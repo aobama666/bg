@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+ -->
+<mapper namespace="com.sgcc.bg.mapper.SearchWorkTaskMapper">
+	<!-- 工作任务查询 table-->
+	<select id="search" resultType="java.util.Map">
+		select b.ID,
+	       b.PROJECT_NAME,
+	       decode(b.CATEGORY,'KY','科研项目 ','HX','横向项目','JS','技术服务项目','NP','非项目工作')  as CATEGORY ,
+	       b.WBS_NUMBER,
+	       b.PROJECT_INTRODUCE,
+	       b.ORGAN_INFO,
+	       b.START_DATE,
+	       b.END_DATE,
+	       b.PLAN_HOURS,
+	       b.PROJECT_STATUS,
+	       b.DECOMPOSE,
+	       b.STATUS,
+	       F.ID as userId,
+	       b.CREATE_USER,
+	       F.START_DATE as personStart,
+           F.END_DATE as personEnd,
+	       b.UPDATE_USER,
+	       (select t4.useralias
+	          from BG_PROJECT_USER t3
+	          JOIN BG_SYS_USER t4
+	            ON t3.hrcode = t4.hrcode
+	         WHERE t3.project_id = b.id
+	           AND t3.role = 1) as principal,
+	       to_char(b.UPDATE_DATE, 'yyyy-MM-dd') as UPDATE_DATE,
+	       to_char(b.CREATE_DATE, 'yyyy-MM-dd') as CREATE_DATE
+	  from BG_PROJECT_INFO b
+	  LEFT JOIN BG_PROJECT_USER F ON F.PROJECT_ID = b.id
+	 where b.ID in
+	       (select t.PROJECT_ID from BG_PROJECT_USER t where t.HRCODE = #{hrCode})
+       and  F.HRCODE = #{hrCode}
+		<if test="projectName!=null and projectName!=''">
+			and b.PROJECT_NAME  like '%'||#{projectName}||'%'
+		</if>
+		<if test="type!=null and type!=''">
+			and b.category  = #{type}
+		</if>
+		<if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
+			and (TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss') BETWEEN F.START_DATE and F.END_DATE
+			or  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss') BETWEEN F.START_DATE and F.END_DATE
+			or (to_char(F.START_DATE,'yyyy-mm-dd') &gt;= #{startTime}  and to_char(F.END_DATE,'yyyy-mm-dd') &lt;= #{endTime}
+			))
+		</if>
+    </select>
+    
+    <!-- 工时审核查询 table-->
+    <select id="searchExamine" resultType="java.util.Map">
+		SELECT
+			b.ID,
+			decode(b.CATEGORY,'KY','科研项目 ','HX','横向项目','JS','技术服务项目','NP','非项目工作')  as CATEGORY ,
+			b.PROJECT_ID,
+			b.PROJECT_NAME,
+			b.JOB_CONTENT,
+			b.WORKING_HOUR,
+			b.APPROVER,
+			b.WORKER,
+			b.DEPT_ID,
+			c.DEPTNAME,
+			b.LAB_ID,
+			D.DEPTNAME LABNAME,
+			b.STATUS,
+			b.VALID,
+			b.CREATE_USER,
+			b.UPDATE_USER,
+			T.USERALIAS,
+			T.HRCODE,
+			TO_CHAR (b.CREATE_TIME, 'yyyy-MM-dd') AS CREATE_TIME,
+			TO_CHAR (b.UPDATE_TIME, 'yyyy-MM-dd') AS UPDATE_TIME,
+			TO_CHAR (b.WORK_TIME, 'yyyy-MM-dd') AS WORK_TIME
+		FROM
+			BG_WORKINGHOUR_INFO b
+		LEFT JOIN BG_SYS_USER T ON T .USERNAME = b.WORKER
+		LEFT JOIN BG_SYS_DEPT c ON c.deptid = b.DEPT_ID
+		LEFT JOIN BG_SYS_DEPT D ON b.LAB_ID = D.deptid
+		AND D.valid = 1
+		WHERE
+			b.VALID = 1 and b.STATUS = '1' and b.approver = #{hrCode}
+		<if test="startTime!=null and startTime!=''">
+			<![CDATA[and b.WORK_TIME >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
+		</if>
+		<if test="endTime!=null and endTime!=''">
+			<![CDATA[and b.WORK_TIME <=  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
+		</if>
+		<if test="projectName!=null and projectName!=''">
+			and b.PROJECT_NAME  like '%'||#{projectName}||'%'
+		</if>
+		<if test="type!=null and type!=''">
+			and b.CATEGORY  = #{type}
+		</if>
+		<if test="userName!=null and userName!=''">
+			and  T.USERALIAS like '%' || #{userName} || '%' 
+		</if>
+		<if test="userCode!=null and userCode!=''">
+			and T.HRCODE  like '%'||#{userCode}||'%'
+		</if>
+		order by b.CREATE_TIME desc
+    </select>
+    <!-- 已审核工时查询 table-->
+    <select id="searchExamined" resultType="java.util.Map">
+      
+   
+		SELECT 
+			b.ID,
+			decode(b.CATEGORY,'KY','科研项目 ','HX','横向项目','JS','技术服务项目','NP','非项目工作')  as CATEGORY ,
+			b.PROJECT_ID,
+			b.PROJECT_NAME,
+			b.JOB_CONTENT,
+			b.WORKING_HOUR,
+			b.APPROVER,
+			b.WORKER,
+			b.DEPT_ID,
+			c.DEPTNAME,
+			b.LAB_ID,
+			D.DEPTNAME LABNAME,
+			b.STATUS,
+			b.VALID,
+			 
+			b.CREATE_USER,
+			b.UPDATE_USER,
+			T.USERALIAS,
+			T.HRCODE,
+			R.PROCESS_NOTE,
+			TO_CHAR (b.CREATE_TIME, 'yyyy-MM-dd') AS CREATE_TIME,
+			TO_CHAR (b.UPDATE_TIME, 'yyyy-MM-dd') AS UPDATE_TIME,
+			TO_CHAR (b.WORK_TIME, 'yyyy-MM-dd') AS WORK_TIME
+		FROM
+			BG_WORKINGHOUR_INFO b
+		LEFT JOIN BG_SYS_USER T ON T .USERNAME = b.WORKER
+		LEFT JOIN BG_SYS_DEPT c ON c.deptid = b.DEPT_ID
+		LEFT JOIN BG_SYS_DEPT D ON b.LAB_ID = D.deptid
+		LEFT JOIN BG_PROCESS_RECORD R
+        ON R.ID = B.PROCESS_ID
+	    AND R.VALID = 1
+	    AND c.valid = 1
+	    AND D.valid = 1
+	     
+	   
+		WHERE
+			b.VALID = 1 and b.APPROVER = #{hrName} and  (b.status = '2' or  b.status = '3')
+		
+		<if test="startTime!=null and startTime!=''">
+			<![CDATA[and b.WORK_TIME >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
+		</if>
+		<if test="endTime!=null and endTime!=''">
+			<![CDATA[and b.WORK_TIME <=  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
+		</if>
+		<if test="projectName!=null and projectName!=''">
+			and b.PROJECT_NAME  like '%'||#{projectName}||'%'
+		</if>
+		<if test="type!=null and type!=''">
+			and b.CATEGORY  = #{type}
+		</if>
+		<if test="userName!=null and userName!=''">
+			and  T.USERALIAS like '%' || #{userName} || '%' 
+		</if>
+		<if test="userCode!=null and userCode!=''">
+			and T.HRCODE  like '%'||#{userCode}||'%'
+		</if>
+		order by b.CREATE_TIME desc
+    </select>
+    
+    <!-- 已审核工时导出-->
+    <select id="searchExamineds" resultType="java.util.Map">
+		SELECT 
+			b.ID,
+			decode(b.CATEGORY,'KY','科研项目 ','HX','横向项目','JS','技术服务项目','NP','非项目工作')  as CATEGORY ,
+			b.PROJECT_ID,
+			b.PROJECT_NAME,
+			b.JOB_CONTENT,
+			b.WORKING_HOUR,
+			b.APPROVER,
+			b.WORKER,
+			b.DEPT_ID,
+			c.DEPTNAME,
+			b.LAB_ID,
+			D.DEPTNAME LABNAME,
+			b.STATUS,
+			b.VALID,
+			b.CREATE_USER,
+			b.UPDATE_USER,
+			T.USERALIAS,
+			T.HRCODE,
+			R.PROCESS_NOTE,
+			DECODE(b.STATUS,0,'未提交',1,'审批中',2,'已退回',3,'已通过') as PROSTATUS,
+			TO_CHAR (b.CREATE_TIME, 'yyyy-MM-dd') AS CREATE_TIME,
+			TO_CHAR (b.UPDATE_TIME, 'yyyy-MM-dd') AS UPDATE_TIME,
+			TO_CHAR (b.WORK_TIME, 'yyyy-MM-dd') AS WORK_TIME
+		FROM
+			BG_WORKINGHOUR_INFO b
+		LEFT JOIN BG_SYS_USER T ON T .USERNAME = b.WORKER
+		LEFT JOIN BG_SYS_DEPT c ON c.deptid = b.DEPT_ID
+		AND c.valid = 1
+		LEFT JOIN BG_SYS_DEPT D ON b.LAB_ID = D.deptid
+		AND D.valid = 1
+		LEFT JOIN BG_PROCESS_RECORD R
+	    ON R.ID = B.PROCESS_ID
+	    AND R.VALID = 1
+		WHERE
+			b.VALID = 1 and b.APPROVER = #{hrName} and (b.status = '2' or  b.status = '3')
+		<if test="startTime!=null and startTime!=''">
+			<![CDATA[and b.WORK_TIME >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
+		</if>
+		<if test="endTime!=null and endTime!=''">
+			<![CDATA[and b.WORK_TIME <=  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
+		</if>
+		<if test="projectName!=null and projectName!=''">
+			and b.PROJECT_NAME  like '%'||#{projectName}||'%'
+		</if>
+		<if test="type!=null and type!=''">
+			and b.CATEGORY  = #{type}
+		</if>
+		<if test="userName!=null and userName!=''">
+			and T.USERALIAS = #{userName}
+		</if>
+		<if test="userCode!=null and userCode!=''">
+			and T.HRCODE = #{userCode}
+		</if>
+		<if test="null != ids and ids.size > 0">
+			AND b.id IN
+			<foreach collection="ids" item="id123" open="(" separator="," close=")">
+            	#{id123,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+		 order by b.CREATE_TIME desc
+    </select>
+    
+    <!-- 工作任务查询导出功能-->
+    <select id="queryExportPrjs" parameterType="java.util.List" resultType="java.util.Map">
+		select rownum as ROW_ID,
+		   b.ID,
+	       b.PROJECT_NAME,
+	       decode(b.CATEGORY,'KY','科研项目 ','HX','横向项目','JS','技术服务项目','NP','非项目工作')  as CATEGORY ,
+	       b.WBS_NUMBER,
+	       b.PROJECT_INTRODUCE,
+	       b.ORGAN_INFO,
+	       to_char(b.START_DATE, 'yyyy-MM-dd') as START_DATE,
+	       to_char(b.END_DATE, 'yyyy-MM-dd') as END_DATE,
+	       F.ID as userId,
+	       b.PLAN_HOURS,
+	       b.PROJECT_STATUS,
+	       b.DECOMPOSE,
+	       b.STATUS,
+	       DECODE(b.PROJECT_STATUS,0,'未启动',1,'进行中',2,'暂停',3,'已结束',4,'废止') as proType,
+	       b.CREATE_USER,
+	       to_char(F.START_DATE, 'yyyy-MM-dd') as personStart,
+	       to_char(F.END_DATE, 'yyyy-MM-dd') as personEnd,
+	       b.UPDATE_USER,
+	       (select t4.useralias
+	          from BG_PROJECT_USER t3
+	          JOIN BG_SYS_USER t4
+	            ON t3.hrcode = t4.hrcode
+	         WHERE t3.project_id = b.id
+	           AND t3.role = 1) as principal,
+	       to_char(b.UPDATE_DATE, 'yyyy-MM-dd') as UPDATE_DATE,
+	       to_char(b.CREATE_DATE, 'yyyy-MM-dd') as CREATE_DATE
+	  from BG_PROJECT_INFO b
+	  LEFT JOIN BG_PROJECT_USER F ON F.PROJECT_ID = b.id
+	 where b.ID in
+	       (select t.PROJECT_ID from BG_PROJECT_USER t where t.HRCODE = #{hrCode})
+       and  F.HRCODE = #{hrCode}
+		<if test="projectName!=null and projectName!=''">
+			and b.PROJECT_NAME  like '%'||#{projectName}||'%'
+		</if>
+		
+		<if test="type!=null and type!=''">
+			and b.category  = #{type}
+		</if>
+		<if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
+			and (TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss') BETWEEN F.START_DATE and F.END_DATE
+			or  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss') BETWEEN F.START_DATE and F.END_DATE
+			or (to_char(F.START_DATE,'yyyy-mm-dd') &gt;= #{startTime}  and to_char(F.END_DATE,'yyyy-mm-dd') &lt;= #{endTime}
+			))
+		</if>
+		<if test="null != ids and ids.size > 0">
+			AND F.id IN
+			<foreach collection="ids" item="id123" open="(" separator="," close=")">
+            	#{id123,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+	</select>
+	<!-- 工时审批确认或者驳回修改 -->
+	<update id="confirmExamine">
+		UPDATE BG_WORKINGHOUR_INFO SET STATUS = #{type},UPDATE_USER = #{dealUserName},UPDATE_TIME = #{date},PROCESS_ID = #{recode} WHERE id = #{id}
+	</update>
+	<!-- 插入审批记录 -->
+	<insert id="saveRecode" parameterType="com.sgcc.bg.model.Recode">
+		insert into BG_PROCESS_RECORD (ID, BUSSINESS_ID, PROCESS_TYPE, 
+      PROCESS_LINK, PROCESS_USER_ID, PROCESS_DEPT_ID, 
+      PROCESS_LAB_ID, PROCESS_RESULT, PROCESS_CREATE_TIME, 
+      PROCESS_NOTE, PROCESS_NEXT_LINK, PROCESS_NEXT_USER_ID, 
+      PROCESS_UPDATE_TIME, VALID)
+    values (#{id,jdbcType=VARCHAR}, #{bussinessId,jdbcType=VARCHAR}, #{processType,jdbcType=VARCHAR}, 
+      #{processLink,jdbcType=VARCHAR}, #{processUserId,jdbcType=VARCHAR}, #{processDeptId,jdbcType=TIMESTAMP}, 
+      #{processLabId,jdbcType=VARCHAR}, #{processResult,jdbcType=VARCHAR}, #{processCreateTime,jdbcType=TIMESTAMP}, 
+      #{processNote,jdbcType=VARCHAR}, #{processNextLink,jdbcType=VARCHAR}, #{processNextUserId,jdbcType=VARCHAR}, 
+      #{processUpdateTime,jdbcType=TIMESTAMP}, #{valid,jdbcType=DECIMAL})
+	</insert>
+	<update id="rejectExamine">
+		UPDATE BG_WORKINGHOUR_INFO SET STATUS = '2', WHERE id = #{id}
+	</update>
+
+	<select id="getUser" resultType="java.util.Map">
+		select
+			t.hrcode,
+			t.useralias,
+			t.username as label
+			from BG_SYS_USER t
+			where t.username like '%'||#{data}||'%'
+	</select>
+</mapper>
