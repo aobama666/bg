@@ -1,0 +1,56 @@
+@charset "UTF-8";
+.treeGrid{
+    width: 100%;
+    border: 1px solid #ddd;
+    border-collapse:collapse;
+    font-size: 12px;
+    color: #2b333e;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+     table-layout:fixed;
+}
+.treeGrid th{
+    padding: 5px;
+    background: #f5f5f5;
+    color: #647989;
+    border: 1px solid #ddd;
+    font-weight: normal;
+    font-family: "Microsoft YaHei"
+}
+.treeGrid tr:hover{
+    background: #f5f5f5;
+}
+.treeGrid td{
+    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    padding: 4px 10px;
+    text-align: left;
+    overflow:hidden;
+}
+.treegrid_switch{
+    font-size: 12px !important;
+    margin-right: 2px;
+    cursor: pointer;
+    color: #87CEEB;
+}
+.treegrid_sort{
+    font-size: 14px;
+    cursor: pointer;
+    color: #3e8ddd;
+    margin-right: 2px;
+
+}
+.TreeNode{
+	white-space:nowrap;
+}
+.icon-file{
+    vertical-align: text-top;
+}
+.treeGrid_select_row{
+    background: #E0FFFF !important;
+}
+.text_target{
+	cursor: pointer;
+}
+

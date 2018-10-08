@@ -1,0 +1,373 @@
+package com.sgcc.bg.workinghourinfo.service.impl;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.sgcc.bg.common.CommonUser;
+import com.sgcc.bg.common.DateUtil;
+import com.sgcc.bg.common.ExportExcelHelper;
+import com.sgcc.bg.common.ResultWarp;
+import com.sgcc.bg.common.UserUtils;
+import com.sgcc.bg.common.WebUtils;
+import com.sgcc.bg.mapper.BgWorkinghourInfoMapper;
+import com.sgcc.bg.workinghourinfo.Utils.DataBean;
+import com.sgcc.bg.workinghourinfo.Utils.DataUtil1;
+import com.sgcc.bg.workinghourinfo.Utils.ExcelUtils;
+import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
+ 
+ 
+ 
+ @Service 
+ public class personWorkingTimeInfoServiceImpl implements personWorkingTimeInfoService {
+	 public Logger log = LoggerFactory.getLogger(personWorkingTimeInfoServiceImpl.class); 
+	 ResultWarp rw; 
+		 @Autowired 
+		 private BgWorkinghourInfoMapper bgworkinghourinfoMapper; 
+		 @Autowired 
+		 private  WebUtils webUtils;
+	     @Autowired
+		 UserUtils userUtils;
+		 
+		 /** 
+		* 分页查询 
+ 		* @param 
+ 		* @param 
+ 		* @return 
+		* */ 
+		 @Override 
+		 public String selectForPagebgWorkinghourInfo(HttpServletRequest request){
+		 log.info("[bgWorkinghourInfo]: 分页查询 " );
+		 CommonUser userInfo = webUtils.getCommonUser();
+		 String userName = userInfo.getUserName();
+		 int pageNum=Integer.parseInt(request.getParameter("page")); 
+		 int limit=Integer.parseInt(request.getParameter("limit")); 
+		
+		 Page<?> page=PageHelper.startPage(pageNum,limit); 
+		 String beginData = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); //开始时间
+		 String endData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
+		 String type = request.getParameter("type" ) == null ? "" : request.getParameter("type").toString(); //类型
+		 if(type.equals("0")){
+			 bgworkinghourinfoMapper.selectForTime("",userName,"",beginData,endData);  
+	     }else if(type.equals("1")){
+	    	 bgworkinghourinfoMapper.selectForNoCategory("",userName,"NP",beginData,endData);
+	     }else if(type.equals("2")){
+	    	 bgworkinghourinfoMapper.selectForTime("",userName,"NP",beginData,endData);  
+	     }
+		 long total=page.getTotal(); 
+		@SuppressWarnings("unchecked")
+		List<Map<String,String>> dataList=(List<Map<String, String>>) page.getResult(); 
+			Map<String, Object> map = new HashMap<String, Object>();	
+		    map.put("items", dataList);
+			map.put("totalCount", total);
+			String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+			return jsonStr;
+		  }
+		 
+		@Override
+		public String selectForTimeAndPagebgWorkinghourInfo(HttpServletRequest request) {
+			log.info("[bgWorkinghourInfo]: 开始时间和结束时间分页查询 " );
+			/* 获取人自编号 */
+			 CommonUser userInfo = webUtils.getCommonUser();
+			 String userName = userInfo.getUserName();
+			 int pageNum=Integer.parseInt(request.getParameter("page")); 
+			 int limit=Integer.parseInt(request.getParameter("limit")); 
+			 String beginData = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); //开始时间
+			 String endData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
+			 String type = request.getParameter("type" ) == null ? "" : request.getParameter("type").toString(); //类型
+				
+			 if(beginData==""){
+				 Map<String, Object> map = new HashMap<String, Object>();
+				  map.put("status", 201);
+				  map.put("res", "开始时间不能为空");
+				  String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+				  return jsonStr;
+			 }
+			 if(endData==""){
+				 Map<String, Object> map = new HashMap<String, Object>();
+				  map.put("status", 201);
+				  map.put("res", "结束时间不能为空");
+				  String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+				  return jsonStr; 
+			 }
+			 /**--------------根据类型分割开始时间和结束时间-----------------------**/
+			 List<Map<String, Object>> maplist=Statistics(userName,type,beginData,endData);
+			 /**-----------------------分页----------------------------------**/
+			 List<Map<String, Object>>  Datalist=new  ArrayList<Map<String, Object>>();
+			 long total= maplist.size();
+			 int begin=(pageNum-1)*limit+1;
+			 int end=pageNum*limit;
+			 for(int i=0;i<maplist.size();i++){
+				Map<String , Object> map= maplist.get(i);
+				String count= map.get("Count").toString();
+				int counts=Integer.valueOf(count);
+				if(begin<=counts&&counts<=end){
+					Datalist.add(map);
+				}
+			 }
+			 Map<String, Object> map = new HashMap<String, Object>();
+			    map.put("status", 200);
+			    map.put("items", Datalist);
+				map.put("totalCount", total);
+				String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+			/**-----------------------分页----------------------------------**/
+				return jsonStr;
+			  
+		}
+		
+		@Override
+		public  void exportExcelForTime(HttpServletRequest request,HttpServletResponse response) {
+			 log.info("[bgWorkinghourInfo]: 导出 " );
+			 CommonUser userInfo = webUtils.getCommonUser();
+			 String userName = userInfo.getUserName();
+			 String beginData = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); //开始时间
+			 String endData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
+			 String type = request.getParameter("type" ) == null ? "" : request.getParameter("type").toString(); //类型
+			 String id = request.getParameter("id" ) == null ? "" : request.getParameter("id").toString(); //类型
+			 /**
+			  * 验证数据
+			  * 
+			  * */
+			   createExcelForTime(id,userName, type,  beginData, endData,  response);
+		    
+		}
+		public String  createExcelForTime(String id,String userName,String type,String beginData,String endData, HttpServletResponse response){
+			//构建Excel表头
+			List<Map<String,String>>  headermaplist=new ArrayList<Map<String,String>>();
+			 
+			LinkedHashMap<String,String> headermap0 = new LinkedHashMap<>(); 
+			headermap0.put("ROW_ID", "序号"); 
+			headermap0.put("StartAndEndData", "统计周期");
+			headermap0.put("TotalHoursNum", "投入总工时（h）");
+			headermap0.put("ProjectTotalHoursNum", "项目工作投入工时统计");
+			headermap0.put("ProjectTotalHoursNumBF", "");
+			headermap0.put("NoProjectTotalHoursNum", "非项目工作投入工时统计");
+			headermap0.put("NoProjectTotalHoursNumBF", "");
+			headermap0.put("StandartHoursNum", "标准工时");
+			headermap0.put("StandartHoursNumBF", "工作饱和度");
+			LinkedHashMap<String,String> headermap1 = new LinkedHashMap<>(); 
+			headermap1.put("ROW_ID", "");
+			headermap1.put("StartAndEndData", "");
+			headermap1.put("TotalHoursNum", "");
+			headermap1.put("ProjectTotalHoursNum", "项目投入总工时（h）");
+			headermap1.put("ProjectTotalHoursNumBF", "工时占比（%）");
+			headermap1.put("NoProjectTotalHoursNum", "非项目投入总工时（h）");
+			headermap1.put("NoProjectTotalHoursNumBF", "工时占比（%）");
+			headermap1.put("StandartHoursNum", "");
+			headermap1.put("StandartHoursNumBF", "");
+			headermaplist.add(headermap1);
+			
+			List<Map<String, Object>> valueList=Statistics(userName, type,  beginData, endData);
+			List<Map<String, Object>> datalist=new  ArrayList<Map<String, Object>>();
+			if(id==""){
+				datalist=valueList;
+			} else{
+				 String[] idnum=id.split(",");
+					for(int i=0;i<idnum.length;i++){
+						String ids=idnum[i];
+						 for(int j=0;j<valueList.size();j++){
+							 String Count=(String) valueList.get(j).get("Count");
+							 if(Count.equals(ids)){
+								 datalist.add(valueList.get(j));
+							 }
+						 }
+					}
+			}
+			List<Map<String, Object>> datalists=new  ArrayList<Map<String, Object>>();
+			for(int i=0;i<datalist.size();i++){
+				Map<String, Object> map= datalist.get(i);
+				map.put("ROW_ID", i+1);
+				datalists.add(map);
+			}
+			//获取Excel数据信息
+			HSSFWorkbook workbook = ExcelUtils.PaddingExcel(headermap0,datalists,headermaplist);
+			String fileName="个人工时统计";
+			ExportExcelHelper.getExcels(response,workbook,fileName);
+			return "";
+		}
+		public  List<Map<String, Object>> Statistics(String userName,String type,String beginData,String endData) {
+			 List<DataBean>  DataBeanlist=null;
+			 try {
+			   if(type.equals("0")){//日
+				   DataBeanlist=DataUtil1.getDatas(beginData,endData);
+			   }else if(type.equals("1")){//周
+				   DataBeanlist=DataUtil1.getWeeks(beginData,endData);
+			   }else if(type.equals("2")){//月
+				   DataBeanlist=DataUtil1.getMonths(beginData,endData);
+			   }else if(type.equals("3")){//季度
+				   DataBeanlist=DataUtil1.getQuarters(beginData,endData);
+			   }else if(type.equals("4")){//年
+				   DataBeanlist=DataUtil1.getYears(beginData,endData);
+			   }else if(type.equals("5")){//自当义
+				   DataBeanlist=DataUtil1.getCustom(beginData,endData);
+			   }                                                                              
+			} catch (ParseException e) {
+					e.printStackTrace();
+			}
+			 List<Map<String, Object>>  maplist=new  ArrayList<Map<String, Object>>();
+			 for(int i=0;i<DataBeanlist.size();i++){
+				 int count=DataBeanlist.get(i).getCount();
+				 String StartData=DataBeanlist.get(i).getStartData();
+				 String EndData=DataBeanlist.get(i).getEndData();
+				 String TotalHoursNum =bgworkinghourinfoMapper.selectForStartAndEnd(userName,"",StartData,EndData);//投入总工时
+				 String NoProjectTotalHoursNum  =bgworkinghourinfoMapper.selectForStartAndEnd(userName,"NP",StartData,EndData);//非项目投入工时
+				 @SuppressWarnings("rawtypes")
+				List<Map>  bzlist= bgworkinghourinfoMapper.selectForSchedule(StartData,EndData);
+				 int  days=bzlist.size();
+			     int standartHours=days*8;
+				 if(TotalHoursNum==null){
+			    	TotalHoursNum="0";
+				 }
+                 if(NoProjectTotalHoursNum==null){
+                	 NoProjectTotalHoursNum="0";
+                 }
+                 double ProjectTotalHourslNum= Double.valueOf(TotalHoursNum)-Double.valueOf(NoProjectTotalHoursNum);
+                 String ProjectTotalHourslNums="";
+                 if(ProjectTotalHourslNum==0.0){
+                	 ProjectTotalHourslNums="0"; 
+                 }else{
+                	 ProjectTotalHourslNums=ProjectTotalHourslNum+"";
+                	 ProjectTotalHourslNums.replace(".0", "");
+                 }
+                 
+                 
+                 
+                 
+ 				String  NoProjectTotalHoursNumPer;
+ 				String  ProjectTotalHoursNumPer;
+ 				 if(TotalHoursNum=="0"){
+ 					NoProjectTotalHoursNumPer="0%";
+ 					ProjectTotalHoursNumPer="0%";
+ 				 }else if(NoProjectTotalHoursNum=="0"){ 
+ 					NoProjectTotalHoursNumPer="0%";
+ 					ProjectTotalHoursNumPer="100%";
+ 				 }else if(ProjectTotalHourslNums=="0"){
+ 					NoProjectTotalHoursNumPer="100%";
+ 					ProjectTotalHoursNumPer="0%";
+ 				 }else{
+ 					double   NoProjectTotalHoursNumBF=Double.valueOf(NoProjectTotalHoursNum)/Double.valueOf(TotalHoursNum);
+ 					double   ProjectTotalHoursNumBF=Double.valueOf(ProjectTotalHourslNums)/Double.valueOf(TotalHoursNum);
+ 				
+ 					ProjectTotalHoursNumPer=DataUtil1.getdoublefromString(ProjectTotalHoursNumBF);
+ 					NoProjectTotalHoursNumPer=DataUtil1.getdoublefromString(NoProjectTotalHoursNumBF) ;
+ 				 }
+ 				  String   StandartHoursNumPer;
+ 				  if(standartHours==0){
+ 					 StandartHoursNumPer=0+"%";
+ 				  }else{
+ 					 double	 StandartHoursNum=Double.valueOf(TotalHoursNum)/Double.valueOf(standartHours);
+ 					 StandartHoursNumPer=DataUtil1.getdoublefromString(StandartHoursNum) ;
+ 				  }
+ 				 String StandartHoursNumBJ;
+ 			     if(Double.valueOf(TotalHoursNum)>Double.valueOf(standartHours)){
+ 			    	StandartHoursNumBJ="1";
+ 			     } else{
+ 			    	StandartHoursNumBJ="0";
+ 			     }
+ 				 Map<String, Object> map=new HashMap<String, Object>();
+				 map.put("Count", count+"");
+			     map.put("StartData", StartData);
+			     map.put("StartAndEndData",StartData+"至"+EndData);
+			     map.put("EndData", EndData);
+			     map.put("TotalHoursNum", TotalHoursNum.replace(".0", ""));
+			     map.put("ProjectTotalHoursNum", ProjectTotalHourslNums.replace(".0", ""));
+			     map.put("ProjectTotalHoursNumBF", ProjectTotalHoursNumPer  );
+			     map.put("NoProjectTotalHoursNum", NoProjectTotalHoursNum.replace(".0", ""));
+			     map.put("NoProjectTotalHoursNumBF",NoProjectTotalHoursNumPer);
+			     map.put("StandartHoursNum",standartHours+"");
+			     map.put("StandartHoursNumBF",StandartHoursNumPer);
+			     map.put("StandartHoursNumBJ", StandartHoursNumBJ);
+			     maplist.add(map);
+			   
+			 }
+			return maplist;
+			  
+		}
+		
+		
+		@Override
+		public  void exportExcel(HttpServletRequest request,HttpServletResponse response) {
+			 log.info("[bgWorkinghourInfo]: 导出 " );
+			 CommonUser userInfo = webUtils.getCommonUser();
+			 String userName = userInfo.getUserName();
+			 String beginData = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); //开始时间
+			 String endData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
+			 String type = request.getParameter("type" ) == null ? "" : request.getParameter("type").toString(); //类型
+			 String id= request.getParameter("id" ) == null ? "" : request.getParameter("id").toString(); //主键
+			 /**
+			  * 验证数据
+			  * 
+			  * */
+			 createExcel(id, userName, type,  beginData, endData,  response);	 
+		}
+		public String createExcel(String id,String userName,String type,String beginData,String endData, HttpServletResponse response){
+			//构建Excel表头
+ 
+			 Object[][] title = { 
+					 { "日期", "WORK_TIME" }, 
+					 { "类型","CATEGORY"},
+					 { "项目名称","PROJECT_NAME"},
+					 { "工作内容","JOB_CONTENT"},
+					 { "投入工时(h)","WORKING_HOUR"}
+					};
+			List<Map<String, Object>> valueList=ExceldataList(id, userName, type,  beginData, endData);
+			//获取Excel数据信息
+			String fileName="";
+			if(type.equals("0")){
+				fileName="投入总工时统计详情";
+			}else if(type.equals("1")){
+				fileName="项目投入总工时统计详情";
+			}else if(type.equals("2")){
+				fileName="非项目投入总工时统计详情";
+			}
+			String excelName=fileName+"-"+DateUtil.getDays();
+			ExportExcelHelper.getExcel(response, excelName, title, valueList, "normal");
+			 
+			return "";
+		}
+		
+		
+		
+		public  List<Map<String, Object>> ExceldataList(String id,String userName,String type,String beginData,String endData){
+			List<Map<String, Object>> valueList = new ArrayList<Map<String,Object>>();
+			if(id==""){
+				 if(type.equals("0")){
+					 valueList = bgworkinghourinfoMapper.selectForTime("",userName,"",beginData,endData); 
+			     }else if(type.equals("1")){
+			    	 valueList = bgworkinghourinfoMapper.selectForNoCategory("",userName,"NP",beginData,endData);
+			     }else if(type.equals("2")){
+			    	 valueList = bgworkinghourinfoMapper.selectForTime("",userName,"NP",beginData,endData);  
+			     }
+			}else{
+				 String[] idnum=id.split(",");
+					for(int i=0;i<idnum.length;i++){
+						String ids=idnum[i];
+						List<Map<String, Object>> dataList = bgworkinghourinfoMapper.selectForTime(ids,userName,"","","");  
+						valueList.addAll(dataList); 
+					}
+			}
+			List<Map<String, Object>> dataList = new ArrayList<Map<String,Object>>();
+			if(valueList.size()>0){
+				for(int i=0;i<valueList.size();i++){
+					Map<String, Object> map	=valueList.get(i);
+					map.put("ROW_ID", i+1);
+					dataList.add(map);
+				}
+			}
+		    
+			return dataList;
+		}
+		
+	}
