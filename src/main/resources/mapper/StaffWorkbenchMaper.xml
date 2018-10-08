@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.mapper.StaffWorkbenchMaper">
+	<select id="getWorkingHourInfo" resultType="java.util.Map">
+		SELECT
+		   t.id, 
+		   t.project_id,
+		  DECODE(t.category,
+              'NP',
+              t.project_name,
+              (SELECT t1.project_name FROM BG_PROJECT_INFO t1 WHERE t1.id=t.project_id AND t1.status='1')) as project_name,
+      	  DECODE(t.category,
+              'NP',
+              t.category,
+              (SELECT t1.category FROM BG_PROJECT_INFO t1 WHERE t1.id=t.project_id AND t1.status='1')) as category,
+	       t.job_content,
+	       t.working_hour,
+	       t.status,
+	       DECODE(t.category,
+              'NP',
+              (SELECT t3.useralias
+                 FROM BG_SYS_USER t3
+                WHERE t3.username = t.approver),
+              DECODE(t.status,
+                     '3',
+                     (SELECT t3.useralias
+                        FROM BG_SYS_USER t3
+                       WHERE t3.username = t.approver),
+                     (SELECT t1.empname
+                        FROM BG_PROJECT_USER t1
+                       WHERE t1.project_id = t.project_id
+                         AND t1.role = '1'
+                         AND t1.status = '1')
+             )
+         	) as principal,
+	       (SELECT t2.process_note
+	          FROM BG_PROCESS_RECORD t2
+	         WHERE t2.id = t.process_id AND t2.valid=1) as process_note,
+	       DECODE(t.category,
+              'NP',
+              (SELECT t3.hrcode
+                 FROM BG_SYS_USER t3
+                WHERE t3.username = t.approver),
+              DECODE(t.status,
+                     '3',
+                     (SELECT t3.hrcode
+                 		FROM BG_SYS_USER t3
+                		WHERE t3.username = t.approver),
+              		(SELECT t4.hrcode
+	          			FROM BG_PROJECT_USER t4
+	             		WHERE t4.project_id = t.project_id
+	           			AND t4.role = '1'
+	          			AND t4.status = '1')) )as hrcode
+	  	FROM BG_WORKINGHOUR_INFO t
+	  	WHERE t.Work_Time = TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
+	  	 AND t.worker=#{username}
+	  	 AND t.valid=1
+	  	ORDER BY t.create_time DESC
+	</select>
+	
+	<select id="getProjectsByDate" resultType="java.util.Map">
+		SELECT 
+		   DECODE(t.category,
+		   		'KY','科研项目',
+		   		'HX','横向项目',
+		   		'JS','技术服务项目') as category,
+		   t.id,
+	       t.project_name,
+	       t.wbs_number,
+	       (SELECT t1.empname
+	          FROM BG_PROJECT_USER t1
+	         WHERE t1.project_id = t.id
+	           AND t1.role = '1'
+	           AND t1.status = '1') as principal,
+	       (SELECT t1.hrcode
+	          FROM BG_PROJECT_USER t1
+	         WHERE t1.project_id = t.id
+	           AND t1.role = '1'
+	           AND t1.status = '1') as hrcode
+	  		FROM BG_PROJECT_INFO t
+  		JOIN BG_PROJECT_USER t1
+   	 	ON t.id = t1.project_id
+  		JOIN BG_SYS_USER t2
+    	ON t1.hrcode = t2.hrcode
+ 		WHERE t2.username =#{username}
+ 		AND t.status='1' 
+ 		AND t1.status = '1'
+ 		AND t.project_status IN ('1','2')
+ 		<![CDATA[
+  		 AND (TO_DATE(#{selectedDate}, 'yyyy-mm-dd') >= t.start_date AND
+      	 	TO_DATE(#{selectedDate}, 'yyyy-mm-dd') <= t.end_date)
+  		 AND (TO_DATE(#{selectedDate}, 'yyyy-mm-dd') >= t1.start_date AND
+       		TO_DATE(#{selectedDate}, 'yyyy-mm-dd') <= t1.end_date)
+ 		]]>
+ 		ORDER BY t.create_date DESC
+	</select>
+	
+	<select id="getAllProjects" resultType="java.util.Map">
+		SELECT
+    	   t.project_name，
+   		   DECODE(t.category,
+		   		'KY','科研项目',
+		   		'HX','横向项目',
+		   		'JS','技术服务项目') as category,
+		   t.id,
+	       t.wbs_number,
+	       (SELECT t1.empname
+	          FROM BG_PROJECT_USER t1
+	         WHERE t1.project_id = t.id
+	           AND t1.role = '1'
+	           AND t1.status = '1') as principal,
+	       (SELECT t1.hrcode
+	          FROM BG_PROJECT_USER t1
+	         WHERE t1.project_id = t.id
+	           AND t1.role = '1'
+	           AND t1.status = '1') as hrcode
+	  		FROM BG_PROJECT_INFO t
+   		WHERE #{username} IN (SELECT t1.username FROM BG_SYS_USER t1 JOIN BG_PROJECT_USER t2 ON t1.hrcode=t2.hrcode WHERE t2.project_id=t.id AND t2.status='1')
+ 		AND t.status='1' 
+ 		AND t.project_status IN ('1','2')
+ 		ORDER BY t.create_date DESC
+	</select>
+	
+	<insert id="addWorkHourInfo"  parameterType="com.sgcc.bg.model.WorkHourInfoPo">
+		INSERT INTO BG_WORKINGHOUR_INFO 
+			(
+			ID,
+			CATEGORY,
+			PROJECT_ID,
+			PROJECT_NAME,
+			JOB_CONTENT,
+			WORKING_HOUR,
+			APPROVER,
+			WORKER,
+			DEPT_ID,
+			LAB_ID,
+			WORK_TIME,
+			STATUS,
+			VALID,
+			PROCESS_ID,
+			CREATE_USER,CREATE_TIME,UPDATE_USER,UPDATE_TIME)
+		VALUES
+			(#{id,jdbcType=VARCHAR}, 
+			#{category,jdbcType=VARCHAR}, 
+			#{proId,jdbcType=VARCHAR}, 
+			#{proName,jdbcType=VARCHAR},
+			#{jobContent,jdbcType=VARCHAR},
+			#{workHour,jdbcType=NUMERIC},
+			#{approver,jdbcType=VARCHAR},
+			#{worker,jdbcType=VARCHAR},
+			#{deptId,jdbcType=VARCHAR},
+			#{labId,jdbcType=VARCHAR},
+			#{workTime,jdbcType=DATE},
+			#{status,jdbcType=VARCHAR},
+			#{valid,jdbcType=VARCHAR},
+			#{processId,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<update id="updateWorkHourInfoById" parameterType="com.sgcc.bg.model.WorkHourInfoPo">
+		UPDATE BG_WORKINGHOUR_INFO 
+		SET 
+			project_name = #{proName,jdbcType=VARCHAR},
+			job_content = #{jobContent,jdbcType=VARCHAR},
+			working_hour = #{workHour,jdbcType=NUMERIC},
+			approver = #{approver,jdbcType=VARCHAR},
+			<if test="status!=null and status!=''">
+				status = #{status,jdbcType=VARCHAR},
+			</if>
+			<if test="processId!=null and processId!=''">
+				process_id=#{processId,jdbcType=VARCHAR},
+			</if>
+			update_user=#{updateUser,jdbcType=VARCHAR},
+			update_time=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE id = #{id} AND valid=1
+	</update>
+	
+	<update id="InvalidWorkHourInfoById">
+		UPDATE BG_WORKINGHOUR_INFO SET
+			VALID=0,
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE ID=#{id} AND valid=1
+	</update>
+	
+	<update id="changeWorkHourInfoStatus" parameterType="String">
+		UPDATE BG_WORKINGHOUR_INFO SET status = #{status,jdbcType=VARCHAR}
+			WHERE
+			<if test="id!=null and id!=''">
+				id = #{id,jdbcType=VARCHAR} AND
+			</if>
+		   	valid=1
+	</update>
+	
+	<select id="getProIdByWBSNumber" parameterType="String" resultType="java.lang.String">
+		SELECT id FROM BG_PROJECT_INFO t WHERE t.wbs_number=#{wbsNumber} AND t.status='1'
+	</select>
+	
+	<select id="getPeriodOvertime" parameterType="String" resultType="double">
+		SELECT COALESCE(SUM(DECODE(tws.schedule_type,
+                   0,
+                   DECODE(SIGN(tws.today_hours - 8),
+                          1,
+                          (tws.today_hours - 8),
+                          0),
+                   1,
+                   tws.today_hours)),0)
+  		 FROM (SELECT wh.*, ws.schedule_type
+           FROM (SELECT t.work_time, SUM(t.working_hour) as today_hours
+                   FROM BG_WORKINGHOUR_INFO t
+                  WHERE t.worker = #{username}
+                  AND t.status IN ('1','3')
+                  AND t.valid=1
+                  	<![CDATA[
+                    AND t.work_time >= TO_DATE(#{startDate}, 'yyyy-mm-dd')
+                    AND t.work_time <= TO_DATE(#{endDate}, 'yyyy-mm-dd')
+	 				AND t.work_time <> TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
+ 					]]>
+                  GROUP BY t.work_time) wh
+           JOIN BG_SYS_WORK_SCHEDULE ws
+             ON wh.work_time = ws.schedule_date) tws
+	</select>
+	
+	<select id="getDayType" parameterType="String" resultType="int">
+		SELECT bws.schedule_type
+    	 FROM BG_SYS_WORK_SCHEDULE bws
+   			 WHERE bws.schedule_date = TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
+	</select>
+	
+	<select id="todaySubmitedWorkHour" parameterType="String" resultType="double">
+		SELECT COALESCE(SUM(t.working_hour),0) today_submit_workhour
+ 			 FROM BG_WORKINGHOUR_INFO t
+				 WHERE t.worker = #{username}
+   					AND t.status IN ('1','3')
+   					AND t.valid=1
+   					AND t.work_time = TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
+	</select>
+	
+	<insert id="addProcessRecord"  parameterType="com.sgcc.bg.model.ProcessRecordPo">
+		INSERT INTO BG_PROCESS_RECORD
+			(
+			ID,
+			BUSSINESS_ID,
+			PROCESS_TYPE,
+			PROCESS_LINK,
+			PROCESS_USER_ID,
+			PROCESS_DEPT_ID,
+			PROCESS_LAB_ID,
+			PROCESS_RESULT,
+			PROCESS_NOTE,
+			PROCESS_NEXT_LINK,
+			PROCESS_NEXT_USER_ID,
+			PROCESS_CREATE_TIME,
+			PROCESS_UPDATE_TIME,
+			VALID)
+		VALUES
+			(#{id,jdbcType=VARCHAR}, 
+			#{bussinessId,jdbcType=VARCHAR}, 
+			#{processType,jdbcType=VARCHAR}, 
+			#{processLink,jdbcType=VARCHAR},
+			#{processUserId,jdbcType=VARCHAR},
+			#{processDeptId,jdbcType=VARCHAR},
+			#{processLabtId,jdbcType=VARCHAR},
+			#{processResult,jdbcType=VARCHAR},
+			#{processNote,jdbcType=VARCHAR},
+			#{processNextLink,jdbcType=VARCHAR},
+			#{processNextUserId,jdbcType=VARCHAR},
+			#{processCreateTime,jdbcType=TIMESTAMP},
+			#{processUpdateTime,jdbcType=TIMESTAMP},
+			#{valid,jdbcType=NUMERIC})
+	</insert>
+	
+	<select id="getPrincipalByProId" parameterType="String" resultType="String">
+		SELECT t1.username
+		  FROM BG_PROJECT_USER t
+		  JOIN BG_SYS_USER t1
+		    ON t.hrcode = t1.hrcode
+ 		WHERE t.project_id = #{proId}
+		   AND t.role = '1'
+		   AND t.status = '1'
+	</select>
+
+	<select id="validateSelectedDate" parameterType="String" resultType="Integer">
+		SELECT COUNT(*)
+		  FROM BG_PROJECT_INFO t1
+		  JOIN BG_PROJECT_USER t2
+		    ON t1.id = t2.project_id
+		  JOIN BG_SYS_USER t3
+		    ON t2.hrcode = t3.hrcode
+		 WHERE  t1.id = #{proId}
+		   AND t3.username = #{username}
+		   <![CDATA[
+		   	  AND t1.start_date <= TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
+			  AND t1.end_date >= TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
+			  AND t2.start_date <= TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
+			  AND t2.end_date >= TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
+ 		   ]]>
+		   AND t1.status='1'
+		   AND t2.status='1'
+	</select>
+	
+	<select id="validateStaff" parameterType="String" resultType="Integer">
+		SELECT COUNT(*)
+ 		 FROM BG_PROJECT_USER t1
+  		 JOIN BG_SYS_USER t2
+       		ON t1.hrcode = t2.hrcode
+ 		WHERE t1.project_id = #{proId}
+  			AND t2.username =#{username}
+   			AND t1.status = '1'
+	</select>
+	
+	<select id="getProInfoByProId" parameterType="String" resultType="java.util.Map">
+		SELECT
+      		t.id,
+      		t.project_name,
+      		 DECODE(t.category,
+		   		'KY','科研项目',
+		   		'HX','横向项目',
+		   		'JS','技术服务项目') as category,
+      		t.wbs_number,
+		    (select t1.empname from BG_PROJECT_USER t1 WHERE t1.project_id=t.id AND t1.role='1' AND t1.status='1') as principal,
+		  	(select t1.hrcode from BG_PROJECT_USER t1 WHERE t1.project_id=t.id AND t1.role='1' AND t1.status='1') as hrcode
+		FROM BG_PROJECT_INFO t
+		WHERE t.id=#{proId} AND t.status='1'
+	</select>
+	
+	<select id="getFieldOfWorkHourById" parameterType="String" resultType="String">
+		SELECT ${field} FROM BG_WORKINGHOUR_INFO t WHERE t.id=#{id} AND t.valid=1
+	</select>
+	
+	<update id="setFieldOfProcessRecordById" parameterType="String">
+		UPDATE BG_PROCESS_RECORD SET ${field} = #{value,jdbcType=VARCHAR} WHERE id=#{processId} AND valid=1
+	</update>
+	
+	<update id="setFieldOfWorkHourById" parameterType="String">
+		UPDATE BG_WORKINGHOUR_INFO SET ${field} = #{value,jdbcType=VARCHAR} WHERE id=#{id} AND valid=1
+	</update>
+	
+	<update id="recallWorkHour">
+		UPDATE BG_WORKINGHOUR_INFO SET
+			status='0',
+			update_user=#{updateUser,jdbcType=VARCHAR},
+			update_time=#{updateTime,jdbcType=TIMESTAMP},
+			process_id=#{processId,jdbcType=VARCHAR}
+		WHERE ID=#{id} AND valid=1
+	</update>
+</mapper>
