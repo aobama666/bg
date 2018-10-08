@@ -369,11 +369,10 @@ public class StaffWorkbenchController {
 			pr.setBussinessId(bussinessId);
 			pr.setProcessType("BG_WORKINGHOUR");
 			pr.setProcessLink("BG_WORKINGHOUR_SUBMIT");
-			String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
+			String currentUsername=webUtils.getUsername();
 			//获取处理人当前信息
-			String nowDay=DateUtil.getDay();
-			CommonCurrentUser approver=userUtils.getCommonCurrentUserByHrCode(hrCode,nowDay);
-			pr.setProcessUserId(approver.getUserName());
+			CommonCurrentUser approver=userUtils.getCommonCurrentUserByUsername(currentUsername);
+			pr.setProcessUserId(currentUsername);
 			pr.setProcessDeptId(approver.getpDeptId());
 			pr.setProcessLabtId(approver.getDeptId());
 			pr.setProcessResult("0");

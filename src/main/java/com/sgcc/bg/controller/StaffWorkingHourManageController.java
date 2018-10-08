@@ -223,10 +223,10 @@ public class StaffWorkingHourManageController {
 			pr.setBussinessId(id);
 			pr.setProcessType("BG_WORKINGHOUR");
 			pr.setProcessLink("BG_WORKINGHOUR_SUBMIT");
-			pr.setProcessUserId(approverUsername);
+			String currentUsername=webUtils.getUsername();
+			pr.setProcessUserId(currentUsername);
 			//获取处理人当前信息
-			String nowDay=DateUtil.getDay();
-			CommonCurrentUser approver=userUtils.getCommonCurrentUserByHrCode(hrCode,nowDay);
+			CommonCurrentUser approver=userUtils.getCommonCurrentUserByUsername(currentUsername);
 			pr.setProcessDeptId(approver.getpDeptId());
 			pr.setProcessLabtId(approver.getDeptId());
 			pr.setProcessResult("0");

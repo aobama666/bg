@@ -469,7 +469,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		//获取处理人当前信息
 		String nowDay=DateUtil.getDay();
 		CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(currentUsername,nowDay);
-		pr.setProcessUserId(user.getUserName());
+		pr.setProcessUserId(currentUsername);
 		pr.setProcessDeptId(user.getpDeptId());
 		pr.setProcessLabtId(user.getDeptId());
 		pr.setProcessResult("3");
