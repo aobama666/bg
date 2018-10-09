@@ -53,7 +53,7 @@
 		</if>
 	</select>	
 	<select id="queryCounted" resultType="double">
-		select SUM(t.working_hour)
+		select decode(SUM(t.working_hour),null,0,SUM(t.working_hour))
 	  	from BG_WORKINGHOUR_INFO t
 	  	LEFT JOIN bg_sys_user u
     	ON u.USERNAME = t.worker
