@@ -8,8 +8,8 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import ch.qos.logback.classic.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ public class SyncServiceImpl implements SyncService {
 	@Autowired
 	private SyncDataMapper syncDataMapper;
 	
-	private final static Log logger = LogFactory.getLog(SyncServiceImpl.class);
+	private final static Logger logger = (Logger) LoggerFactory.getLogger(SyncServiceImpl.class);
 	//所有方法受声明式事务控制，如发生异常，则该方法整体回滚
 	public void syncErpSyncData() {
 		logger.info("[QuartzJob]:1、开始同步HR临时机构数据");

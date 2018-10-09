@@ -207,7 +207,7 @@ function queryList(load){
 	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'start',
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
-	            		if(item.CATEGORY=="NP" && (item.STATUS=="0" || item.STATUS=="2") ){
+	            		if((item.CATEGORY=="NP" || item.CATEGORY=="非项目工作") && (item.STATUS=="0" || item.STATUS=="2") ){
 	            			val='<div style="display:inline"><input onblur="checkInput(this)" class="form-control" name="projectName" value="'+val+'" property="projectName"></div>';
 	            		}else{
 	            			val='<span title="'+val+'">'+val+'</span><input type="hidden" property="projectName" value="'+val+'">';

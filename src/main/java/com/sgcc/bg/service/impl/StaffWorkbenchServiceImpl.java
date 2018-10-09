@@ -455,9 +455,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	@Override
 	public void recallWorkHour(String id) {
 		String currentUsername=webUtils.getUsername();
-		String processId=SWMapper.getFieldOfWorkHourById(id,"process_id");
 		//记录表中的记录设为失效
-		SWMapper.setFieldOfProcessRecordById(processId,"valid","0");
+		//SWMapper.setFieldOfProcessRecordById(processId,"valid","0");
 		//添加撤回操作记录
 		ProcessRecordPo pr=new ProcessRecordPo();
 		String newProcessId=Rtext.getUUID();
@@ -467,17 +466,17 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		pr.setProcessLink("BG_WORKINGHOUR_SUBMIT");
 		//处理人为当前操作人
 		//获取处理人当前信息
-		String nowDay=DateUtil.getDay();
-		CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(currentUsername,nowDay);
+		CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(currentUsername);
 		pr.setProcessUserId(currentUsername);
 		pr.setProcessDeptId(user.getpDeptId());
 		pr.setProcessLabtId(user.getDeptId());
 		pr.setProcessResult("3");
+		pr.setProcessNote("");
+		pr.setProcessNextLink("BG_WORKINGHOUR_SUBMIT");
+		String worker = SWMapper.getFieldOfWorkHourById(id,"worker");
+		pr.setProcessNextUserId(worker);//下个审批人为报工人
 		pr.setProcessCreateTime(new Date());
 		pr.setProcessUpdateTime(new Date());
-		//pr.setProcessNote();
-		//pr.setProcessNextLink();
-		//pr.setProcessNextUserId();
 		pr.setValid(1);
 		addProcessRecord(pr);
 		//工时表中状态改为未提交，更新记录id

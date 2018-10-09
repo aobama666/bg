@@ -257,11 +257,11 @@ $("body").on("click",".reject",function(){
 	
 	if(reason!=""){
 		if(reason.length>200){
-			layer.msg("退回原因不超过200个字");
+			layer.msg("驳回原因不超过200个字");
 			return false;
 		}
 	}else{
-		layer.msg("退回原因不能为空");
+		layer.msg("驳回原因不能为空");
 		return false;
 	}
 	

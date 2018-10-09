@@ -36,7 +36,6 @@ import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.ProjectInfoPo;
 import com.sgcc.bg.model.ProjectUserPo;
 import com.sgcc.bg.service.IBGService;
-import com.sgcc.bg.service.SyncService;
 
 @Controller
 @RequestMapping(value = "project")

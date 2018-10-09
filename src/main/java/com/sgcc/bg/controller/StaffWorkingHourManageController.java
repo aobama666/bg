@@ -226,15 +226,15 @@ public class StaffWorkingHourManageController {
 			String currentUsername=webUtils.getUsername();
 			pr.setProcessUserId(currentUsername);
 			//获取处理人当前信息
-			CommonCurrentUser approver=userUtils.getCommonCurrentUserByUsername(currentUsername);
-			pr.setProcessDeptId(approver.getpDeptId());
-			pr.setProcessLabtId(approver.getDeptId());
+			CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(currentUsername);
+			pr.setProcessDeptId(currentUser.getpDeptId());
+			pr.setProcessLabtId(currentUser.getDeptId());
 			pr.setProcessResult("0");
 			pr.setProcessCreateTime(new Date());
 			pr.setProcessUpdateTime(new Date());
-			//pr.setProcessNote();
-			//pr.setProcessNextLink();
-			//pr.setProcessNextUserId();
+			pr.setProcessNote("");
+			pr.setProcessNextLink("BG_WORKINGHOUR_CHECK");
+			pr.setProcessNextUserId(approverUsername);
 			pr.setValid(1);
 			smService.addProcessRecord(pr);
 			// 注意事务

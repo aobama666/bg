@@ -371,16 +371,18 @@ public class StaffWorkbenchController {
 			pr.setProcessLink("BG_WORKINGHOUR_SUBMIT");
 			String currentUsername=webUtils.getUsername();
 			//获取处理人当前信息
-			CommonCurrentUser approver=userUtils.getCommonCurrentUserByUsername(currentUsername);
+			CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(currentUsername);
 			pr.setProcessUserId(currentUsername);
-			pr.setProcessDeptId(approver.getpDeptId());
-			pr.setProcessLabtId(approver.getDeptId());
+			pr.setProcessDeptId(currentUser.getpDeptId());
+			pr.setProcessLabtId(currentUser.getDeptId());
 			pr.setProcessResult("0");
 			pr.setProcessCreateTime(new Date());
 			pr.setProcessUpdateTime(new Date());
-			//pr.setProcessNote();
-			//pr.setProcessNextLink();
-			//pr.setProcessNextUserId();
+			pr.setProcessNote("");
+			pr.setProcessNextLink("BG_WORKINGHOUR_CHECK");
+			String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
+			CommonCurrentUser approverUser=userUtils.getCommonCurrentUserByHrCode(hrCode);
+			pr.setProcessNextUserId(approverUser==null?"":approverUser.getUserName());
 			pr.setValid(1);
 			SWService.addProcessRecord(pr);
 		}

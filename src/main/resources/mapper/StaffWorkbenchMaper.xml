@@ -181,7 +181,7 @@
 			VALID=0,
 			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
 			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
-		WHERE ID=#{id} AND valid=1
+		WHERE ID=#{id} AND VALID=1 AND STATUS IN (0,2)
 	</update>
 	
 	<update id="changeWorkHourInfoStatus" parameterType="String">
