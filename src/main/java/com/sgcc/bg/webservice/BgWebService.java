@@ -38,7 +38,7 @@ public class BgWebService {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String batchTime = sdf.format(new Date());	
 		return batchTime;
 	}
@@ -118,11 +118,18 @@ public class BgWebService {
 		String startDate = getStartDate(year, period);
 		String endDate = getEndDate(year, period);
 		String monthName = getMonthName(year, period);
-		log.info("---------[batch:"+batchTime+"]:开始获取基本信息！");
+		log.info("---------[batch:"+batchTime+"]:开始获取基本信息，验证本期间是否记录！");
+		//获取基本信息
+		List<Map<String,Object>> baseDate = bgInterfaceService.getInterfaceBaseData(period, year, startDate, endDate, monthName);
+		if(baseDate==null||baseDate.size()==0){
+			return returnSucessMessage("本期间没有记录！");
+		}
+		
+		log.info("---------[batch:"+batchTime+"]:开始获取基本信息,包含负责人没有工时数据！");
 		//获取基本信息
 		List<Map<String,Object>> baseInfo = bgInterfaceService.getInterfaceBaseInfo(period, year, startDate, endDate, monthName);
 		if(baseInfo==null||baseInfo.size()==0){
-			return returnSucessMessage("本期间没有记录！");
+			return returnSucessMessage("本期间没有记录,包含负责人没有工时数据！");
 		}
 		log.info("---------[batch:"+batchTime+"]:开始获取员工总工时！");
 		//获取员工总工时

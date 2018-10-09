@@ -45,4 +45,11 @@ public class BgInterfaceServiceImpl implements BgInterfaceService {
 		bgInterFaceMapper.addInterfaceBspDetailData(WT_SEASON, yearName, startDate, endDate, monthName,update_time);
 	}
 
+	@Override
+	public List<Map<String, Object>> getInterfaceBaseData(String WT_SEASON, String yearName, String startDate,
+			String endDate, String monthName) {
+		List<Map<String, Object>> list = bgInterFaceMapper.getInterfaceBaseData(WT_SEASON, yearName, startDate, endDate, monthName);
+		return list;
+	}
+
 }

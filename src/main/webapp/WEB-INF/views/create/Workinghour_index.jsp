@@ -306,13 +306,13 @@ var dateRangeUtil = (function () {
 	   
 	    var d = new Date(firstDay);  
 	    var day=d.getDate();
-		if(0<(day)<10){
+		if(0<day&&day<10){
 	     day="0"+day ;
 	    }else{
 	     day=day ;
 	    }
 		var month=(d.getMonth() + 1);
-        if(0<month<10){
+        if(0<month&&month<10){
 	     month="0"+month ;
 	    }else{
 	     month=month ;
@@ -348,7 +348,7 @@ var dateRangeUtil = (function () {
  
        var d = new Date(lastDay);  
 	   var month=(d.getMonth() + 1);
-	   if(0<(d.getMonth() + 1)<10){
+	   if(0<month&&month<10){
 	     month="0"+month ;
 	   }else{
 	     month=month ;
