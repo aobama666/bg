@@ -287,7 +287,7 @@ public class SearchWorkTaskController {
 			}
 			String reason = request.getParameter("reason")==null?"":request.getParameter("reason");
 			if("".equals(reason)){
-				map.put("msg","退回原因不能为空");
+				map.put("msg","驳回原因不能为空");
 				return JSON.toJSONString(map);
 			}
 			for(String id:ided){
