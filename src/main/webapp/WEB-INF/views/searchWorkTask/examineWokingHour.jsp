@@ -244,7 +244,7 @@ function reject(){
 		area:['320px', '230px'],
 		resize:false,
 		scrollbar:false,
-		content:'<div class="buttonHead"><button class="reject btn btn-success btn-xs">确认</button></div><div class="contentHead"><label>驳回原因：<span style="color:#f00">(不超过200个字)*</span></label><textarea class="reason"></textarea></div>',
+		content:'<div class="buttonHead"><button class="reject btn btn-success btn-xs">确认</button></div><div class="contentHead"><label>驳回原因：<span style="color:#f00">(不超过200个字)*</span></label><textarea class="reason">驳回</textarea></div>',
 		end: function(){
 			queryList("reload");
 		}
@@ -254,7 +254,6 @@ $("body").on("click",".reject",function(){
 	var ids="";
 	var selectList = mmg.selectedRows();
 	var reason = $(".reason").val();
-	
 	if(reason!=""){
 		if(reason.length>200){
 			layer.msg("驳回原因不超过200个字");
