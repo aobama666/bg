@@ -65,7 +65,7 @@
 		<input type="hidden" name="deptid"/>
 		<input type="hidden" name="pdeptid"/>
 		<input type="hidden" name="level"/>
-		<div class="form-group col-xs-3">
+		<div class="form-group col-xs-4">
 			<label>统计报表：</label>
 			<div class="controls"  data-date-format="yyyy-mm-dd">
 				<select name="Atype">
@@ -92,7 +92,7 @@
 				</div>
 			</div>
 		</div>
-		 <div class="form-group col-xs-4">
+		 <div class="form-group col-xs-3">
 			<label>统计维度：</label>
 			<div class="controls">
 				<select name="Btype">
@@ -102,7 +102,7 @@
 				</select>
 			</div>
 		</div>
-		<div class="form-group col-xs-3"  >
+		<div class="form-group col-xs-4"  >
 			<label>数据显示：</label>
 			<div class="controls datashow">
 				<div class='showcheck'><input type="checkbox" name="dataShow" value="1"/></div>
@@ -118,7 +118,7 @@
 			</div>
 		</div>
 	</div>
-		<div class="form-group col-xs-4 hidden" id="username">
+		<div class="form-group col-xs-3 hidden" id="username">
 			<label>人员姓名：</label>
 			<div class="controls">
 				<input name="userName" property="userName" >
