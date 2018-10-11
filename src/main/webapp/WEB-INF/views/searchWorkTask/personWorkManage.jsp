@@ -2,13 +2,11 @@
 <!-- authentication_index.jsp -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%-- <%@page import="crpri.ess.util.ToolsUtil"%>
 <%@page import="crpri.ess.util.JsonUtil"%> --%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
-<%-- <%
-	String path = ToolsUtil.getContextPath(request);
-%> --%>
 <html>
 <head> 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -100,10 +98,9 @@
 			<div class="controls"  data-date-format="yyyy-mm-dd">
 				<select name="category">
 					<option></option>
-					<option value="KY">科研项目</option>
-					<option value="JS">技术服务项目</option>
-					<option value="HX">横向项目</option>
-					<option value="NP">非项目工作</option>
+					<c:forEach var ="dict" items="${categoryMap}">
+						<option value=${dict.key}>${dict.value}</option>
+					</c:forEach>
 				</select>
 			</div>
 		</div>
@@ -118,10 +115,9 @@
 			<div class="controls"  data-date-format="yyyy-mm-dd">
 				<select name="status">
 					<option></option>
-					<option value="0">未提交</option>
-					<option value="1">审批中</option>
-					<option value="2">已退回</option>
-					<option value="3">已通过</option>
+					<c:forEach var ="dict" items="${statusMap}">
+						<option value=${dict.key}>${dict.value}</option>
+					</c:forEach>
 				</select>
 			</div>
 		</div>
@@ -204,24 +200,8 @@ function queryList(load){
 	            {title:'审核人', name:'USERALIAS', width:100, sortable:false, align:'center'},
 	            {title:'审核结果', name:'STATUS', width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
-	            		var status;
-	            		switch (parseInt(val)){
-	            		case 0:
-	            		  status="未提交";
-	            		  break;
-	            		case 1:
-	            		  status="审批中";
-	            		  break;
-	            		case 2:
-	            		  status="已退回";
-	            		  break;
-	            		case 3:
-	            		  status="已通过";
-	            		  break;
-	            		default:
-	            		  status="";
-	            		}
-	            		return status;
+	            		var dict=${statusJson};
+	            		return dict[val];
 	            	}},
 	            	{title:'审核备注', name:'PROCESS_NOTE', width:100, sortable:false, align:'left'},
 	            	{title:'操作', name:'aa', width:100, sortable:false, align:'center',renderer:function(title,row){

@@ -9,10 +9,7 @@
 				SELECT
 		      		t1.id as "id",
 		      		t1.project_name as "projectName",
-		      		DECODE(t1.category,
-		   				'KY','科研项目',
-		   				'HX','横向项目',
-		   				'JS','技术服务项目') as "category",
+		      		(SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t1.category) as "category",
       				t1.wbs_number as "WBSNumber",
       				t1.project_introduce as "projectIntroduce",
 					t1.organ_info as "organInfo",

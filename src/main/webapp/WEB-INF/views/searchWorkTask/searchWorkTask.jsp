@@ -2,6 +2,7 @@
 <!-- authentication_index.jsp -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%-- <%@page import="crpri.ess.util.ToolsUtil"%>
 <%@page import="crpri.ess.util.JsonUtil"%> --%>
 <%@page import="java.util.List"%>
@@ -80,10 +81,9 @@
 			<div class="controls"  data-date-format="yyyy-mm-dd">
 				<select name="type">
 					<option value=""></option>
-					<option value="KY">科研项目</option>
-					<option value="HX">横向项目</option>
-					<option value="JS">技术服务项目</option>
-					<option value="NP">非项目工作</option>
+					<c:forEach var ="dict" items="${categoryMap}">
+						<option value=${dict.key}>${dict.value}</option>
+					</c:forEach>
 				</select>
 			</div>
 		</div>
@@ -234,27 +234,8 @@ function queryList(load){
 	            {title:'项目负责人', name:'PRINCIPAL', width:100, sortable:false, align:'center'},
 	            {title:'项目状态', name:'PROJECT_STATUS', width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
-	            		var status;
-	            		switch (parseInt(val)){
-	            		case 0:
-	            		  status="未启动";
-	            		  break;
-	            		case 1:
-	            		  status="进行中";
-	            		  break;
-	            		case 2:
-	            		  status="暂停";
-	            		  break;
-	            		case 3:
-	            		  status="已结束";
-	            		  break;
-	            		case 4:
-	            		  status="废止";
-	            		  break;
-	            		default:
-	            		  status="";
-	            		}
-	            		return status;
+	            		var dict=${statusJson};
+	            		return dict[val];
 	            	}},
 	            {title:'本人参与开始时间', name:'PERSONSTART', width:100, sortable:false, align:'center'},
 	            {title:'本人参与结束时间', name:'PERSONEND', width:100, sortable:false, align:'center'}

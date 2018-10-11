@@ -21,6 +21,7 @@ import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.Recode;
+import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.SearchWorkTaskService;
 
 @Controller
@@ -36,13 +37,21 @@ public class SearchWorkTaskController {
 	@Autowired
 	UserUtils userUtils;
 	
+	@Autowired
+	DataDictionaryService dict;
+
+	
 	DateUtil dateUtils = new DateUtil();
 	/*
 	 *工作任务查询页面 index
 	 */
 	@ResponseBody
 	@RequestMapping(value="/index")
-	public ModelAndView Index(){
+	public ModelAndView Index(HttpServletRequest res){
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		String statusJson=dict.getDictDataJsonStr("pstatus100001");
+		res.setAttribute("categoryMap", categoryMap);
+		res.setAttribute("statusJson", statusJson);
 		ModelAndView model = new ModelAndView("searchWorkTask/searchWorkTask");
 		return model;
 	}
@@ -52,7 +61,9 @@ public class SearchWorkTaskController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/examineIndex")
-	public ModelAndView examineIndex(){
+	public ModelAndView examineIndex(HttpServletRequest res){
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		res.setAttribute("categoryMap", categoryMap);
 		ModelAndView model = new ModelAndView("searchWorkTask/examineWokingHour");
 		return model;
 	}
@@ -61,7 +72,11 @@ public class SearchWorkTaskController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/examined")
-	public ModelAndView examined(){
+	public ModelAndView examined(HttpServletRequest res){
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		res.setAttribute("categoryMap", categoryMap);
+		String statusJson=dict.getDictDataJsonStr("cstatus100003");
+		res.setAttribute("statusJson", statusJson);
 		ModelAndView model = new ModelAndView("searchWorkTask/examined");
 		return model;
 	}
@@ -91,7 +106,13 @@ public class SearchWorkTaskController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/personWorkManage")
-	public ModelAndView personWorkManage(){
+	public ModelAndView personWorkManage(HttpServletRequest res){
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		Map<String,String> statusMap= dict.getDictDataByPcode("cstatus100003");
+		String statusJson=dict.getDictDataJsonStr("cstatus100003");
+		res.setAttribute("categoryMap", categoryMap);
+		res.setAttribute("statusMap", statusMap);
+		res.setAttribute("statusJson", statusJson);
 		ModelAndView model = new ModelAndView("searchWorkTask/personWorkManage");
 		return model;
 	}

@@ -12,8 +12,15 @@
               (SELECT t1.project_name FROM BG_PROJECT_INFO t1 WHERE t1.id=t.project_id AND t1.status='1')) as project_name,
       	  DECODE(t.category,
               'NP',
-              t.category,
-              (SELECT t1.category FROM BG_PROJECT_INFO t1 WHERE t1.id=t.project_id AND t1.status='1')) as category,
+              '非项目工作',
+              (SELECT d.name
+				  FROM BG_PROJECT_INFO t1
+				  JOIN BG_SYS_DATADICTIONARY d
+				    ON t1.category = d.code
+				 WHERE t1.id = t.project_id
+				   AND t1.status = '1'
+				   AND d.pcode = 'category100002'
+				   AND d.vaild = 1)) as category,
 	       t.job_content,
 	       t.working_hour,
 	       t.status,
@@ -61,10 +68,7 @@
 	
 	<select id="getProjectsByDate" resultType="java.util.Map">
 		SELECT 
-		   DECODE(t.category,
-		   		'KY','科研项目',
-		   		'HX','横向项目',
-		   		'JS','技术服务项目') as category,
+		   (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t.category) as category,
 		   t.id,
 	       t.project_name,
 	       t.wbs_number,
@@ -99,10 +103,7 @@
 	<select id="getAllProjects" resultType="java.util.Map">
 		SELECT
     	   t.project_name，
-   		   DECODE(t.category,
-		   		'KY','科研项目',
-		   		'HX','横向项目',
-		   		'JS','技术服务项目') as category,
+   		   (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t.category) as category,
 		   t.id,
 	       t.wbs_number,
 	       (SELECT t1.empname
@@ -314,10 +315,7 @@
 		SELECT
       		t.id,
       		t.project_name,
-      		 DECODE(t.category,
-		   		'KY','科研项目',
-		   		'HX','横向项目',
-		   		'JS','技术服务项目') as category,
+      		(SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t.category) as category,
       		t.wbs_number,
 		    (select t1.empname from BG_PROJECT_USER t1 WHERE t1.project_id=t.id AND t1.role='1' AND t1.status='1') as principal,
 		  	(select t1.hrcode from BG_PROJECT_USER t1 WHERE t1.project_id=t.id AND t1.role='1' AND t1.status='1') as hrcode

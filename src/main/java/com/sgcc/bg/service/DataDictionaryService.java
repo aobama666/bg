@@ -10,4 +10,11 @@ public interface DataDictionaryService {
 	 * @return
 	 */
 	Map<String, String> getDictDataByPcode(String pcode);
+	
+	/**
+	 * 根据pcode获取该组字典数据
+	 * @param pcode
+	 * @return 返回json字符串
+	 */
+	String getDictDataJsonStr(String pcode);
 }

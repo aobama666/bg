@@ -32,6 +32,7 @@ import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.ProcessRecordPo;
 import com.sgcc.bg.model.WorkHourInfoPo;
+import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IStaffWorkingHourManageService;
 
 @Controller
@@ -41,15 +42,22 @@ public class StaffWorkingHourManageController {
 	private IStaffWorkingHourManageService smService;
 	@Autowired
 	WebUtils webUtils;
+	
 	@Autowired
 	UserUtils userUtils;
+	
+	@Autowired
+	DataDictionaryService dict;
 	private static Logger  smLog= LoggerFactory.getLogger(StaffWorkingHourManageController.class);
 
 	@RequestMapping("/index")
-	public ModelAndView index() {
-		Map<String,String> map=new HashMap<String, String>();
-		/*CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
-		map.put("currentDeptCode",user.getpDeptCode());*/
+	public ModelAndView index(HttpServletRequest res) {
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		String statusJson=dict.getDictDataJsonStr("cstatus100003");
+		Map<String,String> statusMap= dict.getDictDataByPcode("cstatus100003");
+		res.setAttribute("categoryMap", categoryMap);
+		res.setAttribute("statusMap", statusMap);
+		res.setAttribute("statusJson", statusJson);
 		ModelAndView model = new ModelAndView("bg/staffWorkHourManage/bg_staffWorkHour_manage");
 		return model;
 	}

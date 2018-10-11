@@ -35,6 +35,7 @@ import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.ProjectInfoPo;
 import com.sgcc.bg.model.ProjectUserPo;
+import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IBGService;
 
 @Controller
@@ -46,13 +47,19 @@ public class BgController {
 	private WebUtils webUtils;
 	@Autowired
 	private UserUtils userUtils;
+	@Autowired
+	DataDictionaryService dict;
 
 	private static Logger bgLog = LoggerFactory.getLogger(BgController.class);
 
 	@RequestMapping("/proInfo")
-	public ModelAndView project() {
-		bgLog.info("******************test跳转页面******************");
+	public ModelAndView project(HttpServletRequest request) {
 		ModelAndView model = new ModelAndView("bg/proInfo/bg_project_info");
+		//传项目状态pstatus100001
+		Map<String,String> dictMap= dict.getDictDataByPcode("pstatus100001");
+		String dictJson=dict.getDictDataJsonStr("pstatus100001");
+		request.setAttribute("dictMap",dictMap);
+		request.setAttribute("dictJson",dictJson);
 		return model;
 	}
  

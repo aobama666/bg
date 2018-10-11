@@ -7,7 +7,6 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,8 +44,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.sgcc.bg.common.ConfigUtils;
-import com.sgcc.bg.common.DateUtil;
-import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.model.HRDept;
 import com.sgcc.bg.model.HRUser;
 
@@ -273,11 +270,11 @@ public class SyncData {
 		
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static String readPa0001WebServiceXml() {
-		String wsdl = ConfigUtils.getConfig("axis2_syncUserDeptRelation_Wsdl");;
-		String namespace = ConfigUtils.getConfig("axis2_syncUserDeptRelation_Namespace");;
-		String userName = ConfigUtils.getConfig("axis2_syncUserDeptRelation_UserName");;
-		String password = ConfigUtils.getConfig("axis2_syncUserDeptRelation_Password");;
-		String operationName = ConfigUtils.getConfig("axis2_syncUserDeptRelation_OperationName");;
+		String wsdl = ConfigUtils.getConfig("axis2_syncUserDeptRelation_Wsdl");
+		String namespace = ConfigUtils.getConfig("axis2_syncUserDeptRelation_Namespace");
+		String userName = ConfigUtils.getConfig("axis2_syncUserDeptRelation_UserName");
+		String password = ConfigUtils.getConfig("axis2_syncUserDeptRelation_Password");
+		String operationName = ConfigUtils.getConfig("axis2_syncUserDeptRelation_OperationName");
 
 		StringBuffer xml = new StringBuffer();
 		xml.append("?xml version=\"1.0\" encoding=\"UTF-8\"?>");

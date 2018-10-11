@@ -2,6 +2,7 @@
 <!-- authentication_index.jsp -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%-- <%@page import="crpri.ess.util.ToolsUtil"%>
 <%@page import="crpri.ess.util.JsonUtil"%> --%>
 <%@page import="java.util.List"%>
@@ -108,10 +109,9 @@
 			<div class="controls"  data-date-format="yyyy-mm-dd">
 				<select name="type">
 					<option value=""></option>
-					<option value="KY">科研项目</option>
-					<option value="HX">横向项目</option>
-					<option value="JS">技术服务项目</option>
-					<option value="NP">非项目工作</option>
+					<c:forEach var ="dict" items="${categoryMap}">
+						<option value=${dict.key}>${dict.value}</option>
+					</c:forEach>
 				</select>
 			</div>
 		</div>

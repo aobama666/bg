@@ -38,6 +38,7 @@ import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.ProcessRecordPo;
 import com.sgcc.bg.model.ProjectUserPo;
 import com.sgcc.bg.model.WorkHourInfoPo;
+import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IStaffWorkbenchService;
 
 @Controller
@@ -46,9 +47,11 @@ public class StaffWorkbenchController {
 	@Autowired
 	private IStaffWorkbenchService SWService;
 	@Autowired
-	WebUtils webUtils;
+	private WebUtils webUtils;
 	@Autowired
-	UserUtils userUtils;
+	private UserUtils userUtils;
+	@Autowired
+	private DataDictionaryService dict;
 	private static Logger  SWLog= LoggerFactory.getLogger(StaffWorkbenchController.class);
 
 	@RequestMapping("/personalFill")
@@ -56,6 +59,9 @@ public class StaffWorkbenchController {
 		String note = ConfigUtils.getConfig("personalFillNote");
 		Map<String, String> map=new HashMap<String, String>();
 		map.put("note", note);
+		//从数据字典获取审核状态
+		String statusJson= dict.getDictDataJsonStr("cstatus100003");
+		map.put("statusJson", statusJson);
 		ModelAndView model = new ModelAndView("bg/staffWorkbench/bg_personal_fill",map);
 		return model;
 	}
