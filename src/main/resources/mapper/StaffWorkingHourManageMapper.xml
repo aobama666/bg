@@ -30,33 +30,25 @@
                        DECODE(t.category,
              				 'NP',
              			     t.approver,
-              				 DECODE(t.status,
-                   				  '3',
-                    		  t.approver,
-                     		 (SELECT t1.username
+             			     (SELECT t1.username
                        			 FROM BG_SYS_USER t1
                        			  JOIN BG_PROJECT_USER 	t2
                        			  ON t1.hrcode =t2.hrcode
                      			 WHERE t2.project_id = t.project_id
                         		 AND t2.role = '1'
                          		 AND t2.status = '1')
-            		 	)) as approver_username,
+              			) as approver_username,
                        DECODE(t.category,
              				 'NP',
              				 (SELECT t3.useralias
                 				 FROM BG_SYS_USER t3
                					 WHERE t3.username = t.approver),
-              				 DECODE(t.status,
-                   				  '3',
-                    		 (SELECT t3.useralias
-                       			 FROM BG_SYS_USER t3
-                     			  WHERE t3.username = t.approver),
-                     		 (SELECT t1.empname
-                       			 FROM BG_PROJECT_USER t1
-                     			 WHERE t1.project_id = t.project_id
-                        		 AND t1.role = '1'
-                         		 AND t1.status = '1')
-            		 	)) as approver,
+           				 	 (SELECT t1.empname
+                     			 FROM BG_PROJECT_USER t1
+	                   			 WHERE t1.project_id = t.project_id
+	                      		 AND t1.role = '1'
+	                       		 AND t1.status = '1')
+              		  ) as approver,
                       t.status
                   FROM BG_WORKINGHOUR_INFO t
                    LEFT JOIN BG_SYS_USER u 
@@ -97,7 +89,10 @@
                  	AND  #{category} = DECODE(#{category},'NP',t.category,p.category)
                  </if>
                  <if test="proName != null and proName != ''" >
-                 	AND t.project_Name LIKE '%'||#{proName}||'%'
+                 	AND DECODE(t.category,
+			              'NP',
+			              t.project_name,
+			              p.project_name) LIKE '%'||#{proName}||'%'
                  </if>
                  <if test="empName != null and empName != ''" >
                 	AND (SELECT useralias
@@ -154,7 +149,10 @@
                  	AND  #{category} = DECODE(#{category},'NP',t.category,p.category)
                  </if>
                  <if test="proName != null and proName != ''" >
-                 	AND t.project_Name LIKE '%'||#{proName}||'%'
+                 	AND DECODE(t.category,
+			              'NP',
+			              t.project_name,
+			              p.project_name) LIKE '%'||#{proName}||'%'
                  </if>
                  <if test="empName != null and empName != ''" >
                  	AND (SELECT useralias
@@ -179,13 +177,16 @@
            (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=p.category)) as category,
          t.job_content,
          t.working_hour,
-         t.approver,
-         (SELECT useralias FROM BG_SYS_USER WHERE username = t.worker) as empname,
-         (SELECT hrcode FROM BG_SYS_USER WHERE username = t.worker) as hrcode,
-         (SELECT wbs_number FROM BG_PROJECT_INFO WHERE id = t.project_id AND t.status='1') as wbs_number
+         NVL(e.USERNAME,t.APPROVER) as approver,
+         r.useralias as empname,
+         r.hrcode  as hrcode,
+         p.wbs_number
 	    FROM BG_WORKINGHOUR_INFO t
 	    	LEFT JOIN BG_PROJECT_INFO p
-   			ON p.id=t.project_id
+   			ON p.id=t.project_id AND p.status='1'
+   			LEFT JOIN   BG_PROJECT_USER  u  ON  t.project_id=u.project_id AND u.role = '1'  AND u.status = '1'
+	        LEFT JOIN   BG_SYS_USER  e  ON  e.HRCODE=u.HRCODE
+	        LEFT JOIN   BG_SYS_USER  r  ON  r.username=t.worker
 	   WHERE t.id =#{id} AND t.valid=1
 	</select>
 	
@@ -194,16 +195,22 @@
 			   TO_CHAR(t.work_time, 'yyyy-mm-dd') as work_time,
 		       (SELECT deptname FROM BG_SYS_DEPT WHERE deptid = t.dept_id) as dept,
 		       (SELECT deptname FROM BG_SYS_DEPT WHERE deptid = t.lab_id) as lab,
-		       (SELECT useralias FROM BG_SYS_USER WHERE username = t.worker) as username,
-		       (SELECT hrcode FROM BG_SYS_USER WHERE username = t.worker) as hrcode,
-		       (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t.category) as category,
-		       t.project_name,
+		       r.useralias as username,
+		       r.hrcode as hrcode,
+		       (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=NVL(p.category,t.category)) as category,
+		       NVL(p.project_name,t.project_name) as project_name,
 		       t.job_content,
 		       t.working_hour,
-		       t.approver as approver_username,
-		       (SELECT useralias FROM BG_SYS_USER WHERE username = t.approver) approver,
+		       NVL(e.USERNAME,t.APPROVER) as approver_username,
+		       NVL(e.useralias,f.useralias) as approver,
 		       t.status
 	  		FROM BG_WORKINGHOUR_INFO t
+		  		LEFT JOIN BG_PROJECT_INFO p
+	   			ON p.id=t.project_id and p.status='1'
+	   			LEFT JOIN BG_SYS_USER  r  ON  r.username=t.worker
+	   			LEFT JOIN   BG_PROJECT_USER  u  ON  t.project_id=u.project_id AND u.role = '1'  AND u.status = '1'
+	        	LEFT JOIN   BG_SYS_USER  e  ON  e.HRCODE=u.HRCODE
+	        	LEFT JOIN   BG_SYS_USER  f  ON  f.username=t.approver
 	     	 WHERE t.id =#{id} AND t.valid=1
 	</select>
 	

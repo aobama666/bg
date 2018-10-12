@@ -29,17 +29,11 @@
               (SELECT t3.useralias
                  FROM BG_SYS_USER t3
                 WHERE t3.username = t.approver),
-              DECODE(t.status,
-                     '3',
-                     (SELECT t3.useralias
-                        FROM BG_SYS_USER t3
-                       WHERE t3.username = t.approver),
-                     (SELECT t1.empname
+              (SELECT t1.empname
                         FROM BG_PROJECT_USER t1
                        WHERE t1.project_id = t.project_id
                          AND t1.role = '1'
                          AND t1.status = '1')
-             )
          	) as principal,
 	       (SELECT t2.process_note
 	          FROM BG_PROCESS_RECORD t2
@@ -49,16 +43,12 @@
               (SELECT t3.hrcode
                  FROM BG_SYS_USER t3
                 WHERE t3.username = t.approver),
-              DECODE(t.status,
-                     '3',
-                     (SELECT t3.hrcode
-                 		FROM BG_SYS_USER t3
-                		WHERE t3.username = t.approver),
-              		(SELECT t4.hrcode
-	          			FROM BG_PROJECT_USER t4
-	             		WHERE t4.project_id = t.project_id
-	           			AND t4.role = '1'
-	          			AND t4.status = '1')) )as hrcode
+                (SELECT t4.hrcode
+          			FROM BG_PROJECT_USER t4
+             		WHERE t4.project_id = t.project_id
+           			AND t4.role = '1'
+          			AND t4.status = '1')
+             )as hrcode
 	  	FROM BG_WORKINGHOUR_INFO t
 	  	WHERE t.Work_Time = TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
 	  	 AND t.worker=#{username}

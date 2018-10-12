@@ -33,6 +33,7 @@ import com.sgcc.bg.model.ProjectInfoPo;
 import com.sgcc.bg.model.ProjectInfoVali;
 import com.sgcc.bg.model.ProjectUserPo;
 import com.sgcc.bg.model.ProjectUserVali;
+import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IBGService;
 import com.alibaba.fastjson.JSONObject;
 
@@ -43,7 +44,9 @@ public class BGServiceImpl implements IBGService {
 	@Autowired
 	private WebUtils webUtils;
 	@Autowired
-	UserUtils userUtils;
+	private UserUtils userUtils;
+	@Autowired
+	private DataDictionaryService dict;
 	
 	private static Logger bgServiceLog =  LoggerFactory.getLogger(BGServiceImpl.class);
 
@@ -780,6 +783,8 @@ public class BGServiceImpl implements IBGService {
 			Map<String,String> proMap = new HashMap<String,String>();
 			for (int i = 0; i < idArr.length; i++) {
 				proMap=bgMapper.getProInfoByProId(idArr[i]);
+				Map<String,String> dictMap=dict.getDictDataByPcode("category100002");
+				proMap.put("category", dictMap.get(proMap.get("category")));
 				dataList.add(proMap);
 			}
 		}

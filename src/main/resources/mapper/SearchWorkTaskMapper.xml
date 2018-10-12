@@ -94,10 +94,10 @@
 			<![CDATA[and b.WORK_TIME <=  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
 		<if test="projectName!=null and projectName!=''">
-			and b.PROJECT_NAME  like '%'||#{projectName}||'%'
+			and NVL(p.PROJECT_NAME, b.PROJECT_NAME)  like '%'||#{projectName}||'%'
 		</if>
 		<if test="type!=null and type!=''">
-			and b.CATEGORY  = #{type}
+			and NVL(p.CATEGORY,b.CATEGORY)  = #{type}
 		</if>
 		<if test="userName!=null and userName!=''">
 			and  T.USERALIAS like '%' || #{userName} || '%' 
@@ -152,10 +152,10 @@
 			<![CDATA[and b.WORK_TIME <=  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
 		<if test="projectName!=null and projectName!=''">
-			and b.PROJECT_NAME  like '%'||#{projectName}||'%'
+			and  NVL(p.PROJECT_NAME, b.PROJECT_NAME)  like '%'||#{projectName}||'%'
 		</if>
 		<if test="type!=null and type!=''">
-			and b.CATEGORY  = #{type}
+			and NVL(p.CATEGORY,b.CATEGORY)  = #{type}
 		</if>
 		<if test="userName!=null and userName!=''">
 			and  T.USERALIAS like '%' || #{userName} || '%' 
