@@ -39,6 +39,7 @@ import com.sgcc.bg.model.Dept;
 import com.sgcc.bg.model.ProcessRecordPo;
 import com.sgcc.bg.model.UserPrivilege;
 import com.sgcc.bg.model.WorkHourInfoPo;
+import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IStaffWorkingHourManageService;
 import com.sgcc.bg.service.OrganStuffTreeService;
 
@@ -56,6 +57,8 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 	private StaffWorkbenchMaper SWMapper;
 	@Autowired
 	private OrganStuffTreeService organStuffTreeService;
+	@Autowired
+	private DataDictionaryService dict;
 	
 	private static Logger smServiceLog =  LoggerFactory.getLogger(StaffWorkingHourManageServiceImpl.class);
 	
@@ -480,25 +483,8 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 		}
 		for (int i = 0; i < dataList.size(); i++) {
 			Map<String,String> map=dataList.get(i);
-			String status=map.get("STATUS");
-			int num=Rtext.ToInteger(status,0);
-			switch (num) {
-			case 0:
-				status="未提交";
-				break;
-			case 1:
-				status="审批中";
-				break;
-			case 2:
-				status="已退回";
-				break;
-			case 3:
-				status="已通过";
-				break;
-			default:
-				break;
-			}
-			map.put("STATUS", status);
+			Map<String,String> dictMap=dict.getDictDataByPcode("cstatus100003");
+			map.put("STATUS", dictMap.get(map.get("STATUS")));
 			dataList.set(i, map);
 		}
 		

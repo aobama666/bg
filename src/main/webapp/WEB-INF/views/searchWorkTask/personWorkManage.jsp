@@ -276,7 +276,7 @@ function workCommit(){
 	
 	 if(noxhs!=""){
 		noxhs = noxhs.slice(0,noxhs.length-1);
-		return 	layer.msg("序号 为"+noxhs+"行的审核结果不为“未提交/已退回”,审核结果为“未提交/已退回”才可以提交");
+		return 	layer.msg("序号 为"+noxhs+"行的审核结果不为“未提交/已驳回”,审核结果为“未提交/已驳回”才可以提交");
 	 }
 	ids = ids.slice(0,ids.length-1);
 	xhs = xhs.slice(0,xhs.length-1);
