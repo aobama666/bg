@@ -42,8 +42,9 @@ public interface IStaffWorkbenchService {
 	/**
 	 * 根据id删除表中报工信息
 	 * @param id
+	 * @return 
 	 */
-	void deleteWorkHourInfoById(String id);
+	int deleteWorkHourInfoById(String id);
 
 	/**
 	 * 更新状态
@@ -96,7 +97,22 @@ public interface IStaffWorkbenchService {
 	/**
 	 * 据id撤回已提交工时
 	 * @param id
+	 * @return 
 	 */
-	void recallWorkHour(String id);
+	int recallWorkHour(String id);
+
+	/**
+	 * 判断指定id的报工记录是否已被提交
+	 * @param id
+	 * @return 当状态为1审批中、2已通过，则返回true
+	 */
+	boolean isConmmited(String id);
+	
+	/**
+	 * 判断指定id的报工记录是否已通过
+	 * @param id
+	 * @return 当状态为2已通过，则返回true
+	 */
+	boolean isPassed(String id);
 
 }

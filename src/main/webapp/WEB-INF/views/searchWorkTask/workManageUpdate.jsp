@@ -78,7 +78,7 @@
 		</div>
 	</div>
 	<div class="form-group col-xs-12">
-		<label for="classification"><font class="glyphicon glyphicon-asterisk required"></font>工作内容</label>
+		<label for="classification">工作内容</label><!--<font class="glyphicon glyphicon-asterisk required"></font>-->
 		<div class="controls">
 			<textarea style="height:60px;" name="workContent"></textarea>
 		</div>
@@ -104,7 +104,7 @@ function forSave(){
 	var hours = $("input[name=hours]").val();
 	var ran = Math.random()*10000;
 	var validator=[
-	           	      {name:'workContent',vali:'required'},
+	           	      //{name:'workContent',vali:'required'},暂不校验工作内容必填
 	           	      {name:'hours',vali:'required'}
 	          	];
 	var checkResult = $(".form-box").sotoValidate(validator);
@@ -150,7 +150,7 @@ function workCommit(){
 	var hours = $("input[name=hours]").val();
 	var ran = Math.random()*10000;
 	var validator=[
-	           	      {name:'workContent',vali:'required'},
+	           	      //{name:'workContent',vali:'required'},暂不校验工作内容必填
 	           	      {name:'hours',vali:'required'}
 	          	];
 	var checkResult = $(".form-box").sotoValidate(validator);

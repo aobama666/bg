@@ -33,6 +33,7 @@ import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.ProcessRecordPo;
 import com.sgcc.bg.model.WorkHourInfoPo;
 import com.sgcc.bg.service.DataDictionaryService;
+import com.sgcc.bg.service.IStaffWorkbenchService;
 import com.sgcc.bg.service.IStaffWorkingHourManageService;
 
 @Controller
@@ -48,6 +49,10 @@ public class StaffWorkingHourManageController {
 	
 	@Autowired
 	DataDictionaryService dict;
+	
+	@Autowired
+	private IStaffWorkbenchService SWService;
+	
 	private static Logger  smLog= LoggerFactory.getLogger(StaffWorkingHourManageController.class);
 
 	@RequestMapping("/index")
@@ -120,11 +125,17 @@ public class StaffWorkingHourManageController {
 		String id=Rtext.toStringTrim(req.getParameter("id"), "");
 		double todayHours = 0;
 		//校验数据
-		if("".equals(id) || "".equals(workHour) ||  "".equals(jobContent)){
-			smLog.info("员工工时管理执行提交的数据有空值： 项目id:"+id+"-工时："+workHour+"-工作内容："+jobContent);
+		if(SWService.isConmmited(id)){//如果该记录已被通过或正在审批中则不能再被修改
+			smLog.info("该记录已被通过或正在审批中,不能再被修改");
+			hint="无法修改审批中或已通过的信息！";
+			flag=false;
+		}
+		if("".equals(id) || "".equals(workHour)){
+			smLog.info("员工工时管理执行提交的数据有空值： 项目id:"+id+"-工时："+workHour);
 			hint="必填项值不能为空！";
 			flag=false;
 		}
+		// ||  "".equals(jobContent) +"-工作内容："+jobContent暂不做工作内容必填校验
 		if(jobContent.length()>200){
 			smLog.info("工作内容超出最大200长度限制！");
 			hint="工作内容不能超过200字！";
@@ -132,6 +143,7 @@ public class StaffWorkingHourManageController {
 		}
 		if(projectName.length()>50){
 			smLog.info("projectName 项目名称超出50字！");
+			hint="项目名称不能超过50字！";
 			flag=false;
 		}
 		try {
@@ -187,10 +199,21 @@ public class StaffWorkingHourManageController {
 			String processId=Rtext.getUUID();
 			double todayHours;
 			//校验数据
+			if(SWService.isConmmited(id)){//如果该记录已被通过或正在审批中则不能再被提交
+				smLog.info("该记录已被通过或正在审批中,不能再被修改");
+				hint="无法修改审批中或已通过的信息！";
+				continue;
+			}
 			if("".equals(id) || "".equals(workHour) || "".equals(date) || "".equals(hrCode) 
-					|| "".equals(approverUsername) || "".equals(jobContent)){
+					|| "".equals(approverUsername)){
 				smLog.info("员工工时管理执行提交的数据有空值： 项目id:"+id+"-工时："+workHour+"-日期："+date+"-员工编号："
-					+hrCode+"-审批人用户名："+approverUsername+"-工作内容："+jobContent);
+					+hrCode+"-审批人用户名："+approverUsername);
+				continue;
+			}
+			// || "".equals(jobContent)  +"-工作内容："+jobContent 暂不做工作内容必填校验
+			if(projectName.length()>50){
+				smLog.info("项目名称出最大50长度限制！");
+				hint="项目名称不能超过50字！";
 				continue;
 			}
 			if(jobContent.length()>200){
@@ -260,6 +283,10 @@ public class StaffWorkingHourManageController {
 		String[] ids = whId.split(",");
 		int affectedRows = 0;
 		for (String id : ids) {
+			if(SWService.isConmmited(id)){//如果该记录已被通过或正在审批中则无法删除
+				smLog.info("该记录已被通过或正在审批中,无法删除");
+				continue;
+			}
 			affectedRows += smService.deleteWorkHourInfoById(id);
 		}
 		return "成功删除" + affectedRows + "条数据，失败" + (ids.length - affectedRows) + "条!";

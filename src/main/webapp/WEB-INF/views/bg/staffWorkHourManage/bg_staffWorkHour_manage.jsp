@@ -360,7 +360,10 @@ function forUpdate(){
 			title:"修改",
 			area:['620px', height+'px'],
 			//scrollbar:false,
-		 	content:['<%=request.getContextPath()%>/staffWorkingHourManage/update?whId='+whId]
+		 	content:['<%=request.getContextPath()%>/staffWorkingHourManage/update?whId='+whId],
+		 	end:function(){
+	 			mmg.load();
+	 		}
 		});
 	}else{
 		layer.msg("请选择一条数据!");

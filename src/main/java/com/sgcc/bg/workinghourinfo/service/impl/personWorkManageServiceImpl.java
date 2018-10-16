@@ -20,6 +20,7 @@ import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.mapper.BgWorkinghourInfoMapper;
+import com.sgcc.bg.service.IStaffWorkbenchService;
 import com.sgcc.bg.service.IStaffWorkingHourManageService;
 import com.sgcc.bg.workinghourinfo.Utils.DataUtil1;
 import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
@@ -37,6 +38,8 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 		 UserUtils userUtils;
 	     @Autowired
 	 	 private IStaffWorkingHourManageService smService;
+	     @Autowired
+	 	 private IStaffWorkbenchService swService;
 		   /** 
 			* 个人工时管理-----查询
 	 		* @param 
@@ -84,26 +87,28 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 				 /**
 				  * 验证
 				  * */
+				 if(swService.isConmmited(id)){//如果该条记录已被提交或通过，则无法保存
+					 rw = new ResultWarp(ResultWarp.FAILED ,"无法修改已被提交或通过信息！"); 
+					 return JSON.toJSONString(rw);
+				 }
 				 if(jobContent.length()>200){
-					rw = new ResultWarp(ResultWarp.FAILED ,"工作内容超出最大200长度限制！"); 
-					return JSON.toJSONString(rw);  
-				   }
-				 
-				 
+					 rw = new ResultWarp(ResultWarp.FAILED ,"工作内容超出最大200长度限制！"); 
+					 return JSON.toJSONString(rw);  
+			     }
 				 boolean flag= DataUtil1.Number(workingHour);
-				    if(!flag){
-						 rw = new ResultWarp(ResultWarp.FAILED ,"投入工时必须为数字"); 
-						 return JSON.toJSONString(rw);  
-					}
+			     if(!flag){
+				 	rw = new ResultWarp(ResultWarp.FAILED ,"投入工时必须为数字！"); 
+				 	return JSON.toJSONString(rw);  
+				 }
 				 if(projectName.length()>50){
-						rw = new ResultWarp(ResultWarp.FAILED ,"项目名称超出最大50长度限制！"); 
-						return JSON.toJSONString(rw);  
+					rw = new ResultWarp(ResultWarp.FAILED ,"项目名称超出最大50长度限制！"); 
+					return JSON.toJSONString(rw);  
 				 }
 				 int res=bgworkinghourinfoMapper.updatabgWorkinghourInfo(id,projectName,jobContent,workingHour);   
 				 if(res>0){ 
-				  rw = new ResultWarp(ResultWarp.SUCCESS ,"保存成功"); 
+					 rw = new ResultWarp(ResultWarp.SUCCESS ,"保存成功"); 
 				  }else{
-				  rw = new ResultWarp(ResultWarp.FAILED ,"保存失败");
+					  rw = new ResultWarp(ResultWarp.FAILED ,"保存失败");
 				  }
 				   return JSON.toJSONString(rw);  
 			}
@@ -126,6 +131,10 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 				 /**
 				  * 验证
 				  * */
+				 if(swService.isConmmited(id)){//如果该条记录已被提交或通过，则无法保存
+					 rw = new ResultWarp(ResultWarp.FAILED ,"无法修改已被提交或通过信息！"); 
+					 return JSON.toJSONString(rw);
+				 }
 				 if(jobContent.length()>200){
 					rw = new ResultWarp(ResultWarp.FAILED ,"工作内容超出最大200长度限制！"); 
 					return JSON.toJSONString(rw);  
@@ -180,6 +189,10 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 					  return JSON.toJSONString(rw);  
 				 }
 				 String valid="0";
+				 if(swService.isConmmited(id)){//如果该条记录已被提交或通过，则无法删除
+					 rw = new ResultWarp(ResultWarp.FAILED ,"无法删除已被提交或通过信息！"); 
+					 return JSON.toJSONString(rw);
+				 }
 				 int res=bgworkinghourinfoMapper.deletebgWorkinghourInfo(id,valid);   
 				 if(res>0){ 
 				  rw = new ResultWarp(ResultWarp.SUCCESS ,"删除成功"); 
@@ -206,6 +219,10 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 						  return JSON.toJSONString(rw);  
 					 }
 					 String status="0";
+					 if(swService.isPassed(id)){//如果该条记录已被通过，则无法被撤回
+						 rw = new ResultWarp(ResultWarp.FAILED ,"撤回失败");
+						 return JSON.toJSONString(rw);
+					 }
 					 int res=bgworkinghourinfoMapper.backbgWorkinghourInfo(id,status);   
 					 if(res>0){ 
 					  rw = new ResultWarp(ResultWarp.SUCCESS ,"撤回成功"); 
@@ -229,13 +246,13 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 				 String id = request.getParameter("id") == null ? "" : request.getParameter("id").toString(); 
 				 String xh = request.getParameter("xh") == null ? "" : request.getParameter("xh").toString(); 
 				 List<String > idlist=new ArrayList<>();
-					if(id!=""){
-						String[]  ids=id.split(",");
-						for(int i=0;i<ids.length;i++){
-							idlist.add(ids[i]);
-						}
-					} 	
-			 List<Map<String, Object>> CheckHouslist= bgworkinghourinfoMapper.selectCheckHous(idlist);
+				 if(id!=""){
+					String[]  ids=id.split(",");
+					for(int i=0;i<ids.length;i++){
+						idlist.add(ids[i]);
+					}
+				 } 	
+			     List<Map<String, Object>> CheckHouslist= bgworkinghourinfoMapper.selectCheckHous(idlist);
 				 if(!CheckHouslist.isEmpty()){
 					 for(Map<String, Object> map:CheckHouslist){
 							String worktime= (String) map.get("WORK_TIME");

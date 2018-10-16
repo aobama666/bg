@@ -205,7 +205,7 @@ function queryList(load){
 	            		return val;
 	            	}
 	            },
-	            {titleHtml:'工作内容（200字以内）<font class="glyphicon glyphicon-asterisk text-danger"></font>', name:'JOB_CONTENT', width:300, sortable:false, align:'start',
+	            {titleHtml:'工作内容（200字以内）', name:'JOB_CONTENT', width:300, sortable:false, align:'start',//<font class="glyphicon glyphicon-asterisk text-danger"></font>
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
 	            		if(item.STATUS=="0" || item.STATUS=="2"){
@@ -464,36 +464,45 @@ function forDelete(_this,id){
 			var row=$(_this).parents("tr");
 			var index=row.find(".mmg-index").text();
 			if(id!=""){
-				$.get("<%=request.getContextPath()%>/staffWorkbench/deleteWorkHourInfo?id="+id+"&ran="+ran);
+				$.get("<%=request.getContextPath()%>/staffWorkbench/deleteWorkHourInfo?id="+id+"&ran="+ran,
+					function(data){
+						if(data=='success'){
+							mmg.removeRow(index-1);
+							$("#mmg tr").each(function(i){
+								$(this).find(".mmg-index").text(i+1);
+							});
+						}else if(data=='commited'){
+							layer.msg("无法删除已被提交或通过的信息！");
+							mmg.load();
+						}else{
+							layer.msg("删除失败！");
+							mmg.load();
+						}					
+				},'text');
 			}
-			mmg.removeRow(index-1);
-			$("#mmg tr").each(function(i){
-				$(this).find(".mmg-index").text(i+1);
-			});
 		});
 }
 
 //撤回
 function forRecall(_this,id){
 	layer.confirm('确认撤回吗？', {icon: 7,title:'提示',shift:-1},
-		function(index){
-			layer.close(index);	
+		function(num){
+			layer.close(num);	
 			var ran = Math.random()*100000000;
 			var row=$(_this).parents("tr");
 			var index=row.find(".mmg-index").text();
-			$.get("<%=request.getContextPath()%>/staffWorkbench/recallWorkHourInfo?id="+id+"&ran="+ran);
-			mmg.updateRow({
-				"ID":row.find("input[property='id']").val(),
-				"PROJECT_ID":row.find("input[property='proId']").val(),
-				"PROJECT_NAME":row.find("input[property='projectName']").val(),
-				"HRCODE":row.find("input[property='hrCode']").val(),
-				"CATEGORY":row.find("input[property='category']").val(),
-				"PRINCIPAL":row.find("input[property='principal']").val(),
-				"JOB_CONTENT":row.find("input[property='jobContent']").val(),
-				"WORKING_HOUR":row.find("input[property='workHour']").val(),
-				"STATUS":"0"
-			},index-1);
-		});
+			$.get("<%=request.getContextPath()%>/staffWorkbench/recallWorkHourInfo?id="+id+"&ran="+ran,
+				function(data){
+					if(data=='success'){
+						
+					}else if(data=='passed'){
+						layer.msg("无法撤回已通过信息！");
+					}else{
+						layer.msg("撤回失败！");
+					}
+					mmg.load();					
+			},'text');
+	});
 }
 
 
@@ -517,13 +526,13 @@ function forSubmit(){
 			if(empName!=undefined){
 				checkResult =$row.sotoValidate([
 											  {name:'projectName',vali:'length[-50]'},
-	                                   	      {name:'jobContent',vali:'required;length[-200]'},
+	                                   	      {name:'jobContent',vali:'length[-200]'},//required;暂不做必须校验
 	                                   	      {name:'workHour',vali:'required;checkNumberFormat()'},
 	                                   	      {name:empName,vali:'required;'}
 				                               ]);
 			}else{
 				checkResult =$row.sotoValidate([
-	                                   	      {name:'jobContent',vali:'required;length[-200]'},
+	                                   	      {name:'jobContent',vali:'length[-200]'},//required;暂不做必须校验
 	                                   	      {name:'workHour',vali:'required;checkNumberFormat()'}
 				                               ]);
 			}
@@ -551,9 +560,7 @@ function forSubmit(){
 			dataType:'json',
 			success : function(data) {
 				layer.msg(data.msg);
-				if(data.result=="success"){
-					mmg.load();
-				}
+				mmg.load();
 			}
 		});
 	});

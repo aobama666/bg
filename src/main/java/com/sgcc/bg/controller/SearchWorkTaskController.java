@@ -302,10 +302,10 @@ public class SearchWorkTaskController {
 		Date date = new Date();
 		//type==2是驳回   type==1是确认
 		if("2".equals(type)){
-			if(ided.length>1){
+			/*if(ided.length>1){
 				map.put("msg","只能选择一条");
 				return JSON.toJSONString(map);
-			}
+			}*/
 			String reason = request.getParameter("reason")==null?"":request.getParameter("reason");
 			if("".equals(reason)){
 				map.put("msg","驳回原因不能为空");
@@ -318,10 +318,10 @@ public class SearchWorkTaskController {
 				recode.setProcessDeptId(pDeptId);//处理人所在部门
 				recode.setProcessLabId(deptId);//处理人所在处室
 				recode.setProcessLink("BG_WORKINGHOUR_EXAMINE");//流程环节名称
-				recode.setProcessNextLink("");//下一个流程环节名称  
 				recode.setProcessCreateTime(date);
 				recode.setProcessUpdateTime(date);
-				recode.setProcessNextUserId("");
+				recode.setProcessNextUserId("");//下一个审批人
+				recode.setProcessNextLink("");//下一个流程环节名称  
 				recode.setProcessUserId(dealUserId);
 				recode.setProcessNote(reason);//审批意见
 				recode.setProcessResult("2");//审批状态 2拒绝 1 通过
@@ -337,7 +337,7 @@ public class SearchWorkTaskController {
 				String dString = recode.getId();
 				searchWorkTaskService.confirmExamine(id,type,dString,dealUserName);
 			}
-			map.put("msg","退回成功");
+			map.put("msg","驳回成功");
 			return JSON.toJSONString(map);
 		}else{
 			for(String id:ided){

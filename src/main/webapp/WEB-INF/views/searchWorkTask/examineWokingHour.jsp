@@ -234,10 +234,11 @@ function reject(){
 	if(selectList.length==0){
 		layer.msg("至少选择一条");
 		return false;
-	}else if(selectList.length>1){
+	}
+	/*else if(selectList.length>1){
 		layer.msg("只能选择一条");
 		return false;
-	}
+	}*/
 	index = layer.open({
 		type:1,
 		title:"审核备注",

@@ -287,8 +287,8 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 					
 					// 工作内容校验
 					if (cellValue[5] == null || "".equals(cellValue[5])) {
-						errorInfo.append("工作内容不能为空！");
-						errorNum.add(5);
+						/*errorInfo.append("工作内容不能为空！");
+						errorNum.add(5); 暂不做工作内容必填校验*/
 					} else if (cellValue[5].length() > 200) {
 						errorInfo.append("工作内容不能超过200字！");
 						errorNum.add(5);

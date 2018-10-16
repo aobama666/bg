@@ -157,6 +157,7 @@ public class StaffWorkbenchController {
 			String jobContent=Rtext.toStringTrim(map.get("jobContent"), "");
 			String workHour=Rtext.toStringTrim(map.get("workHour"), "");
 			String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
+			String whId=Rtext.toStringTrim(map.get("id"), "");//报工记录id
 			CommonCurrentUser approver=userUtils.getCommonCurrentUserByHrCode(hrCode);
 			if(!workHour.isEmpty() && !ParamValidationUtil.isDouble(workHour)){
 				SWLog.info("workHour 工时格式不正确！");
@@ -170,7 +171,7 @@ public class StaffWorkbenchController {
 				SWLog.info("proName 项目名称超出50字！");
 				continue;
 			}
-			if(Rtext.isEmpty(map.get("id"))){
+			if(Rtext.isEmpty(whId)){
 				//执行保存操作
 				WorkHourInfoPo wp=new WorkHourInfoPo();
 				wp.setId(Rtext.getUUID());
@@ -205,8 +206,11 @@ public class StaffWorkbenchController {
 				count+= SWService.addWorkHourInfo(wp);
 			}else{
 				//执行更新操作
+				if(SWService.isConmmited(whId)){//如果该记录已被通过或正在审批中则不能再被修改
+					continue;
+				}
 				WorkHourInfoPo wp=new WorkHourInfoPo();
-				wp.setId(Rtext.toStringTrim(map.get("id"), ""));
+				wp.setId(whId);
 				wp.setProName(proName);
 				wp.setJobContent(jobContent);
 				wp.setWorkHour(workHour.isEmpty()?null:Rtext.ToDouble(workHour, 0.0));
@@ -222,20 +226,36 @@ public class StaffWorkbenchController {
 	
 	@RequestMapping(value = "/deleteWorkHourInfo", method = RequestMethod.GET)
 	@ResponseBody
-	public void deleteWorkHourInfo(String id) throws Exception {
-		SWService.deleteWorkHourInfoById(id);
+	public String deleteWorkHourInfo(String id){
+		if(SWService.isConmmited(id)){
+			return "commited";
+		}
+		int res=SWService.deleteWorkHourInfoById(id);
+		if(res==1){
+			return "success";
+		}else{
+			return "fail";
+		}
 	}
 	
 	@RequestMapping(value = "/recallWorkHourInfo", method = RequestMethod.GET)
 	@ResponseBody
-	public void recallWorkHourInfo(String id) throws Exception {
-		SWService.recallWorkHour(id);
+	public String recallWorkHourInfo(String id){
+		if(SWService.isPassed(id)){//如果该条记录已通过，无法撤回
+			return "passed";
+		}
+		int res=SWService.recallWorkHour(id);
+		if(res==1){
+			return "success";
+		}else{
+			return "fail";
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/submitWorkHourInfo", method = RequestMethod.POST)
 	@ResponseBody
-	public String submitWorkHourInfo(String jsonStr,String selectedDate) throws Exception {
+	public String submitWorkHourInfo(String jsonStr,String selectedDate){
 		Map<String, String> resultMap = new HashMap<>();
 		String username=webUtils.getUsername();
 		int count=0;
@@ -260,44 +280,45 @@ public class StaffWorkbenchController {
 			return JSON.toJSONString(resultMap);
 		} 
 		for (HashMap<String, String> map : list) {
+			String whId=Rtext.toStringTrim(map.get("id"), "");//报工记录id
+			String workHour=Rtext.toStringTrim(map.get("workHour"), "");
+			String jobContent=Rtext.toStringTrim(map.get("jobContent"), "");
+			String category=Rtext.toStringTrim(map.get("category"), "");
+			String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
+			String projectName=Rtext.toStringTrim(map.get("projectName"), "");
+			String proId=Rtext.toStringTrim(map.get("proId"), "");
+			double todayHours;
 			String bussinessId="";
 			String processId=Rtext.getUUID();
-			if(Rtext.isEmpty(map.get("id"))){
+			//校验数据
+			if("".equals(workHour) || "".equals(category) || "".equals(hrCode) ){
+				SWLog.info("提交的数据有空值： 工时："+workHour+"-项目类型："+category+"-负责人编号："+hrCode);
+				continue;
+			}
+			//|| "".equals(jobContent) +"-工作内容："+jobContent 工作内容暂不校验必填
+			if(!"非项目工作".equals(category)){
+				if("".equals(projectName) || "".equals(proId)){
+					SWLog.info("项目工作缺失项目名称和项目id！");
+					continue;
+				}
+			}
+			if(jobContent.length()>200){
+				SWLog.info("工作内容超出最大200长度限制！");
+				continue;
+			}
+			if(projectName.length()>50){
+				SWLog.info("proName 项目名称超出50字！");
+				continue;
+			}
+			try {
+				todayHours=Double.parseDouble(workHour);
+			} catch (Exception e) {
+				SWLog.info("workHour工时解析出错！");
+				continue;
+			}
+			
+			if(Rtext.isEmpty(whId)){
 				//执行保存操作
-				String workHour=Rtext.toStringTrim(map.get("workHour"), "");
-				String jobContent=Rtext.toStringTrim(map.get("jobContent"), "");
-				String category=Rtext.toStringTrim(map.get("category"), "");
-				String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
-				String projectName=Rtext.toStringTrim(map.get("projectName"), "");
-				String proId=Rtext.toStringTrim(map.get("proId"), "");
-				double todayHours;
-				
-				//校验数据
-				if("".equals(workHour) || "".equals(category) || "".equals(hrCode) || "".equals(jobContent)){
-					SWLog.info("员工工时管理执行提交的数据有空值： 工时："+workHour+"-项目类型："+category+"-负责人编号："+hrCode+"-工作内容："+jobContent);
-					continue;
-				}
-				if(!"非项目工作".equals(category)){
-					if("".equals(projectName) || "".equals(proId)){
-						SWLog.info("项目工作缺失项目名称和项目id！");
-						continue;
-					}
-				}
-				if(jobContent.length()>200){
-					SWLog.info("工作内容超出最大200长度限制！");
-					continue;
-				}
-				if(projectName.length()>50){
-					SWLog.info("projectName 项目名称超出50字！");
-					continue;
-				}
-				try {
-					todayHours=Double.parseDouble(workHour);
-				} catch (Exception e) {
-					SWLog.info("workHour工时解析出错！");
-					continue;
-				}
-				
 				WorkHourInfoPo wp=new WorkHourInfoPo();
 				wp.setId(Rtext.getUUID());
 				if(category.equals("科研项目")){
@@ -333,29 +354,11 @@ public class StaffWorkbenchController {
 				bussinessId=wp.getId();
 			}else{
 				//执行更新操作
-				String workHour=Rtext.toStringTrim(map.get("workHour"), "");
-				String jobContent=Rtext.toStringTrim(map.get("jobContent"), "");
-				String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
-				String projectName=Rtext.toStringTrim(map.get("projectName"), "");
-				String id=Rtext.toStringTrim(map.get("id"), "");
-				double todayHours;
-				//校验数据
-				if("".equals(id) ||"".equals(workHour) || "".equals(hrCode) || "".equals(jobContent)){
-					SWLog.info("员工工时管理执行提交的数据有空值： 工时："+workHour+"负责人编号："+hrCode+"项目id："+id+"工时jobContent："+jobContent);
-					continue;
-				}
-				if(jobContent.length()>200){
-					SWLog.info("工作内容超出最大200长度限制！");
-					continue;
-				}
-				try {
-					todayHours=Double.parseDouble(workHour);
-				} catch (Exception e) {
-					SWLog.info("workHour工时解析出错！");
+				if(SWService.isConmmited(whId)){//如果该记录已被提交或通过则不能再被提交，只能撤回后在提交
 					continue;
 				}
 				WorkHourInfoPo wp=new WorkHourInfoPo();
-				wp.setId(id);
+				wp.setId(whId);
 				wp.setProName(projectName);
 				wp.setJobContent(jobContent);
 				wp.setWorkHour(todayHours);
@@ -386,7 +389,6 @@ public class StaffWorkbenchController {
 			pr.setProcessUpdateTime(new Date());
 			pr.setProcessNote("");
 			pr.setProcessNextLink("BG_WORKINGHOUR_CHECK");
-			String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
 			CommonCurrentUser approverUser=userUtils.getCommonCurrentUserByHrCode(hrCode);
 			pr.setProcessNextUserId(approverUser==null?"":approverUser.getUserName());
 			pr.setValid(1);

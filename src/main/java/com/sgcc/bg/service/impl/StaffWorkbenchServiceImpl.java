@@ -2,7 +2,6 @@ package com.sgcc.bg.service.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,11 +23,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.sgcc.bg.common.CommonCurrentUser;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ExcelUtil;
 import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.common.FtpUtils;
+import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
@@ -76,14 +77,32 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		return SWMapper.updateWorkHourInfoById(wp);
 	}
 	
+	@Override 
+	public boolean isConmmited(String id){
+		String status=SWMapper.getFieldOfWorkHourById(id, "status");
+		if("1".equals(status) || "3".equals(status)){
+			return true;
+		}
+		return false;
+	}
+	
+	@Override 
+	public boolean isPassed(String id){
+		String status=SWMapper.getFieldOfWorkHourById(id, "status");
+		if("3".equals(status)){
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public void changeWorkHourInfoStatus(String id, String status) {
 		SWMapper.setFieldOfWorkHourById(id, "status", status,webUtils.getUsername(),new Date());
 	}
 
 	@Override
-	public void deleteWorkHourInfoById(String id) {
-		SWMapper.InvalidWorkHourInfoById(id,webUtils.getUsername(),new Date());
+	public int deleteWorkHourInfoById(String id) {
+		return SWMapper.InvalidWorkHourInfoById(id,webUtils.getUsername(),new Date());
 	}
 	
 	@Override
@@ -116,7 +135,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 							 { "项目类型\r\n（必填）", "CATEGORY" ,"nowrap"},
 							 { "WBS编号/项目编号\r\n（项目工作必填，非项目工作不填）", "WBS_NUMBER" ,"nowrap"}, 
 							 { "项目名称\r\n（选填）","PROJECT_NAME","nowrap"},
-							 { "工作内容\r\n（必填 200字以内）",""}, 
+							 { "工作内容\r\n（选填 200字以内）",""}, 
 							 { "投入工时\r\n(必填 数字 h）","","nowrap"},
 							 { "审核人员姓名\r\n（选填）","PRINCIPAL","nowrap"}, 
 							 { "审核人员员工编号\r\n（非项目工作必填）","HRCODE","nowrap"} 
@@ -246,8 +265,9 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 					
 					// 工作内容校验
 					if (cellValue[5] == null || "".equals(cellValue[5])) {
-						errorInfo.append("工作内容不能为空！");
-						errorNum.add(5);
+						/*errorInfo.append("工作内容不能为空！");
+						errorNum.add(5);*/
+						//暂时不做工作内容的必填校验
 					} else if (cellValue[5].length() > 200) {
 						errorInfo.append("工作内容不能超过200字！");
 						errorNum.add(5);
@@ -453,7 +473,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	}
 
 	@Override
-	public void recallWorkHour(String id) {
+	public int recallWorkHour(String id) {
 		String currentUsername=webUtils.getUsername();
 		//记录表中的记录设为失效
 		//SWMapper.setFieldOfProcessRecordById(processId,"valid","0");
@@ -480,7 +500,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		pr.setValid(1);
 		addProcessRecord(pr);
 		//工时表中状态改为未提交，更新记录id
-		SWMapper.recallWorkHour(id,currentUsername,new Date(),newProcessId);
+		return SWMapper.recallWorkHour(id,currentUsername,new Date(),newProcessId);
 	}
 
 	
