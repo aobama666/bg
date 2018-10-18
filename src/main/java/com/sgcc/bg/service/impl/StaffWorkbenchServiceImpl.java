@@ -87,9 +87,18 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	}
 	
 	@Override 
-	public boolean isPassed(String id){
+	public boolean isExamined(String id){
 		String status=SWMapper.getFieldOfWorkHourById(id, "status");
-		if("3".equals(status)){
+		if("2".equals(status) || "3".equals(status)){
+			return true;
+		}
+		return false;
+	}
+	
+	@Override 
+	public boolean canExamine(String id){
+		String status=SWMapper.getFieldOfWorkHourById(id, "status");
+		if("1".equals(status)){
 			return true;
 		}
 		return false;
@@ -440,11 +449,6 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	}
 
 	@Override
-	public void addProcessRecord(ProcessRecordPo pr) {
-		SWMapper.addProcessRecord(pr);
-	}
-
-	@Override
 	public List<Map<String, String>> getAllProjects(String startDate,String endDate) {
 		List<Map<String, String>> dataList=new ArrayList<Map<String, String>>();
 		//获取登录人名下所有已启动（不含结束和废止）项目项目
@@ -478,31 +482,64 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		//记录表中的记录设为失效
 		//SWMapper.setFieldOfProcessRecordById(processId,"valid","0");
 		//添加撤回操作记录
-		ProcessRecordPo pr=new ProcessRecordPo();
-		String newProcessId=Rtext.getUUID();
-		pr.setId(newProcessId);
-		pr.setBussinessId(id);
-		pr.setProcessType("BG_WORKINGHOUR");
-		pr.setProcessLink("BG_WORKINGHOUR_SUBMIT");
-		//处理人为当前操作人
-		//获取处理人当前信息
-		CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(currentUsername);
-		pr.setProcessUserId(currentUsername);
-		pr.setProcessDeptId(user.getpDeptId());
-		pr.setProcessLabtId(user.getDeptId());
-		pr.setProcessResult("3");
-		pr.setProcessNote("");
-		pr.setProcessNextLink("BG_WORKINGHOUR_SUBMIT");
-		String worker = SWMapper.getFieldOfWorkHourById(id,"worker");
-		pr.setProcessNextUserId(worker);//下个审批人为报工人
-		pr.setProcessCreateTime(new Date());
-		pr.setProcessUpdateTime(new Date());
-		pr.setValid(1);
-		addProcessRecord(pr);
+		String processId = addRecallRecord(id, currentUsername);
 		//工时表中状态改为未提交，更新记录id
-		return SWMapper.recallWorkHour(id,currentUsername,new Date(),newProcessId);
+		return SWMapper.recallWorkHour(id,currentUsername,new Date(),processId);
 	}
 
+	/**
+	 * 添加操作记录到流程记录表
+	 * @param processId 如果为null则新增记录，否则执行更新
+	 * @param bussinessId
+	 * @param processUsername
+	 * @param result
+	 * @param note
+	 * @return
+	 */
+	private String addProcessRecord(String processId,String bussinessId,String processUsername, String result, String note) {
+		ProcessRecordPo pr=new ProcessRecordPo();
+		pr.setId((processId==null)?Rtext.getUUID():processId);
+		pr.setBussinessId(bussinessId);
+		//获取处理人当前信息
+		CommonCurrentUser processUser=userUtils.getCommonCurrentUserByUsername(processUsername);
+		pr.setProcessUserId(processUsername);
+		pr.setProcessDeptId(processUser.getpDeptId());
+		pr.setProcessLabtId(processUser.getDeptId());
+		pr.setProcessResult(result);
+		pr.setProcessNote(note);
+		pr.setProcessCreateTime(new Date());
+		pr.setProcessUpdateTime(new Date());
+		//pr.setProcessStep("");
+		pr.setValid(1);
+		
+		int res;
+		if(processId==null){
+			res= SWMapper.addProcessRecord(pr);
+		}else{
+			res= SWMapper.updateProcessRecord(pr);
+		}
+		
+		if(res==1){
+			return pr.getId();
+		}
+		return "";
+	}
 	
+	//审批状态result : 0 已提交 1 待审批 2 已通过 3 已驳回 4 已撤回
+	@Override
+	public String addSubmitRecord(String bussinessId,String processUsername){
+		addProcessRecord(null,bussinessId,processUsername,"0","");
+		return addProcessRecord(null,bussinessId,processUsername,"1","");
+	}
 	
+	@Override
+	public String addRecallRecord(String bussinessId,String processUsername){
+		String processId=SWMapper.getFieldOfWorkHourById(bussinessId, "process_id");
+		return addProcessRecord(processId,bussinessId,processUsername,"4","");
+	}
+	@Override
+	public String addExamineRecord(String bussinessId,String processUsername, String result, String note){
+		String processId=SWMapper.getFieldOfWorkHourById(bussinessId, "process_id");
+		return addProcessRecord(processId,bussinessId,processUsername,result,note);
+	}
 }

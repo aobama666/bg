@@ -495,8 +495,8 @@ function forRecall(_this,id){
 				function(data){
 					if(data=='success'){
 						
-					}else if(data=='passed'){
-						layer.msg("无法撤回已通过信息！");
+					}else if(data=='examined'){
+						layer.msg("无法撤回已审核信息！");
 					}else{
 						layer.msg("撤回失败！");
 					}

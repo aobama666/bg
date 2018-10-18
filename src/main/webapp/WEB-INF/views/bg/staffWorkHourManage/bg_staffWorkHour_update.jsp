@@ -237,13 +237,13 @@
 				data:{jsonStr:"["+paramArr.toString()+"]"},
 				dataType:'json',
 				success : function(data) {
-					if(data.count=='1'){
+					if(data.hint=='success'){
 						parent.layer.msg("提交成功！");
-						parent.mmg.load();
 						forClose();
 					}else{
 						layer.msg(data.hint);
 					}
+					parent.mmg.load();
 				}
 			});
 		});

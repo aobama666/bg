@@ -185,10 +185,11 @@ public class StaffWorkingHourManageController {
 		int count=0;
 		String checkResult="";
 		//修改页提交出错的提示信息
-		String hint="";
+		Map<String, String> resultMap = new HashMap<>();
 		@SuppressWarnings("rawtypes")
 		List<HashMap> list = JSON.parseArray(jsonStr, HashMap.class);
 		for (HashMap<String, String> map : list) {
+			String rowNum=Rtext.toStringTrim(map.get("rowNum"), "");
 			String workHour=Rtext.toStringTrim(map.get("workHour"), "");
 			String jobContent=Rtext.toStringTrim(map.get("jobContent"), "");
 			String date=Rtext.toStringTrim(map.get("date"), "");
@@ -196,13 +197,15 @@ public class StaffWorkingHourManageController {
 			String projectName=Rtext.toStringTrim(map.get("projectName"), "");
 			String approverUsername=Rtext.toStringTrim(map.get("approver"), "");
 			String id=Rtext.toStringTrim(map.get("id"), "");
-			String processId=Rtext.getUUID();
 			double todayHours;
+			String processUsername = webUtils.getUsername();
 			//校验数据
 			if(SWService.isConmmited(id)){//如果该记录已被通过或正在审批中则不能再被提交
 				smLog.info("该记录已被通过或正在审批中,不能再被修改");
-				hint="无法修改审批中或已通过的信息！";
-				continue;
+				resultMap.put("count", count+"");
+				resultMap.put("rowNum", rowNum);
+				resultMap.put("hint","重复提交！");
+				return JSON.toJSONString(resultMap);
 			}
 			if("".equals(id) || "".equals(workHour) || "".equals(date) || "".equals(hrCode) 
 					|| "".equals(approverUsername)){
@@ -213,18 +216,15 @@ public class StaffWorkingHourManageController {
 			// || "".equals(jobContent)  +"-工作内容："+jobContent 暂不做工作内容必填校验
 			if(projectName.length()>50){
 				smLog.info("项目名称出最大50长度限制！");
-				hint="项目名称不能超过50字！";
 				continue;
 			}
 			if(jobContent.length()>200){
 				smLog.info("工作内容超出最大200长度限制！");
-				hint="工作内容不能超过200字！";
 				continue;
 			}
 			try {
 				todayHours=Double.parseDouble(workHour);
 			} catch (Exception e) {
-				hint="工时解析出错！";
 				smLog.info("workHour工时解析出错！");
 				continue;
 			}
@@ -233,45 +233,27 @@ public class StaffWorkingHourManageController {
 			//校验当天工时是否超标
 			checkResult=smService.checkWorkHour(user.getUserName(),date,todayHours);
 			if (!"".equals(checkResult)) {
-				hint=checkResult;
-				smLog.info("工时超标！");		
-				continue;
+				smLog.info("工时超标！");
+				resultMap.put("count", count+"");
+				resultMap.put("rowNum", rowNum);
+				resultMap.put("hint", "工时超标！");
+				return JSON.toJSONString(resultMap);
 			} 
+			//添加到流程记录表
+			String processId=SWService.addSubmitRecord(id, processUsername);
+			//提交
 			WorkHourInfoPo wp=new WorkHourInfoPo();
 			wp.setId(id);
 			wp.setProName(projectName);
 			wp.setJobContent(jobContent);
 			wp.setWorkHour(todayHours);
 			wp.setStatus("1");
-			wp.setUpdateUser(webUtils.getUsername());
+			wp.setUpdateUser(processUsername);
 			wp.setUpdateTime(new Date());
 			wp.setProcessId(processId);
 			count+= smService.updateWorkHourInfo(wp);
-			
-			//添加到流程记录表
-			ProcessRecordPo pr=new ProcessRecordPo();
-			pr.setId(processId);
-			pr.setBussinessId(id);
-			pr.setProcessType("BG_WORKINGHOUR");
-			pr.setProcessLink("BG_WORKINGHOUR_SUBMIT");
-			String currentUsername=webUtils.getUsername();
-			pr.setProcessUserId(currentUsername);
-			//获取处理人当前信息
-			CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(currentUsername);
-			pr.setProcessDeptId(currentUser.getpDeptId());
-			pr.setProcessLabtId(currentUser.getDeptId());
-			pr.setProcessResult("0");
-			pr.setProcessCreateTime(new Date());
-			pr.setProcessUpdateTime(new Date());
-			pr.setProcessNote("");
-			pr.setProcessNextLink("BG_WORKINGHOUR_CHECK");
-			pr.setProcessNextUserId(approverUsername);
-			pr.setValid(1);
-			smService.addProcessRecord(pr);
-			// 注意事务
 		}
-		Map<String, String> resultMap = new HashMap<>();
-		resultMap.put("hint", hint);
+		resultMap.put("hint", "success");
 		resultMap.put("count", count+"");
 		resultMap.put("total", list.size()+"");
 		return JSON.toJSONString(resultMap);

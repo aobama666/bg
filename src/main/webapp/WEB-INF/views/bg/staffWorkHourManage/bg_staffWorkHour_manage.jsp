@@ -281,6 +281,7 @@ function forSubmit(){
 			//校验逻辑在后台
 			var item=rows[i];
 			var params={};
+			params["rowNum"] =  $.trim(item.RN);
 			params["id"] =  $.trim(item.ID);
 			params["hrCode"] =  $.trim(item.HRCODE);
 			params["approver"] =  $.trim(item.APPROVER_USERNAME);
@@ -297,7 +298,11 @@ function forSubmit(){
 			data:{jsonStr:"["+paramArr.toString()+"]"},
 			dataType:'json',
 			success : function(data) {
-				layer.msg("提交成功"+data.count+"条，失败"+(data.total-data.count)+"条！");
+				if(data.hint=='success'){
+					layer.msg("提交成功"+data.count+"条，失败"+(data.total-data.count)+"条！");
+				}else{
+					layer.msg('提交成功'+data.count+'条，'+'第'+data.rowNum+'行'+data.hint);
+				}
 				mmg.load();
 			}
 		});

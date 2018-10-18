@@ -28,14 +28,14 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
  
  @Service 
  public class personWorkManageServiceImpl implements personWorkManageService {
-	 public Logger log = LoggerFactory.getLogger(personWorkManageServiceImpl.class); 
 	 ResultWarp rw; 
+	 public Logger log = LoggerFactory.getLogger(personWorkManageServiceImpl.class); 
 		 @Autowired 
 		 private BgWorkinghourInfoMapper bgworkinghourinfoMapper; 
 		 @Autowired 
 		 private  WebUtils webUtils;
 	     @Autowired
-		 UserUtils userUtils;
+		 private UserUtils userUtils;
 	     @Autowired
 	 	 private IStaffWorkingHourManageService smService;
 	     @Autowired
@@ -163,7 +163,10 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 						rw = new ResultWarp(ResultWarp.FAILED ,"项目名称超出最大50长度限制！"); 
 						return JSON.toJSONString(rw);  
 				 }
-				 int res=bgworkinghourinfoMapper.commitbgWorkinghourInfo(id,projectName,jobContent,workingHour);   
+				 //添加流程记录
+				 //String processId=swService.addRecord(id, userName, "0", "", "submit");
+				 String processId=swService.addSubmitRecord(id, userName);
+				 int res=bgworkinghourinfoMapper.commitbgWorkinghourInfo(id,projectName,jobContent,workingHour,processId);   
 				 if(res>0){ 
 				  rw = new ResultWarp(ResultWarp.SUCCESS ,"提交成功"); 
 				  }else{
@@ -219,15 +222,16 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 						  return JSON.toJSONString(rw);  
 					 }
 					 String status="0";
-					 if(swService.isPassed(id)){//如果该条记录已被通过，则无法被撤回
-						 rw = new ResultWarp(ResultWarp.FAILED ,"撤回失败");
+					 if(swService.isExamined(id)){//如果该条记录已被通过或驳回，则无法被撤回
+						 rw = new ResultWarp(ResultWarp.FAILED ,"无法撤回已审核信息！");
 						 return JSON.toJSONString(rw);
 					 }
-					 int res=bgworkinghourinfoMapper.backbgWorkinghourInfo(id,status);   
+					 String processId=swService.addRecallRecord(id, webUtils.getUsername());
+					 int res=bgworkinghourinfoMapper.backbgWorkinghourInfo(id,status,processId);   
 					 if(res>0){ 
-					  rw = new ResultWarp(ResultWarp.SUCCESS ,"撤回成功"); 
+					  rw = new ResultWarp(ResultWarp.SUCCESS ,"撤回成功！"); 
 					  }else{
-					  rw = new ResultWarp(ResultWarp.FAILED ,"撤回失败");
+					  rw = new ResultWarp(ResultWarp.FAILED ,"撤回失败！");
 					  }
 					 return JSON.toJSONString(rw);  
 				}
@@ -239,93 +243,82 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 		 		* @return 
 				* */ 
 				 @Override 
-				 public String savebgWorkinghourInfo(HttpServletRequest request){
-				 log.info("[bgWorkinghourInfo]: 提交" );
-				 CommonUser userInfo = webUtils.getCommonUser();
-				 String userName = userInfo.getUserName();	 
-				 String id = request.getParameter("id") == null ? "" : request.getParameter("id").toString(); 
-				 String xh = request.getParameter("xh") == null ? "" : request.getParameter("xh").toString(); 
-				 List<String > idlist=new ArrayList<>();
-				 if(id!=""){
-					String[]  ids=id.split(",");
-					for(int i=0;i<ids.length;i++){
-						idlist.add(ids[i]);
-					}
-				 } 	
-			     List<Map<String, Object>> CheckHouslist= bgworkinghourinfoMapper.selectCheckHous(idlist);
-				 if(!CheckHouslist.isEmpty()){
-					 for(Map<String, Object> map:CheckHouslist){
-							String worktime= (String) map.get("WORK_TIME");
-							String workhour= (String) map.get("WORKING_HOUR").toString();
-							double workhours=Double.valueOf(workhour);
-							if(workhours>11){
-								 rw = new ResultWarp(ResultWarp.FAILED ,worktime+"工时超过11个小时"); 
-						    	 return JSON.toJSONString(rw);  
+				public String savebgWorkinghourInfo(HttpServletRequest request) {
+					log.info("[bgWorkinghourInfo]: 提交");
+					CommonUser userInfo = webUtils.getCommonUser();
+					String userName = userInfo.getUserName();
+					String id = request.getParameter("id") == null ? "" : request.getParameter("id").toString();
+					String xh = request.getParameter("xh") == null ? "" : request.getParameter("xh").toString();
+					/*
+					 * List<String > idlist=new ArrayList<>(); if(id!=""){ String[]
+					 * ids=id.split(","); for(int i=0;i<ids.length;i++){ idlist.add(ids[i]);
+					 * } } List<Map<String, Object>> CheckHouslist=
+					 * bgworkinghourinfoMapper.selectCheckHous(idlist);
+					 * if(!CheckHouslist.isEmpty()){ for(Map<String, Object>
+					 * map:CheckHouslist){ String worktime= (String) map.get("WORK_TIME");
+					 * String workhour= (String) map.get("WORKING_HOUR").toString(); double
+					 * workhours=Double.valueOf(workhour); if(workhours>11){ rw = new
+					 * ResultWarp(ResultWarp.FAILED ,worktime+"工时超过11个小时"); return
+					 * JSON.toJSONString(rw); } List<Map<String, Object>>
+					 * Houslist=bgworkinghourinfoMapper.selectCheckWorker(userName,worktime)
+					 * ; if(!Houslist.isEmpty()){ double workHours=0; for(Map<String,
+					 * Object> maps:Houslist){ String workHour = (String)
+					 * maps.get("WORKING_HOUR").toString(); workHours
+					 * +=Double.valueOf(workHour); } double zone=workHours+workhours;
+					 * if(zone>11){ rw = new ResultWarp(ResultWarp.FAILED
+					 * ,worktime+"工时超过11个小时"); return JSON.toJSONString(rw); }
+					 * 
+					 * } } }
+					 */
+					String status = "1";
+					String[] idnum = id.split(",");
+					String[] xhnum = xh.split(",");
+					int res = 0;
+					int count = 0;
+					for (int i = 0; i < idnum.length; i++) {
+						String ids = idnum[i];
+						String xhs = xhnum[i];
+						List<Map<String, Object>> map = bgworkinghourinfoMapper.selectCheckTime(ids, "", "", "", "");
+						if (!map.isEmpty()) {
+							String worktime = (String) map.get(0).get("WORK_TIME");
+							String workhour = (String) map.get(0).get("WORKING_HOUR").toString();
+							double workhours = Double.valueOf(workhour);
+							// 校验当天工时是否超标
+							String checkResult = "";
+							// 校验当天工时是否超标
+							checkResult = smService.checkWorkHour(userName, worktime, workhours);
+			
+							if (!"".equals(checkResult)) {
+								rw = new ResultWarp(ResultWarp.FAILED, "提交成功" + count + "条，第"+xhs+"行工时超标！");
+								return JSON.toJSONString(rw);
 							}
-							 List<Map<String, Object>> Houslist=bgworkinghourinfoMapper.selectCheckWorker(userName,worktime);
-							 if(!Houslist.isEmpty()){
-								 double workHours=0;
-								 for(Map<String, Object> maps:Houslist){
-										String workHour = (String) maps.get("WORKING_HOUR").toString();
-										  workHours +=Double.valueOf(workHour);	
-						         }
-									double zone=workHours+workhours;
-									if(zone>11){
-										 rw = new ResultWarp(ResultWarp.FAILED ,worktime+"工时超过11个小时"); 
-								    	 return JSON.toJSONString(rw);  
-									}
-								 
-				         }
-			         }
-				 }	 
-				 String status="1";
-				 String[] idnum=id.split(",");
-				 String[] xhnum=xh.split(",");
-				 int res = 0;
-				 int count=0;
-				 int nocount=0;
-					for(int i=0;i<idnum.length;i++){
-						String ids=idnum[i];
-						String xhs=xhnum[i];
-						List<Map<String , Object>> map=bgworkinghourinfoMapper.selectCheckTime(ids,"","","","");
-						if(!map.isEmpty()){
-							String  worktime=(String) map.get(0).get("WORK_TIME");
-							String  workhour=(String) map.get(0).get("WORKING_HOUR").toString();
-							double workhours=Double.valueOf(workhour);
-							//校验当天工时是否超标
-							 String checkResult="";
-							 //校验当天工时是否超标
-							 checkResult=smService.checkWorkHour(userName,worktime,workhours);
-								
-							 if (!"".equals(checkResult)) {
-								  rw = new ResultWarp(ResultWarp.FAILED ,checkResult); 
-								  return JSON.toJSONString(rw);  	 
-							 } 
 						}
 						@SuppressWarnings("rawtypes")
-						List<Map> list=bgworkinghourinfoMapper.selectForKilebgWorkinghourInfo(ids);   
-					     if(list.size()==0){
-					    	 rw = new ResultWarp(ResultWarp.FAILED ,"该数据不存在"); 
-					    	 return JSON.toJSONString(rw);  
-					     }
-					     String statuss=(String) list.get(0).get("STATUS");
-					     if(!statuss.equals("0")||!statuss.equals("2")){
-					    	 rw = new ResultWarp(ResultWarp.FAILED ,"序号为 "+xhs+"行 已提交或已通过,请勿重复提交！"); 
-					     }
-						 res=bgworkinghourinfoMapper.backbgWorkinghourInfo(ids,status);
-						 if(res==1){
-							 count++;
-						 }else{
-							 nocount++;
-						 }
+						List<Map> list = bgworkinghourinfoMapper.selectForKilebgWorkinghourInfo(ids);
+						if (list.size() == 0) {
+							rw = new ResultWarp(ResultWarp.FAILED, "该数据不存在");
+							return JSON.toJSONString(rw);
+						}
+						String statuss = (String) list.get(0).get("STATUS");
+						if ("1".equals(statuss) || "3".equals(statuss)) {
+							// 已提交或已通过,请勿重复提交
+							rw = new ResultWarp(ResultWarp.FAILED ,"提交成功" + count + "条，第"+xhs+"行重复提交！");
+							return JSON.toJSONString(rw);
+						}
+						String processId = swService.addSubmitRecord(ids, userName);
+						res = bgworkinghourinfoMapper.backbgWorkinghourInfo(ids, status, processId);
+						if (res == 1) {
+							count++;
+						}
 					}
-				 if(count>0){ 
-				      rw = new ResultWarp(ResultWarp.SUCCESS ,"提交成功"+count+"条,失败"+nocount+"条 。"); 
-				  }else{
-					  rw = new ResultWarp(ResultWarp.SUCCESS ,"提交成功"+count+"条,失败"+nocount+"条 。"); 
-				  }
-				 return JSON.toJSONString(rw);  
-			}
+					/*
+					 * if(count>0){ rw = new ResultWarp(ResultWarp.SUCCESS
+					 * ,"提交成功"+count+"条,失败"+nocount+"条 。"); }else{ rw = new
+					 * ResultWarp(ResultWarp.SUCCESS ,"提交成功"+count+"条,失败"+nocount+"条 。"); }
+					 */
+					rw = new ResultWarp(ResultWarp.SUCCESS, "提交成功" + count + "条,失败" + (idnum.length - count) + "条 。");
+					return JSON.toJSONString(rw);
+				}
 			 
 
 				 

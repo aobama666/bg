@@ -227,7 +227,7 @@ public class StaffWorkbenchController {
 	@RequestMapping(value = "/deleteWorkHourInfo", method = RequestMethod.GET)
 	@ResponseBody
 	public String deleteWorkHourInfo(String id){
-		if(SWService.isConmmited(id)){
+		if(SWService.isConmmited(id)){//如果报工信息已提交或者已通过则不能被删除
 			return "commited";
 		}
 		int res=SWService.deleteWorkHourInfoById(id);
@@ -241,8 +241,8 @@ public class StaffWorkbenchController {
 	@RequestMapping(value = "/recallWorkHourInfo", method = RequestMethod.GET)
 	@ResponseBody
 	public String recallWorkHourInfo(String id){
-		if(SWService.isPassed(id)){//如果该条记录已通过，无法撤回
-			return "passed";
+		if(SWService.isExamined(id)){//如果该条记录已通过或驳回，无法撤回
+			return "examined";
 		}
 		int res=SWService.recallWorkHour(id);
 		if(res==1){
@@ -288,8 +288,8 @@ public class StaffWorkbenchController {
 			String projectName=Rtext.toStringTrim(map.get("projectName"), "");
 			String proId=Rtext.toStringTrim(map.get("proId"), "");
 			double todayHours;
-			String bussinessId="";
-			String processId=Rtext.getUUID();
+			String processId;
+			String bussinessId=(whId==null?Rtext.getUUID():whId);
 			//校验数据
 			if("".equals(workHour) || "".equals(category) || "".equals(hrCode) ){
 				SWLog.info("提交的数据有空值： 工时："+workHour+"-项目类型："+category+"-负责人编号："+hrCode);
@@ -316,11 +316,13 @@ public class StaffWorkbenchController {
 				SWLog.info("workHour工时解析出错！");
 				continue;
 			}
-			
+			//添加到流程记录表
+			processId=SWService.addSubmitRecord(bussinessId, username);
+			//提交
 			if(Rtext.isEmpty(whId)){
 				//执行保存操作
 				WorkHourInfoPo wp=new WorkHourInfoPo();
-				wp.setId(Rtext.getUUID());
+				wp.setId(bussinessId);
 				if(category.equals("科研项目")){
 					category="KY";
 				}else if(category.equals("横向项目")){
@@ -371,28 +373,6 @@ public class StaffWorkbenchController {
 				count+= SWService.updateWorkHourInfo(wp);
 				bussinessId=wp.getId();
 			}
-			// 注意事务
-			//添加到流程记录表
-			ProcessRecordPo pr=new ProcessRecordPo();
-			pr.setId(processId);
-			pr.setBussinessId(bussinessId);
-			pr.setProcessType("BG_WORKINGHOUR");
-			pr.setProcessLink("BG_WORKINGHOUR_SUBMIT");
-			String currentUsername=webUtils.getUsername();
-			//获取处理人当前信息
-			CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(currentUsername);
-			pr.setProcessUserId(currentUsername);
-			pr.setProcessDeptId(currentUser.getpDeptId());
-			pr.setProcessLabtId(currentUser.getDeptId());
-			pr.setProcessResult("0");
-			pr.setProcessCreateTime(new Date());
-			pr.setProcessUpdateTime(new Date());
-			pr.setProcessNote("");
-			pr.setProcessNextLink("BG_WORKINGHOUR_CHECK");
-			CommonCurrentUser approverUser=userUtils.getCommonCurrentUserByHrCode(hrCode);
-			pr.setProcessNextUserId(approverUser==null?"":approverUser.getUserName());
-			pr.setValid(1);
-			SWService.addProcessRecord(pr);
 		}
 		resultMap.put("result", "success");
 		resultMap.put("msg", "成功提交"+count+"条！");

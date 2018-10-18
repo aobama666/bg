@@ -95,7 +95,14 @@ public interface StaffWorkbenchMaper {
 	 * 添加记录到流程记录表
 	 * @param pr
 	 */
-	public void addProcessRecord(ProcessRecordPo pr);
+	public int addProcessRecord(ProcessRecordPo pr);
+	
+	/**
+	 * 更新流程记录表
+	 * @param pr
+	 * @return
+	 */
+	public int updateProcessRecord(ProcessRecordPo pr);
 
 	/**
 	 * 根据项目id获取其负责人

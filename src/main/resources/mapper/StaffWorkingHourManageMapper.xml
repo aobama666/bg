@@ -279,40 +279,6 @@
 			</if>
 	</update>
 	
-	<insert id="addProcessRecord"  parameterType="com.sgcc.bg.model.ProcessRecordPo">
-		INSERT INTO BG_PROCESS_RECORD
-			(
-			ID,
-			BUSSINESS_ID,
-			PROCESS_TYPE,
-			PROCESS_LINK,
-			PROCESS_USER_ID,
-			PROCESS_DEPT_ID,
-			PROCESS_LAB_ID,
-			PROCESS_RESULT,
-			PROCESS_NOTE,
-			PROCESS_NEXT_LINK,
-			PROCESS_NEXT_USER_ID,
-			PROCESS_CREATE_TIME,
-			PROCESS_UPDATE_TIME,
-			VALID)
-		VALUES
-			(#{id,jdbcType=VARCHAR}, 
-			#{bussinessId,jdbcType=VARCHAR}, 
-			#{processType,jdbcType=VARCHAR}, 
-			#{processLink,jdbcType=VARCHAR},
-			#{processUserId,jdbcType=VARCHAR},
-			#{processDeptId,jdbcType=VARCHAR},
-			#{processLabtId,jdbcType=VARCHAR},
-			#{processResult,jdbcType=VARCHAR},
-			#{processNote,jdbcType=VARCHAR},
-			#{processNextLink,jdbcType=VARCHAR},
-			#{processNextUserId,jdbcType=VARCHAR},
-			#{processCreateTime,jdbcType=TIMESTAMP},
-			#{processUpdateTime,jdbcType=TIMESTAMP},
-			#{valid,jdbcType=NUMERIC})
-	</insert>
-	
 	<update id="InvalidWorkHourInfoById">
 		UPDATE BG_WORKINGHOUR_INFO SET
 			VALID=0,

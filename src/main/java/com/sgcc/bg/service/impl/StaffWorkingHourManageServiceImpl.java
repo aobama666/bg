@@ -171,11 +171,6 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 	}
 
 	@Override
-	public void addProcessRecord(ProcessRecordPo pr) {
-		smMapper.addProcessRecord(pr);
-	}
-
-	@Override
 	public int deleteWorkHourInfoById(String id) {
 		return smMapper.InvalidWorkHourInfoById(id,webUtils.getUsername(),new Date());
 	}
