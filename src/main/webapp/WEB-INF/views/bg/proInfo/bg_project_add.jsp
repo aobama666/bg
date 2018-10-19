@@ -1,5 +1,4 @@
 <!DOCTYPE>
-<!-- authentication_add.jsp -->
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
 <%-- <%@page import="crpri.ess.util.ToolsUtil"%>
@@ -54,6 +53,14 @@
 	<script src="<%=request.getContextPath()%>/common/plugins/respond/respond.js"></script>
 	<script src="<%=request.getContextPath()%>/common/plugins/pseudo/jquery.pseudo.js"></script>
 <![endif]-->
+
+<style type="text/css">
+	.italic{
+		color:#999;
+		font-style:italic;
+	}
+</style>
+
 </head>
 <body>
 	<input type="hidden" id="proId"/>
@@ -103,8 +110,15 @@
 						<input type="text" name="projectName" property="projectName">
 					</div>
 				</div>
+				<div class="form-group col-xs-11" id="projectNumber">
+					<label for="projectNumber"><font
+						class="glyphicon glyphicon-asterisk required"></font>项目编号</label>
+					<div class="controls">
+						<input class="italic" disabled value="保存后自动生成" type="text" name="projectNumber" property="projectNumber">
+					</div>
+				</div>	
 				<div class="form-group col-xs-11" id="WBSNumber">
-					<label for="WBSNumber"><font class="glyphicon glyphicon-asterisk required"></font>WBS编号</label>
+					<label for="WBSNumber"></font>WBS编号</label>
 					<div class="controls">
 						<input type="text" name="WBSNumber" property="WBSNumber">
 					</div>
@@ -112,7 +126,7 @@
 				<div class="form-group col-xs-11">
 					<label for="projectIntroduce"><font class=""></font>项目说明</label>
 					<div class="controls">
-						<textarea name="projectIntroduce" property="projectIntroduce" style="height:75px" value="wegge"></textarea>
+						<textarea name="projectIntroduce" property="projectIntroduce" style="height:75px" ></textarea>
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
@@ -211,7 +225,8 @@
 <script type="text/javascript">
 	var mmg;
 	var tempStartDate="";
-	var currentProjectNumber="";
+	var currentWBSNumber="";
+	var currentProNumber="";
 	var currentCategory="";
 	/* var pn = 1;
 	var limit = 30; */
@@ -235,23 +250,32 @@
 				$("#deptName").val($("#currentDeptName").val());
 				$("#deptCode").val($("#currentDeptCode").val());
 			}
-			$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>项目编号');
+			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>项目编号');
 			if(currentCategory==type){
-				$("#WBSNumber input").val(currentProjectNumber);
+				$("#WBSNumber input").val(currentWBSNumber);
 			}else{
 				$("#WBSNumber input").val("保存后自动生成");
 			}
 			$("#WBSNumber input").attr("readonly","").css({'color':'#999','font-style':'italic'});
+			*/
 		}
 		if(type!="JS"){
 			$("#organInfo").hide();
-			$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
+			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
 			if(currentCategory==type){
-				$("#WBSNumber input").val(currentProjectNumber);
+				$("#WBSNumber input").val(currentWBSNumber);
 			}else{
 				$("#WBSNumber input").val("");
 			}
 			$("#WBSNumber input").removeAttr("readonly").removeAttr("style");
+			*/
+		}
+		if(currentCategory==type){
+			$("#WBSNumber input").val(currentWBSNumber);
+			//$("#projectNumber input").val(currentProNumber);
+		}else{
+			$("#WBSNumber input").val("");
+			//$("#projectNumber input").val("保存后自动生成");
 		}
 	}
 	
@@ -270,37 +294,34 @@
 			});
 		}
 		*/
-		var proId=$("#proId").val();
-		var url="<%=request.getContextPath()%>/project/ajaxSavePro?ran="+ran;
-		if(proId!=""){
-			url="<%=request.getContextPath()%>/project/ajaxUpdatePro?ran="+ran;;
-		}
 		var validator=[
 	              	      {name:'category',vali:'required'},
 	             	      {name:'projectName',vali:'required;length[-50]'},
-	             	      {name:'WBSNumber',vali:'required;checkUniqueness()'},
+	             	      {name:'WBSNumber',vali:'checkUniqueness()'},//required;WBS编号改为选填项
 	             	      {name:'projectIntroduce',vali:'length[-200]'},
 	             	      {name:'startDate',vali:'required;date;checkStartDate()'},
 	             	      {name:'endDate',vali:'required;date;checkEndDate()'},
 	             	      {name:'deptName',vali:'required'},
-	             	      {name:'planHours',vali:'required;checkNumberFormat()'},
-	             	      {name:'decompose',vali:'required'}
+	             	      {name:'planHours',vali:'required;checkNumberFormat()'}
+	             	      //{name:'decompose',vali:'required'}
 	             	];
 		//当为技术服务项目时候，不校验项编号，并移除错误提示
-		if($("select[name='category']").val()=="JS"){
+		/*if($("select[name='category']").val()=="JS"){
 			validator.splice(2,1);
 			var c=$("#WBSNumber input");
 			c.removeAttr("errMsg");
 			c.parent("div").removeClass("has-error");
 			c.unbind('hover');
-		}
+		}*/
 		var checkResult = $(".form-box").sotoValidate(validator);
 		if(checkResult){
+			var proId= $("#proId").val();
 			var param = $(".form-box").sotoCollecter();
 			param["proId"] = proId;
+			param["method"] = proId==""?"save":"update";//要执行的操作方法，存在proId为更新，否则保存
 			$.ajax({
 				type:"POST",
-				url:url,
+				url:"<%=request.getContextPath()%>/project/ajaxSavePro?ran="+ran,
 				data:param,
 				dataType:"json",
 				success:function(data){
@@ -308,8 +329,10 @@
 						parent.queryList("reload");
 						$("#proId").val(data.proId);
 						currentCategory=$(".form-box").sotoCollecterForOne("category");
-						currentProjectNumber=data.proNumber;
-						$("#WBSNumber input").val(data.proNumber);
+						currentWBSNumber=data.wbsNumber;
+						currentProNumber=data.proNumber;
+						$("#WBSNumber input").val(data.wbsNumber);
+						$("#projectNumber input").val(data.proNumber);
 						//判断当前日期是否已经被修改,如果被修改则提示修改参与人日期
 						if($("input[name='startDate']").val()!=$("#startDate").val() ||
 								$("input[name='endDate']").val()!=$("#endDate").val()){
@@ -575,7 +598,7 @@
 	
 	function checkUniqueness(val){
 		var result = {};
-		if(currentProjectNumber==$.trim(val)){
+		if(currentWBSNumber==$.trim(val) || ''==$.trim(val)){//如果WBS编号不填或者未改变则不用校验唯一
 			result.result = true;
 			result.info = "";
 			return result;

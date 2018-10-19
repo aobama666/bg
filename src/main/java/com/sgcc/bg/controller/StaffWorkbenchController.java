@@ -289,7 +289,7 @@ public class StaffWorkbenchController {
 			String proId=Rtext.toStringTrim(map.get("proId"), "");
 			double todayHours;
 			String processId;
-			String bussinessId=(whId==null?Rtext.getUUID():whId);
+			String bussinessId=(whId.isEmpty()?Rtext.getUUID():whId);
 			//校验数据
 			if("".equals(workHour) || "".equals(category) || "".equals(hrCode) ){
 				SWLog.info("提交的数据有空值： 工时："+workHour+"-项目类型："+category+"-负责人编号："+hrCode);

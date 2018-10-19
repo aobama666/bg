@@ -61,6 +61,7 @@
 		   (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t.category) as category,
 		   t.id,
 	       t.project_name,
+	       t.project_number,
 	       t.wbs_number,
 	       (SELECT t1.empname
 	          FROM BG_PROJECT_USER t1
@@ -96,6 +97,7 @@
    		   (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t.category) as category,
 		   t.id,
 	       t.wbs_number,
+	       t.project_number,
 	       (SELECT t1.empname
 	          FROM BG_PROJECT_USER t1
 	         WHERE t1.project_id = t.id

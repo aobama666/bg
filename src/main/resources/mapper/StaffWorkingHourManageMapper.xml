@@ -102,7 +102,7 @@
                  <if test="status != null and status != ''" >
                 	 AND t.status=#{status}
                  </if>
-                 ORDER BY t.work_time DESC) p
+                 ORDER BY t.work_time,t.create_time DESC) p
    		<![CDATA[WHERE ROWNUM<=#{end})]]>
 		<![CDATA[WHERE rn>#{start}]]>
 	</select>

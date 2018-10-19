@@ -227,7 +227,8 @@ function queryList(load){
 	var cols = [
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'项目类型', name:'CATEGORY', width:100, sortable:false, align:'center'},
-	            {title:'WBS编号/项目编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
+	            {title:'项目编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:'center'},
+	            {title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
 	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
 	            {title:'项目开始时间', name:'START_DATE', width:100, sortable:false, align:'center'},
 	            {title:'项目结束时间', name:'END_DATE', width:100, sortable:false, align:'center'},

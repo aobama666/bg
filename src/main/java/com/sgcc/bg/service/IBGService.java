@@ -114,11 +114,11 @@ public interface IBGService {
 	public String exportSelectedItems(String ids, HttpServletResponse response);
 	
 	/**
-	 * 获取技术服务项目编号的最大编号值
-	 * @param currentYears
+	 * 获取报工项目编号的最大编号值
+	 * @param 
 	 * @return
 	 */
-	public String getJSNumber();
+	public String getBGNumber();
 
 	/**
 	 * 更新项目信息表中的字段

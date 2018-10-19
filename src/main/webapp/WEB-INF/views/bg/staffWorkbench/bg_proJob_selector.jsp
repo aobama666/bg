@@ -73,9 +73,10 @@ function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 				{title:'序列', name:'ID', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center'},
 	            {title:'项目名称', name:'PROJECT_NAME', width:150, sortable:false, align:'left'},
-	            {title:'WBS编号/项目编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'}
+	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center'},
+	            {title:'项目编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:'center'},
+	            {title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'}
 	    		];
 	var mmGridHeight = $("body").parent().height()*0.8;
 	mmg = $('#mmg').mmGrid({

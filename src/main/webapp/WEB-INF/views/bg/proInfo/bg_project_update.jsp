@@ -48,12 +48,19 @@
 	<script src="<%=request.getContextPath()%>/common/plugins/respond/respond.js"></script>
 	<script src="<%=request.getContextPath()%>/common/plugins/pseudo/jquery.pseudo.js"></script>
 <![endif]-->
+
+<style type="text/css">
+	.italic{
+		color:#999;
+		font-style:italic;
+	}
+</style>
 </head>
 <body>
 	<input type="hidden" id="proId" value="${id}"/>
 	<input type="hidden" id="startDate" value="${startDate}"/>
 	<input type="hidden" id="endDate" value="${endDate}"/>
-	<input type="hidden" id="projectNumber" value="${WBSNumber}"/>
+	<input type="hidden" id="currentWBSNumber" value="${WBSNumber}"/>
 	<input type="hidden" id="category" value="${category}"/>
 	<input type="hidden" name="currentHrcode" id="currentHrcode" value="${hrcode}"/>
 	<input type="hidden" name="currentDeptName" id="currentDeptName" value="${deptName}"/>
@@ -99,16 +106,17 @@
 						<input type="text" name="projectName" property="projectName" value="${projectName}">
 					</div>
 				</div>
-				<div class="form-group col-xs-11" id="WBSNumber">
-					<label for="WBSNumber">
-						<c:choose>
-							<c:when test="${category=='JS'}"><font class="glyphicon glyphicon-asterisk required"></font>项目编号</c:when>
-							<c:otherwise><font class="glyphicon glyphicon-asterisk required"></font>WBS编号</c:otherwise>
-						</c:choose>
-					</label>
+				<div class="form-group col-xs-11">
+					<label for="projectNumber"><font
+						class="glyphicon glyphicon-asterisk required"></font>项目编号</label>
 					<div class="controls">
-						<input type="text" name="WBSNumber" property="WBSNumber" 
-							<c:if test="${category=='JS'}">readonly style="color:#999;font-style:italic"</c:if> value="${WBSNumber}">
+						<input class='italic' disabled type="text" name="projectNumber" property="projectNumber" value="${projectNumber}">
+					</div>
+				</div>
+				<div class="form-group col-xs-11" id="WBSNumber">
+					<label for="WBSNumber">WBS编号</label>
+					<div class="controls">
+						<input type="text" name="WBSNumber" property="WBSNumber" value="${WBSNumber}">
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
@@ -242,15 +250,10 @@
 			});
 		} 
 		*/
-		var proId=$("#proId").val();
-		var url="<%=request.getContextPath()%>/project/ajaxSavePro?ran="+ran;
-		if(proId!=""){
-			url="<%=request.getContextPath()%>/project/ajaxUpdatePro?ran="+ran;
-		}
 		var validator=[
               	      {name:'category',vali:'required'},
              	      {name:'projectName',vali:'required;length[-50]'},
-             	      {name:'WBSNumber',vali:'required;checkUniqueness()'},
+             	      {name:'WBSNumber',vali:'checkUniqueness()'},//required;WBS编号不作为必填项校验了
              	      {name:'projectIntroduce',vali:'length[-200]'},
              	      {name:'startDate',vali:'required;date;checkStartDate()'},
              	      {name:'endDate',vali:'required;date;checkEndDate()'},
@@ -259,20 +262,22 @@
              	      {name:'decompose',vali:'required'}
              	];
 		//当为技术服务项目时候，不校验项编号，并移除错误提示
-		if($("select[name='category']").val()=="JS"){
+		/*if($("select[name='category']").val()=="JS"){
 			validator.splice(2,1);
 			var c=$("#WBSNumber input");
 			c.removeAttr("errMsg");
 			c.parent("div").removeClass("has-error");
 			c.unbind('hover');
-		}
+		}*/
 		var checkResult = $(".form-box").sotoValidate(validator);
 		if(checkResult){
+			var proId=$("#proId").val();
 			var param = $(".form-box").sotoCollecter();
 			param["proId"] = proId;
+			param["method"] = proId==""?"save":"update";//要执行的操作方法，存在proId为更新，否则保存
 			$.ajax({
 				type:"POST",
-				url:url,
+				url:"<%=request.getContextPath()%>/project/ajaxSavePro?ran="+ran,
 				data:param,
 				dataType:"json",
 				success:function(data){
@@ -282,8 +287,8 @@
 						$("#category").val($(".form-box").sotoCollecterForOne("category"));
 						//保存成功后返回技术服务项目编号和项目id
 						$("#proId").val(data.proId);
-						$("#WBSNumber input").val(data.proNumber);
-						$("#projectNumber").val(data.proNumber);
+						$("#WBSNumber input").val(data.wbsNumber);
+						$("#currentWBSNumber").val(data.wbsNumber);
 						//判断当前日期是否已经被修改,如果被修改则提示修改参与人日期
 						if($("input[name='startDate']").val()!=$("#startDate").val() ||
 								$("input[name='endDate']").val()!=$("#endDate").val()){
@@ -512,7 +517,7 @@
 		//var uuid = $("input[name=uuid]").val();
 		//var empCode = $("input[name=WBSNumber]").val();
 		var result = {};
-		if($.trim($("#projectNumber").val())==$.trim(val)){
+		if($.trim($("#currentWBSNumber").val())==$.trim(val) || ''==$.trim(val)){//如果wbs编号未该改变或者未填写则不校验唯一性
 			result.result = true;
 			result.info = "";
 			return result;
@@ -630,23 +635,28 @@
 				$("#deptName").val($("#currentDeptName").val());
 				$("#deptCode").val($("#currentDeptCode").val());
 			}
-			$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>项目编号');
+			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>项目编号');
 			if($("#category").val()==type){
-				$("#WBSNumber input").val($("#projectNumber").val());
+				$("#WBSNumber input").val($("#currentWBSNumber").val());
 			}else{
 				$("#WBSNumber input").val("保存后自动生成");
 			}
-			$("#WBSNumber input").attr("readonly","").css({'color':'#999','font-style':'italic'});
+			$("#WBSNumber input").attr("readonly","").css({'color':'#999','font-style':'italic'});*/
 		}
 		if(type!="JS"){
 			$("#organInfo").hide();
-			$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
+			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
 			if($("#category").val()==type){
-				$("#WBSNumber input").val($("#projectNumber").val());
+				$("#WBSNumber input").val($("#currentWBSNumber").val());
 			}else{
 				$("#WBSNumber input").val("");
 			}
-			$("#WBSNumber input").removeAttr("readonly").removeAttr("style");
+			$("#WBSNumber input").removeAttr("readonly").removeAttr("style");*/
+		}
+		if($("#category").val()==type){
+			$("#WBSNumber input").val($("#currentWBSNumber").val());
+		}else{
+			$("#WBSNumber input").val("");
 		}
 	}
 	

@@ -11,6 +11,7 @@
 		      		t1.project_name as "projectName",
 		      		(SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t1.category) as "category",
       				t1.wbs_number as "WBSNumber",
+      				t1.project_number as "projectNumber",
       				t1.project_introduce as "projectIntroduce",
 					t1.organ_info as "organInfo",
 					to_char(t1.start_date,'yyyy-mm-dd') as "startDate",
@@ -67,13 +68,14 @@
 	
 	<insert id="addProInfo"  parameterType="com.sgcc.bg.model.ProjectInfoPo">
 		INSERT INTO BG_PROJECT_INFO 
-			(ID,PROJECT_NAME,CATEGORY,WBS_NUMBER,
+			(ID,PROJECT_NAME,CATEGORY,PROJECT_NUMBER,WBS_NUMBER,
 			PROJECT_INTRODUCE,ORGAN_INFO,
 			START_DATE,END_DATE,
 			PLAN_HOURS,PROJECT_STATUS,DECOMPOSE,STATUS,
 			CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE)
 		VALUES
-			(#{id}, #{projectName,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, #{WBSNumber,jdbcType=VARCHAR},
+			(#{id}, #{projectName,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, 
+			#{projectNumber,jdbcType=VARCHAR},#{WBSNumber,jdbcType=VARCHAR},
 			#{projectIntroduce,jdbcType=VARCHAR},#{organInfo,jdbcType=VARCHAR},
 			#{startDate,jdbcType=DATE},#{endDate,jdbcType=DATE},
 			#{planHours,jdbcType=NUMERIC},#{projectStatus,jdbcType=VARCHAR},#{decompose,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},
@@ -97,6 +99,7 @@
 		UPDATE BG_PROJECT_INFO SET
 			PROJECT_NAME=#{projectName,jdbcType=VARCHAR},
 			CATEGORY=#{category,jdbcType=VARCHAR},
+			PROJECT_NUMBER=#{projectNumber,jdbcType=VARCHAR},
 			WBS_NUMBER=#{WBSNumber,jdbcType=VARCHAR},
 			PROJECT_INTRODUCE=#{projectIntroduce,jdbcType=VARCHAR},
 			ORGAN_INFO=#{organInfo,jdbcType=VARCHAR},
@@ -118,7 +121,8 @@
 	<select id="getProInfoByProId" parameterType="String" resultType="java.util.Map">
 		SELECT
       		t.id as "id",t.project_name as "projectName",t.category as "category",
-      		t.wbs_number as "WBSNumber",t.project_introduce as "projectIntroduce",
+      		t.project_number as "projectNumber",t.wbs_number as "WBSNumber",
+      		t.project_introduce as "projectIntroduce",
 			t.organ_info as "organInfo",to_char(t.start_date,'yyyy-mm-dd') as "startDate",
 			to_char(t.end_date,'yyyy-mm-dd') as "endDate",
 			t.plan_hours as "planHours",t.project_status as "projectStatus",
@@ -135,6 +139,7 @@
 	<select id="getAllProInfos" parameterType="String" resultType="java.util.Map">
 		SELECT
       		t.id as "id",t.project_name as "projectName",t.category as "category",
+      		t.project_number as "projectNumber",
       		t.wbs_number as "WBSNumber",t.project_introduce as "projectIntroduce",
 			t.organ_info as "organInfo",to_char(t.start_date,'yyyy-mm-dd') as "startDate",
 			to_char(t.end_date,'yyyy-mm-dd') as "endDate",
@@ -188,12 +193,10 @@
 		WHERE t.wbs_number=#{wbsNumber,jdbcType=VARCHAR} AND t.status='1'
 	</select>
 	
-	<select id="getMaxJsNumber" parameterType="String" resultType="java.lang.String">
-		SELECT COALESCE(MAX(SUBSTR(t.wbs_number,7)),'0') 
+	<select id="getMaxBgNumber" parameterType="String" resultType="java.lang.String">
+		SELECT COALESCE(MAX(SUBSTR(t.project_number,11)),'0') 
 			FROM BG_PROJECT_INFO t 
-		 WHERE t.category='JS' 
-		 	 AND  SUBSTR(t.wbs_number,3,4)=#{currentYear}
-		 	 AND t.status='1'
+		 WHERE SUBSTR(t.project_number,3,8)=#{currentDateStr} AND t.status='1'
 	</select>
 	
 	<select id="getProIdByWBSNmuber" parameterType="String" resultType="java.lang.String">
@@ -201,8 +204,18 @@
 			WHERE t.wbs_number=#{wbsNumber,jdbcType=VARCHAR} AND t.status='1'
 	</select>
 	
+	
+	<select id="getProIdByBgNmuber" parameterType="String" resultType="java.lang.String">
+		SELECT t.id FROM BG_PROJECT_INFO t
+			WHERE t.project_number=#{projectNumber,jdbcType=VARCHAR} AND t.status='1'
+	</select>
+	
 	<select id="getAllWbsNumbers" parameterType="String" resultType="java.lang.String">
 		SELECT t.wbs_number FROM BG_PROJECT_INFO t 	WHERE t.status='1'
+	</select>
+	
+	<select id="getAllBgNumbers" parameterType="String" resultType="java.lang.String">
+		SELECT t.project_number FROM BG_PROJECT_INFO t 	WHERE t.status='1'
 	</select>
 	 
 	<update id="updateProInfoField" parameterType="String">

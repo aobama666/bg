@@ -292,7 +292,7 @@ public class BgController {
 		}
 	}
 
-	@RequestMapping(value = "/ajaxUpdatePro", method = RequestMethod.POST)
+	/*@RequestMapping(value = "/ajaxUpdatePro", method = RequestMethod.POST)
 	@ResponseBody
 	public String updatePro(HttpServletRequest request) throws Exception {
 		ProjectInfoPo pro = new ProjectInfoPo();
@@ -389,15 +389,18 @@ public class BgController {
 		}
 		bgLog.info("更新项目信息返回字符串： " + JSON.toJSONString(resultMap));
 		return JSON.toJSONString(resultMap);
-	}
+	}*/
 
 	@RequestMapping(value = "/ajaxSavePro", method = RequestMethod.POST)
 	@ResponseBody
 	public String savePro(HttpServletRequest request) throws Exception {
 		Map<String, String> resultMap = new HashMap<>();
 		ProjectInfoPo pro = new ProjectInfoPo();
+		String proId = Rtext.toStringTrim(request.getParameter("proId"),"");
+		String method = Rtext.toStringTrim(request.getParameter("method"),"");//要执行的操作方法，存在proId为更新，否则保存
 		String projectName = Rtext.toStringTrim(request.getParameter("projectName"),"");
 		String category =Rtext.toStringTrim(request.getParameter("category"),""); 
+		String projectNumber =Rtext.toStringTrim(request.getParameter("projectNumber"),""); 
 		String WBSNumber = Rtext.toStringTrim(request.getParameter("WBSNumber"),""); 
 		String projectIntroduce = Rtext.toStringTrim(request.getParameter("projectIntroduce"),""); 
 		String deptCode =Rtext.toStringTrim(request.getParameter("deptCode"),"");
@@ -407,15 +410,18 @@ public class BgController {
 		String startDateStr=Rtext.toStringTrim(request.getParameter("startDate"),"");
 		String endDateStr=Rtext.toStringTrim(request.getParameter("endDate"),"");
 		String planHoursStr=Rtext.toStringTrim(request.getParameter("planHours"),"");
-		//如果为技术服务项目，项目编号后台生成
-		if("JS".equals(category) && "保存后自动生成".equals(WBSNumber)){
-			WBSNumber=bgService.getJSNumber();
+		//项目编号后台生成
+		if(projectNumber.indexOf("BG")==-1){//如果不存在项目编号
+			projectNumber=bgService.getBGNumber();
 		}
 		//校验项目信息
-		if(Rtext.isEmpty(projectName) || Rtext.isEmpty(category) || Rtext.isEmpty(WBSNumber) 
-				|| Rtext.isEmpty(startDateStr) || Rtext.isEmpty(endDateStr) || Rtext.isEmpty(planHoursStr)){
+		if(Rtext.isEmpty(projectName) 
+				|| Rtext.isEmpty(category)
+				|| Rtext.isEmpty(startDateStr) 
+				|| Rtext.isEmpty(endDateStr) 
+				|| Rtext.isEmpty(planHoursStr)){
 			bgLog.info("bgController 项目必填参数存在空值："+"projectName:"+projectName+"/"+"category:"+category+"/"+
-					"WBSNumber:"+WBSNumber+"/"+"startDateStr:"+startDateStr+"/"+"endDateStr:"+endDateStr+"/"+
+					"startDateStr:"+startDateStr+"/"+"endDateStr:"+endDateStr+"/"+
 					"planHoursStr:"+planHoursStr);
 			resultMap.put("result", "fail");
 			return JSON.toJSONString(resultMap);
@@ -454,26 +460,31 @@ public class BgController {
 		Date startDate = DateUtil.fomatDate(startDateStr);
 		Date endDate = DateUtil.fomatDate(endDateStr);
 		Integer planHours = Rtext.ToInteger(planHoursStr, 0);
-		pro.setId(Rtext.getUUID());
+		pro.setId(proId.isEmpty()?Rtext.getUUID():proId);
 		pro.setProjectName(projectName);
+		pro.setProjectNumber(projectNumber);
 		pro.setCategory(category);
 		pro.setWBSNumber(WBSNumber);
 		pro.setProjectIntroduce(projectIntroduce);
 		pro.setStartDate(startDate);
 		pro.setEndDate(endDate);
-		String deptId="";
-		if(!Rtext.isEmpty(deptCode)){
-			deptId=bgService.getDeptIdByDeptCode(deptCode);
+		if("JS".equals(category)){//当为技术服务项目时才保存或更新组织信息
+			pro.setOrganInfo(bgService.getDeptIdByDeptCode(deptCode));
 		}
-		pro.setOrganInfo(deptId);
 		pro.setPlanHours(planHours);
 		pro.setDecompose(decompose);
-
-		int affectedRows = bgService.addProInfo(pro);
+		
+		int affectedRows;
+		if("save".equals(method)){
+			affectedRows = bgService.addProInfo(pro);
+		}else{
+			affectedRows = bgService.updateProInfo(pro);
+		}
 		if (affectedRows == 1) {
 			resultMap.put("result", "success");
 			resultMap.put("proId", pro.getId());
-			resultMap.put("proNumber", WBSNumber);
+			resultMap.put("wbsNumber", WBSNumber);
+			resultMap.put("proNumber", projectNumber);
 		} else {
 			resultMap.put("result", "fail");
 		}
@@ -584,7 +595,7 @@ public class BgController {
 	}
 
 	/**
-	 * 校验项目编号的唯一性
+	 * 校验WBS编号的唯一性
 	 * 
 	 * @param WBSNumber
 	 * @return

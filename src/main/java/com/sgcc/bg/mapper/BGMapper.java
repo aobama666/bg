@@ -110,20 +110,33 @@ public interface BGMapper {
 	 * @return
 	 */
 	@Options(flushCache=Options.FlushCachePolicy.TRUE)
-	public String getMaxJsNumber(@Param("currentYear")String currentYear);
+	public String getMaxBgNumber(@Param("currentDateStr")String currentDateStr);
 
 	/**
 	 * 根据项目编号查询项目ID
-	 * @param string
+	 * @param wbsNumber
 	 * @return
 	 */
-	public String getProIdByWBSNmuber(String string);
+	public String getProIdByWBSNmuber(@Param("wbsNumber")String wbsNumber);
 
+	/**
+	 * 
+	 * @param projectNumber
+	 * @return
+	 */
+	public String getProIdByBgNmuber(@Param("projectNumber")String projectNumber);
+	
 	/**
 	 * 获取所有项目的wbs编号
 	 * @return
 	 */
 	public List<String> getAllWbsNumbers();
+	
+	/**
+	 * 获取所有项目的项目编号
+	 * @return
+	 */
+	public List<String> getAllBgNumbers();
 
 	/**
 	 * 更新项目信息的字段
@@ -177,4 +190,5 @@ public interface BGMapper {
 	 * @return
 	 */
 	public String getPrincipalCodeByProId(@Param("proId")String proId);
+
 }

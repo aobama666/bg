@@ -137,7 +137,8 @@ function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 				{title:'序列', name:'id', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'WBS/项目编号', name:'WBSNumber', width:100, sortable:false, align:'left'},
+	            {title:'项目编号', name:'projectNumber', width:110, sortable:false, align:'center'},
+	            {title:'WBS编号', name:'WBSNumber', width:100, sortable:false, align:'left'},
 	            {title:'项目名称', name:'projectName',width:150, sortable:false, align:'left',
 	            	renderer:function(val,item,rowIndex){
 	            		return '<a href="###" title="'+val+'" onclick="forDetails(\''+item.id+'\')">'+val+'</a>';

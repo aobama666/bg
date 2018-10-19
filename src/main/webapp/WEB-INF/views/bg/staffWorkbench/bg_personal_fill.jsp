@@ -436,7 +436,7 @@ function forAddProJob(){
 	layer.open({
 		type:2,
 		title:"项目工作选择框",
-		area:['620px', height+'px'],
+		area:['730px', height+'px'],
 		scrollbar:true,
 		skin:'query-box',
 		content:['<%=request.getContextPath()%>/staffWorkbench/proJobSelector?selectedDate='+selectedDate]

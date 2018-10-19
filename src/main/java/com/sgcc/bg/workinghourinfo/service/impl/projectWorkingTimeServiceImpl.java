@@ -264,7 +264,8 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 					 }
 					 if("0".equals(status)){
 						 Object[][] title = { 
-								 { "WBS编号/项目编号", "WBS_NUMBER" }, 
+								 { "项目编号", "PROJECT_NUMBER" },
+								 { "WBS编号", "WBS_NUMBER" }, 
 								 { "项目名称","PROJECT_NAME"},
 								 { "统计周期", "StartAndEndData" },
 								 { "投入总工时(h)","WORKING_HOUR"}
@@ -273,7 +274,8 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 						 ExportExcelHelper.getExcel(response, excelName, title, valueList, "normal");
 					 }else{
 						 Object[][] title = { 
-								 { "WBS编号/项目编号", "WBS_NUMBER" }, 
+								 { "项目编号", "PROJECT_NUMBER" },
+								 { "WBS编号", "WBS_NUMBER" }, 
 								 { "项目名称","PROJECT_NAME"},
 								 { "统计周期", "StartAndEndData" },
 								 { "项目投入总工时(h)","StandartHoursNum"},
@@ -325,8 +327,8 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 						 for(int j=0;j<list.size();j++){
 							 @SuppressWarnings("unchecked")
 							 Map<String ,Object>  map= list.get(j);
-							 String wbsNumbers=(String) map.get("WBS_NUMBER");
-							 List<Map> workinghourinfos= bgworkinghourinfoMapper.selectForProjectNameAndWorker(StartData, EndData, projectName, worker,wbsNumbers);
+							 String projectNumber=(String) map.get("PROJECT_NUMBER");
+							 List<Map> workinghourinfos= bgworkinghourinfoMapper.selectForProjectNameAndWorker(StartData, EndData, projectName, worker,projectNumber);
 							 if(!workinghourinfos.isEmpty()){
 								 for(int a=0;a<workinghourinfos.size();a++){
 									String   projectid= (String) workinghourinfos.get(a).get("PROJECT_ID");
@@ -374,7 +376,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 			 String endData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
 			 String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString(); //项目----人员
 			 String worker = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //项目----人员
-			 String Wbsnumber = request.getParameter("WbsNumber" ) == null ? "" : request.getParameter("WbsNumber").toString(); //WBS
+			 String projectNumber = request.getParameter("projectNumber" ) == null ? "" : request.getParameter("projectNumber").toString(); //WBS
 			 /**
 			  * 验证
 			  * **/	
@@ -383,7 +385,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 				 return Str;
 			 }
 			 Page<?> page2 = PageHelper.startPage(pageNum, limit); 
-			 bgworkinghourinfoMapper.selectForProjectNameAndWorker(beginData, endData, projectName, worker,Wbsnumber);
+			 bgworkinghourinfoMapper.selectForProjectNameAndWorker(beginData, endData, projectName, worker,projectNumber);
 			 long total = page2.getTotal();
 			 @SuppressWarnings("unchecked")
 			 List<Map<String, String>> list = (List<Map<String, String>>) page2.getResult();
@@ -403,7 +405,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 			 String endData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
 			 String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString(); //项目----人员
 			 String worker = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //项目----人员
-			 String Wbsnumber = request.getParameter("WbsNumber" ) == null ? "" : request.getParameter("WbsNumber").toString(); //WBS
+			 String projectNumber = request.getParameter("projectNumber" ) == null ? "" : request.getParameter("projectNumber").toString(); //WBS
 			 String idsStr = request.getParameter("ids" ) == null ? "" : request.getParameter("ids").toString(); //WBS
 			 /**
 			  * 验证
@@ -421,7 +423,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 					}	
 				} 
 			 @SuppressWarnings("rawtypes")
-			 List<Map> valueList = bgworkinghourinfoMapper.selectForProjectNameAndWorker(beginData, endData, projectName, worker,Wbsnumber);
+			 List<Map> valueList = bgworkinghourinfoMapper.selectForProjectNameAndWorker(beginData, endData, projectName, worker,projectNumber);
 			 if(list.size()>0){
 				 @SuppressWarnings("rawtypes")
 				 List<Map> datalist=new  ArrayList<Map>();
@@ -439,7 +441,8 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 				 }
 			 }
 			 Object[][] title = { 
-					 { "WBS编号/项目编号", "WBS_NUMBER" }, 
+					 { "项目编号", "PROJECT_NUMBER" },
+					 { "WBS编号", "WBS_NUMBER" }, 
 					 { "项目名称","PROJECT_NAME"},
 					 { "统计周期", "startToEnd" },
 					 { "人员编号","HRCODE"}, 
@@ -462,7 +465,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 			 String endData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
 			 String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString(); //项目----人员
 			 String worker = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //项目----人员
-			 String Wbsnumber = request.getParameter("WbsNumber" ) == null ? "" : request.getParameter("WbsNumber").toString(); //WBS
+			 String projectNumber = request.getParameter("projectNumber" ) == null ? "" : request.getParameter("projectNumber").toString(); //WBS
 			 String hrcode = request.getParameter("hrcode" ) == null ? "" : request.getParameter("hrcode").toString(); //WBS
 				
 			 /**
@@ -473,7 +476,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 				 return Str;
 			 }
 			 Page<?> page2 = PageHelper.startPage(pageNum, limit); 
-			 bgworkinghourinfoMapper.selectForWorker(beginData, endData, projectName, worker,Wbsnumber,hrcode);
+			 bgworkinghourinfoMapper.selectForWorker(beginData, endData, projectName, worker,projectNumber,hrcode);
 			 long total = page2.getTotal();
 			 @SuppressWarnings("unchecked")
 			 List<Map<String, String>> list = (List<Map<String, String>>) page2.getResult();
@@ -494,7 +497,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 			 String endData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
 			 String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString(); //项目----人员                                        
 			 String worker = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //项目----人员
-			 String Wbsnumber = request.getParameter("WbsNumber" ) == null ? "" : request.getParameter("WbsNumber").toString(); //WBS
+			 String projectNumber = request.getParameter("projectNumber" ) == null ? "" : request.getParameter("projectNumber").toString(); //WBS
 			 String hrcode = request.getParameter("hrcode" ) == null ? "" : request.getParameter("hrcode").toString(); //WBS
 			 String ids = request.getParameter("ids" ) == null ? "" : request.getParameter("ids").toString(); //WBS
 			 /**
@@ -515,7 +518,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 				}
 			 
 			@SuppressWarnings("rawtypes")
-			List<Map> valueList =bgworkinghourinfoMapper.selectForWorker(beginData, endData, projectName, worker,Wbsnumber,hrcode);
+			List<Map> valueList =bgworkinghourinfoMapper.selectForWorker(beginData, endData, projectName, worker,projectNumber,hrcode);
 			 if(list.size()>0){
 				 @SuppressWarnings("rawtypes")
 				List<Map> datalist=new  ArrayList<Map>();
@@ -533,7 +536,8 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 			 }
 			 Object[][] title = { 
 					 { "日期", "WORK_TIME" }, 
-					 { "WBS编号/项目编号","WBS_NUMBER"},
+					 { "项目编号","PROJECT_NUMBER"},
+					 { "WBS编号","WBS_NUMBER"},
 					 { "项目名称", "PROJECT_NAME" },
 					 { "工作内容","JOB_CONTENT"}, 
 					 { "投入工时（h）","WORKING_HOUR"}

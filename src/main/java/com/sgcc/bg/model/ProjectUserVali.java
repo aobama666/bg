@@ -13,7 +13,7 @@ public class ProjectUserVali implements Serializable {
 	//序号
 	private String sqnum;
 	//所在项目编号
-	private String WBSNumber;
+	private String projectNumber;
 	// id
 	private String id;
 	// 人资编号
@@ -79,12 +79,12 @@ public class ProjectUserVali implements Serializable {
 		this.empName = empName;
 	}
 	
-	public String getWBSNumber() {
-		return WBSNumber;
+	public String getprojectNumber() {
+		return projectNumber;
 	}
 
-	public void setWBSNumber(String wBSNumber) {
-		WBSNumber = wBSNumber;
+	public void setprojectNumber(String projectNumber) {
+		projectNumber = projectNumber;
 	}
 
 	public String getProjectId() {
@@ -214,7 +214,7 @@ public class ProjectUserVali implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ProjectUserVali [sqnum=" + sqnum + ", WBSNumber=" + WBSNumber + ", id=" + id + ", hrcode=" + hrcode
+		return "ProjectUserVali [sqnum=" + sqnum + ", projectNumber=" + projectNumber + ", id=" + id + ", hrcode=" + hrcode
 				+ ", empName=" + empName + ", projectId=" + projectId + ", role=" + role + ", status=" + status
 				+ ", startDate=" + startDate + ", endDate=" + endDate + ", createUser=" + createUser + ", createDate="
 				+ createDate + ", updateUser=" + updateUser + ", updateDate=" + updateDate + ", errorInfo=" + errorInfo

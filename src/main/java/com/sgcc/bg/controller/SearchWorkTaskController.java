@@ -271,7 +271,8 @@ public class SearchWorkTaskController {
 			valueList = searchWorkTaskService.queryOutDelegationExport(startTime,endTime,type,projectName,hrCode,list);	
 			Object[][] title = { 
 					 { "项目类型", "CATEGORY" }, 
-					 { "WBS编号/项目编号","WBS_NUMBER"},
+					 { "项目编号","PROJECT_NUMBER"},
+					 { "WBS编号","WBS_NUMBER"},
 					 { "项目名称", "PROJECT_NAME" },
 					 { "项目开始时间","START_DATE"}, 
 					 { "项目结束时间","END_DATE"},
