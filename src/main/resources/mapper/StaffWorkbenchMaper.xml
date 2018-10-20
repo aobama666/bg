@@ -317,6 +317,7 @@
       		t.project_name,
       		(SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t.category) as category,
       		t.wbs_number,
+      		t.project_number,
 		    (select t1.empname from BG_PROJECT_USER t1 WHERE t1.project_id=t.id AND t1.role='1' AND t1.status='1') as principal,
 		  	(select t1.hrcode from BG_PROJECT_USER t1 WHERE t1.project_id=t.id AND t1.role='1' AND t1.status='1') as hrcode
 		FROM BG_PROJECT_INFO t

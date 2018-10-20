@@ -284,7 +284,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 								 { "员工投入工时(h)","WORKING_HOUR"},
 								 { "角色","ROLE"}
 								};
-							String excelName="个人工时管理-"+DateUtil.getDays();
+							String excelName="项目工时统计-"+DateUtil.getDays();
 						 ExportExcelHelper.getExcel(response, excelName, title, valueList, "normal");
 					 }
 					 return "";

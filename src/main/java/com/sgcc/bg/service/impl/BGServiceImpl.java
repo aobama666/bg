@@ -518,7 +518,7 @@ public class BGServiceImpl implements IBGService {
 						errorInfo.append("项目中不存在此项目编号！");
 						errorNum.add(1);
 					}else{
-						//如果存在wbs编号，获取其项目id
+						//如果存在项目编号，获取其项目id
 						proId=bgMapper.getProIdByBgNmuber(cellValue[1]);
 						//获取该项目开始日期以及结束日期
 						startDate=bgMapper.getProInfoFieldByProId(proId,"start_date");
@@ -706,7 +706,7 @@ public class BGServiceImpl implements IBGService {
 					} else {// 未通过校验
 						ProjectUserVali pruv = new ProjectUserVali();
 						pruv.setSqnum(cellValue[0]);
-						pruv.setprojectNumber(cellValue[1]);
+						pruv.setProjectNumber(cellValue[1]);
 						pruv.setEmpName(cellValue[2]);
 						pruv.setHrcode(cellValue[3]);
 						pruv.setStartDate(cellValue[4]);

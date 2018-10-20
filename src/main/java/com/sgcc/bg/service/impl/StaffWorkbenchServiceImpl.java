@@ -142,7 +142,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		Object[][] title = { 
 							 { "填报日期\r\n（必填，格式：YYYY-MM-DD）", "DATE","nowrap"},
 							 { "项目类型\r\n（必填）", "CATEGORY" ,"nowrap"},
-							 { "WBS编号/项目编号\r\n（项目工作必填，非项目工作不填）", "WBS_NUMBER" ,"nowrap"}, 
+							 { "项目编号\r\n（项目工作必填，非项目工作不填）", "PROJECT_NUMBER" ,"nowrap"}, 
 							 { "项目名称\r\n（选填）","PROJECT_NAME","nowrap"},
 							 { "工作内容\r\n（选填 200字以内）",""}, 
 							 { "投入工时\r\n(必填 数字 h）","","nowrap"},
@@ -175,7 +175,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 			int rows = sheet.getLastRowNum();
 			String categoryStr="[科研项目],[横向项目],[技术服务项目],[非项目工作]";
 			//获取所有项目编号存入一个集合
-			List<String> list=bgMapper.getAllWbsNumbers();
+			List<String> list=bgMapper.getAllBgNumbers();
 			String regex = "^([0-9]+|[0-9]*\\.[05])$";
 			SWServiceLog.info("项目信息excel表格最后一行： " + rows);
 			/* 保存有效的Excel模版列数 */
@@ -223,17 +223,17 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						errorInfo.append("无此项目类型！");
 						errorNum.add(2);
 					}
-					// 校验wbs编号(无论是什么类型，只要是不是非项目，就校验wbs编号)
+					// 校验项目编号(无论是什么类型，只要是不是非项目，就校验项目编号)
 					if(!"非项目工作".equals(cellValue[2])){
 						//如果项目类型不为非项目工作则校验其wbs编号
 						if (cellValue[3] == null || "".equals(cellValue[3])) {
-							errorInfo.append("wbs编号/项目编号不能为空！");
+							errorInfo.append("项目编号不能为空！");
 							errorNum.add(3);
 						}else if(!list.contains(cellValue[3])){
-							errorInfo.append("项目中不存在此WBS编号/项目编号！");
+							errorInfo.append("项目中不存在此项目编号！");
 							errorNum.add(3);
 						}else{
-							proId=bgMapper.getProIdByWBSNmuber(cellValue[3]);
+							proId=bgMapper.getProIdByBgNmuber(cellValue[3]);
 						}
 						//项目存在
 						if(!Rtext.isEmpty(proId)){
@@ -345,7 +345,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						map.put("SQNUM",cellValue[0]);
 						map.put("DATE",cellValue[1]);
 						map.put("CATEGORY",cellValue[2]);
-						map.put("WBS_NUMBER",cellValue[3]);
+						map.put("PROJECT_NUMBER",cellValue[3]);
 						map.put("PROJECT_NAME",cellValue[4]);
 						map.put("JOB_CONTENT",cellValue[5]);
 						map.put("WORKING_HOUR",cellValue[6]);
@@ -366,7 +366,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						 { "序号\r\n（选填）", "SQNUM","nowrap"},
 						 { "填报日期 \r\n（必填，格式：YYYY-MM-DD）", "DATE","nowrap"},
 						 { "项目类型\r\n（必填）", "CATEGORY","nowrap" },
-						 { "WBS编号/项目编号\r\n（项目工作必填，非项目工作不填）", "WBS_NUMBER","nowrap" }, 
+						 { "项目编号\r\n（项目工作必填，非项目工作不填）", "PROJECT_NUMBER","nowrap" }, 
 						 { "项目名称\r\n（选填）","PROJECT_NAME","nowrap"},
 						 { "工作内容\r\n（必填 200字以内）","JOB_CONTENT"}, 
 						 { "投入工时（h）\r\n（必填 数字 h）","WORKING_HOUR","nowrap"},

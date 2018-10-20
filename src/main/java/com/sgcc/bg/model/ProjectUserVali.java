@@ -79,12 +79,12 @@ public class ProjectUserVali implements Serializable {
 		this.empName = empName;
 	}
 	
-	public String getprojectNumber() {
-		return projectNumber;
+	public String getProjectNumber() {
+		return this.projectNumber;
 	}
 
-	public void setprojectNumber(String projectNumber) {
-		projectNumber = projectNumber;
+	public void setProjectNumber(String projectNumber) {
+		this.projectNumber = projectNumber;
 	}
 
 	public String getProjectId() {
