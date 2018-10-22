@@ -148,7 +148,7 @@ function queryList(load){
 	var cols = [
 	            {title:'序列', name:'Count', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'统计周期', name:'StartAndEndData' , width:100, sortable:false, align:'center'},
-	            {title:'投入总工时（h）', name:'TotalHoursNum', width:100, sortable:false, align:'center',  renderer: function(val,row){
+	            {title:'投入总工时（h）', name:'TotalHoursNum', width:150, sortable:false, align:'center',  renderer: function(val,row){
 	            	if(val>0){
 	            		 return ' <span Style="Color: #00b"  class="popup" startTime="'+row.StartData+'"  endTime="'+row.EndData+'" type="0">' +val + '</span> ';
 	            	 }else{
