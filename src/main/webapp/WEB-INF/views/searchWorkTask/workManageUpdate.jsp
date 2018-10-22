@@ -130,10 +130,11 @@ function forSave(){
 			data:param,
 			success:function(data){
 				if(data.success == "true"){
-					 layer.msg(data.msg);
+					 parent.parent.layer.msg(data.msg);
 				}else{
-					 layer.msg(data.msg);
+					 parent.parent.layer.msg(data.msg);
 				}
+				forClose();
 			}
 		});
 		
@@ -177,11 +178,11 @@ function workCommit(){
 			data:param,
 			success:function(data){
 				if(data.success == "true"){
-					 layer.msg(data.msg);
-					 parent.layer.close(parent.layer.getFrameIndex(window.name));
+					 parent.parent.layer.msg(data.msg);
 				}else{
-					 layer.msg(data.msg);
+					 parent.parent.layer.msg(data.msg);
 				}
+				forClose();
 			}
 		});
 		 
