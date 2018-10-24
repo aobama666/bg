@@ -253,7 +253,7 @@
 		var validator=[
               	      {name:'category',vali:'required'},
              	      {name:'projectName',vali:'required;length[-50]'},
-             	      {name:'WBSNumber',vali:'checkUniqueness()'},//required;WBS编号不作为必填项校验了
+             	      {name:'WBSNumber',vali:''},//WBS编号不作为必填项校验了
              	      {name:'projectIntroduce',vali:'length[-200]'},
              	      {name:'startDate',vali:'required;date;checkStartDate()'},
              	      {name:'endDate',vali:'required;date;checkEndDate()'},
@@ -261,6 +261,14 @@
              	      {name:'planHours',vali:'required;checkNumberFormat()'},
              	      {name:'decompose',vali:'required'}
              	];
+        var category=$("select[name='category']").val();
+        var wbs=$("#WBSNumber input");
+        //当为科研、横向项目时，校验wbs编号,否则如果天了wbs编号的话，只校验其唯一性
+        if(category=='HX' || category=='KY' ){
+        	validator[2].vali='required;checkUniqueness()';
+        }else if($.trim(wbs.val())!=''){
+        	validator[2].vali='checkUniqueness()';
+        }
 		//当为技术服务项目时候，不校验项编号，并移除错误提示
 		/*if($("select[name='category']").val()=="JS"){
 			validator.splice(2,1);

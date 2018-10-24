@@ -267,14 +267,15 @@ public class BGServiceImpl implements IBGService {
 							errorNum.add(3);
 						}
 					}*/
-					//校验wbs编号唯一性
-					if (cellValue[3] == null || "".equals(cellValue[3])) {
-//						errorInfo.append("wbs编号/项目编号不能为空！");
-//						errorNum.add(3);
-					}else if (!repeatChecker.add(cellValue[3])) {
+					//校验wbs编号，当为科研或横向时必填，如果填了，则校验唯一
+					if (("科研项目".equals(cellValue[2]) || "横向项目".equals(cellValue[2]))
+							&& Rtext.isEmpty(cellValue[3])) {
+						errorInfo.append("wbs编号不能为空！");
+						errorNum.add(3);
+					}else if (!Rtext.isEmpty(cellValue[3]) && !repeatChecker.add(cellValue[3])) {
 						errorInfo.append("wbs编号重复！");
 						errorNum.add(3);
-					}else if(wbsCodeSet.contains(cellValue[3])){
+					}else if(!Rtext.isEmpty(cellValue[3]) && wbsCodeSet.contains(cellValue[3])){
 						errorInfo.append("系统中已经存此wbs编号！");
 						errorNum.add(3);
 					}
@@ -412,7 +413,7 @@ public class BGServiceImpl implements IBGService {
 						{ "序号\r\n（选填）", "sqnum","nowrap" }, 
 						{ "项目名称\r\n（必填，50字以内）", "projectName","nowrap" }, 
 						{ "项目类型\r\n（必填）", "category" ,"nowrap"},
-						{ "WBS编号/项目编号\r\n（项目类型为科研项目、横向项目时必填）", "WBSNumber" ,"nowrap"}, 
+						{ "WBS编号\r\n（项目类型为科研项目、横向项目时必填）", "WBSNumber" ,"nowrap"}, 
 						{ "项目说明\r\n（200字以内）","projectIntroduce"},
 						{ "项目开始时间\r\n（必填，格式：YYYY-MM-DD）","startDate","nowrap"}, 
 						{ "项目结束时间\r\n（必填，格式：YYYY-MM-DD）","endDate","nowrap"},
