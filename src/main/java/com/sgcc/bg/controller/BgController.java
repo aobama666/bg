@@ -426,6 +426,12 @@ public class BgController {
 			resultMap.put("result", "fail");
 			return JSON.toJSONString(resultMap);
 		}
+		if(("KY".equalsIgnoreCase(category) || "HX".equalsIgnoreCase(category)) 
+				&& Rtext.isEmpty(WBSNumber)){
+			bgLog.info("科研或横向时，wbs编号为空！WBSNumber :"+WBSNumber);
+			resultMap.put("result", "fail");
+			return JSON.toJSONString(resultMap);
+		}
 		if("JS".equals(category) && Rtext.isEmpty(deptCode)){
 			bgLog.info("技术服务项目，组织信息为必填项");
 			resultMap.put("result", "fail");
