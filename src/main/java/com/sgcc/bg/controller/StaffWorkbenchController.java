@@ -28,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.CommonCurrentUser;
+import com.sgcc.bg.common.CommonUser;
 import com.sgcc.bg.common.ConfigUtils;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.FileDownloadUtil;
@@ -62,6 +63,14 @@ public class StaffWorkbenchController {
 		//从数据字典获取审核状态
 		String statusJson= dict.getDictDataJsonStr("cstatus100003");
 		map.put("statusJson", statusJson);
+		CommonUser user=webUtils.getCommonUser();
+		//获取当前提报人hrcode
+		String currentUserHrcode=user.getSapHrCode();
+		map.put("currentUserHrcode", currentUserHrcode);
+		//获取默认审核人
+		Map<String, String> approver =SWService.getDefaultApprover();
+		map.put("approverHrcode", approver.get("hrcode"));
+		map.put("approverName", approver.get("name"));
 		ModelAndView model = new ModelAndView("bg/staffWorkbench/bg_personal_fill",map);
 		return model;
 	}
@@ -74,7 +83,6 @@ public class StaffWorkbenchController {
 	@RequestMapping("/initPage")
 	@ResponseBody
 	public String initPage(String selectedDate) {
-		System.out.println("selectedDate: "+selectedDate);
 		List<Map<String, String>> jsonarry = SWService.getWorkingHourInfo(selectedDate);
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("items", jsonarry);
@@ -83,6 +91,17 @@ public class StaffWorkbenchController {
 		return jsonStr;
 	}
 
+	@RequestMapping("/approverSelector")
+	public ModelAndView approverSelector() {
+		//TODO
+		Map<String, Object> jsonMap=new HashMap<String, Object>();
+		List<Map<String, String>> jsonarry =SWService.getApproverList();
+		jsonMap.put("items", jsonarry);
+		String jsonStr = JSON.toJSONString(jsonMap);
+		ModelAndView model = new ModelAndView("bg/staffWorkbench/bg_approver_selector","items",jsonStr);
+		return model;
+	}
+	
 	@RequestMapping("/proJobSelector")
 	public ModelAndView proJobSelector(String selectedDate) {
 		Map<String, String> map=new HashMap<String, String>();

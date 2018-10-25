@@ -464,7 +464,6 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 			String proName = Rtext.toStringTrim(map.get("proName"), "");
 			String empName = Rtext.toStringTrim(map.get("empName"), "");
 			String hrCode = Rtext.toStringTrim(map.get("hrCode"), "");
-			CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 			//服用页面查询方法，把分页范围调大
 			dataList=smMapper.getWorkHourInfoByCondition(
 					getLimitDeptIds(webUtils.getUsername(),deptCode),startDate,endDate,category,proName,empName,hrCode,"0","100000000");

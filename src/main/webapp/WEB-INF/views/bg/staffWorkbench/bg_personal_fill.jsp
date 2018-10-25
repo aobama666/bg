@@ -114,7 +114,11 @@ td span{
 var mmg;
 //一个在保存之后才更改的时间
 var delayDate;
+var approverHrcode='${approverHrcode}';
+var approverName='${approverName}';
+var currentUserHrcode='${currentUserHrcode}';
 $(function(){
+	console.log(approverHrcode+"--"+approverName+"--"+currentUserHrcode);
 	$(".form_date").datepicker({
 		autoclose:true,
 		orientation:'auto',
@@ -232,8 +236,13 @@ function queryList(load){
 	            {titleHtml:'审核人<font class="glyphicon glyphicon-asterisk text-danger"></font>', name:'PRINCIPAL',width:90, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
-	            		if(item.CATEGORY=="非项目工作" && (item.STATUS=="0" || item.STATUS=="2")){
-	            			val='<div title="'+val+'" style="display:inline" class=""><input onblur="removeHint(this)" class="form-control" value="'+val+'" readonly style="text-align:center;width:90%;display:inline-block" name="" property="principal">'
+	            		if(item.EDIT=='yes'){//EDIT是一个标记，解决复杂情况下是否可编辑的问题
+	            			val='<div title="'+val+'" style="display:inline" class=""><input onclick="forAddApprover(this)" onblur="removeHint(this)" class="form-control" value="'+val+'" readonly style="text-align:center;width:90%;display:inline-block" name="" property="principal">'
+	            				+'<span style="width:10%;" class="glyphicon glyphicon-user"></span></div>';
+	            		}else if(item.EDIT=='no'){
+	            			val='<span title="'+val+'">'+val+'</span><input type="hidden" property="principal" value="'+val+'">';
+	            		}else if(item.CATEGORY=="非项目工作" && (item.STATUS=="0" || item.STATUS=="2")){
+	            			val='<div title="'+val+'" style="display:inline" class=""><input onclick="forAddApprover(this)" onblur="removeHint(this)" class="form-control" value="'+val+'" readonly style="text-align:center;width:90%;display:inline-block" name="" property="principal">'
 	            				+'<span style="width:10%;" class="glyphicon glyphicon-user"></span></div>';
 	            		}else{
 	            			val='<span title="'+val+'">'+val+'</span><input type="hidden" property="principal" value="'+val+'">';
@@ -287,6 +296,7 @@ function queryList(load){
 				return $(".form-group").sotoCollecter();
 			}
 		}).on({
+			/*
 			'loadSuccess':function(e, data){
 				var rows=$("#mmg tr").has("input:visible[property='principal']");
 				rows.each(function(){
@@ -323,6 +333,7 @@ function queryList(load){
 					row.stuffTree({bindLayId:id,root:'41000001',iframe:'self',empCode:empCode,empName:empName,checkType:'radio',popEvent:'pop'});
 				}
 			}
+			*/
 		});
 	if(load == "reload"){
 		mmg.load();
@@ -445,15 +456,31 @@ function forAddProJob(){
 
 //新增非项目工作
 function forAddNonProJob(){
+	var edit=currentUserHrcode==approverHrcode?'no':'yes';//非项目，如果默认审核人是本人时，不可编辑
 	mmg.addRow({
 		"CATEGORY":"非项目工作",
 		"PROJECT_NAME":"",
 		"STATUS":"0",
 		"JOB_CONTENT":"",
 		"WORKING_HOUR":"",
-		"PRINCIPAL":""
+		"HRCODE":approverHrcode,
+		"PRINCIPAL":approverName,
+		"EDIT":edit
 		});
 } 
+
+function forAddApprover(_this){
+	var row=$(_this).parents("tr");
+	var rowNum = row.find(".mmg-index").text();
+	layer.open({
+		type:2,
+		title:"审核人员选择框",
+		area:['620px', '80%'],
+		scrollbar:true,
+		skin:'query-box',
+		content:['<%=request.getContextPath()%>/staffWorkbench/approverSelector?rowNum='+rowNum]
+	}); 
+}
 
 // 删除
 function forDelete(_this,id){
@@ -479,8 +506,10 @@ function forDelete(_this,id){
 							mmg.load();
 						}					
 				},'text');
+			}else{
+				mmg.removeRow(index-1);
 			}
-		});
+	});
 }
 
 //撤回

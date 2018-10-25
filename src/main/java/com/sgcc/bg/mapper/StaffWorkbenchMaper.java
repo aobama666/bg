@@ -192,4 +192,26 @@ public interface StaffWorkbenchMaper {
 	 */
 	public int validateStaff(@Param("proId")String proId, @Param("username")String username);
 
+	/**
+	 * 根据用户id获取其最大的审核类型
+	 * @param userId
+	 * @return
+	 */
+	public String getTopSubmitType(@Param("userId")String userId);
+
+	/**
+	 * 根据提报人审核类型和所在部门id获取其默认审核人
+	 * @param subType
+	 * @param deptId 
+	 * @return
+	 */
+	public Map<String, String> getDefaultApprover(@Param("subType")String subType, @Param("deptId")String deptId);
+
+	/**
+	 * 根据提报人用户id和所在部门id获取其所有审核人
+	 * @param userId
+	 * @param deptId
+	 */
+	public List<Map<String,String>> getApproverList(@Param("userId")String userId,@Param("deptId")String deptId);
+
 }

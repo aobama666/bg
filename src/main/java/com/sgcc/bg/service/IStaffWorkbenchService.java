@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.sgcc.bg.model.ProcessRecordPo;
 import com.sgcc.bg.model.WorkHourInfoPo;
 
 public interface IStaffWorkbenchService {
@@ -141,5 +140,17 @@ public interface IStaffWorkbenchService {
 	 * @return
 	 */
 	String addExamineRecord(String bussinessId, String processUsername, String result, String note);
+
+	/**
+	 * 获取当前提报人的审核人列表
+	 * @return
+	 */
+	List<Map<String, String>> getApproverList();
+	
+	/**
+	 * 获取当前提报人的默认审核人
+	 * @return
+	 */
+	Map<String, String> getDefaultApprover();
 
 }

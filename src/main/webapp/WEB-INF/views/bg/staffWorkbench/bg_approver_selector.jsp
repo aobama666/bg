@@ -1,13 +1,6 @@
 <!DOCTYPE>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%-- <%@page import="crpri.ess.util.ToolsUtil"%>
-<%@page import="crpri.ess.util.JsonUtil"%> --%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.Map"%>
-<%-- <%
-	String path = ToolsUtil.getContextPath(request);
-%> --%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -28,16 +21,7 @@
 	src="<%=request.getContextPath()%>/common/plugins/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmGrid.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/common/plugins/layer/layer.min.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
-<!--[if lt IE 9>
-	<script src="<%=request.getContextPath()%>/common/plugins/html5shiv/html5shiv.min.js"></script>
-	<script src="<%=request.getContextPath()%>/common/plugins/respond/respond.js"></script>
-	<script src="<%=request.getContextPath()%>/common/plugins/pseudo/jquery.pseudo.js"></script>
-<![endif]-->
-
+<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/common.js"></script>
 <style type="text/css">
 a{
 	cursor: pointer;
@@ -59,11 +43,11 @@ a{
 				<th rowspan="" colspan=""></th>
 			</tr>
 		</table>
-		<div id="pg" style="text-align: right;"></div>
 	</div>
 </body>
 <script type="text/javascript">
 var mmg;
+var index=common.getQueryString("rowNum")-1;//正在编辑行的索引
 $(function(){
 	queryList();
 });
@@ -73,10 +57,9 @@ function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 				{title:'序列', name:'ID', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'项目名称', name:'PROJECT_NAME', width:150, sortable:false, align:'left'},
-	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center'},
-	            {title:'项目编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:'center'},
-	            {title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'}
+	            {title:'人员编号', name:'hrcode', width:100, sortable:false, align:'center'},
+	            {title:'人员姓名', name:'name', width:100, sortable:false, align:'center'},
+	            {title:'部门（单位）', name:'deptName', width:150, sortable:false, align:'left'}
 	    		];
 	var mmGridHeight = $("body").parent().height()*0.8;
 	mmg = $('#mmg').mmGrid({
@@ -87,44 +70,40 @@ function queryList(load){
 		height: mmGridHeight,
 		cols: cols,
 		nowrap: true,
-		url: '<%=request.getContextPath()%>/staffWorkbench/getProjectsByDate?selectedDate=${selectedDate}&ran='+ran,
 		fullWidthRows: true,
 		multiSelect: true,
-		root: 'items'
+		items:(${items}).items
 		}).on('loadSuccess', function(e, data){
 			$(".checkAll").css("display","none").parent().text("选择");
+			//默认选中行
+			var data=parent.mmg.row(index);
+			var hrcode=data.HRCODE;
+			if(hrcode==undefined || hrcode==""){
+				//上次没有选
+				return;
+			}
+			mmg.select(function(item, index){
+				if(item.hrcode==hrcode){
+					return true;
+				}
+			});
 		});
 }
 
 function forAdd(){
 	var items = mmg.selectedRows();
-	var approverHrcode;
-	var approverName;
-	var edit;
-	for(var i=0;i<items.length;i++){
-		approverHrcode=items[i].HRCODE;
-		approverName=items[i].PRINCIPAL;
-		edit='no';
-		//新增项目，如果项目负责人是本人，则选择负责人的审核人,可编辑
-		if(items[i].HRCODE==parent.currentUserHrcode){
-			approverHrcode=parent.approverHrcode;
-			approverName=parent.approverName;
-			if(parent.approverHrcode!=parent.currentUserHrcode){//如果审核人不是本人，可编辑
-				edit='yes';
-			}
-		}
-		parent.mmg.addRow({
-			"PROJECT_ID":items[i].ID,
-			"CATEGORY":items[i].CATEGORY,
-			"PROJECT_NAME":items[i].PROJECT_NAME,
-			"PRINCIPAL":approverName,
-			"HRCODE":approverHrcode,
-			"STATUS":"0",
-			"JOB_CONTENT":"",
-			"WORKING_HOUR":"",
-			"EDIT":edit
-		});
+	var data=parent.mmg.row(index);
+	if(items.length>1){
+		parent.layer.msg("只能选择一名审核人！");
+		return;
+	}else if(items.length==0){
+		data.PRINCIPAL='';
+		data.HRCODE='';
+	}else if(items.length==1){
+		data.PRINCIPAL=items[0].name;
+		data.HRCODE=items[0].hrcode;
 	}
+	parent.mmg.updateRow(data,index);
 	forClose();
 }
 

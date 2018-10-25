@@ -23,13 +23,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
 import com.sgcc.bg.common.CommonCurrentUser;
+import com.sgcc.bg.common.CommonUser;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ExcelUtil;
 import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.common.FtpUtils;
-import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
@@ -541,5 +540,51 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	public String addExamineRecord(String bussinessId,String processUsername, String result, String note){
 		String processId=SWMapper.getFieldOfWorkHourById(bussinessId, "process_id");
 		return addProcessRecord(processId,bussinessId,processUsername,result,note);
+	}
+	
+	@Override
+	public	List<Map<String,String>> getApproverList(){
+		CommonUser user=webUtils.getCommonUser();
+		String username=user.getUserName();
+		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(username);
+		String userId=currentUser.getUserId();
+		String deptId=currentUser.getDeptId();//获取当前提报人当前所在部门
+		return SWMapper.getApproverList(userId,deptId);
+	}
+
+	@Override
+	public Map<String, String> getDefaultApprover() {
+		CommonUser user=webUtils.getCommonUser();
+		String username=user.getUserName();
+		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(username);
+		String hrcode=currentUser.getHrCode();
+		String useralias=currentUser.getUserAlias();
+		String userId=currentUser.getUserId();
+		String deptId=currentUser.getDeptId();//获取当前提报人当前所在部门
+		//获取当前提报人提交类型，取最大(数值最小的)
+		/*院领导	    SUT1	1
+		分管院领导		SUT2	2
+		院助理副总师	SUT3	3
+		部门行政正职	SUT4	4
+		部门副职		SUT5	5
+		部门助理副总师	SUT6	6
+		技术专家		SUT7	7
+		处室正职		SUT8	8
+		处室副职		SUT9	9
+		专业通道员工	SUT10	10
+		*/
+		String subType=SWMapper.getTopSubmitType(userId);
+		int subTypeNum=Rtext.ToInteger(subType, 0);
+		Map<String,String> approver=new HashMap<>();
+		approver.put("hrcode", hrcode);
+		approver.put("name", useralias);
+		//如果审核类型在部门副职及以上，则默认审批通过，返回自己
+		if(subTypeNum>5){
+			Map<String,String> resultMap=SWMapper.getDefaultApprover(subType,deptId);
+			if(resultMap!=null){
+				approver=resultMap;
+			}
+		}
+		return approver;
 	}
 }
