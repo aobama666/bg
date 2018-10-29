@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sgcc.bg.mapper.StaffWorkbenchMaper">
+	<!-- EDIT是一个标记，解决复杂情况下是否可编辑的问题 -->
 	<select id="getWorkingHourInfo" resultType="java.util.Map">
 		SELECT
 		   t.id, 
@@ -24,32 +25,30 @@
 	       t.job_content,
 	       t.working_hour,
 	       t.status,
-	       DECODE(t.category,
-              'NP',
-              (SELECT t3.useralias
-                 FROM BG_SYS_USER t3
-                WHERE t3.username = t.approver),
-              (SELECT t1.empname
-                        FROM BG_PROJECT_USER t1
-                       WHERE t1.project_id = t.project_id
-                         AND t1.role = '1'
-                         AND t1.status = '1')
-         	) as principal,
+	       u.useralias as principal,
 	       (SELECT t2.process_note
 	          FROM BG_PROCESS_RECORD t2
 	         WHERE t2.id = t.process_id AND t2.valid=1) as process_note,
-	       DECODE(t.category,
-              'NP',
-              (SELECT t3.hrcode
-                 FROM BG_SYS_USER t3
-                WHERE t3.username = t.approver),
-                (SELECT t4.hrcode
-          			FROM BG_PROJECT_USER t4
-             		WHERE t4.project_id = t.project_id
-           			AND t4.role = '1'
-          			AND t4.status = '1')
-             )as hrcode
+	       u.hrcode as hrcode,
+	       DECODE(
+	       	t.category,
+	       	'NP',
+	       	'yes',
+	       	DECODE(
+	       		t.worker,
+	       		(SELECT t2.username FROM BG_PROJECT_USER t1 
+  				 JOIN BG_SYS_USER t2
+    			 ON t1.hrcode = t2.hrcode
+ 				 WHERE t1.project_id = t.project_id
+   				 AND t1.role = '1'
+   				 AND t1.status = '1'),
+   				'yes',
+   				'no'	
+	       	)
+	       ) as edit
 	  	FROM BG_WORKINGHOUR_INFO t
+	  	LEFT JOIN BG_SYS_USER u 
+	  		ON u.username = t.approver
 	  	WHERE t.Work_Time = TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
 	  	 AND t.worker=#{username}
 	  	 AND t.valid=1
@@ -346,7 +345,7 @@
 	</update>
 	
 	<select id="getTopSubmitType" parameterType="String" resultType="String">
-		select min(td.sort_id)
+		select min(to_number(td.sort_id))
 			from BG_SYS_APPROVAL_USER_R_SUBTYPE t
 			join BG_SYS_DATADICTIONARY td
 		on td.code = t.subtype
@@ -411,8 +410,8 @@
                			(select organ_type
                  			 from BG_SYS_APPROVAL_DEPT_R_ORGTYPE
                 			where organ_id = #{deptId})
-           	         and d.sort_id =
-               			(select min(c.sort_id)
+           	         and to_number(d.sort_id) =
+               			(select min(to_number(c.sort_id))
                   			 from BG_SYS_APPROVAL_USER_R_SUBTYPE t
                   			 	left join BG_SYS_DATADICTIONARY c
                     				on c.code = t.subtype

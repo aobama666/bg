@@ -76,7 +76,7 @@
 			 and t.PROJECT_ID = #{projectId}
 		</if>
 		<if test="type!=null and type!=''">
-			 and t.category = #{type}
+			 and A.category = #{type}
 		</if>
 	</select>
 	

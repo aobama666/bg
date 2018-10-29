@@ -114,11 +114,10 @@ td span{
 var mmg;
 //一个在保存之后才更改的时间
 var delayDate;
-var approverHrcode='${approverHrcode}';
-var approverName='${approverName}';
-var currentUserHrcode='${currentUserHrcode}';
+var approverHrcode='${approverHrcode}';//默认审核人
+var approverName='${approverName}';//默认审核人
+var currentUserHrcode='${currentUserHrcode}';//当前提报人
 $(function(){
-	console.log(approverHrcode+"--"+approverName+"--"+currentUserHrcode);
 	$(".form_date").datepicker({
 		autoclose:true,
 		orientation:'auto',
@@ -236,13 +235,9 @@ function queryList(load){
 	            {titleHtml:'审核人<font class="glyphicon glyphicon-asterisk text-danger"></font>', name:'PRINCIPAL',width:90, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
-	            		if(item.EDIT=='yes'){//EDIT是一个标记，解决复杂情况下是否可编辑的问题
-	            			val='<div title="'+val+'" style="display:inline" class=""><input onclick="forAddApprover(this)" onblur="removeHint(this)" class="form-control" value="'+val+'" readonly style="text-align:center;width:90%;display:inline-block" name="" property="principal">'
-	            				+'<span style="width:10%;" class="glyphicon glyphicon-user"></span></div>';
-	            		}else if(item.EDIT=='no'){
-	            			val='<span title="'+val+'">'+val+'</span><input type="hidden" property="principal" value="'+val+'">';
-	            		}else if(item.CATEGORY=="非项目工作" && (item.STATUS=="0" || item.STATUS=="2")){
-	            			val='<div title="'+val+'" style="display:inline" class=""><input onclick="forAddApprover(this)" onblur="removeHint(this)" class="form-control" value="'+val+'" readonly style="text-align:center;width:90%;display:inline-block" name="" property="principal">'
+	            		//EDIT是一个标记，解决复杂情况下是否可编辑的问题,当审核人为本人时不可编辑
+	            		if(item.EDIT=='yes' && currentUserHrcode!=item.HRCODE && (item.STATUS=="0" || item.STATUS=="2")){
+	            			val='<div title="'+val+'" style="display:inline" class=""><input onclick="forAddApprover(this)" onblur="removeHint(this)" class="form-control" value="'+val+'" readonly style="text-align:center;width:90%;display:inline-block" name="principal" property="principal">'
 	            				+'<span style="width:10%;" class="glyphicon glyphicon-user"></span></div>';
 	            		}else{
 	            			val='<span title="'+val+'">'+val+'</span><input type="hidden" property="principal" value="'+val+'">';
@@ -456,7 +451,7 @@ function forAddProJob(){
 
 //新增非项目工作
 function forAddNonProJob(){
-	var edit=currentUserHrcode==approverHrcode?'no':'yes';//非项目，如果默认审核人是本人时，不可编辑
+	//var edit=currentUserHrcode==approverHrcode?'no':'yes';//非项目，如果默认审核人是本人时，不可编辑
 	mmg.addRow({
 		"CATEGORY":"非项目工作",
 		"PROJECT_NAME":"",
@@ -465,7 +460,7 @@ function forAddNonProJob(){
 		"WORKING_HOUR":"",
 		"HRCODE":approverHrcode,
 		"PRINCIPAL":approverName,
-		"EDIT":edit
+		"EDIT":'yes'
 		});
 } 
 

@@ -152,5 +152,11 @@ public interface IStaffWorkbenchService {
 	 * @return
 	 */
 	Map<String, String> getDefaultApprover();
-
+	
+	/**
+	 * 根据id获取该条报工记录审核人
+	 * @param id
+	 * @return
+	 */
+	String getApproverById(String id);
 }

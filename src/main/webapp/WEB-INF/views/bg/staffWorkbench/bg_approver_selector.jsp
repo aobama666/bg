@@ -22,6 +22,8 @@
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmGrid.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/common.js"></script>
+<script type="text/javascript"
+	src="<%=request.getContextPath()%>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
 <style type="text/css">
 a{
 	cursor: pointer;
@@ -77,7 +79,7 @@ function queryList(load){
 			$(".checkAll").css("display","none").parent().text("选择");
 			//默认选中行
 			var data=parent.mmg.row(index);
-			var hrcode=data.HRCODE;
+			var hrcode=parent.mmg.find("tr:eq("+index+") input[property='hrCode']").val();
 			if(hrcode==undefined || hrcode==""){
 				//上次没有选
 				return;
@@ -87,23 +89,29 @@ function queryList(load){
 					return true;
 				}
 			});
+			//只有一行被选中
+			$("#mmg tr").click(function(){
+				var selectedRow=mmg.selectedRowsIndex();
+				$.each(selectedRow,function(i,n){
+					mmg.deselect(n);
+				});
+			});		
 		});
 }
 
 function forAdd(){
 	var items = mmg.selectedRows();
-	var data=parent.mmg.row(index);
+	var row=parent.mmg.find("tr:eq("+index+")");
 	if(items.length>1){
 		parent.layer.msg("只能选择一名审核人！");
 		return;
 	}else if(items.length==0){
-		data.PRINCIPAL='';
-		data.HRCODE='';
+		row.find("input[property='hrCode']").val();
+		row.find("input[property='principal']").val();
 	}else if(items.length==1){
-		data.PRINCIPAL=items[0].name;
-		data.HRCODE=items[0].hrcode;
+		row.find("input[property='hrCode']").val(items[0].hrcode);
+		row.find("input[property='principal']").val(items[0].name);
 	}
-	parent.mmg.updateRow(data,index);
 	forClose();
 }
 

@@ -17,6 +17,7 @@ import com.sgcc.bg.common.CommonUser;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.common.ResultWarp;
+import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.mapper.BgWorkinghourInfoMapper;
@@ -128,6 +129,7 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 				 String jobContent = request.getParameter("workContent" ) == null ? "" : request.getParameter("workContent").toString(); 
 				 String workingHour = request.getParameter("hours" ) == null ? "" : request.getParameter("hours").toString(); 
 				 String date = request.getParameter("time" ) == null ? "" : request.getParameter("time").toString(); 
+				 String status="1";//报工记录状态（0 未提交 1 审批中 2 已驳回 3 已通过）
 				 /**
 				  * 验证
 				  * */
@@ -164,9 +166,13 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 						return JSON.toJSONString(rw);  
 				 }
 				 //添加流程记录
-				 //String processId=swService.addRecord(id, userName, "0", "", "submit");
 				 String processId=swService.addSubmitRecord(id, userName);
-				 int res=bgworkinghourinfoMapper.commitbgWorkinghourInfo(id,projectName,jobContent,workingHour,processId);   
+				 String approverName=swService.getApproverById(id);
+				 if(approverName.equals(userName)){//如果审核人就是本人，则默认通过
+						processId=swService.addExamineRecord(id, userName, "2", "");
+						status="3";
+					}
+				 int res=bgworkinghourinfoMapper.commitbgWorkinghourInfo(id,projectName,jobContent,workingHour,status,processId);   
 				 if(res>0){ 
 				  rw = new ResultWarp(ResultWarp.SUCCESS ,"提交成功"); 
 				  }else{
@@ -270,7 +276,6 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 					 * 
 					 * } } }
 					 */
-					String status = "1";
 					String[] idnum = id.split(",");
 					String[] xhnum = xh.split(",");
 					int res = 0;
@@ -281,8 +286,14 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 						List<Map<String, Object>> map = bgworkinghourinfoMapper.selectCheckTime(ids, "", "", "", "");
 						if (!map.isEmpty()) {
 							String worktime = (String) map.get(0).get("WORK_TIME");
-							String workhour = (String) map.get(0).get("WORKING_HOUR").toString();
-							double workhours = Double.valueOf(workhour);
+							String workhour = Rtext.toStringTrim(map.get(0).get("WORKING_HOUR"), "");
+							double workhours;
+							try {
+								workhours = Double.valueOf(workhour);
+							} catch (Exception e) {
+								rw = new ResultWarp(ResultWarp.FAILED, "提交成功" + count + "条，第"+xhs+"行工时格式错误！");
+								return JSON.toJSONString(rw);
+							}
 							// 校验当天工时是否超标
 							String checkResult = "";
 							// 校验当天工时是否超标
@@ -305,7 +316,14 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 							rw = new ResultWarp(ResultWarp.FAILED ,"提交成功" + count + "条，第"+xhs+"行重复提交！");
 							return JSON.toJSONString(rw);
 						}
+						//添加到流程记录
 						String processId = swService.addSubmitRecord(ids, userName);
+						String approverName=swService.getApproverById(ids);
+						String status="1";//报工记录状态（0 未提交 1 审批中 2 已驳回 3 已通过）
+						if(approverName.equals(userName)){//如果审核人就是本人，则默认通过
+							processId=swService.addExamineRecord(ids, userName, "2", "");
+							status="3";
+						}
 						res = bgworkinghourinfoMapper.backbgWorkinghourInfo(ids, status, processId);
 						if (res == 1) {
 							count++;

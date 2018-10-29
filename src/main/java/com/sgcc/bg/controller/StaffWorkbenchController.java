@@ -93,7 +93,6 @@ public class StaffWorkbenchController {
 
 	@RequestMapping("/approverSelector")
 	public ModelAndView approverSelector() {
-		//TODO
 		Map<String, Object> jsonMap=new HashMap<String, Object>();
 		List<Map<String, String>> jsonarry =SWService.getApproverList();
 		jsonMap.put("items", jsonarry);
@@ -309,6 +308,9 @@ public class StaffWorkbenchController {
 			double todayHours;
 			String processId;
 			String bussinessId=(whId.isEmpty()?Rtext.getUUID():whId);
+			CommonCurrentUser approver=userUtils.getCommonCurrentUserByHrCode(hrCode);
+			String approverName=approver==null?"":approver.getUserName();
+			String status="1";//报工记录状态（0 未提交 1 审批中 2 已驳回 3 已通过）
 			//校验数据
 			if("".equals(workHour) || "".equals(category) || "".equals(hrCode) ){
 				SWLog.info("提交的数据有空值： 工时："+workHour+"-项目类型："+category+"-负责人编号："+hrCode);
@@ -337,6 +339,10 @@ public class StaffWorkbenchController {
 			}
 			//添加到流程记录表
 			processId=SWService.addSubmitRecord(bussinessId, username);
+			if(approverName.equals(username)){//如果审核人就是本人，则默认通过
+				processId=SWService.addExamineRecord(bussinessId, username, "2", "");
+				status="3";
+			}
 			//提交
 			if(Rtext.isEmpty(whId)){
 				//执行保存操作
@@ -356,15 +362,14 @@ public class StaffWorkbenchController {
 				wp.setProName(projectName);
 				wp.setJobContent(jobContent);
 				wp.setWorkHour(todayHours);
-				CommonCurrentUser approver=userUtils.getCommonCurrentUserByHrCode(hrCode);
-				wp.setApprover(approver.getUserName());
+				wp.setApprover(approverName);
 				//获取报工人指定日期所属部门信息
 				CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(username,selectedDate);
 				wp.setWorker(username);
 				wp.setDeptId(user.getpDeptId());
 				wp.setLabId(user.getDeptId());
 				wp.setWorkTime(DateUtil.fomatDate(selectedDate));
-				wp.setStatus("1");
+				wp.setStatus(status);
 				wp.setValid("1");
 				wp.setCreateUser(username);
 				wp.setCreateTime(new Date());
@@ -383,11 +388,10 @@ public class StaffWorkbenchController {
 				wp.setProName(projectName);
 				wp.setJobContent(jobContent);
 				wp.setWorkHour(todayHours);
-				CommonCurrentUser approverUser=userUtils.getCommonCurrentUserByHrCode(hrCode);
-				wp.setApprover(approverUser==null?"":approverUser.getUserName());
+				wp.setApprover(approverName);
 				wp.setUpdateUser(username);
 				wp.setUpdateTime(new Date());
-				wp.setStatus("1");
+				wp.setStatus(status);
 				wp.setProcessId(processId);
 				count+= SWService.updateWorkHourInfo(wp);
 				bussinessId=wp.getId();

@@ -250,6 +250,7 @@
 				$("#deptName").val($("#currentDeptName").val());
 				$("#deptCode").val($("#currentDeptCode").val());
 			}
+			$("#WBSNumber label").html('WBS编号');
 			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>项目编号');
 			if(currentCategory==type){
 				$("#WBSNumber input").val(currentWBSNumber);
@@ -259,8 +260,9 @@
 			$("#WBSNumber input").attr("readonly","").css({'color':'#999','font-style':'italic'});
 			*/
 		}
-		if(type!="JS"){
+		if(type=="KY" || type=="HX"){
 			$("#organInfo").hide();
+			$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
 			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
 			if(currentCategory==type){
 				$("#WBSNumber input").val(currentWBSNumber);

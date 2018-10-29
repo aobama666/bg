@@ -109,9 +109,7 @@ function forAdd(){
 		if(items[i].HRCODE==parent.currentUserHrcode){
 			approverHrcode=parent.approverHrcode;
 			approverName=parent.approverName;
-			if(parent.approverHrcode!=parent.currentUserHrcode){//如果审核人不是本人，可编辑
-				edit='yes';
-			}
+			edit='yes';
 		}
 		parent.mmg.addRow({
 			"PROJECT_ID":items[i].ID,

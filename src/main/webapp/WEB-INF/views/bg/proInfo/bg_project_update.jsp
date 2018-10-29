@@ -84,7 +84,6 @@
 			</div>
 			<hr>
 			<div class="form-box">
-				<c:out value="${proUsers}"></c:out>
 				<div class="form-group col-xs-11">
 					<label for=""category""><font
 						class="glyphicon glyphicon-asterisk required"></font>项目分类</label>
@@ -221,8 +220,6 @@
 <script type="text/javascript">
 	var mmg;
 	var tempStartDate;
-/* 	var pn = 1;
-	var limit = 30; */
 	$(function(){
 		queryList();
 		$(".form_date").datepicker({
@@ -643,6 +640,7 @@
 				$("#deptName").val($("#currentDeptName").val());
 				$("#deptCode").val($("#currentDeptCode").val());
 			}
+			$("#WBSNumber label").html('WBS编号');
 			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>项目编号');
 			if($("#category").val()==type){
 				$("#WBSNumber input").val($("#currentWBSNumber").val());
@@ -651,8 +649,9 @@
 			}
 			$("#WBSNumber input").attr("readonly","").css({'color':'#999','font-style':'italic'});*/
 		}
-		if(type!="JS"){
+		if(type=="KY" || type=="HX"){
 			$("#organInfo").hide();
+			$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
 			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
 			if($("#category").val()==type){
 				$("#WBSNumber input").val($("#currentWBSNumber").val());

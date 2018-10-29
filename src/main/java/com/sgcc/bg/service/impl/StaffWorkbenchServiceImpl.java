@@ -587,4 +587,9 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		}
 		return approver;
 	}
+	
+	@Override
+	public String getApproverById(String id) {
+		return SWMapper.getFieldOfWorkHourById(id, "approver");
+	}
 }
