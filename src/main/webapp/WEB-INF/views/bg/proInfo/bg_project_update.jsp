@@ -113,7 +113,9 @@
 					</div>
 				</div>
 				<div class="form-group col-xs-11" id="WBSNumber">
-					<label for="WBSNumber">WBS编号</label>
+					<label for="WBSNumber">
+						<c:if test="${category=='KY' or category=='HX'}">
+						<font class="glyphicon glyphicon-asterisk required"></font></c:if>WBS编号</label>
 					<div class="controls">
 						<input type="text" name="WBSNumber" property="WBSNumber" value="${WBSNumber}">
 					</div>

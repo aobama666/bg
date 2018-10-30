@@ -118,7 +118,8 @@
 					</div>
 				</div>	
 				<div class="form-group col-xs-11" id="WBSNumber">
-					<label for="WBSNumber"></font>WBS编号</label>
+					<label for="WBSNumber">
+						<font class="glyphicon glyphicon-asterisk required"></font>WBS编号</label>
 					<div class="controls">
 						<input type="text" name="WBSNumber" property="WBSNumber">
 					</div>
