@@ -503,6 +503,9 @@ function forDelete(_this,id){
 				},'text');
 			}else{
 				mmg.removeRow(index-1);
+				$("#mmg tr").each(function(i){
+					$(this).find(".mmg-index").text(i+1);
+				});
 			}
 	});
 }
