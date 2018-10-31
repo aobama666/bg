@@ -69,8 +69,8 @@ public class StaffWorkbenchController {
 		map.put("currentUserHrcode", currentUserHrcode);
 		//获取默认审核人
 		Map<String, String> approver =SWService.getDefaultApprover();
-		map.put("approverHrcode", approver.get("hrcode"));
-		map.put("approverName", approver.get("name"));
+		map.put("approverHrcode", approver==null?"":approver.get("hrcode"));
+		map.put("approverName", approver==null?"":approver.get("name"));
 		ModelAndView model = new ModelAndView("bg/staffWorkbench/bg_personal_fill",map);
 		return model;
 	}

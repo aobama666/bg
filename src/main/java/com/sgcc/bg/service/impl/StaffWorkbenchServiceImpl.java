@@ -576,14 +576,12 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		String subType=SWMapper.getTopSubmitType(userId);
 		int subTypeNum=Rtext.ToInteger(subType, 0);
 		Map<String,String> approver=new HashMap<>();
-		approver.put("hrcode", hrcode);
-		approver.put("name", useralias);
 		//如果审核类型在部门副职及以上，则默认审批通过，返回自己
 		if(subTypeNum>5){
-			Map<String,String> resultMap=SWMapper.getDefaultApprover(subType,deptId);
-			if(resultMap!=null){
-				approver=resultMap;
-			}
+			approver=SWMapper.getDefaultApprover(subType,deptId);
+		}else{
+			approver.put("hrcode", hrcode);
+			approver.put("name", useralias);
 		}
 		return approver;
 	}
