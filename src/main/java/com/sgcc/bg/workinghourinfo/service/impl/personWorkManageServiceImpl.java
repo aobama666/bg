@@ -291,7 +291,8 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 							try {
 								workhours = Double.valueOf(workhour);
 							} catch (Exception e) {
-								rw = new ResultWarp(ResultWarp.FAILED, "提交成功" + count + "条，第"+xhs+"行工时格式错误！");
+								rw = new ResultWarp(ResultWarp.FAILED, "提交成功" + count + "条，"
+										+ "第"+xhs+"行工时"+(Rtext.isEmpty(workhour)?"未填写！":"格式错误！"));
 								return JSON.toJSONString(rw);
 							}
 							// 校验当天工时是否超标

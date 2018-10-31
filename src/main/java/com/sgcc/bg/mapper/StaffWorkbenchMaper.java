@@ -193,7 +193,7 @@ public interface StaffWorkbenchMaper {
 	public int validateStaff(@Param("proId")String proId, @Param("username")String username);
 
 	/**
-	 * 根据用户id获取其最大的审核类型
+	 * 根据用户id获取其最大的审核类型（默认10级）
 	 * @param userId
 	 * @return
 	 */

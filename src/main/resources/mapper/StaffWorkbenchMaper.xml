@@ -345,7 +345,7 @@
 	</update>
 	
 	<select id="getTopSubmitType" parameterType="String" resultType="String">
-		select min(to_number(td.sort_id))
+		select nvl(min(to_number(td.sort_id)),10)
 			from BG_SYS_APPROVAL_USER_R_SUBTYPE t
 			join BG_SYS_DATADICTIONARY td
 		on td.code = t.subtype
@@ -357,72 +357,91 @@
 	
 	<select id="getDefaultApprover" parameterType="String" resultType="java.util.Map">
 		select u.hrcode as "hrcode", u.useralias as "name"
-  			from BG_SYS_APPROVAL_USER_R_SUBTYPE t
- 			left join BG_SYS_USER u
-    			on u.userid = t.user_id
-  			left join BG_SYS_DEPT p
-   				 on t.manage_dept = p.deptid
-   				 and p.valid = 1
-	 		where #{deptId} in
-	       		(select p1.deptid
-	         		 from BG_SYS_DEPT p1
-	        	   where (p.type = 0)
-	            		or (p.type = 1 and p1.pdeptid = p.deptid or p1.deptid = p.deptid)
-	            		or (p.type = 2 and p1.deptid = p.deptid)
-	           			and p1.valid = 1)
-	   		and t.subtype =
-	       		(select r.approval_role
-	         		 from BG_SYS_APPROVAL_RULE r
-	          		 join BG_SYS_DATADICTIONARY d
-	            		on r.submit_role = d.code
-	        	   where r.approval_role_organtype =
-	               		(select organ_type
-	                  		from BG_SYS_APPROVAL_DEPT_R_ORGTYPE
-	                 	  where organ_id = #{deptId})
-	           				and d.sort_id = #{subType}
-	           				and r.is_default = 1
-	           				and d.pcode = 'submitUserType'
-	           				and r.valid = 1
-	           				and d.vaild = 1)
-	   		and t.valid = 1
+		  from BG_SYS_APPROVAL_USER_R_SUBTYPE t
+		  left join BG_SYS_USER u
+		    on u.userid = t.user_id
+		  left join BG_SYS_DEPT p
+		    on t.manage_dept = p.deptid
+		   and p.valid = 1
+		 where #{deptId} in
+		       (select p1.deptid
+		          from BG_SYS_DEPT p1
+		         where p1.valid = 1
+		         start with p1.deptid = p.deptid
+		        connect by prior p1.deptid = p1.pdeptid)
+		   and t.subtype = (select r.approval_role
+		                      from BG_SYS_APPROVAL_RULE r
+		                      join BG_SYS_DATADICTIONARY d
+		                        on r.submit_role = d.code
+		                     where r.approval_role_organtype =
+		                           (select p.code
+		                              from bg_sys_approval_dept_r_orgtype o
+		                              left join BG_SYS_DATADICTIONARY p
+		                                on p.id = o.organ_type
+		                               and p.vaild = 1
+		                             where rownum = 1
+		                               and #{deptId} in
+		                                   (select p1.deptid
+		                                      from BG_SYS_DEPT p1
+		                                     where p1.valid = 1
+		                                     start with p1.deptid = o.organ_id
+		                                    connect by prior p1.deptid = p1.pdeptid))
+		                          
+		                       and d.sort_id = #{subType}
+		                       and r.is_default = 1
+		                       and d.pcode = 'submitUserType'
+		                       and r.valid = 1
+		                       and d.vaild = 1)
+		   and t.valid = 1
 	</select>
 	
 	<select id="getApproverList" parameterType="String" resultType="java.util.Map">
 		select u.hrcode as "hrcode", u.useralias as "name", p.deptname "deptName"
-  			from BG_SYS_APPROVAL_USER_R_SUBTYPE t
-  			left join BG_SYS_USER u
-    			on u.userid = t.user_id
-  			left join BG_SYS_DEPT p
-    			on t.manage_dept = p.deptid and p.valid = 1
- 		    where #{deptId} in
-       			(select p1.deptid
-          			from BG_SYS_DEPT p1
-        		  where (p.type = 0)
-            		or (p.type = 1 and p1.pdeptid = p.deptid or p1.deptid = p.deptid)
-            		or (p.type = 2 and p1.deptid = p.deptid)
-          			and p1.valid = 1)
-   			and t.subtype in
-       			(select r.approval_role
-          			from BG_SYS_APPROVAL_RULE r
-         			join BG_SYS_DATADICTIONARY d
-            			on r.submit_role = d.code
-         			where r.approval_role_organtype =
-               			(select organ_type
-                 			 from BG_SYS_APPROVAL_DEPT_R_ORGTYPE
-                			where organ_id = #{deptId})
-           	         and to_number(d.sort_id) =
-               			(select min(to_number(c.sort_id))
-                  			 from BG_SYS_APPROVAL_USER_R_SUBTYPE t
-                  			 	left join BG_SYS_DATADICTIONARY c
-                    				on c.code = t.subtype
-                				 where t.user_id = #{userId}
-                   				 	and t.valid = 1
-                  					and c.vaild = 1)
-           		   and d.pcode = 'submitUserType'
-           		   and r.valid = 1
-                   and d.vaild = 1)
-   			and t.valid = 1
- 			order by t.subtype asc
+		  from BG_SYS_APPROVAL_USER_R_SUBTYPE t
+		  left join BG_SYS_USER u
+		    on u.userid = t.user_id
+		  left join BG_SYS_DEPT p
+		    on t.manage_dept = p.deptid
+		   and p.valid = 1
+		 where #{deptId} in
+		       (select p1.deptid
+		          from BG_SYS_DEPT p1
+		         where p1.valid = 1
+		         start with p1.deptid = p.deptid
+		        connect by prior p1.deptid = p1.pdeptid)
+		   and t.subtype in
+		       (select r.approval_role
+		          from BG_SYS_APPROVAL_RULE r
+		          join BG_SYS_DATADICTIONARY d
+		            on r.submit_role = d.code
+		         where r.approval_role_organtype =
+		               (select p.code
+		                  from bg_sys_approval_dept_r_orgtype r
+		                  left join BG_SYS_DATADICTIONARY p
+		                    on p.id = r.organ_type
+		                   and p.vaild = 1
+		                 where rownum = 1
+		                   and #{deptId} in
+		                       ( 
+		                        select p1.deptid
+		                          from BG_SYS_DEPT p1
+		                         where p1.valid = 1
+		                         start with p1.deptid = r.organ_id
+		                        connect by prior p1.deptid = p1.pdeptid))
+		           and d.sort_id =
+		               (select nvl(to_number(min(c.sort_id)), 10)
+		                  from BG_SYS_APPROVAL_USER_R_SUBTYPE t
+		                  left join BG_SYS_DATADICTIONARY c
+		                    on c.code = t.subtype
+		                 where t.user_id = #{userId}
+		                   and c.pcode = 'submitUserType'
+		                   and t.valid = 1
+		                   and c.vaild = 1)
+		           and d.pcode = 'submitUserType'
+		           and r.valid = 1
+		           and d.vaild = 1)
+		   and t.valid = 1
+		 order by t.subtype asc
 	</select>
 	
 </mapper>
