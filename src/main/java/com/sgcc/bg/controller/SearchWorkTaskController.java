@@ -1,26 +1,28 @@
 package com.sgcc.bg.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
 import com.alibaba.fastjson.JSON;
 import com.sgcc.bg.common.CommonUser;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ExportExcelHelper;
-import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
-import com.sgcc.bg.model.Recode;
+import com.sgcc.bg.service.DataDictionaryService;
+import com.sgcc.bg.service.IStaffWorkbenchService;
 import com.sgcc.bg.service.SearchWorkTaskService;
 
 @Controller
@@ -28,13 +30,21 @@ import com.sgcc.bg.service.SearchWorkTaskService;
 public class SearchWorkTaskController {
 	private Logger logger = Logger.getLogger(OrganStuffTreeController.class);
 	@Autowired
-	SearchWorkTaskService searchWorkTaskService;
+	private SearchWorkTaskService searchWorkTaskService;
 	
 	@Autowired
-	WebUtils webUtils;
+	private WebUtils webUtils;
 	
 	@Autowired
-	UserUtils userUtils;
+	private UserUtils userUtils;
+	
+	@Autowired
+	private DataDictionaryService dict;
+	
+	@Autowired
+ 	private IStaffWorkbenchService swService;
+	
+
 	
 	DateUtil dateUtils = new DateUtil();
 	/*
@@ -42,7 +52,11 @@ public class SearchWorkTaskController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/index")
-	public ModelAndView Index(){
+	public ModelAndView Index(HttpServletRequest res){
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		String statusJson=dict.getDictDataJsonStr("pstatus100001");
+		res.setAttribute("categoryMap", categoryMap);
+		res.setAttribute("statusJson", statusJson);
 		ModelAndView model = new ModelAndView("searchWorkTask/searchWorkTask");
 		return model;
 	}
@@ -52,7 +66,9 @@ public class SearchWorkTaskController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/examineIndex")
-	public ModelAndView examineIndex(){
+	public ModelAndView examineIndex(HttpServletRequest res){
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		res.setAttribute("categoryMap", categoryMap);
 		ModelAndView model = new ModelAndView("searchWorkTask/examineWokingHour");
 		return model;
 	}
@@ -61,7 +77,11 @@ public class SearchWorkTaskController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/examined")
-	public ModelAndView examined(){
+	public ModelAndView examined(HttpServletRequest res){
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		res.setAttribute("categoryMap", categoryMap);
+		String statusJson=dict.getDictDataJsonStr("cstatus100003");
+		res.setAttribute("statusJson", statusJson);
 		ModelAndView model = new ModelAndView("searchWorkTask/examined");
 		return model;
 	}
@@ -91,7 +111,13 @@ public class SearchWorkTaskController {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/personWorkManage")
-	public ModelAndView personWorkManage(){
+	public ModelAndView personWorkManage(HttpServletRequest res){
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		Map<String,String> statusMap= dict.getDictDataByPcode("cstatus100003");
+		String statusJson=dict.getDictDataJsonStr("cstatus100003");
+		res.setAttribute("categoryMap", categoryMap);
+		res.setAttribute("statusMap", statusMap);
+		res.setAttribute("statusJson", statusJson);
 		ModelAndView model = new ModelAndView("searchWorkTask/personWorkManage");
 		return model;
 	}
@@ -245,7 +271,8 @@ public class SearchWorkTaskController {
 			valueList = searchWorkTaskService.queryOutDelegationExport(startTime,endTime,type,projectName,hrCode,list);	
 			Object[][] title = { 
 					 { "项目类型", "CATEGORY" }, 
-					 { "WBS编号/项目编号","WBS_NUMBER"},
+					 { "项目编号","PROJECT_NUMBER"},
+					 { "WBS编号","WBS_NUMBER"},
 					 { "项目名称", "PROJECT_NAME" },
 					 { "项目开始时间","START_DATE"}, 
 					 { "项目结束时间","END_DATE"},
@@ -272,78 +299,33 @@ public class SearchWorkTaskController {
 		logger.info("【进行审批操作】："+type);
 		CommonUser userInfo = webUtils.getCommonUser();
 		/* 获取人自编号 */
-		String hrCode = userInfo.getSapHrCode();//当前用户人资编号
 		String dealUserName = userInfo.getUserName(); //当前用户名
-		String dealUserId = userInfo.getId();//当前用户id
-		String deptId = userUtils.getCommonCurrentUserByHrCode(hrCode, "").getDeptId();
-		String pDeptId = userUtils.getCommonCurrentUserByHrCode(hrCode, "").getpDeptId();
 		Map<String, String> map = new HashMap<>();
-		Date date = new Date();
 		//type==2是驳回   type==1是确认
 		if("2".equals(type)){
-			if(ided.length>1){
+			/*if(ided.length>1){
 				map.put("msg","只能选择一条");
 				return JSON.toJSONString(map);
-			}
+			}*/
 			String reason = request.getParameter("reason")==null?"":request.getParameter("reason");
 			if("".equals(reason)){
-				map.put("msg","退回原因不能为空");
+				map.put("msg","驳回原因不能为空");
 				return JSON.toJSONString(map);
 			}
 			for(String id:ided){
-				Recode recode = new Recode();
-				recode.setId(Rtext.getUUID());
-				recode.setBussinessId(id);
-				recode.setProcessDeptId(pDeptId);//处理人所在部门
-				recode.setProcessLabId(deptId);//处理人所在处室
-				recode.setProcessLink("BG_WORKINGHOUR_EXAMINE");//流程环节名称
-				recode.setProcessNextLink("");//下一个流程环节名称  
-				recode.setProcessCreateTime(date);
-				recode.setProcessUpdateTime(date);
-				recode.setProcessNextUserId("");
-				recode.setProcessUserId(dealUserId);
-				recode.setProcessNote(reason);//审批意见
-				recode.setProcessResult("2");//审批状态 2拒绝 1 通过
-				recode.setProcessType("BG_WORKINGHOUR");//流程实例名称 
-				recode.setValid(1);
-				try {
-					searchWorkTaskService.saveRecode(recode);
-				} catch (Exception e) {
-					e.printStackTrace();
-					logger.info("插入id: "+ id +" 的审核记录失败，失败原因为：" + e);
-					// TODO: handle exception
+				if(swService.canExamine(id)){//判断当前是否为可审批状态
+					String processId=swService.addExamineRecord(id, dealUserName, "3", reason);
+					searchWorkTaskService.confirmExamine(id,type,processId,dealUserName);
 				}
-				String dString = recode.getId();
-				searchWorkTaskService.confirmExamine(id,type,dString,dealUserName);
 			}
-			map.put("msg","退回成功");
+			map.put("msg","驳回成功");
 			return JSON.toJSONString(map);
 		}else{
 			for(String id:ided){
-				Recode recode = new Recode();
-				recode.setId(Rtext.getUUID());
-				recode.setBussinessId(id);
-				recode.setProcessDeptId(pDeptId);//处理人所在部门
-				recode.setProcessLabId(deptId);//处理人所在处室
-				recode.setProcessLink("BG_WORKINGHOUR_EXAMINE");//流程环节名称
-				recode.setProcessNextLink("");//下一个流程环节名称  
-				recode.setProcessUserId(dealUserId);
-				recode.setProcessCreateTime(date);
-				recode.setProcessUpdateTime(date);
-				recode.setProcessNextUserId("");
-				recode.setProcessNote("");//审批意见
-				recode.setProcessResult("1");//审批状态 2 拒绝 1 通过
-				recode.setProcessType("BG_WORKINGHOUR");//流程实例名称 
-				recode.setValid(1);
-				try {
-					searchWorkTaskService.saveRecode(recode);
-				} catch (Exception e) {
-					e.printStackTrace();
-					logger.info("插入id: "+ id +" 的审核记录失败，失败原因为：" + e);
-					// TODO: handle exception
+				if(swService.canExamine(id)){//判断当前是否为可审批状态
+					String processId=swService.addExamineRecord(id, dealUserName, "2", "");
+					searchWorkTaskService.confirmExamine(id,type,processId,dealUserName);
 				}
-				String dString = recode.getId();//增加记录的主键id = PROCESS_ID
-				searchWorkTaskService.confirmExamine(id,type,dString,dealUserName);
 			}
 			map.put("msg","审批成功");
 			return JSON.toJSONString(map);

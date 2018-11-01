@@ -2,7 +2,6 @@ package com.sgcc.bg.service.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,11 +23,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.sgcc.bg.common.CommonCurrentUser;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ExcelUtil;
 import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.common.FtpUtils;
+import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
@@ -76,14 +77,41 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		return SWMapper.updateWorkHourInfoById(wp);
 	}
 	
+	@Override 
+	public boolean isConmmited(String id){
+		String status=SWMapper.getFieldOfWorkHourById(id, "status");
+		if("1".equals(status) || "3".equals(status)){
+			return true;
+		}
+		return false;
+	}
+	
+	@Override 
+	public boolean isExamined(String id){
+		String status=SWMapper.getFieldOfWorkHourById(id, "status");
+		if("2".equals(status) || "3".equals(status)){
+			return true;
+		}
+		return false;
+	}
+	
+	@Override 
+	public boolean canExamine(String id){
+		String status=SWMapper.getFieldOfWorkHourById(id, "status");
+		if("1".equals(status)){
+			return true;
+		}
+		return false;
+	}
+	
 	@Override
 	public void changeWorkHourInfoStatus(String id, String status) {
 		SWMapper.setFieldOfWorkHourById(id, "status", status,webUtils.getUsername(),new Date());
 	}
 
 	@Override
-	public void deleteWorkHourInfoById(String id) {
-		SWMapper.InvalidWorkHourInfoById(id,webUtils.getUsername(),new Date());
+	public int deleteWorkHourInfoById(String id) {
+		return SWMapper.InvalidWorkHourInfoById(id,webUtils.getUsername(),new Date());
 	}
 	
 	@Override
@@ -114,9 +142,9 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		Object[][] title = { 
 							 { "填报日期\r\n（必填，格式：YYYY-MM-DD）", "DATE","nowrap"},
 							 { "项目类型\r\n（必填）", "CATEGORY" ,"nowrap"},
-							 { "WBS编号/项目编号\r\n（项目工作必填，非项目工作不填）", "WBS_NUMBER" ,"nowrap"}, 
+							 { "项目编号\r\n（项目工作必填，非项目工作不填）", "PROJECT_NUMBER" ,"nowrap"}, 
 							 { "项目名称\r\n（选填）","PROJECT_NAME","nowrap"},
-							 { "工作内容\r\n（必填 200字以内）",""}, 
+							 { "工作内容\r\n（选填 200字以内）",""}, 
 							 { "投入工时\r\n(必填 数字 h）","","nowrap"},
 							 { "审核人员姓名\r\n（选填）","PRINCIPAL","nowrap"}, 
 							 { "审核人员员工编号\r\n（非项目工作必填）","HRCODE","nowrap"} 
@@ -147,7 +175,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 			int rows = sheet.getLastRowNum();
 			String categoryStr="[科研项目],[横向项目],[技术服务项目],[非项目工作]";
 			//获取所有项目编号存入一个集合
-			List<String> list=bgMapper.getAllWbsNumbers();
+			List<String> list=bgMapper.getAllBgNumbers();
 			String regex = "^([0-9]+|[0-9]*\\.[05])$";
 			SWServiceLog.info("项目信息excel表格最后一行： " + rows);
 			/* 保存有效的Excel模版列数 */
@@ -195,17 +223,17 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						errorInfo.append("无此项目类型！");
 						errorNum.add(2);
 					}
-					// 校验wbs编号(无论是什么类型，只要是不是非项目，就校验wbs编号)
+					// 校验项目编号(无论是什么类型，只要是不是非项目，就校验项目编号)
 					if(!"非项目工作".equals(cellValue[2])){
 						//如果项目类型不为非项目工作则校验其wbs编号
 						if (cellValue[3] == null || "".equals(cellValue[3])) {
-							errorInfo.append("wbs编号/项目编号不能为空！");
+							errorInfo.append("项目编号不能为空！");
 							errorNum.add(3);
 						}else if(!list.contains(cellValue[3])){
-							errorInfo.append("项目中不存在此WBS编号/项目编号！");
+							errorInfo.append("项目中不存在此项目编号！");
 							errorNum.add(3);
 						}else{
-							proId=bgMapper.getProIdByWBSNmuber(cellValue[3]);
+							proId=bgMapper.getProIdByBgNmuber(cellValue[3]);
 						}
 						//项目存在
 						if(!Rtext.isEmpty(proId)){
@@ -246,8 +274,9 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 					
 					// 工作内容校验
 					if (cellValue[5] == null || "".equals(cellValue[5])) {
-						errorInfo.append("工作内容不能为空！");
-						errorNum.add(5);
+						/*errorInfo.append("工作内容不能为空！");
+						errorNum.add(5);*/
+						//暂时不做工作内容的必填校验
 					} else if (cellValue[5].length() > 200) {
 						errorInfo.append("工作内容不能超过200字！");
 						errorNum.add(5);
@@ -316,7 +345,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						map.put("SQNUM",cellValue[0]);
 						map.put("DATE",cellValue[1]);
 						map.put("CATEGORY",cellValue[2]);
-						map.put("WBS_NUMBER",cellValue[3]);
+						map.put("PROJECT_NUMBER",cellValue[3]);
 						map.put("PROJECT_NAME",cellValue[4]);
 						map.put("JOB_CONTENT",cellValue[5]);
 						map.put("WORKING_HOUR",cellValue[6]);
@@ -337,7 +366,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						 { "序号\r\n（选填）", "SQNUM","nowrap"},
 						 { "填报日期 \r\n（必填，格式：YYYY-MM-DD）", "DATE","nowrap"},
 						 { "项目类型\r\n（必填）", "CATEGORY","nowrap" },
-						 { "WBS编号/项目编号\r\n（项目工作必填，非项目工作不填）", "WBS_NUMBER","nowrap" }, 
+						 { "项目编号\r\n（项目工作必填，非项目工作不填）", "PROJECT_NUMBER","nowrap" }, 
 						 { "项目名称\r\n（选填）","PROJECT_NAME","nowrap"},
 						 { "工作内容\r\n（必填 200字以内）","JOB_CONTENT"}, 
 						 { "投入工时（h）\r\n（必填 数字 h）","WORKING_HOUR","nowrap"},
@@ -420,11 +449,6 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	}
 
 	@Override
-	public void addProcessRecord(ProcessRecordPo pr) {
-		SWMapper.addProcessRecord(pr);
-	}
-
-	@Override
 	public List<Map<String, String>> getAllProjects(String startDate,String endDate) {
 		List<Map<String, String>> dataList=new ArrayList<Map<String, String>>();
 		//获取登录人名下所有已启动（不含结束和废止）项目项目
@@ -453,37 +477,69 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	}
 
 	@Override
-	public void recallWorkHour(String id) {
+	public int recallWorkHour(String id) {
 		String currentUsername=webUtils.getUsername();
-		String processId=SWMapper.getFieldOfWorkHourById(id,"process_id");
 		//记录表中的记录设为失效
-		SWMapper.setFieldOfProcessRecordById(processId,"valid","0");
+		//SWMapper.setFieldOfProcessRecordById(processId,"valid","0");
 		//添加撤回操作记录
-		ProcessRecordPo pr=new ProcessRecordPo();
-		String newProcessId=Rtext.getUUID();
-		pr.setId(newProcessId);
-		pr.setBussinessId(id);
-		pr.setProcessType("BG_WORKINGHOUR");
-		pr.setProcessLink("BG_WORKINGHOUR_SUBMIT");
-		//处理人为当前操作人
-		//获取处理人当前信息
-		String nowDay=DateUtil.getDay();
-		CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(currentUsername,nowDay);
-		pr.setProcessUserId(user.getUserName());
-		pr.setProcessDeptId(user.getpDeptId());
-		pr.setProcessLabtId(user.getDeptId());
-		pr.setProcessResult("3");
-		pr.setProcessCreateTime(new Date());
-		pr.setProcessUpdateTime(new Date());
-		//pr.setProcessNote();
-		//pr.setProcessNextLink();
-		//pr.setProcessNextUserId();
-		pr.setValid(1);
-		addProcessRecord(pr);
+		String processId = addRecallRecord(id, currentUsername);
 		//工时表中状态改为未提交，更新记录id
-		SWMapper.recallWorkHour(id,currentUsername,new Date(),newProcessId);
+		return SWMapper.recallWorkHour(id,currentUsername,new Date(),processId);
 	}
 
+	/**
+	 * 添加操作记录到流程记录表
+	 * @param processId 如果为null则新增记录，否则执行更新
+	 * @param bussinessId
+	 * @param processUsername
+	 * @param result
+	 * @param note
+	 * @return
+	 */
+	private String addProcessRecord(String processId,String bussinessId,String processUsername, String result, String note) {
+		ProcessRecordPo pr=new ProcessRecordPo();
+		pr.setId((processId==null)?Rtext.getUUID():processId);
+		pr.setBussinessId(bussinessId);
+		//获取处理人当前信息
+		CommonCurrentUser processUser=userUtils.getCommonCurrentUserByUsername(processUsername);
+		pr.setProcessUserId(processUsername);
+		pr.setProcessDeptId(processUser.getpDeptId());
+		pr.setProcessLabtId(processUser.getDeptId());
+		pr.setProcessResult(result);
+		pr.setProcessNote(note);
+		pr.setProcessCreateTime(new Date());
+		pr.setProcessUpdateTime(new Date());
+		//pr.setProcessStep("");
+		pr.setValid(1);
+		
+		int res;
+		if(processId==null){
+			res= SWMapper.addProcessRecord(pr);
+		}else{
+			res= SWMapper.updateProcessRecord(pr);
+		}
+		
+		if(res==1){
+			return pr.getId();
+		}
+		return "";
+	}
 	
+	//审批状态result : 0 已提交 1 待审批 2 已通过 3 已驳回 4 已撤回
+	@Override
+	public String addSubmitRecord(String bussinessId,String processUsername){
+		addProcessRecord(null,bussinessId,processUsername,"0","");
+		return addProcessRecord(null,bussinessId,processUsername,"1","");
+	}
 	
+	@Override
+	public String addRecallRecord(String bussinessId,String processUsername){
+		String processId=SWMapper.getFieldOfWorkHourById(bussinessId, "process_id");
+		return addProcessRecord(processId,bussinessId,processUsername,"4","");
+	}
+	@Override
+	public String addExamineRecord(String bussinessId,String processUsername, String result, String note){
+		String processId=SWMapper.getFieldOfWorkHourById(bussinessId, "process_id");
+		return addProcessRecord(processId,bussinessId,processUsername,result,note);
+	}
 }

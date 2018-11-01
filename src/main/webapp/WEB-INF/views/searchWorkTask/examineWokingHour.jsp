@@ -2,6 +2,7 @@
 <!-- authentication_index.jsp -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%-- <%@page import="crpri.ess.util.ToolsUtil"%>
 <%@page import="crpri.ess.util.JsonUtil"%> --%>
 <%@page import="java.util.List"%>
@@ -108,10 +109,9 @@
 			<div class="controls"  data-date-format="yyyy-mm-dd">
 				<select name="type">
 					<option value=""></option>
-					<option value="KY">科研项目</option>
-					<option value="HX">横向项目</option>
-					<option value="JS">技术服务项目</option>
-					<option value="NP">非项目工作</option>
+					<c:forEach var ="dict" items="${categoryMap}">
+						<option value=${dict.key}>${dict.value}</option>
+					</c:forEach>
 				</select>
 			</div>
 		</div>
@@ -234,17 +234,18 @@ function reject(){
 	if(selectList.length==0){
 		layer.msg("至少选择一条");
 		return false;
-	}else if(selectList.length>1){
+	}
+	/*else if(selectList.length>1){
 		layer.msg("只能选择一条");
 		return false;
-	}
+	}*/
 	index = layer.open({
 		type:1,
 		title:"审核备注",
 		area:['320px', '230px'],
 		resize:false,
 		scrollbar:false,
-		content:'<div class="buttonHead"><button class="reject btn btn-success btn-xs">确认</button></div><div class="contentHead"><label>驳回原因：<span style="color:#f00">(不超过200个字)*</span></label><textarea class="reason"></textarea></div>',
+		content:'<div class="buttonHead"><button class="reject btn btn-success btn-xs">确认</button></div><div class="contentHead"><label>驳回原因：<span style="color:#f00">(不超过200个字)*</span></label><textarea class="reason">驳回</textarea></div>',
 		end: function(){
 			queryList("reload");
 		}
@@ -254,14 +255,13 @@ $("body").on("click",".reject",function(){
 	var ids="";
 	var selectList = mmg.selectedRows();
 	var reason = $(".reason").val();
-	
 	if(reason!=""){
 		if(reason.length>200){
-			layer.msg("退回原因不超过200个字");
+			layer.msg("驳回原因不超过200个字");
 			return false;
 		}
 	}else{
-		layer.msg("退回原因不能为空");
+		layer.msg("驳回原因不能为空");
 		return false;
 	}
 	

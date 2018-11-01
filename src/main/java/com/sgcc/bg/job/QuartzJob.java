@@ -4,7 +4,6 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +12,13 @@ import com.sgcc.bg.common.FtpUtils;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.service.SyncService;
 
+import ch.qos.logback.classic.Logger;
+import org.slf4j.LoggerFactory;
+
+
 @Service
 public class QuartzJob {
-	private Logger logger = Logger.getLogger(QuartzJob.class);
-	
+	private Logger logger = (Logger) LoggerFactory.getLogger(QuartzJob.class);
 	@Autowired
 	private SyncService syncService;
 	

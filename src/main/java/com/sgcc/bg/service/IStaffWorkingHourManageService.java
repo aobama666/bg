@@ -73,12 +73,6 @@ public interface IStaffWorkingHourManageService {
 	void changeWorkHourInfoStatus(String id, String string);
 
 	/**
-	 * 添加记录
-	 * @param pr
-	 */
-	void addProcessRecord(ProcessRecordPo pr);
-
-	/**
 	 * 根据id删除报工信息记录
 	 * @param id
 	 * @return

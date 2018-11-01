@@ -169,7 +169,7 @@
 		var checkResult;
 		checkResult =$(".form-box").sotoValidate([
 									  {name:'projectName',vali:'length[-50]'},
-                               	      {name:'jobContent',vali:'required;length[-200]'},
+                               	      {name:'jobContent',vali:'length[-200]'},//required;暂不做工作内容必填校验
                                	      {name:'workHour',vali:'required;checkNumberFormat()'}
 	                               ]);
 		
@@ -211,12 +211,12 @@
 			var checkResult;
 			checkResult =$(".form-box").sotoValidate([
 										  {name:'projectName',vali:'length[-50]'},
-	                               	      {name:'jobContent',vali:'required;length[-200]'},
+	                               	      {name:'jobContent',vali:'length[-200]'},//required;暂不做工作内容必填校验
 	                               	      {name:'workHour',vali:'required;checkNumberFormat()'}
 		                               ]);
 			
 			if(!checkResult){
-				layer.msg("您的填写有误，请检查");
+				//layer.msg("您的填写有误，请检查");
 				return;
 			}
 			var paramArr =new Array();
@@ -237,13 +237,13 @@
 				data:{jsonStr:"["+paramArr.toString()+"]"},
 				dataType:'json',
 				success : function(data) {
-					if(data.count=='1'){
+					if(data.hint=='success'){
 						parent.layer.msg("提交成功！");
-						parent.mmg.load();
 						forClose();
 					}else{
 						layer.msg(data.hint);
 					}
+					parent.mmg.load();
 				}
 			});
 		});

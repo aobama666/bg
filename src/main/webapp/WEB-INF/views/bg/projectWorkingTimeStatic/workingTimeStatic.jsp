@@ -142,7 +142,7 @@
 <script type="text/javascript">
 
 $("select[name=status]").change(function(){
-	var status = $("select[name=status]").val();0
+	var status = $("select[name=status]").val();
  
 	if(status==0){
 		$("#username").addClass("hidden");
@@ -198,22 +198,23 @@ function queryListPro(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'WBS编号/项目编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left',
+	            {title:'项目编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:' center'},
+	            {title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
+	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left',
 	            	renderer:function(val,item,rowIndex){
 	            		if(!item.PROJECT_ID){
 	            			return "";
 	            		}
             			return '<a href="###" title="'+val+'" onclick="forDetails(\''+item.PROJECT_ID+'\')">'+val+'</a>';
-            		}	
+            		}		
 	            },
-	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
 	            {title:'统计周期', name:'StartAndEndData', width:100, sortable:false, align:'center'},
 	            {title:'投入总工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.WORKING_HOUR == 0){
 	            			return '0';
 	            		}
-            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetails(\''+item.WBS_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+item.PROJECT_NAME+'\' )">'+val+'</a>';
+            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetails(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+item.PROJECT_NAME+'\' )">'+val+'</a>';
             		}	
 	            }
 	    		];
@@ -260,17 +261,17 @@ function forDetails(proId){
 	});
 }
 //项目工时详情
-function forHourDetails(WbsNumber,StartData,EndData,projectName){
+function forHourDetails(projectNumber,StartData,EndData,projectName){
 	var userName = escape($("input[name=userName]").val());
 	var projectNames=escape(projectName);
-	var WbsNumbers=escape(WbsNumber);
+	var projectNumber=escape(projectNumber);
     layer.open({
 		type:2,
 		title:"员工工时明细",
 		area:['80%', '85%'],
 		scrollbar:false,
 		skin:'query-box',
-		content:['<%=request.getContextPath()%>/searchWorkTask/workinghourStaticDetail?WbsNumber='+WbsNumbers+'&StartData='+StartData+'&EndData='+EndData+'&projectName='+projectNames+'&userName='+userName,'no']
+		content:['<%=request.getContextPath()%>/searchWorkTask/workinghourStaticDetail?projcetNumber='+projectNumber+'&StartData='+StartData+'&EndData='+EndData+'&projectName='+projectNames+'&userName='+userName,'no']
 	});
 }
 
@@ -279,12 +280,16 @@ function queryListPer(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'WBS编号/项目编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left',
+	            {title:'项目编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:' center'},
+	            {title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
+	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left',
 	            	renderer:function(val,item,rowIndex){
+	            		if(!item.PROJECT_ID){
+	            			return "";
+	            		}
             			return '<a href="###" title="'+val+'" onclick="forDetails(\''+item.PROJECT_ID+'\')">'+val+'</a>';
-            		}	
+            		}		
 	            },
-	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
 	            {title:'统计周期', name:'StartAndEndData', width:100, sortable:false, align:'center'},
 	            {title:'项目投入总工时(h)', name:'StandartHoursNum', width:100, sortable:false, align:'center'},
 	            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},
@@ -294,7 +299,7 @@ function queryListPer(load){
 	            		if(item.WORKING_HOUR == 0){
 	            			return '0';
 	            		}
-            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''+item.WBS_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+item.PROJECT_NAME+'\' ,\''+item.HRCODE+'\',\''+item.PROJECT_ID+'\')">'+val+'</a>';
+            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+item.PROJECT_NAME+'\' ,\''+item.HRCODE+'\',\''+item.PROJECT_ID+'\')">'+val+'</a>';
             		}	
 	            },
 	            {title:'角色', name:'ROLE', width:100, sortable:false, align:'center'}
@@ -330,11 +335,11 @@ function queryListPer(load){
 		mmg2.load({page:pn2});
 	}
 }
-function forHourDetailA(WbsNumber,StartData,EndData,projectName ,hrcode,projectId){
+function forHourDetailA(projectNumber,StartData,EndData,projectName ,hrcode,projectId){
 	var userName = escape($("input[name=userName]").val());
 	 
 	var projectNames=escape(projectName);
-	var WbsNumbers=escape(WbsNumber);
+	var projectNumber=escape(projectNumber);
 	 
 	 
     layer.open({
@@ -343,7 +348,7 @@ function forHourDetailA(WbsNumber,StartData,EndData,projectName ,hrcode,projectI
 		area:['80%', '85%'],
 		scrollbar:false,
 		skin:'query-box',
-		content:['<%=request.getContextPath()%>/searchWorkTask/workinghourStaticDetails?WbsNumber='+WbsNumbers+'&StartData='+StartData+'&EndData='+EndData+'&projectName='+projectNames+'&userName='+userName+'&hrcode='+hrcode+'&projectId='+projectId,'no']
+		content:['<%=request.getContextPath()%>/searchWorkTask/workinghourStaticDetails?projectNumber='+projectNumber+'&StartData='+StartData+'&EndData='+EndData+'&projectName='+projectNames+'&userName='+userName+'&hrcode='+hrcode+'&projectId='+projectId,'no']
 	});
 }
 

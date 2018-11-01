@@ -112,7 +112,7 @@ function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'left'},
+	            {title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},
 	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center'},
 	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
 	            {title:'工作内容', name:'JOB_CONTENT', width:100, sortable:false, align:'left'},

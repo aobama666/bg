@@ -2,6 +2,7 @@ package com.sgcc.bg.service.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import com.sgcc.bg.model.ProjectInfoPo;
 import com.sgcc.bg.model.ProjectInfoVali;
 import com.sgcc.bg.model.ProjectUserPo;
 import com.sgcc.bg.model.ProjectUserVali;
+import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IBGService;
 import com.alibaba.fastjson.JSONObject;
 
@@ -43,7 +45,9 @@ public class BGServiceImpl implements IBGService {
 	@Autowired
 	private WebUtils webUtils;
 	@Autowired
-	UserUtils userUtils;
+	private UserUtils userUtils;
+	@Autowired
+	private DataDictionaryService dict;
 	
 	private static Logger bgServiceLog =  LoggerFactory.getLogger(BGServiceImpl.class);
 
@@ -231,6 +235,7 @@ public class BGServiceImpl implements IBGService {
 				if (!"#N/A!#N/A!".equals(checkStr.toString()) && !"".equals(checkStr.toString())) {// 校验此行是否为空
 					StringBuffer errorInfo = new StringBuffer();
 					Set<Integer> errorNum = new HashSet<Integer>();
+					String currentUsername=webUtils.getUsername();
 					// 对要导入的文件内容进行校验
 					// 项目名称校验
 					if (cellValue[1] == null || "".equals(cellValue[1])) {
@@ -249,7 +254,7 @@ public class BGServiceImpl implements IBGService {
 						errorNum.add(2);
 					}
 					
-					if(!"技术服务项目".equals(cellValue[2])){
+					/*if(!"技术服务项目".equals(cellValue[2])){
 						// 非技术服务项目，校验wbs编号是否在该excel表以及数据库中已经存在
 						if (cellValue[3] == null || "".equals(cellValue[3])) {
 							errorInfo.append("wbs编号/项目编号不能为空！");
@@ -261,6 +266,18 @@ public class BGServiceImpl implements IBGService {
 							errorInfo.append("系统中已经存此wbs编号！");
 							errorNum.add(3);
 						}
+					}*/
+					//校验wbs编号，当为科研或横向时必填，如果填了，则校验唯一
+					if (("科研项目".equals(cellValue[2]) || "横向项目".equals(cellValue[2]))
+							&& Rtext.isEmpty(cellValue[3])) {
+						errorInfo.append("wbs编号不能为空！");
+						errorNum.add(3);
+					}else if (!Rtext.isEmpty(cellValue[3]) && !repeatChecker.add(cellValue[3])) {
+						errorInfo.append("wbs编号重复！");
+						errorNum.add(3);
+					}else if(!Rtext.isEmpty(cellValue[3]) && wbsCodeSet.contains(cellValue[3])){
+						errorInfo.append("系统中已经存此wbs编号！");
+						errorNum.add(3);
 					}
 				
 					// 项目说明长度200以内
@@ -345,7 +362,7 @@ public class BGServiceImpl implements IBGService {
 						if("技术服务项目".equals(cellValue[2])){
 							String OrganDeptId="";
 							if(Rtext.isEmpty(cellValue[7])){
-								CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
+								CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(currentUsername);
 								String deptCode=currentUser.getDeptCode();
 								OrganDeptId=getDeptIdByDeptCode(deptCode);
 							}else{
@@ -361,9 +378,9 @@ public class BGServiceImpl implements IBGService {
 							decompose="1";
 						}*/
 						pro.setDecompose("0");//一期默认不分解
-						pro.setCreateUser(webUtils.getUsername());
+						pro.setCreateUser(currentUsername);
 						pro.setCreateDate(new Date());
-						pro.setUpdateUser(webUtils.getUsername());
+						pro.setUpdateUser(currentUsername);
 						pro.setUpdateDate(new Date());
 						pro.setStatus("1");
 						pro.setProjectStatus("0");
@@ -396,7 +413,7 @@ public class BGServiceImpl implements IBGService {
 						{ "序号\r\n（选填）", "sqnum","nowrap" }, 
 						{ "项目名称\r\n（必填，50字以内）", "projectName","nowrap" }, 
 						{ "项目类型\r\n（必填）", "category" ,"nowrap"},
-						{ "WBS编号/项目编号\r\n（项目类型为科研项目、横向项目时必填）", "WBSNumber" ,"nowrap"}, 
+						{ "WBS编号\r\n（项目类型为科研项目、横向项目时必填）", "WBSNumber" ,"nowrap"}, 
 						{ "项目说明\r\n（200字以内）","projectIntroduce"},
 						{ "项目开始时间\r\n（必填，格式：YYYY-MM-DD）","startDate","nowrap"}, 
 						{ "项目结束时间\r\n（必填，格式：YYYY-MM-DD）","endDate","nowrap"},
@@ -428,10 +445,8 @@ public class BGServiceImpl implements IBGService {
 			}
 		}
 		for (ProjectInfoPo pro : proList) {
-			//技术服务项目编号自动生成
-			if("JS".equals(pro.getCategory())){
-				pro.setWBSNumber(getJSNumber());
-			}
+			//项目编号自动生成
+			pro.setProjectNumber(getBGNumber());
 			bgMapper.addProInfo(pro);
 		}
 		String[] object = {"成功导入项目信息"+proList.size()+"条，失败"+errorList.size()+"条",errorUUID};
@@ -463,7 +478,7 @@ public class BGServiceImpl implements IBGService {
 			// 得到sheet内总行数
 			int rows = sheet.getLastRowNum();
 			//获取所有项目编号存入一个集合
-			List<String> list=bgMapper.getAllWbsNumbers();
+			List<String> list=bgMapper.getAllBgNumbers();
 			//角色类型
 			String roleStr="[项目负责人],[项目参与人]";
 			bgServiceLog.info("该参与人员信息excel表格最后一行： " + rows);
@@ -496,16 +511,16 @@ public class BGServiceImpl implements IBGService {
 					String endDate="";
 					CommonCurrentUser user=null;
 					// 对要导入的文件内容进行简单的校验
-					// WBS编号/项目编号 必填
+					// 项目编号 必填
 					if (Rtext.isEmpty(cellValue[1])) {
-						errorInfo.append("WBS编号/项目编号不能为空！");
+						errorInfo.append("项目编号不能为空！");
 						errorNum.add(1);
 					}else if(!list.contains(cellValue[1])){
-						errorInfo.append("项目中不存在此WBS编号/项目编号！");
+						errorInfo.append("项目中不存在此项目编号！");
 						errorNum.add(1);
 					}else{
-						//如果存在wbs编号，获取其项目id
-						proId=bgMapper.getProIdByWBSNmuber(cellValue[1]);
+						//如果存在项目编号，获取其项目id
+						proId=bgMapper.getProIdByBgNmuber(cellValue[1]);
 						//获取该项目开始日期以及结束日期
 						startDate=bgMapper.getProInfoFieldByProId(proId,"start_date");
 						endDate=bgMapper.getProInfoFieldByProId(proId,"end_date");
@@ -692,7 +707,7 @@ public class BGServiceImpl implements IBGService {
 					} else {// 未通过校验
 						ProjectUserVali pruv = new ProjectUserVali();
 						pruv.setSqnum(cellValue[0]);
-						pruv.setWBSNumber(cellValue[1]);
+						pruv.setProjectNumber(cellValue[1]);
 						pruv.setEmpName(cellValue[2]);
 						pruv.setHrcode(cellValue[3]);
 						pruv.setStartDate(cellValue[4]);
@@ -711,7 +726,7 @@ public class BGServiceImpl implements IBGService {
 				// 生成错误信息文件
 				Object[][] title = { 
 						{ "序号\r\n（选填）", "sqnum","nowrap" }, 
-						{ "WBS编号/项目编号\r\n（必填）", "WBSNumber" ,"nowrap"}, 
+						{ "项目编号\r\n（必填）", "projectNumber" ,"nowrap"}, 
 						{ "人员姓名\r\n（选填）", "empName" ,"nowrap"},
 						{ "人员编号\r\n（必填）", "hrcode","nowrap" },
 						{ "项目开始时间\r\n（选填，格式：YYYY-MM-DD，如果不填写，系统默认项目开始日期）","startDate","nowrap"}, 
@@ -780,6 +795,8 @@ public class BGServiceImpl implements IBGService {
 			Map<String,String> proMap = new HashMap<String,String>();
 			for (int i = 0; i < idArr.length; i++) {
 				proMap=bgMapper.getProInfoByProId(idArr[i]);
+				Map<String,String> dictMap=dict.getDictDataByPcode("category100002");
+				proMap.put("category", dictMap.get(proMap.get("category")));
 				dataList.add(proMap);
 			}
 		}
@@ -796,7 +813,8 @@ public class BGServiceImpl implements IBGService {
 			dataList.set(i, map);
 		}
 		Object[][] title = { 
-							 { "WBS编号/项目编号", "WBSNumber","nowrap" },
+							 { "项目编号", "projectNumber","nowrap" },
+							 { "WBS编号", "WBSNumber","nowrap" },
 							 { "项目名称", "projectName","nowrap" }, 
 							 { "项目说明","projectIntroduce"},
 							 { "项目类型", "category","nowrap" },
@@ -813,18 +831,13 @@ public class BGServiceImpl implements IBGService {
 	}
 
 	@Override
-	public String getJSNumber() {
-		String JSNumber="";
-		String currentYear=Rtext.getCurrentYear();
-		int i=1;
-		do{
-			String number=bgMapper.getMaxJsNumber(currentYear);
-			int newNum=(Integer.parseInt(number)+i);
-			String MaxJsNumber=String.format("%05d", newNum);
-			JSNumber="JS"+currentYear+MaxJsNumber;
-			i++;
-		}while("false".equals(checkUniqueness(JSNumber)));
-		return JSNumber;
+	public String getBGNumber() {
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd");
+		String currentDateStr=sdf.format(new Date());
+		String number=bgMapper.getMaxBgNumber(currentDateStr);
+		int newNum=(Integer.parseInt(number)+1);
+		String MaxJsNumber=String.format("%04d", newNum);
+		return "BG"+currentDateStr+MaxJsNumber;
 	}
 
 	@Override

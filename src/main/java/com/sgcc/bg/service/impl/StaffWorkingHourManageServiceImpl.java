@@ -39,6 +39,7 @@ import com.sgcc.bg.model.Dept;
 import com.sgcc.bg.model.ProcessRecordPo;
 import com.sgcc.bg.model.UserPrivilege;
 import com.sgcc.bg.model.WorkHourInfoPo;
+import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IStaffWorkingHourManageService;
 import com.sgcc.bg.service.OrganStuffTreeService;
 
@@ -56,6 +57,8 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 	private StaffWorkbenchMaper SWMapper;
 	@Autowired
 	private OrganStuffTreeService organStuffTreeService;
+	@Autowired
+	private DataDictionaryService dict;
 	
 	private static Logger smServiceLog =  LoggerFactory.getLogger(StaffWorkingHourManageServiceImpl.class);
 	
@@ -168,11 +171,6 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 	}
 
 	@Override
-	public void addProcessRecord(ProcessRecordPo pr) {
-		smMapper.addProcessRecord(pr);
-	}
-
-	@Override
 	public int deleteWorkHourInfoById(String id) {
 		return smMapper.InvalidWorkHourInfoById(id,webUtils.getUsername(),new Date());
 	}
@@ -200,7 +198,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 			//Set<String> repeatChecker = new HashSet<String>();
 			String categoryStr="[科研项目],[横向项目],[技术服务项目],[非项目工作]";
 			//获取所有项目编号存入一个集合
-			List<String> list=bgMapper.getAllWbsNumbers();
+			List<String> list=bgMapper.getAllBgNumbers();
 			String regex = "^([0-9]+|[0-9]*\\.[05])$";
 			smServiceLog.info("项目信息excel表格最后一行： " + rows);
 			/* 保存有效的Excel模版列数 */
@@ -247,17 +245,17 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						errorInfo.append("无此项目类型！");
 						errorNum.add(2);
 					}
-					// 校验wbs编号(无论是什么类型，只要是不是非项目，就校验wbs编号)
+					// 校验项目编号(无论是什么类型，只要是不是非项目，就校验项目编号)
 					if(!"非项目工作".equals(cellValue[2])){
-						//如果项目类型不为非项目工作则校验其wbs编号
+						//如果项目类型不为非项目工作则校验其项目编号
 						if (cellValue[3] == null || "".equals(cellValue[3])) {
-							errorInfo.append("wbs编号/项目编号不能为空！");
+							errorInfo.append("项目编号不能为空！");
 							errorNum.add(3);
 						}else if(!list.contains(cellValue[3])){
-							errorInfo.append("项目中不存在此WBS编号/项目编号！");
+							errorInfo.append("项目中不存在此项目编号！");
 							errorNum.add(3);
 						}else{
-							proId=bgMapper.getProIdByWBSNmuber(cellValue[3]);
+							proId=bgMapper.getProIdByBgNmuber(cellValue[3]);
 						}
 					}
 					//非项目工作的名称是直接存入表中，校验其长度不能大于50个字
@@ -284,8 +282,8 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 					
 					// 工作内容校验
 					if (cellValue[5] == null || "".equals(cellValue[5])) {
-						errorInfo.append("工作内容不能为空！");
-						errorNum.add(5);
+						/*errorInfo.append("工作内容不能为空！");
+						errorNum.add(5); 暂不做工作内容必填校验*/
 					} else if (cellValue[5].length() > 200) {
 						errorInfo.append("工作内容不能超过200字！");
 						errorNum.add(5);
@@ -389,7 +387,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						map.put("SQNUM",cellValue[0]);
 						map.put("DATE",cellValue[1]);
 						map.put("CATEGORY",cellValue[2]);
-						map.put("WBS_NUMBER",cellValue[3]);
+						map.put("PROJECT_NUMBER",cellValue[3]);
 						map.put("PROJECT_NAME",cellValue[4]);
 						map.put("JOB_CONTENT",cellValue[5]);
 						map.put("WORKING_HOUR",cellValue[6]);
@@ -412,7 +410,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						 { "序号", "SQNUM" ,"nowrap"},
 						 { "填报日期\r\n（必填，格式：YYYY-MM-DD）", "DATE" ,"nowrap"},
 						 { "项目类型\r\n（必填）", "CATEGORY","nowrap"},
-						 { "WBS编号/项目编号\r\n（项目工作必填，非项目工作不填）", "WBS_NUMBER","nowrap" }, 
+						 { "项目编号\r\n（项目工作必填，非项目工作不填）", "PROJECT_NUMBER","nowrap" }, 
 						 { "项目名称\r\n（选填）","PROJECT_NAME","nowrap"},
 						 { "工作内容\r\n（必填 200字以内）","JOB_CONTENT"}, 
 						 { "投入工时（h）\r\n（必填 数字 ）","WORKING_HOUR","nowrap"},
@@ -480,25 +478,8 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 		}
 		for (int i = 0; i < dataList.size(); i++) {
 			Map<String,String> map=dataList.get(i);
-			String status=map.get("STATUS");
-			int num=Rtext.ToInteger(status,0);
-			switch (num) {
-			case 0:
-				status="未提交";
-				break;
-			case 1:
-				status="审批中";
-				break;
-			case 2:
-				status="已退回";
-				break;
-			case 3:
-				status="已通过";
-				break;
-			default:
-				break;
-			}
-			map.put("STATUS", status);
+			Map<String,String> dictMap=dict.getDictDataByPcode("cstatus100003");
+			map.put("STATUS", dictMap.get(map.get("STATUS")));
 			dataList.set(i, map);
 		}
 		

@@ -1,13 +1,8 @@
 <!DOCTYPE>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%-- <%@page import="crpri.ess.util.ToolsUtil"%>
-<%@page import="crpri.ess.util.JsonUtil"%> --%>
-<%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
-<%-- <%
-	String path = ToolsUtil.getContextPath(request);
-%> --%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -86,11 +81,9 @@ a{
 					<div class="controls">
 						<select name="proStatus" property="proStatus">
 							<option></option>
-							<option value="0">未启动</option>
-							<option value="1">进行中</option>
-							<option value="2">暂停</option>
-							<option value="3">已结束</option>
-							<option value="4">废止</option>
+							<c:forEach var ="dict" items="${dictMap}">
+								<option value=${dict.key}>${dict.value}</option>
+							</c:forEach>
 						</select>
 					</div>
 				</div>
@@ -144,7 +137,8 @@ function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 				{title:'序列', name:'id', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'WBS/项目编号', name:'WBSNumber', width:100, sortable:false, align:'left'},
+	            {title:'项目编号', name:'projectNumber', width:110, sortable:false, align:'center'},
+	            {title:'WBS编号', name:'WBSNumber', width:100, sortable:false, align:'left'},
 	            {title:'项目名称', name:'projectName',width:150, sortable:false, align:'left',
 	            	renderer:function(val,item,rowIndex){
 	            		return '<a href="###" title="'+val+'" onclick="forDetails(\''+item.id+'\')">'+val+'</a>';
@@ -159,27 +153,8 @@ function queryList(load){
 	            {title:'参与人数', name:'amount', width:90,sortable:false, align:'center'},
 	            {title:'项目状态', name:'projectStatus', width:90,sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
-	            		var status;
-	            		switch (parseInt(val)){
-	            		case 0:
-	            		  status="未启动";
-	            		  break;
-	            		case 1:
-	            		  status="进行中";
-	            		  break;
-	            		case 2:
-	            		  status="暂停";
-	            		  break;
-	            		case 3:
-	            		  status="已结束";
-	            		  break;
-	            		case 4:
-	            		  status="废止";
-	            		  break;
-	            		default:
-	            		  status="";
-	            		}
-	            		return status;
+	            		var dict=${dictJson};
+	            		return dict[val];
 	            	}
 	            },
 	            {title:'操作', name:'handle', width:120, sortable:false, align:'center',

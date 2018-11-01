@@ -1093,19 +1093,19 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		}
 		if (type.equals("1")) {
 			Object[][] title = { { "日期", "WORK_TIME" }, { "人员编号", "HRCODE" }, { "人员姓名", "USERALIAS" },
-					{ "项目类别", "CATEGORY" }, { "WBS编号/项目编号", "WBS_NUMBER" }, { "项目名称", "PROJECT_NAME" },
+					{ "项目类别", "CATEGORY" }, { "项目编号", "PROJECT_NUMBER" }, { "WBS编号", "WBS_NUMBER" },{ "项目名称", "PROJECT_NAME" },
 					{ "工作内容", "JOB_CONTENT" }, { "投入总工时(h)", "WORKING_HOUR" } };
 			 String excelName="投入总工时详情-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, dataList, "normal");
 		} else if (type.equals("2")) {
 			Object[][] title = { { "日期", "WORK_TIME" }, { "人员编号", "HRCODE" }, { "人员姓名", "USERALIAS" },
-					{ "项目类别", "CATEGORY" }, { "WBS编号/项目编号", "WBS_NUMBER" }, { "项目名称", "PROJECT_NAME" },
+					{ "项目类别", "CATEGORY" }, { "项目编号", "PROJECT_NUMBER" }, { "WBS编号", "WBS_NUMBER" }, { "项目名称", "PROJECT_NAME" },
 					{ "工作内容", "JOB_CONTENT" }, { "投入总工时(h)", "WORKING_HOUR" } };
 			 String excelName="项目投入工时详情-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, dataList, "normal");
 		} else if (type.equals("3")) {
 			Object[][] title = { { "日期", "WORK_TIME" }, { "人员编号", "HRCODE" }, { "人员姓名", "USERALIAS" },
-					{ "项目类别", "CATEGORY" }, { "WBS编号/项目编号", "WBS_NUMBER" }, { "项目名称", "PROJECT_NAME" },
+					{ "项目类别", "CATEGORY" }, { "项目编号", "PROJECT_NUMBER" }, { "WBS编号", "WBS_NUMBER" }, { "项目名称", "PROJECT_NAME" },
 					{ "工作内容", "JOB_CONTENT" }, { "投入总工时(h)", "WORKING_HOUR" } };
 			 String excelName="非项目投入工时详情-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, dataList, "normal");

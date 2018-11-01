@@ -6,6 +6,10 @@ import java.util.Set;
 
 public class ProjectInfoPo implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	// id
 	private String id;
 	// 项目名称
@@ -14,6 +18,8 @@ public class ProjectInfoPo implements Serializable {
 	private String category;
 	// wbs编号
 	private String WBSNumber;
+	//项目编号
+	private String projectNumber;
 	// 组织信息
 	private String organInfo;
 	// 项目说明
@@ -65,6 +71,14 @@ public class ProjectInfoPo implements Serializable {
 
 	public void setCategory(String category) {
 		this.category = category;
+	}
+
+	public String getProjectNumber() {
+		return projectNumber;
+	}
+
+	public void setProjectNumber(String projectNumber) {
+		this.projectNumber = projectNumber;
 	}
 
 	public String getWBSNumber() {
@@ -175,18 +189,7 @@ public class ProjectInfoPo implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((WBSNumber == null) ? 0 : WBSNumber.hashCode());
-		result = prime * result + ((category == null) ? 0 : category.hashCode());
-		result = prime * result + ((decompose == null) ? 0 : decompose.hashCode());
-		result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((organInfo == null) ? 0 : organInfo.hashCode());
-		result = prime * result + ((planHours == null) ? 0 : planHours.hashCode());
-		result = prime * result + ((projectIntroduce == null) ? 0 : projectIntroduce.hashCode());
 		result = prime * result + ((projectName == null) ? 0 : projectName.hashCode());
-		result = prime * result + ((projectStatus == null) ? 0 : projectStatus.hashCode());
-		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
-		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		return result;
 	}
 
@@ -199,65 +202,10 @@ public class ProjectInfoPo implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ProjectInfoPo other = (ProjectInfoPo) obj;
-		if (WBSNumber == null) {
-			if (other.WBSNumber != null)
-				return false;
-		} else if (!WBSNumber.equals(other.WBSNumber))
-			return false;
-		if (category == null) {
-			if (other.category != null)
-				return false;
-		} else if (!category.equals(other.category))
-			return false;
-		if (decompose == null) {
-			if (other.decompose != null)
-				return false;
-		} else if (!decompose.equals(other.decompose))
-			return false;
-		if (endDate == null) {
-			if (other.endDate != null)
-				return false;
-		} else if (!endDate.equals(other.endDate))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (organInfo == null) {
-			if (other.organInfo != null)
-				return false;
-		} else if (!organInfo.equals(other.organInfo))
-			return false;
-		if (planHours == null) {
-			if (other.planHours != null)
-				return false;
-		} else if (!planHours.equals(other.planHours))
-			return false;
-		if (projectIntroduce == null) {
-			if (other.projectIntroduce != null)
-				return false;
-		} else if (!projectIntroduce.equals(other.projectIntroduce))
-			return false;
 		if (projectName == null) {
 			if (other.projectName != null)
 				return false;
 		} else if (!projectName.equals(other.projectName))
-			return false;
-		if (projectStatus == null) {
-			if (other.projectStatus != null)
-				return false;
-		} else if (!projectStatus.equals(other.projectStatus))
-			return false;
-		if (startDate == null) {
-			if (other.startDate != null)
-				return false;
-		} else if (!startDate.equals(other.startDate))
-			return false;
-		if (status == null) {
-			if (other.status != null)
-				return false;
-		} else if (!status.equals(other.status))
 			return false;
 		return true;
 	}
@@ -265,12 +213,11 @@ public class ProjectInfoPo implements Serializable {
 	@Override
 	public String toString() {
 		return "ProjectInfoPo [id=" + id + ", projectName=" + projectName + ", category=" + category + ", WBSNumber="
-				+ WBSNumber + ", organInfo=" + organInfo + ", projectIntroduce=" + projectIntroduce + ", decompose="
-				+ decompose + ", status=" + status + ", projectStatus=" + projectStatus + ", planHours=" + planHours
-				+ ", startDate=" + startDate + ", endDate=" + endDate + ", createUser=" + createUser + ", createDate="
-				+ createDate + ", updateUser=" + updateUser + ", updateDate=" + updateDate + "]";
+				+ WBSNumber + ", projectNumber=" + projectNumber + ", organInfo=" + organInfo + ", projectIntroduce="
+				+ projectIntroduce + ", decompose=" + decompose + ", status=" + status + ", projectStatus="
+				+ projectStatus + ", planHours=" + planHours + ", startDate=" + startDate + ", endDate=" + endDate
+				+ ", createUser=" + createUser + ", createDate=" + createDate + ", updateUser=" + updateUser
+				+ ", updateDate=" + updateDate + "]";
 	}
-	
-	
 	
 }

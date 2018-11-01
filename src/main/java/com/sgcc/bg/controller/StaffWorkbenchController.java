@@ -38,6 +38,7 @@ import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.ProcessRecordPo;
 import com.sgcc.bg.model.ProjectUserPo;
 import com.sgcc.bg.model.WorkHourInfoPo;
+import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IStaffWorkbenchService;
 
 @Controller
@@ -46,9 +47,11 @@ public class StaffWorkbenchController {
 	@Autowired
 	private IStaffWorkbenchService SWService;
 	@Autowired
-	WebUtils webUtils;
+	private WebUtils webUtils;
 	@Autowired
-	UserUtils userUtils;
+	private UserUtils userUtils;
+	@Autowired
+	private DataDictionaryService dict;
 	private static Logger  SWLog= LoggerFactory.getLogger(StaffWorkbenchController.class);
 
 	@RequestMapping("/personalFill")
@@ -56,6 +59,9 @@ public class StaffWorkbenchController {
 		String note = ConfigUtils.getConfig("personalFillNote");
 		Map<String, String> map=new HashMap<String, String>();
 		map.put("note", note);
+		//从数据字典获取审核状态
+		String statusJson= dict.getDictDataJsonStr("cstatus100003");
+		map.put("statusJson", statusJson);
 		ModelAndView model = new ModelAndView("bg/staffWorkbench/bg_personal_fill",map);
 		return model;
 	}
@@ -151,6 +157,7 @@ public class StaffWorkbenchController {
 			String jobContent=Rtext.toStringTrim(map.get("jobContent"), "");
 			String workHour=Rtext.toStringTrim(map.get("workHour"), "");
 			String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
+			String whId=Rtext.toStringTrim(map.get("id"), "");//报工记录id
 			CommonCurrentUser approver=userUtils.getCommonCurrentUserByHrCode(hrCode);
 			if(!workHour.isEmpty() && !ParamValidationUtil.isDouble(workHour)){
 				SWLog.info("workHour 工时格式不正确！");
@@ -164,7 +171,7 @@ public class StaffWorkbenchController {
 				SWLog.info("proName 项目名称超出50字！");
 				continue;
 			}
-			if(Rtext.isEmpty(map.get("id"))){
+			if(Rtext.isEmpty(whId)){
 				//执行保存操作
 				WorkHourInfoPo wp=new WorkHourInfoPo();
 				wp.setId(Rtext.getUUID());
@@ -199,8 +206,11 @@ public class StaffWorkbenchController {
 				count+= SWService.addWorkHourInfo(wp);
 			}else{
 				//执行更新操作
+				if(SWService.isConmmited(whId)){//如果该记录已被通过或正在审批中则不能再被修改
+					continue;
+				}
 				WorkHourInfoPo wp=new WorkHourInfoPo();
-				wp.setId(Rtext.toStringTrim(map.get("id"), ""));
+				wp.setId(whId);
 				wp.setProName(proName);
 				wp.setJobContent(jobContent);
 				wp.setWorkHour(workHour.isEmpty()?null:Rtext.ToDouble(workHour, 0.0));
@@ -216,20 +226,36 @@ public class StaffWorkbenchController {
 	
 	@RequestMapping(value = "/deleteWorkHourInfo", method = RequestMethod.GET)
 	@ResponseBody
-	public void deleteWorkHourInfo(String id) throws Exception {
-		SWService.deleteWorkHourInfoById(id);
+	public String deleteWorkHourInfo(String id){
+		if(SWService.isConmmited(id)){//如果报工信息已提交或者已通过则不能被删除
+			return "commited";
+		}
+		int res=SWService.deleteWorkHourInfoById(id);
+		if(res==1){
+			return "success";
+		}else{
+			return "fail";
+		}
 	}
 	
 	@RequestMapping(value = "/recallWorkHourInfo", method = RequestMethod.GET)
 	@ResponseBody
-	public void recallWorkHourInfo(String id) throws Exception {
-		SWService.recallWorkHour(id);
+	public String recallWorkHourInfo(String id){
+		if(SWService.isExamined(id)){//如果该条记录已通过或驳回，无法撤回
+			return "examined";
+		}
+		int res=SWService.recallWorkHour(id);
+		if(res==1){
+			return "success";
+		}else{
+			return "fail";
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/submitWorkHourInfo", method = RequestMethod.POST)
 	@ResponseBody
-	public String submitWorkHourInfo(String jsonStr,String selectedDate) throws Exception {
+	public String submitWorkHourInfo(String jsonStr,String selectedDate){
 		Map<String, String> resultMap = new HashMap<>();
 		String username=webUtils.getUsername();
 		int count=0;
@@ -254,46 +280,49 @@ public class StaffWorkbenchController {
 			return JSON.toJSONString(resultMap);
 		} 
 		for (HashMap<String, String> map : list) {
-			String bussinessId="";
-			String processId=Rtext.getUUID();
-			if(Rtext.isEmpty(map.get("id"))){
+			String whId=Rtext.toStringTrim(map.get("id"), "");//报工记录id
+			String workHour=Rtext.toStringTrim(map.get("workHour"), "");
+			String jobContent=Rtext.toStringTrim(map.get("jobContent"), "");
+			String category=Rtext.toStringTrim(map.get("category"), "");
+			String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
+			String projectName=Rtext.toStringTrim(map.get("projectName"), "");
+			String proId=Rtext.toStringTrim(map.get("proId"), "");
+			double todayHours;
+			String processId;
+			String bussinessId=(whId.isEmpty()?Rtext.getUUID():whId);
+			//校验数据
+			if("".equals(workHour) || "".equals(category) || "".equals(hrCode) ){
+				SWLog.info("提交的数据有空值： 工时："+workHour+"-项目类型："+category+"-负责人编号："+hrCode);
+				continue;
+			}
+			//|| "".equals(jobContent) +"-工作内容："+jobContent 工作内容暂不校验必填
+			if(!"非项目工作".equals(category)){
+				if("".equals(projectName) || "".equals(proId)){
+					SWLog.info("项目工作缺失项目名称和项目id！");
+					continue;
+				}
+			}
+			if(jobContent.length()>200){
+				SWLog.info("工作内容超出最大200长度限制！");
+				continue;
+			}
+			if(projectName.length()>50){
+				SWLog.info("proName 项目名称超出50字！");
+				continue;
+			}
+			try {
+				todayHours=Double.parseDouble(workHour);
+			} catch (Exception e) {
+				SWLog.info("workHour工时解析出错！");
+				continue;
+			}
+			//添加到流程记录表
+			processId=SWService.addSubmitRecord(bussinessId, username);
+			//提交
+			if(Rtext.isEmpty(whId)){
 				//执行保存操作
-				String workHour=Rtext.toStringTrim(map.get("workHour"), "");
-				String jobContent=Rtext.toStringTrim(map.get("jobContent"), "");
-				String category=Rtext.toStringTrim(map.get("category"), "");
-				String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
-				String projectName=Rtext.toStringTrim(map.get("projectName"), "");
-				String proId=Rtext.toStringTrim(map.get("proId"), "");
-				double todayHours;
-				
-				//校验数据
-				if("".equals(workHour) || "".equals(category) || "".equals(hrCode) || "".equals(jobContent)){
-					SWLog.info("员工工时管理执行提交的数据有空值： 工时："+workHour+"-项目类型："+category+"-负责人编号："+hrCode+"-工作内容："+jobContent);
-					continue;
-				}
-				if(!"非项目工作".equals(category)){
-					if("".equals(projectName) || "".equals(proId)){
-						SWLog.info("项目工作缺失项目名称和项目id！");
-						continue;
-					}
-				}
-				if(jobContent.length()>200){
-					SWLog.info("工作内容超出最大200长度限制！");
-					continue;
-				}
-				if(projectName.length()>50){
-					SWLog.info("projectName 项目名称超出50字！");
-					continue;
-				}
-				try {
-					todayHours=Double.parseDouble(workHour);
-				} catch (Exception e) {
-					SWLog.info("workHour工时解析出错！");
-					continue;
-				}
-				
 				WorkHourInfoPo wp=new WorkHourInfoPo();
-				wp.setId(Rtext.getUUID());
+				wp.setId(bussinessId);
 				if(category.equals("科研项目")){
 					category="KY";
 				}else if(category.equals("横向项目")){
@@ -327,29 +356,11 @@ public class StaffWorkbenchController {
 				bussinessId=wp.getId();
 			}else{
 				//执行更新操作
-				String workHour=Rtext.toStringTrim(map.get("workHour"), "");
-				String jobContent=Rtext.toStringTrim(map.get("jobContent"), "");
-				String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
-				String projectName=Rtext.toStringTrim(map.get("projectName"), "");
-				String id=Rtext.toStringTrim(map.get("id"), "");
-				double todayHours;
-				//校验数据
-				if("".equals(id) ||"".equals(workHour) || "".equals(hrCode) || "".equals(jobContent)){
-					SWLog.info("员工工时管理执行提交的数据有空值： 工时："+workHour+"负责人编号："+hrCode+"项目id："+id+"工时jobContent："+jobContent);
-					continue;
-				}
-				if(jobContent.length()>200){
-					SWLog.info("工作内容超出最大200长度限制！");
-					continue;
-				}
-				try {
-					todayHours=Double.parseDouble(workHour);
-				} catch (Exception e) {
-					SWLog.info("workHour工时解析出错！");
+				if(SWService.isConmmited(whId)){//如果该记录已被提交或通过则不能再被提交，只能撤回后在提交
 					continue;
 				}
 				WorkHourInfoPo wp=new WorkHourInfoPo();
-				wp.setId(id);
+				wp.setId(whId);
 				wp.setProName(projectName);
 				wp.setJobContent(jobContent);
 				wp.setWorkHour(todayHours);
@@ -362,28 +373,6 @@ public class StaffWorkbenchController {
 				count+= SWService.updateWorkHourInfo(wp);
 				bussinessId=wp.getId();
 			}
-			// 注意事务
-			//添加到流程记录表
-			ProcessRecordPo pr=new ProcessRecordPo();
-			pr.setId(processId);
-			pr.setBussinessId(bussinessId);
-			pr.setProcessType("BG_WORKINGHOUR");
-			pr.setProcessLink("BG_WORKINGHOUR_SUBMIT");
-			String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
-			//获取处理人当前信息
-			String nowDay=DateUtil.getDay();
-			CommonCurrentUser approver=userUtils.getCommonCurrentUserByHrCode(hrCode,nowDay);
-			pr.setProcessUserId(approver.getUserName());
-			pr.setProcessDeptId(approver.getpDeptId());
-			pr.setProcessLabtId(approver.getDeptId());
-			pr.setProcessResult("0");
-			pr.setProcessCreateTime(new Date());
-			pr.setProcessUpdateTime(new Date());
-			//pr.setProcessNote();
-			//pr.setProcessNextLink();
-			//pr.setProcessNextUserId();
-			pr.setValid(1);
-			SWService.addProcessRecord(pr);
 		}
 		resultMap.put("result", "success");
 		resultMap.put("msg", "成功提交"+count+"条！");

@@ -33,6 +33,7 @@ public class SearchWorkTaskImpl implements SearchWorkTaskService{
 		String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
 		return jsonStr;
 	}
+	
 	public String searchExamine(int page,int limit,String startTime,String endTime,String projectName,String type,String userName,String userCode,String hrCode){
 		Page<?> page2 = PageHelper.startPage(page, limit); 
 		searchWorkTaskMapper.searchExamine(startTime,endTime,projectName,type,userName,userCode,hrCode);

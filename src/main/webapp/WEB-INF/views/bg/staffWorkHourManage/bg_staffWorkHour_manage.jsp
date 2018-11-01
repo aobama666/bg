@@ -1,6 +1,7 @@
 <!DOCTYPE>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%-- <%@page import="crpri.ess.util.ToolsUtil"%>
 <%@page import="crpri.ess.util.JsonUtil"%> --%>
 <%@page import="java.util.List"%>
@@ -121,10 +122,9 @@
 					<div class="controls">
 						<select name="category" property="category">
 							<option></option>
-							<option value="KY">科研项目</option>
-							<option value="HX">横向项目</option>
-							<option value="JS">技术服务项目</option>
-							<option value="NP">非项目工作</option>
+							<c:forEach var ="dict" items="${categoryMap}">
+								<option value=${dict.key}>${dict.value}</option>
+							</c:forEach>
 						</select>
 					</div>
 				</div>
@@ -145,10 +145,9 @@
 					<div class="controls">
 						<select name="status" property="status">
 							<option></option>
-							<option value="0">未提交</option>
-							<option value="1">审批中</option>
-							<option value="2">已退回</option>
-							<option value="3">已通过</option>
+							<c:forEach var ="dict" items="${statusMap}">
+								<option value=${dict.key}>${dict.value}</option>
+							</c:forEach>
 						</select>
 					</div>
 				</div>
@@ -222,24 +221,8 @@ function queryList(load){
 	            {title:'审核人', name:'APPROVER', width:100, sortable:false, align:'center'},
 	            {title:'状态', name:'STATUS', width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
-	            		var status;
-	            		switch (parseInt(val)){
-	            		case 0:
-	            		  status="未提交";
-	            		  break;
-	            		case 1:
-	            		  status="审批中";
-	            		  break;
-	            		case 2:
-	            		  status="已退回";
-	            		  break;
-	            		case 3:
-	            		  status="已通过";
-	            		  break;
-	            		default:
-	            		  status="";
-	            		}
-	            		return status;
+	            		var dict=${statusJson};
+	            		return dict[val];
 	            	}	
 	            }
 	    		];
@@ -273,31 +256,32 @@ function queryList(load){
 }
 
 function forSubmit(){
+	var rows=mmg.selectedRows();
+	if(rows.length==0){
+		//没有可操作的数据
+		layer.msg("请选择一条数据!");
+		return;
+	}
+	var forbiddenRows="";
+	for(var i=0;i<rows.length;i++){
+		var row=rows[i];
+		if(row.STATUS=="1" || row.STATUS=="3"){
+			forbiddenRows+=row.RN+" ,";
+		}
+	}
+	if(forbiddenRows!=""){
+		layer.msg("第 "+forbiddenRows.substr(0,forbiddenRows.length-1)+" 行已提交或通过,请勿重复提交！");
+		return;
+	}	
 	layer.confirm('确认提交吗？', {icon: 7,title:'提示',shift:-1}, function(index){
 		layer.close(index);
-		var rows=mmg.selectedRows();
-		if(rows.length==0){
-			//没有可操作的数据
-			layer.msg("请选择一条数据!");
-			return;
-		}
-		var forbiddenRows="";
-		for(var i=0;i<rows.length;i++){
-			var row=rows[i];
-			if(row.STATUS=="1" || row.STATUS=="3"){
-				forbiddenRows+=row.RN+" ,";
-			}
-		}
-		if(forbiddenRows!=""){
-			layer.msg("第 "+forbiddenRows.substr(0,forbiddenRows.length-1)+" 行已提交或通过,请勿重复提交！");
-			return;
-		}
 		var ran = Math.random()*100000000;
 		var paramArr =new Array();
 		for(var i=0;i<rows.length;i++){
 			//校验逻辑在后台
 			var item=rows[i];
 			var params={};
+			params["rowNum"] =  $.trim(item.RN);
 			params["id"] =  $.trim(item.ID);
 			params["hrCode"] =  $.trim(item.HRCODE);
 			params["approver"] =  $.trim(item.APPROVER_USERNAME);
@@ -314,7 +298,11 @@ function forSubmit(){
 			data:{jsonStr:"["+paramArr.toString()+"]"},
 			dataType:'json',
 			success : function(data) {
-				layer.msg("提交成功"+data.count+"条，失败"+(data.total-data.count)+"条！");
+				if(data.hint=='success'){
+					layer.msg("提交成功"+data.count+"条，失败"+(data.total-data.count)+"条！");
+				}else{
+					layer.msg('提交成功'+data.count+'条，'+'第'+data.rowNum+'行'+data.hint);
+				}
 				mmg.load();
 			}
 		});
@@ -377,7 +365,10 @@ function forUpdate(){
 			title:"修改",
 			area:['620px', height+'px'],
 			//scrollbar:false,
-		 	content:['<%=request.getContextPath()%>/staffWorkingHourManage/update?whId='+whId]
+		 	content:['<%=request.getContextPath()%>/staffWorkingHourManage/update?whId='+whId],
+		 	end:function(){
+	 			mmg.load();
+	 		}
 		});
 	}else{
 		layer.msg("请选择一条数据!");

@@ -107,12 +107,6 @@ public interface StaffWorkingHourManageMaper {
 	public void changeWorkHourInfoStatus(@Param("id")String id, @Param("status")String status);
 
 	/**
-	 * 添加记录到流程记录表
-	 * @param pr
-	 */
-	public void addProcessRecord(ProcessRecordPo pr);
-
-	/**
 	 * 根据id使报工信息失效
 	 * @param id
 	 * @param updateTime 

@@ -86,7 +86,7 @@ $(function(){
 		parent.layer.open({
 			type:2,
 			title:"项目工作选择框",
-			area:['620px', '60%'],
+			area:['730px', '60%'],
 			scrollbar:true,
 			skin:'query-box',
 			content:['<%=request.getContextPath()%>/staffWorkbench/DIYProJobSelector?ran='+ran]

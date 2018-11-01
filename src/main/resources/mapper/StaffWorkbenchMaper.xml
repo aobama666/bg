@@ -12,8 +12,15 @@
               (SELECT t1.project_name FROM BG_PROJECT_INFO t1 WHERE t1.id=t.project_id AND t1.status='1')) as project_name,
       	  DECODE(t.category,
               'NP',
-              t.category,
-              (SELECT t1.category FROM BG_PROJECT_INFO t1 WHERE t1.id=t.project_id AND t1.status='1')) as category,
+              '非项目工作',
+              (SELECT d.name
+				  FROM BG_PROJECT_INFO t1
+				  JOIN BG_SYS_DATADICTIONARY d
+				    ON t1.category = d.code
+				 WHERE t1.id = t.project_id
+				   AND t1.status = '1'
+				   AND d.pcode = 'category100002'
+				   AND d.vaild = 1)) as category,
 	       t.job_content,
 	       t.working_hour,
 	       t.status,
@@ -22,17 +29,11 @@
               (SELECT t3.useralias
                  FROM BG_SYS_USER t3
                 WHERE t3.username = t.approver),
-              DECODE(t.status,
-                     '3',
-                     (SELECT t3.useralias
-                        FROM BG_SYS_USER t3
-                       WHERE t3.username = t.approver),
-                     (SELECT t1.empname
+              (SELECT t1.empname
                         FROM BG_PROJECT_USER t1
                        WHERE t1.project_id = t.project_id
                          AND t1.role = '1'
                          AND t1.status = '1')
-             )
          	) as principal,
 	       (SELECT t2.process_note
 	          FROM BG_PROCESS_RECORD t2
@@ -42,16 +43,12 @@
               (SELECT t3.hrcode
                  FROM BG_SYS_USER t3
                 WHERE t3.username = t.approver),
-              DECODE(t.status,
-                     '3',
-                     (SELECT t3.hrcode
-                 		FROM BG_SYS_USER t3
-                		WHERE t3.username = t.approver),
-              		(SELECT t4.hrcode
-	          			FROM BG_PROJECT_USER t4
-	             		WHERE t4.project_id = t.project_id
-	           			AND t4.role = '1'
-	          			AND t4.status = '1')) )as hrcode
+                (SELECT t4.hrcode
+          			FROM BG_PROJECT_USER t4
+             		WHERE t4.project_id = t.project_id
+           			AND t4.role = '1'
+          			AND t4.status = '1')
+             )as hrcode
 	  	FROM BG_WORKINGHOUR_INFO t
 	  	WHERE t.Work_Time = TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
 	  	 AND t.worker=#{username}
@@ -61,12 +58,10 @@
 	
 	<select id="getProjectsByDate" resultType="java.util.Map">
 		SELECT 
-		   DECODE(t.category,
-		   		'KY','科研项目',
-		   		'HX','横向项目',
-		   		'JS','技术服务项目') as category,
+		   (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t.category) as category,
 		   t.id,
 	       t.project_name,
+	       t.project_number,
 	       t.wbs_number,
 	       (SELECT t1.empname
 	          FROM BG_PROJECT_USER t1
@@ -99,12 +94,10 @@
 	<select id="getAllProjects" resultType="java.util.Map">
 		SELECT
     	   t.project_name，
-   		   DECODE(t.category,
-		   		'KY','科研项目',
-		   		'HX','横向项目',
-		   		'JS','技术服务项目') as category,
+   		   (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t.category) as category,
 		   t.id,
 	       t.wbs_number,
+	       t.project_number,
 	       (SELECT t1.empname
 	          FROM BG_PROJECT_USER t1
 	         WHERE t1.project_id = t.id
@@ -181,7 +174,7 @@
 			VALID=0,
 			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
 			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
-		WHERE ID=#{id} AND valid=1
+		WHERE ID=#{id} AND VALID=1 AND STATUS IN (0,2)
 	</update>
 	
 	<update id="changeWorkHourInfoStatus" parameterType="String">
@@ -242,35 +235,43 @@
 			(
 			ID,
 			BUSSINESS_ID,
-			PROCESS_TYPE,
-			PROCESS_LINK,
 			PROCESS_USER_ID,
 			PROCESS_DEPT_ID,
 			PROCESS_LAB_ID,
 			PROCESS_RESULT,
 			PROCESS_NOTE,
-			PROCESS_NEXT_LINK,
-			PROCESS_NEXT_USER_ID,
 			PROCESS_CREATE_TIME,
 			PROCESS_UPDATE_TIME,
+			PROCESS_STEP,
 			VALID)
 		VALUES
 			(#{id,jdbcType=VARCHAR}, 
 			#{bussinessId,jdbcType=VARCHAR}, 
-			#{processType,jdbcType=VARCHAR}, 
-			#{processLink,jdbcType=VARCHAR},
 			#{processUserId,jdbcType=VARCHAR},
 			#{processDeptId,jdbcType=VARCHAR},
 			#{processLabtId,jdbcType=VARCHAR},
 			#{processResult,jdbcType=VARCHAR},
 			#{processNote,jdbcType=VARCHAR},
-			#{processNextLink,jdbcType=VARCHAR},
-			#{processNextUserId,jdbcType=VARCHAR},
 			#{processCreateTime,jdbcType=TIMESTAMP},
 			#{processUpdateTime,jdbcType=TIMESTAMP},
-			#{valid,jdbcType=NUMERIC})
+			(SELECT NVL(MAX(PROCESS_STEP),0)+1 
+				FROM BG_PROCESS_RECORD t 
+			  WHERE t.BUSSINESS_ID=#{bussinessId}
+				AND t.valid=1),
+			#{valid,jdbcType=VARCHAR})
 	</insert>
 	
+	<insert id="updateProcessRecord"  parameterType="com.sgcc.bg.model.ProcessRecordPo">
+		UPDATE BG_PROCESS_RECORD
+		 SET PROCESS_USER_ID = #{processUserId,jdbcType=VARCHAR},
+		 	 PROCESS_DEPT_ID = #{processDeptId,jdbcType=VARCHAR},
+		 	 PROCESS_LAB_ID = #{processLabtId,jdbcType=VARCHAR},
+		 	 PROCESS_RESULT = #{processResult,jdbcType=VARCHAR},
+		 	 PROCESS_NOTE = #{processNote,jdbcType=VARCHAR},
+		 	 PROCESS_UPDATE_TIME = #{processUpdateTime,jdbcType=TIMESTAMP}
+		 WHERE id=#{id} AND valid=1
+	</insert>
+	 
 	<select id="getPrincipalByProId" parameterType="String" resultType="String">
 		SELECT t1.username
 		  FROM BG_PROJECT_USER t
@@ -314,11 +315,9 @@
 		SELECT
       		t.id,
       		t.project_name,
-      		 DECODE(t.category,
-		   		'KY','科研项目',
-		   		'HX','横向项目',
-		   		'JS','技术服务项目') as category,
+      		(SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t.category) as category,
       		t.wbs_number,
+      		t.project_number,
 		    (select t1.empname from BG_PROJECT_USER t1 WHERE t1.project_id=t.id AND t1.role='1' AND t1.status='1') as principal,
 		  	(select t1.hrcode from BG_PROJECT_USER t1 WHERE t1.project_id=t.id AND t1.role='1' AND t1.status='1') as hrcode
 		FROM BG_PROJECT_INFO t

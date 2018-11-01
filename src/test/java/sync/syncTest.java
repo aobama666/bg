@@ -4,6 +4,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 
+import com.sgcc.bg.service.IBGService;
 import com.sgcc.bg.service.SyncService;
 
 import config.TestConfig;

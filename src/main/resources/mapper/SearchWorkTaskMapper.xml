@@ -9,7 +9,8 @@
 	<select id="search" resultType="java.util.Map">
 		select b.ID,
 	       b.PROJECT_NAME,
-	       decode(b.CATEGORY,'KY','科研项目 ','HX','横向项目','JS','技术服务项目','NP','非项目工作')  as CATEGORY ,
+	       (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=b.CATEGORY)  as CATEGORY ,
+	       b.PROJECT_NUMBER,
 	       b.WBS_NUMBER,
 	       b.PROJECT_INTRODUCE,
 	       b.ORGAN_INFO,
@@ -55,12 +56,14 @@
     <select id="searchExamine" resultType="java.util.Map">
 		SELECT
 			b.ID,
-			decode(b.CATEGORY,'KY','科研项目 ','HX','横向项目','JS','技术服务项目','NP','非项目工作')  as CATEGORY ,
+			(SELECT name FROM BG_SYS_DATADICTIONARY  
+				WHERE pcode='category100002' 
+				and vaild=1 and code=NVL(p.CATEGORY,b.CATEGORY))  as CATEGORY ,
+			NVL(p.PROJECT_NAME, b.PROJECT_NAME) as PROJECT_NAME,
 			b.PROJECT_ID,
-			b.PROJECT_NAME,
 			b.JOB_CONTENT,
 			b.WORKING_HOUR,
-			b.APPROVER,
+			NVL(E.USERNAME,b.APPROVER) as APPROVER,
 			b.WORKER,
 			b.DEPT_ID,
 			c.DEPTNAME,
@@ -77,12 +80,14 @@
 			TO_CHAR (b.WORK_TIME, 'yyyy-MM-dd') AS WORK_TIME
 		FROM
 			BG_WORKINGHOUR_INFO b
-		LEFT JOIN BG_SYS_USER T ON T .USERNAME = b.WORKER
-		LEFT JOIN BG_SYS_DEPT c ON c.deptid = b.DEPT_ID
-		LEFT JOIN BG_SYS_DEPT D ON b.LAB_ID = D.deptid
-		AND D.valid = 1
-		WHERE
-			b.VALID = 1 and b.STATUS = '1' and b.approver = #{hrCode}
+		LEFT JOIN BG_PROJECT_INFO p ON p.ID=b.PROJECT_ID
+		LEFT JOIN BG_SYS_USER T ON T.USERNAME = b.WORKER
+		LEFT JOIN BG_SYS_DEPT c ON c.deptid = b.DEPT_ID AND c.valid = 1
+		LEFT JOIN BG_SYS_DEPT D ON b.LAB_ID = D.deptid AND D.valid = 1
+		LEFT JOIN BG_PROJECT_USER  U  ON  b.PROJECT_ID=U.PROJECT_ID AND U.ROLE = '1' AND U.STATUS = '1'
+    	LEFT JOIN   BG_SYS_USER  E  ON  E.HRCODE=U.HRCODE
+  	  	WHERE
+      		b.VALID = 1 and b.STATUS = '1' and NVL(E.USERNAME,b.approver)=#{hrCode}
 		<if test="startTime!=null and startTime!=''">
 			<![CDATA[and b.WORK_TIME >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
@@ -90,10 +95,10 @@
 			<![CDATA[and b.WORK_TIME <=  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
 		<if test="projectName!=null and projectName!=''">
-			and b.PROJECT_NAME  like '%'||#{projectName}||'%'
+			and NVL(p.PROJECT_NAME, b.PROJECT_NAME)  like '%'||#{projectName}||'%'
 		</if>
 		<if test="type!=null and type!=''">
-			and b.CATEGORY  = #{type}
+			and NVL(p.CATEGORY,b.CATEGORY)  = #{type}
 		</if>
 		<if test="userName!=null and userName!=''">
 			and  T.USERALIAS like '%' || #{userName} || '%' 
@@ -105,47 +110,42 @@
     </select>
     <!-- 已审核工时查询 table-->
     <select id="searchExamined" resultType="java.util.Map">
-      
-   
-		SELECT 
-			b.ID,
-			decode(b.CATEGORY,'KY','科研项目 ','HX','横向项目','JS','技术服务项目','NP','非项目工作')  as CATEGORY ,
-			b.PROJECT_ID,
-			b.PROJECT_NAME,
-			b.JOB_CONTENT,
-			b.WORKING_HOUR,
-			b.APPROVER,
-			b.WORKER,
-			b.DEPT_ID,
-			c.DEPTNAME,
-			b.LAB_ID,
-			D.DEPTNAME LABNAME,
-			b.STATUS,
-			b.VALID,
-			 
-			b.CREATE_USER,
-			b.UPDATE_USER,
-			T.USERALIAS,
-			T.HRCODE,
-			R.PROCESS_NOTE,
-			TO_CHAR (b.CREATE_TIME, 'yyyy-MM-dd') AS CREATE_TIME,
-			TO_CHAR (b.UPDATE_TIME, 'yyyy-MM-dd') AS UPDATE_TIME,
-			TO_CHAR (b.WORK_TIME, 'yyyy-MM-dd') AS WORK_TIME
-		FROM
-			BG_WORKINGHOUR_INFO b
-		LEFT JOIN BG_SYS_USER T ON T .USERNAME = b.WORKER
-		LEFT JOIN BG_SYS_DEPT c ON c.deptid = b.DEPT_ID
-		LEFT JOIN BG_SYS_DEPT D ON b.LAB_ID = D.deptid
-		LEFT JOIN BG_PROCESS_RECORD R
-        ON R.ID = B.PROCESS_ID
-	    AND R.VALID = 1
-	    AND c.valid = 1
-	    AND D.valid = 1
-	     
-	   
-		WHERE
-			b.VALID = 1 and b.APPROVER = #{hrName} and  (b.status = '2' or  b.status = '3')
-		
+	    SELECT 
+	      b.ID,
+	      (SELECT name FROM BG_SYS_DATADICTIONARY  
+					WHERE pcode='category100002' 
+					and vaild=1 and code=NVL(p.CATEGORY,b.CATEGORY))  as CATEGORY ,
+	      NVL(p.PROJECT_NAME, b.PROJECT_NAME) as PROJECT_NAME,
+	      b.PROJECT_ID,
+	      b.JOB_CONTENT,
+	      b.WORKING_HOUR,
+	      NVL(E.USERNAME,b.APPROVER) as APPROVER,
+	      b.WORKER,
+	      b.DEPT_ID,
+	      c.DEPTNAME,
+	      b.LAB_ID,
+	      D.DEPTNAME LABNAME,
+	      b.STATUS,
+	      b.VALID,
+	      b.CREATE_USER,
+	      b.UPDATE_USER,
+	      T.USERALIAS,
+	      T.HRCODE,
+	      R.PROCESS_NOTE,
+	      TO_CHAR (b.CREATE_TIME, 'yyyy-MM-dd') AS CREATE_TIME,
+	      TO_CHAR (b.UPDATE_TIME, 'yyyy-MM-dd') AS UPDATE_TIME,
+	      TO_CHAR (b.WORK_TIME, 'yyyy-MM-dd') AS WORK_TIME
+   		 FROM
+     	 BG_WORKINGHOUR_INFO b
+		    LEFT JOIN BG_PROJECT_INFO p ON p.ID=b.PROJECT_ID
+		    LEFT JOIN BG_SYS_USER T ON T .USERNAME = b.WORKER
+		    LEFT JOIN BG_SYS_DEPT c ON c.deptid = b.DEPT_ID AND c.valid = 1
+		    LEFT JOIN BG_SYS_DEPT D ON b.LAB_ID = D.deptid AND D.valid = 1
+		    LEFT JOIN BG_PROCESS_RECORD R ON R.ID = B.PROCESS_ID  AND R.VALID = 1
+		    LEFT JOIN BG_PROJECT_USER  U  ON  b.PROJECT_ID=U.PROJECT_ID AND U.ROLE = '1' AND U.STATUS = '1'
+   			LEFT JOIN BG_SYS_USER  E  ON  E.HRCODE=U.HRCODE
+    	WHERE
+     	 b.VALID = 1 and NVL(E.USERNAME,b.approver) = #{hrName} and  (b.status = '2' or  b.status = '3')
 		<if test="startTime!=null and startTime!=''">
 			<![CDATA[and b.WORK_TIME >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
@@ -153,10 +153,10 @@
 			<![CDATA[and b.WORK_TIME <=  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
 		<if test="projectName!=null and projectName!=''">
-			and b.PROJECT_NAME  like '%'||#{projectName}||'%'
+			and  NVL(p.PROJECT_NAME, b.PROJECT_NAME)  like '%'||#{projectName}||'%'
 		</if>
 		<if test="type!=null and type!=''">
-			and b.CATEGORY  = #{type}
+			and NVL(p.CATEGORY,b.CATEGORY)  = #{type}
 		</if>
 		<if test="userName!=null and userName!=''">
 			and  T.USERALIAS like '%' || #{userName} || '%' 
@@ -171,12 +171,14 @@
     <select id="searchExamineds" resultType="java.util.Map">
 		SELECT 
 			b.ID,
-			decode(b.CATEGORY,'KY','科研项目 ','HX','横向项目','JS','技术服务项目','NP','非项目工作')  as CATEGORY ,
+			(SELECT name FROM BG_SYS_DATADICTIONARY  
+					WHERE pcode='category100002' 
+					and vaild=1 and code=NVL(p.CATEGORY,b.CATEGORY))  as CATEGORY ,
+	        NVL(p.PROJECT_NAME, b.PROJECT_NAME) as PROJECT_NAME,
 			b.PROJECT_ID,
-			b.PROJECT_NAME,
 			b.JOB_CONTENT,
 			b.WORKING_HOUR,
-			b.APPROVER,
+			NVL(E.USERNAME,b.APPROVER) as APPROVER,
 			b.WORKER,
 			b.DEPT_ID,
 			c.DEPTNAME,
@@ -189,22 +191,21 @@
 			T.USERALIAS,
 			T.HRCODE,
 			R.PROCESS_NOTE,
-			DECODE(b.STATUS,0,'未提交',1,'审批中',2,'已退回',3,'已通过') as PROSTATUS,
+			(SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='cstatus100003' and vaild=1 and code=b.STATUS) as PROSTATUS,
 			TO_CHAR (b.CREATE_TIME, 'yyyy-MM-dd') AS CREATE_TIME,
 			TO_CHAR (b.UPDATE_TIME, 'yyyy-MM-dd') AS UPDATE_TIME,
 			TO_CHAR (b.WORK_TIME, 'yyyy-MM-dd') AS WORK_TIME
 		FROM
 			BG_WORKINGHOUR_INFO b
+		LEFT JOIN BG_PROJECT_INFO p ON p.ID=b.PROJECT_ID
 		LEFT JOIN BG_SYS_USER T ON T .USERNAME = b.WORKER
-		LEFT JOIN BG_SYS_DEPT c ON c.deptid = b.DEPT_ID
-		AND c.valid = 1
-		LEFT JOIN BG_SYS_DEPT D ON b.LAB_ID = D.deptid
-		AND D.valid = 1
-		LEFT JOIN BG_PROCESS_RECORD R
-	    ON R.ID = B.PROCESS_ID
-	    AND R.VALID = 1
+		LEFT JOIN BG_SYS_DEPT c ON c.deptid = b.DEPT_ID AND c.valid = 1
+		LEFT JOIN BG_SYS_DEPT D ON b.LAB_ID = D.deptid AND D.valid = 1
+		LEFT JOIN BG_PROCESS_RECORD R ON R.ID = B.PROCESS_ID AND R.VALID = 1
+		LEFT JOIN BG_PROJECT_USER  U  ON  b.PROJECT_ID=U.PROJECT_ID AND U.ROLE = '1' AND U.STATUS = '1'
+   		LEFT JOIN BG_SYS_USER  E  ON  E.HRCODE=U.HRCODE
 		WHERE
-			b.VALID = 1 and b.APPROVER = #{hrName} and (b.status = '2' or  b.status = '3')
+			b.VALID = 1 and NVL(E.USERNAME,b.approver) = #{hrName} and (b.status = '2' or  b.status = '3')
 		<if test="startTime!=null and startTime!=''">
 			<![CDATA[and b.WORK_TIME >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
@@ -237,7 +238,8 @@
 		select rownum as ROW_ID,
 		   b.ID,
 	       b.PROJECT_NAME,
-	       decode(b.CATEGORY,'KY','科研项目 ','HX','横向项目','JS','技术服务项目','NP','非项目工作')  as CATEGORY ,
+	       (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=b.CATEGORY)  as CATEGORY ,
+	       b.PROJECT_NUMBER,
 	       b.WBS_NUMBER,
 	       b.PROJECT_INTRODUCE,
 	       b.ORGAN_INFO,
@@ -248,7 +250,7 @@
 	       b.PROJECT_STATUS,
 	       b.DECOMPOSE,
 	       b.STATUS,
-	       DECODE(b.PROJECT_STATUS,0,'未启动',1,'进行中',2,'暂停',3,'已结束',4,'废止') as proType,
+	       (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='pstatus100001' and vaild=1 and code=b.PROJECT_STATUS) as proType,
 	       b.CREATE_USER,
 	       to_char(F.START_DATE, 'yyyy-MM-dd') as personStart,
 	       to_char(F.END_DATE, 'yyyy-MM-dd') as personEnd,

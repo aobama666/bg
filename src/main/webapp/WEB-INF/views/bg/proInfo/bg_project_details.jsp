@@ -87,12 +87,13 @@
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
-					<label for="WBSNumber">
-						<c:choose>
-							<c:when test="${category=='JS'}">项目编号</c:when>
-							<c:otherwise>WBS编号</c:otherwise>
-						</c:choose>
-					</label>
+					<label for="projectNumber">项目编号</label>
+					<div class="controls bg-white">
+						<input type="text" name="projectNumber" property="projectNumber" value="${projectNumber}" readonly>
+					</div>
+				</div>
+				<div class="form-group col-xs-11">
+					<label for="WBSNumber">WBS编号</label>
 					<div class="controls bg-white">
 						<input type="text" name="WBSNumber" property="WBSNumber" value="${WBSNumber}" readonly>
 					</div>

@@ -42,8 +42,9 @@ public interface IStaffWorkbenchService {
 	/**
 	 * 根据id删除表中报工信息
 	 * @param id
+	 * @return 
 	 */
-	void deleteWorkHourInfoById(String id);
+	int deleteWorkHourInfoById(String id);
 
 	/**
 	 * 更新状态
@@ -80,12 +81,6 @@ public interface IStaffWorkbenchService {
 	String checkWorkHour(String selectedDate, double totalHours);
 
 	/**
-	 * 添加记录到流程记录表
-	 * @param pr
-	 */
-	void addProcessRecord(ProcessRecordPo pr);
-
-	/**
 	 * 获取当前登录人名下所有参与的项目（在日期范围内有可填报的）
 	 * @param startDate
 	 * @param endDate
@@ -96,7 +91,55 @@ public interface IStaffWorkbenchService {
 	/**
 	 * 据id撤回已提交工时
 	 * @param id
+	 * @return 
 	 */
-	void recallWorkHour(String id);
+	int recallWorkHour(String id);
+
+	/**
+	 * 判断指定id的报工记录是否已被提交
+	 * @param id
+	 * @return 当状态为1审批中、3已通过，则返回true
+	 */
+	boolean isConmmited(String id);
+	
+	/**
+	 * 判断指定id的报工记录是否已被审核
+	 * @param id
+	 * @return 当状态为2已驳回，3已通过，则返回true
+	 */
+	boolean isExamined(String id);
+	
+	/**
+	 * 判断指定id的记录能否被审核
+	 * @param id
+	 * @return 当状态为1审批中的，则返回true
+	 */
+	boolean canExamine(String id);
+
+	/**
+	 * 为提交操作添加记录
+	 * @param bussinessId
+	 * @param processUsername
+	 * @return
+	 */
+	String addSubmitRecord(String bussinessId, String processUsername);
+
+	/**
+	 * 为撤回操作添加记录
+	 * @param bussinessId
+	 * @param processUsername
+	 * @return
+	 */
+	String addRecallRecord(String bussinessId, String processUsername);
+
+	/**
+	 * 为审核操作添加记录
+	 * @param bussinessId
+	 * @param processUsername
+	 * @param result：2 已通过 3 已驳回
+	 * @param note
+	 * @return
+	 */
+	String addExamineRecord(String bussinessId, String processUsername, String result, String note);
 
 }

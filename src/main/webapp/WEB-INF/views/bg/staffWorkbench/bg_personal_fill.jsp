@@ -1,7 +1,6 @@
 <!DOCTYPE>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%-- <%@page import="crpri.ess.util.ToolsUtil"%>
 <%@page import="crpri.ess.util.JsonUtil"%> --%>
 <%@page import="java.util.List"%>
@@ -192,22 +191,13 @@ function queryList(load){
 	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center',
 					renderer:function(val,item,rowIndex){
 						val=val==undefined?"":val;
-						if("KY"==val){
-							val="科研项目";
-						}else if("HX"==val){
-							val="横向项目";
-						}else if("JS"==val){
-							val="技术服务项目";
-						}if("NP"==val){
-							val="非项目工作";
-						}
 	            		return '<span title="'+val+'">'+val+'</span><input type="hidden" property="category" value="'+val+'">';
 	            	}
 	            },
 	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'start',
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
-	            		if(item.CATEGORY=="NP" && (item.STATUS=="0" || item.STATUS=="2") ){
+	            		if(item.CATEGORY=="非项目工作" && (item.STATUS=="0" || item.STATUS=="2") ){
 	            			val='<div style="display:inline"><input onblur="checkInput(this)" class="form-control" name="projectName" value="'+val+'" property="projectName"></div>';
 	            		}else{
 	            			val='<span title="'+val+'">'+val+'</span><input type="hidden" property="projectName" value="'+val+'">';
@@ -215,7 +205,7 @@ function queryList(load){
 	            		return val;
 	            	}
 	            },
-	            {titleHtml:'工作内容（200字以内）<font class="glyphicon glyphicon-asterisk text-danger"></font>', name:'JOB_CONTENT', width:300, sortable:false, align:'start',
+	            {titleHtml:'工作内容（200字以内）', name:'JOB_CONTENT', width:300, sortable:false, align:'start',//<font class="glyphicon glyphicon-asterisk text-danger"></font>
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
 	            		if(item.STATUS=="0" || item.STATUS=="2"){
@@ -242,7 +232,7 @@ function queryList(load){
 	            {titleHtml:'审核人<font class="glyphicon glyphicon-asterisk text-danger"></font>', name:'PRINCIPAL',width:90, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
-	            		if(item.CATEGORY=="NP" && (item.STATUS=="0" || item.STATUS=="2")){
+	            		if(item.CATEGORY=="非项目工作" && (item.STATUS=="0" || item.STATUS=="2")){
 	            			val='<div title="'+val+'" style="display:inline" class=""><input onblur="removeHint(this)" class="form-control" value="'+val+'" readonly style="text-align:center;width:90%;display:inline-block" name="" property="principal">'
 	            				+'<span style="width:10%;" class="glyphicon glyphicon-user"></span></div>';
 	            		}else{
@@ -254,24 +244,8 @@ function queryList(load){
 	            {title:'状态', name:'STATUS', width:90, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
-	            		var status;
-	            		switch (parseInt(val)){
-	            		case 0:
-	            		  status="未提交";
-	            		  break;
-	            		case 1:
-	            		  status="待审核";
-	            		  break;
-	            		case 2:
-	            		  status="已退回";
-	            		  break;
-	            		case 3:
-	            		  status="已通过";
-	            		  break;
-	            		default:
-	            		  status="";
-	            		}
-	            		return status;
+	            		var status=${statusJson};
+	            		return status[val];
 	            	}
 	            },
 	            {title:'审核备注', name:'PROCESS_NOTE', width:200, sortable:false, align:'center'},
@@ -326,7 +300,7 @@ function queryList(load){
 				});
 			},
 			'rowInserted':function(e,item,index){
-				if(item.CATEGORY=="NP" && (item.STATUS=="0" || item.STATUS=="2")){
+				if(item.CATEGORY=="非项目工作" && (item.STATUS=="0" || item.STATUS=="2")){
 					var id=getInteger();
 					var empName="empName"+getInteger();
 					var empCode="empCode"+getInteger();
@@ -338,7 +312,7 @@ function queryList(load){
 			},
 			'rowUpdated':function(e, oldItem, newItem, index){
 				var row=$("#mmg tr:eq("+index+")");
-				if(newItem.CATEGORY=="NP" && (newItem.STATUS=="0" || newItem.STATUS=="2")){
+				if(newItem.CATEGORY=="非项目工作" && (newItem.STATUS=="0" || newItem.STATUS=="2")){
 					var id=getInteger();
 					var empName="empName"+getInteger();
 					var empCode="empCode"+getInteger();
@@ -462,7 +436,7 @@ function forAddProJob(){
 	layer.open({
 		type:2,
 		title:"项目工作选择框",
-		area:['620px', height+'px'],
+		area:['730px', height+'px'],
 		scrollbar:true,
 		skin:'query-box',
 		content:['<%=request.getContextPath()%>/staffWorkbench/proJobSelector?selectedDate='+selectedDate]
@@ -472,7 +446,7 @@ function forAddProJob(){
 //新增非项目工作
 function forAddNonProJob(){
 	mmg.addRow({
-		"CATEGORY":"NP",
+		"CATEGORY":"非项目工作",
 		"PROJECT_NAME":"",
 		"STATUS":"0",
 		"JOB_CONTENT":"",
@@ -490,36 +464,45 @@ function forDelete(_this,id){
 			var row=$(_this).parents("tr");
 			var index=row.find(".mmg-index").text();
 			if(id!=""){
-				$.get("<%=request.getContextPath()%>/staffWorkbench/deleteWorkHourInfo?id="+id+"&ran="+ran);
+				$.get("<%=request.getContextPath()%>/staffWorkbench/deleteWorkHourInfo?id="+id+"&ran="+ran,
+					function(data){
+						if(data=='success'){
+							mmg.removeRow(index-1);
+							$("#mmg tr").each(function(i){
+								$(this).find(".mmg-index").text(i+1);
+							});
+						}else if(data=='commited'){
+							layer.msg("无法删除已被提交或通过的信息！");
+							mmg.load();
+						}else{
+							layer.msg("删除失败！");
+							mmg.load();
+						}					
+				},'text');
 			}
-			mmg.removeRow(index-1);
-			$("#mmg tr").each(function(i){
-				$(this).find(".mmg-index").text(i+1);
-			});
 		});
 }
 
 //撤回
 function forRecall(_this,id){
 	layer.confirm('确认撤回吗？', {icon: 7,title:'提示',shift:-1},
-		function(index){
-			layer.close(index);	
+		function(num){
+			layer.close(num);	
 			var ran = Math.random()*100000000;
 			var row=$(_this).parents("tr");
 			var index=row.find(".mmg-index").text();
-			$.get("<%=request.getContextPath()%>/staffWorkbench/recallWorkHourInfo?id="+id+"&ran="+ran);
-			mmg.updateRow({
-				"ID":row.find("input[property='id']").val(),
-				"PROJECT_ID":row.find("input[property='proId']").val(),
-				"PROJECT_NAME":row.find("input[property='projectName']").val(),
-				"HRCODE":row.find("input[property='hrCode']").val(),
-				"CATEGORY":row.find("input[property='category']").val(),
-				"PRINCIPAL":row.find("input[property='principal']").val(),
-				"JOB_CONTENT":row.find("input[property='jobContent']").val(),
-				"WORKING_HOUR":row.find("input[property='workHour']").val(),
-				"STATUS":"0"
-			},index-1);
-		});
+			$.get("<%=request.getContextPath()%>/staffWorkbench/recallWorkHourInfo?id="+id+"&ran="+ran,
+				function(data){
+					if(data=='success'){
+						
+					}else if(data=='examined'){
+						layer.msg("无法撤回已审核信息！");
+					}else{
+						layer.msg("撤回失败！");
+					}
+					mmg.load();					
+			},'text');
+	});
 }
 
 
@@ -543,13 +526,13 @@ function forSubmit(){
 			if(empName!=undefined){
 				checkResult =$row.sotoValidate([
 											  {name:'projectName',vali:'length[-50]'},
-	                                   	      {name:'jobContent',vali:'required;length[-200]'},
+	                                   	      {name:'jobContent',vali:'length[-200]'},//required;暂不做必须校验
 	                                   	      {name:'workHour',vali:'required;checkNumberFormat()'},
 	                                   	      {name:empName,vali:'required;'}
 				                               ]);
 			}else{
 				checkResult =$row.sotoValidate([
-	                                   	      {name:'jobContent',vali:'required;length[-200]'},
+	                                   	      {name:'jobContent',vali:'length[-200]'},//required;暂不做必须校验
 	                                   	      {name:'workHour',vali:'required;checkNumberFormat()'}
 				                               ]);
 			}
@@ -577,9 +560,7 @@ function forSubmit(){
 			dataType:'json',
 			success : function(data) {
 				layer.msg(data.msg);
-				if(data.result=="success"){
-					mmg.load();
-				}
+				mmg.load();
 			}
 		});
 	});

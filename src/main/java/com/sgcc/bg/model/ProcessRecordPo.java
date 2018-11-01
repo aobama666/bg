@@ -10,17 +10,14 @@ public class ProcessRecordPo implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private String id;
 	private String bussinessId;
-	private String processType;
-	private String processLink;
 	private String processUserId;
 	private String processDeptId;
 	private String processLabtId;
 	private String processResult;
-	private Date processCreateTime;
 	private String processNote;
-	private String processNextLink;
-	private String processNextUserId;
+	private Date processCreateTime;
 	private Date processUpdateTime;
+	private String processStep;
 	private Integer valid;
 	
 	public ProcessRecordPo() {
@@ -41,22 +38,6 @@ public class ProcessRecordPo implements Serializable{
 
 	public void setBussinessId(String bussinessId) {
 		this.bussinessId = bussinessId;
-	}
-
-	public String getProcessType() {
-		return processType;
-	}
-
-	public void setProcessType(String processType) {
-		this.processType = processType;
-	}
-
-	public String getProcessLink() {
-		return processLink;
-	}
-
-	public void setProcessLink(String processLink) {
-		this.processLink = processLink;
 	}
 
 	public String getProcessUserId() {
@@ -107,21 +88,6 @@ public class ProcessRecordPo implements Serializable{
 		this.processNote = processNote;
 	}
 
-	public String getProcessNextLink() {
-		return processNextLink;
-	}
-
-	public void setProcessNextLink(String processNextLink) {
-		this.processNextLink = processNextLink;
-	}
-
-	public String getProcessNextUserId() {
-		return processNextUserId;
-	}
-
-	public void setProcessNextUserId(String processNextUserId) {
-		this.processNextUserId = processNextUserId;
-	}
 
 	public Date getProcessUpdateTime() {
 		return processUpdateTime;
@@ -139,6 +105,16 @@ public class ProcessRecordPo implements Serializable{
 		this.valid = valid;
 	}
 
+	public String getProcessStep() {
+		return processStep;
+	}
+
+	public void setProcessStep(String processStep) {
+		this.processStep = processStep;
+	}
+
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -166,13 +142,11 @@ public class ProcessRecordPo implements Serializable{
 
 	@Override
 	public String toString() {
-		return "ProcessRecordPo [id=" + id + ", bussinessId=" + bussinessId + ", processType=" + processType
-				+ ", processLink=" + processLink + ", processUserId=" + processUserId + ", processDeptId="
-				+ processDeptId + ", processLabtId=" + processLabtId + ", processResult=" + processResult
-				+ ", processCreateTime=" + processCreateTime + ", processNote=" + processNote + ", processNextLink="
-				+ processNextLink + ", processNextUserId=" + processNextUserId + ", processUpdateTime="
-				+ processUpdateTime + ", valid=" + valid + "]";
+		return "ProcessRecordPo [id=" + id + ", bussinessId=" + bussinessId + ", processUserId=" + processUserId
+				+ ", processDeptId=" + processDeptId + ", processLabtId=" + processLabtId + ", processResult="
+				+ processResult + ", processNote=" + processNote + ", processCreateTime=" + processCreateTime
+				+ ", processUpdateTime=" + processUpdateTime + ", processStep=" + processStep + ", valid=" + valid
+				+ "]";
 	}
-	
 	
 }

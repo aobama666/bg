@@ -181,7 +181,7 @@ function queryList(load){
 	            		  status="审批中";
 	            		  break;
 	            		case 2:
-	            		  status="已退回";
+	            		  status="已驳回";
 	            		  break;
 	            		case 3:
 	            		  status="已通过";

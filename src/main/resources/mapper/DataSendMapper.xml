@@ -53,7 +53,7 @@
 		</if>
 	</select>	
 	<select id="queryCounted" resultType="double">
-		select SUM(t.working_hour)
+		select decode(SUM(t.working_hour),null,0,SUM(t.working_hour))
 	  	from BG_WORKINGHOUR_INFO t
 	  	LEFT JOIN bg_sys_user u
     	ON u.USERNAME = t.worker
@@ -135,7 +135,7 @@
           from (select A.ID,
                        to_char(A.WORK_TIME, 'yyyy-mm-dd') as WORK_TIME,
                        NVL(B.CATEGORY, A.CATEGORY) as CATEGORY,
-                       DECODE(A.CATEGORY, '非项目工作', '0', '1') AS CATEGORYNAME,
+                       DECODE(A.CATEGORY, 'NP', '0', '1') AS CATEGORYNAME,
                        NVL(B.PROJECT_NAME, A.PROJECT_NAME) as PROJECT_NAME,
                        B.WBS_NUMBER,
                        A.JOB_CONTENT,
