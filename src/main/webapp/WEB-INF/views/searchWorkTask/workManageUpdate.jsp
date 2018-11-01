@@ -178,9 +178,9 @@ function workCommit(){
 			data:param,
 			success:function(data){
 				if(data.success == "true"){
-					 parent.parent.layer.msg(data.msg);
+					 parent.layer.msg(data.msg);
 				}else{
-					 parent.parent.layer.msg(data.msg);
+					 parent.layer.msg(data.msg);
 				}
 				forClose();
 			}

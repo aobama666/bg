@@ -337,6 +337,10 @@ public class StaffWorkbenchController {
 				SWLog.info("workHour工时解析出错！");
 				continue;
 			}
+			//如果该记录已被提交或通过则不能再被提交，只能撤回后在提交
+			if(!Rtext.isEmpty(whId) && SWService.isConmmited(whId)){
+				continue;
+			}
 			//添加到流程记录表
 			processId=SWService.addSubmitRecord(bussinessId, username);
 			if(approverName.equals(username)){//如果审核人就是本人，则默认通过
@@ -380,9 +384,6 @@ public class StaffWorkbenchController {
 				bussinessId=wp.getId();
 			}else{
 				//执行更新操作
-				if(SWService.isConmmited(whId)){//如果该记录已被提交或通过则不能再被提交，只能撤回后在提交
-					continue;
-				}
 				WorkHourInfoPo wp=new WorkHourInfoPo();
 				wp.setId(whId);
 				wp.setProName(projectName);

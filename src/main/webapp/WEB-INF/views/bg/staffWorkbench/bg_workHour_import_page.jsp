@@ -113,7 +113,7 @@ function checkFileType(val){
 	var result = {result:true,info:"只能导入 Microsoft Office Excel 97-2003 工作表!"};
 	var fileType=/\.[^\.]+$/.exec(val);
 	if(val != "" && (fileType+"").toLowerCase() != ".xls"){
-		result.result = true;
+		result.result = false;
 	}
 	return result;
 }
