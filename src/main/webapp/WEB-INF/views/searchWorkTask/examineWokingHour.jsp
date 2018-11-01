@@ -74,6 +74,7 @@
 </head>
 <body>
 <div class="page-header-sl">
+	<h5>工时审核</h5>
 	<div class="button-box">
 		<button type="button" class="btn btn-success btn-xs" onclick="forConfirm()"> 确认</button>
 		<button type="button" class="btn btn-info btn-xs" onclick="reject()"> 驳回</button>

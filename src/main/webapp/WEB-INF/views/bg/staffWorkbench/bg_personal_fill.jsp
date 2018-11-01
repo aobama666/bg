@@ -69,9 +69,7 @@ td span{
 <body>
 	<div class="page-header-sl">
 		<h5>个人工时填报</h5>
-	</div>
-	<hr>
-	<div class="button-box">
+		<div class="button-box">
 			<button type="button" class="btn btn-primary btn-xs" name="kOne"
 				onclick="forAddProJob()">新增项目工作</button>
 			<button type="button" class="btn btn-primary btn-xs" name="kOne"
@@ -82,7 +80,9 @@ td span{
 				onclick="forSubmit()">提交</button>
 			<button type="button" class="btn btn-info btn-xs"
 				onclick="forImport()">批量录入</button>
+		</div>
 	</div>
+	<hr>
 	<form class="form-inline">
 		<div class="form-group">
 			 <label>填报日期</label> 
