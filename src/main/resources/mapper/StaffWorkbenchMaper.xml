@@ -356,43 +356,47 @@
 	</select>
 	
 	<select id="getDefaultApprover" parameterType="String" resultType="java.util.Map">
-		select u.hrcode as "hrcode", u.useralias as "name"
-		  from BG_SYS_APPROVAL_USER_R_SUBTYPE t
-		  left join BG_SYS_USER u
-		    on u.userid = t.user_id
-		  left join BG_SYS_DEPT p
-		    on t.manage_dept = p.deptid
-		   and p.valid = 1
-		 where #{deptId} in
-		       (select p1.deptid
-		          from BG_SYS_DEPT p1
-		         where p1.valid = 1
-		         start with p1.deptid = p.deptid
-		        connect by prior p1.deptid = p1.pdeptid)
-		   and t.subtype = (select r.approval_role
-		                      from BG_SYS_APPROVAL_RULE r
-		                      join BG_SYS_DATADICTIONARY d
-		                        on r.submit_role = d.code
-		                     where r.approval_role_organtype =
-		                           (select p.code
-		                              from bg_sys_approval_dept_r_orgtype o
-		                              left join BG_SYS_DATADICTIONARY p
-		                                on p.id = o.organ_type
-		                               and p.vaild = 1
-		                             where rownum = 1
-		                               and #{deptId} in
-		                                   (select p1.deptid
-		                                      from BG_SYS_DEPT p1
-		                                     where p1.valid = 1
-		                                     start with p1.deptid = o.organ_id
-		                                    connect by prior p1.deptid = p1.pdeptid))
-		                          
-		                       and d.sort_id = #{subType}
-		                       and r.is_default = 1
-		                       and d.pcode = 'submitUserType'
-		                       and r.valid = 1
-		                       and d.vaild = 1)
-		   and t.valid = 1
+		   SELECT *
+			  FROM (SELECT U.HRCODE AS "hrcode", U.USERALIAS AS "name"
+			          FROM BG_SYS_APPROVAL_USER_R_SUBTYPE T
+			          LEFT JOIN BG_SYS_USER U
+			            ON U.USERID = T.USER_ID
+			          LEFT JOIN BG_SYS_DEPT P
+			            ON T.MANAGE_DEPT = P.DEPTID
+			           AND P.VALID = 1
+			         WHERE #{deptId} IN
+			               (SELECT P1.DEPTID
+			                  FROM BG_SYS_DEPT P1
+			                 WHERE P1.VALID = 1
+			                 START WITH P1.DEPTID = P.DEPTID
+			                CONNECT BY PRIOR P1.DEPTID = P1.PDEPTID)
+			           AND T.SUBTYPE =
+			               (SELECT R.APPROVAL_ROLE
+			                  FROM BG_SYS_APPROVAL_RULE R
+			                  JOIN BG_SYS_DATADICTIONARY D
+			                    ON R.SUBMIT_ROLE = D.CODE
+			                 WHERE R.APPROVAL_ROLE_ORGANTYPE =
+			                       (SELECT P.CODE
+			                          FROM BG_SYS_APPROVAL_DEPT_R_ORGTYPE O
+			                          LEFT JOIN BG_SYS_DATADICTIONARY P
+			                            ON P.ID = O.ORGAN_TYPE
+			                           AND P.VAILD = 1
+			                         WHERE ROWNUM = 1
+			                           AND #{deptId} IN
+			                               (SELECT P1.DEPTID
+			                                  FROM BG_SYS_DEPT P1
+			                                 WHERE P1.VALID = 1
+			                                 START WITH P1.DEPTID = O.ORGAN_ID
+			                                CONNECT BY PRIOR P1.DEPTID = P1.PDEPTID))
+			                      
+			                   AND D.SORT_ID = #{subType}
+			                   AND R.IS_DEFAULT = 1
+			                   AND D.PCODE = 'submitUserType'
+			                   AND R.VALID = 1
+			                   AND D.VAILD = 1)
+			           AND T.VALID = 1
+			         ORDER BY T.PRIORITY ASC)
+			 WHERE ROWNUM = 1
 	</select>
 	
 	<select id="getApproverList" parameterType="String" resultType="java.util.Map">
@@ -441,7 +445,7 @@
 		           and r.valid = 1
 		           and d.vaild = 1)
 		   and t.valid = 1
-		 order by t.subtype asc
+		 order by t.subtype,to_number(t.priority)
 	</select>
 	
 </mapper>

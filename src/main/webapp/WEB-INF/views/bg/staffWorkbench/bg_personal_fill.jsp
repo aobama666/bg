@@ -587,7 +587,9 @@ function forSubmit(){
 			dataType:'json',
 			success : function(data) {
 				layer.msg(data.msg);
-				mmg.load();
+				if(data.result=='success'){
+					mmg.load();
+				}
 			}
 		});
 	});
