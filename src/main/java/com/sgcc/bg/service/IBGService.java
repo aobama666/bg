@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.sgcc.bg.model.ProjectInfoPo;
@@ -27,13 +28,6 @@ public interface IBGService {
 	 */
 	public int addProInfo(ProjectInfoPo pro);
 
-	/**
-	 * 新增人员信息
-	 * @param proUser
-	 * @return
-	 */
-	public int addProUser(ProjectUserPo proUser);
-	
 	/**
 	 * 更新项目信息
 	 * @param pro
@@ -140,5 +134,38 @@ public interface IBGService {
 	 * @param proId
 	 */
 	public boolean isExistPrincipal(String proId);
+
+	/**
+	 * 新增人员信息
+	 * @param request
+	 * @return
+	 */
+	String saveStuff(HttpServletRequest request);
+
+	/**
+	 * 更新人员信息
+	 * @param request
+	 * @return
+	 */
+	String updateStuff(HttpServletRequest request);
+
+	/**
+	 * 查询报工信息表，看符合日期的此人是否有报工记录在
+	 * @param hrcode
+	 * @param startDate
+	 * @param endDate
+	 * @return 有：true，无：false
+	 */
+	public boolean checkExistsWorkHourInfo(String hrcode, String startDate, String endDate);
+
+	/**
+	 * 删除符合条件的项目参与人
+	 * @param proId
+	 * @param hrcode
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	public int deleteProUser(String proId, String hrcode, String startDate, String endDate);
 
 }

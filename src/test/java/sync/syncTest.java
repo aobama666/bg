@@ -11,18 +11,23 @@ import config.TestConfig;
 
 
 public class syncTest {
-	public static ApplicationContext ctx;
-	public SyncService sync = ctx.getBean(SyncService.class);
+	/*public static ApplicationContext ctx;
+	public SyncService sync = ctx.getBean(SyncService.class);*/
 
-	@BeforeClass
+	/*@BeforeClass
 	public static void initConfig(){
 		ctx=TestConfig.getApplicationContext("src/main/resources/applicationContext.xml");
-	}
+	}*/
 	@Test
 	public void sync() {
-		System.out.println("------start-----");
+		/*System.out.println("------start-----");
 		sync.syncErpSyncData();
 		sync.syncUserOrganRelationData();
-		System.out.println("------end-----");
+		System.out.println("------end-----");*/
+		System.out.println("------start-----");
+		StringBuilder sb=new StringBuilder();
+		sb.append("1").append("2");
+		System.out.println(sb.length());
+		System.out.println(sb.deleteCharAt(1).toString());
 	}
 }
