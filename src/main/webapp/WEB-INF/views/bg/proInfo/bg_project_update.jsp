@@ -587,67 +587,23 @@
 	// 删除
 	function forDelete_stuff(){
 		var selectedRows = mmg.selectedRowsIndex();
-		if(selectedRows.length == 0){
-			layer.msg("请选择一条数据!");
-			return;
-		}
-		layer.confirm('确认删除吗?', {icon: 7,title:'提示',shift:-1},
-			function(index){
+		if(selectedRows.length > 0){
+			layer.confirm('确认删除吗?', {icon: 7,title:'提示',shift:-1},function(index){
 				layer.close(index);
-				//删除前先校验此人是否已存在报工信息（保存就算），存在则无法删除
-				var param=[];
-				var ran = Math.random()*100000000;
-				$.each(selectedRows,function(i,n){
-					var row=$("#mmg tr:eq("+n+")");
-					var hrcode=row.find("input[name='hrcode']").val();
-					param.push({
-						index:n+1+'',
-						hrcode:row.find("input[name='hrcode']").val(),
-						startDate:row.find("input[name='startDate']").val(),
-						endDate:row.find("input[name='endDate']").val(),
-					});
-				});
-				var jsonArrayStr=JSON.stringify(param);
-				var proId=$("#proId").val();
-				$.post('<%=request.getContextPath()%>/project/deleteStuff?ran='+ran,
-  					{jsonArray:jsonArrayStr,proId:proId},
- 					function(data){
- 						if(data.result=='success'){
- 							var toDeleteIndex=data.toDeleteIndex;
- 							var noDeleteIndex=data.noDeleteIndex;
- 							var arr=[];
- 							if(toDeleteIndex!=''){
- 								arr=toDeleteIndex.split("，");
- 								$.each(arr,function(i,n){
- 									arr[i]=n-1;
- 								});
- 							}
- 							layer.msg("成功删除"+arr.length+"条"+(noDeleteIndex==''?'':'，第'+noDeleteIndex+'行人员已存在报工信息，无法删除！'));
-							mmg.removeRow(arr);
-							//如果删除的是最后一条，重新加载会出现异常，做判断
-							mmg.load(mmg.rows()[0]==undefined?[]:mmg.rows());
- 						}else{
- 							layer.msg("删除失败！");
- 							mmg.load();
- 						}
- 					}
-			  	);
-		});
-		/*
-		layer.confirm('确认删除吗?', {icon: 7,title:'提示',shift:-1},function(index){
-			layer.close(index);
-			var newRows=$("<tbody></tbody>");
-			var unselectedRows=$("#mmg tr:not('.selected')");
-			for(var i=0;i<unselectedRows.length;i++){
-				var row=unselectedRows[i];
-				$(row).css("display","table-row");
-				$(row).find(".mmg-index").text(i+1);
-				newRows.append($(row));
-			}
-			$("#mmg").html(newRows);
-			resize();
-		});
-		*/
+				var newRows=$("<tbody></tbody>");
+				var unselectedRows=$("#mmg tr:not('.selected')");
+				for(var i=0;i<unselectedRows.length;i++){
+					var row=unselectedRows[i];
+					$(row).css("display","table-row");
+					$(row).find(".mmg-index").text(i+1);
+					newRows.append($(row));
+				}
+				$("#mmg").html(newRows);
+				resize();
+			});
+		}else {
+			layer.msg("请选择一条数据!");
+		}
 	}
  	
 	function forClose() {

@@ -271,25 +271,4 @@
    		 AND t.role='1'
    		 AND t.project_id = #{proId}
 	</select>
-	
-	<select id="checkExistsWorkHourInfo" parameterType="String" resultType="Integer">
-		SELECT COUNT(1)
-		  FROM BG_WORKINGHOUR_INFO T
-		  JOIN BG_SYS_USER U
-		    ON U.USERNAME = T.WORKER
-		 WHERE T.PROJECT_ID=#{proId,jdbcType=VARCHAR}
-		   AND U.HRCODE = #{hrcode,jdbcType=VARCHAR}
-		   AND T.WORK_TIME BETWEEN TO_DATE(#{startDate,jdbcType=VARCHAR}, 'yyyy-mm-dd') AND
-		       TO_DATE(#{endDate,jdbcType=VARCHAR}, 'yyyy-mm-dd')
-		   AND T.VALID = 1
-	</select>
-	
-	<delete id="deleteProUser" parameterType="String">
-		DELETE FROM BG_PROJECT_USER PU
-		 WHERE PU.PROJECT_ID = #{proId,jdbcType=VARCHAR}
-		   AND PU.HRCODE = #{hrcode,jdbcType=VARCHAR}
-		   AND PU.START_DATE = TO_DATE(#{startDate,jdbcType=VARCHAR}, 'yyyy-mm-dd')
-		   AND PU.END_DATE = TO_DATE(#{endDate,jdbcType=VARCHAR}, 'yyyy-mm-dd')
-		   AND PU.STATUS = 1
-	</delete>
 </mapper>
