@@ -52,8 +52,9 @@
 </head>
 <body>
 <div class="page-header-sl">
+	<h5>项目工时统计</h5>
 	<div class="button-box">
-		<button type="button" class="btn btn-success btn-xs" onclick="forConfirm()"> 导出</button>
+		<button type="button" class="btn btn-info btn-xs" onclick="forConfirm()"> 导出</button>
 	</div>
 </div>
 <hr>
@@ -220,7 +221,7 @@ function queryListPro(load){
 	    		];
 	var mmGridHeight = $("body").parent().height() - 220;
 	mmg = $('#mmg').mmGrid({
-		cosEdit:"3,6",//声明需要编辑，取消点击选中的列
+		cosEdit:"5,7",//声明需要编辑，取消点击选中的列
 		indexCol: true,
 		indexColWidth: 30,
 		checkCol: true,

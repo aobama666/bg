@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sgcc.bg.mapper.StaffWorkbenchMaper">
+	<!-- EDIT是一个标记，解决复杂情况下是否可编辑的问题 -->
 	<select id="getWorkingHourInfo" resultType="java.util.Map">
 		SELECT
 		   t.id, 
@@ -24,32 +25,30 @@
 	       t.job_content,
 	       t.working_hour,
 	       t.status,
-	       DECODE(t.category,
-              'NP',
-              (SELECT t3.useralias
-                 FROM BG_SYS_USER t3
-                WHERE t3.username = t.approver),
-              (SELECT t1.empname
-                        FROM BG_PROJECT_USER t1
-                       WHERE t1.project_id = t.project_id
-                         AND t1.role = '1'
-                         AND t1.status = '1')
-         	) as principal,
+	       u.useralias as principal,
 	       (SELECT t2.process_note
 	          FROM BG_PROCESS_RECORD t2
 	         WHERE t2.id = t.process_id AND t2.valid=1) as process_note,
-	       DECODE(t.category,
-              'NP',
-              (SELECT t3.hrcode
-                 FROM BG_SYS_USER t3
-                WHERE t3.username = t.approver),
-                (SELECT t4.hrcode
-          			FROM BG_PROJECT_USER t4
-             		WHERE t4.project_id = t.project_id
-           			AND t4.role = '1'
-          			AND t4.status = '1')
-             )as hrcode
+	       u.hrcode as hrcode,
+	       DECODE(
+	       	t.category,
+	       	'NP',
+	       	'yes',
+	       	DECODE(
+	       		t.worker,
+	       		(SELECT t2.username FROM BG_PROJECT_USER t1 
+  				 JOIN BG_SYS_USER t2
+    			 ON t1.hrcode = t2.hrcode
+ 				 WHERE t1.project_id = t.project_id
+   				 AND t1.role = '1'
+   				 AND t1.status = '1'),
+   				'yes',
+   				'no'	
+	       	)
+	       ) as edit
 	  	FROM BG_WORKINGHOUR_INFO t
+	  	LEFT JOIN BG_SYS_USER u 
+	  		ON u.username = t.approver
 	  	WHERE t.Work_Time = TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
 	  	 AND t.worker=#{username}
 	  	 AND t.valid=1
@@ -344,4 +343,109 @@
 			process_id=#{processId,jdbcType=VARCHAR}
 		WHERE ID=#{id} AND valid=1
 	</update>
+	
+	<select id="getTopSubmitType" parameterType="String" resultType="String">
+		select nvl(min(to_number(td.sort_id)),10)
+			from BG_SYS_APPROVAL_USER_R_SUBTYPE t
+			join BG_SYS_DATADICTIONARY td
+		on td.code = t.subtype
+		where td.pcode = 'submitUserType'
+		 and t.user_id = #{userId}
+		 and t.valid=1
+		 and td.vaild=1
+	</select>
+	
+	<select id="getDefaultApprover" parameterType="String" resultType="java.util.Map">
+		   SELECT *
+			  FROM (SELECT U.HRCODE AS "hrcode", U.USERALIAS AS "name"
+			          FROM BG_SYS_APPROVAL_USER_R_SUBTYPE T
+			          LEFT JOIN BG_SYS_USER U
+			            ON U.USERID = T.USER_ID
+			          LEFT JOIN BG_SYS_DEPT P
+			            ON T.MANAGE_DEPT = P.DEPTID
+			           AND P.VALID = 1
+			         WHERE #{deptId} IN
+			               (SELECT P1.DEPTID
+			                  FROM BG_SYS_DEPT P1
+			                 WHERE P1.VALID = 1
+			                 START WITH P1.DEPTID = P.DEPTID
+			                CONNECT BY PRIOR P1.DEPTID = P1.PDEPTID)
+			           AND T.SUBTYPE =
+			               (SELECT R.APPROVAL_ROLE
+			                  FROM BG_SYS_APPROVAL_RULE R
+			                  JOIN BG_SYS_DATADICTIONARY D
+			                    ON R.SUBMIT_ROLE = D.CODE
+			                 WHERE R.APPROVAL_ROLE_ORGANTYPE =
+			                       (SELECT P.CODE
+			                          FROM BG_SYS_APPROVAL_DEPT_R_ORGTYPE O
+			                          LEFT JOIN BG_SYS_DATADICTIONARY P
+			                            ON P.ID = O.ORGAN_TYPE
+			                           AND P.VAILD = 1
+			                         WHERE ROWNUM = 1
+			                           AND #{deptId} IN
+			                               (SELECT P1.DEPTID
+			                                  FROM BG_SYS_DEPT P1
+			                                 WHERE P1.VALID = 1
+			                                 START WITH P1.DEPTID = O.ORGAN_ID
+			                                CONNECT BY PRIOR P1.DEPTID = P1.PDEPTID))
+			                      
+			                   AND D.SORT_ID = #{subType}
+			                   AND R.IS_DEFAULT = 1
+			                   AND D.PCODE = 'submitUserType'
+			                   AND R.VALID = 1
+			                   AND D.VAILD = 1)
+			           AND T.VALID = 1
+			         ORDER BY T.PRIORITY ASC)
+			 WHERE ROWNUM = 1
+	</select>
+	
+	<select id="getApproverList" parameterType="String" resultType="java.util.Map">
+		select u.hrcode as "hrcode", u.useralias as "name", p.deptname "deptName"
+		  from BG_SYS_APPROVAL_USER_R_SUBTYPE t
+		  left join BG_SYS_USER u
+		    on u.userid = t.user_id
+		  left join BG_SYS_DEPT p
+		    on t.manage_dept = p.deptid
+		   and p.valid = 1
+		 where #{deptId} in
+		       (select p1.deptid
+		          from BG_SYS_DEPT p1
+		         where p1.valid = 1
+		         start with p1.deptid = p.deptid
+		        connect by prior p1.deptid = p1.pdeptid)
+		   and t.subtype in
+		       (select r.approval_role
+		          from BG_SYS_APPROVAL_RULE r
+		          join BG_SYS_DATADICTIONARY d
+		            on r.submit_role = d.code
+		         where r.approval_role_organtype =
+		               (select p.code
+		                  from bg_sys_approval_dept_r_orgtype r
+		                  left join BG_SYS_DATADICTIONARY p
+		                    on p.id = r.organ_type
+		                   and p.vaild = 1
+		                 where rownum = 1
+		                   and #{deptId} in
+		                       ( 
+		                        select p1.deptid
+		                          from BG_SYS_DEPT p1
+		                         where p1.valid = 1
+		                         start with p1.deptid = r.organ_id
+		                        connect by prior p1.deptid = p1.pdeptid))
+		           and d.sort_id =
+		               (select nvl(to_number(min(c.sort_id)), 10)
+		                  from BG_SYS_APPROVAL_USER_R_SUBTYPE t
+		                  left join BG_SYS_DATADICTIONARY c
+		                    on c.code = t.subtype
+		                 where t.user_id = #{userId}
+		                   and c.pcode = 'submitUserType'
+		                   and t.valid = 1
+		                   and c.vaild = 1)
+		           and d.pcode = 'submitUserType'
+		           and r.valid = 1
+		           and d.vaild = 1)
+		   and t.valid = 1
+		 order by t.subtype,to_number(t.priority)
+	</select>
+	
 </mapper>

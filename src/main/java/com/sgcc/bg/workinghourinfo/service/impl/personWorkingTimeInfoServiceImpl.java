@@ -197,6 +197,7 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 			ExportExcelHelper.getExcels(response,workbook,fileName);
 			return "";
 		}
+		
 		public  List<Map<String, Object>> Statistics(String userName,String type,String beginData,String endData) {
 			 List<DataBean>  DataBeanlist=null;
 			 try {
@@ -241,9 +242,6 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
                 	 ProjectTotalHourslNums=ProjectTotalHourslNum+"";
                 	 ProjectTotalHourslNums.replace(".0", "");
                  }
-                 
-                 
-                 
                  
  				String  NoProjectTotalHoursNumPer;
  				String  ProjectTotalHoursNumPer;

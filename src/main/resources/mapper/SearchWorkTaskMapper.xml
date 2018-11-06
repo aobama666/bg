@@ -63,7 +63,7 @@
 			b.PROJECT_ID,
 			b.JOB_CONTENT,
 			b.WORKING_HOUR,
-			NVL(E.USERNAME,b.APPROVER) as APPROVER,
+			b.APPROVER APPROVER,
 			b.WORKER,
 			b.DEPT_ID,
 			c.DEPTNAME,
@@ -84,10 +84,8 @@
 		LEFT JOIN BG_SYS_USER T ON T.USERNAME = b.WORKER
 		LEFT JOIN BG_SYS_DEPT c ON c.deptid = b.DEPT_ID AND c.valid = 1
 		LEFT JOIN BG_SYS_DEPT D ON b.LAB_ID = D.deptid AND D.valid = 1
-		LEFT JOIN BG_PROJECT_USER  U  ON  b.PROJECT_ID=U.PROJECT_ID AND U.ROLE = '1' AND U.STATUS = '1'
-    	LEFT JOIN   BG_SYS_USER  E  ON  E.HRCODE=U.HRCODE
   	  	WHERE
-      		b.VALID = 1 and b.STATUS = '1' and NVL(E.USERNAME,b.approver)=#{hrCode}
+      		b.VALID = 1 and b.STATUS = '1' and b.approver=#{hrCode}
 		<if test="startTime!=null and startTime!=''">
 			<![CDATA[and b.WORK_TIME >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
@@ -119,7 +117,7 @@
 	      b.PROJECT_ID,
 	      b.JOB_CONTENT,
 	      b.WORKING_HOUR,
-	      NVL(E.USERNAME,b.APPROVER) as APPROVER,
+	      b.APPROVER as APPROVER,
 	      b.WORKER,
 	      b.DEPT_ID,
 	      c.DEPTNAME,
@@ -142,10 +140,8 @@
 		    LEFT JOIN BG_SYS_DEPT c ON c.deptid = b.DEPT_ID AND c.valid = 1
 		    LEFT JOIN BG_SYS_DEPT D ON b.LAB_ID = D.deptid AND D.valid = 1
 		    LEFT JOIN BG_PROCESS_RECORD R ON R.ID = B.PROCESS_ID  AND R.VALID = 1
-		    LEFT JOIN BG_PROJECT_USER  U  ON  b.PROJECT_ID=U.PROJECT_ID AND U.ROLE = '1' AND U.STATUS = '1'
-   			LEFT JOIN BG_SYS_USER  E  ON  E.HRCODE=U.HRCODE
     	WHERE
-     	 b.VALID = 1 and NVL(E.USERNAME,b.approver) = #{hrName} and  (b.status = '2' or  b.status = '3')
+     	 b.VALID = 1 and b.approver= #{hrName} and  (b.status = '2' or  b.status = '3')
 		<if test="startTime!=null and startTime!=''">
 			<![CDATA[and b.WORK_TIME >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
@@ -178,7 +174,7 @@
 			b.PROJECT_ID,
 			b.JOB_CONTENT,
 			b.WORKING_HOUR,
-			NVL(E.USERNAME,b.APPROVER) as APPROVER,
+			b.APPROVER as APPROVER,
 			b.WORKER,
 			b.DEPT_ID,
 			c.DEPTNAME,
@@ -202,10 +198,8 @@
 		LEFT JOIN BG_SYS_DEPT c ON c.deptid = b.DEPT_ID AND c.valid = 1
 		LEFT JOIN BG_SYS_DEPT D ON b.LAB_ID = D.deptid AND D.valid = 1
 		LEFT JOIN BG_PROCESS_RECORD R ON R.ID = B.PROCESS_ID AND R.VALID = 1
-		LEFT JOIN BG_PROJECT_USER  U  ON  b.PROJECT_ID=U.PROJECT_ID AND U.ROLE = '1' AND U.STATUS = '1'
-   		LEFT JOIN BG_SYS_USER  E  ON  E.HRCODE=U.HRCODE
 		WHERE
-			b.VALID = 1 and NVL(E.USERNAME,b.approver) = #{hrName} and (b.status = '2' or  b.status = '3')
+			b.VALID = 1 and b.approver = #{hrName} and (b.status = '2' or  b.status = '3')
 		<if test="startTime!=null and startTime!=''">
 			<![CDATA[and b.WORK_TIME >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
@@ -213,10 +207,10 @@
 			<![CDATA[and b.WORK_TIME <=  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
 		<if test="projectName!=null and projectName!=''">
-			and b.PROJECT_NAME  like '%'||#{projectName}||'%'
+			and NVL(p.PROJECT_NAME, b.PROJECT_NAME)  like '%'||#{projectName}||'%'
 		</if>
 		<if test="type!=null and type!=''">
-			and b.CATEGORY  = #{type}
+			and NVL(p.CATEGORY,b.CATEGORY)  = #{type}
 		</if>
 		<if test="userName!=null and userName!=''">
 			and T.USERALIAS = #{userName}
