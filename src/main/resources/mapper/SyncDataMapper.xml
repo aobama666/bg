@@ -226,26 +226,51 @@
 		 WHERE R.SRC = 0 
 	</update>
 	<!--更新HR员工的组织关系-->
+	<!--人员关系临时表中某些领导没有处室id（默认00000000），当关联不到处室时，关联部门  -->
 	<update id="syncHrUserOrganRelationData">
 		MERGE INTO BG_SYS_USER_DEPT_RELATION A
 		USING (SELECT U.USERID,
-					  D.DEPTID,
-		              TO_DATE(TO_CHAR(P.BEGDA,'yyyyMMdd'), 'yyyyMMdd') BEGIN_DATE,
-		              TO_DATE(TO_CHAR(P.ENDDA,'yyyyMMdd'), 'yyyyMMdd') END_DATE
-		       FROM BG_ERP_HR_PA0001 P
-		         INNER JOIN BG_SYS_USER U
+		              NVL(D.DEPTID, D1.DEPTID) AS DEPTID,
+		              TO_DATE(TO_CHAR(P.BEGDA, 'yyyyMMdd'), 'yyyyMMdd') BEGIN_DATE,
+		              TO_DATE(TO_CHAR(P.ENDDA, 'yyyyMMdd'), 'yyyyMMdd') END_DATE
+		         FROM BG_ERP_HR_PA0001 P
+		         LEFT JOIN BG_SYS_USER U
 		           ON P.PERNR = U.HRCODE
-		         INNER JOIN BG_SYS_DEPT D
-		           ON P.Z00HRSSBZID=D.DEPTCODE
+		         LEFT JOIN BG_SYS_DEPT D
+		           ON P.Z00HRSSBZID = D.DEPTCODE
+		         LEFT JOIN BG_SYS_DEPT D1
+		           ON P.Z00HRSSBMID = D1.DEPTCODE
 		        WHERE P.Z00HRSSDWID = '41000001'
-		          AND P.BEGDA IS NOT NULL AND P.ENDDA IS NOT NULL) B
-		   ON (A.SRC=0 AND A.USERID = B.USERID AND A.DEPTID = B.DEPTID AND A.EXP_START_TIME = B.BEGIN_DATE AND A.EXP_END_TIME = B.END_DATE)
+		          AND P.BEGDA IS NOT NULL
+		          AND P.ENDDA IS NOT NULL
+		          AND U.USERID IS NOT NULL
+		          AND NVL(D.DEPTID, D1.DEPTID) IS NOT NULL) B
+		ON (A.SRC = 0 AND A.USERID = B.USERID AND A.DEPTID = B.DEPTID AND A.EXP_START_TIME = B.BEGIN_DATE AND A.EXP_END_TIME = B.END_DATE)
 		WHEN MATCHED THEN
-		  UPDATE
-		  SET A.VALID=1,A.UPDATE_USER='admin',A.UPDATE_DATE=SYSDATE
+		  UPDATE SET A.VALID = 1, A.UPDATE_USER = 'admin', A.UPDATE_DATE = SYSDATE
 		WHEN NOT MATCHED THEN
-	      INSERT (A.USERID,A.DEPTID,A.VALID,A.EXP_START_TIME,A.EXP_END_TIME,A.SRC,A.CREATE_USER,A.CREATE_DATE,A.UPDATE_USER,A.UPDATE_DATE)
-	      VALUES (B.USERID,B.DEPTID,1,B.BEGIN_DATE,B.END_DATE,'0','admin',SYSDATE,'admin',SYSDATE)
+		  INSERT
+		    (A.USERID,
+		     A.DEPTID,
+		     A.VALID,
+		     A.EXP_START_TIME,
+		     A.EXP_END_TIME,
+		     A.SRC,
+		     A.CREATE_USER,
+		     A.CREATE_DATE,
+		     A.UPDATE_USER,
+		     A.UPDATE_DATE)
+		  VALUES
+		    (B.USERID,
+		     B.DEPTID,
+		     1,
+		     B.BEGIN_DATE,
+		     B.END_DATE,
+		     '0',
+		     'admin',
+		     SYSDATE,
+		     'admin',
+		     SYSDATE)
 	</update>
 	<!--失效未同步的HR员工的组织关系-->
 	<!-- <update id="invalidHrUserOrganRelationData">

@@ -417,7 +417,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						 { "填报人员姓名\r\n（选填）","WORKER","nowrap"}, 
 						 { "填报人员编号\r\n（必填）","WORKER_HRCODE","nowrap"},
 						 { "审核人员姓名\r\n（选填）","PRINCIPAL","nowrap"}, 
-						 { "审核人员员工编号\r\n（非项目工作必填）","PRINCIPAL_HRCODE","nowrap"},
+						 { "审核人员员工编号\r\n（非项目工作必填，项目工作负责人必填）","PRINCIPAL_HRCODE","nowrap"},
 						 { "错误说明","errInfo"}
 						};
 				
@@ -464,7 +464,6 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 			String proName = Rtext.toStringTrim(map.get("proName"), "");
 			String empName = Rtext.toStringTrim(map.get("empName"), "");
 			String hrCode = Rtext.toStringTrim(map.get("hrCode"), "");
-			CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 			//服用页面查询方法，把分页范围调大
 			dataList=smMapper.getWorkHourInfoByCondition(
 					getLimitDeptIds(webUtils.getUsername(),deptCode),startDate,endDate,category,proName,empName,hrCode,"0","100000000");

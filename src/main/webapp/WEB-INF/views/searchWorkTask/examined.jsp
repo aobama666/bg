@@ -52,8 +52,9 @@
 </head>
 <body>
 <div class="page-header-sl">
+	<h5>已审核工时信息查询</h5>
 	<div class="button-box">
-		<button type="button" class="btn btn-success btn-xs" onclick="forConfirm()"> 导出</button>
+		<button type="button" class="btn btn-info btn-xs" onclick="forConfirm()"> 导出</button>
 	</div>
 </div>
 <hr>

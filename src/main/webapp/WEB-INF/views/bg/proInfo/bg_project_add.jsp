@@ -118,7 +118,8 @@
 					</div>
 				</div>	
 				<div class="form-group col-xs-11" id="WBSNumber">
-					<label for="WBSNumber"></font>WBS编号</label>
+					<label for="WBSNumber">
+						<font class="glyphicon glyphicon-asterisk required"></font>WBS编号</label>
 					<div class="controls">
 						<input type="text" name="WBSNumber" property="WBSNumber">
 					</div>
@@ -250,6 +251,7 @@
 				$("#deptName").val($("#currentDeptName").val());
 				$("#deptCode").val($("#currentDeptCode").val());
 			}
+			$("#WBSNumber label").html('WBS编号');
 			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>项目编号');
 			if(currentCategory==type){
 				$("#WBSNumber input").val(currentWBSNumber);
@@ -259,8 +261,9 @@
 			$("#WBSNumber input").attr("readonly","").css({'color':'#999','font-style':'italic'});
 			*/
 		}
-		if(type!="JS"){
+		if(type=="KY" || type=="HX"){
 			$("#organInfo").hide();
+			$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
 			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
 			if(currentCategory==type){
 				$("#WBSNumber input").val(currentWBSNumber);

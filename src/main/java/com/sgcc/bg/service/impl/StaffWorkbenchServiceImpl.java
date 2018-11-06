@@ -23,13 +23,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
 import com.sgcc.bg.common.CommonCurrentUser;
+import com.sgcc.bg.common.CommonUser;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ExcelUtil;
 import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.common.FtpUtils;
-import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
@@ -147,7 +146,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 							 { "工作内容\r\n（选填 200字以内）",""}, 
 							 { "投入工时\r\n(必填 数字 h）","","nowrap"},
 							 { "审核人员姓名\r\n（选填）","PRINCIPAL","nowrap"}, 
-							 { "审核人员员工编号\r\n（非项目工作必填）","HRCODE","nowrap"} 
+							 { "审核人员员工编号\r\n（非项目工作必填，项目工作负责人必填）","HRCODE","nowrap"} 
 							};
 		ExportExcelHelper.getExcel(response, "定制模板", title, dataList, "normal");
 		return "success";
@@ -371,7 +370,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						 { "工作内容\r\n（必填 200字以内）","JOB_CONTENT"}, 
 						 { "投入工时（h）\r\n（必填 数字 h）","WORKING_HOUR","nowrap"},
 						 { "审核人员姓名\r\n（选填）","PRINCIPAL","nowrap"}, 
-						 { "审核人员员工编号\r\n（非项目工作必填）","HRCODE","nowrap"},
+						 { "审核人员员工编号\r\n（非项目工作必填，项目工作负责人必填）","HRCODE","nowrap"},
 						 { "错误说明","errInfo"}
 						};
 				
@@ -541,5 +540,54 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	public String addExamineRecord(String bussinessId,String processUsername, String result, String note){
 		String processId=SWMapper.getFieldOfWorkHourById(bussinessId, "process_id");
 		return addProcessRecord(processId,bussinessId,processUsername,result,note);
+	}
+	
+	@Override
+	public	List<Map<String,String>> getApproverList(){
+		CommonUser user=webUtils.getCommonUser();
+		String username=user.getUserName();
+		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(username);
+		String userId=currentUser.getUserId();
+		String deptId=currentUser.getDeptId();//获取当前提报人当前所在部门
+		return SWMapper.getApproverList(userId,deptId);
+	}
+
+	@Override
+	public Map<String, String> getDefaultApprover() {
+		CommonUser user=webUtils.getCommonUser();
+		String username=user.getUserName();
+		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(username);
+		String hrcode=currentUser.getHrCode();
+		String useralias=currentUser.getUserAlias();
+		String userId=currentUser.getUserId();
+		String deptId=currentUser.getDeptId();//获取当前提报人当前所在部门
+		//获取当前提报人提交类型，取最大(数值最小的)
+		/*院领导	    SUT1	1
+		分管院领导		SUT2	2
+		院助理副总师	SUT3	3
+		部门行政正职	SUT4	4
+		部门副职		SUT5	5
+		部门助理副总师	SUT6	6
+		技术专家		SUT7	7
+		处室正职		SUT8	8
+		处室副职		SUT9	9
+		专业通道员工	SUT10	10
+		*/
+		String subType=SWMapper.getTopSubmitType(userId);
+		int subTypeNum=Rtext.ToInteger(subType, 0);
+		Map<String,String> approver=new HashMap<>();
+		//如果审核类型在部门副职及以上，则默认审批通过，返回自己
+		if(subTypeNum>5){
+			approver=SWMapper.getDefaultApprover(subType,deptId);
+		}else{
+			approver.put("hrcode", hrcode);
+			approver.put("name", useralias);
+		}
+		return approver;
+	}
+	
+	@Override
+	public String getApproverById(String id) {
+		return SWMapper.getFieldOfWorkHourById(id, "approver");
 	}
 }
