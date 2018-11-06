@@ -932,8 +932,8 @@ public class BGServiceImpl implements IBGService {
 	}
 
 	@Override
-	public boolean checkExistsWorkHourInfo(String hrcode, String startDate, String endDate) {
-		int affectedRows=bgMapper.checkExistsWorkHourInfo(hrcode,startDate,endDate);
+	public boolean checkExistsWorkHourInfo(String proId,String hrcode, String startDate, String endDate) {
+		int affectedRows=bgMapper.checkExistsWorkHourInfo(proId,hrcode,startDate,endDate);
 		if(affectedRows>=1){
 			return true;
 		}

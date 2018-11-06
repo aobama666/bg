@@ -624,7 +624,8 @@
  							}
  							layer.msg("成功删除"+arr.length+"条"+(noDeleteIndex==''?'':'，第'+noDeleteIndex+'行人员已存在报工信息，无法删除！'));
 							mmg.removeRow(arr);
-							mmg.load(mmg.rows());
+							//如果删除的是最后一条，重新加载会出现异常，做判断
+							mmg.load(mmg.rows()[0]==undefined?[]:mmg.rows());
  						}else{
  							layer.msg("删除失败！");
  							mmg.load();

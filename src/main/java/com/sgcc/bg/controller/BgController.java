@@ -527,7 +527,7 @@ public class BgController {
 			String hrcode=map.get("hrcode");
 			String startDate=map.get("startDate");
 			String endDate=map.get("endDate");
-			boolean isExists=bgService.checkExistsWorkHourInfo(hrcode,startDate,endDate);
+			boolean isExists=bgService.checkExistsWorkHourInfo(proId,hrcode,startDate,endDate);
 			if(isExists){
 				noDeleteIndex.append(map.get("index")).append("，");
 			}else{

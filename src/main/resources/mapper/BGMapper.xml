@@ -277,7 +277,8 @@
 		  FROM BG_WORKINGHOUR_INFO T
 		  JOIN BG_SYS_USER U
 		    ON U.USERNAME = T.WORKER
-		 WHERE U.HRCODE = #{hrcode,jdbcType=VARCHAR}
+		 WHERE T.PROJECT_ID=#{proId,jdbcType=VARCHAR}
+		   AND U.HRCODE = #{hrcode,jdbcType=VARCHAR}
 		   AND T.WORK_TIME BETWEEN TO_DATE(#{startDate,jdbcType=VARCHAR}, 'yyyy-mm-dd') AND
 		       TO_DATE(#{endDate,jdbcType=VARCHAR}, 'yyyy-mm-dd')
 		   AND T.VALID = 1

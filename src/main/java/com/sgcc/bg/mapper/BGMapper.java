@@ -192,13 +192,14 @@ public interface BGMapper {
 	public String getPrincipalCodeByProId(@Param("proId")String proId);
 
 	/**
-	 * 查询指定日期内此人是否有报工信息存在
+	 * 查询指定日期内此人在指定项目下是否有报工信息存在
 	 * @param hrcode
 	 * @param startDate
 	 * @param endDate
 	 * @return
 	 */
 	public int checkExistsWorkHourInfo(
+			@Param("proId")String proId,
 			@Param("hrcode")String hrcode, 
 			@Param("startDate")String startDate, 
 			@Param("endDate")String endDate);

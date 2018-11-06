@@ -150,13 +150,13 @@ public interface IBGService {
 	String updateStuff(HttpServletRequest request);
 
 	/**
-	 * 查询报工信息表，看符合日期的此人是否有报工记录在
+	 * 查询报工信息表，看符合日期的此人在指定项目下是否有报工记录在
 	 * @param hrcode
 	 * @param startDate
 	 * @param endDate
 	 * @return 有：true，无：false
 	 */
-	public boolean checkExistsWorkHourInfo(String hrcode, String startDate, String endDate);
+	public boolean checkExistsWorkHourInfo(String proId,String hrcode, String startDate, String endDate);
 
 	/**
 	 * 删除符合条件的项目参与人
