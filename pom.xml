@@ -502,10 +502,10 @@
 			</properties>
 			<build>
 				<filters>
-					<filter>src/main/resources/test/application.properties</filter>
-					<filter>src/main/resources/test/iscadapter.properties</filter>
-					<filter>src/main/resources/test/iscservicesadapter.properties</filter>
-					<filter>src/main/resources/test/logback.xml</filter>
+					<filter>src/main/resources/devtest/application.properties</filter>
+					<filter>src/main/resources/devtest/iscadapter.properties</filter>
+					<filter>src/main/resources/devtest/iscservicesadapter.properties</filter>
+					<filter>src/main/resources/devtest/logback.xml</filter>
 				</filters>
 			</build>
 		</profile>
@@ -521,6 +521,7 @@
 					<exclude>test/*</exclude>
 					<exclude>production/*</exclude>
 					<exclude>development/*</exclude>
+					<exclude>devtest/*</exclude>
 					<exclude>iscadapter.properties</exclude>
 					<exclude>iscservicesadapter.properties</exclude>
 				</excludes>
