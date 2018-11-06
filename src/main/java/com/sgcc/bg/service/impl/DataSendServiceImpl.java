@@ -40,6 +40,9 @@ public class DataSendServiceImpl implements DataSendService{
 		int page = request.getParameter("page")==null?1:Integer.parseInt(request.getParameter("page"));
 		int limit = request.getParameter("limit")==null?30:Integer.parseInt(request.getParameter("limit"));
 		logger.info("数据推送查询：参数year:"+year+"Atype:"+Atype+"Ctype:"+Ctype+"projectName:"+projectName+"Btype:"+Btype+"time:"+time+"userName:"+userName);
+		if("".equals(Ctype)){
+			Ctype = "Y";
+		}
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		Map<String, Object>	map = new HashMap<String, Object>();
 		String round = "";//周期
@@ -49,6 +52,7 @@ public class DataSendServiceImpl implements DataSendService{
 		String startTime = startAndEndTime.get("startTime").toString();//根据季度或者月份计算开始时间
 		String endTime = startAndEndTime.get("endTime").toString();//根据季度或者月份计算结束时间
 		List<Map<String, Object>> list2= dataSendMapper.queryList(year,Ctype,projectName,Btype,time,userName);
+		System.out.println("22"+Ctype+"1122111----------111111");
 		for(int i=0;i<list2.size();i++){
 			Map<String, Object>	mapList = new HashMap<String, Object>();
 			String empCode = list2.get(i).get("EMP_CODE").toString();
@@ -161,13 +165,16 @@ public class DataSendServiceImpl implements DataSendService{
 	public String queryListExport(HttpServletRequest request,HttpServletResponse response){
 		String year = request.getParameter("year")==null?"":request.getParameter("year");//年
 		String Atype = request.getParameter("Atype")==null?"":request.getParameter("Atype");//Y年 J季度 M月度
-		String Ctype = request.getParameter("Ctype")==null?"":request.getParameter("Ctype");//S1-S4代表1234季度，M1-M12代表1-12月份
+		String Ctype = request.getParameter("Ctype")==null?"Y":request.getParameter("Ctype");//S1-S4代表1234季度，M1-M12代表1-12月份
 		String projectName = request.getParameter("projectName")==null?"":request.getParameter("projectName");//项目名称
 		String Btype = request.getParameter("Btype")==null?"":request.getParameter("Btype");//1项目工作    0非项目工作
 		String time = request.getParameter("time")==null?"":request.getParameter("time");//推送日期
 		String userName = request.getParameter("userName")==null?"":request.getParameter("userName");//人员名称
 		String ids = request.getParameter("selectList")==null?"":request.getParameter("selectList");//人员名称
 		logger.info("数据推送导出：参数year:"+year+"Atype:"+Atype+"Ctype:"+Ctype+"projectName:"+projectName+"Btype:"+Btype+"time:"+time+"userName:"+userName);
+		if("".equals(Ctype)){
+			Ctype = "Y";
+		}
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		Map<String, Object>	map = new HashMap<String, Object>();
 		String round = "";//周期

@@ -17,7 +17,7 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery/jquery-1.7.2.min.js"></script>
 <script>
 	$(".loginout").on("click",function(){
-		location.href="/newtygl/index/loginout"; 
+		location.href="/bg/index/loginout"; 
 	})
 </script>
 </body>
