@@ -401,7 +401,7 @@
 		var nameArr=new Array();
 		var hrcodeArr=new Array();
 		var proId=$("#proId").val();
-		var rows=$("#mmg tr");
+		var rows=$("#mmg tr:visible");
 		if(rows.length==0){
 			layer.msg("请添加参与人员");
 			return;
@@ -493,16 +493,28 @@
 			data:{param:jsonStr,proId:proId},
 			dataType:"json",
 			success:function(data){
-				/* if(data.result== "success"){
-					parent.layer.msg("保存成功!");
+				if(data.result== "success"){
+					parent.layer.msg("成功保存"+data.count+"条，"+"失败"+data.failCount+"条");
 					parent.queryList("reload");
 					forClose();
 				}else {
-					parent.layer.msg("保存失败!");
-				} */
-				parent.layer.msg("成功保存"+data.count+"条，"+"失败"+data.failCount+"条");
-				parent.queryList("reload");
-				forClose();
+					var failList=JSON.parse(data.failList);
+					//TODO
+					var note="";
+					$.each(failList,function(i,item){
+						var rows=$("tr:hidden");
+						rows.each(function(i){
+							var hrcode=$(this).find("input[name='hrcode']").val();
+							//console.log("hrcode: "+hrcode+"/HRCODE: "+item.HRCODE);
+							if(hrcode==item.HRCODE){
+								$(this).show();
+								sortIndex();
+								note+=item.NAME+"("+item.WORK_TIME+")、";
+							}
+						});
+					});
+					parent.layer.msg(note.substr(0,note.length-1)+"已存在报工信息，请核实!");
+				} 
 			},
 			error:function(){
 				parent.layer.msg("异常!");
@@ -592,19 +604,21 @@
 		}
 		layer.confirm('确认删除吗?', {icon: 7,title:'提示',shift:-1},function(index){
 			layer.close(index);
-			var newRows=$("<tbody></tbody>");
-			var unselectedRows=$("#mmg tr:not('.selected')");
-			for(var i=0;i<unselectedRows.length;i++){
-				var row=unselectedRows[i];
-				$(row).css("display","table-row");
-				$(row).find(".mmg-index").text(i+1);
-				newRows.append($(row));
-			}
-			$("#mmg").html(newRows);
+			var selectedRows=$("#mmg .selected");
+			selectedRows.hide();
+			sortIndex();
 			resize();
 		});
 	}
  	
+	function sortIndex(){
+		var rows=$("#mmg tr:visible");
+		for(var i=0;i<rows.length;i++){
+			var row=rows[i];
+			$(row).find(".mmg-index").text(i+1);
+		}
+	}	
+	
 	function forClose() {
 		parent.layer.close(parent.layer.getFrameIndex(window.name));
 	}

@@ -143,6 +143,6 @@ public interface IBGService {
 	 * @param list
 	 * @return
 	 */
-	int updateStuff(String proId, List<HashMap> list);
+	String updateStuff(String proId, List<HashMap> list);
 
 }

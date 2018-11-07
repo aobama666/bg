@@ -39,6 +39,7 @@ import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IBGService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 @Service
 public class BGServiceImpl implements IBGService {
@@ -910,7 +911,7 @@ public class BGServiceImpl implements IBGService {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public int updateStuff(String proId,List<HashMap> list) {
+	public String updateStuff(String proId,List<HashMap> list) {
 		//TODO
 		List<Map<String,String>> workerList=bgMapper.getBgWorkerByProId(proId);
 		for (Map<String, String> stuffMap : list) {
@@ -937,11 +938,20 @@ public class BGServiceImpl implements IBGService {
 			set.add(map.get("HRCODE"));
 		}
 		System.out.println(set.toString());
-		return 1;
-		/*// 删除旧的所有项目下人员
-		int affectedRows = deleteProUsersByProId(proId);
+		Map<String, String> resultMap = new HashMap<>();
+		if(workerList.size()>0){
+			resultMap.put("result", "fail");
+			resultMap.put("failList", JSON.toJSONString(workerList, SerializerFeature.WriteMapNullValue));
+			return JSON.toJSONString(resultMap);
+		}
+		// 删除旧的所有项目下人员
+		int affectedRows = bgMapper.deleteProUsersByProId(proId);
 		bgServiceLog.info("成功删除" + affectedRows + "人！");
 		// 重新添加人员
-		return saveStuff(proId,list);*/
+		int count=saveStuff(proId,list);
+		resultMap.put("result", "success");
+		resultMap.put("count", count+"");
+		resultMap.put("failCount", (list.size()-count)+"");
+		return JSON.toJSONString(resultMap);
 	}
 }

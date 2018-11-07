@@ -273,7 +273,7 @@
 	</select>
 	
 	<select id="getBgWorkerByProId" parameterType="String" resultType="java.util.Map">
-		SELECT U.HRCODE, TO_CHAR(T.WORK_TIME, 'yyyy-mm-dd') AS WORK_TIME
+		SELECT U.USERALIAS AS NAME,U.HRCODE, TO_CHAR(T.WORK_TIME, 'yyyy-mm-dd') AS WORK_TIME
 		  FROM BG_WORKINGHOUR_INFO T
 		  JOIN BG_SYS_USER U
 		    ON T.WORKER = U.USERNAME

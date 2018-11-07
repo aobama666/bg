@@ -513,18 +513,14 @@ public class BgController {
 		return JSON.toJSONString(resultMap);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/ajaxUpdateStuff", method = RequestMethod.POST)
 	@ResponseBody
 	public String updateStuff(HttpServletRequest request) throws Exception {
 		String jsonStr = Rtext.toStringTrim(request.getParameter("param"),"");
 		String proId = Rtext.toStringTrim(request.getParameter("proId"),"");
 		List<HashMap> list = JSON.parseArray(jsonStr, HashMap.class);
-		
-		Map<String, String> resultMap = new HashMap<>();
-		int count=bgService.updateStuff(proId, list);
-		resultMap.put("count", count+"");
-		resultMap.put("failCount", (list.size()-count)+"");
-		return JSON.toJSONString(resultMap);
+		return bgService.updateStuff(proId, list);
 	}
 
 	@RequestMapping(value = "/deleteProject", method = RequestMethod.POST)
