@@ -72,6 +72,7 @@ public class BgController {
 	@RequestMapping("/initPage")
 	@ResponseBody
 	public String initPage(String proName, String proStatus, Integer page, Integer limit) {
+		//test
 		proStatus=proStatus.trim();
 		proName=proName.trim();
 		List<Map<String, String>> jsonarry = bgService.getAllProjects(proName, proStatus, page, limit);
