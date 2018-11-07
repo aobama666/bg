@@ -502,16 +502,16 @@
 					//TODO
 					var note="";
 					$.each(failList,function(i,item){
-						var rows=$("tr:hidden");
+						var rows=$("#mmg tr");
 						rows.each(function(i){
 							var hrcode=$(this).find("input[name='hrcode']").val();
 							//console.log("hrcode: "+hrcode+"/HRCODE: "+item.HRCODE);
 							if(hrcode==item.HRCODE){
 								$(this).show();
 								sortIndex();
-								note+=item.NAME+"("+item.WORK_TIME+")、";
 							}
 						});
+						note+=item.NAME+"("+item.WORK_TIME+")、";
 					});
 					parent.layer.msg(note.substr(0,note.length-1)+"已存在报工信息，请核实!");
 				} 
