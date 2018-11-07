@@ -1,6 +1,7 @@
 package com.sgcc.bg.service;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,25 +29,12 @@ public interface IBGService {
 	public int addProInfo(ProjectInfoPo pro);
 
 	/**
-	 * 新增人员信息
-	 * @param proUser
-	 * @return
-	 */
-	public int addProUser(ProjectUserPo proUser);
-	
-	/**
 	 * 更新项目信息
 	 * @param pro
 	 * @return
 	 */
 	public int updateProInfo(ProjectInfoPo pro);
 
-	/**
-	 * 根据项目id删除与其关联的所有人员
-	 * @param proId
-	 */
-	public int deleteProUsersByProId(String proId);
-	
 	/**
 	 * 根据项目id获取项目信息
 	 * @param proId
@@ -140,5 +128,21 @@ public interface IBGService {
 	 * @param proId
 	 */
 	public boolean isExistPrincipal(String proId);
+
+	/**
+	 * 为指定项目添加人员信息
+	 * @param proId
+	 * @param list
+	 * @return
+	 */
+	int saveStuff(String proId, List<HashMap> list);
+
+	/**
+	 * 更新项目参与人员信息
+	 * @param proId
+	 * @param list
+	 * @return
+	 */
+	int updateStuff(String proId, List<HashMap> list);
 
 }

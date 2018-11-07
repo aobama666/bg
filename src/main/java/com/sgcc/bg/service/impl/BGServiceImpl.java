@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,6 +37,7 @@ import com.sgcc.bg.model.ProjectUserPo;
 import com.sgcc.bg.model.ProjectUserVali;
 import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IBGService;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 @Service
@@ -76,26 +78,11 @@ public class BGServiceImpl implements IBGService {
 	}
 
 	@Override
-	public int addProUser(ProjectUserPo proUser) {
-		proUser.setStatus("1");
-		proUser.setCreateDate(new Date());
-		proUser.setUpdateDate(new Date());
-		proUser.setCreateUser(webUtils.getUsername());
-		proUser.setUpdateUser(webUtils.getUsername());
-		return bgMapper.addProUser(proUser);
-	}
-
-	@Override
 	public int updateProInfo(ProjectInfoPo pro) {
 		//只需要更新人信息
 		pro.setUpdateUser(webUtils.getUsername());
 		pro.setUpdateDate(new Date());
 		return bgMapper.updateProInfo(pro);
-	}
-
-	@Override
-	public int deleteProUsersByProId(String proId) {
-		return bgMapper.deleteProUsersByProId(proId);
 	}
 
 	@Override
@@ -860,4 +847,101 @@ public class BGServiceImpl implements IBGService {
 		
 	}
 	
+	private int addProUser(ProjectUserPo proUser) {
+		proUser.setStatus("1");
+		proUser.setCreateDate(new Date());
+		proUser.setUpdateDate(new Date());
+		proUser.setCreateUser(webUtils.getUsername());
+		proUser.setUpdateUser(webUtils.getUsername());
+		return bgMapper.addProUser(proUser);
+	}
+	
+	@Override
+	public int saveStuff(String proId,List<HashMap> list) {
+		int count=0;
+		for (HashMap<String, String> map : list) {
+			String empName=Rtext.toStringTrim(map.get("stuffName"),"");
+			String roleStr=Rtext.toStringTrim(map.get("role"),"");
+			String hrCode=Rtext.toStringTrim(map.get("hrcode"),"");
+			String startDateStr=Rtext.toStringTrim(map.get("startDate"),"");
+			String endDateStr=Rtext.toStringTrim(map.get("endDate"),"");
+			String role="";
+			//校验数据
+			if(Rtext.isEmpty(empName) || Rtext.isEmpty(hrCode) || Rtext.isEmpty(roleStr) 
+					|| Rtext.isEmpty(startDateStr) || Rtext.isEmpty(endDateStr)){
+				bgServiceLog.info("bgController 项目参与人员必填参数存在空值："+"empName:"+empName+"/"+"hrCode:"+hrCode+"/"+
+						"roleStr:"+roleStr+"/"+"startDateStr:"+startDateStr+"/"+"endDateStr:"+endDateStr);
+				continue;
+			}
+			if(!DateUtil.isValidDate(startDateStr,"yyyy-MM-dd")){
+				bgServiceLog.info("开始日期格式错误");
+				continue;
+			}
+			if(!DateUtil.isValidDate(endDateStr,"yyyy-MM-dd")){
+				bgServiceLog.info("结束日期格式错误");
+				continue;
+			}
+			if ("项目参与人".equals(roleStr)) {
+				role="0";
+			} else if ("项目负责人".equals(roleStr)) {
+				if(isExistPrincipal(proId)){
+					bgServiceLog.info("项目中已存在项目负责人");
+					continue;
+				}
+				role="1";
+				//记录负责人的处室到项目信息表bg_project_info的组织信息字段；原因：技术服务项目系统以科室为最小单位
+				//CommonCurrentUser user=userUtils.getCommonCurrentUserByHrCode(hrCode);
+				//bgService.updateProInfoField(proId,"organ_info",user.getDeptId());
+			}
+			ProjectUserPo proUser = new ProjectUserPo();
+			proUser.setId(Rtext.getUUID());
+			proUser.setRole(role);
+			proUser.setProjectId(proId);
+			proUser.setHrcode(hrCode);
+			proUser.setEmpName(empName);
+			proUser.setStartDate(DateUtil.fomatDate(startDateStr));
+			proUser.setEndDate(DateUtil.fomatDate(endDateStr));
+			// 注意事务
+			int affectedRows = addProUser(proUser);
+			count+=affectedRows;
+		}
+		return count;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public int updateStuff(String proId,List<HashMap> list) {
+		//TODO
+		List<Map<String,String>> workerList=bgMapper.getBgWorkerByProId(proId);
+		for (Map<String, String> stuffMap : list) {
+			System.out.println("*****************"+stuffMap.get("stuffName")+"*****************");
+			Iterator<Map<String, String>> iterator= workerList.iterator();
+			while(iterator.hasNext()){
+				Map<String, String> workerMap=iterator.next();
+				if(stuffMap.get("hrcode").equals(workerMap.get("HRCODE"))){
+					System.out.println("WORK_TIME"+workerMap.get("WORK_TIME"));
+					System.out.println("startDate"+stuffMap.get("startDate"));
+					System.out.println("endDate"+stuffMap.get("endDate"));
+				}
+				if(stuffMap.get("hrcode").equals(workerMap.get("HRCODE"))
+						&& DateUtil.compareDate(workerMap.get("WORK_TIME") , stuffMap.get("startDate"))
+						&& DateUtil.compareDate(stuffMap.get("endDate") , workerMap.get("WORK_TIME"))){
+					System.out.println("删除成功"+stuffMap.get("hrcode"));
+					iterator.remove();
+				}
+			}
+			System.out.println("**********************************");
+		}
+		Set<String> set=new HashSet<>();
+		for (Map<String, String> map : workerList) {
+			set.add(map.get("HRCODE"));
+		}
+		System.out.println(set.toString());
+		return 1;
+		/*// 删除旧的所有项目下人员
+		int affectedRows = deleteProUsersByProId(proId);
+		bgServiceLog.info("成功删除" + affectedRows + "人！");
+		// 重新添加人员
+		return saveStuff(proId,list);*/
+	}
 }

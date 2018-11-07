@@ -191,4 +191,11 @@ public interface BGMapper {
 	 */
 	public String getPrincipalCodeByProId(@Param("proId")String proId);
 
+	/**
+	 * 获取指定项目下已存在报工信息（未提交也算）的人员
+	 * @param proId
+	 * @return
+	 */
+	public List<Map<String, String>> getBgWorkerByProId(@Param("proId")String proId);
+
 }

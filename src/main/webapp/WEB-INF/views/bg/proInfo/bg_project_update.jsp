@@ -586,23 +586,23 @@
 	// 删除
 	function forDelete_stuff(){
 		var selectedRows = mmg.selectedRowsIndex();
-		if(selectedRows.length > 0){
-			layer.confirm('确认删除吗?', {icon: 7,title:'提示',shift:-1},function(index){
-				layer.close(index);
-				var newRows=$("<tbody></tbody>");
-				var unselectedRows=$("#mmg tr:not('.selected')");
-				for(var i=0;i<unselectedRows.length;i++){
-					var row=unselectedRows[i];
-					$(row).css("display","table-row");
-					$(row).find(".mmg-index").text(i+1);
-					newRows.append($(row));
-				}
-				$("#mmg").html(newRows);
-				resize();
-			});
-		}else {
+		if(selectedRows.length == 0){
 			layer.msg("请选择一条数据!");
+			return;
 		}
+		layer.confirm('确认删除吗?', {icon: 7,title:'提示',shift:-1},function(index){
+			layer.close(index);
+			var newRows=$("<tbody></tbody>");
+			var unselectedRows=$("#mmg tr:not('.selected')");
+			for(var i=0;i<unselectedRows.length;i++){
+				var row=unselectedRows[i];
+				$(row).css("display","table-row");
+				$(row).find(".mmg-index").text(i+1);
+				newRows.append($(row));
+			}
+			$("#mmg").html(newRows);
+			resize();
+		});
 	}
  	
 	function forClose() {

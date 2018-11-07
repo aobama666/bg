@@ -72,7 +72,6 @@ public class BgController {
 	@RequestMapping("/initPage")
 	@ResponseBody
 	public String initPage(String proName, String proStatus, Integer page, Integer limit) {
-		//test
 		proStatus=proStatus.trim();
 		proName=proName.trim();
 		List<Map<String, String>> jsonarry = bgService.getAllProjects(proName, proStatus, page, limit);
@@ -506,55 +505,9 @@ public class BgController {
 		String jsonStr = Rtext.toStringTrim(request.getParameter("param"),"");
 		String proId = Rtext.toStringTrim(request.getParameter("proId"),"");
 		List<HashMap> list = JSON.parseArray(jsonStr, HashMap.class);
+		
 		Map<String, String> resultMap = new HashMap<>();
-		int count=0;
-
-		for (HashMap<String, String> map : list) {
-			String empName=Rtext.toStringTrim(map.get("stuffName"),"");
-			String roleStr=Rtext.toStringTrim(map.get("role"),"");
-			String hrCode=Rtext.toStringTrim(map.get("hrcode"),"");
-			String startDateStr=Rtext.toStringTrim(map.get("startDate"),"");
-			String endDateStr=Rtext.toStringTrim(map.get("endDate"),"");
-			String role="";
-			//校验数据
-			if(Rtext.isEmpty(empName) || Rtext.isEmpty(hrCode) || Rtext.isEmpty(roleStr) 
-					|| Rtext.isEmpty(startDateStr) || Rtext.isEmpty(endDateStr)){
-				bgLog.info("bgController 项目参与人员必填参数存在空值："+"empName:"+empName+"/"+"hrCode:"+hrCode+"/"+
-						"roleStr:"+roleStr+"/"+"startDateStr:"+startDateStr+"/"+"endDateStr:"+endDateStr);
-				continue;
-			}
-			if(!DateUtil.isValidDate(startDateStr,"yyyy-MM-dd")){
-				bgLog.info("开始日期格式错误");
-				continue;
-			}
-			if(!DateUtil.isValidDate(endDateStr,"yyyy-MM-dd")){
-				bgLog.info("结束日期格式错误");
-				continue;
-			}
-			if ("项目参与人".equals(roleStr)) {
-				role="0";
-			} else if ("项目负责人".equals(roleStr)) {
-				if(bgService.isExistPrincipal(proId)){
-					bgLog.info("项目中已存在项目负责人");
-					continue;
-				}
-				role="1";
-				//记录负责人的处室到项目信息表bg_project_info的组织信息字段；原因：技术服务项目系统以科室为最小单位
-				//CommonCurrentUser user=userUtils.getCommonCurrentUserByHrCode(hrCode);
-				//bgService.updateProInfoField(proId,"organ_info",user.getDeptId());
-			}
-			ProjectUserPo proUser = new ProjectUserPo();
-			proUser.setId(Rtext.getUUID());
-			proUser.setRole(role);
-			proUser.setProjectId(proId);
-			proUser.setHrcode(hrCode);
-			proUser.setEmpName(empName);
-			proUser.setStartDate(DateUtil.fomatDate(startDateStr));
-			proUser.setEndDate(DateUtil.fomatDate(endDateStr));
-			// 注意事务
-			int affectedRows = bgService.addProUser(proUser);
-			count+=affectedRows;
-		}
+		int count=bgService.saveStuff(proId,list);
 		resultMap.put("count", count+"");
 		resultMap.put("failCount", (list.size()-count)+"");
 		return JSON.toJSONString(resultMap);
@@ -563,12 +516,15 @@ public class BgController {
 	@RequestMapping(value = "/ajaxUpdateStuff", method = RequestMethod.POST)
 	@ResponseBody
 	public String updateStuff(HttpServletRequest request) throws Exception {
-		String proId = request.getParameter("proId").trim();
-		// 删除旧的所有项目下人员
-		int affectedRows = bgService.deleteProUsersByProId(proId);
-		bgLog.info("成功删除" + affectedRows + "人！");
-		// 重新添加人员
-		return saveStuff(request);
+		String jsonStr = Rtext.toStringTrim(request.getParameter("param"),"");
+		String proId = Rtext.toStringTrim(request.getParameter("proId"),"");
+		List<HashMap> list = JSON.parseArray(jsonStr, HashMap.class);
+		
+		Map<String, String> resultMap = new HashMap<>();
+		int count=bgService.updateStuff(proId, list);
+		resultMap.put("count", count+"");
+		resultMap.put("failCount", (list.size()-count)+"");
+		return JSON.toJSONString(resultMap);
 	}
 
 	@RequestMapping(value = "/deleteProject", method = RequestMethod.POST)
