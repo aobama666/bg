@@ -121,18 +121,25 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		calendar1.setTime(DateUtil.fomatDate(startDate));
 		calendar2.setTime(DateUtil.fomatDate(endDate));
 		String[] ids=proIds.split(",");
-		String username=webUtils.getUsername();
+		CommonUser currentUser=webUtils.getCommonUser();
+		String currentHrcode=currentUser.getSapHrCode();
+		String currentUsername=currentUser.getUserName();
 		while (calendar1.compareTo(calendar2)<=0) {
 			String dataStr=DateUtil.getFormatDateString(calendar1.getTime(),"yyyy-MM-dd");
 			for (int i = 0; i < ids.length; i++) {
 				String proId=ids[i];
 				//校验指定日期下，指定用户是否有指定项目的提报资格
-				int result=SWMapper.validateSelectedDate(dataStr,proId,username);
+				int result=SWMapper.validateSelectedDate(dataStr,proId,currentUsername);
 				if(result>0){
-					Map<String, String> proMap=SWMapper.getProInfoByProId(proId);
+					Map<String, String> proMap=SWMapper.getProInfoByProId(proId);//如果查询的proid相同，则返回上一个map
 					Map<String, String> dataMap=new HashMap<>();
-					dataMap.put("DATE",dataStr);
 					dataMap.putAll(proMap);
+					if((currentHrcode).equals(proMap.get("HRCODE"))){
+						Map<String, String> approverMap=getDefaultApprover();
+						dataMap.put("HRCODE",approverMap.get("hrcode"));
+						dataMap.put("PRINCIPAL",approverMap.get("name"));
+					}
+					dataMap.put("DATE",dataStr);
 					dataList.add(dataMap);
 				}
 			}
@@ -201,10 +208,11 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 				if (!"#N/A!#N/A!".equals(checkStr.toString()) && !"".equals(checkStr.toString())) {// 校验此行是否为空
 					StringBuffer errorInfo = new StringBuffer();
 					Set<Integer> errorNum = new HashSet<Integer>();
-					String proId="";
+					String proId="";//项目id
+					String principal="";//项目负责人
+					String currentUsername=webUtils.getUsername();//当前登录人
 					CommonCurrentUser approverUser=null;
 					//获取当前登录人
-					String username=webUtils.getUsername();
 					// 对要导入的文件内容进行校验
 					// 填报日期 必填;格式
 					if (cellValue[1] == null || "".equals(cellValue[1])) {
@@ -233,13 +241,14 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 							errorNum.add(3);
 						}else{
 							proId=bgMapper.getProIdByBgNmuber(cellValue[3]);
+							principal =SWMapper.getPrincipalByProId(proId);
 						}
 						//项目存在
 						if(!Rtext.isEmpty(proId)){
 							//如填报人正确且项目存在，则校验其是否存在于该项目
-							int result=SWMapper.validateStaff(proId,username);
+							int result=SWMapper.validateStaff(proId,currentUsername);
 							if(result==0){
-								errorInfo.append("当前登录人不属于该项目！");
+								errorInfo.append("提报人不属于该项目！");
 								errorNum.add(3);
 							}
 							//验证项目类型是否一致
@@ -257,8 +266,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 							}
 						}
 						//如果项目存在则再校验填报日期是否超出范围
-						if(!Rtext.isEmpty(proId) && !errorNum.contains(1)){
-							int result=SWMapper.validateSelectedDate(cellValue[1],proId,username);
+						if(!errorNum.contains(3) && !Rtext.isEmpty(proId) && !errorNum.contains(1)){
+							int result=SWMapper.validateSelectedDate(cellValue[1],proId,currentUsername);
 							if(result==0){
 								errorInfo.append("填报日期不在项目周期或参与周期内！");
 								errorNum.add(1);
@@ -292,10 +301,10 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						//TODO
 						//工时超额校验
 					}
-					// 审核人员员工编号，非项目工作为必填项
-					if (!errorNum.contains(2) && "非项目工作".equals(cellValue[2])) {
+					// 审核人员员工编号，非项目工作以及项目工作负责人为必填项
+					if("非项目工作".equals(cellValue[2]) || principal.equals(currentUsername)){
 						if(cellValue[8] == null || "".equals(cellValue[8])){
-							errorInfo.append("非项目工作审核人员员工编号不能为空！");
+							errorInfo.append("非项目工作、项目工作负责人的审核人员员工编号不能为空！");
 							errorNum.add(8);
 						}else{
 							approverUser=userUtils.getCommonCurrentUserByHrCode(cellValue[8]);
@@ -305,7 +314,6 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 							}
 						}
 					}
-					
 					// 校验结束，分流数据
 					if ("".equals(errorInfo.toString())) {// 通过校验
 						WorkHourInfoPo wh=new WorkHourInfoPo();
@@ -318,7 +326,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						}else{
 							//如果为项目工作，根据项目id获取项目负责人
 							wh.setProId(proId);
-							wh.setApprover(SWMapper.getPrincipalByProId(proId));
+							//如果提报人就是项目负责人，则以审核人是所填审核人；如果是参与人，则默认时项目负责人
+							wh.setApprover(principal.equals(currentUsername)?approverUser.getUserName():principal);
 							//如果为非项目工作，项目类型、名称与项目编号保持一致
 							wh.setCategory(bgMapper.getProInfoFieldByProId(proId, "category"));
 							wh.setProName(bgMapper.getProInfoFieldByProId(proId, "project_name"));
@@ -326,16 +335,16 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						wh.setWorkTime(DateUtil.fomatDate(cellValue[1]));
 						wh.setJobContent(cellValue[5]);
 						wh.setWorkHour(Double.parseDouble(cellValue[6]));
-						wh.setWorker(username);
+						wh.setWorker(currentUsername);
 						//获取填报人填报日期时的信息
-						CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(username,cellValue[1]);
+						CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(currentUsername,cellValue[1]);
 						wh.setDeptId(user.getpDeptId());
 						wh.setLabId(user.getDeptId());
 						wh.setStatus("0");
 						wh.setValid("1");
-						wh.setCreateUser(webUtils.getUsername());
+						wh.setCreateUser(currentUsername);
 						wh.setCreateTime(new Date());
-						wh.setUpdateUser(webUtils.getUsername());
+						wh.setUpdateUser(currentUsername);
 						wh.setUpdateTime(new Date());
 						//保存正确数据   
 						whList.add(wh);
