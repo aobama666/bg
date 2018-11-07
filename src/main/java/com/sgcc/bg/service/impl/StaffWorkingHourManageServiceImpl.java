@@ -226,6 +226,8 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 					StringBuffer errorInfo = new StringBuffer();
 					Set<Integer> errorNum = new HashSet<Integer>();
 					String proId="";
+					String principal="";//项目负责人
+					String currentUsername=webUtils.getUsername();
 					CommonCurrentUser approverUser=null;
 					CommonCurrentUser worker=null;
 					// 对要导入的文件内容进行校验
@@ -256,6 +258,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							errorNum.add(3);
 						}else{
 							proId=bgMapper.getProIdByBgNmuber(cellValue[3]);
+							principal =SWMapper.getPrincipalByProId(proId);
 						}
 					}
 					//非项目工作的名称是直接存入表中，校验其长度不能大于50个字
@@ -312,7 +315,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							if(!"非项目工作".equals(cellValue[2]) && !Rtext.isEmpty(proId)){
 								int result=SWMapper.validateStaff(proId,worker.getUserName());
 								if(result==0){
-									errorInfo.append("填报人员不属于该项目！");
+									errorInfo.append("提报人不属于该项目");
 									errorNum.add(8);
 								}
 							}
@@ -336,10 +339,10 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							errorNum.add(1);
 						}
 					}
-					// 审核人员员工编号，非项目工作为必填项
-					if (!errorNum.contains(2) && "非项目工作".equals(cellValue[2])) {
+					// 审核人员员工编号，非项目工作或项目工作负责人为必填项
+					if ("非项目工作".equals(cellValue[2]) || principal.equals(worker==null?"":worker.getUserName())) {
 						if(cellValue[10] == null || "".equals(cellValue[10])){
-							errorInfo.append("非项目工作审核人员员工编号不能为空！");
+							errorInfo.append("非项目工作、项目工作负责人的审核人员员工编号不能为空！");
 							errorNum.add(10);
 						}else{
 							approverUser=userUtils.getCommonCurrentUserByHrCode(cellValue[10]);
@@ -361,7 +364,8 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						}else{
 							//如果为项目工作，根据项目id获取项目负责人
 							wh.setProId(proId);
-							wh.setApprover(SWMapper.getPrincipalByProId(proId));
+							//如果提报人就是项目负责人，则以审核人是所填审核人；如果是参与人，则默认时项目负责人
+							wh.setApprover(principal.equals(worker.getUserName())?approverUser.getUserName():principal);
 							//如果为非项目工作，项目类型、名称与项目编号保持一致
 							wh.setCategory(bgMapper.getProInfoFieldByProId(proId, "category"));
 							wh.setProName(bgMapper.getProInfoFieldByProId(proId, "project_name"));
@@ -376,9 +380,9 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						wh.setLabId(thenWorker.getDeptId());
 						wh.setStatus("0");
 						wh.setValid("1");
-						wh.setCreateUser(webUtils.getUsername());
+						wh.setCreateUser(currentUsername);
 						wh.setCreateTime(new Date());
-						wh.setUpdateUser(webUtils.getUsername());
+						wh.setUpdateUser(currentUsername);
 						wh.setUpdateTime(new Date());
 						//保存正确数据
 						whList.add(wh);
