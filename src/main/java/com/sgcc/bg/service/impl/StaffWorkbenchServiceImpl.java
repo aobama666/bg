@@ -182,7 +182,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 			String categoryStr="[科研项目],[横向项目],[技术服务项目],[非项目工作]";
 			//获取所有项目编号存入一个集合
 			List<String> list=bgMapper.getAllBgNumbers();
-			String regex = "^([0-9]+|[0-9]*\\.[05])$";
+			String regex = "^([1-9]+|[1-9]*\\.[05]|0\\.5)$";
 			SWServiceLog.info("项目信息excel表格最后一行： " + rows);
 			/* 保存有效的Excel模版列数 */
 			String[] cellValue = new String[9];
@@ -311,6 +311,19 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 							if(approverUser==null){
 								errorInfo.append("审核人员员工编号错误！");
 								errorNum.add(8);
+							}else{
+								List<Map<String,String>> approverList=getApproverList(currentUsername);
+								boolean containsApprover=false;
+								for (Map<String, String> map : approverList) {
+									if(approverUser.getHrCode().equals(map.get("hrcode"))){
+										containsApprover=true;
+										break;
+									}
+								}
+								if(!containsApprover){
+									errorInfo.append("审核人员不具备审核权限！");
+									errorNum.add(8);
+								}
 							}
 						}
 					}
@@ -552,9 +565,9 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	}
 	
 	@Override
-	public	List<Map<String,String>> getApproverList(){
-		CommonUser user=webUtils.getCommonUser();
-		String username=user.getUserName();
+	public	List<Map<String,String>> getApproverList(String username){
+		/*CommonUser user=webUtils.getCommonUser();
+		String username=user.getUserName();*/
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(username);
 		String userId=currentUser.getUserId();
 		String deptId=currentUser.getDeptId();//获取当前提报人当前所在部门

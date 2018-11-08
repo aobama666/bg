@@ -142,10 +142,11 @@ public interface IStaffWorkbenchService {
 	String addExamineRecord(String bussinessId, String processUsername, String result, String note);
 
 	/**
-	 * 获取当前提报人的审核人列表
+	 * 获取提报人的审核人列表
+	 * @param username 提报人
 	 * @return
 	 */
-	List<Map<String, String>> getApproverList();
+	List<Map<String, String>> getApproverList(String username);
 	
 	/**
 	 * 获取当前提报人的默认审核人
