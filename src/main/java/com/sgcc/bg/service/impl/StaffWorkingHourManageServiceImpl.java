@@ -40,6 +40,7 @@ import com.sgcc.bg.model.ProcessRecordPo;
 import com.sgcc.bg.model.UserPrivilege;
 import com.sgcc.bg.model.WorkHourInfoPo;
 import com.sgcc.bg.service.DataDictionaryService;
+import com.sgcc.bg.service.IStaffWorkbenchService;
 import com.sgcc.bg.service.IStaffWorkingHourManageService;
 import com.sgcc.bg.service.OrganStuffTreeService;
 
@@ -50,7 +51,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 	@Autowired
 	private WebUtils webUtils;
 	@Autowired
-	UserUtils userUtils;
+	private UserUtils userUtils;
 	@Autowired
 	private BGMapper bgMapper;
 	@Autowired
@@ -59,6 +60,9 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 	private OrganStuffTreeService organStuffTreeService;
 	@Autowired
 	private DataDictionaryService dict;
+	@Autowired
+	private IStaffWorkbenchService swService;
+	
 	
 	private static Logger smServiceLog =  LoggerFactory.getLogger(StaffWorkingHourManageServiceImpl.class);
 	
@@ -199,7 +203,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 			String categoryStr="[科研项目],[横向项目],[技术服务项目],[非项目工作]";
 			//获取所有项目编号存入一个集合
 			List<String> list=bgMapper.getAllBgNumbers();
-			String regex = "^([0-9]+|[0-9]*\\.[05])$";
+			String regex = "^([1-9]+|[1-9]*\\.[05]|0\\.5)$";
 			smServiceLog.info("项目信息excel表格最后一行： " + rows);
 			/* 保存有效的Excel模版列数 */
 			String[] cellValue = new String[11];
@@ -349,6 +353,19 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							if(approverUser==null){
 								errorInfo.append("审核人员员工编号错误！");
 								errorNum.add(10);
+							}else if(worker!=null){
+								List<Map<String,String>> approverList=swService.getApproverList(worker.getUserName());
+								boolean containsApprover=false;
+								for (Map<String, String> map : approverList) {
+									if(approverUser.getHrCode().equals(map.get("hrcode"))){
+										containsApprover=true;
+										break;
+									}
+								}
+								if(!containsApprover){
+									errorInfo.append("审核人员不具备审核权限！");
+									errorNum.add(10);
+								}
 							}
 						}
 					}
@@ -412,7 +429,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 				smServiceLog.info("出错的项目： " + errorList);
 				// 生成错误信息文件
 				Object[][] title = { 
-						 { "序号", "SQNUM" ,"nowrap"},
+						 { "序号\r\n（选填）", "SQNUM" ,"nowrap"},
 						 { "填报日期\r\n（必填，格式：YYYY-MM-DD）", "DATE" ,"nowrap"},
 						 { "项目类型\r\n（必填）", "CATEGORY","nowrap"},
 						 { "项目编号\r\n（项目工作必填，非项目工作不填）", "PROJECT_NUMBER","nowrap" }, 

@@ -387,12 +387,13 @@ public final class ExportExcelHelper {
 					for (String string : strArr) {
 						int length = string.getBytes().length+getRegexCount(reg,string);//为单字节字符增加部分宽度
 						columnWidth = Math.max(columnWidth, length);
+						columnWidth = columnWidth>50?50:columnWidth;
 					}
 				}
 				
 			}
 		}
-		sheet.setColumnWidth(colNum, columnWidth * 256>25000?25000:columnWidth* 256);
+		sheet.setColumnWidth(colNum, columnWidth * 256);
 		/*if (colNum == 0) {
 			sheet.setColumnWidth(colNum, columnWidth * 256>25000?25000:columnWidth* 256);
 		} else {

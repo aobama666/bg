@@ -94,7 +94,7 @@ public class StaffWorkbenchController {
 	@RequestMapping("/approverSelector")
 	public ModelAndView approverSelector() {
 		Map<String, Object> jsonMap=new HashMap<String, Object>();
-		List<Map<String, String>> jsonarry =SWService.getApproverList();
+		List<Map<String, String>> jsonarry =SWService.getApproverList(webUtils.getUsername());
 		jsonMap.put("items", jsonarry);
 		String jsonStr = JSON.toJSONString(jsonMap);
 		ModelAndView model = new ModelAndView("bg/staffWorkbench/bg_approver_selector","items",jsonStr);
