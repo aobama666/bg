@@ -395,7 +395,7 @@
 			                   AND R.VALID = 1
 			                   AND D.VAILD = 1)
 			           AND T.VALID = 1
-			         ORDER BY T.PRIORITY ASC)
+			         ORDER BY TO_NUMBER(T.PRIORITY) ASC)
 			 WHERE ROWNUM = 1
 	</select>
 	
