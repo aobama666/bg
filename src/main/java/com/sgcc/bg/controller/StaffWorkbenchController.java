@@ -221,6 +221,7 @@ public class StaffWorkbenchController {
 				wp.setCreateTime(new Date());
 				wp.setUpdateUser(username);
 				wp.setUpdateTime(new Date());
+				wp.setSrc("0");
 				count+= SWService.addWorkHourInfo(wp);
 			}else{
 				//执行更新操作

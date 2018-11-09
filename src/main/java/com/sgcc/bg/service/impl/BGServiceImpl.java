@@ -372,6 +372,7 @@ public class BGServiceImpl implements IBGService {
 						pro.setUpdateDate(new Date());
 						pro.setStatus("1");
 						pro.setProjectStatus("0");
+						pro.setSrc("1");
 						//保存正确数据
 						proList.add(pro);
 					} else {// 未通过校验
@@ -691,6 +692,7 @@ public class BGServiceImpl implements IBGService {
 						proUser.setUpdateDate(new Date());
 						proUser.setCreateUser(webUtils.getUsername());
 						proUser.setUpdateUser(webUtils.getUsername());
+						proUser.setSrc("1");
 						userList.add(proUser);
 					} else {// 未通过校验
 						ProjectUserVali pruv = new ProjectUserVali();
@@ -902,6 +904,7 @@ public class BGServiceImpl implements IBGService {
 			proUser.setEmpName(empName);
 			proUser.setStartDate(DateUtil.fomatDate(startDateStr));
 			proUser.setEndDate(DateUtil.fomatDate(endDateStr));
+			proUser.setSrc("0");
 			// 注意事务
 			int affectedRows = addProUser(proUser);
 			count+=affectedRows;

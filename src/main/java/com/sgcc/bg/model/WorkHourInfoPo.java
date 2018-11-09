@@ -27,6 +27,8 @@ public class WorkHourInfoPo implements Serializable{
 	private Date createTime;
 	private String updateUser;
 	private Date updateTime;
+	//数据来源
+	private String src;
 	
 	public WorkHourInfoPo() {
 		super();
@@ -184,6 +186,14 @@ public class WorkHourInfoPo implements Serializable{
 		this.updateTime = updateTime;
 	}
 
+	public String getSrc() {
+		return src;
+	}
+
+	public void setSrc(String src) {
+		this.src = src;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -215,9 +225,9 @@ public class WorkHourInfoPo implements Serializable{
 				+ ", proName=" + proName + ", jobContent=" + jobContent + ", workHour=" + workHour + ", approver="
 				+ approver + ", worker=" + worker + ", deptId=" + deptId + ", labId=" + labId + ", workTime=" + workTime
 				+ ", status=" + status + ", valid=" + valid + ", create=" + create + ", createUser=" + createUser
-				+ ", createTime=" + createTime + ", updateUser=" + updateUser + ", updateTime=" + updateTime + "]";
+				+ ", createTime=" + createTime + ", updateUser=" + updateUser + ", updateTime=" + updateTime + ", src="
+				+ src + "]";
 	}
-	
 	
 	
 }

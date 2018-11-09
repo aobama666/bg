@@ -391,6 +391,11 @@ public class BgController {
 		return JSON.toJSONString(resultMap);
 	}*/
 
+	/**
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/ajaxSavePro", method = RequestMethod.POST)
 	@ResponseBody
 	public String savePro(HttpServletRequest request) throws Exception {
@@ -479,6 +484,7 @@ public class BgController {
 		}
 		pro.setPlanHours(planHours);
 		pro.setDecompose(decompose);
+		pro.setSrc("0");
 		
 		int affectedRows;
 		if("save".equals(method)){
@@ -498,7 +504,7 @@ public class BgController {
 		return JSON.toJSONString(resultMap);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	@RequestMapping(value = "/ajaxSaveStuff", method = RequestMethod.POST)
 	@ResponseBody
 	public String saveStuff(HttpServletRequest request) throws Exception {

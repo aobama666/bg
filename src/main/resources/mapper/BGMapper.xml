@@ -72,14 +72,16 @@
 			PROJECT_INTRODUCE,ORGAN_INFO,
 			START_DATE,END_DATE,
 			PLAN_HOURS,PROJECT_STATUS,DECOMPOSE,STATUS,
-			CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE)
+			CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
+			SRC)
 		VALUES
 			(#{id}, #{projectName,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, 
 			#{projectNumber,jdbcType=VARCHAR},#{WBSNumber,jdbcType=VARCHAR},
 			#{projectIntroduce,jdbcType=VARCHAR},#{organInfo,jdbcType=VARCHAR},
 			#{startDate,jdbcType=DATE},#{endDate,jdbcType=DATE},
 			#{planHours,jdbcType=NUMERIC},#{projectStatus,jdbcType=VARCHAR},#{decompose,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},
-			#{createUser,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateDate,jdbcType=TIMESTAMP})
+			#{createUser,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateDate,jdbcType=TIMESTAMP},
+			#{src,jdbcType=VARCHAR})
 	</insert>
 	
 	<insert id="addProUser"  parameterType="com.sgcc.bg.model.ProjectUserPo">
@@ -87,12 +89,14 @@
 			(ID,HRCODE,EMPNAME,PROJECT_ID,
 			START_DATE,END_DATE,
 			ROLE,STATUS,
-			CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE)
+			CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
+			SRC)
 		VALUES
 			(#{id}, #{hrcode,jdbcType=VARCHAR},#{empName,jdbcType=VARCHAR}, #{projectId,jdbcType=VARCHAR},
 			#{startDate,jdbcType=DATE},#{endDate,jdbcType=DATE},
 			#{role,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},
-			#{createUser,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateDate,jdbcType=TIMESTAMP})
+			#{createUser,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateDate,jdbcType=TIMESTAMP},
+			#{src,jdbcType=VARCHAR})
 	</insert>
 	
 	<update id="updateProInfo"  parameterType="com.sgcc.bg.model.ProjectInfoPo">
