@@ -69,9 +69,7 @@ td span{
 <body>
 	<div class="page-header-sl">
 		<h5>个人工时填报</h5>
-	</div>
-	<hr>
-	<div class="button-box">
+		<div class="button-box">
 			<button type="button" class="btn btn-primary btn-xs" name="kOne"
 				onclick="forAddProJob()">新增项目工作</button>
 			<button type="button" class="btn btn-primary btn-xs" name="kOne"
@@ -82,7 +80,9 @@ td span{
 				onclick="forSubmit()">提交</button>
 			<button type="button" class="btn btn-info btn-xs"
 				onclick="forImport()">批量录入</button>
+		</div>
 	</div>
+	<hr>
 	<form class="form-inline">
 		<div class="form-group">
 			 <label>填报日期</label> 
@@ -114,6 +114,9 @@ td span{
 var mmg;
 //一个在保存之后才更改的时间
 var delayDate;
+var approverHrcode='${approverHrcode}';//默认审核人
+var approverName='${approverName}';//默认审核人
+var currentUserHrcode='${currentUserHrcode}';//当前提报人
 $(function(){
 	$(".form_date").datepicker({
 		autoclose:true,
@@ -232,8 +235,9 @@ function queryList(load){
 	            {titleHtml:'审核人<font class="glyphicon glyphicon-asterisk text-danger"></font>', name:'PRINCIPAL',width:90, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
-	            		if(item.CATEGORY=="非项目工作" && (item.STATUS=="0" || item.STATUS=="2")){
-	            			val='<div title="'+val+'" style="display:inline" class=""><input onblur="removeHint(this)" class="form-control" value="'+val+'" readonly style="text-align:center;width:90%;display:inline-block" name="" property="principal">'
+	            		//EDIT是一个标记，解决复杂情况下是否可编辑的问题,当审核人为本人时不可编辑
+	            		if(item.EDIT=='yes' && currentUserHrcode!=item.HRCODE && (item.STATUS=="0" || item.STATUS=="2")){
+	            			val='<div title="'+val+'" style="display:inline" class="" onclick="forAddApprover()"><input  onblur="removeHint(this)" class="form-control" value="'+val+'" readonly style="text-align:center;width:90%;display:inline-block" name="principal" property="principal">'
 	            				+'<span style="width:10%;" class="glyphicon glyphicon-user"></span></div>';
 	            		}else{
 	            			val='<span title="'+val+'">'+val+'</span><input type="hidden" property="principal" value="'+val+'">';
@@ -287,6 +291,7 @@ function queryList(load){
 				return $(".form-group").sotoCollecter();
 			}
 		}).on({
+			/*
 			'loadSuccess':function(e, data){
 				var rows=$("#mmg tr").has("input:visible[property='principal']");
 				rows.each(function(){
@@ -323,6 +328,7 @@ function queryList(load){
 					row.stuffTree({bindLayId:id,root:'41000001',iframe:'self',empCode:empCode,empName:empName,checkType:'radio',popEvent:'pop'});
 				}
 			}
+			*/
 		});
 	if(load == "reload"){
 		mmg.load();
@@ -363,7 +369,7 @@ function removeHint(_this){
 
 function checkNumberFormat(workHour){
 	var result = {};
-	var reg=/^([0-9]+|[0-9]*\.[05])$/;
+	var reg=/^([1-9]+|[1-9]*\.[05]|0\.5)$/;
 	if($.trim(workHour)!="" && !reg.test(workHour)){
 		result.result = false;
 		result.info = "必须为数字且最小时间单位为0.5h；";
@@ -393,7 +399,7 @@ function forSave(){
 	for(var i=0;i<rows.length;i++){
 		var $row=$(rows[i]);
 		var canSave=false;
-		$row.find("input:visible,textarea").each(function(){
+		$row.find("input[name!='principal']:visible,textarea").each(function(){//审核人员项现在有默认值
 			//当有一个填入了数据并且数据符合保存格式则可保存
 			if($.trim($(this).val())!=""){
 				canSave=true;	
@@ -445,15 +451,31 @@ function forAddProJob(){
 
 //新增非项目工作
 function forAddNonProJob(){
+	//var edit=currentUserHrcode==approverHrcode?'no':'yes';//非项目，如果默认审核人是本人时，不可编辑
 	mmg.addRow({
 		"CATEGORY":"非项目工作",
 		"PROJECT_NAME":"",
 		"STATUS":"0",
 		"JOB_CONTENT":"",
 		"WORKING_HOUR":"",
-		"PRINCIPAL":""
+		"HRCODE":approverHrcode,
+		"PRINCIPAL":approverName,
+		"EDIT":'yes'
 		});
 } 
+
+function forAddApprover(){
+	var row=$(this).parents("tr");
+	var rowNum = row.find(".mmg-index").text();
+	layer.open({
+		type:2,
+		title:"审核人员选择框",
+		area:['620px', '80%'],
+		scrollbar:true,
+		skin:'query-box',
+		content:['<%=request.getContextPath()%>/staffWorkbench/approverSelector?rowNum='+rowNum]
+	}); 
+}
 
 // 删除
 function forDelete(_this,id){
@@ -479,8 +501,13 @@ function forDelete(_this,id){
 							mmg.load();
 						}					
 				},'text');
+			}else{
+				mmg.removeRow(index-1);
+				$("#mmg tr").each(function(i){
+					$(this).find(".mmg-index").text(i+1);
+				});
 			}
-		});
+	});
 }
 
 //撤回
@@ -560,7 +587,9 @@ function forSubmit(){
 			dataType:'json',
 			success : function(data) {
 				layer.msg(data.msg);
-				mmg.load();
+				if(data.result=='success'){
+					mmg.load();
+				}
 			}
 		});
 	});

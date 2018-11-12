@@ -62,14 +62,14 @@
 </head>
 <body>
 <div class="page-header-sl">
+	<h5>个人工时管理</h5>
 	<div class="button-box">
 	<!-- 
 	   <button type="button" class="btn btn-success btn-xs" onclick="workUpdate()"> 修改</button>
 		<button type="button" class="btn btn-success btn-xs" onclick="workDelete()"> 删除</button>
 	 -->
-	    
 		<button type="button" class="btn btn-success btn-xs" onclick="workCommit()"> 提交</button>
-		<button type="button" class="btn btn-success btn-xs" onclick="workExport()"> 导出</button>
+		<button type="button" class="btn btn-info  btn-xs" onclick="workExport()"> 导出</button>
 	</div>
 </div>
 <hr>

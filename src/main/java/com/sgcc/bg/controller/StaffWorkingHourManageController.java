@@ -199,6 +199,7 @@ public class StaffWorkingHourManageController {
 			String id=Rtext.toStringTrim(map.get("id"), "");
 			double todayHours;
 			String processUsername = webUtils.getUsername();
+			String status="1";//报工记录状态（0 未提交 1 审批中 2 已驳回 3 已通过）
 			//校验数据
 			if(SWService.isConmmited(id)){//如果该记录已被通过或正在审批中则不能再被提交
 				smLog.info("该记录已被通过或正在审批中,不能再被修改");
@@ -241,13 +242,17 @@ public class StaffWorkingHourManageController {
 			} 
 			//添加到流程记录表
 			String processId=SWService.addSubmitRecord(id, processUsername);
+			if(approverUsername.equals(user.getUserName())){//如果审核人就是本人，则默认通过
+				processId=SWService.addExamineRecord(id, processUsername, "2", "");
+				status="3";
+			}
 			//提交
 			WorkHourInfoPo wp=new WorkHourInfoPo();
 			wp.setId(id);
 			wp.setProName(projectName);
 			wp.setJobContent(jobContent);
 			wp.setWorkHour(todayHours);
-			wp.setStatus("1");
+			wp.setStatus(status);
 			wp.setUpdateUser(processUsername);
 			wp.setUpdateTime(new Date());
 			wp.setProcessId(processId);

@@ -28,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.CommonCurrentUser;
+import com.sgcc.bg.common.CommonUser;
 import com.sgcc.bg.common.ConfigUtils;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.FileDownloadUtil;
@@ -62,6 +63,14 @@ public class StaffWorkbenchController {
 		//从数据字典获取审核状态
 		String statusJson= dict.getDictDataJsonStr("cstatus100003");
 		map.put("statusJson", statusJson);
+		CommonUser user=webUtils.getCommonUser();
+		//获取当前提报人hrcode
+		String currentUserHrcode=user.getSapHrCode();
+		map.put("currentUserHrcode", currentUserHrcode);
+		//获取默认审核人
+		Map<String, String> approver =SWService.getDefaultApprover();
+		map.put("approverHrcode", approver==null?"":approver.get("hrcode"));
+		map.put("approverName", approver==null?"":approver.get("name"));
 		ModelAndView model = new ModelAndView("bg/staffWorkbench/bg_personal_fill",map);
 		return model;
 	}
@@ -74,7 +83,6 @@ public class StaffWorkbenchController {
 	@RequestMapping("/initPage")
 	@ResponseBody
 	public String initPage(String selectedDate) {
-		System.out.println("selectedDate: "+selectedDate);
 		List<Map<String, String>> jsonarry = SWService.getWorkingHourInfo(selectedDate);
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("items", jsonarry);
@@ -83,6 +91,16 @@ public class StaffWorkbenchController {
 		return jsonStr;
 	}
 
+	@RequestMapping("/approverSelector")
+	public ModelAndView approverSelector() {
+		Map<String, Object> jsonMap=new HashMap<String, Object>();
+		List<Map<String, String>> jsonarry =SWService.getApproverList(webUtils.getUsername());
+		jsonMap.put("items", jsonarry);
+		String jsonStr = JSON.toJSONString(jsonMap);
+		ModelAndView model = new ModelAndView("bg/staffWorkbench/bg_approver_selector","items",jsonStr);
+		return model;
+	}
+	
 	@RequestMapping("/proJobSelector")
 	public ModelAndView proJobSelector(String selectedDate) {
 		Map<String, String> map=new HashMap<String, String>();
@@ -290,6 +308,9 @@ public class StaffWorkbenchController {
 			double todayHours;
 			String processId;
 			String bussinessId=(whId.isEmpty()?Rtext.getUUID():whId);
+			CommonCurrentUser approver=userUtils.getCommonCurrentUserByHrCode(hrCode);
+			String approverName=approver==null?"":approver.getUserName();
+			String status="1";//报工记录状态（0 未提交 1 审批中 2 已驳回 3 已通过）
 			//校验数据
 			if("".equals(workHour) || "".equals(category) || "".equals(hrCode) ){
 				SWLog.info("提交的数据有空值： 工时："+workHour+"-项目类型："+category+"-负责人编号："+hrCode);
@@ -316,8 +337,16 @@ public class StaffWorkbenchController {
 				SWLog.info("workHour工时解析出错！");
 				continue;
 			}
+			//如果该记录已被提交或通过则不能再被提交，只能撤回后在提交
+			if(!Rtext.isEmpty(whId) && SWService.isConmmited(whId)){
+				continue;
+			}
 			//添加到流程记录表
 			processId=SWService.addSubmitRecord(bussinessId, username);
+			if(approverName.equals(username)){//如果审核人就是本人，则默认通过
+				processId=SWService.addExamineRecord(bussinessId, username, "2", "");
+				status="3";
+			}
 			//提交
 			if(Rtext.isEmpty(whId)){
 				//执行保存操作
@@ -337,15 +366,14 @@ public class StaffWorkbenchController {
 				wp.setProName(projectName);
 				wp.setJobContent(jobContent);
 				wp.setWorkHour(todayHours);
-				CommonCurrentUser approver=userUtils.getCommonCurrentUserByHrCode(hrCode);
-				wp.setApprover(approver.getUserName());
+				wp.setApprover(approverName);
 				//获取报工人指定日期所属部门信息
 				CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(username,selectedDate);
 				wp.setWorker(username);
 				wp.setDeptId(user.getpDeptId());
 				wp.setLabId(user.getDeptId());
 				wp.setWorkTime(DateUtil.fomatDate(selectedDate));
-				wp.setStatus("1");
+				wp.setStatus(status);
 				wp.setValid("1");
 				wp.setCreateUser(username);
 				wp.setCreateTime(new Date());
@@ -356,19 +384,15 @@ public class StaffWorkbenchController {
 				bussinessId=wp.getId();
 			}else{
 				//执行更新操作
-				if(SWService.isConmmited(whId)){//如果该记录已被提交或通过则不能再被提交，只能撤回后在提交
-					continue;
-				}
 				WorkHourInfoPo wp=new WorkHourInfoPo();
 				wp.setId(whId);
 				wp.setProName(projectName);
 				wp.setJobContent(jobContent);
 				wp.setWorkHour(todayHours);
-				CommonCurrentUser approverUser=userUtils.getCommonCurrentUserByHrCode(hrCode);
-				wp.setApprover(approverUser==null?"":approverUser.getUserName());
+				wp.setApprover(approverName);
 				wp.setUpdateUser(username);
 				wp.setUpdateTime(new Date());
-				wp.setStatus("1");
+				wp.setStatus(status);
 				wp.setProcessId(processId);
 				count+= SWService.updateWorkHourInfo(wp);
 				bussinessId=wp.getId();

@@ -40,6 +40,7 @@ import com.sgcc.bg.model.ProcessRecordPo;
 import com.sgcc.bg.model.UserPrivilege;
 import com.sgcc.bg.model.WorkHourInfoPo;
 import com.sgcc.bg.service.DataDictionaryService;
+import com.sgcc.bg.service.IStaffWorkbenchService;
 import com.sgcc.bg.service.IStaffWorkingHourManageService;
 import com.sgcc.bg.service.OrganStuffTreeService;
 
@@ -50,7 +51,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 	@Autowired
 	private WebUtils webUtils;
 	@Autowired
-	UserUtils userUtils;
+	private UserUtils userUtils;
 	@Autowired
 	private BGMapper bgMapper;
 	@Autowired
@@ -59,6 +60,9 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 	private OrganStuffTreeService organStuffTreeService;
 	@Autowired
 	private DataDictionaryService dict;
+	@Autowired
+	private IStaffWorkbenchService swService;
+	
 	
 	private static Logger smServiceLog =  LoggerFactory.getLogger(StaffWorkingHourManageServiceImpl.class);
 	
@@ -199,7 +203,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 			String categoryStr="[科研项目],[横向项目],[技术服务项目],[非项目工作]";
 			//获取所有项目编号存入一个集合
 			List<String> list=bgMapper.getAllBgNumbers();
-			String regex = "^([0-9]+|[0-9]*\\.[05])$";
+			String regex = "^([1-9]+|[1-9]*\\.[05]|0\\.5)$";
 			smServiceLog.info("项目信息excel表格最后一行： " + rows);
 			/* 保存有效的Excel模版列数 */
 			String[] cellValue = new String[11];
@@ -226,6 +230,8 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 					StringBuffer errorInfo = new StringBuffer();
 					Set<Integer> errorNum = new HashSet<Integer>();
 					String proId="";
+					String principal="";//项目负责人
+					String currentUsername=webUtils.getUsername();
 					CommonCurrentUser approverUser=null;
 					CommonCurrentUser worker=null;
 					// 对要导入的文件内容进行校验
@@ -256,6 +262,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							errorNum.add(3);
 						}else{
 							proId=bgMapper.getProIdByBgNmuber(cellValue[3]);
+							principal =SWMapper.getPrincipalByProId(proId);
 						}
 					}
 					//非项目工作的名称是直接存入表中，校验其长度不能大于50个字
@@ -312,7 +319,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							if(!"非项目工作".equals(cellValue[2]) && !Rtext.isEmpty(proId)){
 								int result=SWMapper.validateStaff(proId,worker.getUserName());
 								if(result==0){
-									errorInfo.append("填报人员不属于该项目！");
+									errorInfo.append("提报人不属于该项目");
 									errorNum.add(8);
 								}
 							}
@@ -336,16 +343,38 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							errorNum.add(1);
 						}
 					}
-					// 审核人员员工编号，非项目工作为必填项
-					if (!errorNum.contains(2) && "非项目工作".equals(cellValue[2])) {
+					// 审核人员员工编号，非项目工作或项目工作负责人为必填项
+					if ("非项目工作".equals(cellValue[2]) || principal.equals(worker==null?"":worker.getUserName())) {
 						if(cellValue[10] == null || "".equals(cellValue[10])){
-							errorInfo.append("非项目工作审核人员员工编号不能为空！");
+							errorInfo.append("非项目工作、项目工作负责人的审核人员员工编号不能为空！");
 							errorNum.add(10);
 						}else{
 							approverUser=userUtils.getCommonCurrentUserByHrCode(cellValue[10]);
 							if(approverUser==null){
 								errorInfo.append("审核人员员工编号错误！");
 								errorNum.add(10);
+							}else if(worker!=null){
+								if(cellValue[10].equals(worker.getHrCode())){//审核人是自己
+									String subType=SWMapper.getTopSubmitType(worker.getUserId());
+									int subTypeNum=Rtext.ToInteger(subType, 0);
+									if(subTypeNum>5){//等级不够默认通过
+										errorInfo.append("审核人员不具备审核权限！");
+										errorNum.add(10);
+									}
+								}else{
+									List<Map<String,String>> approverList=swService.getApproverList(worker.getUserName());
+									boolean containsApprover=false;
+									for (Map<String, String> map : approverList) {
+										if(approverUser.getHrCode().equals(map.get("hrcode"))){
+											containsApprover=true;
+											break;
+										}
+									}
+									if(!containsApprover){
+										errorInfo.append("审核人员不具备审核权限！");
+										errorNum.add(10);
+									}
+								}
 							}
 						}
 					}
@@ -361,7 +390,8 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						}else{
 							//如果为项目工作，根据项目id获取项目负责人
 							wh.setProId(proId);
-							wh.setApprover(SWMapper.getPrincipalByProId(proId));
+							//如果提报人就是项目负责人，则以审核人是所填审核人；如果是参与人，则默认时项目负责人
+							wh.setApprover(principal.equals(worker.getUserName())?approverUser.getUserName():principal);
 							//如果为非项目工作，项目类型、名称与项目编号保持一致
 							wh.setCategory(bgMapper.getProInfoFieldByProId(proId, "category"));
 							wh.setProName(bgMapper.getProInfoFieldByProId(proId, "project_name"));
@@ -376,9 +406,9 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						wh.setLabId(thenWorker.getDeptId());
 						wh.setStatus("0");
 						wh.setValid("1");
-						wh.setCreateUser(webUtils.getUsername());
+						wh.setCreateUser(currentUsername);
 						wh.setCreateTime(new Date());
-						wh.setUpdateUser(webUtils.getUsername());
+						wh.setUpdateUser(currentUsername);
 						wh.setUpdateTime(new Date());
 						//保存正确数据
 						whList.add(wh);
@@ -407,7 +437,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 				smServiceLog.info("出错的项目： " + errorList);
 				// 生成错误信息文件
 				Object[][] title = { 
-						 { "序号", "SQNUM" ,"nowrap"},
+						 { "序号\r\n（选填）", "SQNUM" ,"nowrap"},
 						 { "填报日期\r\n（必填，格式：YYYY-MM-DD）", "DATE" ,"nowrap"},
 						 { "项目类型\r\n（必填）", "CATEGORY","nowrap"},
 						 { "项目编号\r\n（项目工作必填，非项目工作不填）", "PROJECT_NUMBER","nowrap" }, 
@@ -417,7 +447,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						 { "填报人员姓名\r\n（选填）","WORKER","nowrap"}, 
 						 { "填报人员编号\r\n（必填）","WORKER_HRCODE","nowrap"},
 						 { "审核人员姓名\r\n（选填）","PRINCIPAL","nowrap"}, 
-						 { "审核人员员工编号\r\n（非项目工作必填）","PRINCIPAL_HRCODE","nowrap"},
+						 { "审核人员员工编号\r\n（非项目工作必填，项目工作负责人必填）","PRINCIPAL_HRCODE","nowrap"},
 						 { "错误说明","errInfo"}
 						};
 				
@@ -464,7 +494,6 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 			String proName = Rtext.toStringTrim(map.get("proName"), "");
 			String empName = Rtext.toStringTrim(map.get("empName"), "");
 			String hrCode = Rtext.toStringTrim(map.get("hrCode"), "");
-			CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 			//服用页面查询方法，把分页范围调大
 			dataList=smMapper.getWorkHourInfoByCondition(
 					getLimitDeptIds(webUtils.getUsername(),deptCode),startDate,endDate,category,proName,empName,hrCode,"0","100000000");
