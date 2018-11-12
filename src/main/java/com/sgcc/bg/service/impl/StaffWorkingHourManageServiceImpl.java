@@ -354,17 +354,26 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 								errorInfo.append("审核人员员工编号错误！");
 								errorNum.add(10);
 							}else if(worker!=null){
-								List<Map<String,String>> approverList=swService.getApproverList(worker.getUserName());
-								boolean containsApprover=false;
-								for (Map<String, String> map : approverList) {
-									if(approverUser.getHrCode().equals(map.get("hrcode"))){
-										containsApprover=true;
-										break;
+								if(cellValue[10].equals(worker.getHrCode())){//审核人是自己
+									String subType=SWMapper.getTopSubmitType(worker.getUserId());
+									int subTypeNum=Rtext.ToInteger(subType, 0);
+									if(subTypeNum>5){//等级不够默认通过
+										errorInfo.append("审核人员不具备审核权限！");
+										errorNum.add(10);
 									}
-								}
-								if(!containsApprover){
-									errorInfo.append("审核人员不具备审核权限！");
-									errorNum.add(10);
+								}else{
+									List<Map<String,String>> approverList=swService.getApproverList(worker.getUserName());
+									boolean containsApprover=false;
+									for (Map<String, String> map : approverList) {
+										if(approverUser.getHrCode().equals(map.get("hrcode"))){
+											containsApprover=true;
+											break;
+										}
+									}
+									if(!containsApprover){
+										errorInfo.append("审核人员不具备审核权限！");
+										errorNum.add(10);
+									}
 								}
 							}
 						}

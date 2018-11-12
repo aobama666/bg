@@ -237,7 +237,7 @@ function queryList(load){
 	            		val=val==undefined?"":val;
 	            		//EDIT是一个标记，解决复杂情况下是否可编辑的问题,当审核人为本人时不可编辑
 	            		if(item.EDIT=='yes' && currentUserHrcode!=item.HRCODE && (item.STATUS=="0" || item.STATUS=="2")){
-	            			val='<div title="'+val+'" style="display:inline" class=""><input onclick="forAddApprover(this)" onblur="removeHint(this)" class="form-control" value="'+val+'" readonly style="text-align:center;width:90%;display:inline-block" name="principal" property="principal">'
+	            			val='<div title="'+val+'" style="display:inline" class="" onclick="forAddApprover()"><input  onblur="removeHint(this)" class="form-control" value="'+val+'" readonly style="text-align:center;width:90%;display:inline-block" name="principal" property="principal">'
 	            				+'<span style="width:10%;" class="glyphicon glyphicon-user"></span></div>';
 	            		}else{
 	            			val='<span title="'+val+'">'+val+'</span><input type="hidden" property="principal" value="'+val+'">';
@@ -399,7 +399,7 @@ function forSave(){
 	for(var i=0;i<rows.length;i++){
 		var $row=$(rows[i]);
 		var canSave=false;
-		$row.find("input:visible,textarea").each(function(){
+		$row.find("input[name!='principal']:visible,textarea").each(function(){//审核人员项现在有默认值
 			//当有一个填入了数据并且数据符合保存格式则可保存
 			if($.trim($(this).val())!=""){
 				canSave=true;	
@@ -464,8 +464,8 @@ function forAddNonProJob(){
 		});
 } 
 
-function forAddApprover(_this){
-	var row=$(_this).parents("tr");
+function forAddApprover(){
+	var row=$(this).parents("tr");
 	var rowNum = row.find(".mmg-index").text();
 	layer.open({
 		type:2,

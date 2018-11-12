@@ -210,7 +210,10 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 					Set<Integer> errorNum = new HashSet<Integer>();
 					String proId="";//项目id
 					String principal="";//项目负责人
-					String currentUsername=webUtils.getUsername();//当前登录人
+					String currentUsername = webUtils.getUsername();
+					CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(currentUsername);
+					String currentUserHrcode=currentUser.getHrCode();//当前登录人hrcode
+					String currentUserId=currentUser.getUserId();//当前登录人的id
 					CommonCurrentUser approverUser=null;
 					//获取当前登录人
 					// 对要导入的文件内容进行校验
@@ -312,17 +315,26 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 								errorInfo.append("审核人员员工编号错误！");
 								errorNum.add(8);
 							}else{
-								List<Map<String,String>> approverList=getApproverList(currentUsername);
-								boolean containsApprover=false;
-								for (Map<String, String> map : approverList) {
-									if(approverUser.getHrCode().equals(map.get("hrcode"))){
-										containsApprover=true;
-										break;
+								if(cellValue[8].equals(currentUserHrcode)){//审核人是自己
+									String subType=SWMapper.getTopSubmitType(currentUserId);
+									int subTypeNum=Rtext.ToInteger(subType, 0);
+									if(subTypeNum>5){//等级不够默认通过
+										errorInfo.append("审核人员不具备审核权限！");
+										errorNum.add(8);
 									}
-								}
-								if(!containsApprover){
-									errorInfo.append("审核人员不具备审核权限！");
-									errorNum.add(8);
+								}else{
+									List<Map<String,String>> approverList=getApproverList(currentUsername);
+									boolean containsApprover=false;
+									for (Map<String, String> map : approverList) {
+										if(approverUser.getHrCode().equals(map.get("hrcode"))){
+											containsApprover=true;
+											break;
+										}
+									}
+									if(!containsApprover){
+										errorInfo.append("审核人员不具备审核权限！");
+										errorNum.add(8);
+									}
 								}
 							}
 						}
