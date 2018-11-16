@@ -1,4 +1,5 @@
 package organstufftree;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Array;
@@ -32,10 +33,11 @@ import org.xml.sax.SAXException;
 public class TestErpWebservice {
 
 		public static void main(String[] args) {
-//			System.out.println(readOrganWebServiceXml());
-//			System.out.println(readUserWebServiceXml());
+//			String result = readOrganWebServiceXml();
+			String result = readUserWebServiceXml();
 //			String result = readUserWebServiceXml();
-			String result = readPa0001WebServiceXml();
+//			String result = readPa0001WebServiceXml();
+			System.out.println(result);
 			if(result==null){
 				result = "";
 			}
@@ -45,14 +47,14 @@ public class TestErpWebservice {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-//			FileWriter fw = null;
-//			try {
-//				fw = new FileWriter("d:/abc.txt");
-//				fw.write(result);
-//				System.out.println("ok");
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
+			FileWriter fw = null;
+			try {
+				fw = new FileWriter("d:/abc.txt");
+				fw.write(result);
+				System.out.println("ok");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		//解析xml文件
@@ -70,16 +72,19 @@ public class TestErpWebservice {
 					Node childNode = ChildNodeList.item(j);
 					String nodeName = childNode.getNodeName();
 					String nodeContent = childNode.getTextContent();
-					System.out.print(nodeContent+"/");
-//					if ("SNAME".equals(nodeName)) {
-//						sysout
-//					} else if ("Z00HRSSDW".equals(nodeName)) {
+					System.out.print(nodeContent);
+					if ("SNAME".equals(nodeName)) {
+//						System.out.println(nodeContent);
+					} else if ("Z00HRSSDW".equals(nodeName)) {
+//						System.out.println(nodeContent);
 //						dept.setDeptType(nodeContent);
-//					} else if ("Z00HRSSBM".equals(nodeName)) {
+					} else if ("Z00HRSSBM".equals(nodeName)) {
+//						System.out.println(nodeContent);
 //						dept.setDeptName(nodeContent);
-//					} else if ("Z00HRSSDWID".equals(nodeName)) {
+					} else if ("Z00HRSSDWID".equals(nodeName)) {
+//						System.out.println(nodeContent);
 //						dept.setParentId(nodeContent);
-//					}
+					}
 				}
 				System.out.println("");
 			}
