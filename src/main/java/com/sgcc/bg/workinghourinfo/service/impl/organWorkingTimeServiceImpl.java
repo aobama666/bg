@@ -887,7 +887,6 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				}*/
 				resultList.addAll(list);
 			}
-
 		}
 		return resultList;
 	}
@@ -990,7 +989,16 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		}else{
 			Lablist.add(labid);
 		}
-		List<Map<String, Object>> dataList = bgworkinghourinfoMapper.selectForUsers(deptid, Lablist, "", "");
+		//List<Map<String, Object>> dataList = bgworkinghourinfoMapper.selectForUsers(deptid, Lablist, "", "");
+		List<Map<String, Object>> dataList = new ArrayList<>();
+		for (String labId : Lablist) {
+			List<Map<String, Object>> list = bgworkinghourinfoMapper.selectUserFromWorkHourInfo(labId, "", "");
+			if (list.isEmpty()) {
+				continue;
+			} else {
+				dataList.addAll(list);
+			}
+		}
 		 
 		int count = 0;
 		List<Map<String, Object>> dataLists = new ArrayList<Map<String, Object>>();
