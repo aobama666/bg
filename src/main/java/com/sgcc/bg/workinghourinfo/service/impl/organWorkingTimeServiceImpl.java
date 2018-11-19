@@ -28,6 +28,7 @@ import com.sgcc.bg.common.CommonUser;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.common.ResultWarp;
+import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.mapper.BgWorkinghourInfoMapper;
@@ -221,6 +222,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		 String type = request.getParameter("Atype" ) == null ? "" : request.getParameter("Atype").toString(); //统计类型
 		 String pdeptid = request.getParameter("pdeptid" ) == null ? "" : request.getParameter("pdeptid").toString(); //组织机构 （父ID）
 		 String deptid = request.getParameter("deptid" ) == null ? "" : request.getParameter("deptid").toString(); //组织机构 （ID）
+		 String deptCode = request.getParameter("deptCode" ) == null ? "" : request.getParameter("deptCode").toString(); //组织机构 （code）
 		 String level = request.getParameter("level" ) == null ? "" : request.getParameter("level").toString(); //组织机构 （ID）
 		 String dataShow = request.getParameter("dataShow" ) == null ? "" : request.getParameter("dataShow").toString(); //显示数据
 		  int pageNum=Integer.parseInt(request.getParameter("page")); 
@@ -236,19 +238,25 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		 if(level==""){
 			 level="0";
 		 }
-		 List<Map<String, Object>>  organTreelist= initOrganTree(userName);
+		 //List<Map<String, Object>>  organTreelist= initOrganTree(userName);
+		 //TODO 
+		 //默认全院
+		 deptCode=Rtext.isEmpty(deptCode)?"41000001":deptCode;
 		 List<Map<String, Object>> datalist = null;
+		 List<Map<String, Object>>  organTreelist=new ArrayList<>();
 		 if(status.equals("0")){
-			 List<Map<String, Object>> neworganTreelist=findFordept(organTreelist,level,pdeptid,deptid);
-			 datalist=selectForHouseManager(neworganTreelist, type,beginData,endData,organTreelist);
+			 //List<Map<String, Object>> neworganTreelist=findFordept(organTreelist,level,pdeptid,deptid);
+			 organTreelist = getAuthorityOrganByType(userName, deptCode , "2");
+			 datalist=selectForHouseManager(organTreelist, type,beginData,endData);
 		 }else if(status.equals("1")){
-			 List<Map<String, Object>> neworganTreelist=findForlab(organTreelist,level,pdeptid,deptid  );
-			 datalist=selectForLatManager(neworganTreelist,type,beginData,endData ); 
+			 //List<Map<String, Object>> neworganTreelist=findForlab(organTreelist,level,pdeptid,deptid );
+			 organTreelist = getAuthorityOrganByType(userName, deptCode, "2");
+			 datalist=selectForLatManager(organTreelist,type,beginData,endData ); 
 		 }else if(status.equals("2")){
-			 List<Map<String, Object>> neworganTreelist=findForPersonnel(organTreelist,level,pdeptid,deptid,useralias );
+			 organTreelist = getAuthorityOrgan(userName, deptCode);
+			 List<Map<String, Object>> neworganTreelist=findForPersonnel(organTreelist , useralias);
 			 datalist=selectForPersonnelManager(neworganTreelist, type, beginData, endData);
 		 }
-		  
 		 datalist= dataShow(datalist,dataShow);
 	     Map<String, Object> resultMap = pageAndNum(datalist, pageNum, limit);
 		 String jsonStr = JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
@@ -268,6 +276,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		String type = request.getParameter("Atype") == null ? "" : request.getParameter("Atype").toString(); // 统计类型
 		String pdeptid = request.getParameter("pdeptid") == null ? "" : request.getParameter("pdeptid").toString(); // 组织机构																										 
 		String deptid = request.getParameter("deptid") == null ? "" : request.getParameter("deptid").toString(); // 组织机构 （ID）
+		String deptCode = request.getParameter("deptCode" ) == null ? "" : request.getParameter("deptCode").toString(); //组织机构 （code）
 		String level = request.getParameter("level") == null ? "" : request.getParameter("level").toString(); // 组织机构 （ID）
 		String ids = request.getParameter("selectList") == null ? "" : request.getParameter("selectList").toString(); // 组织机构 （ID）
 		String dataShow = request.getParameter("dataShow" ) == null ? "" : request.getParameter("dataShow").toString(); //显示数据
@@ -289,7 +298,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				list.add(num);
 			}
 		}
-		List<Map<String, Object>> organTreelist = initOrganTree(userName);
+/*		List<Map<String, Object>> organTreelist = initOrganTree(userName);
 		List<Map<String, Object>> datalist = null;
 		if (status.equals("0")) {
 			List<Map<String, Object>> neworganTreelist=findFordept(organTreelist,level,pdeptid,deptid);
@@ -301,7 +310,24 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 			List<Map<String, Object>> neworganTreelist = findForPersonnel(organTreelist, level, pdeptid, deptid,
 					useralias);
 			datalist = selectForPersonnelManager(neworganTreelist, type, beginData, endData);
-		}
+		}*/
+		//默认全院
+		 deptCode=Rtext.isEmpty(deptCode)?"41000001":deptCode;
+		 List<Map<String, Object>> datalist = null;
+		 List<Map<String, Object>>  organTreelist=new ArrayList<>();
+		 if(status.equals("0")){
+			 //List<Map<String, Object>> neworganTreelist=findFordept(organTreelist,level,pdeptid,deptid);
+			 organTreelist = getAuthorityOrganByType(userName, deptCode , "2");
+			 datalist=selectForHouseManager(organTreelist, type,beginData,endData);
+		 }else if(status.equals("1")){
+			 //List<Map<String, Object>> neworganTreelist=findForlab(organTreelist,level,pdeptid,deptid );
+			 organTreelist = getAuthorityOrganByType(userName, deptCode, "2");
+			 datalist=selectForLatManager(organTreelist,type,beginData,endData ); 
+		 }else if(status.equals("2")){
+			 organTreelist = getAuthorityOrgan(userName, deptCode);
+			 List<Map<String, Object>> neworganTreelist=findForPersonnel(organTreelist , useralias);
+			 datalist=selectForPersonnelManager(neworganTreelist, type, beginData, endData);
+		 }
 		 datalist= dataShow(datalist,dataShow);
 		
 		if (list.size() > 0) {
@@ -343,7 +369,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
     /**
 	 * 判断组织结构
 	 */
-	public List<Map<String, Object>> initOrganTree(String userName) {
+	/*public List<Map<String, Object>> initOrganTree(String userName) {
 		String limit = "'no_privilege'";
 		String root = "41000001";
 
@@ -397,13 +423,91 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				}
 			}
 		}
-
 		// 获取组织或组织人员数据列表
-
 		List<Map<String, Object>> list = organStuffTreeService.queryAllOrganTree(root,"2",limit);
 		return list;
-	 
-
+	}*/
+	
+	/**
+	 * 获取用户有权限的所有组织
+	 * @param username 用户名
+	 * @param deptCode 顶级部门
+	 * @return
+	 */
+	private List<Map<String, Object>> getAuthorityOrgan(String username, String deptCode) {
+		//默认全院
+		deptCode=Rtext.isEmpty(deptCode)?"41000001":deptCode;
+		List<Map<String, Object>> organTreelist = new ArrayList<>();
+		List<Map<String, Object>>  allOrganTreeList = organStuffTreeService.queryDeptByCurrentUserPriv(deptCode, "2", username);
+		UserPrivilege priv = userUtils.getUserOrganPrivilegeByUserName(username);
+		if (priv != null) {
+			String role = priv.getUserRoleCode();
+			if (role.indexOf("MANAGER_UNIT") != -1) {// 院专责
+				//List<Map<String, Object>> organTreelist_0 = getAuthorityOrgan(username, deptCode, "0", true);
+				//List<Map<String, Object>> organTreelist_0 = organStuffTreeService.queryDeptByCurrentUserPriv(deptCode, "0", username);
+				//organTreelist.addAll(organTreelist_0);
+				organTreelist = allOrganTreeList;
+			} else {
+				if (role.indexOf("MANAGER_DEPT") != -1) {
+					//List<Map<String, Object>> organTreelist_1 = organStuffTreeService.queryDeptByCurrentUserPriv(deptCode, "1", username);
+					//truncList(organTreelist_1,"1");
+					organTreelist.addAll(truncList(allOrganTreeList,"1"));
+				}
+				if (role.indexOf("MANAGER_LAB") != -1) {
+					//List<Map<String, Object>> organTreelist_2 = organStuffTreeService.queryDeptByCurrentUserPriv(deptCode, "2", username);
+					//truncList(organTreelist_2,"2");
+					organTreelist.addAll(truncList(allOrganTreeList,"2"));
+				}
+			}
+		}
+		
+		Set<String> set = new HashSet<>();
+		Iterator<Map<String, Object>> iterator = organTreelist.iterator();
+		while (iterator.hasNext()) {
+			Map<String, Object> organ = iterator.next();
+			//如果重复或不符类型则删除
+			if(!set.add(organ.get("deptId").toString()))
+				iterator.remove();
+		}
+		
+		return organTreelist;
+	}
+	
+	
+	/**
+	 * 获取用户有权限的某一类组织
+	 * @param username 用户名
+	 * @param deptCode 顶级部门
+	 * @param organType 组织类型 0：院 ，1 ：部门 ， 2：处室
+	 * @return
+	 */
+	private List<Map<String, Object>> getAuthorityOrganByType(String username, String deptCode, String organType) {
+		List<Map<String, Object>> organTreelist = getAuthorityOrgan(username,deptCode);
+		Iterator<Map<String, Object>> iterator = organTreelist.iterator();
+		while (iterator.hasNext()) {
+			Map<String, Object> organ = iterator.next();
+			//如果重复或不符类型则删除
+			if(!organType.equals(organ.get("level")))
+				iterator.remove();
+		}
+		
+		return organTreelist;
+	}
+	
+	private List<Map<String, Object>> truncList(List<Map<String, Object>> list, String organTyp){
+		List<Map<String, Object>> newList = new ArrayList<>();
+		/*Iterator<Map<String, Object>> iterator = list.iterator();
+		while (iterator.hasNext()) {
+			Map<String, Object> organ = iterator.next();
+			//如不符合要求的类型则删除
+			if(organTyp.equals(organ.get("level")))
+				newList.add(organ);
+		}*/
+		for (Map<String, Object> organ : list) {
+			if(organTyp.equals(organ.get("level")))
+				newList.add(organ);
+		}
+		return newList;
 	}
 
 	/**
@@ -446,68 +550,85 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		return datalist;
 	}
 	
-	public List<Map<String, Object>> selectForHouseManager(List<Map<String, Object>> neworganTreelist, String type,
-			String startDate, String endDate,List<Map<String, Object>>  organTreelist) {
-	 
-		int count = 0;
-		String deptId;
-		String deptName;
-		List<Map<String, Object>> maplist = new ArrayList<Map<String, Object>>();
-		List<DataBean> dateList = StatisticsForProjectName(type, startDate, endDate);
-		for (Map<String, Object> organTree : neworganTreelist) {
-				deptId = (String) organTree.get("deptId");
-				deptName = (String) organTree.get("organName");
-				 
-				//既然 明知是取部门维度，用处是ID干嘛？
-				//List<Map<String, Object>> lablist=findForDeptAndLab(organTreelist,deptId);
-				
-				for (DataBean dataBean : dateList) {
-					/* List<String> Lablist=new ArrayList<String>();
-					for(Map<String, Object> labmap:lablist){
-						String labId=(String) labmap.get("deptId");
-						Lablist.add(labId);
-					}*/
-					count++;
-					String start = dataBean.getStartData();
-					String end = dataBean.getEndData();
-					Map<String, Object>  dataMap = bgworkinghourinfoMapper.selectForWorkingHour(start, end, deptId, "", null, "");
-					/*String TotalHoursNum = bgworkinghourinfoMapper.selectForDepts(StartData, EndData, deptId, Lablist, "", "",
-							"");
-					if (TotalHoursNum == null) {
-						TotalHoursNum = "0";
-					}
-					String NoProjectTotalHoursNum = bgworkinghourinfoMapper.selectForDepts(StartData, EndData, deptId, Lablist,
-							"", "NP", "");
-					if (NoProjectTotalHoursNum == null) {
-						NoProjectTotalHoursNum = "0";
-					}
-					String ProjectTotalHoursNum = bgworkinghourinfoMapper.selectForDepts(StartData, EndData, deptId, Lablist, "",
-							"", "NP");
-					if (ProjectTotalHoursNum == null) {
-						ProjectTotalHoursNum = "0";
-					}*/
-					BigDecimal ProjectTotalHoursNum = (BigDecimal) dataMap.get("PROHOUR");
-					BigDecimal NoProjectTotalHoursNum = (BigDecimal)dataMap.get("NPHOUR");
-					BigDecimal TotalHoursNum = ProjectTotalHoursNum.add(NoProjectTotalHoursNum);
-					Map<String, Object> map = new HashMap<String, Object>();
-					map.put("pdeptId", deptId + "");
-					map.put("deptId", "");
-					map.put("Count", count + "");
-					map.put("StartData", start);
-					map.put("EndData", end);
-					map.put("deptName", deptName);
-					map.put("StartAndEndData", start + "至" + end);
-					map.put("TotalHoursNum", TotalHoursNum.toString().replace(".0", ""));
-					map.put("NoProjectTotalHoursNum", NoProjectTotalHoursNum.toString().replace(".0", ""));
-					map.put("ProjectTotalHoursNum", ProjectTotalHoursNum.toString().replace(".0", ""));
-					
-					maplist.add(map);
-		       }
+	@SuppressWarnings("unchecked")
+	public List<Map<String, Object>> selectForHouseManager(List<Map<String, Object>> organTreelist, String type,
+			String startDate, String endDate) {
+		
+		Map<String,Object> dataMap = new HashMap<>(); 
+		for (Map<String, Object> organTree : organTreelist) {
+			//List<String> Lablist=new ArrayList<String>();
+			
+			String pdeptId = (String) organTree.get("pdeptId");
+			String parentName = (String) organTree.get("parentName");
+			String key = parentName+":"+pdeptId;
+			String deptId = (String) organTree.get("deptId");
+			//String deptName = (String) organTree.get("organName");
+			if(dataMap.get(key)==null){
+				List<String> Lablist=new ArrayList<String>();
+				Lablist.add(deptId);
+				dataMap.put(key, Lablist);
+			}else{
+				((List<String>)dataMap.get(key)).add(deptId);
+			}
 		}
-
+		
+		int count = 0;
+		List<DataBean> dateList = StatisticsForProjectName(type, startDate, endDate);
+		List<Map<String, Object>> maplist = new ArrayList<Map<String, Object>>();
+		for (Entry<String,Object> entry: dataMap.entrySet()) {
+			String key = entry.getKey();
+			String[] strArr = key.split(":");
+			String deptName = strArr[0];
+			String deptId = strArr[1];
+			List<String> Lablist = (List<String>)entry.getValue();
+			
+			for (DataBean dataBean : dateList) {
+				/* List<String> Lablist=new ArrayList<String>();
+				for(Map<String, Object> labmap:lablist){
+					String labId=(String) labmap.get("deptId");
+					Lablist.add(labId);
+				}*/
+				count++;
+				String start = dataBean.getStartData();
+				String end = dataBean.getEndData();
+				Map<String, Object>  resultMap = bgworkinghourinfoMapper.selectForWorkingHour(start, end, "", "", Lablist, "");
+				/*String TotalHoursNum = bgworkinghourinfoMapper.selectForDepts(StartData, EndData, deptId, Lablist, "", "",
+						"");
+				if (TotalHoursNum == null) {
+					TotalHoursNum = "0";
+				}
+				String NoProjectTotalHoursNum = bgworkinghourinfoMapper.selectForDepts(StartData, EndData, deptId, Lablist,
+						"", "NP", "");
+				if (NoProjectTotalHoursNum == null) {
+					NoProjectTotalHoursNum = "0";
+				}
+				String ProjectTotalHoursNum = bgworkinghourinfoMapper.selectForDepts(StartData, EndData, deptId, Lablist, "",
+						"", "NP");
+				if (ProjectTotalHoursNum == null) {
+					ProjectTotalHoursNum = "0";
+				}*/
+				BigDecimal ProjectTotalHoursNum = (BigDecimal) resultMap.get("PROHOUR");
+				BigDecimal NoProjectTotalHoursNum = (BigDecimal)resultMap.get("NPHOUR");
+				BigDecimal TotalHoursNum = ProjectTotalHoursNum.add(NoProjectTotalHoursNum);
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("pdeptId", deptId + "");
+				map.put("deptId", "");
+				map.put("Count", count + "");
+				map.put("StartData", start);
+				map.put("EndData", end);
+				map.put("deptName", deptName);
+				map.put("StartAndEndData", start + "至" + end);
+				map.put("TotalHoursNum", TotalHoursNum.toString().replace(".0", ""));
+				map.put("NoProjectTotalHoursNum", NoProjectTotalHoursNum.toString().replace(".0", ""));
+				map.put("ProjectTotalHoursNum", ProjectTotalHoursNum.toString().replace(".0", ""));
+				
+				maplist.add(map);
+	        }
+		}
+		
 		return maplist; 
-
 	}
+	
 	public List<Map<String, Object>> selectForDeptManager(List<Map<String, Object>> neworganTreelist, String type,
 			String beginData, String endData) {
 		int count = 0;
@@ -573,7 +694,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
   
 
 
-	public List<Map<String, Object>> selectForLatManager(List<Map<String, Object>> neworganTreelist, String type,
+	public List<Map<String, Object>> selectForLatManager(List<Map<String, Object>> organTreelist, String type,
 			String beginData, String endData) {
 		int count = 0;
 		String deptId;
@@ -582,7 +703,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		String pdeptName;
 		List<Map<String, Object>> maplist = new ArrayList<Map<String, Object>>();
 		List<DataBean> datalist = StatisticsForProjectName(type, beginData, endData);
-		for (Map<String, Object> organTree : neworganTreelist) {
+		for (Map<String, Object> organTree : organTreelist) {
 			deptId = (String) organTree.get("deptId");
 			deptName = (String) organTree.get("organName");
 			pdeptId = (String) organTree.get("pdeptId");
@@ -632,20 +753,20 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 
 	}
 
-	public List<Map<String, Object>> selectForPersonnelManager(List<Map<String, Object>> neworganTreelist, String type,
+	public List<Map<String, Object>> selectForPersonnelManager(List<Map<String, Object>> organTreelist, String type,
 			String beginData, String endData) {
 		int count = 0;
 
 		List<Map<String, Object>> maplist = new ArrayList<Map<String, Object>>();
 		List<DataBean> datalist = StatisticsForProjectName(type, beginData, endData);
 		 
-			for (Map<String, Object> map : neworganTreelist) {
-				String useralias = (String) map.get("USERALIAS");
-				String username = (String) map.get("USERNAME");
-				String deptname = (String) map.get("DEPTNAME");
-				String pdeptname = (String) map.get("PDEPTNAME");
-				String pdeptid = (String) map.get("PDEPTID");
-				String deptid = (String) map.get("DEPTID");
+			for (Map<String, Object> organMap : organTreelist) {
+				String useralias = (String) organMap.get("USERALIAS");
+				String username = (String) organMap.get("USERNAME");
+				String deptname = (String) organMap.get("DEPTNAME");
+				String pdeptname = (String) organMap.get("PDEPTNAME");
+				String pdeptid = (String) organMap.get("PDEPTID");
+				String deptid = (String) organMap.get("DEPTID");
 				for (DataBean dataBean : datalist) {
 					String StartData = dataBean.getStartData();
 					String EndData = dataBean.getEndData();
@@ -665,7 +786,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 					if (ProjectTotalHoursNum == null) {
 						ProjectTotalHoursNum = "0";
 					}*/
-					Map<String, Object>  dataMap = bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, pdeptid, deptid, null, username);
+					Map<String, Object>  dataMap = bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, "", deptid, null, username);
 					BigDecimal ProjectTotalHoursNum = (BigDecimal) dataMap.get("PROHOUR");
 					BigDecimal NoProjectTotalHoursNum = (BigDecimal)dataMap.get("NPHOUR");
 					BigDecimal TotalHoursNum = ProjectTotalHoursNum.add(NoProjectTotalHoursNum);
@@ -727,37 +848,36 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 	/**
 	 * 人员的处理
 	 */
-	public List<Map<String, Object>> findForPersonnel(List<Map<String, Object>> dataList, String level, String pdeptid,
-			String deptid, String useralias) {
-
+	public List<Map<String, Object>> findForPersonnel(List<Map<String, Object>> organList , String useralias) {
+/*
 		List<Map<String, Object>> datalist = new ArrayList<Map<String, Object>>();
 		if (level.equals("0")) {// 传入的参数的级别，院级别
-			for (Map<String, Object> map : dataList) {
+			for (Map<String, Object> map : organList) {
 				if (map.get("level").equals("2")) {// 获取全部级别为部门的数据
 					datalist.add(map);
 				}
 			}
 		} else if (level.equals("1")) {// 传入的参数的级别，部门级别
-			for (Map<String, Object> map : dataList) {
+			for (Map<String, Object> map : organList) {
 				if (map.get("pdeptId").equals(deptid)) {// 获取全部级别为部门的数据
 					datalist.add(map);
 				}
 			}
 		} else if (level.equals("2")) {
-			for (Map<String, Object> map : dataList) {
+			for (Map<String, Object> map : organList) {
 				if (map.get("pdeptId").equals(pdeptid)) {
 					if (map.get("deptId").equals(deptid)) {
 						datalist.add(map);
 					}
 				}
 			}
-		}
+		}*/
 		 
 		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
-		for (Map<String, Object> map : datalist) {
+		for (Map<String, Object> map : organList) {
 			String deptId = (String) map.get("deptId");
-			String pdeptId = (String) map.get("pdeptId");
-			List<Map<String, Object>> list = bgworkinghourinfoMapper.selectForUser(pdeptId, deptId, useralias, "");
+			//String pdeptId = (String) map.get("pdeptId");
+			List<Map<String, Object>> list = bgworkinghourinfoMapper.selectUserFromWorkHourInfo(deptId, useralias, "");
 			if (list.isEmpty()) {
 				continue;
 			} else {
@@ -853,15 +973,20 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 	    String type = request.getParameter("type" ) == null ? "" : request.getParameter("type").toString(); 
         
 	    List<String> Lablist=new ArrayList<String>();
-		List<Map<String, Object>>  organTreelist= initOrganTree(userName);
+		//List<Map<String, Object>>  organTreelist= initOrganTree(userName);
 		if(labid==""){
-		       List<Map<String, Object>> lablist=findForDeptAndLab(organTreelist,deptid);
-		      
-					for(Map<String, Object> labmap:lablist){
-						String labId=(String) labmap.get("deptId");
-						Lablist.add(labId);
-					 
-					} 
+			/*
+			List<Map<String, Object>> lablist=findForDeptAndLab(organTreelist,deptid);
+			for(Map<String, Object> labmap:lablist){
+				String labId=(String) labmap.get("deptId");
+				Lablist.add(labId);
+			 
+			} */
+			List<Map<String, Object>> organTreelist = getAuthorityOrganByType(userName, null, "2");
+			for (Map<String, Object> map : organTreelist) {
+				String labId=(String) map.get("deptId");
+				Lablist.add(labId);
+			}
 		}else{
 			Lablist.add(labid);
 		}
