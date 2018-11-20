@@ -53,14 +53,13 @@ public class BgController {
 	private static Logger bgLog = LoggerFactory.getLogger(BgController.class);
 
 	@RequestMapping("/proInfo")
-	public ModelAndView project(HttpServletRequest request) {
-		ModelAndView model = new ModelAndView("bg/proInfo/bg_project_info");
+	public String project(HttpServletRequest request) {
 		//传项目状态pstatus100001
 		Map<String,String> dictMap= dict.getDictDataByPcode("pstatus100001");
 		String dictJson=dict.getDictDataJsonStr("pstatus100001");
 		request.setAttribute("dictMap",dictMap);
 		request.setAttribute("dictJson",dictJson);
-		return model;
+		return "bg/proInfo/bg_project_info";
 	}
  
 	

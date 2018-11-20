@@ -146,7 +146,7 @@ public class BGServiceImpl implements IBGService {
 
 	@Override
 	public int getProjectCount(String proName,String proStatus) {
-		if("未启动".equals(proStatus)){
+		/*if("未启动".equals(proStatus)){
 			proStatus="0";
 		}else if("进行中".equals(proStatus)){
 			proStatus="1";
@@ -156,7 +156,7 @@ public class BGServiceImpl implements IBGService {
 			proStatus="3";
 		}else if("废止".equals(proStatus)){
 			proStatus="4";
-		}
+		}*/
 		return bgMapper.getProjectCount(webUtils.getUsername(),proName,proStatus);
 	}
 

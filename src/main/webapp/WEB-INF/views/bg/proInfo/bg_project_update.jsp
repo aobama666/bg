@@ -614,8 +614,7 @@
 	function sortIndex(){
 		var rows=$("#mmg tr:visible");
 		for(var i=0;i<rows.length;i++){
-			var row=rows[i];
-			$(row).find(".mmg-index").text(i+1);
+			$(rows[i]).find(".mmg-index").text(i+1);
 		}
 	}	
 	
@@ -800,6 +799,7 @@
 		date.setTime(millisSeconds);
 		return date;
 	}
+	
 	//防止过快点击，重复添加
 	var isClick=true;
 	function popEvent(){
@@ -812,10 +812,10 @@
 			return;
 		}
 		var rows=$("#mmg tr");
-		rows.each(function(i){
+		/* rows.each(function(i){
 			$(this).css("display","table-row");
 			$(this).find(".mmg-index").text(i+1);
-		});
+		}); */
 		//var hrcode="";
 		//var empName=""; 
 		//var spareNames=new Array();
@@ -855,6 +855,7 @@
 			}
 			mmg.addRow({"HRCODE":code,"NAME":text,"START_DATE":defaultStartDate,"END_DATE":defaultEndDate,"ROLE":role});
 			resize();
+			sortIndex();
 			/* if(flag){
 			}else{
 				layer.msg("已存在，请勿重复添加");
