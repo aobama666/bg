@@ -253,7 +253,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, "2");
 			 datalist=selectForLatManager(organTreelist,type,beginData,endData ); 
 		 }else if(status.equals("2")){
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, "2");
 			 List<Map<String, Object>> neworganTreelist=findForPersonnel(organTreelist , useralias);
 			 datalist=selectForPersonnelManager(neworganTreelist, type, beginData, endData);
 		 }
@@ -324,7 +324,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, "2");
 			 datalist=selectForLatManager(organTreelist,type,beginData,endData ); 
 		 }else if(status.equals("2")){
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, "2");
 			 List<Map<String, Object>> neworganTreelist=findForPersonnel(organTreelist , useralias);
 			 datalist=selectForPersonnelManager(neworganTreelist, type, beginData, endData);
 		 }
