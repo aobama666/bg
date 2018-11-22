@@ -246,14 +246,14 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		 List<Map<String, Object>>  organTreelist=new ArrayList<>();
 		 if(status.equals("0")){
 			 //List<Map<String, Object>> neworganTreelist=findFordept(organTreelist,level,pdeptid,deptid);
-			 organTreelist = getAuthorityOrganByType(userName, deptCode , "2");
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, "2");
 			 datalist=selectForHouseManager(organTreelist, type,beginData,endData);
 		 }else if(status.equals("1")){
 			 //List<Map<String, Object>> neworganTreelist=findForlab(organTreelist,level,pdeptid,deptid );
-			 organTreelist = getAuthorityOrganByType(userName, deptCode, "2");
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, "2");
 			 datalist=selectForLatManager(organTreelist,type,beginData,endData ); 
 		 }else if(status.equals("2")){
-			 organTreelist = getAuthorityOrgan(userName, deptCode);
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
 			 List<Map<String, Object>> neworganTreelist=findForPersonnel(organTreelist , useralias);
 			 datalist=selectForPersonnelManager(neworganTreelist, type, beginData, endData);
 		 }
@@ -317,14 +317,14 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		 List<Map<String, Object>>  organTreelist=new ArrayList<>();
 		 if(status.equals("0")){
 			 //List<Map<String, Object>> neworganTreelist=findFordept(organTreelist,level,pdeptid,deptid);
-			 organTreelist = getAuthorityOrganByType(userName, deptCode , "2");
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, "2");
 			 datalist=selectForHouseManager(organTreelist, type,beginData,endData);
 		 }else if(status.equals("1")){
 			 //List<Map<String, Object>> neworganTreelist=findForlab(organTreelist,level,pdeptid,deptid );
-			 organTreelist = getAuthorityOrganByType(userName, deptCode, "2");
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, "2");
 			 datalist=selectForLatManager(organTreelist,type,beginData,endData ); 
 		 }else if(status.equals("2")){
-			 organTreelist = getAuthorityOrgan(userName, deptCode);
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
 			 List<Map<String, Object>> neworganTreelist=findForPersonnel(organTreelist , useralias);
 			 datalist=selectForPersonnelManager(neworganTreelist, type, beginData, endData);
 		 }
@@ -433,7 +433,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 	 * @param username 用户名
 	 * @param deptCode 顶级部门
 	 * @return
-	 */
+	 *//*
 	private List<Map<String, Object>> getAuthorityOrgan(String username, String deptCode) {
 		//默认全院
 		deptCode=Rtext.isEmpty(deptCode)?"41000001":deptCode;
@@ -474,13 +474,13 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 	}
 	
 	
-	/**
+	*//**
 	 * 获取用户有权限的某一类组织
 	 * @param username 用户名
 	 * @param deptCode 顶级部门
 	 * @param organType 组织类型 0：院 ，1 ：部门 ， 2：处室
 	 * @return
-	 */
+	 *//*
 	private List<Map<String, Object>> getAuthorityOrganByType(String username, String deptCode, String organType) {
 		List<Map<String, Object>> organTreelist = getAuthorityOrgan(username,deptCode);
 		Iterator<Map<String, Object>> iterator = organTreelist.iterator();
@@ -496,19 +496,19 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 	
 	private List<Map<String, Object>> truncList(List<Map<String, Object>> list, String organTyp){
 		List<Map<String, Object>> newList = new ArrayList<>();
-		/*Iterator<Map<String, Object>> iterator = list.iterator();
+		Iterator<Map<String, Object>> iterator = list.iterator();
 		while (iterator.hasNext()) {
 			Map<String, Object> organ = iterator.next();
 			//如不符合要求的类型则删除
 			if(organTyp.equals(organ.get("level")))
 				newList.add(organ);
-		}*/
+		}
 		for (Map<String, Object> organ : list) {
 			if(organTyp.equals(organ.get("level")))
 				newList.add(organ);
 		}
 		return newList;
-	}
+	}*/
 
 	/**
 	 * 部门的处理
@@ -981,7 +981,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				Lablist.add(labId);
 			 
 			} */
-			List<Map<String, Object>> organTreelist = getAuthorityOrganByType(userName, null, "2");
+			List<Map<String, Object>> organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, null, "2");
 			for (Map<String, Object> map : organTreelist) {
 				String labId=(String) map.get("deptId");
 				Lablist.add(labId);

@@ -29,12 +29,12 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.CommonCurrentUser;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.FileDownloadUtil;
+import com.sgcc.bg.common.PageHelper;
 import com.sgcc.bg.common.ParamValidationUtil;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.ProjectInfoPo;
-import com.sgcc.bg.model.ProjectUserPo;
 import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IBGService;
 
@@ -73,11 +73,18 @@ public class BgController {
 	public String initPage(String proName, String proStatus, Integer page, Integer limit) {
 		proStatus=proStatus.trim();
 		proName=proName.trim();
-		List<Map<String, String>> jsonarry = bgService.getAllProjects(proName, proStatus, page, limit);
-		int count = bgService.getProjectCount(proName,proStatus);
+		List<Map<String, String>> content = bgService.getAllProjects(proName, proStatus);
+		int start = 0;
+		int end = 30;
+		if(page != null && limit!=null){
+			start = (page-1)*limit;
+			end = page*limit;
+		}
+		PageHelper<Map<String, String>>  pageHelper = new PageHelper<>(content, start, end);
+		//int count = bgService.getProjectCount(proName,proStatus);
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
-		jsonMap.put("items", jsonarry);
-		jsonMap.put("totalCount", count);
+		jsonMap.put("items", pageHelper.getResult());
+		jsonMap.put("totalCount", pageHelper.getTotalNum());
 		String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd",
 				SerializerFeature.WriteDateUseDateFormat);
 		return jsonStr;
@@ -91,7 +98,6 @@ public class BgController {
 	@RequestMapping("/stuffPageWithData")
 	@ResponseBody
 	public String initStuffPageWithData(String proId) {
-		// TODO
 		List<Map<String, String>> proUsers = bgService.getProUsersByProId(proId);
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("items", proUsers);

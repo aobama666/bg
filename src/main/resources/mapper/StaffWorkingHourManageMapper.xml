@@ -4,87 +4,87 @@
 <mapper namespace="com.sgcc.bg.mapper.StaffWorkingHourManageMaper">
 
 	<select id="getWorkHourInfoByCondition" resultType="java.util.Map">
-		SELECT *
+		<!-- SELECT *
   			FROM (SELECT ROWNUM rn, p.*
-          			FROM (SELECT 
-          				t.id,
-          				to_char(t.work_time,'yyyy-mm-dd') work_time,
-                       (SELECT deptname
-                          FROM BG_SYS_DEPT
-                         WHERE deptid = t.dept_id) as dept,
-                       (SELECT deptname
-                          FROM BG_SYS_DEPT
-                         WHERE deptid = t.lab_id) as lab,
-                       u.useralias as username,
-                       u.hrcode,
-                       DECODE(t.category,
-			              'NP',
-			              t.project_name,
-			              p.project_name) as project_name,
-		      	      DECODE(t.category,
-		              	'NP',
-		              	'非项目工作',
-		               	(SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=p.category)) as category,
-                       t.job_content,
-                       t.working_hour,
-                       t.approver as approver_username,
-                       a.useralias as approver,
-                       t.status
-                  FROM BG_WORKINGHOUR_INFO t
-                   LEFT JOIN BG_SYS_USER u 
-   				   ON u.username=t.worker
-   				   LEFT JOIN BG_SYS_USER a 
-   				   ON a.username=t.approver
-   				   LEFT JOIN BG_PROJECT_INFO p
-   				   ON p.id=t.project_id
-                 WHERE t.valid=1 
-         			AND  (SELECT R.DEPTID FROM BG_SYS_USER_DEPT_RELATION R
-       			      		WHERE R.USERID = u.userid
-         				AND trunc(sysdate) BETWEEN R.EXP_START_TIME AND R.EXP_END_TIME
-         			 	AND ((R.SRC = 0 AND NOT EXISTS
-               			(SELECT R1.USERID
-                   			FROM BG_SYS_USER_DEPT_RELATION R1
-                  				WHERE R1.USERID = R.USERID
-                    			AND trunc(sysdate) BETWEEN R1.EXP_START_TIME AND R1.EXP_END_TIME
-                   			AND R1.VALID = 1
-                    			AND R1.SRC = 1)) OR R.SRC IN (1, 2))
-          			 	AND R.VALID = 1
-        			 	AND ROWNUM = 1) IN (${deptIds})
-                 <!-- <if test="deptCode != null and deptCode != ''" >
-						AND (SELECT deptid
-                          FROM BG_SYS_DEPT
-                         WHERE deptcode = #{deptCode}) =
-                       DECODE((SELECT type
-                                FROM BG_SYS_DEPT
-                               WHERE deptcode = #{deptCode}),
-                              2,
-                              t.lab_id,
-                              t.dept_id)
-				  </if> -->
-				  <if test="startDate != null and startDate != ''" >
-	                   <![CDATA[AND t.work_time >= TO_DATE(#{startDate}, 'yyyy-mm-dd')]]>
-				  </if>
-				  <if test="endDate != null and endDate != ''" >
-				  		 <![CDATA[AND t.work_time <= TO_DATE(#{endDate}, 'yyyy-mm-dd')]]>
-				  </if>
-                 <if test="category != null and category != ''" >
-                 	AND  DECODE(t.category,'NP',t.category,p.category) = #{category}
-                 </if>
-                 <if test="proName != null and proName != ''" >
-                 	AND DECODE(t.category,
-			              'NP',
-			              t.project_name,
-			              p.project_name) LIKE '%'||#{proName}||'%'
-                 </if>
-                 <if test="empName != null and empName != ''" >
-                	AND u.useralias LIKE '%'||#{empName}||'%'
-                 </if>
-                 <if test="status != null and status != ''" >
-                	 AND t.status=#{status}
-                 </if>
-                 ORDER BY t.work_time,t.create_time DESC) p
+          			FROM () p
    		<![CDATA[WHERE ROWNUM<=#{end})]]>
-		<![CDATA[WHERE rn>#{start}]]>
+		<![CDATA[WHERE rn>#{start}]]> -->
+		SELECT T.ID,
+		       TO_CHAR(T.WORK_TIME, 'yyyy-mm-dd') WORK_TIME,
+		       (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = T.DEPT_ID) AS DEPT,
+		       (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = T.LAB_ID) AS LAB,
+		       U.USERALIAS AS USERNAME,
+		       U.HRCODE,
+		       DECODE(T.CATEGORY, 'NP', T.PROJECT_NAME, P.PROJECT_NAME) AS PROJECT_NAME,
+		       DECODE(T.CATEGORY,
+		              'NP',
+		              '非项目工作',
+		              (SELECT NAME
+		                 FROM BG_SYS_DATADICTIONARY
+		                WHERE PCODE = 'category100002'
+		                  AND VAILD = 1
+		                  AND CODE = P.CATEGORY)) AS CATEGORY,
+		       T.JOB_CONTENT,
+		       T.WORKING_HOUR,
+		       T.APPROVER AS APPROVER_USERNAME,
+		       A.USERALIAS AS APPROVER,
+		       T.STATUS
+		  FROM BG_WORKINGHOUR_INFO T
+		  LEFT JOIN BG_SYS_USER U
+		    ON U.USERNAME = T.WORKER
+		  LEFT JOIN BG_SYS_USER A
+		    ON A.USERNAME = T.APPROVER
+		  LEFT JOIN BG_PROJECT_INFO P
+		    ON P.ID = T.PROJECT_ID
+		 WHERE T.VALID = 1
+		   AND (SELECT R.DEPTID
+		          FROM BG_SYS_USER_DEPT_RELATION R
+		         WHERE R.USERID = U.USERID
+		           AND TRUNC(SYSDATE) BETWEEN R.EXP_START_TIME AND R.EXP_END_TIME
+		           AND ((R.SRC = 0 AND NOT EXISTS
+		                (SELECT R1.USERID
+		                    FROM BG_SYS_USER_DEPT_RELATION R1
+		                   WHERE R1.USERID = R.USERID
+		                     AND TRUNC(SYSDATE) BETWEEN R1.EXP_START_TIME AND
+		                         R1.EXP_END_TIME
+		                     AND R1.VALID = 1
+		                     AND R1.SRC = 1)) OR R.SRC IN (1, 2))
+		           AND R.VALID = 1
+		           AND ROWNUM = 1) IN (${deptIds})
+
+             <!-- <if test="deptCode != null and deptCode != ''" >
+				AND (SELECT deptid
+                      FROM BG_SYS_DEPT
+                     WHERE deptcode = #{deptCode}) =
+                   DECODE((SELECT type
+                            FROM BG_SYS_DEPT
+                           WHERE deptcode = #{deptCode}),
+                          2,
+                          t.lab_id,
+                          t.dept_id)
+  			</if> -->
+			  <if test="startDate != null and startDate != ''" >
+                   <![CDATA[AND t.work_time >= TO_DATE(#{startDate}, 'yyyy-mm-dd')]]>
+			  </if>
+			  <if test="endDate != null and endDate != ''" >
+			  		 <![CDATA[AND t.work_time <= TO_DATE(#{endDate}, 'yyyy-mm-dd')]]>
+			  </if>
+              <if test="category != null and category != ''" >
+                	AND  DECODE(t.category,'NP',t.category,p.category) = #{category}
+               </if>
+               <if test="proName != null and proName != ''" >
+               	AND DECODE(t.category,
+	              'NP',
+	              t.project_name,
+	              p.project_name) LIKE '%'||#{proName}||'%'
+               </if>
+               <if test="empName != null and empName != ''" >
+              	AND u.useralias LIKE '%'||#{empName}||'%'
+               </if>
+               <if test="status != null and status != ''" >
+              	 AND t.status=#{status}
+               </if>
+               ORDER BY t.work_time,t.create_time DESC
 	</select>
 	
 	<select id="getItemCount" parameterType="String" resultType="java.lang.Integer">

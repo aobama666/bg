@@ -8,18 +8,15 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import com.sgcc.bg.model.ProjectInfoPo;
-import com.sgcc.bg.model.ProjectUserPo;
 
 public interface IBGService {
 	/**
 	 * 获取所有项目信息到展示页面
 	 * @param proName
 	 * @param proStatus
-	 * @param limit 
-	 * @param page 
 	 * @return
 	 */
-	public List<Map<String,String>> getAllProjects(String proName,String proStatus, Integer page, Integer limit);
+	public List<Map<String,String>> getAllProjects(String proName,String proStatus);
 	
 	/**
 	 * 新增项目信息
@@ -70,7 +67,7 @@ public interface IBGService {
 	 * @param proName 
 	 * @return
 	 */
-	public int getProjectCount(String proName, String proStatus);
+	//public int getProjectCount(String proName, String proStatus);
 
 	/**
 	 * 校验项目编号的唯一性

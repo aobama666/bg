@@ -300,7 +300,7 @@ $("#mmg").on("click",".updateManage",function(){
 	var id=$(this).attr("id");
 	layer.open({
 		type:2,
-		title:"修改页面",
+		title:"修改",
 		area:['620px', '460px'],
 		scrollbar:false,
 		content:['/bg/searchWorkTask/workManageUpdate?id='+id,'no'],

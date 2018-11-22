@@ -19,14 +19,11 @@ public interface BGMapper {
 	 * @param username
 	 * @param proName
 	 * @param proStatus
-	 * @param start
-	 * @param end
 	 * @return
 	 */
 	public List<Map<String,String>> getAllProjects(
 			@Param("username")String username,
-			@Param("proName")String proName,@Param("proStatus")String proStatus,
-			@Param("start")String start, @Param("end")String end);
+			@Param("proName")String proName,@Param("proStatus")String proStatus);
 	
 	/**
 	 * 添加项目信息
@@ -95,7 +92,7 @@ public interface BGMapper {
 	 * @param proName 
 	 * @return
 	 */
-	public int getProjectCount(@Param("username")String username, @Param("proName")String proName, @Param("proStatus")String proStatus);
+	//public int getProjectCount(@Param("username")String username, @Param("proName")String proName, @Param("proStatus")String proStatus);
 
 	/**
 	 * 校验项目编号的唯一性

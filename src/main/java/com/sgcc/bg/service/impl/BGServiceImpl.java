@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -22,6 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.CommonCurrentUser;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ExcelUtil;
@@ -37,9 +43,6 @@ import com.sgcc.bg.model.ProjectUserPo;
 import com.sgcc.bg.model.ProjectUserVali;
 import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IBGService;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 
 @Service
 public class BGServiceImpl implements IBGService {
@@ -55,15 +58,8 @@ public class BGServiceImpl implements IBGService {
 	private static Logger bgServiceLog =  LoggerFactory.getLogger(BGServiceImpl.class);
 
 	@Override
-	public List<Map<String, String>> getAllProjects(String proName,String proStatus,Integer page,Integer limit) {
-		String start="0";
-		String end="30";
-		if(page!=null && limit!=null){
-			start=String.valueOf((page-1)*limit);
-			end=String.valueOf(page*limit);
-		}
-		bgServiceLog.info("page="+page+"/limit="+limit);
-		List<Map<String, String>> list=bgMapper.getAllProjects(webUtils.getUsername(),proName, proStatus,start,end);
+	public List<Map<String, String>> getAllProjects(String proName,String proStatus) {
+		List<Map<String, String>> list=bgMapper.getAllProjects(webUtils.getUsername(),proName, proStatus);
 		return list;
 	}
 
@@ -144,9 +140,9 @@ public class BGServiceImpl implements IBGService {
 		return "done";
 	}
 
-	@Override
+	/*@Override
 	public int getProjectCount(String proName,String proStatus) {
-		/*if("未启动".equals(proStatus)){
+		if("未启动".equals(proStatus)){
 			proStatus="0";
 		}else if("进行中".equals(proStatus)){
 			proStatus="1";
@@ -156,9 +152,9 @@ public class BGServiceImpl implements IBGService {
 			proStatus="3";
 		}else if("废止".equals(proStatus)){
 			proStatus="4";
-		}*/
+		}
 		return bgMapper.getProjectCount(webUtils.getUsername(),proName,proStatus);
-	}
+	}*/
 
 	@Override
 	public String checkUniqueness(String wbsNumber) {
@@ -778,8 +774,8 @@ public class BGServiceImpl implements IBGService {
 			Map<String,String> map=JSONObject.parseObject(ids,Map.class);
 			String proStatus = Rtext.toStringTrim(map.get("proStatus"), "");
 			String proName = Rtext.toStringTrim(map.get("proName"), "");
-			//复用页面查询方法，把分页范围调大
-			dataList=bgMapper.getAllProjects(webUtils.getUsername(), proName, proStatus, "0","100000000");
+			//复用页面查询方法
+			dataList = getAllProjects(proName,proStatus);
 		}else{
 			String[] idArr=ids.split(",");
 			Map<String,String> proMap = new HashMap<String,String>();
