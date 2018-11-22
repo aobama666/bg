@@ -239,21 +239,21 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 			 level="0";
 		 }
 		 //List<Map<String, Object>>  organTreelist= initOrganTree(userName);
-		 //TODO 
+		
 		 //默认全院
 		 deptCode=Rtext.isEmpty(deptCode)?"41000001":deptCode;
 		 List<Map<String, Object>> datalist = null;
 		 List<Map<String, Object>>  organTreelist=new ArrayList<>();
 		 if(status.equals("0")){
 			 //List<Map<String, Object>> neworganTreelist=findFordept(organTreelist,level,pdeptid,deptid);
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, "2");
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
 			 datalist=selectForHouseManager(organTreelist, type,beginData,endData);
 		 }else if(status.equals("1")){
 			 //List<Map<String, Object>> neworganTreelist=findForlab(organTreelist,level,pdeptid,deptid );
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, "2");
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
 			 datalist=selectForLatManager(organTreelist,type,beginData,endData ); 
 		 }else if(status.equals("2")){
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, "2");
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
 			 List<Map<String, Object>> neworganTreelist=findForPersonnel(organTreelist , useralias);
 			 datalist=selectForPersonnelManager(neworganTreelist, type, beginData, endData);
 		 }
@@ -317,14 +317,14 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		 List<Map<String, Object>>  organTreelist=new ArrayList<>();
 		 if(status.equals("0")){
 			 //List<Map<String, Object>> neworganTreelist=findFordept(organTreelist,level,pdeptid,deptid);
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, "2");
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
 			 datalist=selectForHouseManager(organTreelist, type,beginData,endData);
 		 }else if(status.equals("1")){
 			 //List<Map<String, Object>> neworganTreelist=findForlab(organTreelist,level,pdeptid,deptid );
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, "2");
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
 			 datalist=selectForLatManager(organTreelist,type,beginData,endData ); 
 		 }else if(status.equals("2")){
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, "2");
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
 			 List<Map<String, Object>> neworganTreelist=findForPersonnel(organTreelist , useralias);
 			 datalist=selectForPersonnelManager(neworganTreelist, type, beginData, endData);
 		 }
@@ -560,6 +560,8 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 			
 			String pdeptId = (String) organTree.get("pdeptId");
 			String parentName = (String) organTree.get("parentName");
+			//if(Rtext.isEmpty(pdeptId) || Rtext.isEmpty(parentName)) continue;
+			
 			String key = parentName+":"+pdeptId;
 			String deptId = (String) organTree.get("deptId");
 			//String deptName = (String) organTree.get("organName");
@@ -981,10 +983,10 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				Lablist.add(labId);
 			 
 			} */
-			List<Map<String, Object>> organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, null, "2");
+			List<Map<String, Object>> organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, null, null);
 			for (Map<String, Object> map : organTreelist) {
-				String labId=(String) map.get("deptId");
-				Lablist.add(labId);
+				if(deptid!=null && deptid.equals(map.get("pdeptId"))) 
+					Lablist.add((String) map.get("deptId"));
 			}
 		}else{
 			Lablist.add(labid);

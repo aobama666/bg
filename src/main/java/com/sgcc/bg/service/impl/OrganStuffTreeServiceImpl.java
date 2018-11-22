@@ -167,6 +167,15 @@ public class OrganStuffTreeServiceImpl implements OrganStuffTreeService{
 		
 		if(resultList==null || resultList.size()==0){
 			return new ArrayList<>();
+		}else{//去除电科院
+			Iterator<Map<String, Object>>  iterator = resultList.iterator();
+			while (iterator.hasNext()) {
+				Map<String, Object> organ = iterator.next();
+				if("0".equals(organ.get("level"))){
+					iterator.remove();
+				}
+				
+			}
 		}
 		
 		UserPrivilege priv = userUtils.getUserOrganPrivilegeByUserName(userName);
