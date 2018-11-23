@@ -879,16 +879,27 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		for (Map<String, Object> map : organList) {
 			String deptId = (String) map.get("deptId");
 			//String pdeptId = (String) map.get("pdeptId");
-			List<Map<String, Object>> list = bgworkinghourinfoMapper.selectUserFromWorkHourInfo(deptId, useralias, "");
-			if (list.isEmpty()) {
+			//从报工表中获取该部门下已存在报工信息（已通过）的所有报工人员
+			List<Map<String, Object>> workerList = bgworkinghourinfoMapper.selectUserFromWorkHourInfo(deptId, useralias, "");
+			//获取当前该部门下的所有人员
+			List<Map<String, Object>> empList = bgworkinghourinfoMapper.selectForUser("", deptId, useralias, "");
+			
+			empList.addAll(workerList);
+			Set<String> set = new HashSet<>();
+			for (Map<String, Object> emp : empList) {
+				String username = (String) emp.get("USERNAME");
+				if(set.add(username)) resultList.add(emp);
+			}
+			
+			/*if (list.isEmpty()) {
 				continue;
 			} else {
 				//不嫌麻烦吗？？？？
-				/*for (Map<String, Object> maps : list) {
+				for (Map<String, Object> maps : list) {
 					lists.add(maps);
-				}*/
+				}
 				resultList.addAll(list);
-			}
+			}*/
 		}
 		return resultList;
 	}
