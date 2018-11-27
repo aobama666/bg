@@ -380,20 +380,4 @@
 		         A.UPDATE_USER = 'admin',
 		         A.UPDATE_DATE = SYSDATE
 	</update>
-	<!-- 插入专责人员角色 -->
-	<insert id="addUserRole"  parameterType="String">
-		 INSERT INTO BG_SYS_PRIV_USER_R_ROLE
-   		 	(USER_ID, ROLE_ID)
- 		 VALUES
-    		((SELECT u.userid FROM BG_SYS_USER u WHERE u.hrcode = #{empCode}),
-     		(SELECT r.id FROM BG_SYS_ROLE r WHERE r.role_code = #{roleCode}))
-	</insert>
-	<!-- 插入专责所辖部门 -->
-	<insert id="addUserOrgan"  parameterType="String">
-		 INSERT INTO BG_SYS_PRIV_USER_R_ORGAN
-    		(USER_ID, ORGAN_ID)
- 		 VALUES
-  			((SELECT u.userid FROM BG_SYS_USER u WHERE u.hrcode = #{empCode}),
-     		(SELECT d.deptid FROM BG_SYS_DEPT d WHERE d.deptcode = #{deptCode}))
-	</insert>
 </mapper>

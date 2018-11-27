@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
-import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.service.SyncService;
 
 @Controller
@@ -50,29 +47,5 @@ public class syncDataController {
 			}
 		}
 		Logger.info("############# 同步erp数据结束  ##############");
-	}
-	
-	/**
-	 * 返回编辑页面
-	 * @return
-	 */
-	@RequestMapping(value = "/grantDuty", method = RequestMethod.GET)
-	public ModelAndView grantDuty(){
-		ModelAndView model = new ModelAndView("bg/sync/grantDuty");
-		return model;
-	}
-	
-	/**
-	 * 返回编辑页面
-	 * @return
-	 */
-	@RequestMapping(value = "/addDuty", method = RequestMethod.POST)
-	@ResponseBody
-	public String addDuty(String empCode,String deptCode,String roleCode){
-		if(Rtext.isEmpty(empCode) || Rtext.isEmpty(deptCode) || Rtext.isEmpty(roleCode)){
-			return "数据不完整！";
-		}
-		String result=syncService.addDuty(empCode,deptCode,roleCode);
-		return result;
 	}
 }
