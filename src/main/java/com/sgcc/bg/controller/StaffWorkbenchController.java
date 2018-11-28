@@ -221,6 +221,7 @@ public class StaffWorkbenchController {
 				wp.setCreateTime(new Date());
 				wp.setUpdateUser(username);
 				wp.setUpdateTime(new Date());
+				wp.setSrc("0");
 				count+= SWService.addWorkHourInfo(wp);
 			}else{
 				//执行更新操作
@@ -380,6 +381,7 @@ public class StaffWorkbenchController {
 				wp.setUpdateUser(username);
 				wp.setUpdateTime(new Date());
 				wp.setProcessId(processId);
+				wp.setSrc("0");
 				count+= SWService.addWorkHourInfo(wp);
 				bussinessId=wp.getId();
 			}else{

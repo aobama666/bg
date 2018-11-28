@@ -82,6 +82,20 @@ var type=common.getQueryString("type");
 var dataShow=common.getQueryString("dataShow");
 var ran = Math.random()*1000;
 var username=common.getQueryString("username");
+
+var params={
+	ran:ran,
+	deptid:deptid,
+	labid:labid,
+	StartData:StartData,
+	EndData:EndData,
+	type:type,
+	username:username,
+	dataShow:dataShow,
+	page:1,
+	limit:30
+};
+
 $("input[name=ran]").val(ran);
 $("input[name=deptid]").val(deptid);
 $("input[name=labid]").val(labid);
@@ -93,9 +107,33 @@ $("input[name=dataShow]").val(dataShow);
 var mmg;
 var pn = 1;
 var limit = 30;
+var cols=[];
 $(function(){
-	queryList();
+	init();
 });
+
+function init(){
+	$.post('<%=request.getContextPath()%>/BgWorkinghourInfo/findForUser', params,
+			   function(data){
+					cols = [
+				            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
+				            {title:'日期', name:'WORK_TIME', width:70, sortable:false, align:'center'},
+				            {title:'人员编号', name:'HRCODE', width:70, sortable:false, align:'center'},
+				            {title:'人员姓名', name:'NAME', width:70, sortable:false, align:'center'}
+				            //{title:'项目类别', name:'CATEGORY', width:100, sortable:false, align:'center'},
+				            //{title:'项目编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:'center'},
+				            //{title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
+				            //{title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
+				            //{title:'工作内容', name:'JOB_CONTENT', width:100, sortable:false, align:'left'},
+				            //{title:'投入总工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'}
+				    	];
+					var title=data.title;
+					$.each(title,function(i,n){
+						cols.push({title:n, name:i, width:100, sortable:false, align:'center'});
+					});
+					queryList();
+			 	});
+}
 
 function forSearch(){
 	pn = 1;
@@ -104,18 +142,6 @@ function forSearch(){
 // 初始化列表数据
 function queryList(load){
 	var ran = Math.random()*100000000;
-	var cols = [
-	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},
-	            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},
-	            {title:'人员姓名', name:'USERALIAS', width:100, sortable:false, align:'center'},
-	            {title:'项目类别', name:'CATEGORY', width:100, sortable:false, align:'center'},
-	            {title:'项目编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:'center'},
-	            {title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
-	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
-	            {title:'工作内容', name:'JOB_CONTENT', width:100, sortable:false, align:'left'},
-	            {title:'投入总工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'}
-	    		];
 	var mmGridHeight = $("body").parent().height() - 100;
 	mmg = $('#mmg').mmGrid({
 		indexCol: true,
@@ -125,20 +151,11 @@ function queryList(load){
 		height: mmGridHeight,
 		cols: cols,
 		nowrap: true,
-		url: '<%=request.getContextPath()%>/BgWorkinghourInfo/findForUser',
+		url: '<%=request.getContextPath()%>/BgWorkinghourInfo/findForUser?ran='+ran,
 		fullWidthRows: true,
 		multiSelect: true,
 		root: 'items',
-		params:{
-			ran:ran,
-			deptid:deptid,
-			labid:labid,
-			StartData:StartData,
-			EndData:EndData,
-			type:type,
-			username:username,
-			dataShow:dataShow
-		},
+		params:params,
 		plugins: [
 			$("#pg").mmPaginator({page:pn, limit:limit, totalCountName:'totalCount'})
 				]
@@ -155,7 +172,7 @@ function forConfirm(){
 	var ids="";
 	var selectList = mmg.selectedRows();
 	for(var i=0;i<selectList.length;i++){
-		ids += (parseInt(selectList[i].ROW_ID)-1)+",";
+		ids += (parseInt(selectList[i].Count)-1)+",";
 	}
 	$("input[name=ids]").val(ids);
 	document.forms[0].action ="<%=request.getContextPath()%>/BgWorkinghourInfo/findForUserExport";

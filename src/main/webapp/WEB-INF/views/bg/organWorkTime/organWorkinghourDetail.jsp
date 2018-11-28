@@ -49,7 +49,7 @@
 <body>
 <div class="page-header-sl">
 	<div class="button-box">
-		<button type="button" class="btn btn-info btn-xs" onclick="forConfirm()"  > 导出</button>
+		<button type="button" class="btn btn-info btn-xs" onclick="forExport()"  > 导出</button>
 	</div>
 </div>
 <div>
@@ -80,7 +80,7 @@ var EndData=common.getQueryString("EndData");
 var type=common.getQueryString("type");
 var dataShow=common.getQueryString("dataShow");
  
-var ran = Math.random()*1000;
+ran = Math.random()*1000;
 $("input[name=ran]").val(ran);
 $("input[name=deptid]").val(deptid);
 $("input[name=labid]").val(labid);
@@ -104,9 +104,64 @@ if(type==1){
 var mmg;
 var pn = 1;
 var limit = 30;
+var cols=[];
+var params={
+	ran:ran,
+	deptid:deptid,
+	labid:labid,
+	StartData:StartData,
+	EndData:EndData,
+	type:type,
+	dataShow:dataShow,
+	page:1,
+	limit:30
+}
+
 $(function(){
-	queryList();
+	init();
 });
+
+function init(){
+	$.post('<%=request.getContextPath()%>/BgWorkinghourInfo/selectFororganAndUser', params,
+			   function(data){
+					cols = [
+					            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
+					            {title:'统计周期', name:'StartAndEndData', width:150, sortable:false, align:'center'},
+					            {title:'部门', name:'PDEPTNAME', width:100, sortable:false, align:'left'},
+					            {title:'处室', name:'DEPTNAME', width:100, sortable:false, align:'left'},
+					            {title:'人员编号', name:'HRCODE', width:70, sortable:false, align:'center'},
+					            {title:'人员姓名', name:'useralias', width:70, sortable:false, align:'center'}
+					            //{title:nameType, name:workType, width:100, sortable:false, align:'center'}
+					    		];
+					var title=data.title;
+					$.each(title,function(i,n){
+						cols.push({title:n, name:i, width:100, sortable:false, align:'center'});
+					});
+					/* delete title['NP000'];
+					if(type==1){
+						$.each(title,function(i,n){
+							cols.push({title:n, name:i, width:100, sortable:false, align:'center'});
+						});
+						cols.push({title:"非项目工作", name:"NP000", width:100, sortable:false, align:'center',
+							renderer:function(val,item,rowIndex){
+			            		return val==undefined?'0':val;;
+			            	}	
+						});
+					}else if(type==2){
+						$.each(title,function(i,n){
+							cols.push({title:n, name:i, width:100, sortable:false, align:'center'});
+						});
+					}else if(type==3){
+						cols.push({title:"非项目工作", name:"NP000", width:100, sortable:false, align:'center',
+							renderer:function(val,item,rowIndex){
+			            		return val==undefined?'0':val;;
+			            	}	
+						});
+					} */
+					queryList();
+
+			 	});
+}
 
 function forSearch(){
 	pn = 1;
@@ -114,16 +169,6 @@ function forSearch(){
 }
 // 初始化列表数据
 function queryList(load){
-	var ran = Math.random()*100000000;
-	var cols = [
-	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'统计周期', name:'StartAndEndData', width:100, sortable:false, align:'center'},
-	            {title:'部门', name:'PDEPTNAME', width:100, sortable:false, align:'left'},
-	            {title:'处室', name:'DEPTNAME', width:100, sortable:false, align:'left'},
-	            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},
-	            {title:'人员姓名', name:'useralias', width:100, sortable:false, align:'center'},
-	            {title:nameType, name:workType, width:100, sortable:false, align:'center'}
-	    		];
 	var mmGridHeight = $("body").parent().height() - 100;
 	mmg = $('#mmg').mmGrid({
 		indexCol: true,
@@ -133,19 +178,12 @@ function queryList(load){
 		height: mmGridHeight,
 		cols: cols,
 		nowrap: true,
+		//items:[],
 		url: '<%=request.getContextPath()%>/BgWorkinghourInfo/selectFororganAndUser',
+		root: 'items',
 		fullWidthRows: true,
 		multiSelect: true,
-		root: 'items',
-		params:{
-			ran:ran,
-			deptid:deptid,
-			labid:labid,
-			StartData:StartData,
-			EndData:EndData,
-			type:type,
-			dataShow:dataShow
-		},
+		params:params, 
 		plugins: [
 			$("#pg").mmPaginator({page:pn, limit:limit, totalCountName:'totalCount'})
 				]
@@ -158,7 +196,7 @@ function queryList(load){
 	}
 }
 //导出
-function forConfirm(){
+function forExport(){
 	var ids="";
 	var selectList = mmg.selectedRows();
 	for(var i=0;i<selectList.length;i++){

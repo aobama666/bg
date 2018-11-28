@@ -167,7 +167,7 @@ function queryListPro(load){
 	            {title:'人员编号', name:'userCode', width:100, sortable:false, align:'center'},
 	            {title:'人员姓名', name:'userName', width:80, sortable:false, align:'center'},
 	            {title:'工作类型', name:'workType', width:80, sortable:false, align:'center'},
-	            {title:'WBS编号/项目编号', name:'wbsCode', width:120, sortable:false, align:'left'},
+	            {title:'项目编号', name:'wbsCode', width:120, sortable:false, align:'center'},
 	            {title:'项目名称', name:'projectName', width:100, sortable:false, align:'left'},
 	            {title:'角色', name:'role', width:80, sortable:false, align:'center'},
 	            {title:'当前投入工时(h)', name:'totalSendTime', width:120, sortable:false, align:'center'},

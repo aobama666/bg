@@ -53,7 +53,7 @@
 <div class="page-header-sl">
 	<h5>组织员工工时统计</h5>
 	<div class="button-box">
-		<button type="button" class="btn btn-info btn-xs" onclick="forConfirm()"> 导出</button>
+		<button type="button" class="btn btn-info btn-xs" onclick="forExport()"> 导出</button>
 	</div>
 </div>
 <hr>
@@ -463,7 +463,7 @@ function queryListPer(load){
 }
 
 //确认
-function forConfirm(){
+function forExport(){
 	
 	var type = $("select[name=Btype]").val();
 	var selectList;

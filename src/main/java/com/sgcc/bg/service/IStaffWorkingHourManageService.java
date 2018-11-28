@@ -21,12 +21,10 @@ public interface IStaffWorkingHourManageService {
 	 * @param proName
 	 * @param empName
 	 * @param status
-	 * @param limit 
-	 * @param page 
 	 * @return
 	 */
 	List<Map<String, String>> searchForWorkHourInfo(String startDate, String endDate, String deptCode, String category,
-			String proName, String empName, String status, String page, String limit);
+			String proName, String empName, String status);
 
 	/**
 	 * 获取结果数量
@@ -39,8 +37,8 @@ public interface IStaffWorkingHourManageService {
 	 * @param status
 	 * @return
 	 */
-	int getItemCount(String startDate, String endDate, String deptCode, String category,
-			String proName, String empName,String status);
+//	int getItemCount(String startDate, String endDate, String deptCode, String category,
+//			String proName, String empName,String status);
 
 	/**
 	 * 根据报工id获取该条信息

@@ -57,4 +57,12 @@ public interface OrganStuffTreeService {
 			map.put("parentName", parentName);
 	 */
 	List<Map<String, Object>> queryDeptByCurrentUserPriv(String root,String level,String userName);
+	
+	/**
+	 * @param userName 用户名
+	 * @param root 部门deptCode null或空:41000001 从电科院开始
+	 * @param organType 查询类型  1：只部门 2：只处室  null或空:所有类型
+	 * @return
+	 */
+	List<Map<String, Object>> getUserAuthoryOrgan(String userName , String root , String organType);
 }

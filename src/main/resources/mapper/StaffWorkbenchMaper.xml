@@ -131,7 +131,8 @@
 			STATUS,
 			VALID,
 			PROCESS_ID,
-			CREATE_USER,CREATE_TIME,UPDATE_USER,UPDATE_TIME)
+			CREATE_USER,CREATE_TIME,UPDATE_USER,UPDATE_TIME,
+			SRC)
 		VALUES
 			(#{id,jdbcType=VARCHAR}, 
 			#{category,jdbcType=VARCHAR}, 
@@ -147,7 +148,8 @@
 			#{status,jdbcType=VARCHAR},
 			#{valid,jdbcType=VARCHAR},
 			#{processId,jdbcType=VARCHAR},
-			#{createUser,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateTime,jdbcType=TIMESTAMP})
+			#{createUser,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateTime,jdbcType=TIMESTAMP},
+			#{src,jdbcType=VARCHAR})
 	</insert>
 	
 	<update id="updateWorkHourInfoById" parameterType="com.sgcc.bg.model.WorkHourInfoPo">

@@ -1,24 +1,22 @@
 package com.sgcc.bg.service;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
 import com.sgcc.bg.model.ProjectInfoPo;
-import com.sgcc.bg.model.ProjectUserPo;
 
 public interface IBGService {
 	/**
 	 * 获取所有项目信息到展示页面
 	 * @param proName
 	 * @param proStatus
-	 * @param limit 
-	 * @param page 
 	 * @return
 	 */
-	public List<Map<String,String>> getAllProjects(String proName,String proStatus, Integer page, Integer limit);
+	public List<Map<String,String>> getAllProjects(String proName,String proStatus);
 	
 	/**
 	 * 新增项目信息
@@ -28,25 +26,12 @@ public interface IBGService {
 	public int addProInfo(ProjectInfoPo pro);
 
 	/**
-	 * 新增人员信息
-	 * @param proUser
-	 * @return
-	 */
-	public int addProUser(ProjectUserPo proUser);
-	
-	/**
 	 * 更新项目信息
 	 * @param pro
 	 * @return
 	 */
 	public int updateProInfo(ProjectInfoPo pro);
 
-	/**
-	 * 根据项目id删除与其关联的所有人员
-	 * @param proId
-	 */
-	public int deleteProUsersByProId(String proId);
-	
 	/**
 	 * 根据项目id获取项目信息
 	 * @param proId
@@ -82,7 +67,7 @@ public interface IBGService {
 	 * @param proName 
 	 * @return
 	 */
-	public int getProjectCount(String proName, String proStatus);
+	//public int getProjectCount(String proName, String proStatus);
 
 	/**
 	 * 校验项目编号的唯一性
@@ -140,5 +125,21 @@ public interface IBGService {
 	 * @param proId
 	 */
 	public boolean isExistPrincipal(String proId);
+
+	/**
+	 * 为指定项目添加人员信息
+	 * @param proId
+	 * @param list
+	 * @return
+	 */
+	int saveStuff(String proId, List<HashMap> list);
+
+	/**
+	 * 更新项目参与人员信息
+	 * @param proId
+	 * @param list
+	 * @return
+	 */
+	String updateStuff(String proId, List<HashMap> list);
 
 }

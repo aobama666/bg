@@ -44,6 +44,8 @@ public class ProjectInfoPo implements Serializable {
 	private String updateUser;
 	// 最近一次修改时间
 	private Date updateDate;
+	//数据来源
+	private String src;
 	
 	public ProjectInfoPo() {
 		super();
@@ -185,11 +187,21 @@ public class ProjectInfoPo implements Serializable {
 		this.updateDate = updateDate;
 	}
 
+	public String getSrc() {
+		return src;
+	}
+
+	public void setSrc(String src) {
+		this.src = src;
+	}
+	
+	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((projectName == null) ? 0 : projectName.hashCode());
+		result = prime * result + ((projectNumber == null) ? 0 : projectNumber.hashCode());
 		return result;
 	}
 
@@ -202,10 +214,10 @@ public class ProjectInfoPo implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ProjectInfoPo other = (ProjectInfoPo) obj;
-		if (projectName == null) {
-			if (other.projectName != null)
+		if (projectNumber == null) {
+			if (other.projectNumber != null)
 				return false;
-		} else if (!projectName.equals(other.projectName))
+		} else if (!projectNumber.equals(other.projectNumber))
 			return false;
 		return true;
 	}
@@ -217,7 +229,8 @@ public class ProjectInfoPo implements Serializable {
 				+ projectIntroduce + ", decompose=" + decompose + ", status=" + status + ", projectStatus="
 				+ projectStatus + ", planHours=" + planHours + ", startDate=" + startDate + ", endDate=" + endDate
 				+ ", createUser=" + createUser + ", createDate=" + createDate + ", updateUser=" + updateUser
-				+ ", updateDate=" + updateDate + "]";
+				+ ", updateDate=" + updateDate + ", src=" + src + "]";
 	}
+
 	
 }

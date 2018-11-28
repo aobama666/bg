@@ -371,6 +371,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						wh.setCreateTime(new Date());
 						wh.setUpdateUser(currentUsername);
 						wh.setUpdateTime(new Date());
+						wh.setSrc("1");
 						//保存正确数据   
 						whList.add(wh);
 					} else {// 未通过校验

@@ -10,8 +10,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +24,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.CommonCurrentUser;
-import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.FileDownloadUtil;
+import com.sgcc.bg.common.PageHelper;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
-import com.sgcc.bg.model.ProcessRecordPo;
 import com.sgcc.bg.model.WorkHourInfoPo;
 import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IStaffWorkbenchService;
@@ -83,8 +85,8 @@ public class StaffWorkingHourManageController {
 		String proName = Rtext.toStringTrim(request.getParameter("proName"), "");
 		String empName = Rtext.toStringTrim(request.getParameter("empName"), "");
 		String status = Rtext.toStringTrim(request.getParameter("status"), "");
-		String page = Rtext.toStringTrim(request.getParameter("page"), "");
-		String limit = Rtext.toStringTrim(request.getParameter("limit"), "");
+		Integer page = Rtext.ToInteger(request.getParameter("page"), 0);
+		Integer limit = Rtext.ToInteger(request.getParameter("limit"), 30);
 		smLog.info("员工工时管理页面查询条件为： startDate: "+startDate+"/"+
 				"endDate: "+endDate+"/"+
 				"deptName: "+deptName+"/"+
@@ -95,13 +97,14 @@ public class StaffWorkingHourManageController {
 				"status: "+status+"/"+
 				"page: "+page+"/"+
 				"limit: "+limit+"/");
-		List<Map<String, String>> jsonarry = smService.searchForWorkHourInfo(
-				startDate, endDate,deptCode,category,proName,empName,status,page,limit);
-		int count = smService.getItemCount(
+		List<Map<String, String>> resultList = smService.searchForWorkHourInfo(
 				startDate, endDate,deptCode,category,proName,empName,status);
+		int	start = (page-1)*limit;
+		int end = page*limit;
+		PageHelper<Map<String, String>> pageHelper = new PageHelper<>(resultList, start, end);
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
-		jsonMap.put("items", jsonarry);
-		jsonMap.put("totalCount", count);
+		jsonMap.put("items", pageHelper.getResult());
+		jsonMap.put("totalCount", pageHelper.getTotalNum());
 		String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd",
 				SerializerFeature.WriteDateUseDateFormat);
 		return jsonStr;

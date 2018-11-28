@@ -35,9 +35,6 @@ import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.mapper.BGMapper;
 import com.sgcc.bg.mapper.StaffWorkbenchMaper;
 import com.sgcc.bg.mapper.StaffWorkingHourManageMaper;
-import com.sgcc.bg.model.Dept;
-import com.sgcc.bg.model.ProcessRecordPo;
-import com.sgcc.bg.model.UserPrivilege;
 import com.sgcc.bg.model.WorkHourInfoPo;
 import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IStaffWorkbenchService;
@@ -78,7 +75,8 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 		if(Rtext.isEmpty(deptCode)){//如果没有指定，则默认全院范围
 			deptCode="41000001";
 		}
-		List<Map<String, Object>> organList=organStuffTreeService.queryDeptByCurrentUserPriv(deptCode, "2", username);
+		//List<Map<String, Object>> organList=organStuffTreeService.queryDeptByCurrentUserPriv(deptCode, "2", username);
+		List<Map<String, Object>> organList=organStuffTreeService.getUserAuthoryOrgan(username, deptCode, null);
 		if(organList!=null&&organList.size()>0){
 			StringBuffer sb = new StringBuffer();
 			for(Map<String, Object> obj:organList){
@@ -92,29 +90,20 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 	
 	@Override
 	public List<Map<String, String>> searchForWorkHourInfo(String startDate, String endDate, String deptCode,
-			String category, String proName, String empName, String status,String page,String limit) {
-		String start="0";
-		String end="30";
-		int pageInt=Rtext.ToInteger(page, 1);
-		int limitInt=Rtext.ToInteger(limit, 30);
-		if(page!=null && limit!=null){
-			start=String.valueOf((pageInt-1)*limitInt);
-			end=String.valueOf(pageInt*limitInt);
-		}
-		smServiceLog.info("分页：page="+page+"/limit="+limit);
+			String category, String proName, String empName, String status) {
 		String deptIds=getLimitDeptIds(webUtils.getUsername(),deptCode);
 		smServiceLog.info("得到的权限部门ids： "+deptIds);
 		List<Map<String, String>> list=smMapper.getWorkHourInfoByCondition(
-				deptIds,startDate,endDate,category,proName,empName,status,start,end);
+				deptIds,startDate,endDate,category,proName,empName,status);
 		return list;
 	}
 
-	@Override
+	/*@Override
 	public int getItemCount(String startDate, String endDate, String deptCode, String category, String proName,
 			String empName, String status) {
 		String deptIds=getLimitDeptIds(webUtils.getUsername(),deptCode);
 		return smMapper.getItemCount(deptIds,startDate, endDate, category, proName, empName, status);
-	}
+	}*/
 
 	@Override
 	public Map<String, String> getWorkHourInfoById(String whId) {
@@ -410,6 +399,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						wh.setCreateTime(new Date());
 						wh.setUpdateUser(currentUsername);
 						wh.setUpdateTime(new Date());
+						wh.setSrc("1");
 						//保存正确数据
 						whList.add(wh);
 					} else {// 未通过校验
@@ -493,10 +483,10 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 			String category = Rtext.toStringTrim(map.get("category"), "");
 			String proName = Rtext.toStringTrim(map.get("proName"), "");
 			String empName = Rtext.toStringTrim(map.get("empName"), "");
-			String hrCode = Rtext.toStringTrim(map.get("hrCode"), "");
+			String status = Rtext.toStringTrim(map.get("status"), "");
 			//服用页面查询方法，把分页范围调大
-			dataList=smMapper.getWorkHourInfoByCondition(
-					getLimitDeptIds(webUtils.getUsername(),deptCode),startDate,endDate,category,proName,empName,hrCode,"0","100000000");
+			dataList=searchForWorkHourInfo(
+					startDate, endDate,deptCode,category,proName,empName,status);
 		}else{
 			String[] idArr=ids.split(",");
 			Map<String,String> map = new HashMap<String,String>();

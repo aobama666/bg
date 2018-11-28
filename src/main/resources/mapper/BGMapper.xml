@@ -4,48 +4,49 @@
 <mapper namespace="com.sgcc.bg.mapper.BGMapper">
 
 	<select id="getAllProjects" resultType="java.util.Map">
-		SELECT * FROM(
+		<!-- SELECT * FROM(
 			SELECT ROWNUM rn,p.* FROM(
-				SELECT
-		      		t1.id as "id",
-		      		t1.project_name as "projectName",
-		      		(SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t1.category) as "category",
-      				t1.wbs_number as "WBSNumber",
-      				t1.project_number as "projectNumber",
-      				t1.project_introduce as "projectIntroduce",
-					t1.organ_info as "organInfo",
-					to_char(t1.start_date,'yyyy-mm-dd') as "startDate",
-					to_char(t1.end_date,'yyyy-mm-dd') as "endDate",
-					t1.plan_hours as "planHours",
-					t1.project_status as "projectStatus",
-					t1.decompose as "decompose",
-					t1.status as "status",
-					(select count(distinct t2.hrcode) from BG_PROJECT_USER t2 where t2.project_id=t1.id and t2.status='1') as "amount",
-		      		(select t3.empname from BG_PROJECT_USER t3 WHERE t3.project_id=t1.id AND t3.role='1' and t3.status='1') as "principal",
-		      		(select TO_CHAR(WM_CONCAT(distinct t3.empname)) from BG_PROJECT_USER t3 where t3.project_id=t1.id AND t3.status='1') as "empName"
-				FROM BG_PROJECT_INFO t1
-				WHERE (#{username} IN
-                        (SELECT username
-                           FROM BG_SYS_USER t5
-                           JOIN BG_PROJECT_USER t6
-                             ON t5.hrcode = t6.hrcode
-                          WHERE t6.project_id = t1.id
-                            AND t6.role = '1'
-                            AND t6.status = '1')
-                       	OR  #{username}=t1.create_user)
-				  <if test="proName != null and proName != ''" >
-						AND t1.PROJECT_NAME LIKE '%'||#{proName}||'%'
-				  </if>
-				  <if test="proStatus != null and proStatus != ''" >
-						AND t1.PROJECT_STATUS=#{proStatus}
-				  </if>
-				  AND t1.status='1'
-				ORDER BY t1.UPDATE_DATE DESC) p
+				) p
 			 <![CDATA[WHERE ROWNUM<=#{end})]]>
-		<![CDATA[WHERE rn>#{start}]]>
+		<![CDATA[WHERE rn>#{start}]]> -->
+		SELECT
+      		t1.id as "id",
+      		t1.project_name as "projectName",
+      		(SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t1.category) as "category",
+    				t1.wbs_number as "WBSNumber",
+    				t1.project_number as "projectNumber",
+    				t1.project_introduce as "projectIntroduce",
+			t1.organ_info as "organInfo",
+			to_char(t1.start_date,'yyyy-mm-dd') as "startDate",
+			to_char(t1.end_date,'yyyy-mm-dd') as "endDate",
+			t1.plan_hours as "planHours",
+			t1.project_status as "projectStatus",
+			t1.decompose as "decompose",
+			t1.status as "status",
+			(select count(distinct t2.hrcode) from BG_PROJECT_USER t2 where t2.project_id=t1.id and t2.status='1') as "amount",
+      		(select t3.empname from BG_PROJECT_USER t3 WHERE t3.project_id=t1.id AND t3.role='1' and t3.status='1') as "principal",
+      		(select TO_CHAR(WM_CONCAT(distinct t3.empname)) from BG_PROJECT_USER t3 where t3.project_id=t1.id AND t3.status='1') as "empName"
+		FROM BG_PROJECT_INFO t1
+		WHERE (#{username} IN
+                      (SELECT username
+                         FROM BG_SYS_USER t5
+                         JOIN BG_PROJECT_USER t6
+                           ON t5.hrcode = t6.hrcode
+                        WHERE t6.project_id = t1.id
+                          AND t6.role = '1'
+                          AND t6.status = '1')
+                     	OR  #{username}=t1.create_user)
+		  <if test="proName != null and proName != ''" >
+				AND t1.PROJECT_NAME LIKE '%'||#{proName}||'%'
+		  </if>
+		  <if test="proStatus != null and proStatus != ''" >
+				AND t1.PROJECT_STATUS=#{proStatus}
+		  </if>
+		  AND t1.status='1'
+		ORDER BY t1.UPDATE_DATE DESC
 	</select>
 	
-	<select id="getProjectCount" parameterType="String" resultType="java.lang.Integer">
+	<!-- <select id="getProjectCount" parameterType="String" resultType="java.lang.Integer">
 		SELECT COUNT(*)
             FROM BG_PROJECT_INFO t
             WHERE (#{username} IN
@@ -64,7 +65,7 @@
 					AND t.PROJECT_STATUS=#{proStatus}
 			  </if>
 			  AND t.status='1'
-	</select>
+	</select> -->
 	
 	<insert id="addProInfo"  parameterType="com.sgcc.bg.model.ProjectInfoPo">
 		INSERT INTO BG_PROJECT_INFO 
@@ -72,14 +73,16 @@
 			PROJECT_INTRODUCE,ORGAN_INFO,
 			START_DATE,END_DATE,
 			PLAN_HOURS,PROJECT_STATUS,DECOMPOSE,STATUS,
-			CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE)
+			CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
+			SRC)
 		VALUES
 			(#{id}, #{projectName,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, 
 			#{projectNumber,jdbcType=VARCHAR},#{WBSNumber,jdbcType=VARCHAR},
 			#{projectIntroduce,jdbcType=VARCHAR},#{organInfo,jdbcType=VARCHAR},
 			#{startDate,jdbcType=DATE},#{endDate,jdbcType=DATE},
 			#{planHours,jdbcType=NUMERIC},#{projectStatus,jdbcType=VARCHAR},#{decompose,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},
-			#{createUser,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateDate,jdbcType=TIMESTAMP})
+			#{createUser,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateDate,jdbcType=TIMESTAMP},
+			#{src,jdbcType=VARCHAR})
 	</insert>
 	
 	<insert id="addProUser"  parameterType="com.sgcc.bg.model.ProjectUserPo">
@@ -87,12 +90,14 @@
 			(ID,HRCODE,EMPNAME,PROJECT_ID,
 			START_DATE,END_DATE,
 			ROLE,STATUS,
-			CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE)
+			CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
+			SRC)
 		VALUES
 			(#{id}, #{hrcode,jdbcType=VARCHAR},#{empName,jdbcType=VARCHAR}, #{projectId,jdbcType=VARCHAR},
 			#{startDate,jdbcType=DATE},#{endDate,jdbcType=DATE},
 			#{role,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},
-			#{createUser,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateDate,jdbcType=TIMESTAMP})
+			#{createUser,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateDate,jdbcType=TIMESTAMP},
+			#{src,jdbcType=VARCHAR})
 	</insert>
 	
 	<update id="updateProInfo"  parameterType="com.sgcc.bg.model.ProjectInfoPo">
@@ -270,5 +275,14 @@
 		WHERE t.status = '1'
    		 AND t.role='1'
    		 AND t.project_id = #{proId}
+	</select>
+	
+	<select id="getBgWorkerByProId" parameterType="String" resultType="java.util.Map">
+		SELECT U.USERALIAS AS NAME,U.HRCODE, TO_CHAR(T.WORK_TIME, 'yyyy-mm-dd') AS WORK_TIME
+		  FROM BG_WORKINGHOUR_INFO T
+		  JOIN BG_SYS_USER U
+		    ON T.WORKER = U.USERNAME
+		 WHERE T.PROJECT_ID = #{proId}
+		   AND T.VALID = 1
 	</select>
 </mapper>

@@ -22,7 +22,7 @@
 	href="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmGrid.css">
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmPaginator.css">
-<link rel="stylesheet" type="text/css"fsubmitWorkHourInfo
+<link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/bootstrap-datepicker-master/dist/css/bootstrap-datepicker.min.css" media="screen">
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/css/style.css">
@@ -45,11 +45,13 @@
 	src="<%=request.getContextPath()%>/common/plugins/bootstrap-datepicker-master/dist/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/common/plugins/common.js"></script>
-<!--[if lt IE 9>
+<%-- 
+[if lt IE 9>
 	<script src="<%=request.getContextPath()%>/common/plugins/html5shiv/html5shiv.min.js"></script>
 	<script src="<%=request.getContextPath()%>/common/plugins/respond/respond.js"></script>
 	<script src="<%=request.getContextPath()%>/common/plugins/pseudo/jquery.pseudo.js"></script>
-<![endif]-->
+<![endif]
+--%>
 
 <style type="text/css">
 	a{

@@ -2,8 +2,11 @@ package com.sgcc.bg.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -151,6 +154,72 @@ public class OrganStuffTreeServiceImpl implements OrganStuffTreeService{
 		//获取组织或组织人员数据列表
 		List<Map<String, Object>> list = queryAllOrganTree(root,level,limit);
 		return list;
+	}
+	
+	//新增获取权限接口接口
+	@Override
+	public List<Map<String, Object>> getUserAuthoryOrgan(String userName , String root , String organType){
+		if(root==null || root.length()==0){
+			root = "41000001";
+		}
+		
+		List<Map<String, Object>> resultList = queryDeptByCurrentUserPriv(root, "2", userName);
+		
+		if(resultList==null || resultList.size()==0){
+			return new ArrayList<>();
+		}else{//去除电科院
+			Iterator<Map<String, Object>>  iterator = resultList.iterator();
+			while (iterator.hasNext()) {
+				Map<String, Object> organ = iterator.next();
+				if("0".equals(organ.get("level"))){
+					iterator.remove();
+				}
+				
+			}
+		}
+		
+		UserPrivilege priv = userUtils.getUserOrganPrivilegeByUserName(userName);
+		if(priv==null){
+			return new ArrayList<>();
+		}
+		
+		String role = priv.getUserRoleCode();
+		
+		//不为院专责
+		if(role.indexOf("MANAGER_UNIT")==-1){
+			//接口获得的所有组织中有的部门可能并不具有权限，仅仅是对该部门下若干处室有权限，须去除
+			Set<String> deptIds = new HashSet<>();
+			if(role.indexOf("MANAGER_DEPT")!=-1){
+				List<Dept> dept = priv.getOrganForDept();
+				if(dept!=null&&dept.size()>0){
+					for(Dept obj:dept){
+						deptIds.add(obj.getDeptid());
+					}
+				}
+			}
+			//如果不为院专责，则去除电科院；如果部门权限不包含的部门，则去除
+			Iterator<Map<String, Object>>  iterator = resultList.iterator();
+			while (iterator.hasNext()) {
+				Map<String, Object> organ = iterator.next();
+				if("0".equals(organ.get("level")) || ("1".equals(organ.get("level")) && !deptIds.contains(organ.get("deptId")))){
+					iterator.remove();
+				}
+			}
+		}
+		
+		//按组织类型提取组织
+		if(organType!=null && organType.length()>0){
+			Iterator<Map<String, Object>>  iterator = resultList.iterator();
+			while (iterator.hasNext()) {
+				Map<String, Object> organ = iterator.next();
+				if(!organType.equals(organ.get("level"))){
+					iterator.remove();
+				}
+				
+			}
+		}
+		
+		return resultList;
 	}
 
 }

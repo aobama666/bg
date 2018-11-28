@@ -7,7 +7,6 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import com.sgcc.bg.model.ProcessRecordPo;
 import com.sgcc.bg.model.WorkHourInfoPo;
 
 @Repository
@@ -22,8 +21,6 @@ public interface StaffWorkingHourManageMaper {
 	 * @param proName
 	 * @param empName
 	 * @param status
-	 * @param start
-	 * @param end
 	 * @return
 	 */
 	List<Map<String, String>> getWorkHourInfoByCondition(
@@ -33,9 +30,7 @@ public interface StaffWorkingHourManageMaper {
 			@Param("category")String category,
 			@Param("proName")String proName,
 			@Param("empName")String empName, 
-			@Param("status")String status, 
-			@Param("start")String start,  
-			@Param("end")String end);
+			@Param("status")String status);
 
 	/**
 	 * 获取查询到的数量
@@ -48,14 +43,14 @@ public interface StaffWorkingHourManageMaper {
 	 * @param status
 	 * @return
 	 */
-	int getItemCount(
+	/*int getItemCount(
 			@Param("deptIds")String deptIds,
 			@Param("startDate")String startDate, 
 			@Param("endDate")String endDate, 
 			@Param("category")String category, 
 			@Param("proName")String proName, 
 			@Param("empName")String empName, 
-			@Param("status")String status);
+			@Param("status")String status);*/
 
 	/**
 	 * 根据id获取记录
