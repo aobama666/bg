@@ -223,18 +223,18 @@ public class BGServiceImpl implements IBGService {
 					// 对要导入的文件内容进行校验
 					// 项目名称校验
 					if (cellValue[1] == null || "".equals(cellValue[1])) {
-						errorInfo.append("项目名称不能为空！");
+						errorInfo.append("项目名称不能为空！ ");
 						errorNum.add(1);
 					} else if (cellValue[1].length() > 50) {
-						errorInfo.append("项目名称不能超过50字！");
+						errorInfo.append("项目名称不能超过50字！ ");
 						errorNum.add(1);
 					}
 					// 项目分类校验 必填
 					if (cellValue[2] == null || "".equals(cellValue[2])) {
-						errorInfo.append("项目类型不能为空！");
+						errorInfo.append("项目类型不能为空！ ");
 						errorNum.add(2);
 					}else if(!categoryStr.contains("["+cellValue[2]+"]")){
-						errorInfo.append("无此项目类型！");
+						errorInfo.append("无此项目类型！ ");
 						errorNum.add(2);
 					}
 					
@@ -254,35 +254,35 @@ public class BGServiceImpl implements IBGService {
 					//校验wbs编号，当为科研或横向时必填，如果填了，则校验唯一
 					if (("科研项目".equals(cellValue[2]) || "横向项目".equals(cellValue[2]))
 							&& Rtext.isEmpty(cellValue[3])) {
-						errorInfo.append("wbs编号不能为空！");
+						errorInfo.append("wbs编号不能为空！ ");
 						errorNum.add(3);
 					}else if (!Rtext.isEmpty(cellValue[3]) && !repeatChecker.add(cellValue[3])) {
-						errorInfo.append("wbs编号重复！");
+						errorInfo.append("wbs编号重复！ ");
 						errorNum.add(3);
 					}else if(!Rtext.isEmpty(cellValue[3]) && wbsCodeSet.contains(cellValue[3])){
-						errorInfo.append("系统中已经存此wbs编号！");
+						errorInfo.append("系统中已经存此wbs编号！ ");
 						errorNum.add(3);
 					}
 				
 					// 项目说明长度200以内
 					if (cellValue[4].length() > 200) {
-						errorInfo.append("项目说明不能超过200字！");
+						errorInfo.append("项目说明不能超过200字！ ");
 						errorNum.add(4);
 					}
 					// 发布日期 必填;格式
 					if (cellValue[5] == null || "".equals(cellValue[5])) {
-						errorInfo.append("项目开始日期不能为空！");
+						errorInfo.append("项目开始日期不能为空！ ");
 						errorNum.add(5);
 					} else if (!DateUtil.isValidDate(cellValue[5], "yyyy-MM-dd")) {
-						errorInfo.append("项目开始日期填写有误！");
+						errorInfo.append("项目开始日期填写有误！ ");
 						errorNum.add(5);
 					}
 					// 发布日期 必填;格式
 					if (cellValue[6] == null || "".equals(cellValue[6])) {
-						errorInfo.append("项目结束日期不能为空！");
+						errorInfo.append("项目结束日期不能为空！ ");
 						errorNum.add(6);
 					} else if (!DateUtil.isValidDate(cellValue[6], "yyyy-MM-dd")) {
-						errorInfo.append("项目结束日期填写有误！");
+						errorInfo.append("项目结束日期填写有误！ ");
 						errorNum.add(6);
 					}
 					//如果日期均正确 ，则验证技术服务项目是否跨年
@@ -290,14 +290,14 @@ public class BGServiceImpl implements IBGService {
 						//如果日期均正确 ，则验证技术服务项目是否跨年
 						if("技术服务项目".equals(cellValue[2])){
 							if(!(cellValue[5].substring(0,4)).equals(cellValue[6].substring(0,4))){
-								errorInfo.append("技术服务项目不能跨年！");
+								errorInfo.append("技术服务项目不能跨年！ ");
 								errorNum.add(5);
 								errorNum.add(6);
 							}
 						}
 						//验证日期是否符合先后逻辑顺序
 						if(DateUtil.fomatDate(cellValue[6]).getTime()<=DateUtil.fomatDate(cellValue[5]).getTime()){
-							errorInfo.append("项目结束日期必须大于项目开始日期！");
+							errorInfo.append("项目结束日期必须大于项目开始日期！ ");
 							errorNum.add(6);
 						}
 					}
@@ -305,20 +305,20 @@ public class BGServiceImpl implements IBGService {
 					if("技术服务项目".equals(cellValue[2])){
 						if(!Rtext.isEmpty(cellValue[7])){
 							if(Rtext.isEmpty(getDeptIdByDeptCode(cellValue[7]))){
-								errorInfo.append("组织信息填写错误！"); 
+								errorInfo.append("组织信息填写错误！ "); 
 								errorNum.add(7);
 							}
 						}
 					}
 					// 计划投入工时 必填;数字
 					if (cellValue[8] == null || "".equals(cellValue[8])) {
-						errorInfo.append("计划投入工时不能为空！");
+						errorInfo.append("计划投入工时不能为空！ ");
 						errorNum.add(8);
 					} else if (!cellValue[8].matches(regex)) {
-						errorInfo.append("计划投入工时填写有误！");
+						errorInfo.append("计划投入工时填写有误！ ");
 						errorNum.add(8);
 					} else if (cellValue[8].length() > 8) {
-						errorInfo.append("计划投入工时不能超过8位数！");
+						errorInfo.append("计划投入工时不能超过8位数！ ");
 						errorNum.add(8);
 					}
 					// 是否分解
@@ -498,10 +498,10 @@ public class BGServiceImpl implements IBGService {
 					// 对要导入的文件内容进行简单的校验
 					// 项目编号 必填
 					if (Rtext.isEmpty(cellValue[1])) {
-						errorInfo.append("项目编号不能为空！");
+						errorInfo.append("项目编号不能为空！ ");
 						errorNum.add(1);
 					}else if(!list.contains(cellValue[1])){
-						errorInfo.append("项目中不存在此项目编号！");
+						errorInfo.append("项目中不存在此项目编号！ ");
 						errorNum.add(1);
 					}else{
 						//如果存在项目编号，获取其项目id
@@ -519,7 +519,7 @@ public class BGServiceImpl implements IBGService {
 						String projectStatus=bgMapper.getProInfoFieldByProId(proId, "project_status");
 						//3完成，4废止状态不可以添加人员
 						if("3".equals(projectStatus) || "4".equals(projectStatus)){
-							errorInfo.append("该项目已完成或废止，无法添加人员！");
+							errorInfo.append("该项目已完成或废止，无法添加人员！ ");
 							errorNum.add(1);
 						}
 						//初始化roleMap
@@ -535,12 +535,12 @@ public class BGServiceImpl implements IBGService {
 					}*/
 					// 人员编号必填
 					if (Rtext.isEmpty(cellValue[3])) {
-						errorInfo.append("人员编号不能为空！");
+						errorInfo.append("人员编号不能为空！ ");
 						errorNum.add(3);
 					}else{
 						user=userUtils.getCommonCurrentUserByHrCode(cellValue[3]);
 						if(user==null){
-							errorInfo.append("人员编号错误！");
+							errorInfo.append("人员编号错误！ ");
 							errorNum.add(3);
 						}
 					}
@@ -561,31 +561,31 @@ public class BGServiceImpl implements IBGService {
 					}*/
 					// 项目开始日期 必填(若果不填则默认项目开始时间);格式
 					if (!Rtext.isEmpty(cellValue[4]) && !DateUtil.isValidDate(cellValue[4], "yyyy-MM-dd")) {
-						errorInfo.append("项目开始日期填写有误！");
+						errorInfo.append("项目开始日期填写有误！ ");
 						errorNum.add(4);
 					}
 					// 项目结束日期 必填(如果不填则默认项目结束时间);格式
 					if (!Rtext.isEmpty(cellValue[5]) && !DateUtil.isValidDate(cellValue[5], "yyyy-MM-dd")) {
-						errorInfo.append("项目结束日期填写有误！");
+						errorInfo.append("项目结束日期填写有误！ ");
 						errorNum.add(5);
 					}
 					//如果日期正确 ，则验证是否超出项目日期
 					if(!Rtext.isEmpty(cellValue[4]) && !Rtext.isEmpty(startDate) && !errorNum.contains(4)){
 						if(!DateUtil.compareDate(cellValue[4], startDate) || !DateUtil.compareDate(endDate,cellValue[4])){
-							errorInfo.append("项目开始日期超出项目周期！");
+							errorInfo.append("项目开始日期超出项目周期！ ");
 							errorNum.add(4);
 						}
 					}
 					if(!Rtext.isEmpty(cellValue[5]) && !Rtext.isEmpty(endDate) && !errorNum.contains(5)){
 						if(!DateUtil.compareDate(cellValue[5], startDate) || !DateUtil.compareDate(endDate,cellValue[5])){
-							errorInfo.append("项目结束日期超出项目周期！");
+							errorInfo.append("项目结束日期超出项目周期！ ");
 							errorNum.add(5);
 						}
 					}
 					//验证日期是否符合先后逻辑顺序
 					if(!Rtext.isEmpty(cellValue[4]) && !Rtext.isEmpty(cellValue[5]) && !errorNum.contains(4) && !errorNum.contains(5)){
 						if(DateUtil.fomatDate(cellValue[5]).getTime()<DateUtil.fomatDate(cellValue[4]).getTime()){
-							errorInfo.append("结束日期必须大于开始日期！");
+							errorInfo.append("结束日期必须大于开始日期！ ");
 							errorNum.add(4);
 							errorNum.add(5);
 						}else if(!errorNum.contains(3) && !Rtext.isEmpty(proId)){
@@ -605,7 +605,7 @@ public class BGServiceImpl implements IBGService {
 										DateUtil.fomatDate(cellValue[5]).getTime()<DateUtil.fomatDate(dateMap.get("startDate")).getTime()){
 									//日期不重叠
 								}else{
-									errorInfo.append("与已存在参与人"+user.getUserAlias()+"日期("+dateMap.get("startDate")+"至"+dateMap.get("endDate")+")重叠!");
+									errorInfo.append("与已存在参与人"+user.getUserAlias()+"日期("+dateMap.get("startDate")+"至"+dateMap.get("endDate")+")重叠! ");
 									errorNum.add(4);
 									errorNum.add(5);
 									break;
@@ -616,10 +616,10 @@ public class BGServiceImpl implements IBGService {
 					
 					// 角色 必填
 					if (Rtext.isEmpty(cellValue[6])) {
-						errorInfo.append("角色不能为空！");
+						errorInfo.append("角色不能为空！ ");
 						errorNum.add(6);
 					}else if(!roleStr.contains("["+cellValue[6]+"]")){
-						errorInfo.append("不存在此角色！");
+						errorInfo.append("不存在此角色！ ");
 						errorNum.add(6);
 					}else if(!Rtext.isEmpty(proId)){//项目存在
 						//获取map中指定项目的项目负责人数量
@@ -627,7 +627,7 @@ public class BGServiceImpl implements IBGService {
 						if("项目负责人".equals(cellValue[6])){
 							int principalCount=bgMapper.getPrincipalCountByProId(proId);
 							if(principalCount>0 || currentValue>0){
-								errorInfo.append("项目已存在负责人！");
+								errorInfo.append("项目已存在负责人！ ");
 								errorNum.add(6);
 							}
 						}
@@ -648,7 +648,7 @@ public class BGServiceImpl implements IBGService {
 						if("项目负责人".equals(cellValue[6])){//此人存在且为负责人时，项目中如果已存在测人记录，则不允许添加
 							for (Map<String, String> map : empList) {
 								if(cellValue[3].equals(map.get("HRCODE"))){
-									errorInfo.append("此人已存在项目中，不允许添加为负责人！");
+									errorInfo.append("此人已存在项目中，不允许添加为负责人！ ");
 									errorNum.add(6);
 									break;
 								}
@@ -656,7 +656,7 @@ public class BGServiceImpl implements IBGService {
 						}else{//此人存在且为参与人时，项目中此人如果已经作为负责人，则不允许添加
 							for (Map<String, String> map : empList) {
 								if(cellValue[3].equals(map.get("HRCODE")) && "1".equals(map.get("ROLE"))){
-									errorInfo.append("此人为当前项目负责人，请勿重复添加！");
+									errorInfo.append("此人为当前项目负责人，请勿重复添加！ ");
 									errorNum.add(6);
 									break;
 								}

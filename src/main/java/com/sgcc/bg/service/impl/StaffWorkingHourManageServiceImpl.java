@@ -218,7 +218,8 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 				if (!"#N/A!#N/A!".equals(checkStr.toString()) && !"".equals(checkStr.toString())) {// 校验此行是否为空
 					StringBuffer errorInfo = new StringBuffer();
 					Set<Integer> errorNum = new HashSet<Integer>();
-					String proId="";
+					String proId="";//项目id
+					Map<String, String>  proMap=null;//项目信息
 					String principal="";//项目负责人
 					String currentUsername=webUtils.getUsername();
 					CommonCurrentUser approverUser=null;
@@ -226,43 +227,48 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 					// 对要导入的文件内容进行校验
 					// 填报日期 必填;格式
 					if (cellValue[1] == null || "".equals(cellValue[1])) {
-						errorInfo.append("填报日期不能为空！");
+						errorInfo.append("填报日期不能为空！ ");
 						errorNum.add(1);
 					} else if (!DateUtil.isValidDate(cellValue[1], "yyyy-MM-dd")) {
-						errorInfo.append("填报日期填写有误！");
+						errorInfo.append("填报日期填写有误！ ");
 						errorNum.add(1);
 					}
 					// 项目类型校验 必填
 					if (cellValue[2] == null || "".equals(cellValue[2])) {
-						errorInfo.append("项目类型不能为空！");
+						errorInfo.append("项目类型不能为空！ ");
 						errorNum.add(2);
 					}else if(!categoryStr.contains("["+cellValue[2]+"]")){
-						errorInfo.append("无此项目类型！");
+						errorInfo.append("无此项目类型 ！");
 						errorNum.add(2);
 					}
 					// 校验项目编号(无论是什么类型，只要是不是非项目，就校验项目编号)
 					if(!"非项目工作".equals(cellValue[2])){
 						//如果项目类型不为非项目工作则校验其项目编号
 						if (cellValue[3] == null || "".equals(cellValue[3])) {
-							errorInfo.append("项目编号不能为空！");
+							errorInfo.append("项目编号不能为空！ ");
 							errorNum.add(3);
 						}else if(!list.contains(cellValue[3])){
-							errorInfo.append("项目中不存在此项目编号！");
+							errorInfo.append("项目中不存在此项目编号！ ");
 							errorNum.add(3);
 						}else{
 							proId=bgMapper.getProIdByBgNmuber(cellValue[3]);
+							proMap = bgMapper.getProInfoByProId(proId);
 							principal =SWMapper.getPrincipalByProId(proId);
 						}
 					}
-					//非项目工作的名称是直接存入表中，校验其长度不能大于50个字
-					if("非项目工作".equals(cellValue[2]) && !Rtext.isEmpty(cellValue[4]) && cellValue[4].length()>50){
-						errorInfo.append("项目名称不能大于50个字！");
-						errorNum.add(4);
-					}
+					
 					//项目存在
 					if(!Rtext.isEmpty(proId)){
+						//验证项目状态是否处于进行中
+						String projectStatus = proMap.get("projectStatus");
+						String[] staArr = {"已新建","已启动","已暂停","已完成","已废止","状态未知"};
+						if(!"1".equals(projectStatus)){
+							errorInfo.append("项目"+staArr[Rtext.ToInteger(projectStatus,5)]+"，无法填报！ ");
+							errorNum.add(3);
+						}
+						
 						//验证项目类型是否一致
-						String category=bgMapper.getProInfoFieldByProId(proId,"category");
+						String category=proMap.get("category");
 						if("KY".equals(category)){
 							category="科研项目";
 						}else if("HX".equals(category)){
@@ -271,9 +277,15 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							category="技术服务项目";
 						}
 						if(!errorNum.contains(2) && !cellValue[2].equals(category)){
-							errorInfo.append("项目类型与项目不符！");
+							errorInfo.append("项目类型与项目不符！ ");
 							errorNum.add(2);
 						}
+					}
+					
+					//非项目工作的名称是直接存入表中，校验其长度不能大于50个字
+					if("非项目工作".equals(cellValue[2]) && !Rtext.isEmpty(cellValue[4]) && cellValue[4].length()>50){
+						errorInfo.append("项目名称不能大于50个字！ ");
+						errorNum.add(4);
 					}
 					
 					// 工作内容校验
@@ -281,26 +293,26 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						/*errorInfo.append("工作内容不能为空！");
 						errorNum.add(5); 暂不做工作内容必填校验*/
 					} else if (cellValue[5].length() > 200) {
-						errorInfo.append("工作内容不能超过200字！");
+						errorInfo.append("工作内容不能超过200字！ ");
 						errorNum.add(5);
 					}
 					
 					// 投入工时 必填 数字
 					if (cellValue[6] == null || "".equals(cellValue[6])) {
-						errorInfo.append("投入工时不能为空！");
+						errorInfo.append("投入工时不能为空！ ");
 						errorNum.add(6);
 					}else if (!cellValue[6].matches(regex)) {
-						errorInfo.append("计划投入工时填写有误！");
+						errorInfo.append("计划投入工时填写有误！ ");
 						errorNum.add(6);
 					}
 					//填报人员工编号校验
 					if(cellValue[8] == null || "".equals(cellValue[8])){
-						errorInfo.append("填报人员工编号不能为空！");
+						errorInfo.append("填报人员工编号不能为空！ ");
 						errorNum.add(8);
 					}else{
 						worker=userUtils.getCommonCurrentUserByHrCode(cellValue[8]);
 						if(worker==null){
-							errorInfo.append("填报人员工编号错误！");
+							errorInfo.append("填报人员工编号错误！ ");
 							errorNum.add(8);
 						}else{
 							//如填报人正确且项目存在
@@ -308,7 +320,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							if(!"非项目工作".equals(cellValue[2]) && !Rtext.isEmpty(proId)){
 								int result=SWMapper.validateStaff(proId,worker.getUserName());
 								if(result==0){
-									errorInfo.append("提报人不属于该项目");
+									errorInfo.append("提报人不属于该项目！  ");
 									errorNum.add(8);
 								}
 							}
@@ -316,7 +328,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							String currentLabId=worker.getDeptId();//报工人当时所处科室id
 							String limitDdptIds=getLimitDeptIds(webUtils.getUsername(),"41000001");//当前专责有权限的所有部门id
 							if(!limitDdptIds.contains(currentLabId)){
-								errorInfo.append("提报人不在专责范围内！");
+								errorInfo.append("提报人不在专责范围内！ ");
 								errorNum.add(8);
 							}
 						}
@@ -328,26 +340,26 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						
 						int result=SWMapper.validateSelectedDate(cellValue[1],proId,worker.getUserName());
 						if(result==0){
-							errorInfo.append("填报日期不在项目周期或参与周期内！");
+							errorInfo.append("填报日期不在项目周期或参与周期内！ ");
 							errorNum.add(1);
 						}
 					}
 					// 审核人员员工编号，非项目工作或项目工作负责人为必填项
 					if ("非项目工作".equals(cellValue[2]) || principal.equals(worker==null?"":worker.getUserName())) {
 						if(cellValue[10] == null || "".equals(cellValue[10])){
-							errorInfo.append("非项目工作、项目工作负责人的审核人员员工编号不能为空！");
+							errorInfo.append("非项目工作、项目工作负责人的审核人员员工编号不能为空！ ");
 							errorNum.add(10);
 						}else{
 							approverUser=userUtils.getCommonCurrentUserByHrCode(cellValue[10]);
 							if(approverUser==null){
-								errorInfo.append("审核人员员工编号错误！");
+								errorInfo.append("审核人员员工编号错误！ ");
 								errorNum.add(10);
 							}else if(worker!=null){
 								if(cellValue[10].equals(worker.getHrCode())){//审核人是自己
 									String subType=SWMapper.getTopSubmitType(worker.getUserId());
 									int subTypeNum=Rtext.ToInteger(subType, 0);
 									if(subTypeNum>5){//等级不够默认通过
-										errorInfo.append("审核人员不具备审核权限！");
+										errorInfo.append("审核人员不具备审核权限！ ");
 										errorNum.add(10);
 									}
 								}else{
@@ -360,7 +372,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 										}
 									}
 									if(!containsApprover){
-										errorInfo.append("审核人员不具备审核权限！");
+										errorInfo.append("审核人员不具备审核权限！ ");
 										errorNum.add(10);
 									}
 								}
@@ -382,8 +394,8 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							//如果提报人就是项目负责人，则以审核人是所填审核人；如果是参与人，则默认时项目负责人
 							wh.setApprover(principal.equals(worker.getUserName())?approverUser.getUserName():principal);
 							//如果为非项目工作，项目类型、名称与项目编号保持一致
-							wh.setCategory(bgMapper.getProInfoFieldByProId(proId, "category"));
-							wh.setProName(bgMapper.getProInfoFieldByProId(proId, "project_name"));
+							wh.setCategory(proMap.get("category"));
+							wh.setProName(proMap.get("project_name"));
 						}
 						wh.setWorkTime(DateUtil.fomatDate(cellValue[1]));
 						wh.setJobContent(cellValue[5]);

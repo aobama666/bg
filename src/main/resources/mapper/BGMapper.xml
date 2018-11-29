@@ -10,6 +10,7 @@
 			 <![CDATA[WHERE ROWNUM<=#{end})]]>
 		<![CDATA[WHERE rn>#{start}]]> -->
 		SELECT
+			rownum as rn,
       		t1.id as "id",
       		t1.project_name as "projectName",
       		(SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t1.category) as "category",

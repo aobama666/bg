@@ -9,7 +9,8 @@
           			FROM () p
    		<![CDATA[WHERE ROWNUM<=#{end})]]>
 		<![CDATA[WHERE rn>#{start}]]> -->
-		SELECT T.ID,
+		SELECT ROWNUM AS RN,
+			   T.ID,
 		       TO_CHAR(T.WORK_TIME, 'yyyy-mm-dd') WORK_TIME,
 		       (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = T.DEPT_ID) AS DEPT,
 		       (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = T.LAB_ID) AS LAB,

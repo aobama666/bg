@@ -1,7 +1,7 @@
 <!-- http://localhost/bg/organstufftree/demo -->
 <%-- <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> --%>
-<!DOCTYPE html>
+<!DOCTYPE>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <html>
@@ -33,21 +33,28 @@
 	src="<%=request.getContextPath()%>/common/plugins/organ-tree/organ-tree.js"></script>
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
+<style type="text/css">
+a{
+	cursor: pointer;
+	text-decoration: none !important;
+}
+</style>
+
 </head>
 <body>
 	<div class="page-header-sl">
 		<h5>专责授权</h5>
 		<div class="button-box">
 			<button type="button" class="btn btn-primary btn-xs"
-				style="display: none;" name="kOne" onclick="forAdd()">新增</button>
+				 name="kOne" onclick="forAdd()">新增</button>
+				<!-- style="display: none;" -->
 			<button type="button" class="btn btn-success btn-xs"
 				style="display: none;" name="kOne" onclick="forUpdate()">
 				修改</button>
 			<button type="button" class="btn btn-warning btn-xs"
 				style="display: none;" name="kOne" onclick="forDelete()">
 				删除</button>
-			<button type="button" class="btn btn-info btn-xs"
-				style="display: none;" name="kOne" onclick="forImport()">
+			<button type="button" class="btn btn-info btn-xs" name="kOne" onclick="forImport()">
 				批量导入</button>
 			<button type="button" class="btn btn-info btn-xs"
 				onclick="forExport()">导出</button>
@@ -59,7 +66,7 @@
 			<form name="queryBox" action=""
 				style="width: 100%; padding-left: 10px">
 				<div class="form-group col-xs-4">
-					<label for="username"><!-- <font class="glyphicon glyphicon-asterisk required"></font> -->员工</label>
+					<label for="username"><!-- <font class="glyphicon glyphicon-asterisk required"></font> -->人员</label>
 					<div class="controls">
 						<input name="username" id="username"/>	
 					</div>
@@ -78,7 +85,7 @@
 					<label for="roleCode"><!-- <font class="glyphicon glyphicon-asterisk required"></font> -->角色</label>
 					<div class="controls">
 						<select id="roleCode" name="roleCode" property="roleCode">
-								<option><option/>
+								<option></option>
 								<option value="MANAGER_UNIT">院专责</option>
 								<option value="MANAGER_DEPT">部门专责</option>
 								<option value="MANAGER_LAB">处室专责</option>
@@ -122,48 +129,44 @@ function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 				{title:'序列', name:'id', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'人员', name:'USERALIAS', width:110, sortable:false, align:'center'},
-	            {title:'角色', name:'ROLE_NAME', width:100, sortable:false, align:'center'},
+	            {title:'人员姓名', name:'USERALIAS', width:100, sortable:false, align:'center'},
+	            {title:'人员编号', name:'HRCODE',width:80, sortable:false, align:'center'},
+	            {title:'人员角色', name:'ROLE_NAME', width:100, sortable:false, align:'center'},
 	           /*  {title:'人员编号', name:'HRCODE',width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		return '<a href="###" title="'+val+'" onclick="forDetails(\''+item.id+'\')">'+val+'</a>';
 	            	}
 	            }, */
-	            {title:'人员编号', name:'HRCODE',width:100, sortable:false, align:'center'},
-	            {title:'组织机构', name:'DEPTNAME', width:100,sortable:false, align:'left'},
-	            {title:'组织类型', name:'TYPE', width:100, sortable:false, align:'center'},
-	            {title:'组织编号', name:'DEPTCODE', width:100,sortable:false, align:'center'},
-	            {title:'操作', name:'handle', width:120, sortable:false, align:'center',
+	            {title:'组织机构', name:'DEPTNAME', width:120,sortable:false, align:'left'},
+	            {title:'组织类型', name:'TYPE', width:80, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
-	            		var operation;
-	            		switch (parseInt(item.projectStatus)){
+	            		var type;
+	            		switch (val){
 	            		case 0:
-	            			operation='<a onclick="changeStatus(\'启动\',\'start\',\''+item.id+'\')">启动</a>';
+	            			type='单位';
 	            		  break;
 	            		case 1:
-	            			operation='<a onclick="changeStatus(\'暂停\',\'pause\',\''+item.id+'\')">暂停</a>&nbsp&nbsp'+
-	            			'<a onclick="changeStatus(\'结束\',\'finish\',\''+item.id+'\')">结束</a>&nbsp&nbsp'+
-	            			'<a onclick="changeStatus(\'废止\',\'discard\',\''+item.id+'\')">废止</a>';
+	            			type='部门';
 	            		  break;
 	            		case 2:
-	            			operation='<a onclick="changeStatus(\'启动\',\'start\',\''+item.id+'\')">启动</a>&nbsp&nbsp'+
-	            			'<a onclick="changeStatus(\'结束\',\'finish\',\''+item.id+'\')">结束</a>&nbsp&nbsp'+
-	            			'<a onclick="changeStatus(\'废止\',\'discard\',\''+item.id+'\')">废止</a>';
+	            			type='处室';
 	            		  break;
 	            		default:
 	            			operation="";
 	            		}
-	            		return  operation;
+	            		return type;
+	            	}
+	            },
+	            {title:'组织编号', name:'DEPTCODE', width:80,sortable:false, align:'center'},
+	            {title:'操作', name:'handle', width:50, sortable:false, align:'center',
+	            	renderer:function(val,item,rowIndex){
+	            		return '<a onclick="forDelete(\''+item.HRCODE+'\',\''+item.DEPTCODE+'\',\''+item.ROLE_CODE+'\')">删除</a>';
 	            	}
 	            }
 	    		];
-	var mmGridHeight = $("body").parent().height();
-	console.log(mmGridHeight);
-	console.log($("body").height());
-	/* console.log($("body").html());
-	console.log($("body").parent().html()); */
+	var mmGridHeight = $("body").parent().height()-190;
 	mmg = $('#mmg').mmGrid({
-		//cosEdit:"4,13",//声明需要编辑，取消点击选中的列
+		cosEdit:"9",//声明需要编辑，取消点击选中的列
 		indexCol: true,
 		indexColWidth: 40,
 		checkCol: true,
@@ -191,20 +194,62 @@ function queryList(load){
 
 }
 
+//查询
 function forSearch(){
 	pn = 1;
 	queryList("reload");
 }
 
-function forSubmit(){
-	var ran = Math.random()*1000000;
-	$.ajax({
-		type:"POST",
-		url:"<%=request.getContextPath()%>/sync/addDuty?ran="+ran,
-		data:{empCode:$("#empCode").val(),deptCode:$("#deptCode").val(),roleCode:$("#roleCode").val()},
-		dataType:'text',
-		success:function(data){
-			layer.msg(data);
+//新增
+function forAdd(){
+	var height=$(window).height()*0.9;
+	if(height>550){
+		height = 550;
+	}
+	layer.open({
+		type:2,
+		title:"专责权限-新增",
+		area:['620px', height+'px'],
+		//scrollbar:false,
+		skin:'query-box',
+		content:['<%=request.getContextPath()%>/duty/addPage']
+	}); 
+}
+
+//删除
+function forDelete(hrCode,deptCode,roleCode){
+	console.log(hrCode+"///"+deptCode+"///"+roleCode);
+	layer.confirm('确认删除吗？', {icon: 7,title:'提示',shift:-1},
+		function(index){
+			layer.close(index);
+			var ran = Math.random()*1000000;
+			$.post("<%=request.getContextPath()%>/duty/deleteDuty?ran="+ran,
+					{ hrCode: hrCode, deptCode: deptCode,roleCode : roleCode},
+					function(data){
+						if(data.success=="true"){
+							parent.queryList("reload");
+							forClose();
+						}
+						parent.layer.msg(data.msg);
+					}
+			);
+	});
+}
+
+function forImport(){
+	var height=$(window).height()*0.8;
+	if(height>300){
+		height = 300;
+	}
+	layer.open({
+		type:2,
+		title:"导入页面",
+		area:['620px', height+'px'],
+		resize:false,
+		scrollbar:false,
+		content:['<%=request.getContextPath()%>/duty/importExcelPage'],
+		end: function(){
+			
 		}
 	});
 }

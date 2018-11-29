@@ -209,6 +209,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 					StringBuffer errorInfo = new StringBuffer();
 					Set<Integer> errorNum = new HashSet<Integer>();
 					String proId="";//项目id
+					Map<String, String>  proMap=null;//项目信息
 					String principal="";//项目负责人
 					String currentUsername = webUtils.getUsername();
 					CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(currentUsername);
@@ -219,43 +220,51 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 					// 对要导入的文件内容进行校验
 					// 填报日期 必填;格式
 					if (cellValue[1] == null || "".equals(cellValue[1])) {
-						errorInfo.append("填报日期不能为空！");
+						errorInfo.append("填报日期不能为空！ ");
 						errorNum.add(1);
 					} else if (!DateUtil.isValidDate(cellValue[1], "yyyy-MM-dd")) {
-						errorInfo.append("填报日期填写有误！");
+						errorInfo.append("填报日期填写有误！ ");
 						errorNum.add(1);
 					}
 					// 项目类型校验 必填
 					if (cellValue[2] == null || "".equals(cellValue[2])) {
-						errorInfo.append("项目类型不能为空！");
+						errorInfo.append("项目类型不能为空！ ");
 						errorNum.add(2);
 					}else if(!categoryStr.contains("["+cellValue[2]+"]")){
-						errorInfo.append("无此项目类型！");
+						errorInfo.append("无此项目类型！ ");
 						errorNum.add(2);
 					}
 					// 校验项目编号(无论是什么类型，只要是不是非项目，就校验项目编号)
 					if(!"非项目工作".equals(cellValue[2])){
 						//如果项目类型不为非项目工作则校验其wbs编号
 						if (cellValue[3] == null || "".equals(cellValue[3])) {
-							errorInfo.append("项目编号不能为空！");
+							errorInfo.append("项目编号不能为空！ ");
 							errorNum.add(3);
 						}else if(!list.contains(cellValue[3])){
-							errorInfo.append("项目中不存在此项目编号！");
+							errorInfo.append("项目中不存在此项目编号！ ");
 							errorNum.add(3);
 						}else{
 							proId=bgMapper.getProIdByBgNmuber(cellValue[3]);
+							proMap = bgMapper.getProInfoByProId(proId);
 							principal =SWMapper.getPrincipalByProId(proId);
 						}
 						//项目存在
 						if(!Rtext.isEmpty(proId)){
+							//验证项目状态是否处于进行中
+							String projectStatus = proMap.get("projectStatus");
+							String[] staArr = {"已新建","已启动","已暂停","已完成","已废止","状态未知"};
+							if(!"1".equals(projectStatus)){
+								errorInfo.append("项目"+staArr[Rtext.ToInteger(projectStatus,5)]+"，无法填报！ ");
+								errorNum.add(3);
+							}
 							//如填报人正确且项目存在，则校验其是否存在于该项目
 							int result=SWMapper.validateStaff(proId,currentUsername);
 							if(result==0){
-								errorInfo.append("提报人不属于该项目！");
+								errorInfo.append("提报人不属于该项目！ ");
 								errorNum.add(3);
 							}
 							//验证项目类型是否一致
-							String category=bgMapper.getProInfoFieldByProId(proId,"category");
+							String category=proMap.get("category");
 							if("KY".equals(category)){
 								category="科研项目";
 							}else if("HX".equals(category)){
@@ -264,7 +273,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 								category="技术服务项目";
 							}
 							if(!errorNum.contains(2) && !cellValue[2].equals(category)){
-								errorInfo.append("项目类型与项目不符！");
+								errorInfo.append("项目类型与项目不符！ ");
 								errorNum.add(2);
 							}
 						}
@@ -272,14 +281,14 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						if(!errorNum.contains(3) && !Rtext.isEmpty(proId) && !errorNum.contains(1)){
 							int result=SWMapper.validateSelectedDate(cellValue[1],proId,currentUsername);
 							if(result==0){
-								errorInfo.append("填报日期不在项目周期或参与周期内！");
+								errorInfo.append("填报日期不在项目周期或参与周期内！ ");
 								errorNum.add(1);
 							}
 						}
 					}
 					//非项目工作的名称是直接存入表中，校验其长度不能大于50个字
 					if("非项目工作".equals(cellValue[2]) && !Rtext.isEmpty(cellValue[4]) && cellValue[4].length()>50){
-						errorInfo.append("项目名称不能大于50个字！");
+						errorInfo.append("项目名称不能大于50个字！ ");
 						errorNum.add(4);
 					}
 					
@@ -289,16 +298,16 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						errorNum.add(5);*/
 						//暂时不做工作内容的必填校验
 					} else if (cellValue[5].length() > 200) {
-						errorInfo.append("工作内容不能超过200字！");
+						errorInfo.append("工作内容不能超过200字！ ");
 						errorNum.add(5);
 					}
 					
 					// 投入工时 必填 数字
 					if (cellValue[6] == null || "".equals(cellValue[6])) {
-						errorInfo.append("投入工时不能为空！");
+						errorInfo.append("投入工时不能为空！ ");
 						errorNum.add(6);
 					}else if (!cellValue[6].matches(regex)) {
-						errorInfo.append("计划投入工时填写有误！");
+						errorInfo.append("计划投入工时填写有误！ ");
 						errorNum.add(6);
 					}else{
 						//TODO
@@ -307,19 +316,19 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 					// 审核人员员工编号，非项目工作以及项目工作负责人为必填项
 					if("非项目工作".equals(cellValue[2]) || principal.equals(currentUsername)){
 						if(cellValue[8] == null || "".equals(cellValue[8])){
-							errorInfo.append("非项目工作、项目工作负责人的审核人员员工编号不能为空！");
+							errorInfo.append("非项目工作、项目工作负责人的审核人员员工编号不能为空！ ");
 							errorNum.add(8);
 						}else{
 							approverUser=userUtils.getCommonCurrentUserByHrCode(cellValue[8]);
 							if(approverUser==null){
-								errorInfo.append("审核人员员工编号错误！");
+								errorInfo.append("审核人员员工编号错误！ ");
 								errorNum.add(8);
 							}else{
 								if(cellValue[8].equals(currentUserHrcode)){//审核人是自己
 									String subType=SWMapper.getTopSubmitType(currentUserId);
 									int subTypeNum=Rtext.ToInteger(subType, 0);
 									if(subTypeNum>5){//等级不够默认通过
-										errorInfo.append("审核人员不具备审核权限！");
+										errorInfo.append("审核人员不具备审核权限！ ");
 										errorNum.add(8);
 									}
 								}else{
@@ -332,7 +341,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 										}
 									}
 									if(!containsApprover){
-										errorInfo.append("审核人员不具备审核权限！");
+										errorInfo.append("审核人员不具备审核权限！ ");
 										errorNum.add(8);
 									}
 								}
@@ -354,8 +363,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 							//如果提报人就是项目负责人，则以审核人是所填审核人；如果是参与人，则默认时项目负责人
 							wh.setApprover(principal.equals(currentUsername)?approverUser.getUserName():principal);
 							//如果为非项目工作，项目类型、名称与项目编号保持一致
-							wh.setCategory(bgMapper.getProInfoFieldByProId(proId, "category"));
-							wh.setProName(bgMapper.getProInfoFieldByProId(proId, "project_name"));
+							wh.setCategory(proMap.get("category"));
+							wh.setProName(proMap.get("project_name"));
 						}
 						wh.setWorkTime(DateUtil.fomatDate(cellValue[1]));
 						wh.setJobContent(cellValue[5]);
