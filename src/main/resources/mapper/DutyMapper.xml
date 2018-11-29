@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+ -->
+<mapper namespace="com.sgcc.bg.mapper.DutyMapper">
+	<!-- 获取所有专责权限信息 -->
+	<select id="getAllDuties" resultType="java.util.Map">
+		SELECT DISTINCT U.USERALIAS,
+                U.USERNAME,
+                U.HRCODE,
+                B.ROLE_NAME,
+                B.ROLE_CODE,
+                DECODE(B.ROLE_CODE,
+                       'MANAGER_UNIT',
+                       (SELECT DEPTCODE FROM BG_SYS_DEPT WHERE TYPE = 0),
+                       'MANAGER_KJB',
+                       (SELECT DEPTCODE FROM BG_SYS_DEPT WHERE TYPE = 0),
+                       T.DEPTCODE) DEPTCODE,
+                DECODE(B.ROLE_CODE,
+                       'MANAGER_UNIT',
+                       (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE TYPE = 0),
+                       'MANAGER_KJB',
+                       (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE TYPE = 0),
+                       T.DEPTNAME) DEPTNAME,
+                DECODE(B.ROLE_CODE,
+                       'MANAGER_UNIT',
+                       0,
+                       'MANAGER_KJB',
+                       0,
+                       T.TYPE) TYPE
+			  FROM BG_SYS_PRIV_USER_R_ROLE A
+			  JOIN BG_SYS_ROLE B
+			    ON A.ROLE_ID = B.ID
+			   AND B.VALID = 1
+			  JOIN BG_SYS_USER U
+			    ON U.USERID = A.USER_ID
+			   AND U.STATE = 0
+			  LEFT JOIN (SELECT O.USER_ID, D.DEPTCODE, D.DEPTNAME, D.TYPE
+			               FROM BG_SYS_PRIV_USER_R_ORGAN O
+			               JOIN BG_SYS_DEPT D
+			                 ON O.ORGAN_ID = D.DEPTID
+			                AND D.VALID = 1
+			                AND O.VALID = 1) T
+			    ON A.USER_ID = T.USER_ID
+			   AND DECODE(B.ROLE_CODE,
+			              'MANAGER_UNIT',
+			              0,
+			              'MANAGER_KJB',
+			              0,
+			              'MANAGER_DEPT',
+			              1,
+			              'MANAGER_LAB',
+			              '2') = T.TYPE
+			 WHERE A.VALID = 1
+			   <if test="username != null and username != ''" >
+				AND U.USERALIAS LIKE '%'||#{username}||'%'
+		       </if>	
+		       <if test="deptCode != null and deptCode != ''" >
+				AND T.DEPTCODE = #{deptCode}
+		       </if>
+		       <if test="roleCode != null and roleCode != ''" >
+				AND B.ROLE_CODE = #{roleCode}
+		       </if>
+			 ORDER BY DEPTNAME NULLS LAST
+	</select>
+	
+	<!-- 插入专责人员角色 -->
+	<insert id="addUserRole"  parameterType="String">
+		INSERT INTO BG_SYS_PRIV_USER_R_ROLE
+		  (USER_ID, ROLE_ID)
+		  SELECT (SELECT U.USERID
+		            FROM BG_SYS_USER U
+		           WHERE U.HRCODE = #{empCode}
+		             AND U.STATE = 0),
+		         (SELECT R.ID
+		            FROM BG_SYS_ROLE R
+		           WHERE R.ROLE_CODE = #{roleCode}
+		             AND R.VALID = 1)
+		    FROM DUAL
+		   WHERE NOT EXISTS (SELECT A.ROLE_ID
+		            FROM BG_SYS_PRIV_USER_R_ROLE A
+		            JOIN BG_SYS_ROLE B
+		              ON A.ROLE_ID = B.ID
+		             AND B.VALID = 1
+		            JOIN BG_SYS_USER C
+		              ON A.USER_ID = C.USERID
+		             AND C.STATE = 0
+		           WHERE A.VALID = 1
+		           	 AND C.HRCODE = #{empCode}
+		             AND B.ROLE_CODE = #{roleCode})
+	</insert>
+	<!-- 插入专责所辖部门 -->
+	<insert id="addUserOrgan"  parameterType="String">
+		INSERT INTO BG_SYS_PRIV_USER_R_ORGAN
+		  (USER_ID, ORGAN_ID)
+		  SELECT (SELECT U.USERID
+		            FROM BG_SYS_USER U
+		           WHERE U.HRCODE = #{empCode}
+		             AND U.STATE = 0),
+		         (SELECT D.DEPTID
+		            FROM BG_SYS_DEPT D
+		           WHERE D.DEPTCODE = #{deptCode}
+		             AND D.VALID = 1)
+		    FROM DUAL
+		   WHERE NOT EXISTS (SELECT A.ORGAN_ID
+		            FROM BG_SYS_PRIV_USER_R_ORGAN A
+		            JOIN BG_SYS_DEPT B
+		              ON A.ORGAN_ID = B.DEPTID
+		             AND A.VALID = 1
+		            JOIN BG_SYS_USER C
+		              ON A.USER_ID = C.USERID
+		             AND C.STATE = 0
+		           WHERE A.VALID = 1
+		             AND C.HRCODE = #{empCode}
+		             AND B.DEPTCODE = #{deptCode})
+	</insert>
+	
+	<update id="deleteOrgan">
+		UPDATE BG_SYS_PRIV_USER_R_ORGAN O
+		   SET O.VALID = 0
+		 WHERE O.ORGAN_ID =
+		       (SELECT DEPTID FROM BG_SYS_DEPT WHERE DEPTCODE = #{deptCode})
+		   AND O.USER_ID =
+		       (SELECT USERID FROM BG_SYS_USER WHERE HRCODE = #{hrCode})
+		   AND O.VALID = 1
+	</update>
+	
+	<!-- 当某人不再管辖某组织时，清空角色表中组织对应的角色 -->
+	<update id="deleteRole">
+		 UPDATE BG_SYS_PRIV_USER_R_ROLE E
+		   SET E.VALID = 0
+		 WHERE E.VALID = 1
+		   AND E.USER_ID =
+		       (SELECT USERID FROM BG_SYS_USER WHERE HRCODE = #{hrCode})
+		   AND NOT EXISTS
+		 (SELECT ID
+		          FROM BG_SYS_PRIV_USER_R_ORGAN O
+		          JOIN BG_SYS_DEPT D
+		            ON O.ORGAN_ID = D.DEPTID
+		          JOIN BG_SYS_USER U
+		            ON O.USER_ID = U.USERID
+		         WHERE O.VALID = 1
+		           AND U.HRCODE = #{hrCode}
+		           AND D.TYPE =
+		               DECODE((SELECT ROLE_CODE FROM BG_SYS_ROLE WHERE ID = E.ROLE_ID),
+		                      'MANAGER_UNIT',
+		                      0,
+		                      'MANAGER_KJB',
+		                      0,
+		                      'MANAGER_DEPT',
+		                      1,
+		                      'MANAGER_LAB',
+		                      2))
+		                               
+	</update>
+	
+	<select id="getDeptByDeptCode" resultType="java.util.Map">
+		SELECT *
+		  FROM BG_SYS_DEPT
+		 WHERE VALID = 1
+		   AND DEPTCODE = #{deptCode,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="deleteOrganByPDeptCode"> 
+		UPDATE BG_SYS_PRIV_USER_R_ORGAN O
+  		  	SET O.VALID = 0
+		 WHERE 1 = 1
+		   <if test="empCode != null and empCode != ''" >
+				AND (SELECT PDEPTCODE FROM BG_SYS_DEPT WHERE DEPTID = O.ORGAN_ID) = #{pDeptCode}
+		   </if>
+		   <if test="pDeptCode != null and pDeptCode != ''" >
+				AND (SELECT HRCODE FROM BG_SYS_USER WHERE USERID = O.USER_ID) = #{empCode}
+		   </if>
+	</delete>
+	
+</mapper>
