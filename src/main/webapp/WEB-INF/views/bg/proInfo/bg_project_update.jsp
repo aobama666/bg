@@ -91,6 +91,7 @@
 						<select name="category" property="category" onchange="typeChange(this)">
 							<options collection="typeList" property="label"
 								labelProperty="value">
+								<option  value="QT" <c:if test="${category=='QT'}">selected="selected"</c:if> >其他</option>
 								<option  value="KY" <c:if test="${category=='KY'}">selected="selected"</c:if> >科研项目</option>
 								<option value="HX" <c:if test="${category=='HX'}">selected="selected"</c:if> >横向项目</option>
 								<option value="JS" <c:if test="${category=='JS'}">selected="selected"</c:if> >技术服务项目</option>	
@@ -675,6 +676,11 @@
 			}
 			$("#WBSNumber input").removeAttr("readonly").removeAttr("style");*/
 		}
+		if(type=="QT"){
+			$("#organInfo").hide();
+			$("#WBSNumber label").html('WBS编号');
+		}
+		
 		if($("#category").val()==type){
 			$("#WBSNumber input").val($("#currentWBSNumber").val());
 		}else{

@@ -90,12 +90,13 @@
 			<hr>
 			<div class="form-box">
 				<div class="form-group col-xs-11">
-					<label for=""category""><font
+					<label for="category"><font
 						class="glyphicon glyphicon-asterisk required"></font>项目分类</label>
 					<div class="controls">
 						<select name="category" property="category" onchange="typeChange($(this).val())" >
 							<options collection="typeList" property="label"
 								labelProperty="value">
+								<option value="QT">其他</option>
 								<option value="KY">科研项目</option>
 								<option value="HX">横向项目</option>
 								<option value="JS">技术服务项目</option>	
@@ -119,7 +120,7 @@
 				</div>	
 				<div class="form-group col-xs-11" id="WBSNumber">
 					<label for="WBSNumber">
-						<font class="glyphicon glyphicon-asterisk required"></font>WBS编号</label>
+						<!-- <font class="glyphicon glyphicon-asterisk required"></font> -->WBS编号</label>
 					<div class="controls">
 						<input type="text" name="WBSNumber" property="WBSNumber">
 					</div>
@@ -273,6 +274,10 @@
 			$("#WBSNumber input").removeAttr("readonly").removeAttr("style");
 			*/
 		}
+		if(type=="QT"){
+			$("#organInfo").hide();$("#organInfo").hide();
+			$("#WBSNumber label").html('WBS编号');
+		}		
 		if(currentCategory==type){
 			$("#WBSNumber input").val(currentWBSNumber);
 			//$("#projectNumber input").val(currentProNumber);

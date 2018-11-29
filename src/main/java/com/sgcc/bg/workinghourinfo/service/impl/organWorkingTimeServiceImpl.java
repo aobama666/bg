@@ -246,14 +246,14 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		 List<Map<String, Object>>  organTreelist=new ArrayList<>();
 		 if(status.equals("0")){
 			 //List<Map<String, Object>> neworganTreelist=findFordept(organTreelist,level,pdeptid,deptid);
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
 			 datalist=selectForHouseManager(organTreelist, type,beginData,endData);
 		 }else if(status.equals("1")){
 			 //List<Map<String, Object>> neworganTreelist=findForlab(organTreelist,level,pdeptid,deptid );
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
 			 datalist=selectForLatManager(organTreelist,type,beginData,endData ); 
 		 }else if(status.equals("2")){
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
 			 List<Map<String, Object>> neworganTreelist=findForPersonnel(organTreelist , useralias);
 			 datalist=selectForPersonnelManager(neworganTreelist, type, beginData, endData);
 		 }
@@ -317,14 +317,14 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		 List<Map<String, Object>>  organTreelist=new ArrayList<>();
 		 if(status.equals("0")){
 			 //List<Map<String, Object>> neworganTreelist=findFordept(organTreelist,level,pdeptid,deptid);
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
 			 datalist=selectForHouseManager(organTreelist, type,beginData,endData);
 		 }else if(status.equals("1")){
 			 //List<Map<String, Object>> neworganTreelist=findForlab(organTreelist,level,pdeptid,deptid );
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
 			 datalist=selectForLatManager(organTreelist,type,beginData,endData ); 
 		 }else if(status.equals("2")){
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode, null);
+			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
 			 List<Map<String, Object>> neworganTreelist=findForPersonnel(organTreelist , useralias);
 			 datalist=selectForPersonnelManager(neworganTreelist, type, beginData, endData);
 		 }
@@ -994,7 +994,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				Lablist.add(labId);
 			 
 			} */
-			List<Map<String, Object>> organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, null, null);
+			List<Map<String, Object>> organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, null);
 			for (Map<String, Object> map : organTreelist) {
 				if(deptid!=null && deptid.equals(map.get("pdeptId"))) 
 					Lablist.add((String) map.get("deptId"));
@@ -1005,11 +1005,17 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		//List<Map<String, Object>> dataList = bgworkinghourinfoMapper.selectForUsers(deptid, Lablist, "", "");
 		List<Map<String, Object>> dataList = new ArrayList<>();
 		for (String labId : Lablist) {
-			List<Map<String, Object>> list = bgworkinghourinfoMapper.selectUserFromWorkHourInfo(labId, "", "");
-			if (list.isEmpty()) {
-				continue;
-			} else {
-				dataList.addAll(list);
+			//从报工表中获取该部门下已存在报工信息（已通过）的所有报工人员
+			List<Map<String, Object>> workerList = bgworkinghourinfoMapper.selectUserFromWorkHourInfo(labId, "", "");
+			
+			//获取当前该部门下的所有人员
+			List<Map<String, Object>> empList = bgworkinghourinfoMapper.selectForUser("", labId, "", "");
+			
+			empList.addAll(workerList);
+			Set<String> set = new HashSet<>();
+			for (Map<String, Object> emp : empList) {
+				String username = (String) emp.get("USERNAME");
+				if(set.add(username)) dataList.add(emp);
 			}
 		}
 		 

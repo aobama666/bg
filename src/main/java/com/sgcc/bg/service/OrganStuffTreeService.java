@@ -59,10 +59,11 @@ public interface OrganStuffTreeService {
 	List<Map<String, Object>> queryDeptByCurrentUserPriv(String root,String level,String userName);
 	
 	/**
+	 * 获取用户所有权限的组织，该组织无下级组织
+	 * 也就是处室，也可能是领导干部或助理/副总师这样没有处室的部门
 	 * @param userName 用户名
 	 * @param root 部门deptCode null或空:41000001 从电科院开始
-	 * @param organType 查询类型  1：只部门 2：只处室  null或空:所有类型
 	 * @return
 	 */
-	List<Map<String, Object>> getUserAuthoryOrgan(String userName , String root , String organType);
+	List<Map<String, Object>> getUserAuthoryOrgan(String userName , String root);
 }

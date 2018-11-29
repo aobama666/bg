@@ -191,8 +191,9 @@ public class BGServiceImpl implements IBGService {
 			//获取所有项目编号存入一个集合
 			Set<String> wbsCodeSet = new HashSet<String>();
 			List<String> list=bgMapper.getAllWbsNumbers();
-			//项目类型
-			String categoryStr="[科研项目],[横向项目],[技术服务项目]";
+			//从数据字典中获取项目类型
+			Map<String,String> dictMap=dict.getDictDataByPcode("category100002");
+			
 			wbsCodeSet.addAll(list);
 			bgServiceLog.info("项目信息excel表格最后一行： " + rows);
 			/* 保存有效的Excel模版列数 */
@@ -233,7 +234,7 @@ public class BGServiceImpl implements IBGService {
 					if (cellValue[2] == null || "".equals(cellValue[2])) {
 						errorInfo.append("项目类型不能为空！ ");
 						errorNum.add(2);
-					}else if(!categoryStr.contains("["+cellValue[2]+"]")){
+					}else if(!dictMap.containsValue(cellValue[2])){
 						errorInfo.append("无此项目类型！ ");
 						errorNum.add(2);
 					}
@@ -332,13 +333,19 @@ public class BGServiceImpl implements IBGService {
 						ProjectInfoPo pro=new ProjectInfoPo();
 						pro.setId(Rtext.getUUID());
 						pro.setProjectName(cellValue[1]);
-						if("科研项目".equals(cellValue[2])){
+						/*if("科研项目".equals(cellValue[2])){
 							pro.setCategory("KY");
 						}else if("横向项目".equals(cellValue[2])){
 							pro.setCategory("HX");
 						}else if("技术服务项目".equals(cellValue[2])){
 							pro.setCategory("JS");
+						}*/
+						for (Map.Entry<String,String> entry : dictMap.entrySet()) {
+							String key = entry.getKey();
+							String value = entry.getValue();
+							if(cellValue[2].equals(value)) pro.setCategory(key);
 						}
+						
 						pro.setWBSNumber(cellValue[3]);
 						pro.setProjectIntroduce(cellValue[4]);
 						pro.setStartDate(DateUtil.fomatDate(cellValue[5]));
@@ -914,29 +921,29 @@ public class BGServiceImpl implements IBGService {
 		//TODO
 		List<Map<String,String>> workerList=bgMapper.getBgWorkerByProId(proId);
 		for (Map<String, String> stuffMap : list) {
-			System.out.println("*****************"+stuffMap.get("stuffName")+"*****************");
+			//System.out.println("*****************"+stuffMap.get("stuffName")+"*****************");
 			Iterator<Map<String, String>> iterator= workerList.iterator();
 			while(iterator.hasNext()){
 				Map<String, String> workerMap=iterator.next();
-				if(stuffMap.get("hrcode").equals(workerMap.get("HRCODE"))){
+				/*if(stuffMap.get("hrcode").equals(workerMap.get("HRCODE"))){
 					System.out.println("WORK_TIME"+workerMap.get("WORK_TIME"));
 					System.out.println("startDate"+stuffMap.get("startDate"));
 					System.out.println("endDate"+stuffMap.get("endDate"));
-				}
+				}*/
 				if(stuffMap.get("hrcode").equals(workerMap.get("HRCODE"))
 						&& DateUtil.compareDate(workerMap.get("WORK_TIME") , stuffMap.get("startDate"))
 						&& DateUtil.compareDate(stuffMap.get("endDate") , workerMap.get("WORK_TIME"))){
-					System.out.println("删除成功"+stuffMap.get("hrcode"));
+					bgServiceLog.info("删除成功"+stuffMap.get("hrcode"));
 					iterator.remove();
 				}
 			}
-			System.out.println("**********************************");
+			//System.out.println("**********************************");
 		}
 		Set<String> set=new HashSet<>();
 		for (Map<String, String> map : workerList) {
 			set.add(map.get("HRCODE"));
 		}
-		System.out.println(set.toString());
+		//System.out.println(set.toString());
 		Map<String, String> resultMap = new HashMap<>();
 		if(workerList.size()>0){
 			resultMap.put("result", "fail");

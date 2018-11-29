@@ -194,14 +194,12 @@ public class StaffWorkbenchController {
 				WorkHourInfoPo wp=new WorkHourInfoPo();
 				wp.setId(Rtext.getUUID());
 				String category=Rtext.toStringTrim(map.get("category"), "");
-				if(category.equals("科研项目")){
-					category="KY";
-				}else if(category.equals("横向项目")){
-					category="HX";
-				}else if(category.equals("技术服务项目")){
-					category="JS";
-				}else if(category.equals("非项目工作")){
-					category="NP";
+				//从数据字典中映射项目类型
+				Map<String,String> dictMap = dict.getDictDataByPcode("category100002");
+				for (Map.Entry<String,String> entry : dictMap.entrySet()) {
+					String key = entry.getKey();
+					String value = entry.getValue();
+					if(category.equals(value)) category=key;
 				}
 				wp.setCategory(category);
 				wp.setProId(Rtext.toStringTrim(map.get("proId"), ""));
@@ -353,14 +351,12 @@ public class StaffWorkbenchController {
 				//执行保存操作
 				WorkHourInfoPo wp=new WorkHourInfoPo();
 				wp.setId(bussinessId);
-				if(category.equals("科研项目")){
-					category="KY";
-				}else if(category.equals("横向项目")){
-					category="HX";
-				}else if(category.equals("技术服务项目")){
-					category="JS";
-				}else if(category.equals("非项目工作")){
-					category="NP";
+				//从数据字典中映射项目类型
+				Map<String,String> dictMap = dict.getDictDataByPcode("category100002");
+				for (Map.Entry<String,String> entry : dictMap.entrySet()) {
+					String key = entry.getKey();
+					String value = entry.getValue();
+					if(category.equals(value)) category=key;
 				}
 				wp.setCategory(category);
 				wp.setProId(proId);
