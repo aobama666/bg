@@ -9,7 +9,7 @@
           			FROM () p
    		<![CDATA[WHERE ROWNUM<=#{end})]]>
 		<![CDATA[WHERE rn>#{start}]]> -->
-		SELECT ROWNUM AS RN,
+		SELECT ROW_NUMBER() OVER(ORDER BY t.work_time,t.create_time DESC) AS RN,
 			   T.ID,
 		       TO_CHAR(T.WORK_TIME, 'yyyy-mm-dd') WORK_TIME,
 		       (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = T.DEPT_ID) AS DEPT,
@@ -85,7 +85,6 @@
                <if test="status != null and status != ''" >
               	 AND t.status=#{status}
                </if>
-               ORDER BY t.work_time,t.create_time DESC
 	</select>
 	
 	<select id="getItemCount" parameterType="String" resultType="java.lang.Integer">
