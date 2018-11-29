@@ -230,8 +230,8 @@ function forDetails(proId){
 // 新增
 function forAdd(){
 	var height=$(window).height()*0.9;
-	if(height>550){
-		height = 550;
+	if(height>560){
+		height = 560;
 	}
 	layer.open({
 		type:2,
@@ -252,8 +252,8 @@ function forUpdate(){
 		}
 		var proId = mmg.selectedRowsByName("id");
 		var height=$(window).height()*0.9;
-		if(height>550){
-			height = 550;
+		if(height>560){
+			height = 560;
 		}
 		layer.open({
 			type:2,
@@ -320,8 +320,8 @@ function changeStatus(text,operation,proId){
 			function(index){
 				layer.close(index);
 				var height=$(window).height()*0.9;
-				if(height>550){
-					height = 550;
+				if(height>560){
+					height = 560;
 				}
 				layer.open({
 					type:2,

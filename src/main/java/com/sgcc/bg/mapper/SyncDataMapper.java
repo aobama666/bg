@@ -116,18 +116,4 @@ public interface SyncDataMapper {
 	 * @return
 	 */
 	public void syncZhglUserOrderData();
-	/**
-	 * 新增被授权人专责角色
-	 * @param empCode
-	 * @param roleCode
-	 * @return
-	 */
-	public int addUserRole(@Param("empCode")String empCode, @Param("roleCode")String roleCode);
-	/**
-	 * 新增被授权人所辖部门
-	 * @param empCode
-	 * @param deptCode
-	 * @return
-	 */
-	public int addUserOrgan(@Param("empCode")String empCode, @Param("deptCode")String deptCode);
 }

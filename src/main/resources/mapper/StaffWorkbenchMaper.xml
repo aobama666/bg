@@ -80,7 +80,7 @@
  		WHERE t2.username =#{username}
  		AND t.status='1' 
  		AND t1.status = '1'
- 		AND t.project_status IN ('1','2')
+ 		AND t.project_status = '1'
  		<![CDATA[
   		 AND (TO_DATE(#{selectedDate}, 'yyyy-mm-dd') >= t.start_date AND
       	 	TO_DATE(#{selectedDate}, 'yyyy-mm-dd') <= t.end_date)
@@ -110,7 +110,7 @@
 	  		FROM BG_PROJECT_INFO t
    		WHERE #{username} IN (SELECT t1.username FROM BG_SYS_USER t1 JOIN BG_PROJECT_USER t2 ON t1.hrcode=t2.hrcode WHERE t2.project_id=t.id AND t2.status='1')
  		AND t.status='1' 
- 		AND t.project_status IN ('1','2')
+ 		AND t.project_status = '1'
  		ORDER BY t.create_date DESC
 	</select>
 	

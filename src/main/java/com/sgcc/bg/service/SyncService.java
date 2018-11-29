@@ -98,13 +98,4 @@ public interface SyncService {
 	 * 同步综合人资数据，共5部分数据，1、特殊部门 2、特殊员工 3、部门排序 4、单位（科室）排序 5、员工排序
 	 */
 	public void syncZhglSyncData();
-	
-	/**
-	 * 添加专责权限
-	 * @param empCode
-	 * @param deptCode
-	 * @param roleCode
-	 * @return
-	 */
-	public String addDuty(String empCode, String deptCode, String roleCode);
 }

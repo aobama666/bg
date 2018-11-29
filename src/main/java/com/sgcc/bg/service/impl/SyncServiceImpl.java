@@ -230,21 +230,4 @@ public class SyncServiceImpl implements SyncService {
 			}
 		}
 	}
-
-	@Override
-	public String addDuty(String empCode, String deptCode, String roleCode) {
-		int affectedRows_1=syncDataMapper.addUserRole(empCode,roleCode);
-		int affectedRows_2=syncDataMapper.addUserOrgan(empCode,deptCode);
-		if(affectedRows_1==1 && affectedRows_2==1){
-			return "授权成功!";
-		}else{
-			return "授权失败!";
-		}
-	}
-	
-	/*	public static void main(String[] args) {
-		syncErpHrUserDataByMh();
-	}
-	*/
-
 }

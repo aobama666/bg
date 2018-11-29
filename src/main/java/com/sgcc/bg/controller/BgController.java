@@ -71,8 +71,8 @@ public class BgController {
 	@RequestMapping("/initPage")
 	@ResponseBody
 	public String initPage(String proName, String proStatus, Integer page, Integer limit) {
-		proStatus=proStatus.trim();
-		proName=proName.trim();
+		proStatus=Rtext.toStringTrim(proStatus, "");
+		proName=Rtext.toStringTrim(proName, "");
 		List<Map<String, String>> content = bgService.getAllProjects(proName, proStatus);
 		int start = 0;
 		int end = 30;
@@ -231,6 +231,7 @@ public class BgController {
 			}
 		}
 	}
+	
 	@RequestMapping(value = "/readEmpExcel", method = { RequestMethod.POST, RequestMethod.GET })
 	public void readEmpExcel(
 			@RequestParam("empFile") MultipartFile empFile ,
