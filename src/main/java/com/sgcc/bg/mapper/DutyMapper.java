@@ -68,5 +68,15 @@ public interface DutyMapper {
 	public void deleteOrganByPDeptCode(
 			@Param("empCode")String empCode,
 			@Param("pDeptCode")String pDeptCode);
+
+	/**
+	 * 获取父级组织
+	 * @param empCode
+	 * @param deptCode
+	 * @return
+	 */
+	public Map<String, Object> getFatherOrgan(
+			@Param("empCode")String empCode, 
+			@Param("deptCode")String deptCode);
 	
 }

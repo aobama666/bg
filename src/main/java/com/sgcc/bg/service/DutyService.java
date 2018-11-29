@@ -13,7 +13,7 @@ public interface DutyService {
 	 * @param roleCode
 	 * @return
 	 */
-	public String addDuty(String empCode, String deptCode, String roleCode);
+	public int addDuty(String empCode, String deptCode, String roleCode);
 
 	/**
 	 * 获取所有专责权限信息

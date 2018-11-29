@@ -107,9 +107,9 @@ public class DutyController {
 			rw.setMsg("数据不完整！");
 			return rw;
 		}
-		String result=dutyService.addDuty(empCode,deptCode,roleCode);
+		int result = dutyService.addDuty(empCode,deptCode,roleCode);
 		rw.setSuccess("true");
-		rw.setMsg(result);
+		rw.setMsg(result==1?"授权成功":"已存在上级组织权限！");
 		return rw;
 	}
 	

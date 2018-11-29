@@ -39,20 +39,35 @@ public class DutyServiceImpl implements DutyService {
 	private static Logger log = LoggerFactory.getLogger(DutyServiceImpl.class);
 
 	@Override
-	public String addDuty(String empCode, String deptCode, String roleCode) {
-		//新增组织下如果有组织，则将其全部删除
+	public int addDuty(String empCode, String deptCode, String roleCode) {
+		//如果新增组织在权限表中存在父级组织，则不再添加
+		if(existsFatherOrgan(empCode,deptCode)) return 0;
+		
+		//新增组织下如果有组织，则将其全部删除；如果有上级组织，则不允许添加
 		if("MANAGER_UNIT".equals(roleCode) || "MANAGER_KJB".equals(roleCode)){
 			dutyMapper.deleteOrganByPDeptCode(empCode,null);
 		}else if("MANAGER_DEPT".equals(roleCode)){
 			dutyMapper.deleteOrganByPDeptCode(empCode,deptCode);
+		}else if("MANAGER_LAB".equals(roleCode)){
+			
 		}
 		dutyMapper.deleteRole(empCode);
 		
 		dutyMapper.addUserRole(empCode,roleCode);//在sql中已做了判断：如果该人员已存在该类型角色，则不再重复添加
 		dutyMapper.addUserOrgan(empCode,deptCode);
-		return "授权成功!";
+		return 1;
 	}
 	
+	/**
+	 * 验证某人是否存在该组织对应的上级部门的权限
+	 * @param empCode
+	 * @param deptCode
+	 * @return
+	 */
+	private boolean existsFatherOrgan(String empCode,String deptCode){
+		Map<String,Object> fatherOrgan = dutyMapper.getFatherOrgan(empCode,deptCode);
+		return fatherOrgan==null?false:true;
+	}
 
 	@Override
 	public List<Map<String, Object>> getAllDuties(String username,String deptCode,String roleCode) {
@@ -82,7 +97,8 @@ public class DutyServiceImpl implements DutyService {
 
 		HSSFWorkbook wb = null;
 		//获取通过验证的专责信息
-		List<Map<String,Object>> correctList = new ArrayList<>();
+		//List<Map<String,Object>> correctList = new ArrayList<>();
+		int count = 0;
 		//出错项目信息
 		List<Map<String,Object>> errorList = new ArrayList<>();
 		//存储在ftp的错误文件名称
@@ -172,23 +188,37 @@ public class DutyServiceImpl implements DutyService {
 						}
 					}
 					
+					//如果新增组织在权限表中存在父级组织，则不再添加
+					if(errorNum.size()==0 && existsFatherOrgan(empCode,deptCode)){
+						errorNum.add(5);
+						errorInfo.append("已存在上级组织权限！ ");
+					}
+					
 					//校验重复
 					String str = empCode+role+deptCode;
 					if(errorNum.size()==0 && !repeatChecker.add(str)){
 						errorNum.add(2);
-						errorNum.add(3);
 						errorNum.add(5);
-						errorInfo.append("必填项重复！ ");
+						errorInfo.append("重复添加！ ");
 					}
 					
 					// 校验结束，分流数据
 					if (errorNum.size()==0) {// 通过校验
 						//保存正确数据
-						Map<String,Object> correctMap = new HashMap<String, Object>();
-						correctMap.put("empCode", empCode);
-						correctMap.put("deptCode", deptCode);
-						correctMap.put("role", role);
-						correctList.add(correctMap);
+						String roleCode = null;
+						if("院专责".equals(role)){
+							roleCode = "MANAGER_UNIT";
+						}else if("科技部专责".equals(role)){
+							roleCode = "MANAGER_KJB";
+						}else if("部门专责".equals(role)){
+							roleCode = "MANAGER_DEPT";
+						}else if("处室专责".equals(role)){
+							roleCode = "MANAGER_LAB";
+						}
+						int result = addDuty(empCode,deptCode,roleCode);
+						
+						if(result==1) count++;
+						
 					} else {// 未通过校验
 						Map<String,Object> errortMap = new HashMap<String, Object>();
 						errortMap.put("sqnum", cellValue[0]);
@@ -240,23 +270,7 @@ public class DutyServiceImpl implements DutyService {
 				}
 			}
 		}
-		for (Map<String,Object> map: correctList) {
-			String empCode = Rtext.toString(map.get("empCode"));
-			String deptCode = Rtext.toString(map.get("deptCode"));
-			String role = Rtext.toString(map.get("role"));
-			String roleCode = null;
-			if("院专责".equals(role)){
-				roleCode = "MANAGER_UNIT";
-			}else if("科技部专责".equals(role)){
-				roleCode = "MANAGER_KJB";
-			}else if("部门专责".equals(role)){
-				roleCode = "MANAGER_DEPT";
-			}else if("处室专责".equals(role)){
-				roleCode = "MANAGER_LAB";
-			}
-			addDuty(empCode,deptCode,roleCode);
-		}
-		String[] object = {"成功导入项目信息"+correctList.size()+"条，失败"+errorList.size()+"条",errorUUID};
+		String[] object = {"成功导入项目信息"+ count +"条，失败"+errorList.size()+"条",errorUUID};
 		return object;
 		//
 	}
