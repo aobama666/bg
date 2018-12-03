@@ -162,18 +162,8 @@
 </div>
 </body>
 <script type="text/javascript">
-var date= new Date();
-var startTime = day(date)+"-01";
-var newDate =  new Date(date.getFullYear()+"/"+(date.getMonth()+2)+"/1");
-var newDate1 = new Date(newDate.getTime()-24*60*60*1000);
-var endTime = day(newDate1)+"-"+newDate1.getDate();
-function day(date){
-    var year = date.getFullYear();
-    var mouth = date.getMonth()+1;
-    return year +"-"+ (mouth<10?"0"+mouth:mouth);
-}
-$("input[name=startTime]").val(startTime);
-$("input[name=endTime]").val(endTime);
+$("input[name=startTime]").val(common.getMonthFirstDay());
+$("input[name=endTime]").val(common.getMonthEndDay());
 var deptName2=$("input[name=deptName2]").val(deptName2);
 var mmg,mmg2,mmg3;
 var pn = 1,pn2 = 1,pn3 = 1;

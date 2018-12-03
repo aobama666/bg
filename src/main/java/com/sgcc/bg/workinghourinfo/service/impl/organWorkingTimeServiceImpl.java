@@ -15,14 +15,14 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.sgcc.bg.common.CommonCurrentUser;
 import com.sgcc.bg.common.CommonUser;
 import com.sgcc.bg.common.DateUtil;
@@ -36,8 +36,6 @@ import com.sgcc.bg.service.OrganStuffTreeService;
 import com.sgcc.bg.workinghourinfo.Utils.DataBean;
 import com.sgcc.bg.workinghourinfo.Utils.DataUtil1;
 import com.sgcc.bg.workinghourinfo.service.organWorkingTimeService;
-import com.sgcc.bg.model.Dept;
-import com.sgcc.bg.model.UserPrivilege;
 
 @Service
 public class organWorkingTimeServiceImpl implements organWorkingTimeService {

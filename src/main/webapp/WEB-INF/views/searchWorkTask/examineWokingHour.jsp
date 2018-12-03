@@ -154,6 +154,8 @@ $(function(){
 
 function init(){
 	$(".form_date").datepicker({autoclose:true,todayHighlight:true,language: 'cn',clearBtn:true,orientation:'auto'});
+	var startDate =$("input[name=startTime]").val(common.getMonthFirstDay());
+	var endDate=$("input[name=endTime]").val(common.getMonthEndDay());
 }
 function forSearch(){
 	var startDate =$("input[name=startTime]").val();

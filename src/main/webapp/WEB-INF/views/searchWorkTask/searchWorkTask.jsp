@@ -115,98 +115,11 @@ var mmg;
 var pn = 1;
 var limit = 30;
 $(function(){
-	$("input[name=startTime]").val(dateRangeUtil.getMonthFirstDay());
-	$("input[name=endTime]").val(dateRangeUtil.getMonthEndDay());
+	$("input[name=startTime]").val(common.getMonthFirstDay());
+	$("input[name=endTime]").val(common.getMonthEndDay());
 	init();
 	queryList();
 });
-
-
-
-var dateRangeUtil = (function () {
-  
-    this.getCurrentDate = function () {
-	var data=new Date();
-        return  data;
-    };
-    
-    this.getMonthFirstDay = function () {
-       
-        
-        var currentDate = this.getCurrentDate();
-        
-        var currentMonth = currentDate.getMonth();
-       
-        var currentYear = currentDate.getFullYear();
-        
-        var firstDay = new Date(currentYear, currentMonth, 1);
-	   
-	    var d = new Date(firstDay);  
-	    var day=d.getDate();
-		if(0<day&&day<10){
-	     day="0"+day ;
-	    }else{
-	     day=day ;
-	    }
-		var month=(d.getMonth() + 1);
-        if(0<month&&month<10){
-	     month="0"+month ;
-	    }else{
-	     month=month ;
-	    }
-		
- 	    var d = new Date(firstDay);  
-	    var youWant=d.getFullYear() + '-' +  month + '-' + day  ; 
-       
-        return youWant;
-    };
-  
-    this.getMonthEndDay = function () {
-         
-        var currentDate = this.getCurrentDate();
-           
-        var currentMonth = currentDate.getMonth();
-        
-        var currentYear = currentDate.getFullYear();
-       
-        if (currentMonth == 11) {
-            currentYear++;
-            currentMonth = 0;  
-        } else {
-            
-            currentMonth++;
-        }
-        
-        var millisecond = 1000 * 60 * 60 * 24;
-        
-        var nextMonthDayOne = new Date(currentYear, currentMonth, 1);
-        
-        var lastDay = new Date(nextMonthDayOne.getTime() - millisecond);
- 
-       var d = new Date(lastDay);  
-	   var month=(d.getMonth() + 1);
-	   if(0<month&&month<10){
-	     month="0"+month ;
-	   }else{
-	     month=month ;
-	   }
-	  
-	   
-	   var youWant=d.getFullYear() + '-' + month + '-' + d.getDate() ; 
-         
-        return youWant;
-
-    };
-  
-    
-    return this;
-    
-})();
-
-
-
-
-
 
 
 function init(){
