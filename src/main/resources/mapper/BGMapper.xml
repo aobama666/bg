@@ -91,13 +91,13 @@
 			START_DATE,END_DATE,
 			ROLE,STATUS,
 			CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
-			SRC)
+			SRC,TASK,PLANHOURS)
 		VALUES
 			(#{id}, #{hrcode,jdbcType=VARCHAR},#{empName,jdbcType=VARCHAR}, #{projectId,jdbcType=VARCHAR},
 			#{startDate,jdbcType=DATE},#{endDate,jdbcType=DATE},
 			#{role,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},
 			#{createUser,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateDate,jdbcType=TIMESTAMP},
-			#{src,jdbcType=VARCHAR})
+			#{src,jdbcType=VARCHAR},#{task,jdbcType=VARCHAR},#{planHours,jdbcType=DOUBLE})
 	</insert>
 	
 	<update id="updateProInfo"  parameterType="com.sgcc.bg.model.ProjectInfoPo">
@@ -174,7 +174,8 @@
       		t.HRCODE,
       		TO_CHAR(t.START_DATE,'YYYY-MM-DD') AS START_DATE,
       		TO_CHAR(t.END_DATE,'YYYY-MM-DD') AS END_DATE,
-			t.ROLE,t.STATUS,t.empname as NAME 
+			t.ROLE,t.STATUS,t.empname as NAME ,
+			t.TASK,t.PLANHOURS
 		FROM BG_PROJECT_USER t
 		WHERE t.PROJECT_ID=#{proId} AND t.STATUS='1'
 		ORDER BY t.ROLE DESC,t.HRCODE,t.START_DATE

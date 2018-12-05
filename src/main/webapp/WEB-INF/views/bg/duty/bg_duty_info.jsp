@@ -253,6 +253,22 @@ function forImport(){
 		}
 	});
 }
+
+function forExport(){
+	if($("#mmg").has(".emptyRow").length>0){
+		layer.msg("无可导出数据");
+		return;
+	}
+	var ids = mmg.selectedRowsByName("id");
+	//如果没有选择任何记录，则把当前条件传到后台查询所有记录
+	ids==""?ids=JSON.stringify($(".query-box").sotoCollecter()):ids;
+	$("input[name=ids]").val(ids);
+	var ran = Math.random()*1000;
+	document.forms[1].action ="<%=request.getContextPath()%>/project/exportSelectedItems?ran="+ran;
+	document.forms[1].submit();
+	$("input[name=ids]").val("");
+}
+
  
 function forClose(){
 	layer.msg("自定义关闭！");
@@ -263,6 +279,12 @@ function forClose(){
 function popEvent(ids,codes,texts,pId,level){
 	//alert(level);
 }
+//回车键提交事件
+$("body").keydown(function(){
+    if(event.keyCode=="13"){
+    	forSearch();
+    }
+})
 </script>
 </html>
 	

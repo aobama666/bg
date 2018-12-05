@@ -33,6 +33,10 @@ public class ProjectUserPo implements Serializable{
 	private String updateUser;
 	//最近一次修改时间
 	private Date updateDate;
+	//工作任务
+	private String task;
+	//计划投入工时
+	private Double planHours;
 	//数据来源
 	private String src;
 	
@@ -136,6 +140,22 @@ public class ProjectUserPo implements Serializable{
 		this.updateDate = updateDate;
 	}
 
+	public String getTask() {
+		return task;
+	}
+
+	public void setTask(String task) {
+		this.task = task;
+	}
+
+	public Double getPlanHours() {
+		return planHours;
+	}
+
+	public void setPlanHours(Double planHours) {
+		this.planHours = planHours;
+	}
+
 	public String getSrc() {
 		return src;
 	}
@@ -186,7 +206,7 @@ public class ProjectUserPo implements Serializable{
 		return "ProjectUserPo [id=" + id + ", hrcode=" + hrcode + ", empName=" + empName + ", projectId=" + projectId
 				+ ", role=" + role + ", status=" + status + ", startDate=" + startDate + ", endDate=" + endDate
 				+ ", createUser=" + createUser + ", createDate=" + createDate + ", updateUser=" + updateUser
-				+ ", updateDate=" + updateDate + ", src=" + src + "]";
+				+ ", updateDate=" + updateDate + ", task=" + task + ", planHours=" + planHours + ", src=" + src + "]";
 	}
 
 }

@@ -473,6 +473,9 @@ public class BGServiceImpl implements IBGService {
 			List<String> list=bgMapper.getAllBgNumbers();
 			//角色类型
 			String roleStr="[项目负责人],[项目参与人]";
+			//验证计划投入工时正则表达式
+			String regex ="^0\\.\\d$|^[1-9]+\\d*(\\.\\d)?$";
+			
 			bgServiceLog.info("该参与人员信息excel表格最后一行： " + rows);
 			/* 保存有效的Excel模版列数 */
 			String[] cellValue = new String[10];
@@ -623,10 +626,10 @@ public class BGServiceImpl implements IBGService {
 					
 					// 角色 必填
 					if (Rtext.isEmpty(cellValue[6])) {
-						errorInfo.append("角色不能为空！ ");
+						errorInfo.append("角色不能为空！  ");
 						errorNum.add(6);
 					}else if(!roleStr.contains("["+cellValue[6]+"]")){
-						errorInfo.append("不存在此角色！ ");
+						errorInfo.append("不存在此角色！  ");
 						errorNum.add(6);
 					}else if(!Rtext.isEmpty(proId)){//项目存在
 						//获取map中指定项目的项目负责人数量
@@ -634,7 +637,7 @@ public class BGServiceImpl implements IBGService {
 						if("项目负责人".equals(cellValue[6])){
 							int principalCount=bgMapper.getPrincipalCountByProId(proId);
 							if(principalCount>0 || currentValue>0){
-								errorInfo.append("项目已存在负责人！ ");
+								errorInfo.append("项目已存在负责人！  ");
 								errorNum.add(6);
 							}
 						}
@@ -655,7 +658,7 @@ public class BGServiceImpl implements IBGService {
 						if("项目负责人".equals(cellValue[6])){//此人存在且为负责人时，项目中如果已存在测人记录，则不允许添加
 							for (Map<String, String> map : empList) {
 								if(cellValue[3].equals(map.get("HRCODE"))){
-									errorInfo.append("此人已存在项目中，不允许添加为负责人！ ");
+									errorInfo.append("此人已存在项目中，不允许添加为负责人！  ");
 									errorNum.add(6);
 									break;
 								}
@@ -663,7 +666,7 @@ public class BGServiceImpl implements IBGService {
 						}else{//此人存在且为参与人时，项目中此人如果已经作为负责人，则不允许添加
 							for (Map<String, String> map : empList) {
 								if(cellValue[3].equals(map.get("HRCODE")) && "1".equals(map.get("ROLE"))){
-									errorInfo.append("此人为当前项目负责人，请勿重复添加！ ");
+									errorInfo.append("此人为当前项目负责人，请勿重复添加！  ");
 									errorNum.add(6);
 									break;
 								}
@@ -671,6 +674,16 @@ public class BGServiceImpl implements IBGService {
 						}
 					}
 
+					if(!Rtext.isEmpty(cellValue[7]) && cellValue[7].length()>200){
+						errorInfo.append("工作任务超过200字！  ");
+						errorNum.add(7);
+					}
+					
+					if(!Rtext.isEmpty(cellValue[8]) && !cellValue[8].matches(regex)){
+						errorInfo.append("计划投入工时格式错误！  ");
+						errorNum.add(8);
+					}
+					
 					// 校验结束，分流数据
 					if ("".equals(errorInfo.toString())) {
 						// 通过校验 ,保存正确数据
@@ -690,6 +703,8 @@ public class BGServiceImpl implements IBGService {
 						}else{
 							proUser.setRole("0");
 						}
+						proUser.setTask(cellValue[7]);
+						proUser.setPlanHours(Double.parseDouble(cellValue[8]));
 						proUser.setStatus("1");
 						proUser.setCreateDate(new Date());
 						proUser.setUpdateDate(new Date());
@@ -706,6 +721,8 @@ public class BGServiceImpl implements IBGService {
 						pruv.setStartDate(cellValue[4]);
 						pruv.setEndDate(cellValue[5]);
 						pruv.setRole(cellValue[6]);
+						pruv.setTask(cellValue[7]);
+						pruv.setPlanHours(cellValue[8]);
 						pruv.setErrorInfo(errorInfo.toString());
 						pruv.setErrSet(errorNum);
 						errorList.add(pruv);
@@ -725,6 +742,8 @@ public class BGServiceImpl implements IBGService {
 						{ "项目开始时间\r\n（选填，格式：YYYY-MM-DD，如果不填写，系统默认项目开始日期）","startDate","nowrap"}, 
 						{ "项目结束时间\r\n（选填，格式：YYYY-MM-DD，如果不填写，系统默认项目开始日期）","endDate","nowrap"},
 						{ "角色\r\n（必填）","role","nowrap"},
+						{ "工作任务\r\n（选填，200字以内）", "task" ,"nowrap"},
+						{ "计划投入工时\r\n（选填，正数，\r\n最多精确到一位小数）", "planHours" ,"nowrap"},
 						{ "错误说明","errorInfo"}
 					};
 				
@@ -871,7 +890,10 @@ public class BGServiceImpl implements IBGService {
 			String hrCode=Rtext.toStringTrim(map.get("hrcode"),"");
 			String startDateStr=Rtext.toStringTrim(map.get("startDate"),"");
 			String endDateStr=Rtext.toStringTrim(map.get("endDate"),"");
+			String taskStr=Rtext.toStringTrim(map.get("task"),"");
+			String planHoursStr=Rtext.toStringTrim(map.get("planHours"),"");
 			String role="";
+			Double planHours=null;
 			//校验数据
 			if(Rtext.isEmpty(empName) || Rtext.isEmpty(hrCode) || Rtext.isEmpty(roleStr) 
 					|| Rtext.isEmpty(startDateStr) || Rtext.isEmpty(endDateStr)){
@@ -899,6 +921,20 @@ public class BGServiceImpl implements IBGService {
 				//CommonCurrentUser user=userUtils.getCommonCurrentUserByHrCode(hrCode);
 				//bgService.updateProInfoField(proId,"organ_info",user.getDeptId());
 			}
+			if(taskStr.length()>200){
+				bgServiceLog.info("工作任务超出200字！");
+				continue;
+			}
+			
+			if(!Rtext.isEmpty(planHoursStr)){
+				try {
+					planHours = Double.parseDouble(planHoursStr);
+				} catch (Exception e) {
+					bgServiceLog.info("计划投入工时格式不正确！");
+					continue;
+				}
+			}
+			
 			ProjectUserPo proUser = new ProjectUserPo();
 			proUser.setId(Rtext.getUUID());
 			proUser.setRole(role);
@@ -907,6 +943,8 @@ public class BGServiceImpl implements IBGService {
 			proUser.setEmpName(empName);
 			proUser.setStartDate(DateUtil.fomatDate(startDateStr));
 			proUser.setEndDate(DateUtil.fomatDate(endDateStr));
+			proUser.setTask(taskStr);
+			proUser.setPlanHours(planHours);
 			proUser.setSrc("0");
 			// 注意事务
 			int affectedRows = addProUser(proUser);
@@ -939,10 +977,10 @@ public class BGServiceImpl implements IBGService {
 			}
 			//System.out.println("**********************************");
 		}
-		Set<String> set=new HashSet<>();
-		for (Map<String, String> map : workerList) {
-			set.add(map.get("HRCODE"));
-		}
+//		Set<String> set=new HashSet<>();
+//		for (Map<String, String> map : workerList) {
+//			set.add(map.get("HRCODE"));
+//		}
 		//System.out.println(set.toString());
 		Map<String, String> resultMap = new HashMap<>();
 		if(workerList.size()>0){

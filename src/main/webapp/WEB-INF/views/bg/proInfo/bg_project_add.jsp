@@ -486,7 +486,9 @@
 	                                     	      {name:'stuffName',vali:'required'},
 	                                     	      {name:'startDate',vali:'required;date;setStartDate();checkDateRange()'},
 	                                     	      {name:'endDate',vali:'required;date;checkDate();checkDateRange()'},
-	                                     	      {name:'role',vali:'required'}
+	                                     	      {name:'role',vali:'required'},
+	                                     	      {name:'task',vali:'length[-200]'},
+	                                     	      {name:'planHours',vali:'checkNumberic()'}
 				                               ]);
 			if(!checkResult){
 				isPass=false;
@@ -582,6 +584,19 @@
 				parent.layer.msg("异常!");
 			}
 		});
+	}
+	
+ 	function checkNumberic(planHours){
+		var result = {};
+		var reg=/^(0\.\d|[1-9]+\d*(\.\d)?)$/;
+		if($.trim(planHours)!="" && !reg.test(planHours)){
+			result.result = false;
+			result.info = "必须为正数；";
+		}else{
+			result.result = true;
+			result.info = "";
+		}
+		return result;
 	}
 	
  	/* function arrRepeat(arr){
@@ -746,11 +761,21 @@
 		            		}
 			            	return  text;
 			            }	
-		           	 }
+		           	 },
+		           	 {title:'工作任务', name:'task',sortable:false, width:150,align:'left',
+		            	 renderer:function(val,item,rowIndex){
+			            	 return  '<div style="display:inline"><textarea rows="2" value="" class="form-control" name="task" property="task" style="padding:6px 2px;border:none;text-align:start"></textarea></div>';			            
+			             }
+			          },
+			          {title:'计划投入工时', name:'planHours',sortable:false, width:95,align:'center',
+		            	 renderer:function(val,item,rowIndex){
+			            	 return  '<div style="display:inline"><input value=""  class="form-control" name="planHours" property="planHours" style="padding:6px 2px;text-align:center"></div>';			            
+			             }
+			          }
 		    		];
 		var mmGridHeight = $("body").parent().height() - 220;
 		mmg = $('#mmg').mmGrid({
-			cosEdit:"4,5,6",//声明需要编辑，取消点击选中的列
+			cosEdit:"4,5,6,7,8",//声明需要编辑，取消点击选中的列
 			noDataText:"",
 			indexCol: true,
 			indexColWidth:30,

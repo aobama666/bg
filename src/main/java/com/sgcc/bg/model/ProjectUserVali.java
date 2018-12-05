@@ -38,6 +38,10 @@ public class ProjectUserVali implements Serializable {
 	private String updateUser;
 	// 最近一次修改时间
 	private Date updateDate;
+	//工作任务
+	private String task;
+	//计划投入工时
+	private String planHours;
 	// 错误信息
 	private String errorInfo;
 	// 错误列号
@@ -159,6 +163,22 @@ public class ProjectUserVali implements Serializable {
 		this.updateDate = date;
 	}
 
+	public String getTask() {
+		return task;
+	}
+
+	public void setTask(String task) {
+		this.task = task;
+	}
+
+	public String getPlanHours() {
+		return planHours;
+	}
+
+	public void setPlanHours(String planHours) {
+		this.planHours = planHours;
+	}
+
 	public String getErrorInfo() {
 		return errorInfo;
 	}
@@ -214,12 +234,11 @@ public class ProjectUserVali implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ProjectUserVali [sqnum=" + sqnum + ", projectNumber=" + projectNumber + ", id=" + id + ", hrcode=" + hrcode
-				+ ", empName=" + empName + ", projectId=" + projectId + ", role=" + role + ", status=" + status
+		return "ProjectUserVali [sqnum=" + sqnum + ", projectNumber=" + projectNumber + ", id=" + id + ", hrcode="
+				+ hrcode + ", empName=" + empName + ", projectId=" + projectId + ", role=" + role + ", status=" + status
 				+ ", startDate=" + startDate + ", endDate=" + endDate + ", createUser=" + createUser + ", createDate="
-				+ createDate + ", updateUser=" + updateUser + ", updateDate=" + updateDate + ", errorInfo=" + errorInfo
-				+ ", errSet=" + errSet + "]";
+				+ createDate + ", updateUser=" + updateUser + ", updateDate=" + updateDate + ", task=" + task
+				+ ", planHours=" + planHours + ", errorInfo=" + errorInfo + ", errSet=" + errSet + "]";
 	}
 
-	
 }

@@ -32,7 +32,9 @@
 	         WHERE t3.project_id = b.id
 	           AND t3.role = 1) as principal,
 	       to_char(b.UPDATE_DATE, 'yyyy-MM-dd') as UPDATE_DATE,
-	       to_char(b.CREATE_DATE, 'yyyy-MM-dd') as CREATE_DATE
+	       to_char(b.CREATE_DATE, 'yyyy-MM-dd') as CREATE_DATE,
+	       F.TASK,
+	       F.PLANHOURS
 	  from BG_PROJECT_INFO b
 	  LEFT JOIN BG_PROJECT_USER F ON F.PROJECT_ID = b.id
 	 where b.ID in
