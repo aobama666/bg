@@ -9,7 +9,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
 
-<title>专责授权</title>
+<title>审批权限</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css"
@@ -43,7 +43,7 @@ a{
 </head>
 <body>
 	<div class="page-header-sl">
-		<h5>专责授权</h5>
+		<h5>审批权限授权</h5>
 		<div class="button-box">
 			<button type="button" class="btn btn-primary btn-xs"
 				 name="kOne" onclick="forAdd()">新增</button>
@@ -86,10 +86,16 @@ a{
 					<div class="controls">
 						<select id="roleCode" name="roleCode" property="roleCode">
 								<option></option>
-								<option value="MANAGER_UNIT">院专责</option>
-								<option value="MANAGER_DEPT">部门专责</option>
-								<option value="MANAGER_LAB">处室专责</option>
-								<option value="MANAGER_KJB">科技部专责</option>
+								<option value="SUT1">院领导</option>
+								<option value="SUT2">分管院领导</option>
+								<option value="SUT3">院助理副总师</option>
+								<option value="SUT4">部门行政正职</option>
+								<option value="SUT5">部门副职</option>
+								<option value="SUT6">部门助理副总师</option>
+								<option value="SUT7">技术专家</option>
+								<option value="SUT8">处室正职</option>
+								<option value="SUT9">处室副职</option>
+								<option value="SUT10">专业通道员工</option>
 						</select>
 					</div>
 				</div>
@@ -129,10 +135,10 @@ function queryList(load){
 	var w=$(window).width();
 	var ran = Math.random()*100000000;
 	var cols = [
-				{title:'序列', name:'id', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
+				{title:'UUID', name:'UUID', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'人员姓名',name:'USERALIAS', width:100, sortable:false, align:'center'},
 	            {title:'人员编号', name:'HRCODE',width:80, sortable:false, align:'center'},
-	            {title:'人员角色', name:'ROLE_NAME', width:100, sortable:false, align:'center'},
+	            {title:'人员角色', name:'SUBNAME', width:100, sortable:false, align:'center'},
 	           /*  {title:'人员编号', name:'HRCODE',width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		return '<a href="###" title="'+val+'" onclick="forDetails(\''+item.id+'\')">'+val+'</a>';
@@ -161,7 +167,7 @@ function queryList(load){
 	            {title:'组织编号', name:'DEPTCODE', width:80,sortable:false, align:'center'},
 	            {title:'操作', name:'handle', width:50, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
-	            		return '<a onclick="forDelete(\''+item.HRCODE+'\',\''+item.DEPTCODE+'\',\''+item.ROLE_CODE+'\')">删除</a>';
+	            		return '<a onclick="forDelete(\''+item.UUID+'\')">删除</a>';
 	            	}
 	            }
 	    		];
@@ -175,7 +181,7 @@ function queryList(load){
 		height: mmGridHeight,
 		cols: cols,
 		nowrap: true,
-		url: '<%=request.getContextPath()%>/duty/listDuties?ran='+ran,
+		url: '<%=request.getContextPath()%>/approver/listApprovers?ran='+ran,
 		fullWidthRows: true,
 		multiSelect: true,
 		root: 'items',
@@ -209,22 +215,22 @@ function forAdd(){
 	}
 	layer.open({
 		type:2,
-		title:"专责权限-新增",
+		title:"审批权限-新增",
 		area:['620px', height+'px'],
 		//scrollbar:false,
 		skin:'query-box',
-		content:['<%=request.getContextPath()%>/duty/addPage']
+		content:['<%=request.getContextPath()%>/approver/addPage']
 	}); 
 }
 
 //删除
-function forDelete(hrCode,deptCode,roleCode){
+function forDelete(id){
 	layer.confirm('确认删除吗？', {icon: 7,title:'提示',shift:-1},
 		function(index){
 			layer.close(index);
 			var ran = Math.random()*1000000;
-			$.post("<%=request.getContextPath()%>/duty/deleteDuty?ran="+ran,
-					{ hrCode: hrCode, deptCode: deptCode,roleCode : roleCode},
+			$.post("<%=request.getContextPath()%>/approver/deleteDuty?ran="+ran,
+					{ id: id},
 					function(data){
 						if(data.success=="true"){
 							parent.queryList("reload");
@@ -247,7 +253,7 @@ function forImport(){
 		area:['620px', height+'px'],
 		resize:false,
 		scrollbar:false,
-		content:['<%=request.getContextPath()%>/duty/importExcelPage'],
+		content:['<%=request.getContextPath()%>/approver/importExcelPage'],
 		end: function(){
 			
 		}
@@ -263,7 +269,7 @@ function forExport(){
 	//如果没有选择任何记录，则把当前条件传到后台查询所有记录
 	//index = index==""?JSON.stringify($(".query-box").sotoCollecter()):index;
 	$("input[name=index]").val(index);
-	document.forms[0].action ="<%=request.getContextPath()%>/duty/exportSelectedItems";
+	document.forms[0].action ="<%=request.getContextPath()%>/approver/exportSelectedItems";
 	document.forms[0].submit();
 	$("input[name=index]").val("");
 }
@@ -271,7 +277,6 @@ function forExport(){
  
 function forClose(){
 	layer.msg("自定义关闭！");
-	return ;
 	parent.layer.close(parent.layer.getFrameIndex(window.name));
 }
 

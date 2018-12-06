@@ -13,7 +13,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>添加专责权限</title>
+<title>添加审批权限</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css"
@@ -91,10 +91,16 @@
 			<div class="controls">
 				<select id="roleCode" name="roleCode" property="roleCode">
 						<option></option>
-						<option value="MANAGER_UNIT">院专责</option>
-						<option value="MANAGER_DEPT">部门专责</option>
-						<option value="MANAGER_LAB">处室专责</option>
-						<option value="MANAGER_KJB">科技部专责</option>
+						<option value="SUT1">院领导</option>
+						<option value="SUT2">分管院领导</option>
+						<option value="SUT3">院助理副总师</option>
+						<option value="SUT4">部门行政正职</option>
+						<option value="SUT5">部门副职</option>
+						<option value="SUT6">部门助理副总师</option>
+						<option value="SUT7">技术专家</option>
+						<option value="SUT8">处室正职</option>
+						<option value="SUT9">处室副职</option>
+						<option value="SUT10">专业通道员工</option>
 				</select>
 			</div>
 		</div>	
@@ -123,16 +129,15 @@
 			return;
 		}
 		
-		if( (level==0 && (roleCode!='MANAGER_UNIT' && roleCode!='MANAGER_KJB')) ||
+		/* if( (level==0 && (roleCode!='MANAGER_UNIT' && roleCode!='MANAGER_KJB')) ||
 			(level==1 && roleCode!='MANAGER_DEPT') ||
 			(level==2 && roleCode!='MANAGER_LAB')){
 			
 			layer.msg("组织类型和角色不匹配！");			
 			return;
-		}
+		} */
 
-		var ran = Math.random()*1000000;
-		$.post("<%=request.getContextPath()%>/duty/addDuty?ran="+ran,
+		$.post("<%=request.getContextPath()%>/approver/addApprover",
 				{ empCode: empCode, deptCode: deptCode, roleCode : roleCode},
 				function(data){
 					if(data.success=="true"){
