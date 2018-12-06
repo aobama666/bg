@@ -72,6 +72,7 @@
 					<div class="controls bg-white">
 						<input type="text" name="category" property="category" 
 							<c:choose>
+								<c:when test="${category=='QT'}"> value="其他"</c:when>
 								<c:when test="${category=='HX'}"> value="横向项目"</c:when>
 								<c:when test="${category=='KY'}"> value="科研项目"</c:when>
 								<c:when test="${category=='JS'}"> value="技术服务项目"</c:when>
@@ -206,23 +207,25 @@
 	function queryList(load){
 		var ran = Math.random()*100000000;
 		var cols = [
-		            //{title:'序列', name:'hex2', sortable:false, align:'center', hidden: true, lockDisplay: true},
-		            //{title:'选择', name:'label', width:100, sortable:false, align:'left'},
-		            {title:'人员编号', name:'HRCODE',width:100,sortable:false, align:'center'},
-		            {title:'人员姓名', name:'NAME',sortable:false, width:100,align:'center'},
-		            {titleHtml:'开始日期',width:100, name:'START_DATE', sortable:false, align:'center'},
-		            {titleHtml:'结束日期', width:100,name:'END_DATE', sortable:false, align:'center'},
-		            {titleHtml:'角色', width:130,name:'ROLE',sortable:false, align:'center',
-		            	renderer:function(val,item,rowIndex){
-		            		var text='';
-		            		if(val==0){
-		            			text='项目参与人';
-		            		}else if(val==1){
-		            			text='项目负责人';
-		            		}
-			            	return  text;
-			            }	
-		            }
+						 //{title:'序列', name:'hex2', sortable:false, align:'center', hidden: true, lockDisplay: true},
+						 //{title:'选择', name:'label', width:100, sortable:false, align:'left'},
+						 {title:'人员编号', name:'HRCODE',width:100,sortable:false, align:'center'},
+						 {title:'人员姓名', name:'NAME',sortable:false, width:100,align:'center'},
+						 {titleHtml:'开始日期',width:100, name:'START_DATE', sortable:false, align:'center'},
+						 {titleHtml:'结束日期', width:100,name:'END_DATE', sortable:false, align:'center'},
+						 {titleHtml:'角色', width:130,name:'ROLE',sortable:false, align:'center',
+						 	renderer:function(val,item,rowIndex){
+						 		var text='';
+						 		if(val==0){
+						 			text='项目参与人';
+						 		}else if(val==1){
+						 			text='项目负责人';
+						 		}
+						  	return  text;
+						  }	
+						 },
+						 {title:'工作任务', name:'TASK',sortable:false, width:150,align:'left'},
+						 {title:'计划投入工时', name:'PLANHOURS',sortable:false, width:95,align:'center'}
 		    		];
 		var mmGridHeight = $("body").parent().height() - 220;
 		mmg = $('#mmg').mmGrid({

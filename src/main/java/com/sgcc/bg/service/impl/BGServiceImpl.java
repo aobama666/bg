@@ -474,7 +474,7 @@ public class BGServiceImpl implements IBGService {
 			//角色类型
 			String roleStr="[项目负责人],[项目参与人]";
 			//验证计划投入工时正则表达式
-			String regex ="^0\\.\\d$|^[1-9]+\\d*(\\.\\d)?$";
+			String regex ="^(0\\.\\d|[1-9]+\\d*(\\.\\d)?)$";
 			
 			bgServiceLog.info("该参与人员信息excel表格最后一行： " + rows);
 			/* 保存有效的Excel模版列数 */

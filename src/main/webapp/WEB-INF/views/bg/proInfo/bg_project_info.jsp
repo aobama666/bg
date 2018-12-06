@@ -220,7 +220,7 @@ function forDetails(proId){
 	layer.open({
 		type:2,
 		title:"项目信息-查看",
-		area:['620px', height+"px"],
+		area:['865px', height+"px"],
 		//scrollbar:false,
 		skin:'query-box',
 		content:['<%=request.getContextPath()%>/project/pro_details?proId='+proId]

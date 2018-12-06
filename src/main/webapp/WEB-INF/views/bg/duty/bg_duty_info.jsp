@@ -63,7 +63,7 @@ a{
 	<hr>
 	<div class="query-box">
 		<div class="query-box-left">
-			<form name="queryBox" action=""
+			<form name="queryBox" action="" method="post"
 				style="width: 100%; padding-left: 10px">
 				<div class="form-group col-xs-4">
 					<label for="username"><!-- <font class="glyphicon glyphicon-asterisk required"></font> -->人员</label>
@@ -93,6 +93,7 @@ a{
 						</select>
 					</div>
 				</div>
+				<input type="hidden" name="index" value="">
 			</form>
 		</div>
 		<div class="query-box-right">
@@ -129,7 +130,7 @@ function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 				{title:'序列', name:'id', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'人员姓名', name:'USERALIAS', width:100, sortable:false, align:'center'},
+	            {title:'人员姓名',name:'USERALIAS', width:100, sortable:false, align:'center'},
 	            {title:'人员编号', name:'HRCODE',width:80, sortable:false, align:'center'},
 	            {title:'人员角色', name:'ROLE_NAME', width:100, sortable:false, align:'center'},
 	           /*  {title:'人员编号', name:'HRCODE',width:100, sortable:false, align:'center',
@@ -138,7 +139,7 @@ function queryList(load){
 	            	}
 	            }, */
 	            {title:'组织机构', name:'DEPTNAME', width:120,sortable:false, align:'left'},
-	            {title:'组织类型', name:'TYPE', width:80, sortable:false, align:'center',
+	            /* {title:'组织类型', name:'TYPE', width:80, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		var type;
 	            		switch (val){
@@ -156,7 +157,7 @@ function queryList(load){
 	            		}
 	            		return type;
 	            	}
-	            },
+	            }, */
 	            {title:'组织编号', name:'DEPTCODE', width:80,sortable:false, align:'center'},
 	            {title:'操作', name:'handle', width:50, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
@@ -259,14 +260,13 @@ function forExport(){
 		layer.msg("无可导出数据");
 		return;
 	}
-	var ids = mmg.selectedRowsByName("id");
+	var index = mmg.selectedRowsIndex();
 	//如果没有选择任何记录，则把当前条件传到后台查询所有记录
-	ids==""?ids=JSON.stringify($(".query-box").sotoCollecter()):ids;
-	$("input[name=ids]").val(ids);
-	var ran = Math.random()*1000;
-	document.forms[1].action ="<%=request.getContextPath()%>/project/exportSelectedItems?ran="+ran;
-	document.forms[1].submit();
-	$("input[name=ids]").val("");
+	//index = index==""?JSON.stringify($(".query-box").sotoCollecter()):index;
+	$("input[name=index]").val(index);
+	document.forms[0].action ="<%=request.getContextPath()%>/duty/exportSelectedItems";
+	document.forms[0].submit();
+	$("input[name=index]").val("");
 }
 
  

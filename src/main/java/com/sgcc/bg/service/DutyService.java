@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 public interface DutyService {
 	
 	/**
@@ -39,4 +41,16 @@ public interface DutyService {
 	 * @return
 	 */
 	public String[] parseDutyExcel(InputStream in);
+
+	/**
+	 * 导出专责权限信息
+	 * @param username
+	 * @param deptCode
+	 * @param roleCode
+	 * @param index
+	 * @param response
+	 * @return
+	 */
+	public String exportSelectedItems(String username, String deptCode, String roleCode, String index,
+			HttpServletResponse response);
 }
