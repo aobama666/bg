@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 public interface ApproverService {
 
 	/**
-	 * 添加专责权限
+	 * 添加审批权限
 	 * @param empCode
 	 * @param deptCode
 	 * @param subType
@@ -18,7 +18,7 @@ public interface ApproverService {
 	public int addApprover(String empCode, String deptCode, String subType);
 
 	/**
-	 * 获取所有专责权限信息
+	 * 获取所有审批权限信息
 	 * @param username
 	 * @param deptcode
 	 * @param roleCode
@@ -34,14 +34,14 @@ public interface ApproverService {
 	public String deleteApprover(String id);
 
 	/**
-	 * 解析专责权限excel文件
+	 * 解析审批权限excel文件
 	 * @param in
 	 * @return
 	 */
-	public String[] parseDutyExcel(InputStream in);
+	public String[] parseApproverFile(InputStream in);
 
 	/**
-	 * 导出专责权限信息
+	 * 导出审批权限信息
 	 * @param username
 	 * @param deptCode
 	 * @param roleCode

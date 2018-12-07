@@ -61,7 +61,7 @@ public class ApproverController {
 	 */
 	@RequestMapping(value = "/importExcelPage", method = RequestMethod.GET)
 	public String importPage(){
-		return "bg/approver/bg_import_duty";
+		return "bg/approver/bg_approver_import";
 	}
 	
 	/**
@@ -70,7 +70,7 @@ public class ApproverController {
 	 */
 	@RequestMapping(value = "/listApprovers", method = RequestMethod.POST)
 	@ResponseBody
-	public String grantDuty(String username,String deptCode,String roleCode,Integer page, Integer limit,Map<String,Object> dataMap){
+	public String listApprovers(String username,String deptCode,String roleCode,Integer page, Integer limit,Map<String,Object> dataMap){
 		username = Rtext.toStringTrim(username, "");
 		deptCode = Rtext.toStringTrim(deptCode, "");
 		roleCode = Rtext.toStringTrim(roleCode, "");
@@ -179,17 +179,17 @@ public class ApproverController {
 		}
 	}
 	
-	@RequestMapping(value = "/readDutyExcel", method = { RequestMethod.POST, RequestMethod.GET })
-	public void readProExcel(
-			@RequestParam("dutyFile") MultipartFile dutyFile,
+	@RequestMapping(value = "/readApproverExcel", method = { RequestMethod.POST, RequestMethod.GET })
+	public void readExcel(
+			@RequestParam("approverFile") MultipartFile approverFile,
 			HttpServletResponse response) throws Exception {
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
 			out.print("<head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head>");
-			if (dutyFile != null) {
-				InputStream in = dutyFile.getInputStream();
-				String[] arr = approverService.parseDutyExcel(in);
+			if (approverFile != null) {
+				InputStream in = approverFile.getInputStream();
+				String[] arr = approverService.parseApproverFile(in);
 				if (arr[0].toString().indexOf("Error") != -1) {// 导入异常
 					out.print(
 							"<script>parent.parent.layer.msg('" + arr[0].toString().split(":")[1] + "');</script>");

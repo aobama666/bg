@@ -34,8 +34,8 @@
 <div class="page-header-sl">
 	<h5>上传Excel</h5>
 	<div class="button-box">
-		<button type="button" class="btn btn-danger btn-xs" style="display:none;" id="errInfoButton" onclick="downLoadErr(this)"> 专责权限错误信息下载</button>
-		<button type="button" class="btn btn-primary btn-xs" onclick="downLoadTemp('专责权限模板.xls')"> 专责权限模板下载</button>
+		<button type="button" class="btn btn-danger btn-xs" style="display:none;" id="errInfoButton" onclick="downLoadErr(this)"> 审批权限错误信息下载</button>
+		<button type="button" class="btn btn-primary btn-xs" onclick="downLoadTemp('审批权限模板.xls')"> 审批权限模板下载</button>
 		<!-- <button type="button" class="btn btn-warning btn-xs" onclick="forClose()"> 关闭</button> -->
 	</div>
 </div>
@@ -46,9 +46,9 @@
 			<span>请选择要导入的EXCEL文件</span>&nbsp;<code>注意：文件需为Excel 97~2003格式，后缀名为.xls</code>
 		</div>
 		<div class="form-group col-xs-12">
-			<label for="duty" style="width:110px;margin-top:5px">专责权限文件：</label>
+			<label for="approver" style="width:110px;margin-top:5px">审批权限文件：</label>
 			<div class="controls" style="margin-left:110px" class="form-control">
-				<input id="file" type="file" name="dutyFile" property="dutyFile" style="display:inline-block;width:395px">
+				<input id="file" type="file" name="approverFile" property="approverFile" style="display:inline-block;width:395px">
 				<button type="button" class="btn btn-success btn-xs" onclick="uploadFile()"> 确定</button>
 			</div>
 		</div>
@@ -63,7 +63,7 @@
 
 function downLoadTemp(fileName){
 	var ran = Math.random()*1000;
-	document.forms[0].action = "<%=request.getContextPath() %>/duty/download_excel_temp?fileName="+fileName;
+	document.forms[0].action = "<%=request.getContextPath() %>/approver/download_excel_temp?fileName="+fileName;
 	document.forms[0].submit();
 }
 
@@ -77,7 +77,7 @@ function uploadFile() {
 		/* var filePath=$("#file").val();
 		var pos=filePath.lastIndexOf("\\");
 		var fileName=filePath.substr(pos+1); */
-		document.forms[0].action ="<%=request.getContextPath() %>/duty/readDutyExcel?&ran="+ran;
+		document.forms[0].action ="<%=request.getContextPath() %>/approver/readApproverExcel?&ran="+ran;
 		document.forms[0].submit();
 		loadPage("close");
 	}
@@ -110,7 +110,7 @@ function downLoadErr(_this){
 	var uuid = $(_this).attr("uuid");
 	var fileName = uuid + ".xls";
 	//$("#fileName").val(fileName);
-	document.forms[0].action = "<%=request.getContextPath() %>/duty/downloadErrExecl?fileName="+fileName;
+	document.forms[0].action = "<%=request.getContextPath() %>/approver/downloadErrExecl?fileName="+fileName;
 	document.forms[0].submit();
 	loadPage("close");
 }

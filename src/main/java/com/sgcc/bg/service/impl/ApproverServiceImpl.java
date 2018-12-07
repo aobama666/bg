@@ -30,6 +30,7 @@ import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.mapper.ApproverMapper;
 import com.sgcc.bg.service.ApproverService;
+import com.sgcc.bg.service.DataDictionaryService;
 
 @Service
 public class ApproverServiceImpl implements ApproverService {
@@ -38,6 +39,9 @@ public class ApproverServiceImpl implements ApproverService {
 	
 	@Autowired
 	private UserUtils userUtils;
+	
+	@Autowired
+	private DataDictionaryService dict;
 	
 	private static Logger log = LoggerFactory.getLogger(ApproverServiceImpl.class);
 
@@ -81,7 +85,7 @@ public class ApproverServiceImpl implements ApproverService {
 	
 	
 	@Override
-	public String[] parseDutyExcel(InputStream in) {
+	public String[] parseApproverFile(InputStream in) {
 
 		HSSFWorkbook wb = null;
 		//获取通过验证的专责信息
@@ -104,8 +108,10 @@ public class ApproverServiceImpl implements ApproverService {
 			int rows = sheet.getLastRowNum();
 			//检查重复
 			Set<String> repeatChecker = new HashSet<String>();
-			//
-			String roleType = "院专责,科技部专责,部门专责,处室专责"; 
+			
+			//从数据字典中获取项目类型
+			Map<String,String> dictMap=dict.getDictDataByPcode("submitUserType");
+			
 			log.info("项目信息excel表格最后一行： " + rows);
 			/* 保存有效的Excel模版列数 */
 			String[] cellValue = new String[6];
@@ -132,47 +138,36 @@ public class ApproverServiceImpl implements ApproverService {
 					StringBuffer errorInfo = new StringBuffer();
 					Set<Integer> errorNum = new HashSet<Integer>();
 					String empCode = cellValue[2];
-					String role = cellValue[3];
+					String subType = cellValue[3];
 					String deptCode = cellValue[5];
 					
 					// 校验人资编号
 					if (Rtext.isEmpty(empCode)) {
-						errorInfo.append("人员编号不能为空！");
+						errorInfo.append("人员编号不能为空！ ");
 						errorNum.add(2);
 					} else if(!validateHrCode(empCode)){
-						errorInfo.append("人员编号错误！");
+						errorInfo.append("人员编号错误！ ");
 						errorNum.add(2);
 					}
 					
 					// 校验角色
-					if (Rtext.isEmpty(role)) {
-						errorInfo.append("角色不能为空！");
+					if (Rtext.isEmpty(subType)) {
+						errorInfo.append("角色不能为空！ ");
 						errorNum.add(3);
-					} else if(!roleType.contains(role)){
-						errorInfo.append("无此角色类型！");
+					} else if(!dictMap.containsValue(subType)){
+						errorInfo.append("无此角色类型！ ");
 						errorNum.add(3);
 					}
 					
 					// 校验部门编号
 					if (Rtext.isEmpty(deptCode)) {
-						errorInfo.append("部门编号不能为空！");
+						errorInfo.append("部门编号不能为空！ ");
 						errorNum.add(5);
 					} else {
 						Map<String,Object> dept = approverMapper.getDeptByDeptCode(deptCode);
 						if (dept==null) {
-							errorInfo.append("部门编号错误！");
+							errorInfo.append("部门编号错误！ ");
 							errorNum.add(5);
-						}else if(!errorNum.contains(3)) {
-							String type = Rtext.toString(dept.get("TYPE"));
-							if(
-								("0".equals(type) && !"院专责".equals(role) && !"科技部专责".equals(role)) ||
-								("1".equals(type) && !"部门专责".equals(role)) ||
-								("2".equals(type) && !"处室专责".equals(role))){
-								
-								errorInfo.append("组织类型和角色不匹配！ ");
-								errorNum.add(3);
-								errorNum.add(5);
-							}
 						}
 					}
 					
@@ -183,27 +178,23 @@ public class ApproverServiceImpl implements ApproverService {
 					}*/
 					
 					//校验重复
-					String str = empCode+role+deptCode;
-					if(errorNum.size()==0 && !repeatChecker.add(str)){
+					String str = empCode+subType+deptCode;
+					if(errorNum.size()==0 && (!repeatChecker.add(str) || existsApprover(empCode,deptCode,subType))){
 						errorNum.add(2);
+						errorNum.add(3);
 						errorNum.add(5);
-						errorInfo.append("重复添加！ ");
+						errorInfo.append("重复添加！  ");
 					}
 					
 					// 校验结束，分流数据
 					if (errorNum.size()==0) {// 通过校验
 						//保存正确数据
-						String roleCode = null;
-						if("院专责".equals(role)){
-							roleCode = "MANAGER_UNIT";
-						}else if("科技部专责".equals(role)){
-							roleCode = "MANAGER_KJB";
-						}else if("部门专责".equals(role)){
-							roleCode = "MANAGER_DEPT";
-						}else if("处室专责".equals(role)){
-							roleCode = "MANAGER_LAB";
+						for (Map.Entry<String,String> entry : dictMap.entrySet()) {
+							String key = entry.getKey();
+							String value = entry.getValue();
+							if(subType.equals(value)) subType=key;
 						}
-						int result = addApprover(empCode,deptCode,roleCode);
+						int result = addApprover(empCode,deptCode,subType);
 						
 						if(result==1) count++;
 						
@@ -212,7 +203,7 @@ public class ApproverServiceImpl implements ApproverService {
 						errortMap.put("sqnum", cellValue[0]);
 						errortMap.put("empName", cellValue[1]);
 						errortMap.put("empCode", cellValue[2]);
-						errortMap.put("role", cellValue[3]);
+						errortMap.put("subType", cellValue[3]);
 						errortMap.put("deptName", cellValue[4]);
 						errortMap.put("deptCode", cellValue[5]);
 						errortMap.put("errInfo",errorInfo.toString());
@@ -230,7 +221,7 @@ public class ApproverServiceImpl implements ApproverService {
 						{ "序号\r\n（选填）", "sqnum","nowrap" }, 
 						{ "人员姓名\r\n（选填）", "empName","nowrap" }, 
 						{ "人员编号\r\n（必填）", "empCode" ,"nowrap"},
-						{ "角色\r\n（必填）","role","nowrap"}, 
+						{ "角色\r\n（必填）","subType","nowrap"}, 
 						{ "组织名称\r\n（选填）","deptName","nowrap"},
 						{ "组织编号\r\n（必填）","deptCode","nowrap"}, 
 						{ "错误说明","errInfo"}
@@ -287,12 +278,12 @@ public class ApproverServiceImpl implements ApproverService {
 		Object[][] title = { 
 							 { "人员姓名", "USERALIAS","nowrap" },
 							 { "人员编号", "HRCODE","nowrap" },
-							 { "人员角色", "ROLE_NAME","nowrap" }, 
+							 { "审批层级", "SUBNAME","nowrap" }, 
 							 { "组织机构","DEPTNAME"},
 							 //{ "项目类型", "TYPE","nowrap" },
 							 { "组织编号","DEPTCODE","nowrap"}
 							};
-		ExportExcelHelper.getExcel(response, "报工管理-专责授权-"+DateUtil.getDays(), title, resultList, "normal");
+		ExportExcelHelper.getExcel(response, "报工管理-审批权限授权-"+DateUtil.getDays(), title, resultList, "normal");
 		return "";
 	}
 	

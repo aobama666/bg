@@ -132,13 +132,12 @@ function init(){
 }
 
 function queryList(load){
-	var w=$(window).width();
 	var ran = Math.random()*100000000;
 	var cols = [
 				{title:'UUID', name:'UUID', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'人员姓名',name:'USERALIAS', width:100, sortable:false, align:'center'},
 	            {title:'人员编号', name:'HRCODE',width:80, sortable:false, align:'center'},
-	            {title:'人员角色', name:'SUBNAME', width:100, sortable:false, align:'center'},
+	            {title:'审批层级', name:'SUBNAME', width:100, sortable:false, align:'center'},
 	           /*  {title:'人员编号', name:'HRCODE',width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		return '<a href="###" title="'+val+'" onclick="forDetails(\''+item.id+'\')">'+val+'</a>';
