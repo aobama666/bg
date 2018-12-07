@@ -158,7 +158,7 @@ public class OrganStuffTreeServiceImpl implements OrganStuffTreeService{
 	
 	//新增获取权限接口接口
 	@Override
-	public List<Map<String, Object>> getUserAuthoryOrgan(String userName , String root , String organType){
+	public List<Map<String, Object>> getUserAuthoryOrgan(String userName , String root){
 		if(root==null || root.length()==0){
 			root = "41000001";
 		}
@@ -167,18 +167,18 @@ public class OrganStuffTreeServiceImpl implements OrganStuffTreeService{
 		
 		if(resultList==null || resultList.size()==0){
 			return new ArrayList<>();
-		}else{//去除电科院
-			Iterator<Map<String, Object>>  iterator = resultList.iterator();
-			while (iterator.hasNext()) {
-				Map<String, Object> organ = iterator.next();
-				if("0".equals(organ.get("level"))){
-					iterator.remove();
-				}
-				
-			}
 		}
 		
-		UserPrivilege priv = userUtils.getUserOrganPrivilegeByUserName(userName);
+		Iterator<Map<String, Object>>  iterator = resultList.iterator();
+		while (iterator.hasNext()) {
+			Map<String, Object> organ = iterator.next();
+			if(!"0".equals(organ.get("childNum"))){//利用childNum去除有下级组织的
+				iterator.remove();
+			}
+			
+		}
+		
+		/*UserPrivilege priv = userUtils.getUserOrganPrivilegeByUserName(userName);
 		if(priv==null){
 			return new ArrayList<>();
 		}
@@ -217,7 +217,7 @@ public class OrganStuffTreeServiceImpl implements OrganStuffTreeService{
 				}
 				
 			}
-		}
+		}*/
 		
 		return resultList;
 	}

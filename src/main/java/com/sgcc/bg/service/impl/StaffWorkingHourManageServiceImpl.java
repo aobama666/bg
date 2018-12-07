@@ -76,7 +76,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 			deptCode="41000001";
 		}
 		//List<Map<String, Object>> organList=organStuffTreeService.queryDeptByCurrentUserPriv(deptCode, "2", username);
-		List<Map<String, Object>> organList=organStuffTreeService.getUserAuthoryOrgan(username, deptCode, null);
+		List<Map<String, Object>> organList=organStuffTreeService.getUserAuthoryOrgan(username, deptCode);
 		if(organList!=null&&organList.size()>0){
 			StringBuffer sb = new StringBuffer();
 			for(Map<String, Object> obj:organList){
@@ -189,7 +189,9 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 			// 得到sheet内总行数
 			int rows = sheet.getLastRowNum();
 			//Set<String> repeatChecker = new HashSet<String>();
-			String categoryStr="[科研项目],[横向项目],[技术服务项目],[非项目工作]";
+			//从数据字典中获取项目类型
+			Map<String,String> dictMap=dict.getDictDataByPcode("category100002");
+			
 			//获取所有项目编号存入一个集合
 			List<String> list=bgMapper.getAllBgNumbers();
 			String regex = "^([1-9]+|[1-9]*\\.[05]|0\\.5)$";
@@ -237,7 +239,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 					if (cellValue[2] == null || "".equals(cellValue[2])) {
 						errorInfo.append("项目类型不能为空！ ");
 						errorNum.add(2);
-					}else if(!categoryStr.contains("["+cellValue[2]+"]")){
+					}else if(!dictMap.containsValue(cellValue[2])){
 						errorInfo.append("无此项目类型 ！");
 						errorNum.add(2);
 					}
@@ -269,13 +271,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						
 						//验证项目类型是否一致
 						String category=proMap.get("category");
-						if("KY".equals(category)){
-							category="科研项目";
-						}else if("HX".equals(category)){
-							category="横向项目";
-						}else if("JS".equals(category)){
-							category="技术服务项目";
-						}
+						category = dictMap.get(category);
 						if(!errorNum.contains(2) && !cellValue[2].equals(category)){
 							errorInfo.append("项目类型与项目不符！ ");
 							errorNum.add(2);

@@ -36,6 +36,7 @@ import com.sgcc.bg.mapper.BGMapper;
 import com.sgcc.bg.mapper.StaffWorkbenchMaper;
 import com.sgcc.bg.model.ProcessRecordPo;
 import com.sgcc.bg.model.WorkHourInfoPo;
+import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IStaffWorkbenchService;
 
 @Service
@@ -48,6 +49,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	private WebUtils webUtils;
 	@Autowired
 	UserUtils userUtils;
+	@Autowired
+	private DataDictionaryService dict;
 	
 	private static Logger SWServiceLog =  LoggerFactory.getLogger(StaffWorkbenchServiceImpl.class);
 
@@ -179,7 +182,10 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 			sheet = wb.getSheetAt(0);
 			// 得到sheet内总行数
 			int rows = sheet.getLastRowNum();
-			String categoryStr="[科研项目],[横向项目],[技术服务项目],[非项目工作]";
+			
+			//从数据字典中获取项目类型
+			Map<String,String> dictMap=dict.getDictDataByPcode("category100002");
+			
 			//获取所有项目编号存入一个集合
 			List<String> list=bgMapper.getAllBgNumbers();
 			String regex = "^([1-9]+|[1-9]*\\.[05]|0\\.5)$";
@@ -230,7 +236,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 					if (cellValue[2] == null || "".equals(cellValue[2])) {
 						errorInfo.append("项目类型不能为空！ ");
 						errorNum.add(2);
-					}else if(!categoryStr.contains("["+cellValue[2]+"]")){
+					}else if(!dictMap.containsValue(cellValue[2])){
 						errorInfo.append("无此项目类型！ ");
 						errorNum.add(2);
 					}
@@ -264,14 +270,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 								errorNum.add(3);
 							}
 							//验证项目类型是否一致
-							String category=proMap.get("category");
-							if("KY".equals(category)){
-								category="科研项目";
-							}else if("HX".equals(category)){
-								category="横向项目";
-							}else if("JS".equals(category)){
-								category="技术服务项目";
-							}
+							String category = proMap.get("category");
+							category = dictMap.get(category);
 							if(!errorNum.contains(2) && !cellValue[2].equals(category)){
 								errorInfo.append("项目类型与项目不符！ ");
 								errorNum.add(2);

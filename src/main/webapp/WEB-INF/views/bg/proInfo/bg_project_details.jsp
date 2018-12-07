@@ -72,6 +72,7 @@
 					<div class="controls bg-white">
 						<input type="text" name="category" property="category" 
 							<c:choose>
+								<c:when test="${category=='QT'}"> value="其他"</c:when>
 								<c:when test="${category=='HX'}"> value="横向项目"</c:when>
 								<c:when test="${category=='KY'}"> value="科研项目"</c:when>
 								<c:when test="${category=='JS'}"> value="技术服务项目"</c:when>

@@ -105,5 +105,72 @@ var common = {
 	    		 }
 	    	 }
 	    	 return html;
-	     }
+	     },
+	    
+	    getMonthFirstDay : function () {
+            var currentDate = new Date();
+            
+            var currentMonth = currentDate.getMonth();
+            
+            var currentYear = currentDate.getFullYear();
+           
+            var firstDay = new Date(currentYear, currentMonth, 1);
+    	   
+    	    var d = new Date(firstDay);  
+    	    var day=d.getDate();
+    		if(0<day&&day<10){
+    	     day="0"+day ;
+    	    }else{
+    	     day=day ;
+    	    }
+    		var month=(d.getMonth() + 1);
+            if(0<month&&month<10){
+    	     month="0"+month ;
+    	    }else{
+    	     month=month ;
+    	    }
+    		
+     	    var d = new Date(firstDay);  
+    	    var youWant=d.getFullYear() + '-' +  month + '-' + day  ; 
+            
+            return youWant;
+        },
+	     
+        getMonthEndDay : function () {
+             
+            var currentDate = new Date();
+             
+            var currentMonth = currentDate.getMonth();
+            
+            var currentYear = currentDate.getFullYear();
+            
+            if (currentMonth == 11) {
+                currentYear++;
+                currentMonth = 0;   
+            } else {
+                
+                currentMonth++;
+            }
+             
+            var millisecond = 1000 * 60 * 60 * 24;
+             
+            var nextMonthDayOne = new Date(currentYear, currentMonth, 1);
+               
+            var lastDay = new Date(nextMonthDayOne.getTime() - millisecond);
+     
+           var d = new Date(lastDay);  
+    	   var month=(d.getMonth() + 1);
+    	   if(0<month&&month<10){
+    	     month="0"+month ;
+    	   }else{
+    	     month=month ;
+    	   }
+    	  
+    	   
+    	   var youWant=d.getFullYear() + '-' + month + '-' + d.getDate() ; 
+             
+            return youWant;
+
+        }
+        
 }
