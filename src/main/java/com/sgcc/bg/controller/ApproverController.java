@@ -65,6 +65,18 @@ public class ApproverController {
 	}
 	
 	/**
+	 * 参考信息
+	 * @return
+	 */
+	@RequestMapping(value = "/getInfoForShow", method = RequestMethod.GET)
+	@ResponseBody
+	public List<Map<String,Object>> getInfoForShow(String target){
+		List<Map<String,Object>> content = approverService.getInfoForShow(target);
+		return content;
+	}
+	
+	
+	/**
 	 * 返回权限信息
 	 * @return
 	 */

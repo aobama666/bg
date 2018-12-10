@@ -46,6 +46,17 @@ public class ApproverServiceImpl implements ApproverService {
 	private static Logger log = LoggerFactory.getLogger(ApproverServiceImpl.class);
 
 	@Override
+	public List<Map<String, Object>> getInfoForShow(String target) {
+		List<Map<String, Object>> result = new ArrayList<>();
+		if("organType".equals(target)){
+			result = approverMapper.getOrganType();
+		}else if("approveRule".equals(target)){
+			result = approverMapper.getApproveRule();
+		}
+		return result;
+	}
+	
+	@Override
 	public int addApprover(String empCode, String deptCode, String subType) {
 		//如果新增组织在权限表中存在父级组织，则不再添加
 		if(existsApprover(empCode,deptCode,subType)) return 0;
@@ -286,7 +297,7 @@ public class ApproverServiceImpl implements ApproverService {
 		ExportExcelHelper.getExcel(response, "报工管理-审批权限授权-"+DateUtil.getDays(), title, resultList, "normal");
 		return "";
 	}
-	
+
 	/*	public static void main(String[] args) {
 		syncErpHrUserDataByMh();
 	}

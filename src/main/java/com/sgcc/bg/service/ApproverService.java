@@ -51,4 +51,11 @@ public interface ApproverService {
 	 */
 	public String exportSelectedItems(String username, String deptCode, String roleCode, String index,
 			HttpServletResponse response);
+
+	/**
+	 * 获取提示信息
+	 * @param target
+	 * @return
+	 */
+	public List<Map<String, Object>> getInfoForShow(String target);
 }

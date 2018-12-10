@@ -38,12 +38,30 @@ a{
 	cursor: pointer;
 	text-decoration: none !important;
 }
+#show{
+	border: 1px solid #1b9974;
+	margin:10px;
+	width:666px;
+}
+#show td{
+	border: solid rgb(228, 228, 228) 1px;
+	padding: 5px;
+	text-align: center;
+	font-size: 14px;
+}
+.even{
+	background: #f9f9f9;
+}
 </style>
 
 </head>
 <body>
 	<div class="page-header-sl">
 		<h5>审批权限授权</h5>
+		<span style="margin-left:10px">【</span>
+		<a onclick="show('organType')">部门类型</a>
+		<a onclick="show('approveRule')">审批规则</a>
+		<span>】</span>
 		<div class="button-box">
 			<button type="button" class="btn btn-primary btn-xs"
 				 name="kOne" onclick="forAdd()">新增</button>
@@ -198,6 +216,44 @@ function queryList(load){
 		mmg.load({page:pn});
 	}
 
+}
+
+//查看审批负责和部门类型
+function show(target){
+	var url = '<%=request.getContextPath()%>/approver/getInfoForShow?ran='+Math.random()*100000000;
+	$.get(url,{target:target},
+			function(data){
+				var title;
+				var content = '<table id="show">';
+				if(target=='organType'){
+					title = '组织类型';
+					content += '<tr style="background-color: rgb(143, 230, 198);font-weight: bold;"><td>组织编号</td><td>组织名称</td><td>组织类型</td></tr>';
+					$.each(data,function(i,obj){
+						var clazz = i%2==0?"even":"";
+						content += '<tr class="'+clazz+'"><td>'+obj.DEPTCODE+'</td>'+'<td>'+obj.ORGAN+'</td>'+'<td>'+obj.TYPE+'</td></tr>';
+					});
+				}else{
+					title = '审批规则';
+					content += '<tr style="background-color: rgb(143, 230, 198);font-weight: bold;"><td>组织类型</td><td>角色</td><td>审批角色</td></tr>';
+					$.each(data,function(i,obj){
+						var clazz = i%2==0?"even":"";
+						content += '<tr class="'+clazz+'"><td>'+obj.ORGANTYPE+'</td>'+'<td>'+obj.ROLE+'</td>'+'<td>'+obj.APPROVEROLE+'</td></tr>';
+					});
+				}
+				
+				content += '</table>';
+				index = layer.open({
+					type:1,
+					title:title,
+					area:['700px', '600px'],
+					resize:false,
+					scrollbar:false,
+					content:content,
+					end: function(){
+						queryList("reload");
+					}
+				}); 
+	});
 }
 
 //查询

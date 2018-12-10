@@ -59,5 +59,17 @@ public interface ApproverMapper {
 	public void deleteOrganByPDeptCode(
 			@Param("empCode")String empCode,
 			@Param("pDeptCode")String pDeptCode);
+
+	/**
+	 * 返回组织类型
+	 * @return
+	 */
+	public List<Map<String, Object>> getOrganType();
+
+	/**
+	 * 返回审批规则
+	 * @return
+	 */
+	public List<Map<String, Object>> getApproveRule();
 	
 }

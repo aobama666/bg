@@ -364,8 +364,8 @@ function forExport(){
 
 function forImport(){
 	var height=$(window).height()*0.8;
-	if(height>300){
-		height = 300;
+	if(height>320){
+		height = 320;
 	}
 	layer.open({
 		type:2,
