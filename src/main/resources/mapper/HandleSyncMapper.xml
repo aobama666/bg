@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.sgcc.bg.mapper.BGMapper">
+<mapper namespace="com.sgcc.bg.mapper.HandleMapper">
 
 	<select id="getAllProjects" resultType="java.util.Map">
-		<!-- SELECT * FROM(
-			SELECT ROWNUM rn,p.* FROM(
-				) p
-			 <![CDATA[WHERE ROWNUM<=#{end})]]>
-		<![CDATA[WHERE rn>#{start}]]> -->
 		SELECT
 			row_number() over(ORDER BY T1.UPDATE_DATE DESC) as rn,
       		t1.id as "id",
@@ -46,6 +41,29 @@
 		  AND t1.status='1'
 	</select>
 	
+	<select id="getProRelationById" resultType="java.util.Map">
+		SELECT BG_ID, SYNC_ID, CREATE_TIME, UPDATE_TIME
+		  FROM BG_SYNC_PROJECT_RELATION T
+		 WHERE T.VALID = 1
+		  <if test="bgId != null and bgId != ''" >
+			 AND T.BG_ID = #{bgId}
+		  </if>
+		  <if test="sycnId != null and sycnId != ''" >
+			 AND T.SYNC_ID = #{sycnId}
+		  </if>
+	</select>
+	
+	<insert id="addProRelation"  parameterType="String">
+		INSERT INTO BG_SYNC_PROJECT_RELATION (BG_ID, SYNC_ID) VALUES (#{bgId,jdbcType=VARCHAR}, #{sycnId,jdbcType=VARCHAR})
+	</insert>
+	
+	<insert id="addErrorRecord"  parameterType="String">
+		INSERT INTO BG_SYNC_ERROR_RECORD
+		  (SRC, SYNC_ID, ERROR)
+		VALUES
+		  (#{src, jdbcType=VARCHAR}, #{syncId, jdbcType=VARCHAR} #{errorInfo, jdbcType=VARCHAR})
+	</insert>
+	
 	<!-- <select id="getProjectCount" parameterType="String" resultType="java.lang.Integer">
 		SELECT COUNT(*)
             FROM BG_PROJECT_INFO t
@@ -65,7 +83,7 @@
 					AND t.PROJECT_STATUS=#{proStatus}
 			  </if>
 			  AND t.status='1'
-	</select> -->
+	</select> 
 	
 	<insert id="addProInfo"  parameterType="com.sgcc.bg.model.ProjectInfoPo">
 		INSERT INTO BG_PROJECT_INFO 
@@ -137,30 +155,6 @@
 		    (select TO_CHAR(WM_CONCAT(distinct t3.empname)) from BG_PROJECT_USER t3 where t3.project_id=t.id AND t3.status='1') as "empName",
 		    (select deptname from BG_SYS_DEPT where deptid=t.organ_info) as "deptName",
 		    (select deptcode from BG_SYS_DEPT where deptid=t.organ_info) as "deptCode" 
-		FROM BG_PROJECT_INFO t
-		WHERE t.id=#{proId} AND t.status='1'
-	</select>
-	
-	<select id="getProPoByProId" parameterType="String" resultType="com.sgcc.bg.model.ProjectInfoPo">
-		SELECT
-      		t.id as "id",
-      		t.project_name as "projectName",
-      		t.category as "category",
-      		t.project_number as "projectNumber",
-      		t.wbs_number as "WBSNumber",
-      		t.project_introduce as "projectIntroduce",
-			t.organ_info as "organInfo",
-			t.start_date as "startDate",
-			t.end_date as "endDate",
-			t.plan_hours as "planHours",
-			t.project_status as "projectStatus",
-			t.decompose as "decompose",
-			t.status as "status",
-			t.create_date as "createDate",
-			t.create_user as "createUser",
-			t.update_date as "updateDate",
-			t.update_user as "updateUser",
-			t.src as "src"
 		FROM BG_PROJECT_INFO t
 		WHERE t.id=#{proId} AND t.status='1'
 	</select>
@@ -310,4 +304,6 @@
 		 WHERE T.PROJECT_ID = #{proId}
 		   AND T.VALID = 1
 	</select>
+	
+	-->
 </mapper>

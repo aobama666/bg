@@ -224,6 +224,7 @@
 	var mmg;
 	var tempStartDate;
 	$(function(){
+		init();
 		queryList();
 		$(".form_date").datepicker({
 			autoclose:true,
@@ -235,6 +236,13 @@
 		$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'self',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'});
 		$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio'});
 	}); 
+	
+	//初始化操作,当不为其他类型时，项目类型、项目名称、WBS页面不可更改
+	function init(){
+		if($('#category').val()!='QT'){
+			$('#proInfo select[name="category"],input[name="projectName"],input[name="WBSNumber"]').prop("disabled",true);
+		}
+	}
 
 	function forSave_pro(){
 		var ran = Math.random()*1000000;

@@ -194,5 +194,12 @@ public interface BGMapper {
 	 * @return
 	 */
 	public List<Map<String, String>> getBgWorkerByProId(@Param("proId")String proId);
+	
+	/**
+	 * 获取项目信息的实体类
+	 * @param proId
+	 * @return
+	 */
+	public ProjectInfoPo getProPoByProId(String proId);
 
 }

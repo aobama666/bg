@@ -142,4 +142,11 @@ public interface IBGService {
 	 */
 	String updateStuff(String proId, List<HashMap> list);
 
+	/**
+	 * 获取项目信息的实体类
+	 * @param proId
+	 * @return
+	 */
+	ProjectInfoPo getProPoByProId(String proId);
+
 }

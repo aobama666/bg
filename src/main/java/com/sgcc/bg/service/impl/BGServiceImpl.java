@@ -87,6 +87,11 @@ public class BGServiceImpl implements IBGService {
 		Map<String, String> proMap=bgMapper.getProInfoByProId(proId);
 		return proMap;
 	}
+	
+	@Override
+	public ProjectInfoPo getProPoByProId(String proId) {
+		return bgMapper.getProPoByProId(proId);
+	}
 
 	@Override
 	public List<Map<String, String>> getProUsersByProId(String proId) {
