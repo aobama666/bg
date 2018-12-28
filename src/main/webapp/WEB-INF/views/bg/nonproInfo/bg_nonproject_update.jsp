@@ -1,13 +1,8 @@
 <!DOCTYPE>
+<!-- authentication_add.jsp -->
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
-<%-- <%@page import="crpri.ess.util.ToolsUtil"%>
-<%@page import="crpri.ess.util.JsonUtil"%> --%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.Map"%>
-<%-- <%
-	String path = ToolsUtil.getContextPath(request);
-%> --%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <html>
 <head>
@@ -15,7 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>添加项目信息</title>
+<title>非修改项目信息</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css"
@@ -60,23 +55,22 @@
 		font-style:italic;
 	}
 </style>
-
 </head>
 <body>
-	<input type="hidden" id="proId"/>
-	<input type="hidden" id="startDate"/>
-	<input type="hidden" id="endDate"/>
-	<input type="hidden" name="empCode" id="empCode"/>
-	<input type="hidden" name="empName" id="empName"/>
+	<input type="hidden" id="proId" value="${id}"/>
+	<input type="hidden" id="startDate" value="${startDate}"/>
+	<input type="hidden" id="endDate" value="${endDate}"/>
+	<input type="hidden" id="currentWBSNumber" value="${WBSNumber}"/>
+	<input type="hidden" id="category" value="${category}"/>
 	<input type="hidden" name="currentHrcode" id="currentHrcode" value="${hrcode}"/>
 	<input type="hidden" name="currentDeptName" id="currentDeptName" value="${deptName}"/>
 	<input type="hidden" name="currentDeptCode" id="currentDeptCode" value="${deptCode}"/>
-	
+	<input type="hidden" name="empCode" id="empCode"/>
+	<input type="hidden" name="empName" id="empName"/>
+	<%-- <c:out value="${ID}"></c:out> --%>
 	<ul id="myTab" class="nav nav-tabs">
-		<li class="active"><a href="#proInfo" data-toggle="tab">项目信息</a></li>
-		<li><a href="#people" data-toggle="">参与人员</a></li>
+		<li class="active"><a href="#proInfo" data-toggle="tab">非项目信息</a></li>
 	</ul>
-	
 	<div id="myTabContent" class="tab-content">
 		<div class="tab-pane fade in active" id="proInfo">
 			<div class="page-header-sl">
@@ -90,53 +84,45 @@
 			<hr>
 			<div class="form-box">
 				<div class="form-group col-xs-11">
-					<label for="category"><font
-						class="glyphicon glyphicon-asterisk required"></font>项目分类</label>
-					<div class="controls">
-						<select name="category" property="category" onchange="typeChange($(this).val())" >
+					<label for=""category""><font
+						class="glyphicon glyphicon-asterisk required"></font>非项目分类</label>
+					<div class="noncontrols">
+						<select name="category" property="category" onchange="typeChange(this)">
 							<options collection="typeList" property="label"
 								labelProperty="value">
-								<option value="QT">其他</option>
-								<option value="KY">科研项目</option>
-								<option value="HX">横向项目</option>
-								<option value="JS">技术服务项目</option>	
+								<option   value="BP" <c:if test="${category=='BP'}">selected="selected"</c:if> >项目前期</option>
+								<option   value="CG" <c:if test="${category=='CG'}">selected="selected"</c:if> >常规工作</option>
 							</options>
 						</select>
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
 					<label for="projectName"><font
-						class="glyphicon glyphicon-asterisk required"></font>项目名称</label>
-					<div class="controls">
-						<input type="text" name="projectName" property="projectName">
+						class="glyphicon glyphicon-asterisk required"></font>非项目名称</label>
+					<div class="noncontrols">
+						<input type="text" name="projectName" property="projectName" value="${projectName}">
 					</div>
 				</div>
-				<div class="form-group col-xs-11" id="projectNumber">
-					<label for="projectNumber"><font
-						class="glyphicon glyphicon-asterisk required"></font>项目编号</label>
-					<div class="controls">
-						<input class="italic" disabled value="保存后自动生成" type="text" name="projectNumber" property="projectNumber">
-					</div>
-				</div>	
-				<div class="form-group col-xs-11" id="WBSNumber">
-					<label for="WBSNumber">
-						<!-- <font class="glyphicon glyphicon-asterisk required"></font> -->WBS编号</label>
-					<div class="controls">
-						<input type="text" name="WBSNumber" property="WBSNumber">
-					</div>
-				</div>		
 				<div class="form-group col-xs-11">
-					<label for="projectIntroduce"><font class=""></font>项目说明</label>
-					<div class="controls">
-						<textarea name="projectIntroduce" property="projectIntroduce" style="height:75px" ></textarea>
+					<label for="projectNumber"><font
+						class="glyphicon glyphicon-asterisk required"></font>非项目编号</label>
+					<div class=noncontrols>
+						<input class='italic' disabled type="text" name="projectNumber" property="projectNumber" value="${projectNumber}">
+					</div>
+				</div>
+			 
+				<div class="form-group col-xs-11">
+					<label for="projectIntroduce"><font class=""></font>非项目说明</label>
+					<div class="noncontrols">
+						<textarea name="projectIntroduce" property="projectIntroduce" style="height:75px">${projectIntroduce}</textarea>
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
 					<label for="startDate"><font
-						class="glyphicon glyphicon-asterisk required"></font> 项目开始时间</label>
-					<div class="controls">
+						class="glyphicon glyphicon-asterisk required"></font> 非项目开始时间</label>
+					<div class="noncontrols">
 						 <div class="input-group date form_date">
-							<input type="text" name="startDate" property="startDate" readonly="true"> <span
+							<input type="text" name="startDate" property="startDate" readonly="true" value="${startDate}"> <span
 								class="input-group-addon"><span
 								class="glyphicon glyphicon-calendar"></span></span>
 						</div>
@@ -144,32 +130,33 @@
 				</div>
 				<div class="form-group col-xs-11">
 					<label for="endDate"><font
-						class="glyphicon glyphicon-asterisk required"></font> 项目结束时间</label>
-					<div class="controls">
+						class="glyphicon glyphicon-asterisk required"></font> 非项目结束时间</label>
+					<div class="noncontrols">
 						<div class="input-group date form_date">
-							<input type="text" name="endDate" property="endDate"
+							<input type="text" name="endDate" property="endDate" value="${endDate}"
 								readonly="true"> <span class="input-group-addon"><span
 								class="glyphicon glyphicon-calendar"></span></span>
 						</div>
 					</div>
 				</div>
-				<div class="form-group col-xs-11" id="organInfo" style="display:none">
+				<div class="form-group col-xs-11">
+					<label for="planHours"><font
+						class=""></font> 计划投入工时</label>
+					<div class="noncontrols">
+						<input type="text" name="planHours" property="planHours" value="${planHours}">
+					</div>
+				</div>
+				<div class="form-group col-xs-11" id="organInfo"   >
 					<label for="organInfo"><font class="glyphicon glyphicon-asterisk required"></font> 组织信息</label>
-					<div class="controls">
+					<div class="noncontrols">
 						<div id="organTree" class="input-group organ">
-							<input type="hidden" name="deptCode" id="deptCode" value="">
-							<input type="text" name="deptName" id="deptName" readonly="readonly">
+							<input type="hidden" name="deptCode" id="deptCode" value="${deptCode}">
+							<input type="text" name="deptName" id="deptName" readonly="readonly" value="${deptName}">
 							<span class="input-group-addon"><span class="glyphicon glyphicon-th-list"></span></span>
 						</div>
 					</div>
 				</div>
-				<div class="form-group col-xs-11">
-					<label for="planHours"><font
-						class="glyphicon glyphicon-asterisk required"></font> 计划投入工时</label>
-					<div class="controls">
-						<input type="text" name="planHours"  property="planHours">
-					</div>
-				</div>
+				
 				<!-- <div class="form-group col-xs-11">
 					<label for="decompose"><font
 						class="glyphicon glyphicon-asterisk required"></font> 是否分解</label>
@@ -183,8 +170,8 @@
 		<div class="tab-pane fade" id="people">
 			<div class="page-header-sl">
 				<div class="button-box">
-					<span id="stuffTree">
-						<button type="button"  id="popStuffTree" class="btn btn-primary btn-xs" name="kOne">新增人员</button>
+				    <span id="stuffTree">
+					<button type="button"  id="popStuffTree" class="btn btn-primary btn-xs" name="kOne">新增人员</button>
 					</span>
 					<button type="button" class="btn btn-danger btn-xs" name="kOne"
 						onclick="forDelete_stuff()">删除</button>
@@ -214,7 +201,7 @@
 				</div>
 			</div>
 			<div>
-				<table id="mmg" class="mmg">
+				<table id="mmg" class="mmg" style="width:500px !important;">
 					<tr>
 						<th rowspan="" colspan=""></th>
 					</tr>
@@ -226,74 +213,25 @@
 </body>
 <script type="text/javascript">
 	var mmg;
-	var tempStartDate="";
-	var currentWBSNumber="";
-	var currentProNumber="";
-	var currentCategory="";
-	/* var pn = 1;
-	var limit = 30; */
+	var tempStartDate;
 	$(function(){
 		queryList();
 		$(".form_date").datepicker({
 			autoclose:true,
 			orientation:'auto',
 			language: 'cn',
-			format: 'yyyy-mm-dd', 
+			format: 'yyyy-mm-dd',
 			todayHighlight:true,
-			});//clearBtn:true todayHighlight:true,
+		});				
 		$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'self',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'});
 		$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio'});
 	}); 
 
-	function typeChange(type){	
-	
-		if(type=="JS"){
-			$("#organInfo").show();
-			if($("#deptCode").val()==""){
-				$("#deptName").val($("#currentDeptName").val());
-				$("#deptCode").val($("#currentDeptCode").val());
-			}
-			$("#WBSNumber label").html('WBS编号');
-			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>项目编号');
-			if(currentCategory==type){
-				$("#WBSNumber input").val(currentWBSNumber);
-			}else{
-				$("#WBSNumber input").val("保存后自动生成");
-			}
-			$("#WBSNumber input").attr("readonly","").css({'color':'#999','font-style':'italic'});
-			*/
-		}
-		if(type=="KY" || type=="HX"){
-			$("#organInfo").hide();
-			$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
-			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
-			if(currentCategory==type){
-				$("#WBSNumber input").val(currentWBSNumber);
-			}else{
-				$("#WBSNumber input").val("");
-			}
-			$("#WBSNumber input").removeAttr("readonly").removeAttr("style");
-			*/
-		}
-		if(type=="QT"){
-			$("#organInfo").hide();$("#organInfo").hide();
-			$("#WBSNumber label").html('WBS编号');
-		}		
-		if(currentCategory==type){
-			$("#WBSNumber input").val(currentWBSNumber);
-			//$("#projectNumber input").val(currentProNumber);
-		}else{
-			$("#WBSNumber input").val("");
-			//$("#projectNumber input").val("保存后自动生成");
-		}
-	}
-	
 	function forSave_pro(){
 		var ran = Math.random()*1000000;
-		//保存时再生成技术服务项目编号
-		/*
-		if($("select[name='category']").val()=="JS" && $("#WBSNumber input").val()=="保存后自动生成"){
-			$.ajax({
+		//生成项目编号
+		/*	if($("select[name='category']").val()=="JS" && $("#WBSNumber input").val()=="保存后自动生成"){
+		$.ajax({
 				  url: "<%=request.getContextPath()%>/project/queryForJsNumber?ran="+ran,
 				  async: false,
 				  dataType: "text",
@@ -301,20 +239,19 @@
 					$("#WBSNumber input").val(data);
 				  }
 			});
-		}
+		} 
 		*/
 		var validator=[
-	              	      {name:'category',vali:'required'},
-	             	      {name:'projectName',vali:'required;length[-50]'},
-	             	      {name:'WBSNumber',vali:''},//required;WBS编号改为选填项
-	             	      {name:'projectIntroduce',vali:'length[-200]'},
-	             	      {name:'startDate',vali:'required;date;checkStartDate()'},
-	             	      {name:'endDate',vali:'required;date;checkEndDate()'},
-	             	      {name:'deptName',vali:'required'},
-	             	      {name:'planHours',vali:'required;checkNumberFormat()'}
-	             	      //{name:'decompose',vali:'required'}
-	             	];
-	    var category=$("select[name='category']").val();
+              	      {name:'category',vali:'required'},
+             	      {name:'projectName',vali:'required;length[-50]'},
+             	      {name:'projectIntroduce',vali:'length[-200]'},
+             	      {name:'startDate',vali:'required;date;checkStartDate()'},
+             	      {name:'endDate',vali:'required;date;checkEndDate()'},
+             	      {name:'deptName',vali:'required;checkOrganFormat()'},
+             	      {name:'planHours',vali:''},
+             	      {name:'decompose',vali:'required'}
+             	];
+        var category=$("select[name='category']").val();
         var wbs=$("#WBSNumber input");
         //当为科研、横向项目时，校验wbs编号,否则如果天了wbs编号的话，只校验其唯一性
         if(category=='HX' || category=='KY' ){
@@ -322,47 +259,39 @@
         }else if($.trim(wbs.val())!=''){
         	validator[2].vali='checkUniqueness()';
         }
-		//当为技术服务项目时候，不校验项编号，并移除错误提示
-		/*if($("select[name='category']").val()=="JS"){
-			validator.splice(2,1);
-			var c=$("#WBSNumber input");
-			c.removeAttr("errMsg");
-			c.parent("div").removeClass("has-error");
-			c.unbind('hover');
-		}*/
 		var checkResult = $(".form-box").sotoValidate(validator);
 		if(checkResult){
-			var proId= $("#proId").val();
+			var proId=$("#proId").val();
 			var param = $(".form-box").sotoCollecter();
 			param["proId"] = proId;
 			param["method"] = proId==""?"save":"update";//要执行的操作方法，存在proId为更新，否则保存
 			$.ajax({
 				type:"POST",
-				url:"<%=request.getContextPath()%>/project/ajaxSavePro?ran="+ran,
+				url:"<%=request.getContextPath()%>/nonproject/ajaxSavePro?ran="+ran,
 				data:param,
 				dataType:"json",
 				success:function(data){
-					if(data.result== "success"){
+					if(data.result=="success"){
+						//parent.layer.msg("保存成功!");
 						parent.queryList("reload");
+						$("#category").val($(".form-box").sotoCollecterForOne("category"));
+						//保存成功后返回技术服务项目编号和项目id
 						$("#proId").val(data.proId);
-						currentCategory=$(".form-box").sotoCollecterForOne("category");
-						currentWBSNumber=data.wbsNumber;
-						currentProNumber=data.proNumber;
 						$("#WBSNumber input").val(data.wbsNumber);
-						$("#projectNumber input").val(data.proNumber);
+						$("#currentWBSNumber").val(data.wbsNumber);
 						//判断当前日期是否已经被修改,如果被修改则提示修改参与人日期
 						if($("input[name='startDate']").val()!=$("#startDate").val() ||
 								$("input[name='endDate']").val()!=$("#endDate").val()){
 							//如果日期有改动则更新当前日期的值
-							$("#startDate").val($(".form-box").sotoCollecterForOne("startDate"));
-							$("#endDate").val($(".form-box").sotoCollecterForOne("endDate"));
+							$("#startDate").val($("input[name='startDate']").val());
+							$("#endDate").val($("input[name='endDate']").val());
 							if($("#mmg tr[class!='emptyRow']").length==0){
 								//若当前没有参与人员则不用提醒
 								parent.layer.msg("保存成功!");
 								stuffShow();
 								return;
 							} 
-							layer.confirm('保存成功！项目开始日期/项目结束日期变动，请修改参与人的参与开始日期/结束日期，以免影响员工工时填报。', {icon: 7, title:'提示',shift:-1},
+							layer.confirm('保存成功！非项目开始日期/非项目结束日期变动，请修改参与人的参与开始日期/结束日期，以免影响员工工时填报。', {icon: 7, btn:"修改",title:'提示 ',shift:-1},
 								function(index){
 									layer.close(index);
 									stuffShow();
@@ -393,32 +322,18 @@
 		}
 	}
 	
-	function checkNumberFormat(planHours){
+	
+	function checkOrganFormat(deptName){
 		var result = {};
-		var reg=/^([0-9]|[1-9][0-9]{0,7})$/;
-		if($.trim(planHours)!="" && !reg.test(planHours)){
+		if($.trim(deptName) =="中国电力科学研究院有限公司"  ){
 			result.result = false;
-			result.info = "必须为8位以内整数；";
+			result.info = "组织信息不能为'中国电力科学研究院有限公司'";
 		}else{
 			result.result = true;
 			result.info = "";
 		}
 		return result;
 	}
-	
-	function checkDateRange(date){
- 		//alert($("input[name='startDate']").val()+"/"+$("input[name='endDate']").val());
-		var result = {};
-		if(getDate($("input[name='startDate']").val())<=getDate(date) && getDate($("input[name='endDate']").val())>=getDate(date)){
-			result.result = true;
-			result.info = "";
-		}else{
-			result.result = false;
-			result.info = "日期超范围；";
-		}
-		return result;
-	}
-	
 	function checkStartDate(startDate){
 		var result = {};
 		var currentYear=new Date().getFullYear();
@@ -446,37 +361,48 @@
 			result.info = "";
 		}else{
 			result.result = false;
-			result.info = "项目结束时间必须大于项目开始时间；";
+			result.info = "非项目结束时间必须大于非项目开始时间；";
 		}
 		return result;
 	}
 	
-	//未完成项目信息填写阻止填写人员信息
- 	$("#myTab a").click(function(e){
-		e.preventDefault();
-		if($("#proId").val()){
-			$(this).tab("show");
+	function checkNumberFormat(planHours){
+		var result = {};
+		var reg=/^([0-9]|[1-9][0-9]{0,7})$/;
+		if($.trim(planHours)!="" && !reg.test(planHours)){
+			result.result = false;
+			result.info = "必须为8位以内整数；";
 		}else{
-			if($(this).parent().index()==1){
-				layer.msg("请先保存项目！");
-			}
+			result.result = true;
+			result.info = "";
 		}
-	})  
+		return result;
+	}
 	
-	
+	function checkNumberLength(num){
+		var result = {};
+		if(num.length>8){
+			result.result = false;
+			result.info = "不能大于8位数字；";
+		}else{
+			result.result = true;
+			result.info = "";
+		}
+		return result;
+	}
 	
 	function forSave_stuff(){
 		var ran = Math.random()*1000000;
+		var nameArr=new Array();
+		var hrcodeArr=new Array();
 		var proId=$("#proId").val();
-		var rows=$("#mmg tr");
+		var rows=$("#mmg tr:visible");
 		if(rows.length==0){
 			layer.msg("请添加参与人员");
 			return;
 		}
 		var jsonStr ="[";
 		var isPass=true;
-		var hrcodeArr=new Array();
-		var nameArr=new Array();
 		var roleCount=0;
 		var principalCode="";
 		for(var i=0;i<rows.length;i++){
@@ -486,7 +412,7 @@
 	                                     	      {name:'hrcode',vali:'required'},
 	                                     	      {name:'stuffName',vali:'required'},
 	                                     	      {name:'startDate',vali:'required;date;setStartDate();checkDateRange()'},
-	                                     	      {name:'endDate',vali:'required;date;checkDate();checkDateRange()'},
+	                                     	      {name:'endDate',vali:'required;date;checkDateOrder();checkDateRange()'},
 	                                     	      {name:'role',vali:'required'}
 				                               ]);
 			if(!checkResult){
@@ -534,7 +460,7 @@
 			layer.msg("您的填写有误，请检查");
 			return;
 		}
-		
+	
 		//校验是否有重复，且负责人是否有且唯一
 		if(roleCount==0){
 			layer.msg("请选择项目负责人");
@@ -548,7 +474,7 @@
 		if (arrStr.indexOf(principalCode) != arrStr.lastIndexOf(principalCode)){
 			layer.msg("只能选择一名项目负责人");
 			return;
-		}	
+		}
 		
 		//校验人员+日期是否唯一
 		if(nameArr.length>0){
@@ -556,28 +482,34 @@
 			return;
 		}
 		
-		/* if(arrRepeat(hrcodeArr)){
-			layer.msg("人员有重复");
-			return;
-		} */
-		
 		$.ajax({
 			type:"POST",
-			url:"<%=request.getContextPath()%>/project/ajaxSaveStuff?ran="+ran,
+			url:"<%=request.getContextPath()%>/project/ajaxUpdateStuff?ran="+ran,
 			data:{param:jsonStr,proId:proId},
 			dataType:"json",
 			success:function(data){
-				/* if(data.result== "success"){
-					parent.layer.msg("保存成功!");
+				if(data.result== "success"){
+					parent.layer.msg("成功保存"+data.count+"条，"+"失败"+data.failCount+"条");
 					parent.queryList("reload");
 					forClose();
 				}else {
-					parent.layer.msg("保存失败!");
-				} */
-				
-				parent.layer.msg("成功保存"+data.count+"条，"+"失败"+data.failCount+"条");
-				parent.queryList("reload");
-				forClose();
+					var failList=JSON.parse(data.failList);
+					//TODO
+					var note="";
+					$.each(failList,function(i,item){
+						var rows=$("#mmg tr");
+						rows.each(function(i){
+							var hrcode=$(this).find("input[name='hrcode']").val();
+							//console.log("hrcode: "+hrcode+"/HRCODE: "+item.HRCODE);
+							if(hrcode==item.HRCODE){
+								$(this).show();
+								sortIndex();
+							}
+						});
+						note+=item.NAME+"("+item.WORK_TIME+")、";
+					});
+					parent.layer.msg(note.substr(0,note.length-1)+"已存在报工信息，请核实!");
+				} 
 			},
 			error:function(){
 				parent.layer.msg("异常!");
@@ -585,7 +517,7 @@
 		});
 	}
 	
- 	/* function arrRepeat(arr){
+	/* function arrRepeat(arr){
 		var arrStr = JSON.stringify(arr);
 		for (var i = 0; i < arr.length; i++) {
 			if (arrStr.indexOf(arr[i]) != arrStr.lastIndexOf(arr[i])){
@@ -593,34 +525,18 @@
 			}
 		};
 		return false;
-	} */
-	
-	function checkDate(endDate){
-		var result = {};
-		if(getDate(endDate)>=getDate(tempStartDate)){
-			result.result = true;
-			result.info = "";
-		}else{
-			result.result = false;
-			result.info = "项目结束时间不能小于项目开始时间；";
-		}
-		return result;
-	} 
-	
-	//仅用于保存当前行的开始日期数据
-	function setStartDate(val){
-		tempStartDate=val;
-		return  result ={result:true,info:""};
-	}
+	}  */
 	
 	function checkUniqueness(val){
+		//var uuid = $("input[name=uuid]").val();
+		//var empCode = $("input[name=WBSNumber]").val();
 		var result = {};
-		if(currentWBSNumber==$.trim(val) || ''==$.trim(val)){//如果WBS编号不填或者未改变则不用校验唯一
+		if($.trim($("#currentWBSNumber").val())==$.trim(val) || ''==$.trim(val)){//如果wbs编号未该改变或者未填写则不校验唯一性
 			result.result = true;
 			result.info = "";
 			return result;
-		} 
-		var ran = Math.random()*100000000;
+		}
+		var ran = Math.random()*1000000;
 		$.ajax({
 			type: 'POST',
 			url:'<%=request.getContextPath()%>/project/ajaxCheckUniqueness?ran='+ran,
@@ -635,12 +551,44 @@
 								result.info = "";
 							} else {
 								result.result = false;
-								result.info = "在系统中已存在相同项目编号数据，不能重复录入；";
+								result.info = "在系统中已存在相同非项目编号数据，不能重复录入；";
 							}
 						}
 					});
 		return result;
 	}
+	
+ 	function checkDateOrder(endDate){
+		var result = {};
+		if(getDate(endDate)>=getDate(tempStartDate)){
+			result.result = true;
+			result.info = "";
+		}else{
+			result.result = false;
+			result.info = "非项目结束时间不能小于非项目开始时间；";
+		}
+		return result;
+	} 
+ 	
+ 	function checkDateRange(date){
+ 		//alert($("input[name='startDate']").val()+"/"+$("input[name='endDate']").val());
+		var result = {};
+		if(getDate($("input[name='startDate']").val())<=getDate(date) && getDate($("input[name='endDate']").val())>=getDate(date)){
+			result.result = true;
+			result.info = "";
+		}else{
+			result.result = false;
+			result.info = "日期超范围；";
+		}
+		return result;
+	} 
+	
+	//仅用于保存当前行的开始日期数据
+	function setStartDate(val){
+		tempStartDate=val;
+		return  result ={result:true,info:""};
+	}
+	
 	
 	// 删除
 	function forDelete_stuff(){
@@ -651,33 +599,21 @@
 		}
 		layer.confirm('确认删除吗?', {icon: 7,title:'提示',shift:-1},function(index){
 			layer.close(index);
-			/* 
-			var uuids = mmg.selectedRowsByName("uuid");
-			var ran = Math.random()*100000000;
-			$.post('<%=request.getContextPath()%>/authenticationWeb/forDelete?ran='+ran,{uuids:uuids},function(data){
-				if(data == "true"){
-					layer.msg("删除成功!");
-				}else{
-					layer.msg("删除失败!");
-				}
-				queryList("reload");
-			}); 
-			*/
-			var newRows=$("<tbody></tbody>");
-			var unselectedRows=$("#mmg tr:not('.selected')");
-			for(var i=0;i<unselectedRows.length;i++){
-				var row=unselectedRows[i];
-				$(row).css("display","table-row");
-				$(row).find(".mmg-index").text(i+1);
-				newRows.append($(row));
-			}
-			$("#mmg").html(newRows);
-			mmg._fullWidthRows();
-			mmg.resize();
+			var selectedRows=$("#mmg .selected");
+			selectedRows.hide();
+			sortIndex();
+			resize();
 		});
 	}
  	
-	function forClose() {
+	function sortIndex(){
+		var rows=$("#mmg tr:visible");
+		for(var i=0;i<rows.length;i++){
+			$(rows[i]).find(".mmg-index").text(i+1);
+		}
+	}	
+	
+	function forClose() { 
 		parent.layer.close(parent.layer.getFrameIndex(window.name));
 	}
 	
@@ -691,8 +627,7 @@
 				$(row).css("display","table-row");
 				$(row).find(".mmg-index").text(index++);
 			}
-			mmg._fullWidthRows();
-			mmg.resize();
+			resize();
 			return;
 		}
 		rows.css("display","none");
@@ -704,40 +639,79 @@
 				$(row).css("display","table-row");
 			}
 		}
-		mmg._fullWidthRows();
-		mmg.resize();
+		resize();
 	}
-	// 初始化列表数据
+	
+	function typeChange(_this){
+		var type=$(_this).val();
+		if(type=="JS"){
+			$("#organInfo").show();
+			if($("#deptCode").val()==""){
+				$("#deptName").val($("#currentDeptName").val());
+				$("#deptCode").val($("#currentDeptCode").val());
+			}
+			$("#WBSNumber label").html('WBS编号');
+			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>项目编号');
+			if($("#category").val()==type){
+				$("#WBSNumber input").val($("#currentWBSNumber").val());
+			}else{
+				$("#WBSNumber input").val("保存后自动生成");
+			}
+			$("#WBSNumber input").attr("readonly","").css({'color':'#999','font-style':'italic'});*/
+		}
+		if(type=="KY" || type=="HX"){
+			$("#organInfo").hide();
+			$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
+			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
+			if($("#category").val()==type){
+				$("#WBSNumber input").val($("#currentWBSNumber").val());
+			}else{
+				$("#WBSNumber input").val("");
+			}
+			$("#WBSNumber input").removeAttr("readonly").removeAttr("style");*/
+		}
+		if(type=="QT"){
+			$("#organInfo").hide();
+			$("#WBSNumber label").html('WBS编号');
+		}
+		
+		if($("#category").val()==type){
+			$("#WBSNumber input").val($("#currentWBSNumber").val());
+		}else{
+			$("#WBSNumber input").val("");
+		}
+	}
+	
+	// 初始化人员列表数据
 	function queryList(load){
 		var ran = Math.random()*100000000;
-		//var bw=$("body").width()-30;//body宽度 减去padding
 		var cols = [
-   		            //{title:'序列', name:'hex2', sortable:false, align:'center', hidden: true, lockDisplay: true},
+		            //{title:'序列', name:'hex2', sortable:false, align:'center', hidden: true, lockDisplay: true},
 		            //{title:'选择', name:'label', width:100, sortable:false, align:'left'},
-		            {title:'人员编号', name:'empCode',width:95,sortable:false, align:'center',
+		            {title:'人员编号', name:'HRCODE',width:95,sortable:false, align:'center',
 		            	renderer:function(val,item,rowIndex){
-			            	return  '<div style="display:inline"><input value="'+val+'"  class="form-control" name="hrcode" property="hrcode" readonly="true" style="padding:6px 2px;border:none;text-align:center"></div>';			            
-			            }
+			            	return  '<div style="display:inline"><input value="'+val+'"  class="form-control" name="hrcode" property="hrcode" readonly="true" style="border:none;text-align:center;padding:6px 2px"></div>';			            
+			            }	
 		            },
-		            {title:'人员姓名', name:'empName',sortable:false, width:95,align:'center',
+		            {title:'人员姓名', name:'NAME',sortable:false, width:95,align:'center',
 		            	renderer:function(val,item,rowIndex){
-			            	return  '<div style="display:inline"><input value="'+val+'"  class="form-control" name="stuffName" property="stuffName" readonly="true" style="padding:6px 2px;border:none;text-align:center"></div>';			            
-			            }
-		           	},
-		            {titleHtml:'<font class="glyphicon glyphicon-asterisk text-danger"></font>开始日期',width:100, name:'startDate', sortable:false, align:'center',
+			            	return  '<div style="display:inline"><input value="'+val+'"  class="form-control" name="stuffName" property="stuffName" readonly="true" style="border:none;text-align:center;padding:6px 2pxs"></div>';			            
+			            }	
+		            },
+		            {titleHtml:'<font class="glyphicon glyphicon-asterisk text-danger"></font>开始日期',width:100, name:'START_DATE', sortable:false, align:'center',
 		            	renderer:function(val,item,rowIndex){
 			            	return  '<div style="display:inline"><input value="'+val+'"  class="form-control datePicker" name="startDate" property="startDate" readonly="true" style="padding:6px 2px;text-align:center"></div>';			            
 			            }
 		            },
-		            {titleHtml:'<font class="glyphicon glyphicon-asterisk text-danger"></font>结束日期', width:100,name:'endDate', sortable:false, align:'center',
+		            {titleHtml:'<font class="glyphicon glyphicon-asterisk text-danger"></font>结束日期', width:100,name:'END_DATE', sortable:false, align:'center',
 		            	renderer:function(val,item,rowIndex){
-			            	return  '<div style="display:inline"><input value="'+val+'"  class="form-control datePicker" name="endDate" property="endDate"  readonly="true" style="padding:6px 2px;text-align:center"></div>';
+			            	return  '<div style="display:inline"><input value="'+val+'"  class="form-control datePicker" name="endDate" property="endDate" readonly="true" style="padding:6px 2px;text-align:center"></div>';
 			            }
 		            },
-		            {titleHtml:'<font class="glyphicon glyphicon-asterisk text-danger"></font>角色', width:120,name:'role',sortable:false, align:'center',
+		            {titleHtml:'<font class="glyphicon glyphicon-asterisk text-danger"></font>角色', width:120,name:'ROLE',sortable:false, align:'center',
 		            	renderer:function(val,item,rowIndex){
 		            		var text='<div style="display:inline"><select onchange="roleChange($(this))" class="form-control" name="role" property="role" style="text-align:center;padding:6px 2px">'+
-	            					'<option>项目负责人</option>'+'<option>项目参与人</option>'+
+	            					'<option>项目参与人</option>'+'<option>项目负责人</option>'+
 		            				'</select></div>';
 		            				
 		            		if(val==0){
@@ -747,7 +721,7 @@
 		            		}
 			            	return  text;
 			            }	
-		           	 }
+		            }
 		    		];
 		var mmGridHeight = $("body").parent().height() - 220;
 		mmg = $('#mmg').mmGrid({
@@ -760,12 +734,13 @@
 			height: mmGridHeight,
 			cols: cols,
 			nowrap: true,
-			items:[],
-			multiSelect: true,
-			root: 'items',
-			params : function() {
+			url: '<%=request.getContextPath()%>/project/stuffPageWithData?proId=${id}&ran=' + ran,
+			//fullWidthRows:true,
+			multiSelect : true,
+			root : 'items'
+			/* params : function() {
 				return $(".query-box").sotoCollecter();
-			}
+			} */
 		}).on({'loadSuccess': function(e, data) {
 				$(".checkAll").css("display","none").parent().text("选择");
 				$("#mmg").find(".emptyRow").remove();
@@ -773,28 +748,33 @@
 					autoclose:true,
 					orientation:'auto',
 					language: 'cn',
-					format: 'yyyy-mm-dd',
-					startDate:getDate($("#startDate").val()),
-					endDate : getDate($("#endDate").val())
-				});
+					format: 'yyyy-mm-dd'
+					/* startDate:getDate($("#startDate").val()),
+					endDate : getDate($("#endDate").val()) */
+				});			
 			},
-			'rowInserted':function(args_1, args_2){
+			'rowInserted':function(e,item,index){
 				$(".datePicker").datepicker({
 					autoclose:true,
 					orientation:'auto',
 					language: 'cn',
-					format: 'yyyy-mm-dd',
-					startDate:getDate($("#startDate").val()),
-					endDate : getDate($("#endDate").val())
-				});
-				mmg._fullWidthRows();
-				mmg.resize();
+					format: 'yyyy-mm-dd'
+					/* startDate:getDate($("#startDate").val()),
+					endDate :getDate($("#endDate").val()) */
+				});		
+				resize();
 			}
 		});
 	}
 	
+	function resize(){
+		mmg._fullWidthRows();
+		mmg.resize();
+	}
+	
 	function stuffShow(){
 		$("#myTab a:eq(1)").tab("show");
+		setTimeout(resize,200);
 	}
 	
 	function roleChange(_this){
@@ -832,14 +812,13 @@
 			return;
 		}
 		var rows=$("#mmg tr");
-		rows.each(function(i){
+		/* rows.each(function(i){
 			$(this).css("display","table-row");
 			$(this).find(".mmg-index").text(i+1);
-		});
-		var index=rows.length;
+		}); */
 		//var hrcode="";
-		//var empName="";
-		//var spareNames=[];
+		//var empName=""; 
+		//var spareNames=new Array();
 		var codes=$("#empCode").val();
 		var texts=$("#empName").val();
 		var code_arr = codes.split(",");
@@ -860,10 +839,10 @@
 					spareNames.push(empName);
 				}
 			} */
-			var defaultStartDate=$("#startDate").val();
-			var	defaultEndDate=$("#endDate").val();
-			//var role=$("#currentHrcode").val()==code?"1":"0";
+			var defaultStartDate=$("input[name='startDate']").val();
+			var	defaultEndDate=$("input[name='endDate']").val();
 			var role="0";
+			//var role=$("#currentHrcode").val()==code?"1":"0";
 			for(var j=0;j<rows.length;j++){
 				$row=$(rows[j]);
 				if($row.find("select[name='role']").val()=="项目负责人"){
@@ -874,12 +853,12 @@
 			if($("#currentHrcode").val()==code && flag){
 				role="1";
 			}
-			mmg.addRow({"empCode":code,"empName":text,"startDate":defaultStartDate,"endDate":defaultEndDate,"role":role});
-			mmg._fullWidthRows();
-			mmg.resize();
+			mmg.addRow({"HRCODE":code,"NAME":text,"START_DATE":defaultStartDate,"END_DATE":defaultEndDate,"ROLE":role});
+			resize();
+			sortIndex();
 			/* if(flag){
 			}else{
-				layer.msg(spareNames.toString()+"已存在，请勿重复添加");
+				layer.msg("已存在，请勿重复添加");
 			} */
 		} 
 	}

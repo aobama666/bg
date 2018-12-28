@@ -15,7 +15,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>添加项目信息</title>
+<title>添加非项目信息</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css"
@@ -73,68 +73,56 @@
 	<input type="hidden" name="currentDeptCode" id="currentDeptCode" value="${deptCode}"/>
 	
 	<ul id="myTab" class="nav nav-tabs">
-		<li class="active"><a href="#proInfo" data-toggle="tab">项目信息</a></li>
-		<li><a href="#people" data-toggle="">参与人员</a></li>
+		<li class="active"><a href="#proInfo" data-toggle="tab">非项目信息</a></li>
 	</ul>
-	
+
 	<div id="myTabContent" class="tab-content">
 		<div class="tab-pane fade in active" id="proInfo">
 			<div class="page-header-sl">
 				<div class="button-box">
 					<button type="button" class="btn btn-success btn-xs"
 						onclick="forSave_pro()">保存</button>
-					<!-- <button type="button" class="btn btn-warning btn-xs"
-						onclick="forClose()">关闭</button> -->
 				</div>
 			</div>
 			<hr>
 			<div class="form-box">
 				<div class="form-group col-xs-11">
 					<label for="category"><font
-						class="glyphicon glyphicon-asterisk required"></font>项目分类</label>
-					<div class="controls">
+						class="glyphicon glyphicon-asterisk required"></font>非项目分类</label>
+					<div class="noncontrols">
 						<select name="category" property="category" onchange="typeChange($(this).val())" >
-							<options collection="typeList" property="label"
-								labelProperty="value">
-								<option value="QT">其他</option>
-								<option value="KY">科研项目</option>
-								<option value="HX">横向项目</option>
-								<option value="JS">技术服务项目</option>	
+							<options collection="typeList" property="label"  labelProperty="value">
+								<option value="BP">项目前期</option>
+								<option value="CG">常规工作</option>
 							</options>
 						</select>
 					</div>
 				</div>
+				
 				<div class="form-group col-xs-11">
 					<label for="projectName"><font
-						class="glyphicon glyphicon-asterisk required"></font>项目名称</label>
-					<div class="controls">
+						class="glyphicon glyphicon-asterisk required"></font>非项目名称</label>
+					<div class="noncontrols">
 						<input type="text" name="projectName" property="projectName">
 					</div>
 				</div>
 				<div class="form-group col-xs-11" id="projectNumber">
 					<label for="projectNumber"><font
-						class="glyphicon glyphicon-asterisk required"></font>项目编号</label>
-					<div class="controls">
+						class="glyphicon glyphicon-asterisk required"></font>非项目编号</label>
+					<div class="noncontrols">
 						<input class="italic" disabled value="保存后自动生成" type="text" name="projectNumber" property="projectNumber">
 					</div>
 				</div>	
-				<div class="form-group col-xs-11" id="WBSNumber">
-					<label for="WBSNumber">
-						<!-- <font class="glyphicon glyphicon-asterisk required"></font> -->WBS编号</label>
-					<div class="controls">
-						<input type="text" name="WBSNumber" property="WBSNumber">
-					</div>
-				</div>		
 				<div class="form-group col-xs-11">
-					<label for="projectIntroduce"><font class=""></font>项目说明</label>
-					<div class="controls">
+					<label for="projectIntroduce"><font class=""></font>非项目说明</label>
+					<div class="noncontrols">
 						<textarea name="projectIntroduce" property="projectIntroduce" style="height:75px" ></textarea>
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
 					<label for="startDate"><font
-						class="glyphicon glyphicon-asterisk required"></font> 项目开始时间</label>
-					<div class="controls">
+						class="glyphicon glyphicon-asterisk required"></font>非项目开始时间</label>
+					<div class="noncontrols">
 						 <div class="input-group date form_date">
 							<input type="text" name="startDate" property="startDate" readonly="true"> <span
 								class="input-group-addon"><span
@@ -144,8 +132,8 @@
 				</div>
 				<div class="form-group col-xs-11">
 					<label for="endDate"><font
-						class="glyphicon glyphicon-asterisk required"></font> 项目结束时间</label>
-					<div class="controls">
+						class="glyphicon glyphicon-asterisk required"></font>非项目结束时间</label>
+					<div class="noncontrols">
 						<div class="input-group date form_date">
 							<input type="text" name="endDate" property="endDate"
 								readonly="true"> <span class="input-group-addon"><span
@@ -153,31 +141,23 @@
 						</div>
 					</div>
 				</div>
-				<div class="form-group col-xs-11" id="organInfo" style="display:none">
+				<div class="form-group col-xs-11">
+					<label for="planHours"><font
+						class=""></font> 计划投入工时</label>
+					<div class="noncontrols">
+						<input type="text" name="planHours"  property="planHours">
+					</div>
+				</div>
+				<div class="form-group col-xs-11" id="organInfo" >
 					<label for="organInfo"><font class="glyphicon glyphicon-asterisk required"></font> 组织信息</label>
-					<div class="controls">
+					<div class="noncontrols">
 						<div id="organTree" class="input-group organ">
-							<input type="hidden" name="deptCode" id="deptCode" value="">
-							<input type="text" name="deptName" id="deptName" readonly="readonly">
+							<input type="hidden" name="deptCode" id="deptCode" value="${deptCode}">
+							<input type="text" name="deptName" id="deptName" readonly="readonly" value="${deptName}">
 							<span class="input-group-addon"><span class="glyphicon glyphicon-th-list"></span></span>
 						</div>
 					</div>
 				</div>
-				<div class="form-group col-xs-11">
-					<label for="planHours"><font
-						class="glyphicon glyphicon-asterisk required"></font> 计划投入工时</label>
-					<div class="controls">
-						<input type="text" name="planHours"  property="planHours">
-					</div>
-				</div>
-				<!-- <div class="form-group col-xs-11">
-					<label for="decompose"><font
-						class="glyphicon glyphicon-asterisk required"></font> 是否分解</label>
-					<div class="controls">
-						<input type="text" name="decompose" property="decompose"
-							disabled="disabled" value="否">
-					</div>
-				</div> -->
 			</div>
 		</div>
 		<div class="tab-pane fade" id="people">
@@ -225,6 +205,7 @@
 	</div>
 </body>
 <script type="text/javascript">
+   
 	var mmg;
 	var tempStartDate="";
 	var currentWBSNumber="";
@@ -242,94 +223,52 @@
 			todayHighlight:true,
 			});//clearBtn:true todayHighlight:true,
 		$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'self',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'});
-		$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio'});
+		$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio' });
 	}); 
 
 	function typeChange(type){	
-	
-		if(type=="JS"){
+	   
 			$("#organInfo").show();
 			if($("#deptCode").val()==""){
 				$("#deptName").val($("#currentDeptName").val());
 				$("#deptCode").val($("#currentDeptCode").val());
 			}
-			$("#WBSNumber label").html('WBS编号');
-			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>项目编号');
-			if(currentCategory==type){
-				$("#WBSNumber input").val(currentWBSNumber);
-			}else{
-				$("#WBSNumber input").val("保存后自动生成");
-			}
-			$("#WBSNumber input").attr("readonly","").css({'color':'#999','font-style':'italic'});
-			*/
-		}
-		if(type=="KY" || type=="HX"){
-			$("#organInfo").hide();
-			$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
-			/*$("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
-			if(currentCategory==type){
-				$("#WBSNumber input").val(currentWBSNumber);
-			}else{
-				$("#WBSNumber input").val("");
-			}
-			$("#WBSNumber input").removeAttr("readonly").removeAttr("style");
-			*/
-		}
-		if(type=="QT"){
-			$("#organInfo").hide();$("#organInfo").hide();
-			$("#WBSNumber label").html('WBS编号');
-		}		
-		if(currentCategory==type){
-			$("#WBSNumber input").val(currentWBSNumber);
-			//$("#projectNumber input").val(currentProNumber);
-		}else{
-			$("#WBSNumber input").val("");
-			//$("#projectNumber input").val("保存后自动生成");
-		}
+		   
 	}
 	
 	function forSave_pro(){
 		var ran = Math.random()*1000000;
-		//保存时再生成技术服务项目编号
+		//保存时再生成技术服务非项目编号
 		/*
 		if($("select[name='category']").val()=="JS" && $("#WBSNumber input").val()=="保存后自动生成"){
 			$.ajax({
 				  url: "<%=request.getContextPath()%>/project/queryForJsNumber?ran="+ran,
 				  async: false,
 				  dataType: "text",
-				  success: function(data){
+				  success: function(data)
 					$("#WBSNumber input").val(data);
 				  }
 			});
 		}
 		*/
 		var validator=[
-	              	      {name:'category',vali:'required'},
+	              	      {name:'category',vali:'required'},  
 	             	      {name:'projectName',vali:'required;length[-50]'},
 	             	      {name:'WBSNumber',vali:''},//required;WBS编号改为选填项
 	             	      {name:'projectIntroduce',vali:'length[-200]'},
 	             	      {name:'startDate',vali:'required;date;checkStartDate()'},
 	             	      {name:'endDate',vali:'required;date;checkEndDate()'},
-	             	      {name:'deptName',vali:'required'},
-	             	      {name:'planHours',vali:'required;checkNumberFormat()'}
-	             	      //{name:'decompose',vali:'required'}
+	             	      {name:'planHours',vali:'checkNumberFormat()'},
+	             	      {name:'deptName',vali:'required;checkOrganFormat()'} 
 	             	];
 	    var category=$("select[name='category']").val();
         var wbs=$("#WBSNumber input");
-        //当为科研、横向项目时，校验wbs编号,否则如果天了wbs编号的话，只校验其唯一性
+        //当为科研、横向非项目时，校验wbs编号,否则如果天了wbs编号的话，只校验其唯一性
         if(category=='HX' || category=='KY' ){
         	validator[2].vali='required;checkUniqueness()';
         }else if($.trim(wbs.val())!=''){
         	validator[2].vali='checkUniqueness()';
         }
-		//当为技术服务项目时候，不校验项编号，并移除错误提示
-		/*if($("select[name='category']").val()=="JS"){
-			validator.splice(2,1);
-			var c=$("#WBSNumber input");
-			c.removeAttr("errMsg");
-			c.parent("div").removeClass("has-error");
-			c.unbind('hover');
-		}*/
 		var checkResult = $(".form-box").sotoValidate(validator);
 		if(checkResult){
 			var proId= $("#proId").val();
@@ -338,7 +277,7 @@
 			param["method"] = proId==""?"save":"update";//要执行的操作方法，存在proId为更新，否则保存
 			$.ajax({
 				type:"POST",
-				url:"<%=request.getContextPath()%>/project/ajaxSavePro?ran="+ran,
+				url:"<%=request.getContextPath()%>/nonproject/ajaxSavePro?ran="+ran,
 				data:param,
 				dataType:"json",
 				success:function(data){
@@ -362,7 +301,7 @@
 								stuffShow();
 								return;
 							} 
-							layer.confirm('保存成功！项目开始日期/项目结束日期变动，请修改参与人的参与开始日期/结束日期，以免影响员工工时填报。', {icon: 7, title:'提示',shift:-1},
+							layer.confirm('保存成功！非项目开始日期/非项目结束日期变动，请修改参与人的参与开始日期/结束日期，以免影响员工工时填报。', {icon: 7, title:'提示',shift:-1},
 								function(index){
 									layer.close(index);
 									stuffShow();
@@ -391,6 +330,18 @@
 				}
 			});
 		}
+	}
+	
+	function checkOrganFormat(deptName){
+		var result = {};
+		if($.trim(deptName) =="中国电力科学研究院有限公司"  ){
+			result.result = false;
+			result.info = "组织信息不能为'中国电力科学研究院有限公司'";
+		}else{
+			result.result = true;
+			result.info = "";
+		}
+		return result;
 	}
 	
 	function checkNumberFormat(planHours){
@@ -424,7 +375,7 @@
 		var currentYear=new Date().getFullYear();
 		if($("select[name=category]").val()=="JS" && startDate.substr(0,4)!=currentYear){
 			result.result = false;
-			result.info = "技术服务项目不能跨年；";
+			result.info = "技术服务非项目不能跨年；";
 		}else{
 			result.result = true;
 			result.info = "";
@@ -438,7 +389,7 @@
 		var startDate = $("input[name=startDate]").val();
 		if($("select[name=category]").val()=="JS" && endDate.substr(0,4)!=currentYear){
 			result.result = false;
-			result.info = "技术服务项目不能跨年；";
+			result.info = "技术服务非项目不能跨年；";
 			return result;
 		}
 		if((new Date(endDate.replace(/-/g,"\/")))>(new Date(startDate.replace(/-/g,"\/")))){
@@ -446,19 +397,19 @@
 			result.info = "";
 		}else{
 			result.result = false;
-			result.info = "项目结束时间必须大于项目开始时间；";
+			result.info = "非项目结束时间必须大于非项目开始时间；";
 		}
 		return result;
 	}
 	
-	//未完成项目信息填写阻止填写人员信息
+	//未完成非项目信息填写阻止填写人员信息
  	$("#myTab a").click(function(e){
 		e.preventDefault();
 		if($("#proId").val()){
 			$(this).tab("show");
 		}else{
 			if($(this).parent().index()==1){
-				layer.msg("请先保存项目！");
+				layer.msg("请先保存非项目！");
 			}
 		}
 	})  
@@ -519,7 +470,7 @@
 			}
 			var stuff = $row.sotoCollecter();
 			hrcodeArr.push(stuff["hrcode"]);
-			if(stuff["role"]=="项目负责人"){
+			if(stuff["role"]=="非项目负责人"){
 				principalCode=stuff["hrcode"];
 				roleCount++;
 			}
@@ -537,16 +488,16 @@
 		
 		//校验是否有重复，且负责人是否有且唯一
 		if(roleCount==0){
-			layer.msg("请选择项目负责人");
+			layer.msg("请选择非项目负责人");
 			return;
 		}else if(roleCount>1){
-			layer.msg("只能选择一名项目负责人");
+			layer.msg("只能选择一名非项目负责人");
 			return;
 		}
 		
 		var arrStr = JSON.stringify(hrcodeArr);
 		if (arrStr.indexOf(principalCode) != arrStr.lastIndexOf(principalCode)){
-			layer.msg("只能选择一名项目负责人");
+			layer.msg("只能选择一名非项目负责人");
 			return;
 		}	
 		
@@ -602,7 +553,7 @@
 			result.info = "";
 		}else{
 			result.result = false;
-			result.info = "项目结束时间不能小于项目开始时间；";
+			result.info = "非项目结束时间不能小于非项目开始时间；";
 		}
 		return result;
 	} 
@@ -635,7 +586,7 @@
 								result.info = "";
 							} else {
 								result.result = false;
-								result.info = "在系统中已存在相同项目编号数据，不能重复录入；";
+								result.info = "在系统中已存在相同非项目编号数据，不能重复录入；";
 							}
 						}
 					});
@@ -737,13 +688,13 @@
 		            {titleHtml:'<font class="glyphicon glyphicon-asterisk text-danger"></font>角色', width:120,name:'role',sortable:false, align:'center',
 		            	renderer:function(val,item,rowIndex){
 		            		var text='<div style="display:inline"><select onchange="roleChange($(this))" class="form-control" name="role" property="role" style="text-align:center;padding:6px 2px">'+
-	            					'<option>项目负责人</option>'+'<option>项目参与人</option>'+
+	            					'<option>非项目负责人</option>'+'<option>非项目参与人</option>'+
 		            				'</select></div>';
 		            				
 		            		if(val==0){
-		            			text=text.replace(/\<option\>项目参与人/g, "<option selected='selected'>项目参与人");
+		            			text=text.replace(/\<option\>非项目参与人/g, "<option selected='selected'>非项目参与人");
 		            		}else if(val==1){
-		            			text=text.replace(/\<option\>项目负责人/g, "<option selected='selected'>项目负责人");
+		            			text=text.replace(/\<option\>非项目负责人/g, "<option selected='selected'>非项目负责人");
 		            		}
 			            	return  text;
 			            }	
@@ -801,9 +752,9 @@
 		var role=_this.val();
 		var hrCode=_this.parents("tr").find("input[name='hrcode']").val();
 		var rows=$("#mmg tr").has("input[value='"+hrCode+"']");
-		if(role=="项目负责人"){
+		if(role=="非项目负责人"){
 			$("#mmg tr").each(function(index,row){
-				$(row).find("select").val("项目参与人");
+				$(row).find("select").val("非项目参与人");
 			});
 		}
 		rows.each(function(index,row){
@@ -866,7 +817,7 @@
 			var role="0";
 			for(var j=0;j<rows.length;j++){
 				$row=$(rows[j]);
-				if($row.find("select[name='role']").val()=="项目负责人"){
+				if($row.find("select[name='role']").val()=="非项目负责人"){
 					flag=false;
 					break;
 				}
