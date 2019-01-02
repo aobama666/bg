@@ -87,7 +87,7 @@
 			<hr>
 			<div class="form-box">
 				<div class="form-group col-xs-11">
-					<label for="category"><font
+					<label for="category" style="width:110px"><font
 						class="glyphicon glyphicon-asterisk required"></font>非项目分类</label>
 					<div class="noncontrols">
 						<select name="category" property="category" onchange="typeChange($(this).val())" >
@@ -100,27 +100,27 @@
 				</div>
 				
 				<div class="form-group col-xs-11">
-					<label for="projectName"><font
+					<label for="projectName" style="width:110px"><font
 						class="glyphicon glyphicon-asterisk required"></font>非项目名称</label>
 					<div class="noncontrols">
 						<input type="text" name="projectName" property="projectName">
 					</div>
 				</div>
 				<div class="form-group col-xs-11" id="projectNumber">
-					<label for="projectNumber"><font
+					<label for="projectNumber" style="width:110px"><font
 						class="glyphicon glyphicon-asterisk required"></font>非项目编号</label>
 					<div class="noncontrols">
 						<input class="italic" disabled value="保存后自动生成" type="text" name="projectNumber" property="projectNumber">
 					</div>
 				</div>	
 				<div class="form-group col-xs-11">
-					<label for="projectIntroduce"><font class=""></font>非项目说明</label>
+					<label for="projectIntroduce" style="width:110px"><font class=""></font>非项目说明</label>
 					<div class="noncontrols">
 						<textarea name="projectIntroduce" property="projectIntroduce" style="height:75px" ></textarea>
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
-					<label for="startDate"><font
+					<label for="startDate"  style="width:110px" ><font
 						class="glyphicon glyphicon-asterisk required"></font>非项目开始时间</label>
 					<div class="noncontrols">
 						 <div class="input-group date form_date">
@@ -131,7 +131,7 @@
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
-					<label for="endDate"><font
+					<label for="endDate" style="width:110px" ><font
 						class="glyphicon glyphicon-asterisk required"></font>非项目结束时间</label>
 					<div class="noncontrols">
 						<div class="input-group date form_date">
@@ -142,14 +142,14 @@
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
-					<label for="planHours"><font
+					<label for="planHours" style="width:110px"><font
 						class=""></font> 计划投入工时</label>
 					<div class="noncontrols">
 						<input type="text" name="planHours"  property="planHours">
 					</div>
 				</div>
 				<div class="form-group col-xs-11" id="organInfo" >
-					<label for="organInfo"><font class="glyphicon glyphicon-asterisk required"></font> 组织信息</label>
+					<label for="organInfo" style="width:110px"><font class="glyphicon glyphicon-asterisk required"></font> 组织信息</label>
 					<div class="noncontrols">
 						<div id="organTree" class="input-group organ">
 							<input type="hidden" name="deptCode" id="deptCode" value="${deptCode}">
