@@ -83,12 +83,9 @@ public class BgNonProjectController {
 		String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd",
 				SerializerFeature.WriteDateUseDateFormat);
 		return jsonStr;
-	}
-
-	
+	}	
 	/**
-	 * 添加人員的頁面初始化（需要传值）
-	 * 
+	 * 添加人員的頁面初始化（需要传值） 
 	 * @return
 	 */
 	@RequestMapping("/stuffPageWithData")
@@ -452,11 +449,14 @@ public class BgNonProjectController {
 			resultMap.put("result", "fail");
 			return JSON.toJSONString(resultMap);
 		}
-//		if(!ParamValidationUtil.isValidInt(planHoursStr) || planHoursStr.length()>8){
-//			bgLog.info("计划投入工时不是8位整数");
-//			resultMap.put("result", "fail");
-//			return JSON.toJSONString(resultMap);
-//		}
+		if(!Rtext.isEmpty(projectName)){
+			if(!ParamValidationUtil.isValidInt(planHoursStr) || planHoursStr.length()>8){
+				bgLog.info("计划投入工时不是8位整数");
+				resultMap.put("result", "fail");
+				return JSON.toJSONString(resultMap);
+			}
+		}
+		
 		Date startDate = DateUtil.fomatDate(startDateStr);
 		Date endDate = DateUtil.fomatDate(endDateStr);
 		Integer planHours = Rtext.ToInteger(planHoursStr, 0);
@@ -485,7 +485,7 @@ public class BgNonProjectController {
 		} else {
 			resultMap.put("result", "fail");
 		}
-		bgLog.info("保存项目信息返回字符串： " + JSON.toJSONString(resultMap));
+		bgLog.info("保存非项目信息返回字符串： " + JSON.toJSONString(resultMap));
 		return JSON.toJSONString(resultMap);
 	}
 
