@@ -1,45 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.sgcc.bg.mapper.HandleMapper">
+<mapper namespace="com.sgcc.bg.mapper.HandleSyncMapper">
 
-	<select id="getAllProjects" resultType="java.util.Map">
-		SELECT
-			row_number() over(ORDER BY T1.UPDATE_DATE DESC) as rn,
-      		t1.id as "id",
-      		t1.project_name as "projectName",
-      		(SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t1.category) as "category",
-    				t1.wbs_number as "WBSNumber",
-    				t1.project_number as "projectNumber",
-    				t1.project_introduce as "projectIntroduce",
-			t1.organ_info as "organInfo",
-			to_char(t1.start_date,'yyyy-mm-dd') as "startDate",
-			to_char(t1.end_date,'yyyy-mm-dd') as "endDate",
-			t1.plan_hours as "planHours",
-			t1.project_status as "projectStatus",
-			t1.decompose as "decompose",
-			t1.status as "status",
-			(select count(distinct t2.hrcode) from BG_PROJECT_USER t2 where t2.project_id=t1.id and t2.status='1') as "amount",
-      		(select t3.empname from BG_PROJECT_USER t3 WHERE t3.project_id=t1.id AND t3.role='1' and t3.status='1') as "principal",
-      		(select TO_CHAR(WM_CONCAT(distinct t3.empname)) from BG_PROJECT_USER t3 where t3.project_id=t1.id AND t3.status='1') as "empName"
-		FROM BG_PROJECT_INFO t1
-		WHERE (#{username} IN
-                      (SELECT username
-                         FROM BG_SYS_USER t5
-                         JOIN BG_PROJECT_USER t6
-                           ON t5.hrcode = t6.hrcode
-                        WHERE t6.project_id = t1.id
-                          AND t6.role = '1'
-                          AND t6.status = '1')
-                     	OR  #{username}=t1.create_user)
-		  <if test="proName != null and proName != ''" >
-				AND t1.PROJECT_NAME LIKE '%'||#{proName}||'%'
-		  </if>
-		  <if test="proStatus != null and proStatus != ''" >
-				AND t1.PROJECT_STATUS=#{proStatus}
-		  </if>
-		  AND t1.status='1'
+	<insert id="addKYToProTemp">
+		INSERT INTO BG_SYNC_KY_PROJECT_TEMP
+		  SELECT PROJECT_NAME,
+		         PROJECT_ID,
+		         PROJECT_TYPE,
+		         PROJECT_WBS,
+		         PROJECT_REMARK,
+		         PROJECT_START_DATE,
+		         PROJECT_END_DATE,
+		         SYSDATE,
+		         'admin'
+		    FROM 'TODO表名'
+	</insert>
+	
+	<delete id="cutProTemp" parameterType="int">
+		DELETE FROM BG_SYNC_KY_PROJECT_TEMP
+    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt; TRUNC(SYSDATE)
+	</delete>
+	
+	<insert id="addKYToEmpTemp">
+		INSERT INTO BG_SYNC_KY_EMP_TEMP
+		  SELECT USER_NAME,
+		         USER_HRCODE,
+		         JOIN_START_DATE,
+		         JOIN_END_DATE,
+		         PROJECT_ROLE,
+		         WORK_TIME,
+		         SYSDATE,
+		         'admin'
+		    FROM 'TODO表名'
+	</insert>
+	
+	<delete id="cutEmpTemp" parameterType="int">
+		DELETE FROM BG_SYNC_KY_EMP_TEMP
+    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt; TRUNC(SYSDATE)
+	</delete>
+	
+	<select id="getAllSyncProFromKY" resultType="java.util.Map">
+	    SELECT PROJECT_NAME,
+	           PROJECT_ID,
+	           PROJECT_TYPE,
+	           PROJECT_WBS,
+	           PROJECT_REMARK,
+	           PROJECT_START_DATE,
+	           PROJECT_END_DATE
+	      FROM 'TODO表名'
 	</select>
+	
+	<insert id="saveProFromKY" >
+		INSERT INTO BG_SYNC_KY_PROJECT
+		  (ID,
+		   PROJECT_ID,
+		   CATEGORY,
+		   PROJECT_NAME,
+		   WBS_NUMBER,
+		   PROJECT_INTRODUCE,
+		   START_DATE,
+		   END_DATE,
+		   CREATE_DATE,
+		   CREATE_USER,
+		   UPDATE_DATE,
+		   UPDATE_USER,
+		   VALID)
+		VALUES
+		  (SYS_GUID(),
+		   #{PROJECT_ID,jdbcType=VARCHAR},
+		   #{CATEGORY,jdbcType=VARCHAR},
+		   #{PROJECT_NAME,jdbcType=VARCHAR},
+		   #{WBS_NUMBER,jdbcType=VARCHAR},
+		   #{PROJECT_INTRODUCE,jdbcType=VARCHAR},
+		   #{START_DATE,jdbcType=VARCHAR},
+		   #{END_DATE,jdbcType=VARCHAR},
+		   SYSDATE,
+		   'admin',
+		   SYSDATE,
+		   'admin',
+		   '1')
+	</insert>
+	
+	<select id="getAllSyncEmpFromKY" resultType="java.util.Map">
+	    SELECT USER_NAME,
+	        USER_HRCODE,
+	        PROJECT_ID,
+	        JOIN_START_DATE,
+	        JOIN_END_DATE,
+	        PROJECT_ROLE,
+	        WORK_TIME
+	    FROM 'TODO表名'
+	</select>
+	
+	<insert id="saveEmpFromKY">
+		INSERT INTO BG_SYNC_KY_EMP
+		  (ID,
+		   PROJECT_ID,
+		   HRCODE,
+		   EMPNAME,
+		   START_DATE,
+		   END_DATE,
+		   ROLE,
+		   PLANHOURS,
+		   CREATE_DATE,
+		   CREATE_USER,
+		   UPDATE_DATE,
+		   UPDATE_USER,
+		   VALID)
+		VALUES
+		  (SYS_GUID(),
+		   #{PROJECT_ID,jdbcType=VARCHAR},
+		   #{HRCODE,jdbcType=VARCHAR},
+		   #{EMPNAME,jdbcType=VARCHAR},
+		   #{START_DATE,jdbcType=VARCHAR},
+		   #{END_DATE,jdbcType=VARCHAR},
+		   #{ROLE,jdbcType=VARCHAR},
+		   #{PLANHOURS,jdbcType=NUMERIC},
+		   SYSDATE,
+		   'admin',
+		   SYSDATE,
+		   'admin',
+		   '1')
+	</insert>
+	
 	
 	<select id="getProRelationById" resultType="java.util.Map">
 		SELECT BG_ID, SYNC_ID, CREATE_TIME, UPDATE_TIME
@@ -59,11 +143,38 @@
 	
 	<insert id="addErrorRecord"  parameterType="String">
 		INSERT INTO BG_SYNC_ERROR_RECORD
-		  (SRC, SYNC_ID, ERROR)
+		  (SYSTEM, TNAME, SYNC_ID, ERROR)
 		VALUES
-		  (#{src, jdbcType=VARCHAR}, #{syncId, jdbcType=VARCHAR} #{errorInfo, jdbcType=VARCHAR})
+		  (#{system, jdbcType=VARCHAR}, #{tName, jdbcType=VARCHAR}, #{syncId, jdbcType=VARCHAR} ,#{errorInfo, jdbcType=VARCHAR})
 	</insert>
 	
+	<select id="getEmpRelation" resultType="java.util.Map">
+		SELECT BG_EMP_ID, BG_PROJECT_ID , HRCODE , SRC , CREATE_TIME, UPDATE_TIME
+		  FROM BG_SYNC_EMP_RELATION T
+		 WHERE T.VALID = 1
+		  <if test="bgProId != null and bgProId != ''" >
+			 AND T.BG_PROJECT_ID = #{bgProId}
+		  </if>
+		  <if test="bgEmpId != null and bgEmpId != ''" >
+			 AND T.BG_EMP_ID = #{bgEmpId}
+		  </if>
+		  <if test="hrCode != null and hrCode != ''" >
+			 AND T.HRCODE = #{hrCode}
+		  </if>
+		  <if test="src != null and src != ''" >
+			 AND T.SRC = #{src}
+		  </if>
+	</select>
+	
+	<insert id="addEmpRelation"  parameterType="String">
+		INSERT INTO BG_SYNC_EMP_RELATION
+		  (BG_EMP_ID, BG_PROJECT_ID, HRCODE, SRC)
+		VALUES
+		  (	#{bgEmpId,jdbcType=VARCHAR}, 
+			#{bgProId,jdbcType=VARCHAR}, 
+			#{hrCode,jdbcType=VARCHAR}, 
+			#{src,jdbcType=VARCHAR})
+	</insert>
 	<!-- <select id="getProjectCount" parameterType="String" resultType="java.lang.Integer">
 		SELECT COUNT(*)
             FROM BG_PROJECT_INFO t

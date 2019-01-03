@@ -334,7 +334,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 					//如果存在wbs/项目编号,且填报人真实存在则再次校验填报日期是否超出范围
 					if(!"非项目工作".equals(cellValue[2]) && !Rtext.isEmpty(proId) && !errorNum.contains(1) && !errorNum.contains(8)){
 						
-						int result=SWMapper.validateSelectedDate(cellValue[1],proId,worker.getUserName());
+						int result=SWMapper.validateSelectedDateAndDeptId(proId,currentUsername,cellValue[1],worker.getDeptId());
 						if(result==0){
 							errorInfo.append("填报日期不在项目周期或参与周期内！ ");
 							errorNum.add(1);

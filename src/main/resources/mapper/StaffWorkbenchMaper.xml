@@ -11,17 +11,7 @@
               'NP',
               t.project_name,
               (SELECT t1.project_name FROM BG_PROJECT_INFO t1 WHERE t1.id=t.project_id AND t1.status='1')) as project_name,
-      	  DECODE(t.category,
-              'NP',
-              '非项目工作',
-              (SELECT d.name
-				  FROM BG_PROJECT_INFO t1
-				  JOIN BG_SYS_DATADICTIONARY d
-				    ON t1.category = d.code
-				 WHERE t1.id = t.project_id
-				   AND t1.status = '1'
-				   AND d.pcode = 'category100002'
-				   AND d.vaild = 1)) as category,
+      	   t.category as category,
 	       t.job_content,
 	       t.working_hour,
 	       t.status,
@@ -56,38 +46,46 @@
 	</select>
 	
 	<select id="getProjectsByDate" resultType="java.util.Map">
-		SELECT 
-		   (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t.category) as category,
-		   t.id,
-	       t.project_name,
-	       t.project_number,
-	       t.wbs_number,
-	       (SELECT t1.empname
-	          FROM BG_PROJECT_USER t1
-	         WHERE t1.project_id = t.id
-	           AND t1.role = '1'
-	           AND t1.status = '1') as principal,
-	       (SELECT t1.hrcode
-	          FROM BG_PROJECT_USER t1
-	         WHERE t1.project_id = t.id
-	           AND t1.role = '1'
-	           AND t1.status = '1') as hrcode
-	  		FROM BG_PROJECT_INFO t
-  		JOIN BG_PROJECT_USER t1
-   	 	ON t.id = t1.project_id
-  		JOIN BG_SYS_USER t2
-    	ON t1.hrcode = t2.hrcode
- 		WHERE t2.username =#{username}
- 		AND t.status='1' 
- 		AND t1.status = '1'
- 		AND t.project_status = '1'
- 		<![CDATA[
-  		 AND (TO_DATE(#{selectedDate}, 'yyyy-mm-dd') >= t.start_date AND
-      	 	TO_DATE(#{selectedDate}, 'yyyy-mm-dd') <= t.end_date)
-  		 AND (TO_DATE(#{selectedDate}, 'yyyy-mm-dd') >= t1.start_date AND
-       		TO_DATE(#{selectedDate}, 'yyyy-mm-dd') <= t1.end_date)
- 		]]>
- 		ORDER BY t.create_date DESC
+		SELECT T.CATEGORY,
+		       T.ID,
+		       T.PROJECT_NAME,
+		       T.PROJECT_NUMBER,
+		       T.WBS_NUMBER,
+		       T4.EMPNAME       AS PRINCIPAL,
+		       T4.HRCODE        AS HRCODE
+		  FROM BG_PROJECT_INFO T
+		  LEFT JOIN BG_PROJECT_USER T1
+		    ON T.ID = T1.PROJECT_ID
+		   AND T1.STATUS = '1'
+		  LEFT JOIN BG_SYS_USER T2
+		    ON T1.HRCODE = T2.HRCODE
+		  LEFT JOIN BG_PROJECT_USER T4
+		    ON T4.PROJECT_ID = T.ID
+		   AND T4.ROLE = '1'
+		   AND T4.STATUS = '1'
+		 WHERE ((T.CATEGORY IN ('JS', 'KY', 'HX', 'QT') AND
+		       T2.USERNAME = #{username} AND
+		       (TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &gt;= T1.START_DATE AND
+		       TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &lt;= T1.END_DATE))
+		        OR
+		       (T.CATEGORY IN ('CG', 'BP') AND
+		       #{deptId} IN
+		       (SELECT D.DEPTID
+		            FROM BG_SYS_DEPT D
+		           WHERE D.VALID = '1'
+		           START WITH D.DEPTID = T.ORGAN_INFO
+		          CONNECT BY PRIOR D.DEPTID = D.PDEPTID)))
+		   AND (TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &gt;= T.START_DATE AND
+		       TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &lt;= T.END_DATE)
+		   AND T.STATUS = '1'
+		   AND T.PROJECT_STATUS = '1'
+		   <if test="proName != null and proName != ''" >
+			 AND T.PROJECT_NAME LIKE '%'||#{proName}||'%'
+		   </if>
+		   <if test="proNumber != null and proNumber != ''" >
+			 AND T.PROJECT_NUMBER = #{proNumber}
+		   </if>
+		 ORDER BY T.CREATE_DATE DESC
 	</select>
 	
 	<select id="getAllProjects" resultType="java.util.Map">
@@ -283,27 +281,35 @@
 		   AND t.status = '1'
 	</select>
 
-	<select id="validateSelectedDate" parameterType="String" resultType="Integer">
-		SELECT COUNT(*)
-		  FROM BG_PROJECT_INFO t1
-		  JOIN BG_PROJECT_USER t2
-		    ON t1.id = t2.project_id
-		  JOIN BG_SYS_USER t3
-		    ON t2.hrcode = t3.hrcode
-		 WHERE  t1.id = #{proId}
-		   AND t3.username = #{username}
-		   <![CDATA[
-		   	  AND t1.start_date <= TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
-			  AND t1.end_date >= TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
-			  AND t2.start_date <= TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
-			  AND t2.end_date >= TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
- 		   ]]>
-		   AND t1.status='1'
-		   AND t2.status='1'
+	<select id="validateSelectedDateAndDeptId"  resultType="int">
+		SELECT COUNT(1)
+		  FROM BG_PROJECT_INFO T
+		  LEFT JOIN BG_PROJECT_USER T1
+		    ON T.ID = T1.PROJECT_ID
+		   AND T1.STATUS = '1'
+		  LEFT JOIN BG_SYS_USER T2
+		    ON T1.HRCODE = T2.HRCODE
+		 WHERE ((T.CATEGORY IN ('JS', 'KY', 'HX', 'QT') AND
+		       T2.USERNAME = #{username} AND
+		       (TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &gt;= T1.START_DATE AND
+		       TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &lt;= T1.END_DATE)) 
+		       OR
+		       (T.CATEGORY IN ('CG', 'BP') AND
+		       #{deptId} IN
+		       (SELECT D.DEPTID
+		            FROM BG_SYS_DEPT D
+		           WHERE D.VALID = '1'
+		           START WITH D.DEPTID = T.ORGAN_INFO
+		          CONNECT BY PRIOR D.DEPTID = D.PDEPTID)))
+		   AND (TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &gt;= T.START_DATE AND
+		       TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &lt;= T.END_DATE)
+		   AND T.STATUS = '1'
+		   AND T.PROJECT_STATUS = '1'
+		   AND T.ID = #{proId}
 	</select>
 	
-	<select id="validateStaff" parameterType="String" resultType="Integer">
-		SELECT COUNT(*)
+	<select id="validateStaff" resultType="int">
+		SELECT COUNT(1)
  		 FROM BG_PROJECT_USER t1
   		 JOIN BG_SYS_USER t2
        		ON t1.hrcode = t2.hrcode
@@ -312,17 +318,63 @@
    			AND t1.status = '1'
 	</select>
 	
+	<select id="validateSelectedDate" resultType="int">
+      SELECT COUNT(1)
+	    FROM BG_PROJECT_INFO T
+	    LEFT JOIN BG_PROJECT_USER T1
+	      ON T.ID = T1.PROJECT_ID
+	     AND T1.STATUS = '1'
+	    LEFT JOIN BG_SYS_USER T2
+	      ON T1.HRCODE = T2.HRCODE
+	   WHERE ((T.CATEGORY IN ('JS', 'KY', 'HX', 'QT') AND
+	         T2.USERNAME = #{username} AND
+	         (TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &gt;= T1.START_DATE AND
+	         TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &lt;= T1.END_DATE) AND
+	         (TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &gt;= T.START_DATE AND
+	         TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &lt;= T.END_DATE)) OR
+	         (T.CATEGORY IN ('CG', 'BP') AND
+	         (TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &gt;= T.START_DATE AND
+	         TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &lt;= T.END_DATE)))
+	     AND T.STATUS = '1'
+	     AND T.PROJECT_STATUS = '1'
+	     AND T.ID =  #{proId}
+	</select>
+	
+	<select id="validateDeptId" resultType="int">
+	   SELECT COUNT(1)
+		  FROM BG_PROJECT_INFO T
+		 WHERE (T.CATEGORY IN ('CG', 'BP') AND
+		       #{deptId} IN
+		       (SELECT D.DEPTID
+		           FROM BG_SYS_DEPT D
+		          WHERE D.VALID = '1'
+		          START WITH D.DEPTID = T.ORGAN_INFO
+		         CONNECT BY PRIOR D.DEPTID = D.PDEPTID))
+		   AND T.STATUS = '1'
+		   AND T.PROJECT_STATUS = '1'
+		   AND T.ID = #{proId}
+	</select>
+	
 	<select id="getProInfoByProId" parameterType="String" resultType="java.util.Map">
-		SELECT
-      		t.id,
-      		t.project_name,
-      		(SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='category100002' and vaild=1 and code=t.category) as category,
-      		t.wbs_number,
-      		t.project_number,
-		    (select t1.empname from BG_PROJECT_USER t1 WHERE t1.project_id=t.id AND t1.role='1' AND t1.status='1') as principal,
-		  	(select t1.hrcode from BG_PROJECT_USER t1 WHERE t1.project_id=t.id AND t1.role='1' AND t1.status='1') as hrcode
-		FROM BG_PROJECT_INFO t
-		WHERE t.id=#{proId} AND t.status='1'
+		SELECT T.ID,
+		       T.PROJECT_NAME,
+		       D.NAME           AS CATEGORY,
+		       T.WBS_NUMBER,
+		       T.PROJECT_NUMBER,
+		       E.EMPNAME        AS PRINCIPAL,
+		       E.HRCODE         
+		  FROM BG_PROJECT_INFO T
+		  LEFT JOIN BG_SYS_DATADICTIONARY D
+		    ON T.CATEGORY = D.CODE
+		   AND D.VAILD = 1
+		   AND D.PCODE = 'category100002'
+		  LEFT JOIN BG_PROJECT_USER E
+		    ON E.PROJECT_ID = T.ID
+		   AND E.STATUS = '1'
+		   AND E.ROLE = '1'
+		 WHERE T.ID = #{proId}
+		   AND T.STATUS = '1'
+		   AND ROWNUM = 1
 	</select>
 	
 	<select id="getFieldOfWorkHourById" parameterType="String" resultType="String">

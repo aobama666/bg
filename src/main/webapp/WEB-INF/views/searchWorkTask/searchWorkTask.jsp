@@ -64,7 +64,7 @@
 		<hidden name="uuid" property="uuid"></hidden>
 		<input type="hidden" name="selectList"/>
 		<div class="form-group col-xs-5"  style="margin-bottom:0;">
-			<label>查询日期：</label>
+			<label>工作任务日期：</label>
 			<div class="controls"  data-date-format="yyyy-mm-dd">
 				<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
 					<input name="startTime" property="startTime"  readonly="true" placeholder='开始时间'>

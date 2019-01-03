@@ -21,9 +21,9 @@ public class SearchWorkTaskImpl implements SearchWorkTaskService{
 	@Autowired
 	SearchWorkTaskMapper searchWorkTaskMapper;
 	
-	public String search(int page,int limit,String startTime,String endTime,String type,String projectName,String hrCode){
+	public String search(int page,int limit,String startTime,String endTime,String type,String projectName,String hrCode,String deptId){
 		Page<?> page2 = PageHelper.startPage(page, limit); 
-		searchWorkTaskMapper.search(startTime,endTime,type,projectName,hrCode);
+		searchWorkTaskMapper.search(startTime,endTime,type,projectName,hrCode,deptId);
 		long total = page2.getTotal();
 		List<Map<String, String>> list = (List<Map<String, String>>) page2.getResult();
 		Map<String, Object> map = new HashMap<String, Object>();

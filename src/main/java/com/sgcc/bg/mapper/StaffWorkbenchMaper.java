@@ -23,14 +23,22 @@ public interface StaffWorkbenchMaper {
 
 	/**
 	 * 获取当前员工名下的项目信息
-	 * 条件：项目开始日期<=填报日期<=项目结束日期，且员工参与开始日期<=填报日期<=参与结束日期
+	 * 条件：1.项目开始日期<=填报日期<=项目结束日期
+	 * 	    2.如果为项目信息，员工参与开始日期<=填报日期<=参与结束日期
+	 * 		3.如果为非项目信息，则为本人所属处室或部门下的项目
 	 * @param selectedDate
 	 * @param username
+	 * @param deptId
+	 * @param proName
+	 * @param proNumber
 	 * @return
 	 */
 	public List<Map<String, String>> getProjectsByDate(
 			@Param("selectedDate")String selectedDate, 
-			@Param("username")String username);
+			@Param("username")String username,
+			@Param("deptId")String deptId,
+			@Param("proName")String proName,
+			@Param("proNumber")String proNumber);
 	
 
 	/**
@@ -112,16 +120,18 @@ public interface StaffWorkbenchMaper {
 	public String getPrincipalByProId(@Param("proId")String proId);
 
 	/**
-	 * 验证用户在该项目下的指定日期是否可以填报
-	 * @param selectedDate
-	 * @param proId
-	 * @param username
+	 * 验证用户对该项目是否具有填报权限
+	 * @param proId 项目id
+	 * @param username 用户名
+	 * @param selectedDate 验证日期
+	 * @param deptId 用户当时所处组织id
 	 * @return
 	 */
-	public int validateSelectedDate(
-			@Param("selectedDate")String selectedDate,
+	public int validateSelectedDateAndDeptId(
 			@Param("proId") String proId, 
-			@Param("username")String username);
+			@Param("username")String username,
+			@Param("selectedDate")String selectedDate,
+			@Param("deptId")String deptId);
 
 	/**
 	 * 获取登录人名下所有项目
@@ -213,5 +223,25 @@ public interface StaffWorkbenchMaper {
 	 * @param deptId
 	 */
 	public List<Map<String,String>> getApproverList(@Param("userId")String userId,@Param("deptId")String deptId);
+
+	/**
+	 * 当为项目前期和常规项目时验证提报人当前所属组织是否具有报工资格
+	 * @param proId
+	 * @param deptId 提报人当前所在组织
+	 * @return
+	 */
+	public int validateDeptId(@Param("proId")String proId, @Param("deptId")String deptId);
+
+	/**
+	 * 验证
+	 * @param proId
+	 * @param username
+	 * @param selectedDate
+	 * @return
+	 */
+	public int validateSelectedDate(
+			@Param("proId")String proId,
+			@Param("username")String username,
+			@Param("selectedDate")String selectedDate);
 
 }

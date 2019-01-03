@@ -1,24 +1,21 @@
 <!DOCTYPE>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%-- <%@page import="crpri.ess.util.ToolsUtil"%>
-<%@page import="crpri.ess.util.JsonUtil"%> --%>
-<%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
-<%-- <%
-	String path = ToolsUtil.getContextPath(request);
-%> --%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>报工系统</title>
+<title>项目前期信息</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmGrid.css">
+<link rel="stylesheet" type="text/css"
+	href="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmPaginator.css">
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/css/style.css">
 
@@ -28,6 +25,8 @@
 	src="<%=request.getContextPath()%>/common/plugins/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmGrid.js"></script>
+<script type="text/javascript"
+	src="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmPaginator.js"></script>
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/common/plugins/layer/layer.min.js"></script>
 <script type="text/javascript"
@@ -47,9 +46,9 @@ a{
 </head>
 <body>
 	<div class="page-header-sl">
+		<h5>项目前期信息</h5>
 		<div class="button-box">
-			<button type="button" class="btn btn-success btn-xs"
-				onclick="forAdd()">确定</button>
+			<button type="button" class="btn btn-success btn-xs" name="kOne" onclick="forCommit()">确定</button>
 		</div>
 	</div>
 	<hr>
@@ -57,20 +56,13 @@ a{
 		<div class="query-box-left">
 			<form name="queryBox" action=""
 				style="width: 100%; padding-left: 10px">
-				<div class="form-group col-xs-6">
-					<label for="querySex">工作任务编号</label>
-					<div class="controls">
-						<input name="proNumber" property="proNumber">
-					</div>
-				</div>
-				<div class="form-group col-xs-6">
+				<div class="form-group col-xs-12">
 					<label>工作任务名称</label>
 					<div class="controls">
 						<input name="proName" property="proName">
+						<input type="hidden" name=isRelated value="n">
 					</div>
 				</div>
-				<input type="hidden" id="startDate" name="startDate">
-				<input type="hidden" id="endDate" name="endDate">
 			</form>
 		</div>
 		<div class="query-box-right">
@@ -79,98 +71,82 @@ a{
 		</div>
 	</div>
 	<div>
-		<table id="mmg" class="mmg bg-white">
+		<table id="mmg" class="mmg">
 			<tr>
 				<th rowspan="" colspan=""></th>
 			</tr>
 		</table>
-		<div id="pg" style="text-align: right;"></div>
 	</div>
 </body>
 <script type="text/javascript">
 var mmg;
-//'定制模板内容'页面的句柄document
-var iframes=parent.document.getElementsByTagName("iframe");
-var iframe=iframes[1].contentWindow;//iframe为定支模板页面
-var doc=$(iframe.document);
-var startDate = doc.find("#startDate").val();
-var endDate = doc.find("#endDate").val();
-var category = ${categoryJson};
 $(function(){
-	$('#startDate').val(startDate);
-	$('#endDate').val(endDate);
+	init();
 	queryList();
 });
 
+function init(){
+	//
+}
 function forSearch(){
 	queryList("reload");
 }
-
 // 初始化列表数据
 function queryList(load){
+	var w=$(window).width();
 	var ran = Math.random()*100000000;
 	var cols = [
-				{title:'序列', name:'ID', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center',
-					renderer:function(val,item,rowIndex){
-	            		val=val==undefined?"":val;
-	            		return category[val];
-	            	}},
-	            {title:'工作任务编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:'center'},
-	            {title:'工作任务名称', name:'PROJECT_NAME', width:150, sortable:false, align:'left'}
-	            //{title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'}
-	    		];
-	var mmGridHeight = $("body").parent().height() - 80;
+				{title:'工作任务编号', name:'projectNumber',width:145,sortable:false, align:'center'},
+				{title:'工作任务名称', name:'projectName',width:171,sortable:false, align:'center'},
+				{title:'开始日期', name:'startDate', width:145, sortable:false, align:'center'},
+				{title:'结束日期', name:'endDate', width:145,sortable:false, align:'center'},
+				{title:'已投入工时(h)', name:'workTime', width:145, sortable:false, align:'center'}
+				];
+	var mmGridHeight = $("body").parent().height() - 190;
 	mmg = $('#mmg').mmGrid({
+		cosEdit:"4,13",//声明需要编辑，取消点击选中的列
 		indexCol: true,
-		indexColWidth: 50,
+		indexColWidth: 40,
 		checkCol: true,
 		checkColWidth:50,
 		height: mmGridHeight,
 		cols: cols,
 		nowrap: true,
-		url: '<%=request.getContextPath()%>/staffWorkbench/getAllProjects?ran='+ran,
+		url: '<%=request.getContextPath()%>/project/getBeforePro?ran='+ran,
 		fullWidthRows: true,
 		multiSelect: true,
 		root: 'items',
 		params: function(){
-			return $(".query-box").sotoCollecter();
-			} 
+				return $(".query-box").sotoCollecter();
+			}
 		}).on('loadSuccess', function(e, data){
 			$(".checkAll").css("display","none").parent().text("选择");
-			//默认选中行
-			var selectProIds=doc.find("#selectProIds").val();
-			if(selectProIds==undefined || selectProIds==""){
-				//上次没有选
-				return;
-			}
-			mmg.select(function(item, index){
-				if(selectProIds.indexOf(item.ID)!=-1){
-					return true;
-				}
-			});
 		});
 	if(load == "reload"){
 		mmg.load();
 	}
+
 }
 
-function forAdd(){
+// 删除
+function forCommit(){
 	var items = mmg.selectedRows();
-	var proIds=[];
-	var proNames=[];
-	for(var i=0;i<items.length;i++){
-		proNames.push(items[i].PROJECT_NAME);
-		proIds.push(items[i].ID);
+	if(items.length==0){
+		layer.msg("请至少选择一条数据！");
+		return;
+	} 
+	//新增项目信息页面
+	var iframes = parent.document.getElementsByTagName("iframe");
+	var mmg_p = iframes[0].contentWindow.mmg_p;//iframe为定新增项目信息页面
+	for (var int = 0; int < items.length; int++) {
+		var item = items[int];
+		mmg_p.addRow(item);
 	}
-	doc.find("#selectNames").val(proNames.toString());
-	doc.find("#selectProIds").val(proIds.toString());
 	forClose();
 }
 
 function forClose() {
 	parent.layer.close(parent.layer.getFrameIndex(window.name));
 }
-
 </script>
 </html>

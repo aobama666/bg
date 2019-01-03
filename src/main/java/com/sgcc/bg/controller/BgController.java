@@ -31,6 +31,7 @@ import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.FileDownloadUtil;
 import com.sgcc.bg.common.PageHelper;
 import com.sgcc.bg.common.ParamValidationUtil;
+import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
@@ -145,7 +146,18 @@ public class BgController {
 		ModelAndView model = new ModelAndView("bg/proInfo/bg_import_excel_page");
 		return model;
 	}
-
+	
+	@RequestMapping("/beforeProSelectPage")
+	public String initBeforeProPage() {
+		return "bg/proInfo/bg_beforeProject_info";
+	}
+	
+	@RequestMapping("/proSelectPage")
+	public String initProSelectPage() {
+		return "bg/proInfo/bg_project_select";
+	}
+	
+	
 	/**
 	 * 下载模板
 	 * 
@@ -405,124 +417,20 @@ public class BgController {
 	@RequestMapping(value = "/ajaxSavePro", method = RequestMethod.POST)
 	@ResponseBody
 	public String savePro(HttpServletRequest request) throws Exception {
-		Map<String, String> resultMap = new HashMap<>();
-		ProjectInfoPo pro = new ProjectInfoPo();
-		String proId = Rtext.toStringTrim(request.getParameter("proId"),"");
-		String method = Rtext.toStringTrim(request.getParameter("method"),"");//要执行的操作方法，存在proId为更新，否则保存
-		String projectName = Rtext.toStringTrim(request.getParameter("projectName"),"");
-		String category =Rtext.toStringTrim(request.getParameter("category"),""); 
-		String projectNumber =Rtext.toStringTrim(request.getParameter("projectNumber"),""); 
-		String WBSNumber = Rtext.toStringTrim(request.getParameter("WBSNumber"),""); 
-		String projectIntroduce = Rtext.toStringTrim(request.getParameter("projectIntroduce"),""); 
-		String deptCode =Rtext.toStringTrim(request.getParameter("deptCode"),"");
-		//是否分解是（一期默认为不分解）
-		//String decompose = "否".equals(Rtext.toStringTrim(request.getParameter("decompose"),"")) ? "0" : "1";
-		String decompose="0";
-		String startDateStr=Rtext.toStringTrim(request.getParameter("startDate"),"");
-		String endDateStr=Rtext.toStringTrim(request.getParameter("endDate"),"");
-		String planHoursStr=Rtext.toStringTrim(request.getParameter("planHours"),"");
-		//项目编号后台生成
-		if(projectNumber.indexOf("BG")==-1){//如果不存在项目编号
-			projectNumber=bgService.getBGNumber();
-		}
-		//校验项目信息
-		if(Rtext.isEmpty(projectName) 
-				|| Rtext.isEmpty(category)
-				|| Rtext.isEmpty(startDateStr) 
-				|| Rtext.isEmpty(endDateStr) 
-				|| Rtext.isEmpty(planHoursStr)){
-			bgLog.info("bgController 项目必填参数存在空值："+"projectName:"+projectName+"/"+"category:"+category+"/"+
-					"startDateStr:"+startDateStr+"/"+"endDateStr:"+endDateStr+"/"+
-					"planHoursStr:"+planHoursStr);
-			resultMap.put("result", "fail");
-			return JSON.toJSONString(resultMap);
-		}
-		if(("KY".equalsIgnoreCase(category) || "HX".equalsIgnoreCase(category)) 
-				&& Rtext.isEmpty(WBSNumber)){
-			bgLog.info("科研或横向时，wbs编号为空！WBSNumber :"+WBSNumber);
-			resultMap.put("result", "fail");
-			return JSON.toJSONString(resultMap);
-		}
-		if("JS".equals(category) && Rtext.isEmpty(deptCode)){
-			bgLog.info("技术服务项目，组织信息为必填项");
-			resultMap.put("result", "fail");
-			return JSON.toJSONString(resultMap);
-		}
-		if(projectName.length()>50){
-			bgLog.info("项目名称超过50个字");
-			resultMap.put("result", "fail");
-			return JSON.toJSONString(resultMap);
-		}
-		if(projectIntroduce.length()>200){
-			bgLog.info("项目介绍超过200个字");
-			resultMap.put("result", "fail");
-			return JSON.toJSONString(resultMap);
-		}
-			
-		if(!DateUtil.isValidDate(startDateStr,"yyyy-MM-dd")){
-			bgLog.info("开始日期格式错误");
-			resultMap.put("result", "fail");
-			return JSON.toJSONString(resultMap);
-		}
-		if(!DateUtil.isValidDate(endDateStr,"yyyy-MM-dd")){
-			bgLog.info("结束日期格式错误");
-			resultMap.put("result", "fail");
-			return JSON.toJSONString(resultMap);
-		}
-		if(!ParamValidationUtil.isValidInt(planHoursStr) || planHoursStr.length()>8){
-			bgLog.info("计划投入工时不是8位整数");
-			resultMap.put("result", "fail");
-			return JSON.toJSONString(resultMap);
-		}
-		Date startDate = DateUtil.fomatDate(startDateStr);
-		Date endDate = DateUtil.fomatDate(endDateStr);
-		Integer planHours = Rtext.ToInteger(planHoursStr, 0);
-		pro.setId(proId.isEmpty()?Rtext.getUUID():proId);
-		pro.setProjectName(projectName);
-		pro.setProjectNumber(projectNumber);
-		pro.setCategory(category);
-		pro.setWBSNumber(WBSNumber);
-		pro.setProjectIntroduce(projectIntroduce);
-		pro.setStartDate(startDate);
-		pro.setEndDate(endDate);
-		if("JS".equals(category)){//当为技术服务项目时才保存或更新组织信息
-			pro.setOrganInfo(bgService.getDeptIdByDeptCode(deptCode));
-		}
-		pro.setPlanHours(planHours);
-		pro.setDecompose(decompose);
-		pro.setSrc("0");
-		
-		int affectedRows;
-		if("save".equals(method)){
-			affectedRows = bgService.addProInfo(pro);
-		}else{
-			affectedRows = bgService.updateProInfo(pro);
-		}
-		if (affectedRows == 1) {
-			resultMap.put("result", "success");
-			resultMap.put("proId", pro.getId());
-			resultMap.put("wbsNumber", WBSNumber);
-			resultMap.put("proNumber", projectNumber);
-		} else {
-			resultMap.put("result", "fail");
-		}
-		bgLog.info("保存项目信息返回字符串： " + JSON.toJSONString(resultMap));
-		return JSON.toJSONString(resultMap);
+		return bgService.ajaxSaveProInfo(request);	
 	}
 
 	@SuppressWarnings({ "rawtypes" })
 	@RequestMapping(value = "/ajaxSaveStuff", method = RequestMethod.POST)
 	@ResponseBody
-	public String saveStuff(HttpServletRequest request) throws Exception {
-		String jsonStr = Rtext.toStringTrim(request.getParameter("param"),"");
+	public void saveStuff(HttpServletRequest request) throws Exception {
+		String srcProId = Rtext.toStringTrim(request.getParameter("srcProId"),"");
+		String src = Rtext.toStringTrim(request.getParameter("src"),"");
 		String proId = Rtext.toStringTrim(request.getParameter("proId"),"");
-		List<HashMap> list = JSON.parseArray(jsonStr, HashMap.class);
 		
-		Map<String, String> resultMap = new HashMap<>();
-		int count=bgService.saveStuff(proId,list);
-		resultMap.put("count", count+"");
-		resultMap.put("failCount", (list.size()-count)+"");
-		return JSON.toJSONString(resultMap);
+		List<HashMap>  list = bgService.getEmpDataByProIdAndSrc(srcProId,src);
+		
+		bgService.updateStuff(proId, src, list);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -531,8 +439,10 @@ public class BgController {
 	public String updateStuff(HttpServletRequest request) throws Exception {
 		String jsonStr = Rtext.toStringTrim(request.getParameter("param"),"");
 		String proId = Rtext.toStringTrim(request.getParameter("proId"),"");
+		String src = Rtext.toStringTrim(request.getParameter("src"),"");
+		
 		List<HashMap> list = JSON.parseArray(jsonStr, HashMap.class);
-		return bgService.updateStuff(proId, list);
+		return bgService.updateStuff(proId, src, list);
 	}
 
 	@RequestMapping(value = "/deleteProject", method = RequestMethod.POST)
@@ -575,7 +485,93 @@ public class BgController {
 	@RequestMapping(value = "/ajaxCheckUniqueness", method = RequestMethod.POST)
 	@ResponseBody
 	public String checkUniqueness(String WBSNumber) throws Exception {
-		String result = bgService.checkUniqueness(WBSNumber);
-		return result;
+		return bgService.checkUniqueness(WBSNumber);
 	}
+	
+	/**
+	 * 保存项目前期与项目的关联关系
+	 * @param proId 项目id
+	 * @param ids 与项目关联的项目前期id
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/saveBeforePro", method = RequestMethod.POST)
+	@ResponseBody
+	public String saveBeforePro(String proId,String ids) throws Exception {
+ 		if(Rtext.isEmpty(proId)) return JSON.toJSONString(new ResultWarp("false","项目id为空！"));
+ 		
+		String[] idsArr = null;
+		if(!Rtext.isEmpty(ids)) idsArr = ids.split(",");
+		
+		bgService.saveBeforePro(proId,idsArr);
+		return JSON.toJSONString(new ResultWarp("true",""));
+	}
+	
+	/**
+	 * 获取指定系统下的所有项目信息
+	 * @param src 来源系统
+	 * @param proName 项目名称
+	 * @param wbsNumber wbs编号
+	 * @return
+	 */
+	@RequestMapping(value="/getProjectsBySrc",method = RequestMethod.POST)
+	@ResponseBody
+	public String getProjectsBySrc(String src,String proName,String wbsNumber) {
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		if(Rtext.isEmpty(src)){
+			return JSON.toJSONString(jsonMap);
+		};
+		
+		List<Map<String,Object>> proData = bgService.getProjectsBySrc(src,proName,wbsNumber);
+		
+		jsonMap.put("items", proData);
+		String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd",
+				SerializerFeature.WriteDateUseDateFormat);
+		return jsonStr;
+	}
+	
+	
+	/**
+	 * 通过id获取科研或者横向系统的项目信息以及其关联人员信息并返回
+	 * @param proId 科研或横向的项目id
+	 * @param queryFor 科研或是横向系统 KY/HX
+ 	 * @return
+	 */
+	@RequestMapping(value="/getProAndEmpData",method = RequestMethod.GET)
+	@ResponseBody
+	public String getProAndEmpDataById(String proId,String src) {
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		if(Rtext.isEmpty(proId) || Rtext.isEmpty(src)){
+			jsonMap.put("result", "failed");
+			return JSON.toJSONString(jsonMap);
+		};
+		
+		Map<String,Object> proData = bgService.getProDataByProIdAndSrc(proId,src);
+		//List<Map<String,Object>> empData = bgService.getEmpDataByProIdAndSrc(proId,src);
+		
+		jsonMap.put("result", "success");
+		jsonMap.put("proData", proData);
+		//jsonMap.put("empData", empData);
+		
+		return JSON.toJSONString(jsonMap);
+	}
+	
+	/**
+	 * 获取所有的项目前期（当前登录人所在组织的）
+	 * @return
+	 */
+	@RequestMapping(value="/getBeforePro",method = RequestMethod.POST)
+	@ResponseBody
+	public String getBeforePro(String proName,String isRelated,String relProId) {
+		boolean flag = "y".equalsIgnoreCase(isRelated)?true:false;
+		
+		List<Map<String, Object>> beforeProList = bgService.getBeforeProjects(webUtils.getUsername(),proName,flag,relProId);
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		jsonMap.put("items", beforeProList);
+		String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd",
+				SerializerFeature.WriteDateUseDateFormat);
+		return jsonStr;
+	}
+	
+	
 }

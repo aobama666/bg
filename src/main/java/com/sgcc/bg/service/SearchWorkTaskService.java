@@ -9,7 +9,7 @@ import com.sgcc.bg.model.Recode;
 import javax.servlet.http.HttpServletRequest;
 
 public interface SearchWorkTaskService {
-	public String search(int page,int limit,String startTime,String endTime,String type,String projectName,String hrCode);
+	public String search(int page,int limit,String startTime,String endTime,String type,String projectName,String hrCode,String deptId);
 	
 	public String searchExamine(int page,int limit,String startTime,String endTime,String projectName,String type,String userName,String userCode,String hrCode);
 	

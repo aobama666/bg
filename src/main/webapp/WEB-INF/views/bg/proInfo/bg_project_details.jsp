@@ -26,18 +26,6 @@
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/common/plugins/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript"
-	src="<%=request.getContextPath()%>/common/plugins/bootstrap-datepicker-master/dist/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/common/plugins/layer/layer.min.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/common/plugins/stuff-tree/stuff-tree.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/common/plugins/sotoValidate/sotoValidate.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmPaginator.js"></script>
-<script type="text/javascript"
 	src="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmGrid.js"></script>
 <!--[if lt IE 9>
 	<script src="<%=request.getContextPath()%>/common/plugins/html5shiv/html5shiv.min.js"></script>
@@ -55,6 +43,9 @@
 	<ul id="myTab" class="nav nav-tabs">
 		<li class="active"><a href="#proInfo" data-toggle="tab">项目信息</a></li>
 		<li><a href="#people" data-toggle="tab" onclick="setTimeout(resize,200)">参与人员</a></li>
+		<c:if test="${isRelated=='1'}">
+			<li><a href="#beforePro" data-toggle="tab">项目前期维护</a></li>
+		</c:if> 
 	</ul>
 	<div id="myTabContent" class="tab-content">
 		<div class="tab-pane fade in active" id="proInfo">
@@ -170,14 +161,21 @@
 				<!-- <div id="pg" style="text-align: right;"></div> -->
 			</div>
 		</div>
+		<div class="tab-pane fade" id="beforePro">
+			<hr>
+			<div>
+				<table id="mmg_p" class="mmg">
+					<tr>
+						<th rowspan="" colspan=""></th>
+					</tr>
+				</table>
+			</div>
+		</div>
 	</div>
 </body>
 <script type="text/javascript">
 	var mmg;
 	queryList();
-	function forClose() {
-		parent.layer.close(parent.layer.getFrameIndex(window.name));
-	}
 	
 	function forSearch(){
 		var index=1;
@@ -257,5 +255,36 @@
 		mmg.resize();
 	}
 	
+</script>
+
+<script type="text/javascript">
+var mmg_p;
+queryList_beforePro();
+
+//初始化项目前期列表
+function queryList_beforePro(){
+	var ran = Math.random()*100000000;
+	var cols = [
+				{title:'工作任务编号', name:'projectNumber',width:150,sortable:false, align:'center'},
+				{title:'工作任务名称', name:'projectName',width:201,sortable:false, align:'center'},
+				{title:'开始日期', name:'startDate', width:150, sortable:false, align:'center'},
+				{title:'结束日期', name:'endDate', width:150,sortable:false, align:'center'},
+				{title:'已投入工时(h)', name:'workTime', width:150, sortable:false, align:'center'}
+	    		];
+	var mmGridHeight = $("body").parent().height() - 180;
+	mmg_p = $('#mmg_p').mmGrid({
+		noDataText:"",
+		indexCol: true,
+		indexColWidth:30,
+		//checkCol: true,
+		//checkColWidth:50,
+		height: mmGridHeight,
+		cols: cols,
+		nowrap: true,
+		url: '<%=request.getContextPath()%>/project/getBeforePro?isRelated=y&relProId=${id}&ran='+ran,
+		multiSelect: true,
+		root: 'items'
+	})
+}
 </script>
 </html>

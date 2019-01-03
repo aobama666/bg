@@ -36,8 +36,6 @@ import com.sgcc.bg.common.ParamValidationUtil;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
-import com.sgcc.bg.model.ProcessRecordPo;
-import com.sgcc.bg.model.ProjectUserPo;
 import com.sgcc.bg.model.WorkHourInfoPo;
 import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IStaffWorkbenchService;
@@ -61,8 +59,11 @@ public class StaffWorkbenchController {
 		Map<String, String> map=new HashMap<String, String>();
 		map.put("note", note);
 		//从数据字典获取审核状态
-		String statusJson= dict.getDictDataJsonStr("cstatus100003");
+		String statusJson = dict.getDictDataJsonStr("cstatus100003");
 		map.put("statusJson", statusJson);
+		//从数据字典获取工时类型
+		String  categoryJson = dict.getDictDataJsonStr("category100002");
+		map.put("categoryJson", categoryJson);
 		CommonUser user=webUtils.getCommonUser();
 		//获取当前提报人hrcode
 		String currentUserHrcode=user.getSapHrCode();
@@ -110,9 +111,10 @@ public class StaffWorkbenchController {
 	}
 	
 	@RequestMapping("/DIYProJobSelector")
-	public ModelAndView DIYProJobSelector() {
-		ModelAndView model = new ModelAndView("bg/staffWorkbench/bg_DIY_proJob_selector");
-		return model;
+	public String DIYProJobSelector(Map<String, Object> modelMap) {
+		String  categoryJson = dict.getDictDataJsonStr("category100002");
+		modelMap.put("categoryJson", categoryJson);
+		return "bg/staffWorkbench/bg_DIY_proJob_selector";
 	}
 	
 	/**
@@ -123,14 +125,16 @@ public class StaffWorkbenchController {
 	 */
 	@RequestMapping("/getProjectsByDate")
 	@ResponseBody
-	public String getProjects(String selectedDate) {
+	public String getProjects(String selectedDate,String proName,String proNumber) {
+		proName = Rtext.toStringTrim(proName, "");
+		proNumber = Rtext.toStringTrim(proNumber, "");
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		List<Map<String, String>> jsonarry=null;
 		if(Rtext.isEmpty(selectedDate)){
 			SWLog.info("selectedDate 获取名下项目信息，指定日期为空值！");
 			jsonarry =new ArrayList<>();
 		}else{
-			jsonarry = SWService.getProjectsByDate(selectedDate);
+			jsonarry = SWService.getProjectsByDate(selectedDate,proName,proNumber);
 		}
 		jsonMap.put("items", jsonarry);
 		String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd",
@@ -140,13 +144,18 @@ public class StaffWorkbenchController {
 	
 	/**
 	 * 获取当前员工名下的所有项目信息（在日期范围内有可填报的）
-	 * @param selectedDate
+	 * @param proName
+	 * @param wbsNumber
+	 * @param startDate
+	 * @param endDate
 	 * @return
 	 */
 	@RequestMapping("/getAllProjects")
 	@ResponseBody
-	public String getAllProjects(String startDate,String endDate) {
-		List<Map<String, String>> jsonarry = SWService.getAllProjects(startDate,endDate);
+	public String getAllProjects(String startDate,String endDate,String proName,String proNumber) {
+		proName = Rtext.toStringTrim(proName, "");
+		proNumber = Rtext.toStringTrim(proNumber, "");
+		List<Map<String, String>> jsonarry = SWService.getAllProjects(startDate,endDate,proName,proNumber);
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("items", jsonarry);
 		String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd",
@@ -190,10 +199,13 @@ public class StaffWorkbenchController {
 				continue;
 			}
 			if(Rtext.isEmpty(whId)){
+				String proId=Rtext.toStringTrim(map.get("proId"), "");
+				String category=Rtext.toStringTrim(map.get("category"), "");
+				
 				//执行保存操作
 				WorkHourInfoPo wp=new WorkHourInfoPo();
 				wp.setId(Rtext.getUUID());
-				String category=Rtext.toStringTrim(map.get("category"), "");
+				
 				//从数据字典中映射项目类型
 				Map<String,String> dictMap = dict.getDictDataByPcode("category100002");
 				for (Map.Entry<String,String> entry : dictMap.entrySet()) {
@@ -201,8 +213,9 @@ public class StaffWorkbenchController {
 					String value = entry.getValue();
 					if(category.equals(value)) category=key;
 				}
+				
 				wp.setCategory(category);
-				wp.setProId(Rtext.toStringTrim(map.get("proId"), ""));
+				wp.setProId(proId);
 				wp.setProName(proName);
 				wp.setJobContent(jobContent);
 				wp.setWorkHour(workHour.isEmpty()?null:Rtext.ToDouble(workHour, 0.0));
@@ -316,12 +329,6 @@ public class StaffWorkbenchController {
 				continue;
 			}
 			//|| "".equals(jobContent) +"-工作内容："+jobContent 工作内容暂不校验必填
-			if(!"非项目工作".equals(category)){
-				if("".equals(projectName) || "".equals(proId)){
-					SWLog.info("项目工作缺失项目名称和项目id！");
-					continue;
-				}
-			}
 			if(jobContent.length()>200){
 				SWLog.info("工作内容超出最大200长度限制！");
 				continue;
@@ -351,6 +358,7 @@ public class StaffWorkbenchController {
 				//执行保存操作
 				WorkHourInfoPo wp=new WorkHourInfoPo();
 				wp.setId(bussinessId);
+				
 				//从数据字典中映射项目类型
 				Map<String,String> dictMap = dict.getDictDataByPcode("category100002");
 				for (Map.Entry<String,String> entry : dictMap.entrySet()) {
@@ -358,6 +366,7 @@ public class StaffWorkbenchController {
 					String value = entry.getValue();
 					if(category.equals(value)) category=key;
 				}
+				
 				wp.setCategory(category);
 				wp.setProId(proId);
 				wp.setProName(projectName);

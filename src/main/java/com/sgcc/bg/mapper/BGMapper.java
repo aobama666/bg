@@ -1,6 +1,7 @@
 package com.sgcc.bg.mapper;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,8 @@ public interface BGMapper {
 	 */
 	public List<Map<String,String>> getAllProjects(
 			@Param("username")String username,
-			@Param("proName")String proName,@Param("proStatus")String proStatus);
+			@Param("proName")String proName,
+			@Param("proStatus")String proStatus);
 	
 	/**
 	 * 添加项目信息
@@ -142,7 +144,7 @@ public interface BGMapper {
 	 * @param value
 	 * @return
 	 */
-	public int updateProInfoField(@Param("proId")String proId,@Param("field")String field, @Param("value")String value);
+	public boolean updateProInfoField(@Param("proId")String proId,@Param("field")String field, @Param("value")String value);
 
 	/**
 	 * 获取项目信息指定字段信息
@@ -201,5 +203,141 @@ public interface BGMapper {
 	 * @return
 	 */
 	public ProjectInfoPo getProPoByProId(String proId);
+
+	/**
+	 * 改变项目下某人的角色
+	 * @param projectId 项目id
+	 * @param in_hrCode 将要更改人员的人资编号，如果为空则更改全部人员
+	 * @param ex_hrCode 排除人员的人资编号，如果为空则更改全部人员
+	 * @param role 角色  0：项目参与人 1：项目负责人
+	 */
+	public void changeEmpRoleByHrCode(
+			@Param("projectId")String projectId, 
+			@Param("in_hrCode")String in_hrCode, 
+			@Param("ex_hrCode")String ex_hrCode, 
+			@Param("role")String role);
+
+	/**
+	 * 根据字段值更新该字段值
+	 * @param field 字段名称
+	 * @param fieldVal 字段值
+ 	 * @param targetVal 目标字段值
+	 */
+	public void updateProInfoFieldByField(
+			@Param("fieldName")String fieldName, 
+			@Param("fieldVal")String fieldVal, 
+			@Param("targetVal")Object targetVal);
+
+	/**
+	 * 根据项目id从科研系统中获取项目信息
+	 * @param proId
+	 * @return
+	 */
+	public Map<String, Object> getProInfoByProIdFromKY(String proId);
+
+	/**
+	 * 根据项目id从横向系统中获取项目信息
+	 * @param proId
+	 * @return
+	 */
+	public Map<String, Object> getProInfoByProIdFromHX(String proId);
+
+	/**
+	 * 根据项目id从科研系统中获取参与人员
+	 * @param proId
+	 * @return
+	 */
+	public List<HashMap> getEmpByProIdFromKY(String proId);
+
+	/**
+	 * 根据项目id从科研系统中获取参与人员
+	 * @param proId
+	 * @return
+	 */
+	public List<HashMap> getEmpByProIdFromHX(String proId);
+
+	/**
+	 * 获取科研系统的项目信息（未添加到报工系统的）
+	 * @param proName
+	 * @param wbsNumber
+	 * @return
+	 */
+	public List<Map<String, Object>> getProjectsFromKY(
+			@Param("proName")String proName, 
+			@Param("wbsNumber")String wbsNumber);
+
+	/**
+	 * 获取横向系统的项目信息（未添加到报工系统的）
+	 * @param proName
+	 * @param wbsNumber
+	 * @return
+	 */
+	public List<Map<String, Object>> getProjectsFromHX(
+			@Param("proName")String proName, 
+			@Param("wbsNumber")String wbsNumber);
+
+	/**
+	 * 添加项目与来源系统的关联
+	 * @param proId 报工系统的id
+	 * @param srcProId 项目来源系统的项目id
+	 * @param src 项目来源系统
+	 */
+	public void addProRelation(
+			@Param("proId")String proId,
+			@Param("srcProId")String srcProId,
+			@Param("src")String src);
+
+	/**
+	 * 添加人员与来源系统的关联(如果存在proId则更新，否则新增)
+	 * @param bgEmpId 报工系统的人员id
+	 * @param bgProId 报工系统的项目id
+	 * @param hrCode 人资编号
+	 * @param src 项目来源系统   proUserId,srcProId,hrCode,src
+	 */
+	public void addEmpRelation(
+			@Param("bgEmpId")String bgEmpId, 
+			@Param("bgProId")String bgProId,
+			@Param("hrCode")String hrCode, 
+			@Param("src")String src);
+
+	/**
+	 * 删除项目信息关联关系
+	 * @param proId
+	 */
+	public void deleteProRelation(String proId);
+
+	/**
+	 * 删除人员信息关联关系
+	 * @param proId
+	 * @param hrCode
+	 */
+	public void deleteEmpRelation(
+			@Param("proId")String proId,
+			@Param("hrCode")String hrCode);
+	
+	/**
+	 * 从项目关联表中获取记录
+	 * @param proId
+	 * @param srcProId 来源系统项目id
+	 * @param src
+	 */
+	public List<Map<String, Object>> getProRelation(
+			@Param("proId")String proId, 
+			@Param("srcProId")String srcProId, 
+			@Param("src")String src);
+
+	/**
+	 * 获取所有项目前期信息
+	 * @param deptId 当前登录人所在组织
+	 * @param proName 项目名称
+	 * @param isRelated 是否查询已经关联到项目的项目前期信息 true：是，false：否
+	 * @param relProId 项目id 如
+	 * @return
+	 */
+	public List<Map<String, Object>> getBeforeProjects(
+			@Param("deptId")String deptId,
+			@Param("proName")String proName,
+			@Param("isRelated")boolean isRelated,
+			@Param("relProId")String relProId);
 
 }

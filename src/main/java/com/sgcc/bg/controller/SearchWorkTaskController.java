@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
+import com.sgcc.bg.common.CommonCurrentUser;
 import com.sgcc.bg.common.CommonUser;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ExportExcelHelper;
@@ -53,7 +54,7 @@ public class SearchWorkTaskController {
 	@ResponseBody
 	@RequestMapping(value="/index")
 	public ModelAndView Index(HttpServletRequest res){
-		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category_show");
 		String statusJson=dict.getDictDataJsonStr("pstatus100001");
 		res.setAttribute("categoryMap", categoryMap);
 		res.setAttribute("statusJson", statusJson);
@@ -67,7 +68,7 @@ public class SearchWorkTaskController {
 	@ResponseBody
 	@RequestMapping(value="/examineIndex")
 	public ModelAndView examineIndex(HttpServletRequest res){
-		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category_show");
 		res.setAttribute("categoryMap", categoryMap);
 		ModelAndView model = new ModelAndView("searchWorkTask/examineWokingHour");
 		return model;
@@ -78,7 +79,7 @@ public class SearchWorkTaskController {
 	@ResponseBody
 	@RequestMapping(value="/examined")
 	public ModelAndView examined(HttpServletRequest res){
-		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category_show");
 		res.setAttribute("categoryMap", categoryMap);
 		String statusJson=dict.getDictDataJsonStr("cstatus100003");
 		res.setAttribute("statusJson", statusJson);
@@ -107,12 +108,12 @@ public class SearchWorkTaskController {
 	}
 	
 	/*
-	 *员工工时管理导入页面
+	 *个人工时管理导入页面
 	 */
 	@ResponseBody
 	@RequestMapping(value="/personWorkManage")
 	public ModelAndView personWorkManage(HttpServletRequest res){
-		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category_show");
 		Map<String,String> statusMap= dict.getDictDataByPcode("cstatus100003");
 		String statusJson=dict.getDictDataJsonStr("cstatus100003");
 		res.setAttribute("categoryMap", categoryMap);
@@ -215,9 +216,11 @@ public class SearchWorkTaskController {
 		CommonUser userInfo = webUtils.getCommonUser();
 		/* 获取人自编号 */
 		String hrCode = userInfo.getSapHrCode();
-		System.out.println("----hrCode-----"+hrCode);
+		CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByHrCode(hrCode);
+		String deptId = currentUser.getDeptId();
+		//System.out.println("----hrCode-----"+hrCode);
 		/* 根据人资编号和查询条件去查项目 */
-		String rw = searchWorkTaskService.search(page,limit,startTime,endTime,type,projectName,hrCode);
+		String rw = searchWorkTaskService.search(page,limit,startTime,endTime,type,projectName,hrCode,deptId);
 		return rw;
 	}
 	/*

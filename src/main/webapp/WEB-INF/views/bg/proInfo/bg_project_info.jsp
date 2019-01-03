@@ -151,6 +151,24 @@ function queryList(load){
 	            {title:'计划投入工时(h)', name:'planHours', width:120, sortable:false, align:'center'},
 	            {title:'项目负责人', name:'principal', width:90, sortable:false, align:'center'},
 	            {title:'参与人数', name:'amount', width:90,sortable:false, align:'center'},
+	            {title:'项目来源', name:'src', width:90,sortable:false, align:'center',
+	            	renderer:function(val,item,rowIndex){
+	            		val = $.trim(val);
+	            		if(val=='0' || val=='1'){
+	            			return '报工系统';
+	            		}else if(val=='2'){
+	            			return '科研系统';
+	            		}else if(val=='3'){
+	            			return '横向系统';
+	            		}
+	            		return "";
+	            	}
+	            },
+	            {title:'项目前期', name:'isRelated', width:90,sortable:false, align:'center',
+	            	renderer:function(val,item,rowIndex){
+	            		return val=='0'?'无':'有';
+	            	}
+	            },
 	            {title:'项目状态', name:'projectStatus', width:90,sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		var dict=${dictJson};
@@ -230,9 +248,7 @@ function forDetails(proId){
 // 新增
 function forAdd(){
 	var height=$(window).height()*0.9;
-	if(height>560){
-		height = 560;
-	}
+	height=height>570?570:height;
 	layer.open({
 		type:2,
 		title:"项目信息-新增",
@@ -250,7 +266,8 @@ function forUpdate(){
 			layer.msg("该项目无法修改!");
 			return;
 		}
-		var proId = mmg.selectedRowsByName("id");
+		var proId = $.trim(mmg.selectedRowsByName("id"));
+		var src = $.trim(mmg.selectedRowsByName("src"));
 		var height=$(window).height()*0.9;
 		if(height>560){
 			height = 560;
@@ -260,7 +277,7 @@ function forUpdate(){
 			title:"项目信息-修改",
 			area:['865px', height+'px'],
 			//scrollbar:false,
-		 	content:['<%=request.getContextPath()%>/project/pro_update?proId='+proId]
+		 	content:['<%=request.getContextPath()%>/project/pro_update?proId='+proId+"&src="+src]
 		});
 	}else{
 		layer.msg("请选择一条数据!");

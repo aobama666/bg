@@ -78,7 +78,6 @@ function queryList(load){
 		}).on('loadSuccess', function(e, data){
 			$(".checkAll").css("display","none").parent().text("选择");
 			//默认选中行
-			var data=parent.mmg.row(index);
 			var hrcode=parent.mmg.find("tr:eq("+index+") input[property='hrCode']").val();
 			if(hrcode==undefined || hrcode==""){
 				//上次没有选
