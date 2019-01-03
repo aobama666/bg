@@ -255,17 +255,22 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 							errorInfo.append("组织信息填写错误！ "); 
 							errorNum.add(6);
 					}
-					// 计划投入工时 必填;数字
-					if (cellValue[7] == null || "".equals(cellValue[7])) {
-						errorInfo.append("计划投入工时不能为空！ ");
-						errorNum.add(7);
-					} else if (!cellValue[7].matches(regex)) {
-						errorInfo.append("计划投入工时填写有误！ ");
-						errorNum.add(7);
-					} else if (cellValue[7].length() > 8) {
-						errorInfo.append("计划投入工时不能超过8位数！ ");
-						errorNum.add(7);
-					}
+					 
+					int  PlanHours=0;			// 计划投入工时 必填;数字
+					if (!"".equals(cellValue[7])) {
+						if (!cellValue[7].matches(regex)) {
+							errorInfo.append("计划投入工时填写有误！ ");
+							errorNum.add(7);
+						} else if (cellValue[7].length() > 8) {
+							errorInfo.append("计划投入工时不能超过8位数！ ");
+							errorNum.add(7);
+						}else{
+							PlanHours=Integer.parseInt(cellValue[7]);
+						}
+						
+					}  
+					
+					
 				 
 					// 校验结束，分流数据
 					if ("".equals(errorInfo.toString())) {// 通过校验
@@ -291,9 +296,9 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 							}else{
 								OrganDeptId=getDeptIdByDeptCode(cellValue[6]);
 							}
-							pro.setOrganInfo(OrganDeptId);
-					 
-						pro.setPlanHours(Integer.parseInt(cellValue[7]));
+							
+						pro.setOrganInfo(OrganDeptId);
+						pro.setPlanHours(PlanHours);
 						pro.setDecompose("0");//一期默认不分解
 						pro.setCreateUser(currentUsername);
 						pro.setCreateDate(new Date());
@@ -309,12 +314,11 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 						prov.setSqnum(cellValue[0]);
 						prov.setProjectName(cellValue[1]);
 						prov.setCategory(cellValue[2]);
-						prov.setWBSNumber(cellValue[3]);
-						prov.setProjectIntroduce(cellValue[4]);
-						prov.setStartDate(cellValue[5]);
-						prov.setEndDate(cellValue[6]);
-						prov.setOrganInfo(cellValue[7]);
-						prov.setPlanHours(cellValue[8]);
+						prov.setProjectIntroduce(cellValue[3]);
+						prov.setStartDate(cellValue[4]);
+						prov.setEndDate(cellValue[5]);
+						prov.setOrganInfo(cellValue[6]);
+						prov.setPlanHours(cellValue[7]);
 						prov.setErrorInfo(errorInfo.toString());
 						prov.setErrSet(errorNum);
 						errorList.add(prov);
@@ -333,8 +337,8 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 						{ "非项目说明\r\n（200字以内）","projectIntroduce"},
 						{ "非项目开始时间\r\n（必填，格式：YYYY-MM-DD）","startDate","nowrap"}, 
 						{ "非项目结束时间\r\n（必填，格式：YYYY-MM-DD）","endDate","nowrap"},
-						{ "组织信息\r\n（非项目类型为技术服务非项目时必填，如不填则默认填报人处室）","organInfo","nowrap"}, 
-						{ "计划投入工时(h)\r\n(必填，数字，8位数字）", "planHours","nowrap"},
+						{ "组织信息\r\n（如不填则默认填报人处室）","organInfo","nowrap"}, 
+						{ "计划投入工时(h)\r\n(数字，8位数字）", "planHours","nowrap"},
 						{ "错误说明","errorInfo"}
 				};
 				errorUUID = ExportExcelHelper.createErrorExcel(FtpUtils.BgTempUploadPath, title, errorList);
