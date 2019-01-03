@@ -99,7 +99,7 @@ function uploadEmpFile() {
 	if(checkResult){
 		loadPage("open");
 		var ran = Math.random()*1000;
-		document.forms[1].action ="<%=request.getContextPath() %>/project/readEmpExcel?&ran="+ran;
+		document.forms[1].action ="<%=request.getContextPath() %>/nonproject/readEmpExcel?&ran="+ran;
 		document.forms[1].submit();
 		loadPage("close");
 	}
@@ -136,8 +136,10 @@ function downLoadErr(_this){
 	var ran = Math.random()*1000;
 	var uuid = $(_this).attr("uuid");
 	var fileName = uuid + ".xls";
-	document.forms[1].action = "<%=request.getContextPath() %>/project/downloadErrExecl?fileName="+fileName+"&ran"+ran;
-	document.forms[1].submit();
+	 
+	$("#fileName").val(fileName);
+	document.forms[0].action = "<%=request.getContextPath() %>/nonproject/downloadErrExecl?ran"+ran;
+	document.forms[0].submit();
 	loadPage("close");
 }
 function queryList(){
