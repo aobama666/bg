@@ -263,50 +263,51 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 							proMap = bgMapper.getProInfoByProId(proId);
 							principal = proMap.get("principal")==null?"":proMap.get("principal");//负责人也可以从proMap中获取,
 						}
-						//项目存在
-						if(!Rtext.isEmpty(proId)){
-							//验证项目类型是否一致
-							String category = proMap.get("category");
-							category = dictMap.get(category);
-							if(!errorNum.contains(2) && !cellValue[2].equals(category)){
-								errorInfo.append("项目类型与项目不符！ ");
-								errorNum.add(2);
-							}
-							
-							//验证项目状态是否处于进行中
-							String projectStatus = proMap.get("projectStatus");
-							String[] staArr = {"已新建","已启动","已暂停","已完成","已废止","状态未知"};
-							if(!"1".equals(projectStatus)){
-								errorInfo.append("项目"+staArr[Rtext.ToInteger(projectStatus,5)]+"，无法填报！ ");
-								errorNum.add(3);
-							}
-							
-							if(!errorNum.contains(2)){
-								if(!"项目前期".equals(cellValue[2]) && !"常规工作".equals(cellValue[2])){
-									//如项目存在并且不为项目前期和常规工作，则校验其是否存在于该项目
-									int result=SWMapper.validateStaff(proId,currentUsername);
-									if(result==0){
-										errorInfo.append("提报人不属于该项目！ ");
-										errorNum.add(3);
-									}
-								}else{
-									//项目前期和常规工作，则校验其是是否属于属于项目指定的处室或部门
-									int result = SWMapper.validateDeptId(proId,currentDeptId);
-									if(result==0){
-										errorInfo.append("提报人不属于项目所属组织！ ");
-										errorNum.add(3);
-									}
-								}
-							}
-							
-							
-							//如果项目存在则再校验填报日期是否超出范围
-							if(!errorNum.contains(1)){
-								int result=SWMapper.validateSelectedDate(proId,currentUsername,cellValue[1]);
+					}
+					
+					//项目存在
+					if(!Rtext.isEmpty(proId)){
+						//验证项目类型是否一致
+						String category = proMap.get("category");
+						category = dictMap.get(category);
+						if(!errorNum.contains(2) && !cellValue[2].equals(category)){
+							errorInfo.append("项目类型与项目不符！ ");
+							errorNum.add(2);
+						}
+						
+						//验证项目状态是否处于进行中
+						String projectStatus = proMap.get("projectStatus");
+						String[] staArr = {"已新建","已启动","已暂停","已完成","已废止","状态未知"};
+						if(!"1".equals(projectStatus)){
+							errorInfo.append("项目"+staArr[Rtext.ToInteger(projectStatus,5)]+"，无法填报！ ");
+							errorNum.add(3);
+						}
+						
+						if(!errorNum.contains(2)){
+							if(!"项目前期".equals(cellValue[2]) && !"常规工作".equals(cellValue[2])){
+								//如项目存在并且不为项目前期和常规工作，则校验其是否存在于该项目
+								int result=SWMapper.validateStaff(proId,currentUsername);
 								if(result==0){
-									errorInfo.append("填报日期不在项目周期或参与周期内！ ");
-									errorNum.add(1);
+									errorInfo.append("提报人不属于该项目！ ");
+									errorNum.add(3);
 								}
+							}else{
+								//项目前期和常规工作，则校验其是是否属于属于项目指定的处室或部门
+								int result = SWMapper.validateDeptId(proId,currentDeptId);
+								if(result==0){
+									errorInfo.append("提报人不属于项目所属组织！ ");
+									errorNum.add(3);
+								}
+							}
+						}
+						
+						
+						//如果项目存在则再校验填报日期是否超出范围
+						if(!errorNum.contains(1)){
+							int result=SWMapper.validateSelectedDate(proId,currentUsername,cellValue[1]);
+							if(result==0){
+								errorInfo.append("填报日期不在项目周期或参与周期内！ ");
+								errorNum.add(1);
 							}
 						}
 					}
