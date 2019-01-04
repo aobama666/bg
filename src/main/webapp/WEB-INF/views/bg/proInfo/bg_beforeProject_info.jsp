@@ -57,7 +57,7 @@ a{
 			<form name="queryBox" action=""
 				style="width: 100%; padding-left: 10px">
 				<div class="form-group col-xs-12">
-					<label>工作任务名称</label>
+					<label>工作任务名称：</label>
 					<div class="controls">
 						<input name="proName" property="proName">
 						<input type="hidden" name=isRelated value="n">

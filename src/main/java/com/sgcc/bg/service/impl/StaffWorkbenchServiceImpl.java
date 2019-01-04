@@ -159,10 +159,10 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 							 { "项目类型\r\n（必填）", "CATEGORY" ,"nowrap"},
 							 { "项目编号\r\n（项目工作必填，非项目工作不填）", "PROJECT_NUMBER" ,"nowrap"}, 
 							 { "项目名称\r\n（选填）","PROJECT_NAME","nowrap"},
-							 { "工作内容\r\n（选填 200字以内）",""}, 
-							 { "投入工时\r\n(必填 数字 h）","","nowrap"},
+							 { "工作内容\r\n（选填，200字以内）",""}, 
+							 { "投入工时\r\n(必填，数字 h）","","nowrap"},
 							 { "审核人员姓名\r\n（选填）","PRINCIPAL","nowrap"}, 
-							 { "审核人员员工编号\r\n（非项目工作必填，项目工作负责人必填）","HRCODE","nowrap"} 
+							 { "审核人员员工编号\r\n（项目前期、常规工作必填，工作任务负责人必填）","HRCODE","nowrap"} 
 							};
 		ExportExcelHelper.getExcel(response, "定制模板", title, dataList, "normal");
 		return "success";
@@ -194,7 +194,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 			
 			//获取所有项目编号存入一个集合
 			List<String> list=bgMapper.getAllBgNumbers();
-			String regex = "^([1-9]+|[1-9]*\\.[05]|0\\.5)$";
+			String regex = "^([1-9]+0*|[1-9]*\\.[05]|0\\.5)$";
 			SWServiceLog.info("项目信息excel表格最后一行： " + rows);
 			/* 保存有效的Excel模版列数 */
 			String[] cellValue = new String[9];
@@ -261,7 +261,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						}else{
 							proId=bgMapper.getProIdByBgNmuber(cellValue[3]);
 							proMap = bgMapper.getProInfoByProId(proId);
-							principal = proMap.get("principal")==null?"":proMap.get("principal");//负责人也可以从proMap中获取,
+							principal = SWMapper.getPrincipalByProId(proId);
+							principal = principal==null?"":principal;//如果是项目前期和常规项目则获取不到负责人
 						}
 					}
 					
@@ -388,11 +389,17 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						}else{
 							//如果为项目工作，根据项目id获取项目负责人
 							wh.setProId(proId);
-							//如果提报人就是项目负责人，则以审核人是所填审核人；如果是参与人，则默认时项目负责人
-							wh.setApprover(principal.equals(currentUsername)?approverUser.getUserName():principal);
+							//如果提报人就是项目负责人，则以审核人是所填审核人；如果是参与人或者是非项目，则默认时项目负责人
+							if(Rtext.isEmpty(principal) || principal.equals(currentUsername)) principal = approverUser.getUserName();
+							wh.setApprover(principal);
 							//如果为非项目工作，项目类型、名称与项目编号保持一致
-							wh.setCategory(proMap.get("category"));
-							wh.setProName(proMap.get("project_name"));
+							if("项目前期".equals(cellValue[2]) || "常规工作".equals(cellValue[2])){
+								wh.setCategory("项目前期".equals(cellValue[2])?"BP":"CG");
+								wh.setProName(cellValue[4]);
+							}else{
+								wh.setCategory(proMap.get("category"));
+								wh.setProName(proMap.get("projectName"));
+							}
 						}
 						wh.setWorkTime(DateUtil.fomatDate(cellValue[1]));
 						wh.setJobContent(cellValue[5]);

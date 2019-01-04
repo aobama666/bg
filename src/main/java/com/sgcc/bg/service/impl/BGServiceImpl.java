@@ -1067,7 +1067,8 @@ public class BGServiceImpl implements IBGService {
 		}else if("HX".equals(src)){
 			return bgMapper.getEmpByProIdFromHX(proId);
 		}
-		return null;
+		return new ArrayList<HashMap>() {
+		};
 	}
 
 	@Override

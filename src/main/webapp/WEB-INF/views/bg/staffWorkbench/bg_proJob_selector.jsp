@@ -136,11 +136,11 @@ function queryList(load){
 
 function forAdd(){
 	var items = mmg.selectedRows();
-	var approverHrcode;
+	/* var approverHrcode;
 	var approverName;
-	var category;
+	var category; */
 	for(var i=0;i<items.length;i++){
-		approverHrcode = items[i].HRCODE;
+		/* approverHrcode = items[i].HRCODE;
 		approverName = items[i].PRINCIPAL;
 		category = items[i].CATEGORY;
 		
@@ -148,13 +148,13 @@ function forAdd(){
 		if('CG,BP'.indexOf(category)!=-1 || items[i].HRCODE==parent.currentUserHrcode){
 			approverHrcode=parent.approverHrcode;
 			approverName=parent.approverName;
-		}
+		} */
 		parent.mmg.addRow({
 			"PROJECT_ID":items[i].ID,
-			"CATEGORY":category,
+			"CATEGORY":items[i].CATEGORY,
 			"PROJECT_NAME":items[i].PROJECT_NAME,
-			"PRINCIPAL":approverName,
-			"HRCODE":approverHrcode,
+			"PRINCIPAL":items[i].PRINCIPAL,
+			"HRCODE":items[i].HRCODE,
 			"STATUS":"0",
 			"JOB_CONTENT":"",
 			"WORKING_HOUR":""

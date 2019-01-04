@@ -53,13 +53,13 @@ a{
 			<form name="queryBox" action=""
 				style="width: 100%; padding-left: 10px">
 				<div class="form-group col-xs-6">
-					<label>项目名称</label>
+					<label>项目名称：</label>
 					<div class="controls">
 						<input name="proName" property="proName">
 					</div>
 				</div>
 				<div class="form-group col-xs-6">
-					<label for="querySex">WBS编号</label>
+					<label for="querySex">WBS编号：</label>
 					<div class="controls">
 						<input name="wbsNumber" property="wbsNumber">
 					</div>
