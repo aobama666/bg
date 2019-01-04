@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>项目信息维护</title>
+<title>非项目信息维护</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css"
@@ -18,7 +18,6 @@
 	href="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmPaginator.css">
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/css/style.css">
-
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/common/plugins/jQuery/jquery-1.9.1.min.js"></script>
 <script type="text/javascript"
@@ -48,7 +47,7 @@ a{
 </head>
 <body>
 	<div class="page-header-sl">
-		<h5>项目信息维护</h5>
+		<h5>非项目信息维护</h5>
 		<div class="button-box">
 			<button type="button" class="btn btn-primary btn-xs"
 				style="display: none;" name="kOne" onclick="forAdd()">新增</button>
@@ -71,13 +70,13 @@ a{
 			<form name="queryBox" action=""
 				style="width: 100%; padding-left: 10px">
 				<div class="form-group col-xs-4">
-					<label>项目名称：</label>
+					<label>非项目名称：</label>
 					<div class="controls">
 						<input name="proName" property="proName">
 					</div>
 				</div>
 				<div class="form-group col-xs-4">
-					<label for="querySex">项目状态：</label>
+					<label for="querySex">非项目状态：</label>
 					<div class="controls">
 						<select name="proStatus" property="proStatus">
 							<option></option>
@@ -137,39 +136,19 @@ function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 				{title:'序列', name:'id', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'项目编号', name:'projectNumber', width:110, sortable:false, align:'center'},
-	            {title:'WBS编号', name:'WBSNumber', width:100, sortable:false, align:'left'},
-	            {title:'项目名称', name:'projectName',width:150, sortable:false, align:'left',
-	            	renderer:function(val,item,rowIndex){
-	            		return '<a href="###" title="'+val+'" onclick="forDetails(\''+item.id+'\')">'+val+'</a>';
-	            	}
-	            },
-	            {title:'项目说明', name:'projectIntroduce',width:150, sortable:false, align:'left'},
-	            {title:'项目类型', name:'category', width:100,sortable:false, align:'center'},
-	            {title:'项目开始时间', name:'startDate', width:100, sortable:false, align:'center'},
-	            {title:'项目结束时间', name:'endDate', width:100,sortable:false, align:'center'},
+	            {title:'非项目编号', name:'projectNumber', width:110, sortable:false, align:'center',
+					renderer:function(val,item,rowIndex){
+            		return '<a href="###" title="'+val+'" onclick="forDetails(\''+item.id+'\')">'+val+'</a>';
+                 	}
+                },   
+	   
+	            {title:'非项目类型', name:'category', width:100,sortable:false, align:'center'},
+	            {title:'非项目名称', name:'projectName',width:150, sortable:false, align:'left'}, 
+	            {title:'非项目说明', name:'projectIntroduce',width:150, sortable:false, align:'left'},
+	            {title:'非项目开始时间', name:'startDate', width:100, sortable:false, align:'center'},
+	            {title:'非项目结束时间', name:'endDate', width:100,sortable:false, align:'center'},
 	            {title:'计划投入工时(h)', name:'planHours', width:120, sortable:false, align:'center'},
-	            {title:'项目负责人', name:'principal', width:90, sortable:false, align:'center'},
-	            {title:'参与人数', name:'amount', width:90,sortable:false, align:'center'},
-	            {title:'项目来源', name:'src', width:90,sortable:false, align:'center',
-	            	renderer:function(val,item,rowIndex){
-	            		val = $.trim(val);
-	            		if(val=='0' || val=='1'){
-	            			return '报工系统';
-	            		}else if(val=='2'){
-	            			return '科研系统';
-	            		}else if(val=='3'){
-	            			return '横向系统';
-	            		}
-	            		return "";
-	            	}
-	            },
-	            {title:'项目前期', name:'isRelated', width:90,sortable:false, align:'center',
-	            	renderer:function(val,item,rowIndex){
-	            		return val=='0'?'无':'有';
-	            	}
-	            },
-	            {title:'项目状态', name:'projectStatus', width:90,sortable:false, align:'center',
+	            {title:'非项目状态', name:'projectStatus', width:90,sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		var dict=${dictJson};
 	            		return dict[val];
@@ -209,7 +188,7 @@ function queryList(load){
 		height: mmGridHeight,
 		cols: cols,
 		nowrap: true,
-		url: '<%=request.getContextPath()%>/project/initPage?ran='+ran,
+		url: '<%=request.getContextPath()%>/nonproject/initPage?ran='+ran,
 		fullWidthRows: true,
 		multiSelect: true,
 		root: 'items',
@@ -237,25 +216,27 @@ function forDetails(proId){
 	}
 	layer.open({
 		type:2,
-		title:"项目信息-查看",
+		title:"非项目信息-查看",
 		area:['865px', height+"px"],
 		//scrollbar:false,
 		skin:'query-box',
-		content:['<%=request.getContextPath()%>/project/pro_details?proId='+proId]
+		content:['<%=request.getContextPath()%>/nonproject/pro_details?proId='+proId]
 	});
 }
 
 // 新增
 function forAdd(){
 	var height=$(window).height()*0.9;
-	height=height>570?570:height;
+	if(height>560){
+		height = 560;
+	}
 	layer.open({
 		type:2,
-		title:"项目信息-新增",
-		area:['865px', height+'px'],
+		title:"非项目信息-新增",
+		area:['620px', height+'px'],
 		//scrollbar:false,
 		skin:'query-box',
-		content:['<%=request.getContextPath()%>/project/pro_add']
+		content:['<%=request.getContextPath()%>/nonproject/pro_add']
 	}); 
 }
 // 修改
@@ -263,21 +244,20 @@ function forUpdate(){
 	var rows = mmg.selectedRows();
 	if(rows.length == 1){
 		if(rows[0].projectStatus=="3" || rows[0].projectStatus=="4"){
-			layer.msg("该项目无法修改!");
+			layer.msg("该非项目无法修改!");
 			return;
 		}
-		var proId = $.trim(mmg.selectedRowsByName("id"));
-		var src = $.trim(mmg.selectedRowsByName("src"));
+		var proId = mmg.selectedRowsByName("id");
 		var height=$(window).height()*0.9;
 		if(height>560){
 			height = 560;
 		}
 		layer.open({
 			type:2,
-			title:"项目信息-修改",
-			area:['865px', height+'px'],
+			title:"非项目信息-修改",
+			area:['620px', height+'px'],
 			//scrollbar:false,
-		 	content:['<%=request.getContextPath()%>/project/pro_update?proId='+proId+"&src="+src]
+		 	content:['<%=request.getContextPath()%>/nonproject/pro_update?proId='+proId]
 		});
 	}else{
 		layer.msg("请选择一条数据!");
@@ -295,14 +275,14 @@ function forDelete(){
 			}
 		}
 		if(forbiddenRows!=""){
-			layer.msg("第 "+forbiddenRows.substr(0,forbiddenRows.length-1)+" 行项目无法删除！");
+			layer.msg("第 "+forbiddenRows.substr(0,forbiddenRows.length-1)+" 行非项目无法删除！");
 			return;
 		}
 		layer.confirm('确认删除吗?', {icon: 7,title:'提示',shift:-1},function(index){
 			layer.close(index);
 			var proId = mmg.selectedRowsByName("id");
 			var ran = Math.random()*100000000;
-			$.post('<%=request.getContextPath()%>/project/deleteProject?ran='+ran,{proId:proId},function(data){
+			$.post('<%=request.getContextPath()%>/nonproject/deleteProject?ran='+ran,{proId:proId},function(data){
 				if(data.result == "success"){
 					layer.msg(data.msg);
 				}else{
@@ -322,7 +302,7 @@ function changeStatus(text,operation,proId){
 			function(index){
 			layer.close(index);
 			var ran = Math.random()*100000000;
-			$.get("<%=request.getContextPath()%>/project/changeStatus?operation="+operation+"&proId="+proId+"&ran="+ran,
+			$.get("<%=request.getContextPath()%>/nonproject/changeStatus?operation="+operation+"&proId="+proId+"&ran="+ran,
 					function(data,status){
 						if(data.result=="done"){
 							queryList("reload");
@@ -333,7 +313,7 @@ function changeStatus(text,operation,proId){
 			);
 		});
 	}else if(operation=="finish" || operation=="discard"){
-		layer.confirm('项目结束日期是否需要变动？', {icon: 7,title:'提示',shift:-1,btn: ['是', '否']},
+		layer.confirm('非项目结束日期是否需要变动？', {icon: 7,title:'提示',shift:-1,btn: ['是', '否']},
 			function(index){
 				layer.close(index);
 				var height=$(window).height()*0.9;
@@ -342,15 +322,15 @@ function changeStatus(text,operation,proId){
 				}
 				layer.open({
 					type:2,
-					title:"项目信息-修改",
+					title:"非项目信息-修改",
 					area:['620px', height+'px'],
-		 			content:['<%=request.getContextPath()%>/project/pro_update?proId='+proId]
+		 			content:['<%=request.getContextPath()%>/nonproject/pro_update?proId='+proId]
 				});
 			},
 			function(index){
 				layer.close(index);
 				var ran = Math.random()*100000000;
-				$.get("<%=request.getContextPath()%>/project/changeStatus?operation="+operation+"&proId="+proId+"&ran="+ran,
+				$.get("<%=request.getContextPath()%>/nonproject/changeStatus?operation="+operation+"&proId="+proId+"&ran="+ran,
 					function(data,status){
 						if(data.result=="done"){
 							queryList("reload");
@@ -374,15 +354,15 @@ function forExport(){
 	ids==""?ids=JSON.stringify($(".query-box").sotoCollecter()):ids;
 	$("input[name=ids]").val(ids);
 	var ran = Math.random()*1000;
-	document.forms[1].action ="<%=request.getContextPath()%>/project/exportSelectedItems?ran="+ran;
+	document.forms[1].action ="<%=request.getContextPath()%>/nonproject/exportSelectedItems?ran="+ran;
 	document.forms[1].submit();
 	$("input[name=ids]").val("");
 }
 
 function forImport(){
 	var height=$(window).height()*0.8;
-	if(height>320){
-		height = 320;
+	if(height>300){
+		height = 300;
 	}
 	layer.open({
 		type:2,
@@ -390,7 +370,7 @@ function forImport(){
 		area:['620px', height+'px'],
 		resize:false,
 		scrollbar:false,
-		content:['<%=request.getContextPath()%>/project/import_excel_page'],
+		content:['<%=request.getContextPath()%>/nonproject/import_excel_page'],
 		end: function(){
 			
 		}

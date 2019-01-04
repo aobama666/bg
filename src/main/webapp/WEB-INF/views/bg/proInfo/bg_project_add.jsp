@@ -89,7 +89,6 @@
 <script type="text/javascript">
 	var mmg;
 	var mmg_p;
-	var tempStartDate="";
 	var currentWBSNumber="";
 	var currentProNumber="";
 	var currentCategory="";
@@ -100,7 +99,6 @@
 		queryList();
 		queryList_beforePro();
 	}); 
-	
 
 	//未完成项目信息填写阻止填写人员信息
  	$("#myTab a").click(function(e){
@@ -205,7 +203,7 @@
 		return false;
 	} */
 	
-	function checkDate(endDate){
+	/* function checkDate(endDate){
 		var result = {};
 		if(getDate(endDate)>=getDate(tempStartDate)){
 			result.result = true;
@@ -215,7 +213,7 @@
 			result.info = "项目结束时间不能小于项目开始时间；";
 		}
 		return result;
-	} 
+	}  */
 	
 	//仅用于保存当前行的开始日期数据
 	function setStartDate(val){

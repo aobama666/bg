@@ -23,7 +23,7 @@
 				style="width: 100%; padding-left: 10px">
 				<hidden name="uuid" property="uuid"></hidden>
 				<div class="form-group col-xs-12">
-					<label>人员姓名</label>
+					<label>人员姓名：</label>
 					<div class="controls">
 						<input id="queryEmpName" name="queryEmpName"
 							property="queryEmpName">
@@ -48,6 +48,7 @@
 
 <script type="text/javascript">
 //srcProId和src在项目信息页面定义
+var tempStartDate="";//用于临时存放参与人员的开始日期
 
 //初始化列表数据
 function queryList(){
@@ -149,6 +150,18 @@ function queryList(){
 		}
 	});
 }
+
+function checkDateOrder(endDate){
+	var result = {};
+	if(getDate(endDate)>=getDate(tempStartDate)){
+		result.result = true;
+		result.info = "";
+	}else{
+		result.result = false;
+		result.info = "项目结束时间不能小于项目开始时间；";
+	}
+	return result;
+} 
 
 function forSave_stuff(){
 	var ran = Math.random()*1000000;

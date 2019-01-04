@@ -155,33 +155,36 @@
 		       T.PLAN_HOURS AS "planHours",
 		       T.PROJECT_STATUS AS "projectStatus",
 		       T.DECOMPOSE AS "decompose",
-	       T.STATUS AS "status",
-	       T.SRC AS "src",
-	       T.RELATED_PROJECT_ID AS "relProId",
-	       (SELECT COUNT(DISTINCT T2.HRCODE)
-	          FROM BG_PROJECT_USER T2
-	         WHERE T2.PROJECT_ID = T.ID
-	           AND T2.STATUS = '1') AS "amount",
-	       (SELECT T3.EMPNAME
-	          FROM BG_PROJECT_USER T3
-	         WHERE T3.PROJECT_ID = T.ID
-	           AND T3.ROLE = '1'
-	           AND T3.STATUS = '1') AS "principal",
-	       (SELECT TO_CHAR(WM_CONCAT(DISTINCT T3.EMPNAME))
-	          FROM BG_PROJECT_USER T3
-	         WHERE T3.PROJECT_ID = T.ID
-	           AND T3.STATUS = '1') AS "empName",
-	       D.DEPTNAME AS "deptName",
-	       D.DEPTCODE AS "deptCode",
-	       SIGN((SELECT COUNT(1)
-	              FROM BG_PROJECT_INFO
-	             WHERE RELATED_PROJECT_ID = T.ID)) AS "isRelated"
-	  FROM BG_PROJECT_INFO T
-	  LEFT JOIN BG_SYS_DEPT D
-	    ON T.ORGAN_INFO = D.DEPTID
-	   AND D.VALID = '1'
-	 WHERE T.ID = #{proId}
-	   AND T.STATUS = '1'
+		       T.STATUS AS "status",
+		       T.SRC AS "src",
+		       T.RELATED_PROJECT_ID AS "relProId",
+		       (SELECT COUNT(DISTINCT T2.HRCODE)
+		          FROM BG_PROJECT_USER T2
+		         WHERE T2.PROJECT_ID = T.ID
+		           AND T2.STATUS = '1') AS "amount",
+		       U.USERALIAS AS "principal",
+		       U.USERNAME AS "username",
+		       (SELECT TO_CHAR(WM_CONCAT(DISTINCT T3.EMPNAME))
+		          FROM BG_PROJECT_USER T3
+		         WHERE T3.PROJECT_ID = T.ID
+		           AND T3.STATUS = '1') AS "empName",
+		       D.DEPTNAME AS "deptName",
+		       D.DEPTCODE AS "deptCode",
+		       SIGN((SELECT COUNT(1)
+		              FROM BG_PROJECT_INFO
+		             WHERE RELATED_PROJECT_ID = T.ID)) AS "isRelated"
+		  FROM BG_PROJECT_INFO T
+		  LEFT JOIN BG_SYS_DEPT D
+		    ON T.ORGAN_INFO = D.DEPTID
+		   AND D.VALID = '1'
+		  LEFT JOIN BG_PROJECT_USER E
+		    ON T.ID = E.PROJECT_ID
+		   AND E.ROLE = '1'
+		   AND E.STATUS = '1'
+		  LEFT JOIN BG_SYS_USER U
+		    ON E.HRCODE = U.HRCODE
+		 WHERE T.ID = #{proId}
+		   AND T.STATUS = '1'
 	</select>
 	
 	<select id="getProPoByProId" parameterType="String" resultType="com.sgcc.bg.model.ProjectInfoPo">

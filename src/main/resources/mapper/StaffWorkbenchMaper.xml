@@ -2,47 +2,31 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sgcc.bg.mapper.StaffWorkbenchMaper">
-	<!-- EDIT是一个标记，解决复杂情况下是否可编辑的问题 -->
+	
 	<select id="getWorkingHourInfo" resultType="java.util.Map">
-		SELECT
-		   t.id, 
-		   t.project_id,
-		  DECODE(t.category,
-              'NP',
-              t.project_name,
-              (SELECT t1.project_name FROM BG_PROJECT_INFO t1 WHERE t1.id=t.project_id AND t1.status='1')) as project_name,
-      	   t.category as category,
-	       t.job_content,
-	       t.working_hour,
-	       t.status,
-	       u.useralias as principal,
-	       (SELECT t2.process_note
-	          FROM BG_PROCESS_RECORD t2
-	         WHERE t2.id = t.process_id AND t2.valid=1) as process_note,
-	       u.hrcode as hrcode,
-	       DECODE(
-	       	t.category,
-	       	'NP',
-	       	'yes',
-	       	DECODE(
-	       		t.worker,
-	       		(SELECT t2.username FROM BG_PROJECT_USER t1 
-  				 JOIN BG_SYS_USER t2
-    			 ON t1.hrcode = t2.hrcode
- 				 WHERE t1.project_id = t.project_id
-   				 AND t1.role = '1'
-   				 AND t1.status = '1'),
-   				'yes',
-   				'no'	
-	       	)
-	       ) as edit
-	  	FROM BG_WORKINGHOUR_INFO t
-	  	LEFT JOIN BG_SYS_USER u 
-	  		ON u.username = t.approver
-	  	WHERE t.Work_Time = TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
-	  	 AND t.worker=#{username}
-	  	 AND t.valid=1
-	  	ORDER BY t.create_time DESC
+	  	SELECT T.ID,
+		       T.PROJECT_ID,
+		       NVL(P.PROJECT_NAME, T.PROJECT_NAME) AS PROJECT_NAME,
+		       NVL(P.CATEGORY, T.CATEGORY) AS CATEGORY,
+		       T.JOB_CONTENT,
+		       T.WORKING_HOUR,
+		       T.STATUS,
+		       U.USERALIAS AS PRINCIPAL,
+		       R.PROCESS_NOTE AS PROCESS_NOTE,
+		       U.HRCODE AS HRCODE
+		  FROM BG_WORKINGHOUR_INFO T
+		  LEFT JOIN BG_SYS_USER U
+		    ON U.USERNAME = T.APPROVER
+		  LEFT JOIN BG_PROJECT_INFO P
+		    ON T.PROJECT_ID = P.ID
+		   AND P.STATUS = '1'
+		  LEFT JOIN BG_PROCESS_RECORD R
+		    ON T.PROCESS_ID = R.ID
+		   AND R.VALID = 1
+		 WHERE T.WORK_TIME = TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
+		   AND T.WORKER = #{username}
+		   AND T.VALID = 1
+		 ORDER BY T.CREATE_TIME DESC
 	</select>
 	
 	<select id="getProjectsByDate" resultType="java.util.Map">
