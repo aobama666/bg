@@ -49,10 +49,10 @@ public interface HandleSyncMapper {
 	void addKYToProTemp();
 
 	/**
-	 * 清理过期的转存项目信息
-	 * @param interval  当前日期前的天数
+	 * 清理过期的科研转存项目信息
+	 * @param days  当前日期前的天数
 	 */
-	void cutProTemp(int days);
+	void cutKYProTemp(int days);
 	
 	/**
 	 * 转存科研系统人员信息中间表
@@ -60,10 +60,10 @@ public interface HandleSyncMapper {
 	void addKYToEmpTemp();
 	
 	/**
-	 * 清理过期的转存参与人员信息
-	 * @param interval 当前日期前的天数
+	 * 清理过期的转存科研参与人员信息
+	 * @param days 当前日期前的天数
 	 */
-	void cutEmpTemp(int days);
+	void cutKYEmpTemp(int days);
 
 
 	/**
@@ -114,4 +114,48 @@ public interface HandleSyncMapper {
 	 * @param empMap
 	 */
 	void saveEmpFromKY(Map<String, Object> empMap);
+
+	/**
+	 * 转存横向项目信息中间表
+	 */
+	void addHXToProTemp();
+
+	/**
+	 * 清理过期的横向转存项目信息
+	 * @param days  当前日期前的天数
+	 */
+	void cutHXProTemp(int days);
+
+	/**
+	 * 转存横向系统人员信息中间表
+	 */
+	void addHXToEmpTemp();
+
+	/**
+	 * 清理过期的转存横向参与人员信息
+	 * @param days 当前日期前的天数
+	 */
+	void cutHXEmpTemp(int days);
+
+	/**
+	 * 从横向系统（数据中心推送表）获取所有项目信息
+	 */
+	List<Map<String, Object>> getAllSyncProFromHX();
+
+	/**
+	 * 保存校验通过的从横向同步的项目信息
+	 * @param proMap
+	 */
+	void saveProFromHX(Map<String, Object> proMap);
+
+	/**
+	 * 从横向系统（数据中心推送表）获取所有参与人信息
+	 */
+	List<Map<String, Object>> getAllSyncEmpFromHX();
+
+	/**
+	 * 保存校验通过的从横向同步的参与人员信息
+	 * @param empMap
+	 */
+	void saveEmpFromHX(Map<String, Object> empMap);
 }

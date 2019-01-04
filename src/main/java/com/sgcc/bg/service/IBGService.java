@@ -193,7 +193,7 @@ public interface IBGService {
 	public List<HashMap> getEmpDataByProIdAndSrc(String proId, String src);
 
 	/**
-	 * 获取指定系统来源的项目信息（未添加到报工系统的）
+	 * 获取指定系统来源的项目信息（未添加到报工系统的,并且是本人负责的）
 	 * @param src 来源系统 KY:科研  HX:横向
 	 * @param wbsNumber wbs 编号
 	 * @param proName  项目名称

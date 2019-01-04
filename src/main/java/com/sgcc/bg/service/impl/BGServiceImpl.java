@@ -1075,11 +1075,12 @@ public class BGServiceImpl implements IBGService {
 	public List<Map<String, Object>> getProjectsBySrc(String src,String proName, String wbsNumber) {
 		proName = Rtext.toStringTrim(proName,"");
 		wbsNumber = Rtext.toStringTrim(wbsNumber,"");
+		String username = webUtils.getUsername();
 		
 		if("KY".equals(src)){
-			return bgMapper.getProjectsFromKY(proName,wbsNumber);
+			return bgMapper.getProjectsFromKY(username,proName,wbsNumber);
 		}else if("HX".equals(src)){
-			return bgMapper.getProjectsFromHX(proName,wbsNumber);
+			return bgMapper.getProjectsFromHX(username,proName,wbsNumber);
 		}
 		return null;
 	}

@@ -388,24 +388,31 @@
 	<!-- 获取科研系统的项目信息（未添加到报工系统的） -->
 	<select id="getProjectsFromKY" resultType="java.util.Map">
 		SELECT T.ID,
-		       T.CATEGORY,
-		       T.PROJECT_ID,
-		       T.PROJECT_NAME,
-		       T.WBS_NUMBER,
-		       T.PROJECT_INTRODUCE,
-		       T.START_DATE,
-		       T.END_DATE
-		  FROM BG_SYNC_KY_PROJECT T
-		 WHERE T.VALID = '1'
-		   AND NOT EXISTS (SELECT 1
-		          FROM BG_SYNC_PROJECT_RELATION R
-		         WHERE R.SYNC_ID = T.PROJECT_ID
-		           AND R.VALID = '1')
+	           T.CATEGORY,
+	           T.PROJECT_ID,
+	           T.PROJECT_NAME,
+	           T.WBS_NUMBER,
+	           T.PROJECT_INTRODUCE,
+	           T.START_DATE,
+	           T.END_DATE
+	      FROM BG_SYNC_KY_PROJECT T
+	      JOIN BG_SYNC_KY_EMP E
+	        ON T.PROJECT_ID = E.PROJECT_ID
+	       AND E.VALID = '1'
+	      JOIN BG_SYS_USER U
+	        ON E.HRCODE = U.HRCODE
+	     WHERE T.VALID = '1'
+	       AND NOT EXISTS (SELECT 1
+	              FROM BG_SYNC_PROJECT_RELATION R
+	             WHERE R.SYNC_ID = T.PROJECT_ID
+	               AND R.VALID = '1')
+	       AND U.USERNAME = #{username}
+	       AND E.ROLE = '1'
 		   <if test="proName != null and proName != ''" >
-			   AND T.PROJECT_NAME LIKE '%'||#{proName}||'%'
+			  AND T.PROJECT_NAME LIKE '%'||#{proName}||'%'
 		   </if>
 		   <if test="wbsNumber != null and wbsNumber != ''" >
-			   AND T.WBS_NUMBER = #{wbsNumber}
+			  AND T.WBS_NUMBER = #{wbsNumber}
 		   </if>
 	</select>
 	
@@ -419,11 +426,18 @@
 		       T.START_DATE,
 		       T.END_DATE
 		  FROM BG_SYNC_HX_PROJECT T
+		  JOIN BG_SYNC_HX_EMP E
+		    ON T.PROJECT_ID = E.PROJECT_ID
+		   AND E.VALID = '1'
+		  JOIN BG_SYS_USER U
+		    ON E.HRCODE = U.HRCODE
 		 WHERE T.VALID = '1'
 		   AND NOT EXISTS (SELECT 1
 		          FROM BG_SYNC_PROJECT_RELATION R
 		         WHERE R.SYNC_ID = T.PROJECT_ID
 		           AND R.VALID = '1')
+		   AND U.USERNAME = #{username}
+		   AND E.ROLE = '1'
 		   <if test="proName != null and proName != ''" >
 			   AND T.PROJECT_NAME LIKE '%'||#{proName}||'%'
 		   </if>
@@ -485,7 +499,7 @@
 		       T.PLANHOURS AS "planHours"
 		  FROM BG_SYNC_HX_EMP T
 		 WHERE T.VALID = '1'
-		   AND T.PROJECT_ID = '1'
+		   AND T.PROJECT_ID = #{proId}
 	</select>
 	
 	<!-- 添加报工系统项目和其来源系统的关联关系 -->

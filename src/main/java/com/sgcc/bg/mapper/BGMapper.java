@@ -257,22 +257,26 @@ public interface BGMapper {
 	public List<HashMap> getEmpByProIdFromHX(String proId);
 
 	/**
-	 * 获取科研系统的项目信息（未添加到报工系统的）
+	 * 获取科研系统的项目信息（未添加到报工系统的，并且是本人负责的）
+	 * @param username
 	 * @param proName
 	 * @param wbsNumber
 	 * @return
 	 */
 	public List<Map<String, Object>> getProjectsFromKY(
+			@Param("username")String username,
 			@Param("proName")String proName, 
 			@Param("wbsNumber")String wbsNumber);
 
 	/**
-	 * 获取横向系统的项目信息（未添加到报工系统的）
+	 * 获取横向系统的项目信息（未添加到报工系统的，并且是本人负责的）
+	 * @param username
 	 * @param proName
 	 * @param wbsNumber
 	 * @return
 	 */
 	public List<Map<String, Object>> getProjectsFromHX(
+			@Param("username")String username,
 			@Param("proName")String proName, 
 			@Param("wbsNumber")String wbsNumber);
 

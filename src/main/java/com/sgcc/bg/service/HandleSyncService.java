@@ -16,28 +16,21 @@ public interface HandleSyncService {
 	 * 根据科研系统的数据更新报工中已关联的数据
 	 */
 	void updateFromKY();
+
 	
 	/**
-	 * 处理纵向系统的项目信息同步数据
-	 * @param map
+	 * 转存横向系统同步数据
 	 */
-	//void handleKYPro(Map<String,String> map);
+	void copyFromHX();
+
+	/**
+	 * 校验横向系统的数据并存入报工系统中间表
+	 */
+	void validateHX();
+
+	/**
+	 * 根据系统的数据更新报工中已关联的数据
+	 */
+	void updateFromHX();
 	
-	/**
-	 * 处理纵向系统的参与人员同步数据
-	 * @param map
-	 * @param firstAddProIds 记录本次同步中是第一次同步的报工系统项目id
-	 */
-	//void handleKYEmp(Map<String,String> map,Set<String> firstAddProIds);
-
-	/**
-	 * 从科研系统（数据中心推送表）获取所有项目信息
-	 */
-	//List<Map<String, String>>  getAllSyncProFromKY();
-
-	/**
-	 * 从科研系统（数据中心推送表）获取所有参与人员信息
-	 */
-	//List<Map<String, String>>  getAllSyncEmpFromKY();
-
 }
