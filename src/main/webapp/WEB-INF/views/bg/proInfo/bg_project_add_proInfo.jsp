@@ -301,6 +301,7 @@ function forSave_pro(){
 function stuffShow(){
 	$("#myTab a:eq(1)").tab("show");
 	mmg.load();
+	setTimeout(resize,200);
 }
 
 //选择项目信息的回调方法
@@ -313,6 +314,10 @@ function getProInfo(proId,queryFor){
 	    		//设置项目信息来源
 	    		src = queryFor;
 	    		srcProId = proId;
+	    		//清空上一次保存项目信息记录的项目起止日期
+	    		$("#startDate").val("");
+				$("#endDate").val("");
+	    		
 	    		//初始化项目信息
 	    		var pro = data.proData;
 	    		$('input[name="projectName"]').val(pro.PROJECT_NAME);

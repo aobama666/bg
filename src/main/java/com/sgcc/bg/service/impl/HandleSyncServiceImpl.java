@@ -99,7 +99,7 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 	public void updateFromKY() {
 		//获取所有已关联的科研系统项目关联关系
 		List<Map<String, Object>>  proRelList = bgMapper.getProRelation(null,null,"KY");
-		for (Map<String, Object> map : proRelList) {
+ 		for (Map<String, Object> map : proRelList) {
 			String bgProId = Rtext.toString(map.get("BG_ID"));
 			String kyProId = Rtext.toString(map.get("SYNC_ID"));
 			
@@ -107,11 +107,13 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 			Map<String, Object> kyProMap = bgMapper.getProInfoByProIdFromKY(kyProId);
 			
 			String proName = Rtext.toString(kyProMap.get("PROJECT_NAME"));
-			String wbsCode = Rtext.toString(kyProMap.get("PROJECT_WBS"));
+			String wbsCode = Rtext.toString(kyProMap.get("WBS_NUMBER"));
 
 			ProjectInfoPo pro = bgMapper.getProPoByProId(bgProId);
 			pro.setProjectName(proName);
 			pro.setWBSNumber(wbsCode);
+			pro.setUpdateDate(new Date());
+			pro.setUpdateUser("HandleSyncJob");
 			
 			bgMapper.updateProInfo(pro);
 			
@@ -130,23 +132,26 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 				
 				for (Map<String, String> bgEmp : bgEmpList) {
 					String bgHrCode = bgEmp.get("HRCODE");
-					if(bgHrCode.equals(kyHrCode)) existsInBg = true;
+					if(bgHrCode.equals(kyHrCode)){
+						existsInBg = true ;
+						break;
+					}
 				}
 				
 				if(!existsInBg){//如果报工系统中不存在则同步到报工系统并添加关联
 					ProjectUserPo proUser = new ProjectUserPo();
 					String empId = Rtext.getUUID();
 					proUser.setId(empId);
-					proUser.setRole(Rtext.toString(kyEmp.get("PROJECT_ROLE")));
+					proUser.setRole(Rtext.toString(kyEmp.get("role")));
 					proUser.setProjectId(bgProId);
 					proUser.setHrcode(kyHrCode);
-					proUser.setEmpName(Rtext.toString(kyEmp.get("USER_NAME")));
+					proUser.setEmpName(Rtext.toString(kyEmp.get("stuffName")));
 					
 					proUser.setStartDate(startDate);
 					proUser.setEndDate(endDate);
 					proUser.setTask(null);
-					double planHours = Rtext.ToDouble(kyEmp.get("WORK_TIME"),0d);
-					proUser.setPlanHours(planHours*22*24);
+					Double planHours = Rtext.ToDouble(kyEmp.get("planHours"),null);
+					proUser.setPlanHours(planHours==null?null:planHours*22*24);
 					proUser.setSrc("2");
 					proUser.setStatus("1");
 					proUser.setCreateDate(new Date());
@@ -419,14 +424,16 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 			String hxProId = Rtext.toString(map.get("SYNC_ID"));
 			
 			//更新已经关联到报工系统的项目信息的部分字段（项目类型，项目名称，wbs编号）
-			Map<String, Object> kyProMap = bgMapper.getProInfoByProIdFromHX(hxProId);
+			Map<String, Object> hxProMap = bgMapper.getProInfoByProIdFromHX(hxProId);
 			
-			String proName = Rtext.toString(kyProMap.get("PROJECT_NAME"));
-			String wbsCode = Rtext.toString(kyProMap.get("PROJECT_WBS"));
+			String proName = Rtext.toString(hxProMap.get("PROJECT_NAME"));
+			String wbsCode = Rtext.toString(hxProMap.get("WBS_NUMBER"));
 
 			ProjectInfoPo pro = bgMapper.getProPoByProId(bgProId);
 			pro.setProjectName(proName);
 			pro.setWBSNumber(wbsCode);
+			pro.setUpdateDate(new Date());
+			pro.setUpdateUser("HandleSyncJob");
 			
 			bgMapper.updateProInfo(pro);
 			
@@ -445,23 +452,26 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 				
 				for (Map<String, String> bgEmp : bgEmpList) {
 					String bgHrCode = bgEmp.get("HRCODE");
-					if(bgHrCode.equals(hxHrCode)) existsInBg = true;
+					if(bgHrCode.equals(hxHrCode)) {
+						existsInBg = true;
+						break;
+					}
 				}
 				
 				if(!existsInBg){//如果报工系统中不存在则同步到报工系统并添加关联
 					ProjectUserPo proUser = new ProjectUserPo();
 					String empId = Rtext.getUUID();
 					proUser.setId(empId);
-					proUser.setRole(Rtext.toString(hxEmp.get("PROJECT_ROLE")));
+					proUser.setRole(Rtext.toString(hxEmp.get("role")));
 					proUser.setProjectId(bgProId);
 					proUser.setHrcode(hxHrCode);
-					proUser.setEmpName(Rtext.toString(hxEmp.get("USER_NAME")));
+					proUser.setEmpName(Rtext.toString(hxEmp.get("stuffName")));
 					
 					proUser.setStartDate(startDate);
 					proUser.setEndDate(endDate);
 					proUser.setTask(null);
-					double planHours = Rtext.ToDouble(hxEmp.get("WORK_TIME"),0d);
-					proUser.setPlanHours(planHours*22*24);
+					Double planHours = Rtext.ToDouble(hxEmp.get("planHours"),null);
+					proUser.setPlanHours(planHours==null?null:planHours*22*24);
 					proUser.setSrc("2");
 					proUser.setStatus("1");
 					proUser.setCreateDate(new Date());

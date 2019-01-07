@@ -103,8 +103,8 @@
 	//未完成项目信息填写阻止填写人员信息
  	$("#myTab a").click(function(e){
 		e.preventDefault();
-		 $(this).tab("show");
-		return; 
+		/*  $(this).tab("show");
+		return;  */
 		var index = $(this).parent().index();
 		if(index!=0){
 			if(isSaved){
@@ -193,27 +193,6 @@
 		return result;
 	}
 	
- 	/* function arrRepeat(arr){
-		var arrStr = JSON.stringify(arr);
-		for (var i = 0; i < arr.length; i++) {
-			if (arrStr.indexOf(arr[i]) != arrStr.lastIndexOf(arr[i])){
-				return true;
-			}
-		};
-		return false;
-	} */
-	
-	/* function checkDate(endDate){
-		var result = {};
-		if(getDate(endDate)>=getDate(tempStartDate)){
-			result.result = true;
-			result.info = "";
-		}else{
-			result.result = false;
-			result.info = "项目结束时间不能小于项目开始时间；";
-		}
-		return result;
-	}  */
 	
 	//仅用于保存当前行的开始日期数据
 	function setStartDate(val){
@@ -221,7 +200,7 @@
 		return  result ={result:true,info:""};
 	}
 	
-	function checkUniqueness(val){
+ 	function checkUniqueness(val){
 		var result = {};
 		if(currentWBSNumber==$.trim(val) || ''==$.trim(val)){//如果WBS编号不填或者未改变则不用校验唯一
 			result.result = true;
@@ -256,19 +235,6 @@
 	}
 	
 	
-	function roleChange(_this){
-		var role=_this.val();
-		var hrCode=_this.parents("tr").find("input[name='hrcode']").val();
-		var rows=$("#mmg tr").has("input[value='"+hrCode+"']");
-		if(role=="项目负责人"){
-			$("#mmg tr").each(function(index,row){
-				$(row).find("select").val("项目参与人");
-			});
-		}
-		rows.each(function(index,row){
-			$(row).find("select").val(role);
-		});
-	}
 	
 	function getDate(dateStr){
 		var reg=new RegExp("\\-","gi");

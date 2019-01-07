@@ -88,7 +88,7 @@ function queryList(){
 		            	return  text;
 		            }	
 	           	 },
-	           	 {title:'来源', name:'SYNC',sortable:false, width:95,align:'center',
+	           	 {title:'来源', name:'SYNC',sortable:false, hidden: true,width:95,align:'center',
 		            	renderer:function(val,item,rowIndex){
 		            		//val = val=='0'?'录入':'同步';
 			            	return  '<div style="display:inline"><input value="'+val+'"  class="form-control" name="sync" property="sync" readonly="true" style="padding:6px 2px;border:none;text-align:center"></div>';			            
@@ -149,6 +149,11 @@ function queryList(){
 			resize();
 		}
 	});
+}
+
+function resize(){
+	mmg._fullWidthRows();
+	mmg.resize();
 }
 
 function checkDateOrder(endDate){
@@ -311,6 +316,20 @@ function forSave_stuff(){
 	});
 }
 
+function roleChange(_this){
+	var role=_this.val();
+	var hrCode=_this.parents("tr").find("input[name='hrcode']").val();
+	var rows=$("#mmg tr").has("input[value='"+hrCode+"']");
+	if(role=="项目负责人"){
+		$("#mmg tr").each(function(index,row){
+			$(row).find("select").val("项目参与人");
+		});
+	}
+	rows.each(function(index,row){
+		$(row).find("select").val(role);
+	});
+}
+
 <%-- function forSave_stuff(){
 	var ran = Math.random()*1000000;
 	var proId=$("#proId").val();
@@ -460,14 +479,26 @@ function forSave_stuff(){
 
 //删除
 function forDelete_stuff(){
-	var selectedRows = mmg.selectedRowsIndex();
+	var selectedRows = $("#mmg .selected");
 	if(selectedRows.length == 0){
 		layer.msg("请选择一条数据!");
 		return;
 	}
+	
+	var index = "";
+	$.each(selectedRows,function(i,row){
+		if($(row).find('input[name="sync"]').val()=='1'){
+			index += $(row).find('.mmg-index').text()+"，";
+		}
+	});
+	if(index!=""){
+		index = index.substr(0,index.length-1);
+		layer.msg("第"+index+"行为系统关联人员，无法删除！");
+		return;
+	}
+	
 	layer.confirm('确认删除吗?', {icon: 7,title:'提示',shift:-1},function(index){
 		layer.close(index);
-		var selectedRows=$("#mmg .selected");
 		selectedRows.hide();
 		sortIndex();
 		resize();

@@ -44,18 +44,18 @@ public class syncTest {
 /**********************************科研***********************************************************/
 /*********************************横向************************************************************/
 
-		logger.info("开始处转存横向系统中间表...");
-		//handleSyncService.copyFromHX();
-		logger.info("横向系统中间表转存完毕！");
+//		logger.info("开始处转存横向系统中间表...");
+//		//handleSyncService.copyFromHX();
+//		logger.info("横向系统中间表转存完毕！");
 		
 /*********************************************************************************************/
-		logger.info("开始处理横向系统中间表...");
-		handleSyncService.validateHX();
-		logger.info("横向系统中间表处理完毕！");
+//		logger.info("开始处理横向系统中间表...");
+//		//handleSyncService.validateHX();
+//		logger.info("横向系统中间表处理完毕！");
 		
 /*********************************************************************************************/	
 		logger.info("开始根据横向系统数据更新报工系统...");
-		//handleSyncService.updateFromHX();
+		handleSyncService.updateFromHX();
 		logger.info("根据横向系统数据更新报工系统完毕！");	
 		System.out.println("------end-----");
 	}

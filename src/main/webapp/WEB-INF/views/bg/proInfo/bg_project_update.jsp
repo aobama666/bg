@@ -51,7 +51,7 @@
 		font-style:italic;
 	}
 	
-	#proSelect{
+	/* #proSelect{
 		position: absolute;
     	top: 0px;
     	right: 15px;
@@ -59,7 +59,7 @@
     	display: none;
     	width: 78px;
   		padding: 0px 3px;
-	}
+	} */
 </style>
 </head>
 <body>
@@ -112,8 +112,8 @@
 					<div class="controls">
 						<input type="text" name="projectName" property="projectName" value="${projectName}">
 					</div>
-					<button id="proSelect" type="button" class="btn btn-info"
-						aria-label="Left Align">选择项目</button>
+					<!-- <button id="proSelect" type="button" class="btn btn-info"
+						aria-label="Left Align">选择项目</button> -->
 				</div>
 				<div class="form-group col-xs-11">
 					<label for="projectNumber"><font
@@ -221,11 +221,11 @@
 			//禁用输入框
 			$('#proInfo select[name="category"],input[name="projectName"],input[name="WBSNumber"]').prop("disabled",true);
 			//显示关联项目按钮
-			$('#proSelect').show();
+			//$('#proSelect').show();
 		}
 	}
 	
-	$("#proSelect").click(function(){
+	<%-- $("#proSelect").click(function(){
 		var category = $("select[name='category']").val();
 		var title = "项目选择-科研项目";
 		if(category=="HX") title = "项目选择-横向项目";
@@ -242,7 +242,7 @@
 			}
 		});
 		//forClose();
-	});
+	}); --%>
 
 	function forSave_pro(){
 		var ran = Math.random()*1000000;
