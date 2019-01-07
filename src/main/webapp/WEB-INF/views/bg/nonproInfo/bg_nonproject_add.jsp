@@ -320,6 +320,7 @@
 						}else{
 							parent.layer.msg("保存成功!");
 							stuffShow();
+						
 						}
 					}else {
 						parent.layer.msg("保存失败!");
