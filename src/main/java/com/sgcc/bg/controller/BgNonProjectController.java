@@ -449,7 +449,7 @@ public class BgNonProjectController {
 			resultMap.put("result", "fail");
 			return JSON.toJSONString(resultMap);
 		}
-		if(!Rtext.isEmpty(projectName)){
+		if(!Rtext.isEmpty(planHoursStr)){
 			if(!ParamValidationUtil.isValidInt(planHoursStr) || planHoursStr.length()>8){
 				bgLog.info("计划投入工时不是8位整数");
 				resultMap.put("result", "fail");
