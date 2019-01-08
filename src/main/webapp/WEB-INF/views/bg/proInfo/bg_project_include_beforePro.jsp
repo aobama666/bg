@@ -21,7 +21,7 @@
 	
 <!-- 项目前期维护javascrip代码 -->
 <script type="text/javascript">
-
+var mmg_p;
 // 初始化项目前期列表
 function queryList_beforePro(){
 	var ran = Math.random()*100000000;

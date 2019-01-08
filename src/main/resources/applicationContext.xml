@@ -46,6 +46,7 @@
 	<task:scheduled-tasks>
 		<task:scheduled ref="quartzJob" method="syncDeptAndUserData" cron="0 45 4,12 * * ?" />	
 		<task:scheduled ref="quartzJob" method="deleteErrorInfoFilesFromFtp" cron="0 0 4 * * ?" />	
+		<task:scheduled ref="handleSyncJob" method="handleData" cron="0 20 1,12 * * ?" />	
 	</task:scheduled-tasks>
 	
 	

@@ -54,9 +54,9 @@ public class syncTest {
 //		logger.info("横向系统中间表处理完毕！");
 		
 /*********************************************************************************************/	
-		logger.info("开始根据横向系统数据更新报工系统...");
-		handleSyncService.updateFromHX();
-		logger.info("根据横向系统数据更新报工系统完毕！");	
+//		logger.info("开始根据横向系统数据更新报工系统...");
+//		handleSyncService.updateFromHX();
+//		logger.info("根据横向系统数据更新报工系统完毕！");	
 		System.out.println("------end-----");
 	}
 }

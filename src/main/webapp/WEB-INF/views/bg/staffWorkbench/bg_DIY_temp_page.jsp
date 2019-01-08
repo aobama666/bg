@@ -40,7 +40,7 @@
 <![endif]-->
 <style type="text/css">
 	label{
-		width: 100px;
+		width: 110px;
     	text-align: right;
 	}
 </style>

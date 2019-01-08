@@ -163,6 +163,30 @@ function typeChange(type){
 	}
 }
 
+//未完成项目信息填写阻止填写人员信息
+$("#myTab a").click(function(e){
+	e.preventDefault();
+	/*  $(this).tab("show");
+	return;  */
+	var index = $(this).parent().index();
+	if(index!=0){
+		if(isSaved){
+			$(this).tab("show");
+		}else{
+			parent.layer.confirm('请先保存项目！', {icon: 7, title:'提示',shift:-1,btn: ['保存', '退出']},
+				function(i){
+					parent.layer.close(i);
+					forSave_pro(); 
+				}, function(i){
+					parent.layer.close(i); 
+					setTimeout(function(){//解决ie下报错
+						forClose();
+					},200); 
+				});	
+		}
+	}
+}) 
+
 $("#proSelect").click(function(){
 	var category = $("select[name='category']").val();
 	var title = "项目选择-科研项目";
@@ -266,9 +290,9 @@ function forSave_pro(){
 							stuffShow();
 							return;
 						} 
-						layer.confirm('保存成功！项目开始日期/项目结束日期变动，请修改参与人的参与开始日期/结束日期，以免影响员工工时填报。', {icon: 7, title:'提示',shift:-1},
+						parent.layer.confirm('保存成功！项目开始日期/项目结束日期变动，请修改参与人的参与开始日期/结束日期，以免影响员工工时填报。', {icon: 7, title:'提示',shift:-1},
 							function(index){
-								layer.close(index);
+								parent.layer.close(index);
 								stuffShow();
 								setTimeout(function(){
 									var rows=$("#mmg tr");

@@ -318,9 +318,9 @@
 								stuffShow();
 								return;
 							} 
-							layer.confirm('保存成功！项目开始日期/项目结束日期变动，请修改参与人的参与开始日期/结束日期，以免影响员工工时填报。', {icon: 7, btn:"修改",title:'提示 ',shift:-1},
+							parent.layer.confirm('保存成功！项目开始日期/项目结束日期变动，请修改参与人的参与开始日期/结束日期，以免影响员工工时填报。', {icon: 7, btn:"修改",title:'提示 ',shift:-1},
 								function(index){
-									layer.close(index);
+									parent.layer.close(index);
 									stuffShow();
 									setTimeout(function(){
 										var rows=$("#mmg tr");

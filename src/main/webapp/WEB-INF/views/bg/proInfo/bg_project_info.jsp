@@ -231,14 +231,14 @@ function queryList(load){
 
 //详细信息
 function forDetails(proId){
-	var height=$(window).height()*0.9;
+	/* var height=$(window).height()*0.9;
 	if(height>520){
 		height = 520;
-	}
+	} */
 	layer.open({
 		type:2,
 		title:"项目信息-查看",
-		area:['865px', height+"px"],
+		area:['865px', '80%'],
 		//scrollbar:false,
 		skin:'query-box',
 		content:['<%=request.getContextPath()%>/project/pro_details?proId='+proId]
@@ -247,12 +247,13 @@ function forDetails(proId){
 
 // 新增
 function forAdd(){
-	var height=$(window).height()*0.9;
-	height=height>570?570:height;
+	//var height=$(window).height()*0.9;
+	//height=height>570?570:height;
 	layer.open({
 		type:2,
 		title:"项目信息-新增",
-		area:['865px', height+'px'],
+		//area:['865px', height+'px'],
+		area:['865px', '85%'],
 		//scrollbar:false,
 		skin:'query-box',
 		content:['<%=request.getContextPath()%>/project/pro_add']
@@ -268,16 +269,16 @@ function forUpdate(){
 		}
 		var proId = $.trim(mmg.selectedRowsByName("id"));
 		var src = $.trim(mmg.selectedRowsByName("src"));
-		var height=$(window).height()*0.9;
+		/* var height=$(window).height()*0.9;
 		if(height>560){
 			height = 560;
-		}
+		} */
 		layer.open({
 			type:2,
 			title:"项目信息-修改",
-			area:['865px', height+'px'],
+			area:['865px', '85%'],
 			//scrollbar:false,
-		 	content:['<%=request.getContextPath()%>/project/pro_update?proId='+proId+"&src="+src]
+		 	content:['<%=request.getContextPath()%>/project/pro_update?proId='+proId+'&src='+src]
 		});
 	}else{
 		layer.msg("请选择一条数据!");

@@ -87,8 +87,6 @@
 	</div>
 </body>
 <script type="text/javascript">
-	var mmg;
-	var mmg_p;
 	var currentWBSNumber="";
 	var currentProNumber="";
 	var currentCategory="";
@@ -100,27 +98,6 @@
 		queryList_beforePro();
 	}); 
 
-	//未完成项目信息填写阻止填写人员信息
- 	$("#myTab a").click(function(e){
-		e.preventDefault();
-		/*  $(this).tab("show");
-		return;  */
-		var index = $(this).parent().index();
-		if(index!=0){
-			if(isSaved){
-				$(this).tab("show");
-			}else{
-				parent.layer.confirm('请先保存项目！', {icon: 7, title:'提示',shift:-1,btn: ['保存', '退出']},
-					function(index){
-						parent.layer.close(index);
-						forSave_pro();
-					}, function(index){
-						parent.layer.closeAll();
-					});	
-			}
-		}
-	}) 
-	
 	
 	function checkNumberFormat(planHours){
 		var result = {};

@@ -47,6 +47,7 @@
 </div>
 
 <script type="text/javascript">
+var mmg;
 //srcProId和src在项目信息页面定义
 var tempStartDate="";//用于临时存放参与人员的开始日期
 
