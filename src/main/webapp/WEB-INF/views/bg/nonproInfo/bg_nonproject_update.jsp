@@ -248,7 +248,7 @@
              	      {name:'startDate',vali:'required;date;checkStartDate()'},
              	      {name:'endDate',vali:'required;date;checkEndDate()'},
              	      {name:'deptName',vali:'required;checkOrganFormat()'},
-             	      {name:'planHours',vali:''},
+             	      {name:'planHours',vali:'checkNumberFormat()'},
              	      {name:'decompose',vali:'required'}
              	];
         var category=$("select[name='category']").val();
@@ -289,6 +289,7 @@
 								//若当前没有参与人员则不用提醒
 								parent.layer.msg("保存成功!");
 								stuffShow();
+								forClose();
 								return;
 							} 
 							layer.confirm('保存成功！非项目开始日期/非项目结束日期变动，请修改参与人的参与开始日期/结束日期，以免影响员工工时填报。', {icon: 7, btn:"修改",title:'提示 ',shift:-1},
@@ -310,6 +311,7 @@
 						}else{
 							parent.layer.msg("保存成功!");
 							stuffShow();
+							forClose();
 						}
 					}else {
 						parent.layer.msg("保存失败!");
