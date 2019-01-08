@@ -146,8 +146,8 @@ function forCommit(){
 	} 
 	//新增项目信息页面
 	var iframes = parent.document.getElementsByTagName("iframe");
-	var addPage = iframes[0].contentWindow;//iframe为定新增项目信息页面
-	addPage.getProInfo(items[0].PROJECT_ID,queryFor);
+	var parentPage = iframes[0].contentWindow;//iframe为定新增项目信息页面
+	parentPage.getProInfo(items[0].PROJECT_ID,queryFor);
 	forClose();
 }
 

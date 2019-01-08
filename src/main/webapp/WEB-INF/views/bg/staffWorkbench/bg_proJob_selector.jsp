@@ -136,25 +136,24 @@ function queryList(load){
 
 function forAdd(){
 	var items = mmg.selectedRows();
-	/* var approverHrcode;
-	var approverName;
-	var category; */
+	
 	for(var i=0;i<items.length;i++){
-		/* approverHrcode = items[i].HRCODE;
-		approverName = items[i].PRINCIPAL;
-		category = items[i].CATEGORY;
+		var approverHrcode = items[i].HRCODE;
+		var approverName = items[i].PRINCIPAL;
+		var category = items[i].CATEGORY;
 		
-		//新增项目，如果是常规工作和项目前期类型；如果项目负责人是本人,则审核人为按审批层级的默认审核人
-		if('CG,BP'.indexOf(category)!=-1 || items[i].HRCODE==parent.currentUserHrcode){
+		//新增项目，如果是常规工作和项目前期类型,则审核人为按审批层级的默认审核人
+		if('CG,BP'.indexOf(category)!=-1){
 			approverHrcode=parent.approverHrcode;
 			approverName=parent.approverName;
-		} */
+		}
+		 
 		parent.mmg.addRow({
 			"PROJECT_ID":items[i].ID,
 			"CATEGORY":items[i].CATEGORY,
 			"PROJECT_NAME":items[i].PROJECT_NAME,
-			"PRINCIPAL":items[i].PRINCIPAL,
-			"HRCODE":items[i].HRCODE,
+			"PRINCIPAL":approverName,
+			"HRCODE":approverHrcode,
 			"STATUS":"0",
 			"JOB_CONTENT":"",
 			"WORKING_HOUR":""

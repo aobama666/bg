@@ -194,11 +194,12 @@ function queryList(load){
 	            		
 	            		item.EDITABLE = editable;
 	            		
-	            /* 		if('CG,BP,NP'.indexOf(item.CATEGORY)!=-1 || currentUserHrcode==item.HRCODE){
+	            		//当前登录人就是项目负责人，则审核人为按审批层级的默认审核人
+	            		if(currentUserHrcode==item.HRCODE){
 	            			item.HRCODE = approverHrcode;
 	            			item.PRINCIPAL = approverName;
 	            		}
-	            		 */
+	            		 
 	            		return '<input type="hidden" property="id" value="'+val+'">';
 	            	}	
 				},

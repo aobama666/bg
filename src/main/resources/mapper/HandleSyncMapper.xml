@@ -5,37 +5,36 @@
 
 	<insert id="addKYToProTemp">
 		INSERT INTO BG_SYNC_KY_PROJECT_TEMP
-		  SELECT PROJECT_NAME,
-		         PROJECT_ID,
+		  SELECT PROJECT_ID,
 		         PROJECT_TYPE,
+		         PROJECT_NAME,
 		         PROJECT_WBS,
 		         PROJECT_REMARK,
 		         PROJECT_START_DATE,
 		         PROJECT_END_DATE,
-		         SYSDATE,
-		         'admin'
-		    FROM 'TODO表名'
+		         SYSDATE
+		    FROM BG_KY_PRJ_VIEW
 	</insert>
 	
-	<delete id="cutProTemp" parameterType="int">
+	<delete id="cutKYProTemp" parameterType="int">
 		DELETE FROM BG_SYNC_KY_PROJECT_TEMP
     	 WHERE TRUNC(CREATE_DATE + #{days}) &lt; TRUNC(SYSDATE)
 	</delete>
 	
 	<insert id="addKYToEmpTemp">
 		INSERT INTO BG_SYNC_KY_EMP_TEMP
-		  SELECT USER_NAME,
+		  SELECT PROJECT_ID,
+		         USER_NAME,
 		         USER_HRCODE,
 		         JOIN_START_DATE,
 		         JOIN_END_DATE,
 		         PROJECT_ROLE,
 		         WORK_TIME,
-		         SYSDATE,
-		         'admin'
-		    FROM 'TODO表名'
+		         SYSDATE
+		    FROM BG_KY_EMP_VIEW
 	</insert>
 	
-	<delete id="cutEmpTemp" parameterType="int">
+	<delete id="cutKYEmpTemp" parameterType="int">
 		DELETE FROM BG_SYNC_KY_EMP_TEMP
     	 WHERE TRUNC(CREATE_DATE + #{days}) &lt; TRUNC(SYSDATE)
 	</delete>
@@ -48,7 +47,18 @@
 	           PROJECT_REMARK,
 	           PROJECT_START_DATE,
 	           PROJECT_END_DATE
-	      FROM 'TODO表名'
+	      FROM BG_KY_PRJ_VIEW
+	</select>
+	
+	<select id="getAllSyncEmpFromKY" resultType="java.util.Map">
+	    SELECT USER_NAME,
+	        USER_HRCODE,
+	        PROJECT_ID,
+	        JOIN_START_DATE,
+	        JOIN_END_DATE,
+	        PROJECT_ROLE,
+	        WORK_TIME
+	    FROM  BG_KY_EMP_VIEW
 	</select>
 	
 	<insert id="saveProFromKY" >
@@ -69,29 +79,18 @@
 		VALUES
 		  (SYS_GUID(),
 		   #{PROJECT_ID,jdbcType=VARCHAR},
-		   #{CATEGORY,jdbcType=VARCHAR},
+		   #{PROJECT_TYPE,jdbcType=VARCHAR},
 		   #{PROJECT_NAME,jdbcType=VARCHAR},
-		   #{WBS_NUMBER,jdbcType=VARCHAR},
-		   #{PROJECT_INTRODUCE,jdbcType=VARCHAR},
-		   #{START_DATE,jdbcType=VARCHAR},
-		   #{END_DATE,jdbcType=VARCHAR},
+		   #{PROJECT_WBS,jdbcType=VARCHAR},
+		   #{PROJECT_REMARK,jdbcType=VARCHAR},
+		   #{PROJECT_START_DATE,jdbcType=VARCHAR},
+		   #{PROJECT_END_DATE,jdbcType=VARCHAR},
 		   SYSDATE,
 		   'admin',
 		   SYSDATE,
 		   'admin',
 		   '1')
 	</insert>
-	
-	<select id="getAllSyncEmpFromKY" resultType="java.util.Map">
-	    SELECT USER_NAME,
-	        USER_HRCODE,
-	        PROJECT_ID,
-	        JOIN_START_DATE,
-	        JOIN_END_DATE,
-	        PROJECT_ROLE,
-	        WORK_TIME
-	    FROM 'TODO表名'
-	</select>
 	
 	<insert id="saveEmpFromKY">
 		INSERT INTO BG_SYNC_KY_EMP
@@ -111,12 +110,12 @@
 		VALUES
 		  (SYS_GUID(),
 		   #{PROJECT_ID,jdbcType=VARCHAR},
-		   #{HRCODE,jdbcType=VARCHAR},
-		   #{EMPNAME,jdbcType=VARCHAR},
-		   #{START_DATE,jdbcType=VARCHAR},
-		   #{END_DATE,jdbcType=VARCHAR},
-		   #{ROLE,jdbcType=VARCHAR},
-		   #{PLANHOURS,jdbcType=NUMERIC},
+		   #{USER_HRCODE,jdbcType=VARCHAR},
+		   #{USER_NAME,jdbcType=VARCHAR},
+		   #{JOIN_START_DATE,jdbcType=VARCHAR},
+		   #{JOIN_END_DATE,jdbcType=VARCHAR},
+		   #{PROJECT_ROLE,jdbcType=VARCHAR},
+		   #{WORK_TIME,jdbcType=NUMERIC},
 		   SYSDATE,
 		   'admin',
 		   SYSDATE,
@@ -175,246 +174,125 @@
 			#{hrCode,jdbcType=VARCHAR}, 
 			#{src,jdbcType=VARCHAR})
 	</insert>
-	<!-- <select id="getProjectCount" parameterType="String" resultType="java.lang.Integer">
-		SELECT COUNT(*)
-            FROM BG_PROJECT_INFO t
-            WHERE (#{username} IN
-                 (SELECT username
-                    FROM BG_SYS_USER t1
-                    JOIN BG_PROJECT_USER t2
-                      ON t1.hrcode = t2.hrcode
-                   WHERE t2.project_id = t.id
-                     AND t2.role = '1'
-                     AND t2.status = '1')
-                  OR  #{username}=t.create_user)
-               <if test="proName != null and proName != ''" >
-					AND t.PROJECT_NAME LIKE '%'||#{proName}||'%'
-			  </if>
-			  <if test="proStatus != null and proStatus != ''" >
-					AND t.PROJECT_STATUS=#{proStatus}
-			  </if>
-			  AND t.status='1'
-	</select> 
 	
-	<insert id="addProInfo"  parameterType="com.sgcc.bg.model.ProjectInfoPo">
-		INSERT INTO BG_PROJECT_INFO 
-			(ID,PROJECT_NAME,CATEGORY,PROJECT_NUMBER,WBS_NUMBER,
-			PROJECT_INTRODUCE,ORGAN_INFO,
-			START_DATE,END_DATE,
-			PLAN_HOURS,PROJECT_STATUS,DECOMPOSE,STATUS,
-			CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
-			SRC)
-		VALUES
-			(#{id}, #{projectName,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, 
-			#{projectNumber,jdbcType=VARCHAR},#{WBSNumber,jdbcType=VARCHAR},
-			#{projectIntroduce,jdbcType=VARCHAR},#{organInfo,jdbcType=VARCHAR},
-			#{startDate,jdbcType=DATE},#{endDate,jdbcType=DATE},
-			#{planHours,jdbcType=NUMERIC},#{projectStatus,jdbcType=VARCHAR},#{decompose,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},
-			#{createUser,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateDate,jdbcType=TIMESTAMP},
-			#{src,jdbcType=VARCHAR})
+	<insert id="addHXToProTemp">
+		INSERT INTO BG_SYNC_HX_PROJECT_TEMP
+		   SELECT PROJECT_ID,
+		         PROJECT_TYPE,
+		         PROJECT_NAME,
+		         PROJECT_WBS,
+		         PROJECT_REMARK,
+		         PROJECT_START_DATE,
+		         PROJECT_END_DATE,
+		         SYSDATE
+		    FROM BG_HX_PRJ_VIEW
 	</insert>
 	
-	<insert id="addProUser"  parameterType="com.sgcc.bg.model.ProjectUserPo">
-		INSERT INTO BG_PROJECT_USER 
-			(ID,HRCODE,EMPNAME,PROJECT_ID,
-			START_DATE,END_DATE,
-			ROLE,STATUS,
-			CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
-			SRC,TASK,PLANHOURS)
-		VALUES
-			(#{id}, #{hrcode,jdbcType=VARCHAR},#{empName,jdbcType=VARCHAR}, #{projectId,jdbcType=VARCHAR},
-			#{startDate,jdbcType=DATE},#{endDate,jdbcType=DATE},
-			#{role,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},
-			#{createUser,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateDate,jdbcType=TIMESTAMP},
-			#{src,jdbcType=VARCHAR},#{task,jdbcType=VARCHAR},#{planHours,jdbcType=DOUBLE})
-	</insert>
-	
-	<update id="updateProInfo"  parameterType="com.sgcc.bg.model.ProjectInfoPo">
-		UPDATE BG_PROJECT_INFO SET
-			PROJECT_NAME=#{projectName,jdbcType=VARCHAR},
-			CATEGORY=#{category,jdbcType=VARCHAR},
-			PROJECT_NUMBER=#{projectNumber,jdbcType=VARCHAR},
-			WBS_NUMBER=#{WBSNumber,jdbcType=VARCHAR},
-			PROJECT_INTRODUCE=#{projectIntroduce,jdbcType=VARCHAR},
-			ORGAN_INFO=#{organInfo,jdbcType=VARCHAR},
-			START_DATE=#{startDate,jdbcType=DATE},
-			END_DATE=#{endDate,jdbcType=DATE},
-			PLAN_HOURS=#{planHours,jdbcType=NUMERIC},
-			DECOMPOSE=#{decompose,jdbcType=VARCHAR},
-			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
-			UPDATE_DATE=#{updateDate,jdbcType=TIMESTAMP}
-		WHERE ID=#{id} AND status='1'
-	</update> 
-	
-	<delete id="deleteProUsersByProId" parameterType="String">
-		DELETE FROM BG_PROJECT_USER 
-		WHERE 
-		PROJECT_ID=#{proId}
+	<delete id="cutHXProTemp" parameterType="int">
+		DELETE FROM BG_SYNC_HX_PROJECT_TEMP
+    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt; TRUNC(SYSDATE)
 	</delete>
 	
-	<select id="getProInfoByProId" parameterType="String" resultType="java.util.Map">
-		SELECT
-      		t.id as "id",t.project_name as "projectName",t.category as "category",
-      		t.project_number as "projectNumber",t.wbs_number as "WBSNumber",
-      		t.project_introduce as "projectIntroduce",
-			t.organ_info as "organInfo",to_char(t.start_date,'yyyy-mm-dd') as "startDate",
-			to_char(t.end_date,'yyyy-mm-dd') as "endDate",
-			t.plan_hours as "planHours",t.project_status as "projectStatus",
-			t.decompose as "decompose",t.status as "status",
-			(select count(distinct t2.hrcode) from BG_PROJECT_USER t2 where t2.project_id=t.id and t2.status='1') as "amount",
-		    (select t3.empname from BG_PROJECT_USER t3 WHERE t3.project_id=t.id AND t3.role='1' AND t3.status='1') as "principal",
-		    (select TO_CHAR(WM_CONCAT(distinct t3.empname)) from BG_PROJECT_USER t3 where t3.project_id=t.id AND t3.status='1') as "empName",
-		    (select deptname from BG_SYS_DEPT where deptid=t.organ_info) as "deptName",
-		    (select deptcode from BG_SYS_DEPT where deptid=t.organ_info) as "deptCode" 
-		FROM BG_PROJECT_INFO t
-		WHERE t.id=#{proId} AND t.status='1'
-	</select>
-
-	<select id="getAllProInfos" parameterType="String" resultType="java.util.Map">
-		SELECT
-      		t.id as "id",t.project_name as "projectName",t.category as "category",
-      		t.project_number as "projectNumber",
-      		t.wbs_number as "WBSNumber",t.project_introduce as "projectIntroduce",
-			t.organ_info as "organInfo",to_char(t.start_date,'yyyy-mm-dd') as "startDate",
-			to_char(t.end_date,'yyyy-mm-dd') as "endDate",
-			t.plan_hours as "planHours",t.project_status as "projectStatus",
-			t.decompose as "decompose",t.status as "status",
-			(select count(distinct t2.hrcode) from BG_PROJECT_USER t2 where t2.project_id=t.id and t2.status='1') as "amount",
-		    (select t3.empname from BG_PROJECT_USER t3 WHERE t3.project_id=t.id AND t3.role='1' AND t3.status='1') as "principal",
-		    (select TO_CHAR(WM_CONCAT(distinct t3.empname)) from BG_PROJECT_USER t3 where t3.project_id=t.id AND t3.status='1') as "empName",
-		    (select deptname from BG_SYS_DEPT where deptid=t.organ_info) as "deptName",
-		    (select deptcode from BG_SYS_DEPT where deptid=t.organ_info) as "deptCode" 
-		FROM BG_PROJECT_INFO t
-		WHERE (#{username} IN
-	                     (SELECT username
-	                        FROM BG_SYS_USER t1
-	                        JOIN BG_PROJECT_USER t2
-	                          ON t1.hrcode = t2.hrcode
-	                       WHERE t2.project_id = t.id
-	                         AND t2.role = '1'
-	                         AND t2.status = '1')
-	                    	OR  #{username}=t.create_user)
-		  AND t.status='1'
-		ORDER BY t.UPDATE_DATE DESC
+	<insert id="addHXToEmpTemp">
+		INSERT INTO BG_SYNC_HX_EMP_TEMP
+		   SELECT PROJECT_ID,
+		         USER_NAME,
+		         USER_HRCODE,
+		         JOIN_START_DATE,
+		         JOIN_END_DATE,
+		         PROJECT_ROLE,
+		         WORK_TIME,
+		         SYSDATE
+		    FROM BG_HX_EMP_VIEW
+	</insert>
+	
+	<delete id="cutHXEmpTemp" parameterType="int">
+		DELETE FROM BG_SYNC_HX_EMP_TEMP
+    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt; TRUNC(SYSDATE)
+	</delete>
+	
+	
+	<select id="getAllSyncProFromHX" resultType="java.util.Map">
+	    SELECT PROJECT_NAME,
+	           PROJECT_ID,
+	           PROJECT_TYPE,
+	           PROJECT_WBS,
+	           PROJECT_REMARK,
+	           PROJECT_START_DATE,
+	           PROJECT_END_DATE
+	      FROM BG_HX_PRJ_VIEW
 	</select>
 	
-	<select id="getProUsersByProId" parameterType="String" resultType="java.util.Map">
-		 SELECT
-      		t.HRCODE,
-      		TO_CHAR(t.START_DATE,'YYYY-MM-DD') AS START_DATE,
-      		TO_CHAR(t.END_DATE,'YYYY-MM-DD') AS END_DATE,
-			t.ROLE,t.STATUS,t.empname as NAME ,
-			t.TASK,t.PLANHOURS
-		FROM BG_PROJECT_USER t
-		WHERE t.PROJECT_ID=#{proId} AND t.STATUS='1'
-		ORDER BY t.ROLE DESC,t.HRCODE,t.START_DATE
+	<select id="getAllSyncEmpFromHX" resultType="java.util.Map">
+	    SELECT USER_NAME,
+	        USER_HRCODE,
+	        PROJECT_ID,
+	        JOIN_START_DATE,
+	        JOIN_END_DATE,
+	        PROJECT_ROLE,
+	        WORK_TIME
+	    FROM BG_HX_EMP_VIEW
 	</select>
 	
-	<update id="deleteProjectByProId">
-		UPDATE BG_PROJECT_INFO 
-		SET STATUS='0',UPDATE_USER=#{updateUser,jdbcType=VARCHAR},UPDATE_DATE=#{updateDate,jdbcType=TIMESTAMP}
-		WHERE ID=#{proId} AND status='1'
-	</update>
+	<insert id="saveProFromHX" >
+		INSERT INTO BG_SYNC_HX_PROJECT
+		  (ID,
+		   PROJECT_ID,
+		   CATEGORY,
+		   PROJECT_NAME,
+		   WBS_NUMBER,
+		   PROJECT_INTRODUCE,
+		   START_DATE,
+		   END_DATE,
+		   CREATE_DATE,
+		   CREATE_USER,
+		   UPDATE_DATE,
+		   UPDATE_USER,
+		   VALID)
+		VALUES
+		  (SYS_GUID(),
+		   #{PROJECT_ID,jdbcType=VARCHAR},
+		   #{PROJECT_TYPE,jdbcType=VARCHAR},
+		   #{PROJECT_NAME,jdbcType=VARCHAR},
+		   #{PROJECT_WBS,jdbcType=VARCHAR},
+		   #{PROJECT_REMARK,jdbcType=VARCHAR},
+		   #{PROJECT_START_DATE,jdbcType=VARCHAR},
+		   #{PROJECT_END_DATE,jdbcType=VARCHAR},
+		   SYSDATE,
+		   'admin',
+		   SYSDATE,
+		   'admin',
+		   '1')
+	</insert>
 	
-	<update id="changeProStatusById"  parameterType="String">
-		UPDATE BG_PROJECT_INFO 
-		SET PROJECT_STATUS=#{proStatus}
-		WHERE ID=#{proId} AND status='1'
-	</update>
-	
-	<select id="checkUniqueness" parameterType="String" resultType="java.lang.Integer">
-		SELECT COUNT(*)
-		FROM BG_PROJECT_INFO t
-		WHERE t.wbs_number=#{wbsNumber,jdbcType=VARCHAR} AND t.status='1'
-	</select>
-	
-	<select id="getMaxBgNumber" parameterType="String" resultType="java.lang.String">
-		SELECT COALESCE(MAX(SUBSTR(t.project_number,11)),'0') 
-			FROM BG_PROJECT_INFO t 
-		 WHERE SUBSTR(t.project_number,3,8)=#{currentDateStr} AND t.status='1'
-	</select>
-	
-	<select id="getProIdByWBSNmuber" parameterType="String" resultType="java.lang.String">
-		SELECT t.id FROM BG_PROJECT_INFO t
-			WHERE t.wbs_number=#{wbsNumber,jdbcType=VARCHAR} AND t.status='1'
-	</select>
-	
-	
-	<select id="getProIdByBgNmuber" parameterType="String" resultType="java.lang.String">
-		SELECT t.id FROM BG_PROJECT_INFO t
-			WHERE t.project_number=#{projectNumber,jdbcType=VARCHAR} AND t.status='1'
-	</select>
-	
-	<select id="getAllWbsNumbers" parameterType="String" resultType="java.lang.String">
-		SELECT t.wbs_number FROM BG_PROJECT_INFO t 	WHERE t.status='1'
-	</select>
-	
-	<select id="getAllBgNumbers" parameterType="String" resultType="java.lang.String">
-		SELECT t.project_number FROM BG_PROJECT_INFO t 	WHERE t.status='1'
-	</select>
-	 
-	<update id="updateProInfoField" parameterType="String">
-		UPDATE BG_PROJECT_INFO 
-		SET 
-		<choose>
-			<when test="field =='start_date' or field == 'end_date'">
-				${field}=TO_DATE(#{value},'yyyy-mm-dd')
-			</when>
-			<otherwise>
-				${field}=#{value}
-			</otherwise>
-		</choose> 
-		WHERE ID=#{proId} AND status='1'
-	</update>
-	
-	
-	<select id="getProInfoFieldByProId" parameterType="String" resultType="java.lang.String">
-		SELECT 
-		<choose>
-			<when test="field =='start_date' or field == 'end_date'">
-				TO_CHAR(${field},'yyyy-mm-dd')
-			</when>
-			<otherwise>
-				${field}
-			</otherwise>
-		</choose> 
-		FROM BG_PROJECT_INFO  WHERE id=#{proId}
-	</select>
-	
-	<select id="getDeptIdByDeptCode" parameterType="String" resultType="java.lang.String">
-		SELECT deptid FROM BG_SYS_DEPT WHERE deptcode=#{deptCode}
-	</select>
-	
-	<select id="getPrincipalCountByProId" parameterType="String" resultType="java.lang.Integer">
-		SELECT COUNT(*) FROM BG_PROJECT_USER t WHERE t.role='1' AND t.status='1' AND t.project_id=#{proId}
-	</select>
-	
-	<select id="getPartyDateByHrcode" parameterType="String" resultType="java.util.Map">
-		SELECT TO_CHAR(t.start_date, 'yyyy-mm-dd')  as "startDate",
-      		   TO_CHAR(t.end_date, 'yyyy-mm-dd') as "endDate"
- 		 FROM BG_PROJECT_USER t
- 		WHERE
- 		 t.status = '1'
- 		 AND t.project_id = #{proId}
- 		 AND t.hrcode = #{hrCode}
-	</select>
-	
-	<select id="getPrincipalCodeByProId" parameterType="String" resultType="String">
-		SELECT t.hrcode
-  		 FROM BG_PROJECT_USER t
-		WHERE t.status = '1'
-   		 AND t.role='1'
-   		 AND t.project_id = #{proId}
-	</select>
-	
-	<select id="getBgWorkerByProId" parameterType="String" resultType="java.util.Map">
-		SELECT U.USERALIAS AS NAME,U.HRCODE, TO_CHAR(T.WORK_TIME, 'yyyy-mm-dd') AS WORK_TIME
-		  FROM BG_WORKINGHOUR_INFO T
-		  JOIN BG_SYS_USER U
-		    ON T.WORKER = U.USERNAME
-		 WHERE T.PROJECT_ID = #{proId}
-		   AND T.VALID = 1
-	</select>
-	
-	-->
+	<insert id="saveEmpFromHX">
+		INSERT INTO BG_SYNC_HX_EMP
+		  (ID,
+		   PROJECT_ID,
+		   HRCODE,
+		   EMPNAME,
+		   START_DATE,
+		   END_DATE,
+		   ROLE,
+		   PLANHOURS,
+		   CREATE_DATE,
+		   CREATE_USER,
+		   UPDATE_DATE,
+		   UPDATE_USER,
+		   VALID)
+		VALUES
+		  (SYS_GUID(),
+		   #{PROJECT_ID,jdbcType=VARCHAR},
+		   #{USER_HRCODE,jdbcType=VARCHAR},
+		   #{USER_NAME,jdbcType=VARCHAR},
+		   #{JOIN_START_DATE,jdbcType=VARCHAR},
+		   #{JOIN_END_DATE,jdbcType=VARCHAR},
+		   #{PROJECT_ROLE,jdbcType=VARCHAR},
+		   #{WORK_TIME,jdbcType=NUMERIC},
+		   SYSDATE,
+		   'admin',
+		   SYSDATE,
+		   'admin',
+		   '1')
+	</insert>
 </mapper>
