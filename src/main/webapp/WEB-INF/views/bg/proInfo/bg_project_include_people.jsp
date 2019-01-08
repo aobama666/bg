@@ -290,7 +290,7 @@ function forSave_stuff(){
 			if(data.result== "success"){
 				parent.layer.msg("成功保存"+data.count+"条，"+"失败"+data.failCount+"条");
 				parent.queryList("reload");
-				forClose();
+				//forClose();
 			}else {
 				var failList=JSON.parse(data.failList);
 				//TODO

@@ -182,10 +182,10 @@
 	
  	function checkNumberic(planHours){
 		var result = {};
-		var reg=/^(0\.\d|[1-9]+\d*(\.\d)?)$/;
+		var reg=/^(0(\.\d)?|[1-9]+\d*(\.\d)?)$/;
 		if($.trim(planHours)!="" && !reg.test(planHours)){
 			result.result = false;
-			result.info = "必须为正数；";
+			result.info = "不能为负数；";
 		}else{
 			result.result = true;
 			result.info = "";

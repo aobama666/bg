@@ -150,8 +150,8 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 					proUser.setStartDate(startDate);
 					proUser.setEndDate(endDate);
 					proUser.setTask(null);
-					Double planHours = Rtext.ToDouble(kyEmp.get("planHours"),null);
-					proUser.setPlanHours(planHours==null?null:planHours*22*24);
+					Double planHours = Rtext.ToDouble(kyEmp.get("planHours"),0d);
+					proUser.setPlanHours(planHours*22*24);
 					proUser.setSrc("2");
 					proUser.setStatus("1");
 					proUser.setCreateDate(new Date());
@@ -470,8 +470,8 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 					proUser.setStartDate(startDate);
 					proUser.setEndDate(endDate);
 					proUser.setTask(null);
-					Double planHours = Rtext.ToDouble(hxEmp.get("planHours"),null);
-					proUser.setPlanHours(planHours==null?null:planHours*22*24);
+					Double planHours = Rtext.ToDouble(hxEmp.get("planHours"),0d);
+					proUser.setPlanHours(planHours*22*24);
 					proUser.setSrc("2");
 					proUser.setStatus("1");
 					proUser.setCreateDate(new Date());
