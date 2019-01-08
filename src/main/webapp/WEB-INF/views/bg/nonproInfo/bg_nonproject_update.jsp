@@ -248,7 +248,7 @@
              	      {name:'startDate',vali:'required;date;checkStartDate()'},
              	      {name:'endDate',vali:'required;date;checkEndDate()'},
              	      {name:'deptName',vali:'required;checkOrganFormat()'},
-             	      {name:'planHours',vali:''},
+             	      {name:'planHours',vali:'checkNumberFormat()'},
              	      {name:'decompose',vali:'required'}
              	];
         var category=$("select[name='category']").val();
