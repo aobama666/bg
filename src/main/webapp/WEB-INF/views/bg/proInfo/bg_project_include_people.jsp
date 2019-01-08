@@ -132,9 +132,9 @@ function queryList(){
 				autoclose:true,
 				orientation:'auto',
 				language: 'cn',
-				format: 'yyyy-mm-dd',
+				format: 'yyyy-mm-dd'/* ,
 				startDate:getDate($("#startDate").val()),
-				endDate : getDate($("#endDate").val())
+				endDate : getDate($("#endDate").val()) */
 			});
 		},
 		'rowInserted':function(args_1, args_2){
@@ -142,9 +142,9 @@ function queryList(){
 				autoclose:true,
 				orientation:'auto',
 				language: 'cn',
-				format: 'yyyy-mm-dd',
+				format: 'yyyy-mm-dd'/* ,
 				startDate:getDate($("#startDate").val()),
-				endDate : getDate($("#endDate").val())
+				endDate : getDate($("#endDate").val()) */
 			});
 			resize();
 		}
