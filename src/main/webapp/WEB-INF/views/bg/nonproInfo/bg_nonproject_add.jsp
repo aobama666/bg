@@ -242,7 +242,7 @@
 		/*
 		if($("select[name='category']").val()=="JS" && $("#WBSNumber input").val()=="保存后自动生成"){
 			$.ajax({
-				  url: "<%=request.getContextPath()%>/project/queryForJsNumber?ran="+ran,
+				  url: "<%=request.getContextPath()%>/nonproject/queryForJsNumber?ran="+ran,
 				  async: false,
 				  dataType: "text",
 				  success: function(data)
@@ -299,6 +299,7 @@
 								//若当前没有参与人员则不用提醒
 								parent.layer.msg("保存成功!");
 								stuffShow();
+								forClose();
 								return;
 							} 
 							layer.confirm('保存成功！非项目开始日期/非项目结束日期变动，请修改参与人的参与开始日期/结束日期，以免影响员工工时填报。', {icon: 7, title:'提示',shift:-1},
@@ -319,7 +320,9 @@
 							});
 						}else{
 							parent.layer.msg("保存成功!");
+							forClose();
 							stuffShow();
+						
 						
 						}
 					}else {
@@ -515,7 +518,7 @@
 		
 		$.ajax({
 			type:"POST",
-			url:"<%=request.getContextPath()%>/project/ajaxSaveStuff?ran="+ran,
+			url:"<%=request.getContextPath()%>/nonproject/ajaxSaveStuff?ran="+ran,
 			data:{param:jsonStr,proId:proId},
 			dataType:"json",
 			success:function(data){
@@ -526,7 +529,7 @@
 				}else {
 					parent.layer.msg("保存失败!");
 				} */
-				
+				 
 				parent.layer.msg("成功保存"+data.count+"条，"+"失败"+data.failCount+"条");
 				parent.queryList("reload");
 				forClose();
@@ -575,7 +578,7 @@
 		var ran = Math.random()*100000000;
 		$.ajax({
 			type: 'POST',
-			url:'<%=request.getContextPath()%>/project/ajaxCheckUniqueness?ran='+ran,
+			url:'<%=request.getContextPath()%>/nonproject/ajaxCheckUniqueness?ran='+ran,
 						async : false,
 						data : {
 							WBSNumber : $.trim(val)
