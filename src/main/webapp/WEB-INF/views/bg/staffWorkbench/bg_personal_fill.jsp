@@ -180,26 +180,6 @@ function queryList(load){
 				{title:'id', name:'ID', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true,
 					renderer:function(val,item,rowIndex){
 						val=val==undefined?"":val;
-						//EDIT是一个标记，解决复杂情况下是否可编辑的问题,当审核人为本人时不可编辑
-	            		var editable;
-	            		if('CG,BP,NP'.indexOf(item.CATEGORY)!=-1){//非项目工作和非项目信息（常规工作，项目前期）并且当前审核人非本人时
-	            			editable = true;
-	            		}else{//项目信息时
-	            			if(currentUserHrcode==item.HRCODE && currentUserHrcode!=approverHrcode){//审核人为当前登录人自己,并且默认审核人不是自己时，可编辑
-	            				editable = true;
-	            			}else{
-	            				editable = false;
-	            			}
-	            		}
-	            		
-	            		item.EDITABLE = editable;
-	            		
-	            		//当前登录人就是项目负责人，则审核人为按审批层级的默认审核人
-	            		if(currentUserHrcode==item.HRCODE){
-	            			item.HRCODE = approverHrcode;
-	            			item.PRINCIPAL = approverName;
-	            		}
-	            		 
 	            		return '<input type="hidden" property="id" value="'+val+'">';
 	            	}	
 				},
@@ -260,7 +240,7 @@ function queryList(load){
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
 	            		//EDITABLE 是在赋值id时确定的一个值，标记是否审核人可编辑
-	            		if(item.EDITABLE && (item.STATUS=="0" || item.STATUS=="2")){
+	            		if(item.EDITABLE=="true" && (item.STATUS=="0" || item.STATUS=="2")){
 	            			val='<div title="'+val+'" style="display:inline" class="" onclick="forAddApprover(this)"><input  onblur="removeHint(this)" class="form-control" value="'+val+'" readonly style="text-align:center;width:90%;display:inline-block" name="principal" property="principal">'
 	            				+'<span style="width:10%;" class="glyphicon glyphicon-user"></span></div>';
 	            		}else{
@@ -482,7 +462,8 @@ function forAddNonProJob(){
 		"JOB_CONTENT":"",
 		"WORKING_HOUR":"",
 		"HRCODE":approverHrcode,
-		"PRINCIPAL":approverName
+		"PRINCIPAL":approverName,
+		"EDITABLE":"true"
 		});
 } 
 

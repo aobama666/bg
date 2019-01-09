@@ -589,7 +589,6 @@
 	}
 	
  	function checkDateOrder(endDate){
- 		console.log(this);
 		var result = {};
 		if(getDate(endDate)>=getDate(tempStartDate)){
 			result.result = true;

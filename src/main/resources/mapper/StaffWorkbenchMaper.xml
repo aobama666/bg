@@ -2,18 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sgcc.bg.mapper.StaffWorkbenchMaper">
-	
+
 	<select id="getWorkingHourInfo" resultType="java.util.Map">
-	  	SELECT T.ID,
+		SELECT T.ID,
 		       T.PROJECT_ID,
 		       NVL(P.PROJECT_NAME, T.PROJECT_NAME) AS PROJECT_NAME,
 		       NVL(P.CATEGORY, T.CATEGORY) AS CATEGORY,
 		       T.JOB_CONTENT,
 		       T.WORKING_HOUR,
 		       T.STATUS,
-		       U.USERALIAS AS PRINCIPAL,
 		       R.PROCESS_NOTE AS PROCESS_NOTE,
-		       U.HRCODE AS HRCODE
+		       U.HRCODE AS HRCODE,
+		       U.USERALIAS AS PRINCIPAL,
+		       E.HRCODE AS PRO_USER_HRCODE
 		  FROM BG_WORKINGHOUR_INFO T
 		  LEFT JOIN BG_SYS_USER U
 		    ON U.USERNAME = T.APPROVER
@@ -23,6 +24,10 @@
 		  LEFT JOIN BG_PROCESS_RECORD R
 		    ON T.PROCESS_ID = R.ID
 		   AND R.VALID = 1
+		  LEFT JOIN BG_PROJECT_USER E
+		    ON E.PROJECT_ID = T.PROJECT_ID
+		   AND E.STATUS = '1'
+		   AND E.ROLE = '1'
 		 WHERE T.WORK_TIME = TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
 		   AND T.WORKER = #{username}
 		   AND T.VALID = 1

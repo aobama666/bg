@@ -59,7 +59,26 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		if(Rtext.isEmpty(selectedDate)){
 			selectedDate=DateUtil.getFormatDateString(new Date(),"yyyy-MM-dd");
 		}
-		List<Map<String, String>>  list=SWMapper.getWorkingHourInfo(selectedDate,webUtils.getUsername());
+		
+		CommonUser commonUser = webUtils.getCommonUser();
+		String currentUsername = commonUser.getUserName();
+		String currentHrcode = commonUser.getSapHrCode();
+		List<Map<String, String>>  list=SWMapper.getWorkingHourInfo(selectedDate,currentUsername);
+		//获取默认审核人
+		Map<String, String> approver = getDefaultApprover();
+		String approverHrcode = approver.get("hrcode");
+		for (Map<String, String> map : list) {
+			String category = map.get("CATEGORY");
+			String proUserHrcode = map.get("PRO_USER_HRCODE");
+			
+			if("BP,CG,NP".indexOf(category)!=-1){
+				map.put("EDITABLE", "true");
+			}else if(currentHrcode.equals(proUserHrcode) && !currentHrcode.equals(approverHrcode)){
+				map.put("EDITABLE", "true");
+			}else{
+				map.put("EDITABLE", "false");
+			}
+		}
 		return list;
 	}
 

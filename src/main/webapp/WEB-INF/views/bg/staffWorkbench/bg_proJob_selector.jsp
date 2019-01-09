@@ -141,11 +141,13 @@ function forAdd(){
 		var approverHrcode = items[i].HRCODE;
 		var approverName = items[i].PRINCIPAL;
 		var category = items[i].CATEGORY;
-		
-		//新增项目，如果是常规工作和项目前期类型,则审核人为按审批层级的默认审核人
-		if('CG,BP'.indexOf(category)!=-1){
+		var editable = "true";
+		//新增项目，如果是常规工作和项目前期类型,或者项目负责人为当前登录人，则审核人为按审批层级的默认审核人
+		if('CG,BP'.indexOf(category)!=-1 || approverHrcode==parent.currentUserHrcode){
 			approverHrcode=parent.approverHrcode;
 			approverName=parent.approverName;
+		}else{
+			editable = "false";
 		}
 		 
 		parent.mmg.addRow({
@@ -156,7 +158,8 @@ function forAdd(){
 			"HRCODE":approverHrcode,
 			"STATUS":"0",
 			"JOB_CONTENT":"",
-			"WORKING_HOUR":""
+			"WORKING_HOUR":"",
+			"EDITABLE":editable
 		});
 	}
 	forClose();
