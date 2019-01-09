@@ -180,7 +180,7 @@ function queryList(load){
 	    		];
 	var mmGridHeight = $("body").parent().height() - 190;
 	mmg = $('#mmg').mmGrid({
-		cosEdit:"4,13",//声明需要编辑，取消点击选中的列
+		cosEdit:"3,11",//声明需要编辑，取消点击选中的列
 		indexCol: true,
 		indexColWidth: 40,
 		checkCol: true,

@@ -318,29 +318,31 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							if(!errorNum.contains(2) && !Rtext.isEmpty(proId)){
 								if(!"项目前期".equals(cellValue[2]) && !"常规工作".equals(cellValue[2])){
 									//如项目存在并且不为项目前期和常规工作，则校验其是否存在于该项目
-									int result=SWMapper.validateStaff(proId,currentUsername);
+									int result=SWMapper.validateStaff(proId,worker.getUserName());
 									if(result==0){
 										errorInfo.append("提报人不属于该项目！ ");
-										errorNum.add(3);
+										errorNum.add(8);
 									}
 								}else{
 									//项目前期和常规工作，则校验其是是否属于属于项目指定的处室或部门
 									int result = SWMapper.validateDeptId(proId,worker.getDeptId());
 									if(result==0){
 										errorInfo.append("提报人不属于项目所属组织！ ");
-										errorNum.add(3);
+										errorNum.add(8);
 									}
 								}
 							}
 							
-							
-							//校验其是否属于当前专责管辖
-							String currentLabId=worker.getDeptId();//报工人当时所处科室id
-							String limitDdptIds=getLimitDeptIds(currentUsername,"41000001");//当前专责有权限的所有部门id
-							if(!limitDdptIds.contains(currentLabId)){
-								errorInfo.append("提报人不在专责范围内！ ");
-								errorNum.add(8);
+							//如果提报人在项目下或者属于项目所属组织，则校验其是否属于当前专责管辖
+							if(!errorNum.contains(8)){
+								String currentLabId=worker.getDeptId();//报工人当时所处科室id
+								String limitDdptIds=getLimitDeptIds(currentUsername,"41000001");//当前专责有权限的所有部门id
+								if(!limitDdptIds.contains(currentLabId)){
+									errorInfo.append("提报人不在专责范围内！ ");
+									errorNum.add(8);
+								}
 							}
+							
 						}
 						
 					}
