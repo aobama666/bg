@@ -297,7 +297,21 @@ function forDelete(){
 }
 
 function changeStatus(text,operation,proId){
-	if(operation=="start" || operation=="pause"){
+	layer.confirm('确认'+text+'吗？', {icon: 7,title:'提示',shift:-1},
+			function(index){
+			layer.close(index);
+			var ran = Math.random()*100000000;
+			$.get("<%=request.getContextPath()%>/nonproject/changeStatus?operation="+operation+"&proId="+proId+"&ran="+ran,
+					function(data,status){
+						if(data.result=="done"){
+							queryList("reload");
+						}else{
+							layer.msg(data.result);
+						}
+					}
+			);
+	});
+	<%-- if(operation=="start" || operation=="pause"){
 		layer.confirm('确认'+text+'吗？', {icon: 7,title:'提示',shift:-1},
 			function(index){
 			layer.close(index);
@@ -341,7 +355,7 @@ function changeStatus(text,operation,proId){
 				);
 			}
 		);
-	}
+	} --%>
 }
 
 function forExport(){

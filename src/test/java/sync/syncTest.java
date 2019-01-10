@@ -26,31 +26,31 @@ public class syncTest {
 		System.out.println("------start-----");
 		Logger logger = (Logger) LoggerFactory.getLogger(HandleSyncJob.class);
 		
-//		
-//		logger.info("开始处转存研系统中间表...");
-//		//handleSyncService.copyFromKY();
-//		logger.info("科研系统中间表转存完毕！");
+		
+		logger.info("开始处转存研系统中间表...");
+		handleSyncService.copyFromKY();
+		logger.info("科研系统中间表转存完毕！");
 		
 /*********************************************************************************************/
-//		logger.info("开始处理科研系统中间表...");
-//		handleSyncService.validateKY();
-//		logger.info("科研系统中间表处理完毕！");
+		logger.info("开始处理科研系统中间表...");
+		handleSyncService.validateKY();
+		logger.info("科研系统中间表处理完毕！");
 		
 /*********************************************************************************************/	
-//		logger.info("开始根据科研系统数据更新报工系统...");
-//		handleSyncService.updateFromKY();
-//		logger.info("根据科研系统数据更新报工系统完毕！");
+		logger.info("开始根据科研系统数据更新报工系统...");
+		handleSyncService.updateFromKY();
+		logger.info("根据科研系统数据更新报工系统完毕！");
 		
 /**********************************科研***********************************************************/
 /*********************************横向************************************************************/
 
 //		logger.info("开始处转存横向系统中间表...");
-//		//handleSyncService.copyFromHX();
+//		handleSyncService.copyFromHX();
 //		logger.info("横向系统中间表转存完毕！");
 		
 /*********************************************************************************************/
 //		logger.info("开始处理横向系统中间表...");
-//		//handleSyncService.validateHX();
+//		handleSyncService.validateHX();
 //		logger.info("横向系统中间表处理完毕！");
 		
 /*********************************************************************************************/	

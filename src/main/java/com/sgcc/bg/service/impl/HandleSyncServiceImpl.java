@@ -53,9 +53,8 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 	
 	@Override
 	public void validateKY() {
-		logger.info("获取所有的项目信息");
-		List<Map<String, Object>> proList = handleMapper.getAllSyncProFromKY();
-		logger.info("处理获取到的项目信息");
+		logger.info("删除科研中间表项目信息");
+		handleMapper.truncateTable("BG_SYNC_KY_PROJECT");
 //		字段名称	英文名称	类型	是否必推字段	要求
 //		项目ID	PROJECT_ID	VARCHAR2(50)	是	科研项目ID，唯一
 //		项目分类	PROJECT_TYPE	VARCHAR2(20)	是	科研项目，编码：KYXM
@@ -64,6 +63,9 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 //		项目说明	PROJECT_REMARK	VARCHAR2(200 CHAR )	否	项目摘要
 //		项目开始时间	PROJECT_START_DATE	VARCHAR2(20)	是	格式：yyyy-MM-dd
 //		项目结束时间	PROJECT_END_DATE	VARCHAR2(20)	是	格式：yyyy-MM-dd
+		logger.info("获取所有的项目信息");
+		List<Map<String, Object>> proList = handleMapper.getAllSyncProFromKY();
+		logger.info("处理获取到的项目信息");
 		for (Map<String, Object> proMap : proList) {
 			if(validPro(proMap,"KY")){
 				//校验通过存入报工中间表
@@ -71,6 +73,8 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 			}
 		}
 		
+		logger.info("删除科研中间表人员信息");
+		handleMapper.truncateTable("BG_SYNC_KY_EMP");
 //		字段名称	英文名称	类型	是否必推字段	要求
 //		人员姓名	USER_NAME	VARCHAR2(100 CHAR)	是	
 //		人员编号	USER_HRCODE	VARCHAR2(20)	是	人资编号，必须是院内人员，唯一
@@ -375,9 +379,8 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 
 	@Override
 	public void validateHX() {
-		logger.info("获取所有的横向项目信息");
-		List<Map<String, Object>> proList = handleMapper.getAllSyncProFromHX();
-		logger.info("处理获取到的项目信息");
+		logger.info("删除横向中间表项目信息");
+		handleMapper.truncateTable("BG_SYNC_HX_PROJECT");
 //		字段名称	英文名称	类型	是否必推字段	要求
 //		项目ID	PROJECT_ID	VARCHAR2(50)	是	科研项目ID，唯一
 //		项目分类	PROJECT_TYPE	VARCHAR2(20)	是	科研项目，编码：KYXM
@@ -386,6 +389,9 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 //		项目说明	PROJECT_REMARK	VARCHAR2(200 CHAR )	否	项目摘要
 //		项目开始时间	PROJECT_START_DATE	VARCHAR2(20)	是	格式：yyyy-MM-dd
 //		项目结束时间	PROJECT_END_DATE	VARCHAR2(20)	是	格式：yyyy-MM-dd
+		logger.info("获取所有的横向项目信息");
+		List<Map<String, Object>> proList = handleMapper.getAllSyncProFromHX();
+		logger.info("处理获取到的项目信息");
 		for (Map<String, Object> proMap : proList) {
 			if(validPro(proMap,"HX")){
 				//校验通过存入报工中间表
@@ -393,6 +399,8 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 			}
 		}
 		
+		logger.info("删除横向中间表人员信息");
+		handleMapper.truncateTable("BG_SYNC_HX_EMP");
 //		字段名称	英文名称	类型	是否必推字段	要求
 //		人员姓名	USER_NAME	VARCHAR2(100 CHAR)	是	
 //		人员编号	USER_HRCODE	VARCHAR2(20)	是	人资编号，必须是院内人员，唯一

@@ -66,7 +66,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		List<Map<String, String>>  list=SWMapper.getWorkingHourInfo(selectedDate,currentUsername);
 		//获取默认审核人
 		Map<String, String> approver = getDefaultApprover();
-		String approverHrcode = approver.get("hrcode");
+		String approverHrcode = approver==null?"":approver.get("hrcode");
 		for (Map<String, String> map : list) {
 			String category = map.get("CATEGORY");
 			String proUserHrcode = map.get("PRO_USER_HRCODE");

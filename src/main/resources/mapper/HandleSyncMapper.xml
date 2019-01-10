@@ -295,4 +295,8 @@
 		   'admin',
 		   '1')
 	</insert>
+	
+	<delete id="truncateTable">
+		TRUNCATE TABLE ${tableName}
+	</delete>
 </mapper>

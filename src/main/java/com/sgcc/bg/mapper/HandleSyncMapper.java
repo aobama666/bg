@@ -158,4 +158,10 @@ public interface HandleSyncMapper {
 	 * @param empMap
 	 */
 	void saveEmpFromHX(Map<String, Object> empMap);
+
+	/**
+	 * 清空数据表
+	 * @param tableName
+	 */
+	void truncateTable(@Param("tableName")String tableName);
 }

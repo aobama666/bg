@@ -65,7 +65,7 @@
 		<form name="queryBox" action="" style="width:100%;padding-left:10px"  method="post">
 		<hidden name="uuid" property="uuid"></hidden>
 		<div class="form-group col-xs-3">
-			<label>统计报表</label>
+			<label>统计报表：</label>
 			<div class="controls"  data-date-format="yyyy-mm-dd">
 				<select name="type">
 				   
@@ -91,6 +91,13 @@
 					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 				</div>
 			</div>
+		</div>
+		<div class="form-group col-xs-4"  >
+			<label>数据显示：</label>
+			<div class="controls datashow">
+				<div class='showcheck'><input type="checkbox" name="bpShow" checked="checked"/></div>
+				<div class="showText">显示项目前期数据</div>
+			</div>	    
 		</div>
 		</form>
 	</div>
