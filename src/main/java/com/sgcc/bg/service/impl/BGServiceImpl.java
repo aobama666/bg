@@ -286,6 +286,9 @@ public class BGServiceImpl implements IBGService {
 							&& Rtext.isEmpty(cellValue[3])) {
 						errorInfo.append("wbs编号不能为空！ ");
 						errorNum.add(3);
+					}else if(!Rtext.isEmpty(cellValue[3]) && cellValue[3].length()>50){
+						errorInfo.append("wbs编号不能超过50字！ ");
+						errorNum.add(3);
 					}else if (!Rtext.isEmpty(cellValue[3]) && !repeatChecker.add(cellValue[3])) {
 						errorInfo.append("wbs编号重复！ ");
 						errorNum.add(3);
@@ -1311,11 +1314,11 @@ public class BGServiceImpl implements IBGService {
 	}
 	
 	public static void main(String[] args) {
-		String[] arr1 = new String[3];
+		/*String[] arr1 = new String[3];
 		System.out.println(Arrays.toString(arr1));
 		
 		String[] arr = {"1","2","3"};
-		System.out.println(Arrays.toString(arr1));
+		System.out.println(Arrays.toString(arr1));*/
 	}
 
 	@Override

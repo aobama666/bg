@@ -297,7 +297,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						
 						//验证项目状态是否处于进行中
 						String projectStatus = proMap.get("projectStatus");
-						String[] staArr = {"已新建","已启动","已暂停","已完成","已废止","状态未知"};
+						String[] staArr = {"未启动","已启动","已暂停","已完成","已废止","状态未知"};
 						if(!"1".equals(projectStatus)){
 							errorInfo.append("项目"+staArr[Rtext.ToInteger(projectStatus,5)]+"，无法填报！ ");
 							errorNum.add(3);
