@@ -1,11 +1,17 @@
 package sync;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import com.sgcc.bg.job.HandleSyncJob;
+import com.sgcc.bg.mapper.BgWorkinghourInfoMapper;
 import com.sgcc.bg.service.HandleSyncService;
 import com.sgcc.bg.service.SyncService;
 
@@ -16,6 +22,7 @@ import config.TestConfig;
 public class syncTest {
 	public static ApplicationContext ctx;
 	public HandleSyncService handleSyncService = ctx.getBean(HandleSyncService.class);
+	public BgWorkinghourInfoMapper bgMapper = ctx.getBean(BgWorkinghourInfoMapper.class);
 
 	@BeforeClass
 	public static void initConfig(){
@@ -58,5 +65,27 @@ public class syncTest {
 //		handleSyncService.updateFromHX();
 //		logger.info("根据横向系统数据更新报工系统完毕！");	
 		System.out.println("------end-----");
+	}
+	
+	@Test
+	public void testMapper() {
+		List<Map<String,Object>> list = bgMapper.getWorkingHourInfoByDateAndType("epri_gukai", "2019-01-07", "2019-01-13", null, new String[]{"NP","CG","BP"});
+		System.out.println(list);
+		
+		List<Map<String,Object>> list1 = bgMapper.getBPByDateAndIsRelated("epri_gukai", "2019-01-07", "2019-01-13", "0");
+		System.out.println(list1);
+		
+		/*List<String> idList = new ArrayList<>();
+		for (Map<String, Object> map : list) {
+			if(map.get("")){
+				
+			}
+			idList
+		}*/
+		List<Map<String,Object>> list2 = bgMapper.getBPByWorkingHourInfo(list);
+		
+		//String workHours = bgMapper.getWorkHoursById(list);
+		System.out.println(list2);
+		
 	}
 }

@@ -96,6 +96,7 @@
 var type=common.getQueryString("type");
 var startTime=common.getQueryString("startTime");
 var endTime=common.getQueryString("endTime");
+var bpShow=common.getQueryString("bpShow");
 var mmg;
 var pn = 1;
 var limit = 30;
@@ -127,7 +128,7 @@ function queryList(load){
 		height: mmGridHeight,
 		cols: cols,
 		nowrap: true,
-		url: '<%=request.getContextPath()%>/BgWorkinghourInfo/selectForPagebgWorkinghourInfo?ran='+ran+"&type="+type+"&startTime="+startTime+"&endTime="+endTime,
+		url: '<%=request.getContextPath()%>/BgWorkinghourInfo/selectForPagebgWorkinghourInfo?ran='+ran+"&type="+type+"&startTime="+startTime+"&endTime="+endTime+"&bpShow="+bpShow,
 		fullWidthRows: true,
 		multiSelect: true,
 		root: 'items',

@@ -38,17 +38,20 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 	@Autowired
 	private UserUtils userUtils;
 	
+	//报工系统转存表删除几天前的数据
+	private final static int DAYS = 2;
+	
 /**********************************************处理科研******************************************************/
 	
 	@Override
 	public void copyFromKY() {
 		logger.info("转存项目信息表");
 		handleMapper.addKYToProTemp();
-		handleMapper.cutKYProTemp(3);
+		handleMapper.cutKYProTemp(DAYS);
 		
 		logger.info("转存参与人员表");
 		handleMapper.addKYToEmpTemp();
-		handleMapper.cutKYEmpTemp(3);
+		handleMapper.cutKYEmpTemp(DAYS);
 	}
 	
 	@Override
@@ -370,11 +373,11 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 	public void copyFromHX() {
 		logger.info("转存项目信息表");
 		handleMapper.addHXToProTemp();
-		handleMapper.cutHXProTemp(3);
+		handleMapper.cutHXProTemp(DAYS);
 		
 		logger.info("转存参与人员表");
 		handleMapper.addHXToEmpTemp();
-		handleMapper.cutHXEmpTemp(3);
+		handleMapper.cutHXEmpTemp(DAYS);
 	}
 
 	@Override

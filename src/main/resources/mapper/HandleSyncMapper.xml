@@ -18,7 +18,7 @@
 	
 	<delete id="cutKYProTemp" parameterType="int">
 		DELETE FROM BG_SYNC_KY_PROJECT_TEMP
-    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt; TRUNC(SYSDATE)
+    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt;= TRUNC(SYSDATE)
 	</delete>
 	
 	<insert id="addKYToEmpTemp">
@@ -36,7 +36,7 @@
 	
 	<delete id="cutKYEmpTemp" parameterType="int">
 		DELETE FROM BG_SYNC_KY_EMP_TEMP
-    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt; TRUNC(SYSDATE)
+    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt;= TRUNC(SYSDATE)
 	</delete>
 	
 	<select id="getAllSyncProFromKY" resultType="java.util.Map">
@@ -190,7 +190,7 @@
 	
 	<delete id="cutHXProTemp" parameterType="int">
 		DELETE FROM BG_SYNC_HX_PROJECT_TEMP
-    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt; TRUNC(SYSDATE)
+    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt;= TRUNC(SYSDATE)
 	</delete>
 	
 	<insert id="addHXToEmpTemp">
@@ -208,7 +208,7 @@
 	
 	<delete id="cutHXEmpTemp" parameterType="int">
 		DELETE FROM BG_SYNC_HX_EMP_TEMP
-    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt; TRUNC(SYSDATE)
+    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt;= TRUNC(SYSDATE)
 	</delete>
 	
 	
