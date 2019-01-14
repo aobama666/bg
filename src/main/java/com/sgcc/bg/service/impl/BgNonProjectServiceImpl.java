@@ -204,7 +204,7 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 					if (cellValue[1] == null || "".equals(cellValue[1])) {
 						errorInfo.append("非项目名称不能为空！ ");
 						errorNum.add(1);
-					} else if (cellValue[1].length() > 50) {
+					} else if (cellValue[1].length() > 51) {
 						errorInfo.append("非项目名称不能超过50字！ ");
 						errorNum.add(1);
 					}
@@ -217,7 +217,7 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 						errorNum.add(2);
 					}
 					// 非项目说明长度200以内
-					if (cellValue[3].length() > 200) {
+					if (cellValue[3].length() > 201) {
 						errorInfo.append("非项目说明不能超过200字！ ");
 						errorNum.add(3);
 					}
@@ -245,17 +245,16 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 							errorNum.add(5);
 						}
 					}
-					// 组织信息 技术服务非项目为必填项(如果不填则默认登录人所在处室) 
-					if(cellValue[6] == null || "".equals(cellValue[6])){
-						errorInfo.append("组织信息填写错误！ "); 
-						errorNum.add(6);
+					
+					// 组织信息非项目为必填项(如果不填则默认登录人所在处室) 
+					if(!"".equals(cellValue[6])){
+						String code=getDeptIdByDeptCode(cellValue[6]);
+						if(Rtext.isEmpty(code)){
+								errorInfo.append("组织信息填写错误！ "); 
+								errorNum.add(6);
+						}
 					}
-					String code=getDeptIdByDeptCode(cellValue[6]);
-					if(Rtext.isEmpty(code)){
-							errorInfo.append("组织信息填写错误！ "); 
-							errorNum.add(6);
-					}
-					 
+					
 					int  PlanHours=0;			// 计划投入工时 必填;数字
 					if (!"".equals(cellValue[7])) {
 						if (!cellValue[7].matches(regex)) {
@@ -287,7 +286,7 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 						pro.setProjectIntroduce(cellValue[3]);
 						pro.setStartDate(DateUtil.fomatDate(cellValue[4]));
 						pro.setEndDate(DateUtil.fomatDate(cellValue[5]));
-					 
+					   
 							String OrganDeptId="";
 							if(Rtext.isEmpty(cellValue[6])){
 								CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(currentUsername);
