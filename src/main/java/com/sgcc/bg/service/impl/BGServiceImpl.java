@@ -350,6 +350,7 @@ public class BGServiceImpl implements IBGService {
 						pro.setProjectIntroduce(cellValue[4]);
 						pro.setStartDate(DateUtil.fomatDate(cellValue[5]));
 						pro.setEndDate(DateUtil.fomatDate(cellValue[6]));
+						
 						if("技术服务项目".equals(cellValue[2])){
 							String OrganDeptId="";
 							if(Rtext.isEmpty(cellValue[7])){
