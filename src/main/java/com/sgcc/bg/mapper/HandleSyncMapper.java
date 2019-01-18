@@ -164,4 +164,10 @@ public interface HandleSyncMapper {
 	 * @param tableName
 	 */
 	void truncateTable(@Param("tableName")String tableName);
+
+	/**
+	 * 清理过期的出错信息表中数据
+	 * @param days 当前日期前的天数
+	 */
+	void cutErrorRecord(int days);
 }

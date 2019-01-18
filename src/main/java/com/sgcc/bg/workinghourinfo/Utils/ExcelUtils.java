@@ -270,26 +270,26 @@ public static HSSFWorkbook PaddingExcel(LinkedHashMap<String,String> headermap,L
 		
 		// 合并单元格
 		for(int i=0;i<headlsit.size();i++){
-					if(headlsit.get(i)==null){
-						continue;
-					}
-					int rowindex = i+headlsit.size();
-					HSSFRow valueRow = sheet.createRow(rowindex);
-					 
-					 
-					for(Entry<?, ?> entry:headlsit.get(i).entrySet()){
-						String key = entry.getKey()+"";
-						String value = entry.getValue()==null?"":entry.getValue()+"";
-						//根据Key匹配获取对应的值属于哪一列。获取列索引
-						Integer valueColumn = valueColumnMap.get(key);
-						if(valueColumn==null){
-							continue;
-						}
-						HSSFCell valueCell = valueRow.createCell(valueColumn);
-						valueCell.setCellStyle(cellStyle);
-						valueCell.setCellValue(value);
-					}
+			if(headlsit.get(i)==null){
+				continue;
+			}
+			int rowindex = i+headlsit.size();
+			HSSFRow valueRow = sheet.createRow(rowindex);
+			 
+			 
+			for(Entry<?, ?> entry:headlsit.get(i).entrySet()){
+				String key = entry.getKey()+"";
+				String value = entry.getValue()==null?"":entry.getValue()+"";
+				//根据Key匹配获取对应的值属于哪一列。获取列索引
+				Integer valueColumn = valueColumnMap.get(key);
+				if(valueColumn==null){
+					continue;
 				}
+				HSSFCell valueCell = valueRow.createCell(valueColumn);
+				valueCell.setCellStyle(cellStyle);
+				valueCell.setCellValue(value);
+			}
+		}
 				 
 		
 		//创建Excel对应的行
@@ -354,9 +354,9 @@ public static HSSFWorkbook PaddingExcel(LinkedHashMap<String,String> headermap,L
         		0, // first row
                 0, // last row
                 5, // first column
-                6 // last column
+                7 // last column
         );
-        CellRangeAddress region5 = new CellRangeAddress(//
+        /*CellRangeAddress region5 = new CellRangeAddress(//
         		0, // first row
                 1, // last row
                 7, // first column
@@ -367,15 +367,15 @@ public static HSSFWorkbook PaddingExcel(LinkedHashMap<String,String> headermap,L
                 1, // last row
                 8, // first column
                 8 // last column
-        );
+        );*/
        
         sheet.addMergedRegion(region);
         sheet.addMergedRegion(region1); 
         sheet.addMergedRegion(region2);
         sheet.addMergedRegion(region3);
         sheet.addMergedRegion(region4);
-        sheet.addMergedRegion(region5);
-        sheet.addMergedRegion(region6);
+       /* sheet.addMergedRegion(region5);
+        sheet.addMergedRegion(region6);*/
       
         
     }

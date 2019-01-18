@@ -80,6 +80,10 @@ public class HandleSyncJob {
 			logger.error("[HandleSyncJob]:横向数据同步已关闭！请检查");
 		}
 		
+/*********************************清理出错信息表过期数据************************************************************/
+		logger.info("开始清理出错信息表BG_SYNC_ERROR_RECORD过期数据");
+		handleSyncService.cutErrorRecord();
+		logger.info("出错信息表BG_SYNC_ERROR_RECORD过期数据清理完毕!");
 	}
 	
 }
