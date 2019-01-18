@@ -204,7 +204,7 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 					if (cellValue[1] == null || "".equals(cellValue[1])) {
 						errorInfo.append("非项目名称不能为空！ ");
 						errorNum.add(1);
-					} else if (cellValue[1].length() > 51) {
+					} else if (cellValue[1].length() > 50) {
 						errorInfo.append("非项目名称不能超过50字！ ");
 						errorNum.add(1);
 					}
@@ -217,7 +217,7 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 						errorNum.add(2);
 					}
 					// 非项目说明长度200以内
-					if (cellValue[3].length() > 201) {
+					if (cellValue[3].length() > 200) {
 						errorInfo.append("非项目说明不能超过200字！ ");
 						errorNum.add(3);
 					}
