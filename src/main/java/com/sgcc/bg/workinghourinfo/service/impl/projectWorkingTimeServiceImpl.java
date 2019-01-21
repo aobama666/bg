@@ -510,8 +510,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 				 List<Map<String,Object>> datalist=new  ArrayList<>();
 				 for(int i=0;i<list.size();i++){
 					int selectId = Integer.parseInt(list.get(i));
-					Map<String, Object> map = new HashMap<>();
-					map = valueList.get(selectId);
+					Map<String, Object> map = valueList.get(selectId);
 					map.put("startToEnd", beginData+"至"+endData);
 					datalist.add(map);
 				 }

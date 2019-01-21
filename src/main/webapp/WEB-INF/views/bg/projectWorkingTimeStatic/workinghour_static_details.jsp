@@ -146,13 +146,13 @@ function queryList(load){
 }
 //导出
 function forConfirm(){
-	var ids="";
-	var selectList = mmg.selectedRows();
+	var ids = mmg.selectedRowsIndex();
+	/* var selectList = mmg.selectedRows();
 	var reason = $(".reason").val();
 	for(var i=0;i<selectList.length;i++){
 		ids += (selectList[i].ROW_ID-1)+",";
 	}
-	ids = ids.slice(0,ids.length-1);
+	ids = ids.slice(0,ids.length-1); */
 	$("input[name=ids]").val(ids);
 	document.forms[0].action ="<%=request.getContextPath()%>/BgWorkinghourInfo/selectForWorkerReport";
 	document.forms[0].submit();
