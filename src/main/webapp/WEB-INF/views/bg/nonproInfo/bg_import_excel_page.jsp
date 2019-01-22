@@ -39,8 +39,8 @@
 <div class="page-header-sl">
 	<h5>上传Excel</h5>
 	<div class="button-box">
-		<button type="button" class="btn btn-danger btn-xs" style="display:none;" id="proErrInfoButton" onclick="downLoadErr(this)"> 非项目错误信息下载</button>
-		<button type="button" class="btn btn-primary btn-xs" onclick="downLoadTemp('非项目信息模板.xls')"> 非项目信息模板下载</button>
+		<button type="button" class="btn btn-danger btn-xs" style="display:none;" id="proErrInfoButton" onclick="downLoadErr(this)"> 项目前期工作维护错误信息下载</button>
+		<button type="button" class="btn btn-primary btn-xs" onclick="downLoadTemp('项目前期工作维护模板.xls')"> 项目前期工作维护模板下载</button>
 	</div>
 </div>
 <hr>
@@ -50,7 +50,7 @@
 			<span>请选择要导入的EXCEL文件</span>&nbsp;<code>注意：文件需为Excel 97~2003格式，后缀名为.xls</code>
 		</div>
 		<div class="form-group col-xs-12">
-			<label for="empName" style="width:110px;margin-top:5px">非项目信息文件：</label>
+			<label for="empName" style="width:110px;margin-top:5px">文件：</label>
 			<div class="controls" style="margin-left:110px" class="form-control">
 				<input id="file" type="file" name="proFile" property="proFile" style="display:inline-block;width:395px">
 				<button type="button" class="btn btn-success btn-xs" onclick="uploadProFile()"> 确定</button>

@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>修改项目信息</title>
+<title>查看项目前期工作维护信息</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css"
@@ -53,7 +53,7 @@
 	<input type="hidden" name="empName" id="empName"/>
 	<%-- <c:out value="${id}"></c:out> --%>
 	<ul id="myTab" class="nav nav-tabs">
-		<li class="active"><a href="#proInfo" data-toggle="tab">非项目信息</a></li>
+		<li class="active"><a href="#proInfo" data-toggle="tab">项目前期工作维护</a></li>
 	</ul>
 	<div id="myTabContent" class="tab-content">
 		<div class="tab-pane fade in active" id="proInfo">
@@ -67,7 +67,7 @@
 			<div class="form-box">
 				<c:out value="${proUsers}"></c:out>
 				<div class="form-group col-xs-11">
-					<label for="category">非项目分类</label>
+					<label for="category">分类</label>
 					<div class="noncontrols bg-white">
 						<input type="text" name="category" property="category" 
 							<c:choose>
@@ -79,33 +79,33 @@
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
-					<label for="projectName">非项目名称</label>
+					<label for="projectName">名称</label>
 					<div class="noncontrols bg-white">
 						<input type="text" name="projectName" property="projectName" value="${projectName}" readonly>
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
-					<label for="projectNumber">非项目编号</label>
+					<label for="projectNumber">编号</label>
 					<div class="noncontrols bg-white">
 						<input type="text" name="projectNumber" property="projectNumber" value="${projectNumber}" readonly>
 					</div>
 				</div>
 				 
 				<div class="form-group col-xs-11">
-					<label for="projectIntroduce">非项目说明</label>
+					<label for="projectIntroduce">说明</label>
 					<div class="noncontrols">
 						<textarea name="projectIntroduce" property="projectIntroduce" 
 							readonly="true" style="height:75px;background-color: #fff">${projectIntroduce}</textarea>
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
-					<label for="startDate"> 非项目开始时间</label>
+					<label for="startDate"> 开始时间</label>
 					<div class="noncontrols bg-white">
 						<input type="text" name="startDate" property="startDate" readonly="true" value="${startDate}" readonly> 
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
-					<label for="endDate"> 非项目结束时间</label>
+					<label for="endDate"> 结束时间</label>
 					<div class="noncontrols bg-white">
 							<input type="text" name="startDate" property="startDate" readonly="true" value="${endDate}" readonly> 
 					</div>
