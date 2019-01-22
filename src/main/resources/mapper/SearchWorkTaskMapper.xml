@@ -41,7 +41,9 @@
 	       (select t.PROJECT_ID from BG_PROJECT_USER t where t.HRCODE = #{hrCode})
 	       or 
        and  F.HRCODE = #{hrCode} -->
-       ((b.CATEGORY IN ('JS', 'KY', 'HX', 'QT') AND
+          1 = 1
+       and b.status = '1'
+       and  ((b.CATEGORY IN ('JS', 'KY', 'HX', 'QT') AND
 		       F.HRCODE = #{hrCode})
 		        OR
 		       (b.CATEGORY IN ('CG', 'BP') AND
