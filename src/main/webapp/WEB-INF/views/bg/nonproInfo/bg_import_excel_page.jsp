@@ -39,8 +39,8 @@
 <div class="page-header-sl">
 	<h5>上传Excel</h5>
 	<div class="button-box">
-		<button type="button" class="btn btn-danger btn-xs" style="display:none;" id="proErrInfoButton" onclick="downLoadErr(this)"> 项目前期工作维护错误信息下载</button>
-		<button type="button" class="btn btn-primary btn-xs" onclick="downLoadTemp('项目前期工作维护模板.xls')"> 项目前期工作维护模板下载</button>
+		<button type="button" class="btn btn-danger btn-xs" style="display:none;" id="proErrInfoButton" onclick="downLoadErr(this)"> 错误信息下载</button>
+		<button type="button" class="btn btn-primary btn-xs" onclick="downLoadTemp('项目前期工作维护模板.xls')"> 模板下载</button>
 	</div>
 </div>
 <hr>
