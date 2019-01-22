@@ -70,14 +70,14 @@ a{
 			<form name="queryBox" action=""
 				style="width: 100%; padding-left: 10px">
 				<div class="form-group col-xs-4">
-					<label>非项目名称：</label>
-					<div class="controls">
+					<label>名称</label>
+					<div class="noncontrols">
 						<input name="proName" property="proName">
 					</div>
 				</div>
 				<div class="form-group col-xs-4">
-					<label for="querySex">非项目状态：</label>
-					<div class="controls">
+					<label for="querySex">状态</label>
+					<div class="noncontrols">
 						<select name="proStatus" property="proStatus">
 							<option></option>
 							<c:forEach var ="dict" items="${dictMap}">
@@ -180,7 +180,7 @@ function queryList(load){
 	    		];
 	var mmGridHeight = $("body").parent().height() - 190;
 	mmg = $('#mmg').mmGrid({
-		cosEdit:"3,11",//声明需要编辑，取消点击选中的列
+		cosEdit:"4,13",//声明需要编辑，取消点击选中的列
 		indexCol: true,
 		indexColWidth: 40,
 		checkCol: true,
@@ -297,21 +297,7 @@ function forDelete(){
 }
 
 function changeStatus(text,operation,proId){
-	layer.confirm('确认'+text+'吗？', {icon: 7,title:'提示',shift:-1},
-			function(index){
-			layer.close(index);
-			var ran = Math.random()*100000000;
-			$.get("<%=request.getContextPath()%>/nonproject/changeStatus?operation="+operation+"&proId="+proId+"&ran="+ran,
-					function(data,status){
-						if(data.result=="done"){
-							queryList("reload");
-						}else{
-							layer.msg(data.result);
-						}
-					}
-			);
-	});
-	<%-- if(operation=="start" || operation=="pause"){
+	if(operation=="start" || operation=="pause"){
 		layer.confirm('确认'+text+'吗？', {icon: 7,title:'提示',shift:-1},
 			function(index){
 			layer.close(index);
@@ -355,7 +341,7 @@ function changeStatus(text,operation,proId){
 				);
 			}
 		);
-	} 
+	}
 }
 
 function forExport(){
