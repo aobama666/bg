@@ -10,7 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>非修改项目信息</title>
+<title>修改项目前期工作维护信息</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css"
@@ -69,7 +69,7 @@
 	<input type="hidden" name="empName" id="empName"/>
 	<%-- <c:out value="${ID}"></c:out> --%>
 	<ul id="myTab" class="nav nav-tabs">
-		<li class="active"><a href="#proInfo" data-toggle="tab">非项目信息</a></li>
+		<li class="active"><a href="#proInfo" data-toggle="tab">项目前期工作维护</a></li>
 	</ul>
 	<div id="myTabContent" class="tab-content">
 		<div class="tab-pane fade in active" id="proInfo">
@@ -85,41 +85,40 @@
 			<div class="form-box">
 				<div class="form-group col-xs-11">
 					<label for=""category"" style="width:110px"><font
-						class="glyphicon glyphicon-asterisk required"></font>非项目分类</label>
+						class="glyphicon glyphicon-asterisk required"></font>分类</label>
 					<div class="noncontrols">
 						<select name="category" property="category" onchange="typeChange(this)">
 							<options collection="typeList" property="label"
 								labelProperty="value">
 								<option   value="BP" <c:if test="${category=='BP'}">selected="selected"</c:if> >项目前期</option>
-								<option   value="CG" <c:if test="${category=='CG'}">selected="selected"</c:if> >常规工作</option>
 							</options>
 						</select>
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
 					<label for="projectName" style="width:110px"><font
-						class="glyphicon glyphicon-asterisk required"></font>非项目名称</label>
+						class="glyphicon glyphicon-asterisk required"></font>名称</label>
 					<div class="noncontrols">
 						<input type="text" name="projectName" property="projectName" value="${projectName}">
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
 					<label for="projectNumber" style="width:110px"><font
-						class="glyphicon glyphicon-asterisk required"></font>非项目编号</label>
+						class="glyphicon glyphicon-asterisk required"></font>编号</label>
 					<div class=noncontrols>
 						<input class='italic' disabled type="text" name="projectNumber" property="projectNumber" value="${projectNumber}">
 					</div>
 				</div>
 			 
 				<div class="form-group col-xs-11">
-					<label for="projectIntroduce" style="width:110px"><font class=""></font>非项目说明</label>
+					<label for="projectIntroduce" style="width:110px"><font class=""></font>说明</label>
 					<div class="noncontrols">
 						<textarea name="projectIntroduce" property="projectIntroduce" style="height:75px">${projectIntroduce}</textarea>
 					</div>
 				</div>
 				<div class="form-group col-xs-11">
 					<label for="startDate" style="width:110px"><font
-						class="glyphicon glyphicon-asterisk required"></font> 非项目开始时间</label>
+						class="glyphicon glyphicon-asterisk required"></font> 开始时间</label>
 					<div class="noncontrols">
 						 <div class="input-group date form_date">
 							<input type="text" name="startDate" property="startDate" readonly="true" value="${startDate}"> <span
@@ -130,7 +129,7 @@
 				</div>
 				<div class="form-group col-xs-11">
 					<label for="endDate" style="width:110px"><font
-						class="glyphicon glyphicon-asterisk required"></font> 非项目结束时间</label>
+						class="glyphicon glyphicon-asterisk required"></font> 结束时间</label>
 					<div class="noncontrols">
 						<div class="input-group date form_date">
 							<input type="text" name="endDate" property="endDate" value="${endDate}"
@@ -292,7 +291,7 @@
 								forClose();
 								return;
 							} 
-							layer.confirm('保存成功！非项目开始日期/非项目结束日期变动，请修改参与人的参与开始日期/结束日期，以免影响员工工时填报。', {icon: 7, btn:"修改",title:'提示 ',shift:-1},
+							layer.confirm('保存成功！开始日期/结束日期变动，请修改参与人的参与开始日期/结束日期，以免影响员工工时填报。', {icon: 7, btn:"修改",title:'提示 ',shift:-1},
 								function(index){
 									layer.close(index);
 									stuffShow();
