@@ -1,6 +1,7 @@
 package com.sgcc.bg.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -257,21 +258,25 @@ public class SearchWorkTaskController {
 			String type = request.getParameter("type")==null?"":request.getParameter("type").trim();
 			String projectName = request.getParameter("projectName")==null?"":request.getParameter("projectName").trim();
 			String idsStr = request.getParameter("selectList")==null?"":request.getParameter("selectList").trim();
-			List<String>  list =new  ArrayList<String>();
+			List<String>  list = null;
 			if(idsStr!=""){
 				String [] strings=idsStr.split(",");
-				for(int i=0;i<strings.length;i++){
-					String num=strings[i];
-					list.add(num);
-				}	
+				list = new  ArrayList<String>(Arrays.asList(strings));
 			}
 			
 			CommonUser userInfo = webUtils.getCommonUser();
 			/* 获取人自编号 */
 			String hrCode = userInfo.getSapHrCode();
+			CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByHrCode(hrCode);
+			String deptId = currentUser.getDeptId();
 			//获取Excel数据信息
-			List<Map<String, Object>> valueList = new ArrayList<Map<String,Object>>();
-			valueList = searchWorkTaskService.queryOutDelegationExport(startTime,endTime,type,projectName,hrCode,list);	
+			List<Map<String, String>> valueList = new ArrayList<Map<String,String>>();
+			valueList = searchWorkTaskService.queryOutDelegationExport(startTime,endTime,type,projectName,hrCode,deptId,list);	
+			Map<String, String> dictMap = dict.getDictDataByPcode("pstatus100001");
+			for (Map<String, String> map : valueList) {
+				map.put("PROJECT_STATUS", dictMap.get(map.get("PROJECT_STATUS")));
+			}
+			
 			Object[][] title = { 
 					 { "项目类型", "CATEGORY" }, 
 					 { "项目编号","PROJECT_NUMBER"},
@@ -280,9 +285,11 @@ public class SearchWorkTaskController {
 					 { "项目开始时间","START_DATE"}, 
 					 { "项目结束时间","END_DATE"},
 					 { "项目负责人","PRINCIPAL"},
-					 { "项目状态","PROTYPE"}, 
+					 { "项目状态","PROJECT_STATUS"}, 
 					 { "本人参与开始时间","PERSONSTART"},
-					 { "本人参与结束时间","PERSONEND"} 
+					 { "本人参与结束时间","PERSONEND"},
+					 { "工作任务","TASK"},
+					 { "计划投入工时","PLANHOURS"} 
 					};
 			String time = dateUtils.getDays();
 			ExportExcelHelper.getExcel(response, "报工系统-工作任务查询-"+time, title, valueList, "normal");
