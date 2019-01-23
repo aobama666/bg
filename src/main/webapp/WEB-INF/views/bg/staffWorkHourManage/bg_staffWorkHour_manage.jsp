@@ -249,7 +249,7 @@ function queryList(load){
 				]
 		}).on('loadSuccess', function(e, data){
 			pn = data.page;
-			$(".checkAll").css("display","none").parent().text("选择");
+			//$(".checkAll").css("display","none").parent().text("选择");
 		});
 	if(load == "reload"){
 		mmg.load({page:pn});
