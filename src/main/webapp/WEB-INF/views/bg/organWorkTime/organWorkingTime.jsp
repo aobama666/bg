@@ -272,8 +272,8 @@ function queryListPart(load){
 }
 $(".content").on("click",".forDetails",function(){
 	var type = $(this).attr("type");
-	var dataShow = $("input[name=dataShow]:checked").val();
-	
+	var dataShow = $('input[name="dataShow"]').prop("checked") ? "1":"0";
+	var bpShow = $('input[name="bpShow"]').prop("checked") ? "1":"0";
 	var deptid = $(this).attr("pdeptid");
 	var labid = $(this).attr("deptid");
 	var StartData = $(this).attr("StartData");
@@ -292,13 +292,17 @@ $(".content").on("click",".forDetails",function(){
 		area:['80%','85%'],
 		scrollbar:false,
 		skin:'query-box',
-		content:["<%=request.getContextPath()%>/searchWorkTask/organWorkinghourDetail?deptid="+deptid+"&labid="+labid+"&StartData="+StartData+"&EndData="+EndData+"&type="+type+"&dataShow="+dataShow,'no']
+		content:["<%=request.getContextPath()%>/searchWorkTask/organWorkinghourDetail?deptid="+deptid
+				+"&labid="+labid+"&StartData="+StartData+"&EndData="+EndData+"&type="+type
+				+"&dataShow="+dataShow+"&bpShow="+bpShow,'no']
 	});
 });
+
 $(".content").on("click",".perForDetails",function(){
 	var type = $(this).attr("type");
 	 
-	var dataShow = $("input[name=dataShow]:checked").val();
+	var dataShow = $('input[name="dataShow"]').prop("checked") ? "1":"0";
+	var bpShow = $('input[name="bpShow"]').prop("checked") ? "1":"0";
 	var StartData = $(this).attr("StartData");
 	var EndData = $(this).attr("EndData");
 	var deptid = $(this).attr("pdeptid");

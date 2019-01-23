@@ -985,8 +985,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		
 		Map<String, Object> resultMap = pageAndNum((List<Map<String, Object>>) dataMap.get("dataList"), pageNum, limit);
 		
-		resultMap.put("proTitleMap", dataMap.get("proTitleMap"));
-		resultMap.put("noProTitleMap", dataMap.get("noProTitleMap"));
+		resultMap.put("titleMap", dataMap.get("titleMap"));
 		
 		String jsonStr = JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
 		return jsonStr;
@@ -1083,52 +1082,6 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		
 		dataList = sumWorkingHourByHrCodeAndDeptCode(dataList);
 		
-		/*
-		Set<String> set=new HashSet<>();//用于项目去重
-		empList.addAll(dataList);
-		Map<String, Map<String,Object>> resultMap = new LinkedHashMap<>();
-		for (Map<String, Object> map : empList) {
-			String deptName = Rtext.toString(map.get("PDEPTNAME"));
-			String labName = Rtext.toString(map.get("DEPTNAME"));
-			String proNumber = Rtext.toString(map.get("PROJECT_NUMBER"));
-			String proName = Rtext.toString(map.get("PROJECT_NAME"));
-			String useralias = Rtext.toString(map.get("USERALIAS"));
-			String deptCode = Rtext.toString(map.get("DEPTCODE"));
-			String hrCode = Rtext.toString(map.get("HRCODE"));	
-			String category = Rtext.toString(map.get("CATEGORY"));
-			double workHour = Rtext.ToDouble(map.get("WORKING_HOUR"),0d);	 
-			String key = hrCode+deptCode;
-			
-			if(!Rtext.isEmpty(proNumber) && set.add(proNumber)){
-				if ("KY,HX,JS,QT".contains(category)) {
-					proTitleMap.put(proNumber, proName);
-				}else if("BP".equals(category)){
-					noProTitleMap.put(proNumber, proName);
-				}
-			}
-			
-			Map<String,Object> dataMap = resultMap.get(key);
-			if(dataMap==null){
-				Map<String,Object> tempMap = new HashMap<>();
-				tempMap.put("useralias", useralias);
-				tempMap.put("hrcode", hrCode);
-				tempMap.put("deptname", deptName);
-				tempMap.put("labname", labName);
-				tempMap.put("StartAndEndData", StartData + "至" + EndData);
-				if(!Rtext.isEmpty(proNumber)) tempMap.put(proNumber, workHour);
-				tempMap.put("total", 0d);
-				resultMap.put(key,tempMap);
-				
-				
-			}else if(!Rtext.isEmpty(proNumber)){
-				double hours = Rtext.ToDouble(dataMap.get(proNumber),0d);
-				dataMap.put(proNumber, workHour+hours);
-				double totalHours = Rtext.ToDouble(dataMap.get("total"),0d);
-				dataMap.put("total", workHour+totalHours);
-			}
-		
-		}*/
-		
 		//设置默认值
 		for (String proNumber : proTitleMap.keySet()) {
 			for (Map<String, Object> userMap : dataList) {
@@ -1143,35 +1096,29 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 			}
 		}
 		
-		//TODO
-		/*List<String,Map<String, Object>> resultList = new ArrayList<>();
+		//设置默认值
+		Set<String> set = new HashSet<>();
+		set.addAll(proTitleMap.keySet());
+		set.addAll(noProTitleMap.keySet());
 		
-		for (Map<String, Object> map : dataList) {
-			Map<String,Object> tempMap = new HashMap<>();
-			String deptName = Rtext.toString(map.get("PDEPTNAME"));
-			String labName = Rtext.toString(map.get("DEPTNAME"));
-			String proName = Rtext.toString(map.get("PROJECT_NAME"));
-			String useralias = Rtext.toString(map.get("USERALIAS"));
-			String hrCode = Rtext.toString(map.get("HRCODE"));	
-			tempMap.put("useralias", useralias);
-			tempMap.put("hrcode", hrCode);
-			tempMap.put("deptname", deptName);
-			tempMap.put("labname", labName);
-			tempMap.put("StartAndEndData", StartData + "至" + EndData);
-			for (String key : map.keySet()) {
-				if(proTitleMap.containsKey(key) || noProTitleMap.containsKey(key)){
-					
+		for (String proNumber : set) {
+			for (Map<String, Object> userMap : dataList) {
+				if(!userMap.containsKey(proNumber)){
+					int d=bgworkinghourinfoMapper.validateAuthority(proNumber,String.valueOf(userMap.get("hrcode")));
+					if(d==0 && !"NP000".equals(proNumber)){
+						userMap.put(proNumber,"--");
+					}else{
+						userMap.put(proNumber,"0");
+					}
 				}
 			}
-			if(!userMap.containsKey(proNumber)){
-				int d=bgworkinghourinfoMapper.validateAuthority(proNumber,String.valueOf(userMap.get("hrcode")));
-				if(d==0 && !"NP000".equals(proNumber)){
-					userMap.put(proNumber,"--");
-				}else{
-					userMap.put(proNumber,"0");
-				}
-			}
-		}*/
+		}
+		
+		for (int i=0; i<dataList.size() ; i++) {
+			Map<String,Object> userMap = dataList.get(i);
+			userMap.put("Count", (i+1)+"");
+			userMap.put("StartAndEndData", StartData + "至" + EndData);
+		}
 		
 		Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put("dataList", dataList);
