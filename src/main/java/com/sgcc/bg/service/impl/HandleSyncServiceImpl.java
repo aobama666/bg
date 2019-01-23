@@ -303,7 +303,7 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 			}
 		}*/
 		
-		if(empName.isEmpty()) errorInfo += "人员姓名为空；";
+		//if(empName.isEmpty()) errorInfo += "人员姓名为空；";
 		
 		if(hrCode.isEmpty()) {
 			errorInfo += "人员编号为空；";
@@ -311,36 +311,36 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 			CommonCurrentUser user = userUtils.getCommonCurrentUserByHrCode(hrCode);
 			if(user==null){
 				errorInfo += "人员编号错误！ ";
-			}else{
+			}/*else{
 				if(!empName.isEmpty() && !empName.equals(user.getUserAlias())) errorInfo += "人员编号与姓名不匹配！ ";
-			}
+			}*/
 		}
 		
-		SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
-		Date startDate = null;
-		Date endDate = null;
-		
-		if(startDateStr.isEmpty()){
-			errorInfo += "参与开始日期为空；";
-		}else{
-			try {
-				startDate = dateFormat.parse(startDateStr);
-			} catch (ParseException e) {
-				errorInfo += "参与开始日期出错；";
-			}
-		}
-		
-		if(endDateStr.isEmpty()){
-			errorInfo += "参与结束日期为空；";
-		}else{
-			try {
-				endDate = dateFormat.parse(endDateStr);
-			} catch (ParseException e) {
-				errorInfo += "参与结束日期出错；";
-			}
-		}
-		
-		if(startDate!=null && endDate!=null && startDate.after(endDate)) errorInfo += "日期顺序出错；";
+//		SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
+//		Date startDate = null;
+//		Date endDate = null;
+//		
+//		if(startDateStr.isEmpty()){
+//			errorInfo += "参与开始日期为空；";
+//		}else{
+//			try {
+//				startDate = dateFormat.parse(startDateStr);
+//			} catch (ParseException e) {
+//				errorInfo += "参与开始日期出错；";
+//			}
+//		}
+//		
+//		if(endDateStr.isEmpty()){
+//			errorInfo += "参与结束日期为空；";
+//		}else{
+//			try {
+//				endDate = dateFormat.parse(endDateStr);
+//			} catch (ParseException e) {
+//				errorInfo += "参与结束日期出错；";
+//			}
+//		}
+//		
+//		if(startDate!=null && endDate!=null && startDate.after(endDate)) errorInfo += "日期顺序出错；";
 		
 		//角色的转换
 		if(role.isEmpty()) errorInfo += "角色为空；";

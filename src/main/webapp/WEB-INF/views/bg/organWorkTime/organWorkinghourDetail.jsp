@@ -137,6 +137,15 @@ function init(){
 					$.each(title,function(i,n){
 						cols.push({title:n, name:i, width:100, sortable:false, align:'center'});
 					});
+					
+					//TODO
+					/* {title:'非项目',   width:200, sortable:false, align:'center' ,cols:[
+                     {title:'项目前期投入工时（h）', name:'BPHoursNum', width:200, sortable:false, align:'center'},
+  	                 {title:'常规工作投入工时（h）', name:'NP_CGHoursNum', width:200, sortable:false, align:'center'},
+                     {title:'工时占比（%）', name:'NoProjectTotalHoursNumBF', width:200, sortable:false, align:'center' }
+                   ]}; */
+                   
+                   
 					/* delete title['NP000'];
 					if(type==1){
 						$.each(title,function(i,n){
