@@ -147,7 +147,12 @@ function init(){
 						cols.push({title:category, width:200, sortable:false, align:'center' ,cols:innerCols});
 					});
 					
-					queryList(data.items);
+					if(data.items.length>0){
+						queryList(data.items);
+					}else{
+						queryList({});
+					}
+					
 			 	});
 }
 

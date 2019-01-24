@@ -286,6 +286,7 @@ $(".content").on("click",".forDetails",function(){
 	}else{
 		title = "非项目投入工时";
 	}
+	
 	layer.open({
 		type:2,
 		title:title,
