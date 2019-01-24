@@ -1324,9 +1324,12 @@ public class BGServiceImpl implements IBGService {
 
 	@Override
 	public List<Map<String, Object>> getBeforeProjects(String username, String proName ,boolean isRelated,String relProId) {
-		CommonCurrentUser user = userUtils.getCommonCurrentUserByUsername(username);
-		String deptId = user.getDeptId();
-		
-		return bgMapper.getBeforeProjects(deptId,proName,isRelated,relProId);
+		if(isRelated){
+			return bgMapper.getBeforeProjects(null,proName,isRelated,relProId);
+		}else{
+			CommonCurrentUser user = userUtils.getCommonCurrentUserByUsername(username);
+			String deptId = user.getDeptId();
+			return bgMapper.getBeforeProjects(deptId,proName,isRelated,relProId);
+		}
 	}
 }

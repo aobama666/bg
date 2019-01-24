@@ -579,15 +579,17 @@
 		  FROM BG_PROJECT_INFO T
 		 WHERE T.STATUS = '1'
 		   AND T.CATEGORY = 'BP'
+		 <if test="deptId != null and deptId != ''" >
 		   AND #{deptId} IN (SELECT D.DEPTID
 		                       FROM BG_SYS_DEPT D
 		                      WHERE D.VALID = '1'
 		                      START WITH D.DEPTID = T.ORGAN_INFO
 		                     CONNECT BY PRIOR D.DEPTID = D.PDEPTID)
+	     </if>		                     
 	     <if test="!isRelated" >
 			 AND T.RELATED_PROJECT_ID IS NULL
 	     </if>
-	     <if test="isRelated" >
+	     <if test="isRelated and relProId != null and relProId != ''" >
 			 AND T.RELATED_PROJECT_ID = #{relProId}
 	     </if>
 	   	 <if test="proName != null and proName != ''" >

@@ -33,4 +33,9 @@ public interface HandleSyncService {
 	 */
 	void updateFromHX();
 	
+	/**
+	 * 删除出错信息表中过期数据
+	 */
+	void cutErrorRecord();
+	
 }

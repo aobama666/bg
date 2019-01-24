@@ -95,7 +95,7 @@
 		<div class="form-group col-xs-4"  >
 			<!-- <label>数据显示：</label> -->
 			<div class="controls datashow">
-				<div class='showcheck'><input type="checkbox" name="bpShow" checked="checked"/></div>
+				<div class='showcheck'><input type="checkbox" name="bpShow" value="1" checked="checked"/></div>
 				<div class="showText">项目计入项目前期</div>
 			</div>	    
 		</div>
@@ -246,7 +246,7 @@ $("body").on("click",".popup",function(){
 	var type = $(this).attr("type");
 	var startTime = $(this).attr("startTime");
 	var endTime = $(this).attr("endTime");
-	var bpShow = $('input[name="bpShow"]').prop("checked") ? "1":"0";;
+	var bpShow = $('input[name="bpShow"]').prop("checked") ? "1":"0";
 	var title="查询日期："+startTime+"至"+endTime+"&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp查询类型：";
 	
 	if(type==0){

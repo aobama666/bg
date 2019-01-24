@@ -155,7 +155,7 @@ function forConfirm(){
 		ids += selectList[i].ID+",";
 	}
 	var ran = Math.random()*1000;
-	document.forms[0].action ="<%=request.getContextPath()%>/BgWorkinghourInfo/exportExcel?ran="+ran+"&type="+type+"&startTime="+startTime+"&endTime="+endTime+"&id="+ids;
+	document.forms[0].action ="<%=request.getContextPath()%>/BgWorkinghourInfo/exportExcel?ran="+ran+"&type="+type+"&startTime="+startTime+"&endTime="+endTime+"&id="+ids+"&bpShow="+bpShow;
 	document.forms[0].submit();
 	$("input[name=uuid]").val("");
 }

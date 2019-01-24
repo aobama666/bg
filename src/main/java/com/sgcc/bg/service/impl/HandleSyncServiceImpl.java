@@ -497,4 +497,9 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 		}
 	}
 
+	@Override
+	public void cutErrorRecord() {
+		handleMapper.cutErrorRecord(DAYS);
+	}
+
 }

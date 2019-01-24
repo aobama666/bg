@@ -218,12 +218,13 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		 String useralias = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //人员
 		 String status = request.getParameter("Btype" ) == null ? "" : request.getParameter("Btype").toString(); //统计纬度 0部门1处室2员工
 		 String type = request.getParameter("Atype" ) == null ? "" : request.getParameter("Atype").toString(); //统计类型
-		 String pdeptid = request.getParameter("pdeptid" ) == null ? "" : request.getParameter("pdeptid").toString(); //组织机构 （父ID）
-		 String deptid = request.getParameter("deptid" ) == null ? "" : request.getParameter("deptid").toString(); //组织机构 （ID）
+//		 String pdeptid = request.getParameter("pdeptid" ) == null ? "" : request.getParameter("pdeptid").toString(); //组织机构 （父ID）
+//		 String deptid = request.getParameter("deptid" ) == null ? "" : request.getParameter("deptid").toString(); //组织机构 （ID）
 		 String deptCode = request.getParameter("deptCode" ) == null ? "" : request.getParameter("deptCode").toString(); //组织机构 （code）
 		 String level = request.getParameter("level" ) == null ? "" : request.getParameter("level").toString(); //组织机构 （ID）
 		 String dataShow = request.getParameter("dataShow" ) == null ? "" : request.getParameter("dataShow").toString(); //显示数据
-		  int pageNum=Integer.parseInt(request.getParameter("page")); 
+		 String bpShow = request.getParameter("bpShow" ) == null ? "" : request.getParameter("bpShow").toString(); //项目计入项目前期
+		 int pageNum=Integer.parseInt(request.getParameter("page")); 
 		 int limit=Integer.parseInt(request.getParameter("limit")); 
 		 /**
 		  * 验证
@@ -245,7 +246,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		 if(status.equals("0")){
 			 //List<Map<String, Object>> neworganTreelist=findFordept(organTreelist,level,pdeptid,deptid);
 			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
-			 datalist=selectForHouseManager(organTreelist, type,beginData,endData);
+			 datalist=selectForHouseManager(organTreelist, type,beginData,endData,bpShow);
 		 }else if(status.equals("1")){
 			 //List<Map<String, Object>> neworganTreelist=findForlab(organTreelist,level,pdeptid,deptid );
 			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
@@ -272,12 +273,14 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		String useralias = request.getParameter("userName") == null ? "" : request.getParameter("userName").toString(); // 人员
 		String status = request.getParameter("Btype") == null ? "" : request.getParameter("Btype").toString(); // 统计纬度// 0部门1处室2员工
 		String type = request.getParameter("Atype") == null ? "" : request.getParameter("Atype").toString(); // 统计类型
-		String pdeptid = request.getParameter("pdeptid") == null ? "" : request.getParameter("pdeptid").toString(); // 组织机构																										 
-		String deptid = request.getParameter("deptid") == null ? "" : request.getParameter("deptid").toString(); // 组织机构 （ID）
+//		String pdeptid = request.getParameter("pdeptid") == null ? "" : request.getParameter("pdeptid").toString(); // 组织机构																										 
+//		String deptid = request.getParameter("deptid") == null ? "" : request.getParameter("deptid").toString(); // 组织机构 （ID）
 		String deptCode = request.getParameter("deptCode" ) == null ? "" : request.getParameter("deptCode").toString(); //组织机构 （code）
 		String level = request.getParameter("level") == null ? "" : request.getParameter("level").toString(); // 组织机构 （ID）
 		String ids = request.getParameter("selectList") == null ? "" : request.getParameter("selectList").toString(); // 组织机构 （ID）
 		String dataShow = request.getParameter("dataShow" ) == null ? "" : request.getParameter("dataShow").toString(); //显示数据
+		String bpShow = request.getParameter("bpShow" ) == null ? "" : request.getParameter("bpShow").toString(); //项目计入项目前期
+
 		 /**
 		  * 验证
 		  * **/	
@@ -316,7 +319,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		 if(status.equals("0")){
 			 //List<Map<String, Object>> neworganTreelist=findFordept(organTreelist,level,pdeptid,deptid);
 			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
-			 datalist=selectForHouseManager(organTreelist, type,beginData,endData);
+			 datalist=selectForHouseManager(organTreelist, type,beginData,endData,bpShow);
 		 }else if(status.equals("1")){
 			 //List<Map<String, Object>> neworganTreelist=findForlab(organTreelist,level,pdeptid,deptid );
 			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
@@ -550,7 +553,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 	
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> selectForHouseManager(List<Map<String, Object>> organTreelist, String type,
-			String startDate, String endDate) {
+			String startDate, String endDate,String bpShow) {
 		
 		Map<String,Object> dataMap = new HashMap<>(); 
 		for (Map<String, Object> organTree : organTreelist) {

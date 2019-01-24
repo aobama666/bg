@@ -1,7 +1,5 @@
 package sync;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +11,6 @@ import org.springframework.context.ApplicationContext;
 import com.sgcc.bg.job.HandleSyncJob;
 import com.sgcc.bg.mapper.BgWorkinghourInfoMapper;
 import com.sgcc.bg.service.HandleSyncService;
-import com.sgcc.bg.service.SyncService;
 
 import ch.qos.logback.classic.Logger;
 import config.TestConfig;
