@@ -16,6 +16,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.codehaus.janino.IClass.IField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,7 @@ import com.sgcc.bg.mapper.BgWorkinghourInfoMapper;
 import com.sgcc.bg.service.OrganStuffTreeService;
 import com.sgcc.bg.workinghourinfo.Utils.DataBean;
 import com.sgcc.bg.workinghourinfo.Utils.DataUtil1;
+import com.sgcc.bg.workinghourinfo.Utils.ExcelUtils;
 import com.sgcc.bg.workinghourinfo.service.organWorkingTimeService;
 
 @Service
@@ -610,8 +612,6 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				double noRelBPSum = sumWorkingHour(noRelatedBPList);
 				double relBPSum = sumWorkingHour(relatedBPList);
 				double totalSum = proSum+noProSum+noRelBPSum+relBPSum;
-				
-				
 				
 				if("1".equals(bpShow)){
 					proSum += relBPSum;
@@ -1234,38 +1234,88 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 //			dataLists = datalistA;
 //		}
 		
-		Map<String,String> titleMap=(Map<String, String>) dataMap.get("titleMap");
-		int len = 5;
-		int size = titleMap.size();
-		Object[][] title = new Object[len+size][2];
-		title[0]=new Object[]{"统计周期","StartAndEndData"};
-		title[1]=new Object[]{"部门","deptname"};
-		title[2]=new Object[]{"处室","labname"};
-		title[3]=new Object[]{"人员编号","HRCODE"};
-		title[4]=new Object[]{"人员姓名","USERALIAS"};
+		Map<String,Map<String,String>> titleMap = (Map<String, Map<String, String>>) dataMap.get("titleMap");
+//		int len = 5;
+//		int size = titleMap.size();
+//		Object[][] title = new Object[len+size][2];
+//		title[0]=new Object[]{"统计周期","StartAndEndData"};
+//		title[1]=new Object[]{"部门（单位）","deptname"};
+//		title[2]=new Object[]{"处室","labname"};
+//		title[3]=new Object[]{"人员编号","HRCODE"};
+//		title[4]=new Object[]{"人员姓名","USERALIAS"};
+//		
+//		for (Entry<String, Map<String,String>> entry : titleMap.entrySet()) {
+//			title[len++]=new Object[]{entry.getValue(),entry.getKey()};
+//		}
+//		
+//		String excelName="投入工时详情-"+DateUtil.getDays();
+//		ExportExcelHelper.getExcel(response, excelName, title, dataLists, "normal");
+
+		//构建Excel表头
+		List<Map<String,String>>  headermaplist=new ArrayList<Map<String,String>>();
 		
-		for (Entry<String, String> entry : titleMap.entrySet()) {
-			title[len++]=new Object[]{entry.getValue(),entry.getKey()};
+		LinkedHashMap<String,String> headermap0 = new LinkedHashMap<>(); 
+		headermap0.put("Count", "序号"); 
+		headermap0.put("StartAndEndData", "统计周期");
+		headermap0.put("PDEPTNAME", "部门（单位）");
+		headermap0.put("DEPTNAME", "处室");
+		headermap0.put("HRCODE", "人员编号");
+		headermap0.put("USERALIAS", "人员姓名");
+		
+		LinkedHashMap<String,String> headermap1 = new LinkedHashMap<>(); 
+		headermap1.put("Count", "序号"); 
+		headermap1.put("StartAndEndData", "统计周期");
+		headermap1.put("PDEPTNAME", "部门（单位）");
+		headermap1.put("DEPTNAME", "处室");
+		headermap1.put("HRCODE", "人员编号");
+		headermap1.put("USERALIAS", "人员姓名");
+		headermaplist.add(headermap1);
+		
+		//设定要合并的单元格
+		List<int[]> mregeList = new ArrayList<>();
+		mregeList.add(new int[]{0,1,0,0});
+		mregeList.add(new int[]{0,1,1,1});
+		mregeList.add(new int[]{0,1,2,2});
+		mregeList.add(new int[]{0,1,3,3});
+		mregeList.add(new int[]{0,1,4,4});
+		mregeList.add(new int[]{0,1,5,5});
+		
+		int count0 = 5;//开始合并的列索引
+		Map<String, String> proTitleMap = titleMap.get("项目工作");
+		if(proTitleMap!=null && !proTitleMap.isEmpty()){
+			for (Entry<String, String>  proEntry: proTitleMap.entrySet()) {
+				String proNumber = proEntry.getKey();
+				String proName = proEntry.getValue();
+				if((count0++)==5){
+					headermap0.put(proNumber, "项目工作");
+				}else{
+					headermap0.put(proNumber, "");
+				}
+				headermap1.put(proNumber, proName);
+			}
+			mregeList.add(new int[]{0,0,6,count0});
 		}
-		String excelName="投入工时详情-"+DateUtil.getDays();
-		ExportExcelHelper.getExcel(response, excelName, title, dataLists, "normal");
 		
-		/*if (type.equals("1")) {
-			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门", "deptname" }, { "处室", "labname" },
-					{ "人员编号", "HRCODE" }, { "人员姓名", "USERALIAS" }, { "投入总工时(h)", "TotalHoursNum" } };
-			String excelName="投入总工时详情-"+DateUtil.getDays();
-			ExportExcelHelper.getExcel(response, excelName, title, dataLists, "normal");
-		} else if (type.equals("2")) {
-			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门", "deptname" }, { "处室", "labname" },
-					{ "人员编号", "HRCODE" }, { "人员姓名", "USERALIAS" }, { "项目投入工时(h)", "ProjectTotalHoursNum" } };
-			String excelName="项目投入工时详情-"+DateUtil.getDays();
-			ExportExcelHelper.getExcel(response, excelName, title, dataLists, "normal");
-		} else if (type.equals("3")) {
-			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门", "deptname" }, { "处室", "labname" },
-					{ "人员编号", "HRCODE" }, { "人员姓名", "USERALIAS" }, { "非项目投入工时(h)", "NoProjectTotalHoursNum" } };
-			String excelName="非项目投入工时详情-"+DateUtil.getDays();
-			ExportExcelHelper.getExcel(response, excelName, title, dataLists, "normal");
-		}*/
+		int count1 = count0;//开始合并的列索引
+		Map<String, String> noProTitleMap = titleMap.get("非项目工作");
+		if(noProTitleMap!=null && !noProTitleMap.isEmpty()){
+			for (Entry<String, String>  noProEntry: noProTitleMap.entrySet()) {
+				String proNumber = noProEntry.getKey();
+				String proName = noProEntry.getValue();
+				if((count1++) == count0){
+					headermap0.put(proNumber, "非项目工作");
+				}else{
+					headermap0.put(proNumber, "");
+				}
+				headermap1.put(proNumber, proName);
+			}
+			mregeList.add(new int[]{0,0,count0+1,count1});
+		}
+		
+		//获取Excel数据信息
+		HSSFWorkbook workbook = ExcelUtils.PaddingExcel(headermap0,dataLists,headermaplist,mregeList);
+		String fileName="个人工时统计";
+		ExportExcelHelper.getExcels(response,workbook,fileName);
 		return "";
 	}
     /**

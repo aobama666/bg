@@ -233,7 +233,8 @@ public class ExcelUtils {
 
 		return style;
 	}
-public static HSSFWorkbook PaddingExcel(LinkedHashMap<String,String> headermap,List<Map<String,Object>> rowlsit,List<Map<String,String>> headlsit){
+public static HSSFWorkbook PaddingExcel(
+		LinkedHashMap<String,String> headermap,List<Map<String,Object>> rowlsit,List<Map<String,String>> headlsit,List<int[]> mergeList){
 		
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet();
@@ -313,67 +314,75 @@ public static HSSFWorkbook PaddingExcel(LinkedHashMap<String,String> headermap,L
 				valueCell.setCellValue(value);
 			}
 		}
-		mergerow(sheet);
+		
+		if(mergeList!=null && mergeList.size()>0) mergerow(sheet,mergeList);
 		return workbook;
 	}
     /**
      * 合并的行和列
      * */
-    public static void   mergerow(HSSFSheet sheet){
-    	
-    	  
+    public static void   mergerow(HSSFSheet sheet, List<int[]> mergeList){
         //合并单元格
+    	for (int[] arr : mergeList) {
+    		CellRangeAddress region = new CellRangeAddress(//序号
+    				arr[0], // first row 
+    				arr[1], // last row
+    				arr[2], // first column
+    				arr[3] // last column
+            );
+    		
+    		sheet.addMergedRegion(region);
+		}
     	
-    	
-        CellRangeAddress region = new CellRangeAddress(//序号
-        		0, // first row 
-                1, // last row
-                0, // first column
-                0 // last column
-        );
-        CellRangeAddress region1 = new CellRangeAddress(//项目工作投入工时统计
-        		0, // first row
-                1, // last row
-                1, // first column
-                1 // last column
-        );
-        
-        CellRangeAddress region2 = new CellRangeAddress(//非项目工作投入工时统计
-        		0, // first row
-                1, // last row
-                2, // first column
-                2 // last column
-        );
-        CellRangeAddress region3 = new CellRangeAddress(//投入总工时（h）
-        		0, // first row
-                0, // last row
-                3, // first column
-                4 // last column
-        );
-        CellRangeAddress region4 = new CellRangeAddress(//
-        		0, // first row
-                0, // last row
-                5, // first column
-                7 // last column
-        );
-        /*CellRangeAddress region5 = new CellRangeAddress(//
-        		0, // first row
-                1, // last row
-                7, // first column
-                7 // last column
-        );
-        CellRangeAddress region6 = new CellRangeAddress(//工作饱和度
-        		0, // first row
-                1, // last row
-                8, // first column
-                8 // last column
-        );*/
-       
-        sheet.addMergedRegion(region);
-        sheet.addMergedRegion(region1); 
-        sheet.addMergedRegion(region2);
-        sheet.addMergedRegion(region3);
-        sheet.addMergedRegion(region4);
+//        CellRangeAddress region = new CellRangeAddress(//序号
+//        		0, // first row 
+//                1, // last row
+//                0, // first column
+//                0 // last column
+//        );
+//        CellRangeAddress region1 = new CellRangeAddress(//项目工作投入工时统计
+//        		0, // first row
+//                1, // last row
+//                1, // first column
+//                1 // last column
+//        );
+//        
+//        CellRangeAddress region2 = new CellRangeAddress(//非项目工作投入工时统计
+//        		0, // first row
+//                1, // last row
+//                2, // first column
+//                2 // last column
+//        );
+//        CellRangeAddress region3 = new CellRangeAddress(//投入总工时（h）
+//        		0, // first row
+//                0, // last row
+//                3, // first column
+//                4 // last column
+//        );
+//        CellRangeAddress region4 = new CellRangeAddress(//
+//        		0, // first row
+//                0, // last row
+//                5, // first column
+//                7 // last column
+//        );
+//        /*CellRangeAddress region5 = new CellRangeAddress(//
+//        		0, // first row
+//                1, // last row
+//                7, // first column
+//                7 // last column
+//        );
+//        CellRangeAddress region6 = new CellRangeAddress(//工作饱和度
+//        		0, // first row
+//                1, // last row
+//                8, // first column
+//                8 // last column
+//        );*/
+//       
+//        sheet.addMergedRegion(region);
+//        sheet.addMergedRegion(region1); 
+//        sheet.addMergedRegion(region2);
+//        sheet.addMergedRegion(region3);
+//        sheet.addMergedRegion(region4);
        /* sheet.addMergedRegion(region5);
         sheet.addMergedRegion(region6);*/
       
@@ -420,7 +429,7 @@ public static HSSFWorkbook PaddingExcel(LinkedHashMap<String,String> headermap,L
 		valuemap0.put("GZBHD", "ffffff");
 		valueList.add(valuemap0);
 		//获取Excel数据信息
-		HSSFWorkbook workbook = PaddingExcel(headermap0,valueList,headermaplist);
+		HSSFWorkbook workbook = PaddingExcel(headermap0,valueList,headermaplist,null);
 		workbook.write(new FileOutputStream("F:/table6.xls"));
     }
 }

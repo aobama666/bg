@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -206,8 +207,16 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 				map.put("ROW_ID", i+1);
 				datalists.add(map);
 			}
+			//设定要合并的单元格
+			List<int[]> mregeList = new ArrayList<>();
+			mregeList.add(new int[]{0,1,0,0});
+			mregeList.add(new int[]{0,1,1,1});
+			mregeList.add(new int[]{0,1,2,2});
+			mregeList.add(new int[]{0,0,3,4});
+			mregeList.add(new int[]{0,0,5,7});
+			
 			//获取Excel数据信息
-			HSSFWorkbook workbook = ExcelUtils.PaddingExcel(headermap0,datalists,headermaplist);
+			HSSFWorkbook workbook = ExcelUtils.PaddingExcel(headermap0,datalists,headermaplist,mregeList);
 			String fileName="个人工时统计";
 			ExportExcelHelper.getExcels(response,workbook,fileName);
 			return "";
