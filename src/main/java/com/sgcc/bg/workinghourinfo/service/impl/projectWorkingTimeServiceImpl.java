@@ -277,9 +277,9 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 							 //{ "WBS编号", "WBS_NUMBER" }, 
 							 { "项目名称","PROJECT_NAME"},
 							 { "统计周期", "StartAndEndData" },
-							 { "投入总工时(h)","WORKING_HOUR"},
+							 { "投入总工时(h)","WORKING_HOUR"}/*,
 							 { "项目工作投入工时(h)","PRO_HOUR"},
-							 { "项目前期投入工时(h)","BP_HOUR"}
+							 { "项目前期投入工时(h)","BP_HOUR"}*/
 							};
 					 String excelName="项目工时统计-"+DateUtil.getDays();
 					 ExportExcelHelper.getExcel(response, excelName, title, valueList, "normal");
@@ -292,8 +292,9 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 							 { "项目投入总工时(h)","StandartHoursNum"},
 							 { "人员编号","HRCODE"},
 							 { "人员姓名","USERALIAS"},
-							 { "员工项目投入工时(h)","PRO_HOUR"},
-							 { "员工项目前期投入工时(h)","BP_HOUR"}
+							 { "员工投入工时(h)","PRO_HOUR"}/*,
+							 { "员工项目投入工时(h)","PRO_HOUR"}
+							 { "员工项目前期投入工时(h)","BP_HOUR"}*/
 							};
 						String excelName="项目工时统计-"+DateUtil.getDays();
 					 ExportExcelHelper.getExcel(response, excelName, title, valueList, "normal");
