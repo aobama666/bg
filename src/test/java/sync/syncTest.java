@@ -69,8 +69,8 @@ public class syncTest {
 		List<Map<String,Object>> list = bgMapper.getWorkingHourInfoByDateAndType("epri_gukai", "2019-01-07", "2019-01-13", null, new String[]{"NP","CG","BP"});
 		System.out.println(list);
 		
-		List<Map<String,Object>> list1 = bgMapper.getBPByDateAndIsRelated("epri_gukai", "2019-01-07", "2019-01-13", "0");
-		System.out.println(list1);
+		//List<Map<String,Object>> list1 = bgMapper.getBPByDateAndIsRelated("epri_gukai", "2019-01-07", "2019-01-13", "0");
+		//System.out.println(list1);
 		
 		/*List<String> idList = new ArrayList<>();
 		for (Map<String, Object> map : list) {
@@ -79,10 +79,10 @@ public class syncTest {
 			}
 			idList
 		}*/
-		List<Map<String,Object>> list2 = bgMapper.getBPByWorkingHourInfo(list);
+		//List<Map<String,Object>> list2 = bgMapper.getBPByWorkingHourInfo(list);
 		
 		//String workHours = bgMapper.getWorkHoursById(list);
-		System.out.println(list2);
+		//System.out.println(list2);
 		
 	}
 }
