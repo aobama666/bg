@@ -114,10 +114,11 @@
 					<input name="userName" property="userName" >
 				</div>
 			</div>
+			<!-- 年前不上，把计前期取消 -->
 			<!-- <div class="form-group col-xs-4"  >
 				<label>数据显示：</label>
 				<div class="controls datashow">
-					<div class='showcheck'><input type="checkbox" name="bpShow" value="1" checked="checked"/></div>
+					<div class='showcheck'><input type="checkbox" name="bpShow" value="1" /></div>checked="checked" 
 					<div class="showText">项目计入项目前期</div>
 				</div>	    
 			</div> -->
@@ -220,7 +221,7 @@ function queryListPro(load){
 	            		}
             			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetails(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+0+'\' )">'+val+'</a>';
             		}	
-	            },
+	            }/* ,
 	            {title:'项目工作投入工时(h)', name:'PRO_HOUR', width:150, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.PRO_HOUR == 0){
@@ -332,7 +333,7 @@ function queryListPer(load){
 	            		}
             			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+1+'\' ,\''+item.HRCODE+'\',\''+item.WORKER+'\')">'+val+'</a>';
             		}	
-	            },
+	            }/* ,
 	            {title:'员工项目前期投入工时(h)', name:'BP_HOUR', width:150, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.BP_HOUR == 0){

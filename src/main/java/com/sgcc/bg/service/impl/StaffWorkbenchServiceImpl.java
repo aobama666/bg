@@ -154,23 +154,31 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 
 		while (calendar1.compareTo(calendar2)<=0) {
 			String dataStr=DateUtil.getFormatDateString(calendar1.getTime(),"yyyy-MM-dd");
-			for (int i = 0; i < ids.length; i++) {
-				String proId=ids[i];
-				//校验用户是否有指定项目的提报资格
-				int result=SWMapper.validateSelectedDateAndDeptId(proId,currentUsername,dataStr,currentDeptId);
-				if(result>0){
-					Map<String, String> proMap=SWMapper.getProInfoByProId(proId);//如果查询的proid相同，则返回上一个map
-					Map<String, String> dataMap=new HashMap<>();
-					dataMap.putAll(proMap);
-					//如果负责人为空或者本人即负责人
-					if(Rtext.isEmpty(proMap.get("HRCODE")) || (currentHrcode).equals(proMap.get("HRCODE"))){
-						dataMap.put("HRCODE",approverMap.get("hrcode"));
-						dataMap.put("PRINCIPAL",approverMap.get("name"));
+			
+			//过滤掉节假日
+			int dayType=SWMapper.getDayType(dataStr);
+			SWServiceLog.info(dataStr+" 类型： "+dayType);
+			
+			if(dayType==0){
+				for (int i = 0; i < ids.length; i++) {
+					String proId=ids[i];
+					//校验用户是否有指定项目的提报资格
+					int result=SWMapper.validateSelectedDateAndDeptId(proId,currentUsername,dataStr,currentDeptId);
+					if(result>0){
+						Map<String, String> proMap=SWMapper.getProInfoByProId(proId);//如果查询的proid相同，则返回上一个map
+						Map<String, String> dataMap=new HashMap<>();
+						dataMap.putAll(proMap);
+						//如果负责人为空或者本人即负责人
+						if(Rtext.isEmpty(proMap.get("HRCODE")) || (currentHrcode).equals(proMap.get("HRCODE"))){
+							dataMap.put("HRCODE",approverMap.get("hrcode"));
+							dataMap.put("PRINCIPAL",approverMap.get("name"));
+						}
+						dataMap.put("DATE",dataStr);
+						dataList.add(dataMap);
 					}
-					dataMap.put("DATE",dataStr);
-					dataList.add(dataMap);
 				}
 			}
+			
 			calendar1.add(Calendar.DATE, 1);// 把日期往后增加一天
 		}
 		Object[][] title = { 
@@ -578,6 +586,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		Set<String> proNumberSet = new HashSet<>();
 		while (calendar1.compareTo(calendar2)<=0) {
 			String dataStr=DateUtil.getFormatDateString(calendar1.getTime(),"yyyy-MM-dd");
+
 			//获取指定日期下可填报的项目信息
 			List<Map<String, String>> availableProjects = SWMapper.getProjectsByDate(dataStr, username, deptId , proName, proNumber);
 			

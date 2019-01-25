@@ -71,7 +71,7 @@ td span{
 		<h5>个人工时填报</h5>
 		<div class="button-box">
 			<button type="button" class="btn btn-primary btn-xs" name="kOne"
-				onclick="forAddProJob()">新增工作任务</button>
+				onclick="forAddProJob()">新增项目工作</button>
 			<button type="button" class="btn btn-primary btn-xs" name="kOne"
 				onclick="forAddNonProJob()">新增非项目工作</button>
 			<button type="button" class="btn btn-success btn-xs" name="kOne"
@@ -444,7 +444,7 @@ function forAddProJob(){
 	var height=$(window).height()*0.8;
 	layer.open({
 		type:2,
-		title:"工作任务选择框",
+		title:"项目工作选择框",
 		area:['730px', height+'px'],
 		scrollbar:true,
 		skin:'query-box',

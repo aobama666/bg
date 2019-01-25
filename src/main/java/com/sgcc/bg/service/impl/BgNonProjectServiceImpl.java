@@ -173,7 +173,7 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 			Map<String,String> dictMap=dict.getDictDataByPcode("nonproject");
 			
 			wbsCodeSet.addAll(list);
-			bgServiceLog.info("非项目信息excel表格最后一行： " + rows);
+			bgServiceLog.info("项目前期工作维护excel表格最后一行： " + rows);
 			/* 保存有效的Excel模版列数 */
 			String[] cellValue = new String[9];
 			for (int i = 1; i <=rows; i++) {// 从第2行开始是正式数据
@@ -202,46 +202,47 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 					// 对要导入的文件内容进行校验
 					// 非项目名称校验
 					if (cellValue[1] == null || "".equals(cellValue[1])) {
-						errorInfo.append("非项目名称不能为空！ ");
+						errorInfo.append("名称不能为空！ ");
 						errorNum.add(1);
-					} else if (cellValue[1].length() > 50) {
-						errorInfo.append("非项目名称不能超过50字！ ");
+					
+					}else if (cellValue[1].length() > 50) {
+						errorInfo.append("名称不能超过50字！ ");
 						errorNum.add(1);
 					}
 					// 非项目分类校验 必填
 					if (cellValue[2] == null || "".equals(cellValue[2])) {
-						errorInfo.append("非项目类型不能为空！ ");
+						errorInfo.append("类型不能为空！ ");
 						errorNum.add(2);
 					}else if(!dictMap.containsValue(cellValue[2])){
-						errorInfo.append("无此非项目类型！ ");
+						errorInfo.append("无此类型！ ");
 						errorNum.add(2);
 					}
 					// 非项目说明长度200以内
 					if (cellValue[3].length() > 200) {
-						errorInfo.append("非项目说明不能超过200字！ ");
+						errorInfo.append("说明不能超过200字！ ");
 						errorNum.add(3);
 					}
 					// 发布日期 必填;格式
 					if (cellValue[4] == null || "".equals(cellValue[4])) {
-						errorInfo.append("非项目开始日期不能为空！ ");
+						errorInfo.append("开始日期不能为空！ ");
 						errorNum.add(4);
 					} else if (!DateUtil.isValidDate(cellValue[4], "yyyy-MM-dd")) {
-						errorInfo.append("非项目开始日期填写有误！ ");
+						errorInfo.append("开始日期填写有误！ ");
 						errorNum.add(4);
 					}
 					// 发布日期 必填;格式
 					if (cellValue[5] == null || "".equals(cellValue[5])) {
-						errorInfo.append("非项目结束日期不能为空！ ");
+						errorInfo.append("结束日期不能为空！ ");
 						errorNum.add(5);
 					} else if (!DateUtil.isValidDate(cellValue[5], "yyyy-MM-dd")) {
-						errorInfo.append("非项目结束日期填写有误！ ");
+						errorInfo.append("结束日期填写有误！ ");
 						errorNum.add(5);
 					}
 					//如果日期均正确 ，则验证技术服务非项目是否跨年
 					if(!errorNum.contains(4) && !errorNum.contains(5)){ 
 						//验证日期是否符合先后逻辑顺序
 						if(DateUtil.fomatDate(cellValue[5]).getTime()<=DateUtil.fomatDate(cellValue[4]).getTime()){
-							errorInfo.append("非项目结束日期必须大于非项目开始日期！ ");
+							errorInfo.append("结束日期必须大于开始日期！ ");
 							errorNum.add(5);
 						}
 					}
@@ -327,15 +328,15 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 
 			// 返回错误数据
 			if (errorList.size() > 0) {
-				bgServiceLog.info("出错的非项目： " + errorList);
+				bgServiceLog.info("出错的项目前期工作维护： " + errorList);
 				// 生成错误信息文件
 				Object[][] title = { 
 						{ "序号\r\n（选填）", "sqnum","nowrap" }, 
-						{ "非项目名称\r\n（必填，50字以内）", "projectName","nowrap" }, 
-						{ "非项目类型\r\n（必填）", "category" ,"nowrap"},
-						{ "非项目说明\r\n（200字以内）","projectIntroduce"},
-						{ "非项目开始时间\r\n（必填，格式：YYYY-MM-DD）","startDate","nowrap"}, 
-						{ "非项目结束时间\r\n（必填，格式：YYYY-MM-DD）","endDate","nowrap"},
+						{ "名称\r\n（必填，50字以内）", "projectName","nowrap" }, 
+						{ "类型\r\n（必填）", "category" ,"nowrap"},
+						{ "说明\r\n（200字以内）","projectIntroduce"},
+						{ "开始时间\r\n（必填，格式：YYYY-MM-DD）","startDate","nowrap"}, 
+						{ "结束时间\r\n（必填，格式：YYYY-MM-DD）","endDate","nowrap"},
 						{ "组织信息\r\n（如不填则默认填报人处室）","organInfo","nowrap"}, 
 						{ "计划投入工时(h)\r\n(数字，8位数字）", "planHours","nowrap"},
 						{ "错误说明","errorInfo"}
@@ -345,7 +346,7 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
-			String[] object = {"Error:非项目信息导入失败，请重新导入！",""};
+			String[] object = {"Error:项目前期工作维护导入失败，请重新导入！",""};
 			return object;
 		} finally {
 			if (wb != null) {
@@ -368,7 +369,7 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 			pro.setProjectNumber(getBGNumber());
 			bgNonProjectMapper.addProInfo(pro);
 		}
-		String[] object = {"成功导入非项目信息"+proList.size()+"条，失败"+errorList.size()+"条",errorUUID};
+		String[] object = {"成功导入项目前期工作维护"+proList.size()+"条，失败"+errorList.size()+"条",errorUUID};
 		return object;
 	}
 	
@@ -733,17 +734,17 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 			dataList.set(i, map);
 		}
 		Object[][] title = { 
-							 { "非项目编号", "projectNumber","nowrap" },
-							 { "非项目类型", "category","nowrap" },
-							 { "非项目名称", "projectName","nowrap" }, 
-							 { "非项目说明","projectIntroduce"},
-							 { "非项目开始时间","startDate","nowrap"}, 
-							 { "非项目结束时间","endDate","nowrap"},
+							 { "编号", "projectNumber","nowrap" },
+							 { "类型", "category","nowrap" },
+							 { "名称", "projectName","nowrap" }, 
+							 { "说明","projectIntroduce"},
+							 { "开始时间","startDate","nowrap"}, 
+							 { "结束时间","endDate","nowrap"},
 							 { "计划投入工时(h)","planHours","nowrap"},
-							 { "非项目状态","projectStatus","nowrap"}
+							 { "状态","projectStatus","nowrap"}
 						 
 							};
-		ExportExcelHelper.getExcel(response, "报工管理-非项目信息维护-"+DateUtil.getDays(), title, dataList, "normal");
+		ExportExcelHelper.getExcel(response, "报工管理-项目前期工作维护-"+DateUtil.getDays(), title, dataList, "normal");
 		return "";
 	}
 

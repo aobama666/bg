@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>非项目信息维护</title>
+<title>项目前期工作维护</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css"
@@ -47,7 +47,7 @@ a{
 </head>
 <body>
 	<div class="page-header-sl">
-		<h5>非项目信息维护</h5>
+		<h5>项目前期工作维护</h5>
 		<div class="button-box">
 			<button type="button" class="btn btn-primary btn-xs"
 				style="display: none;" name="kOne" onclick="forAdd()">新增</button>
@@ -70,14 +70,14 @@ a{
 			<form name="queryBox" action=""
 				style="width: 100%; padding-left: 10px">
 				<div class="form-group col-xs-4">
-					<label>非项目名称：</label>
-					<div class="controls">
+					<label>名称</label>
+					<div class="noncontrols">
 						<input name="proName" property="proName">
 					</div>
 				</div>
 				<div class="form-group col-xs-4">
-					<label for="querySex">非项目状态：</label>
-					<div class="controls">
+					<label for="querySex">状态</label>
+					<div class="noncontrols">
 						<select name="proStatus" property="proStatus">
 							<option></option>
 							<c:forEach var ="dict" items="${dictMap}">
@@ -136,19 +136,19 @@ function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 				{title:'序列', name:'id', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'非项目编号', name:'projectNumber', width:110, sortable:false, align:'center',
+	            {title:'编号', name:'projectNumber', width:110, sortable:false, align:'center',
 					renderer:function(val,item,rowIndex){
             		return '<a href="###" title="'+val+'" onclick="forDetails(\''+item.id+'\')">'+val+'</a>';
                  	}
                 },   
 	   
-	            {title:'非项目类型', name:'category', width:100,sortable:false, align:'center'},
-	            {title:'非项目名称', name:'projectName',width:150, sortable:false, align:'left'}, 
-	            {title:'非项目说明', name:'projectIntroduce',width:150, sortable:false, align:'left'},
-	            {title:'非项目开始时间', name:'startDate', width:100, sortable:false, align:'center'},
-	            {title:'非项目结束时间', name:'endDate', width:100,sortable:false, align:'center'},
+	            {title:'类型', name:'category', width:100,sortable:false, align:'center'},
+	            {title:'名称', name:'projectName',width:150, sortable:false, align:'left'}, 
+	            {title:'说明', name:'projectIntroduce',width:150, sortable:false, align:'left'},
+	            {title:'开始时间', name:'startDate', width:100, sortable:false, align:'center'},
+	            {title:'结束时间', name:'endDate', width:100,sortable:false, align:'center'},
 	            {title:'计划投入工时(h)', name:'planHours', width:120, sortable:false, align:'center'},
-	            {title:'非项目状态', name:'projectStatus', width:90,sortable:false, align:'center',
+	            {title:' 状态', name:'projectStatus', width:90,sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		var dict=${dictJson};
 	            		return dict[val];
@@ -180,7 +180,7 @@ function queryList(load){
 	    		];
 	var mmGridHeight = $("body").parent().height() - 190;
 	mmg = $('#mmg').mmGrid({
-		cosEdit:"3,11",//声明需要编辑，取消点击选中的列
+		cosEdit:"4,13",//声明需要编辑，取消点击选中的列
 		indexCol: true,
 		indexColWidth: 40,
 		checkCol: true,
@@ -216,7 +216,7 @@ function forDetails(proId){
 	}
 	layer.open({
 		type:2,
-		title:"非项目信息-查看",
+		title:"项目前期工作维护-查看",
 		area:['865px', height+"px"],
 		//scrollbar:false,
 		skin:'query-box',
@@ -232,7 +232,7 @@ function forAdd(){
 	}
 	layer.open({
 		type:2,
-		title:"非项目信息-新增",
+		title:"项目前期工作维护-新增",
 		area:['620px', height+'px'],
 		//scrollbar:false,
 		skin:'query-box',
@@ -244,7 +244,7 @@ function forUpdate(){
 	var rows = mmg.selectedRows();
 	if(rows.length == 1){
 		if(rows[0].projectStatus=="3" || rows[0].projectStatus=="4"){
-			layer.msg("该非项目无法修改!");
+			layer.msg("该无法修改!");
 			return;
 		}
 		var proId = mmg.selectedRowsByName("id");
@@ -254,7 +254,7 @@ function forUpdate(){
 		}
 		layer.open({
 			type:2,
-			title:"非项目信息-修改",
+			title:"项目前期工作维护-修改",
 			area:['620px', height+'px'],
 			//scrollbar:false,
 		 	content:['<%=request.getContextPath()%>/nonproject/pro_update?proId='+proId]
@@ -275,7 +275,7 @@ function forDelete(){
 			}
 		}
 		if(forbiddenRows!=""){
-			layer.msg("第 "+forbiddenRows.substr(0,forbiddenRows.length-1)+" 行非项目无法删除！");
+			layer.msg("第 "+forbiddenRows.substr(0,forbiddenRows.length-1)+" 行无法删除！");
 			return;
 		}
 		layer.confirm('确认删除吗?', {icon: 7,title:'提示',shift:-1},function(index){
@@ -297,21 +297,7 @@ function forDelete(){
 }
 
 function changeStatus(text,operation,proId){
-	layer.confirm('确认'+text+'吗？', {icon: 7,title:'提示',shift:-1},
-			function(index){
-			layer.close(index);
-			var ran = Math.random()*100000000;
-			$.get("<%=request.getContextPath()%>/nonproject/changeStatus?operation="+operation+"&proId="+proId+"&ran="+ran,
-					function(data,status){
-						if(data.result=="done"){
-							queryList("reload");
-						}else{
-							layer.msg(data.result);
-						}
-					}
-			);
-	});
-	<%-- if(operation=="start" || operation=="pause"){
+	if(operation=="start" || operation=="pause"){
 		layer.confirm('确认'+text+'吗？', {icon: 7,title:'提示',shift:-1},
 			function(index){
 			layer.close(index);
@@ -327,7 +313,7 @@ function changeStatus(text,operation,proId){
 			);
 		});
 	}else if(operation=="finish" || operation=="discard"){
-		layer.confirm('非项目结束日期是否需要变动？', {icon: 7,title:'提示',shift:-1,btn: ['是', '否']},
+		layer.confirm('结束日期是否需要变动？', {icon: 7,title:'提示',shift:-1,btn: ['是', '否']},
 			function(index){
 				layer.close(index);
 				var height=$(window).height()*0.9;
@@ -336,7 +322,7 @@ function changeStatus(text,operation,proId){
 				}
 				layer.open({
 					type:2,
-					title:"非项目信息-修改",
+					title:"项目前期工作维护-修改",
 					area:['620px', height+'px'],
 		 			content:['<%=request.getContextPath()%>/nonproject/pro_update?proId='+proId]
 				});
@@ -355,7 +341,7 @@ function changeStatus(text,operation,proId){
 				);
 			}
 		);
-	} --%>
+	}
 }
 
 function forExport(){

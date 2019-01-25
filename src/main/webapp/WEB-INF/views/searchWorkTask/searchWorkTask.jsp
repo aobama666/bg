@@ -186,14 +186,14 @@ function queryList(load){
 }
 
 function forExport(){
-	var selectList = mmg.selectedRows();
-	var ids = "";
-	if(selectList.length>0){
+	var selectList = mmg.selectedRowsIndex();
+	var ids = selectList.toString();
+	/* if(selectList.length>0){
 		for(var i=0;i<selectList.length;i++){
 			ids += selectList[i].USERID+",";
 		}
 		ids = ids.slice(0,ids.length-1);
-	}
+	} */
 	$("input[name=selectList]").val(ids);
 	var ran = Math.random()*1000;
 	document.forms[0].method="post";
