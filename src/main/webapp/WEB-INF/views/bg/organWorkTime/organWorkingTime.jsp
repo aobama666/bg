@@ -280,7 +280,7 @@ $(".content").on("click",".forDetails",function(){
 	var EndData = $(this).attr("EndData");
 	var title = "";
 	if(type=='1'){
-		title = "投入工时";
+		title = "员工工时明细";
 	}else if(type=='2'){
 		title = "项目投入工时";
 	}else{
@@ -311,7 +311,7 @@ $(".content").on("click",".perForDetails",function(){
 	var username = $(this).attr("username");
 	var title = "";
 	if(type=='1'){
-		title = "投入工时";
+		title = "员工工时明细";
 	}else if(type=='2'){
 		title = "项目投入工时";
 	}else{
@@ -323,7 +323,9 @@ $(".content").on("click",".perForDetails",function(){
 		area:['80%','85%'],
 		scrollbar:false,
 		skin:'query-box',
-		content:["<%=request.getContextPath()%>/searchWorkTask/organPersonHourDetail?deptid="+deptid+"&labid="+labid+"&StartData="+StartData+"&EndData="+EndData+"&type="+type+"&username="+username+"&dataShow="+dataShow,'no']
+		content:["<%=request.getContextPath()%>/searchWorkTask/organPersonHourDetail?deptid="
+				+deptid+"&labid="+labid+"&StartData="+StartData+"&EndData="+EndData+"&type="
+				+type+"&username="+username+"&dataShow="+dataShow+"&bpShow="+bpShow,'no']
 	});
 })
 //初始化列表数据
@@ -399,6 +401,7 @@ function queryListPer(load){
 	            {title:'统计周期', name:'StartAndEndData', width:100, sortable:false, align:'center'},
 	            {title:'部门（单位）', name:'pdeptName', width:100, sortable:false, align:'left'},
 	            {title:'处室', name:'deptName', width:100, sortable:false, align:'left'},
+	            {title:'人员编号', name:'hrCode', width:100, sortable:false, align:'center'},
 	            {title:'人员姓名', name:'Useralias', width:100, sortable:false, align:'center'},
 	            {title:'投入工时(h)', name:'TotalHoursNum', width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
@@ -427,7 +430,7 @@ function queryListPer(load){
 	    		];
 	var mmGridHeight = $("body").parent().height() - 220;
 	mmg3 = $('#mmg3').mmGrid({
-		cosEdit:"7,8,9",//声明需要编辑，取消点击选中的列
+		cosEdit:"8,9,10",//声明需要编辑，取消点击选中的列
 		indexCol: true,
 		indexColWidth: 30,
 		checkCol: true,
