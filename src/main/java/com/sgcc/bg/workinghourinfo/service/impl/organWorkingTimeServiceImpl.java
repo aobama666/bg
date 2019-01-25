@@ -594,10 +594,10 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, Lablist, null , new String[]{"KY","HX","JS","QT"});
 				List<Map<String, Object>>  noProList = 
 						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, Lablist, null, new String[]{"NP","CG"});
-				List<Map<String,Object>> noRelatedBPList = 
-						bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, start, end, proList, false);
-				List<Map<String,Object>> relatedBPList = 
-						bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, start, end, proList, true);
+				List<Map<String,Object>> noRelatedBPList = null;
+						//bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, start, end, proList, false);
+				List<Map<String,Object>> relatedBPList = null;
+						//bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, start, end, proList, true);
 				
 				double proSum = sumWorkingHour(proList);
 				double noProSum = sumWorkingHour(noProList);
@@ -710,10 +710,10 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, labList, null , new String[]{"KY","HX","JS","QT"});
 				List<Map<String, Object>>  noProList = 
 						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, labList, null, new String[]{"NP","CG"});
-				List<Map<String,Object>> noRelatedBPList = 
-						bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,labList, start, end, proList, false);
-				List<Map<String,Object>> relatedBPList = 
-						bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,labList, start, end, proList, true);
+				List<Map<String,Object>> noRelatedBPList = null;
+						//bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,labList, start, end, proList, false);
+				List<Map<String,Object>> relatedBPList = null;
+						//bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,labList, start, end, proList, true);
 				
 				double proSum = sumWorkingHour(proList);
 				double noProSum = sumWorkingHour(noProList);
@@ -793,10 +793,10 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 					bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, null, username , new String[]{"KY","HX","JS","QT"});
 				List<Map<String, Object>>  noProList = 
 					bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, null, username, new String[]{"NP","CG"});
-				List<Map<String,Object>> noRelatedBPList = 
-					bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, start, end, proList, false);
-				List<Map<String,Object>> relatedBPList = 
-					bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, start, end, proList, true);
+				List<Map<String,Object>> noRelatedBPList = null;
+					//bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, start, end, proList, false);
+				List<Map<String,Object>> relatedBPList = null;
+					//bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, start, end, proList, true);
 				
 				double proSum = sumWorkingHour(proList);
 				double noProSum = sumWorkingHour(noProList);
@@ -1059,7 +1059,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		Map<String,Map<String,String>> titleMap = new LinkedHashMap<>();//存放将要被前台列出项目编号和名称
 		Map<String,String> proTitleMap = new LinkedHashMap<>();//存放将要被前台列出的项目编号
 		Map<String,String> noProTitleMap = new LinkedHashMap<>();//存放将要被前台列出的非项目编号
-		noProTitleMap.put("BP000", "项目前期");
+		//noProTitleMap.put("BP000", "项目前期");
 		noProTitleMap.put("NP000", "常规工作");
 		
 		if("1".equals(type)){
@@ -1313,7 +1313,8 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				}
 				headermap1.put(proNumber, proName);
 			}
-			mregeList.add(new int[]{0,0,6,count0});
+			
+			if(count0-5>1) mregeList.add(new int[]{0,0,6,count0});
 		}
 		
 		int count1 = count0;//开始合并的列索引
@@ -1329,7 +1330,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				}
 				headermap1.put(proNumber, proName);
 			}
-			mregeList.add(new int[]{0,0,count0+1,count1});
+			if(count1-count0>1) mregeList.add(new int[]{0,0,count0+1,count1});
 		}
 		
 		//获取Excel数据信息
@@ -1379,10 +1380,10 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 			bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, null, null, username , new String[]{"KY","HX","JS","QT"});
 		List<Map<String, Object>>  noProList = 
 			bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, null, null, username, new String[]{"NP","CG"});
-		List<Map<String,Object>> noRelatedBPList = 
-			bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, startDate, endDate, proList, false);
-		List<Map<String,Object>> relatedBPList = 
-			bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, startDate, endDate, proList, true);
+		List<Map<String,Object>> noRelatedBPList = new ArrayList<>();
+			//bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, startDate, endDate, proList, false);
+		List<Map<String,Object>> relatedBPList =  new ArrayList<>();
+			//bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, startDate, endDate, proList, true);
 		
 		if("1".equals(type)){
 			if("1".equals(bpShow)){
@@ -1576,6 +1577,8 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 	
 	private double sumWorkingHour(List<Map<String,Object>> list){
 		double sum = 0d;
+		if(list==null || list.size()==0)  return 0d;
+		
 		for (Map<String, Object> map : list) {
 			sum += Rtext.ToDouble(map.get("WORKING_HOUR"), 0d);
 		}

@@ -121,9 +121,9 @@
 	<div class="form-group col-xs-4"  >
 		<!-- <label>数据显示：</label> -->
 		<div class="controls datashow">
-			<div class='showcheck'><input type="checkbox" name="bpShow" value="1" checked="checked"/></div>
+			<!-- <div class='showcheck'><input type="checkbox" name="bpShow" value="1" checked="checked"/></div>
 			<div class="showText">项目计入项目前期</div>
-			<div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+			<div>&nbsp;&nbsp;&nbsp;&nbsp;</div> -->
 			<div class='showcheck'><input type="checkbox" name="dataShow" value="1"/></div>
 			<div class="showText">仅显示工时大于0的数据</div>
 		</div>	    
