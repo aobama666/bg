@@ -632,24 +632,8 @@
 	}
 	
 	
-	// 删除
-	/* function forDelete_stuff(){
-		var selectedRows = mmg.selectedRowsIndex();
-		if(selectedRows.length == 0){
-			layer.msg("请选择一条数据!");
-			return;
-		}
-		layer.confirm('确认删除吗?', {icon: 7,title:'提示',shift:-1},function(index){
-			layer.close(index);
-			var selectedRows=$("#mmg .selected");
-			selectedRows.hide();
-			sortIndex();
-			resize();
-		});
-	} */
- 	
-	function sortIndex(){
-		var rows=$("#mmg tr:visible");
+	function sortIndex(grid_name){
+		var rows=$("#"+grid_name+" tr:visible");
 		for(var i=0;i<rows.length;i++){
 			$(rows[i]).find(".mmg-index").text(i+1);
 		}

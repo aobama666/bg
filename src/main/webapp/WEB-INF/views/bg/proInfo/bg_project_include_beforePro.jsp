@@ -78,7 +78,11 @@ function forDeleteBeforePro(){
 		return;
 	}  
 	mmg_p.removeRow(index);
-	sortIndex();
+	var rows = $("#mmg_p tr:visible");
+	for(var i=0;i<rows.length;i++){
+		$(rows[i]).find(".mmg-index").text(i+1);
+	}
+	sortIndex("mmg_p");
 }
 
 function forSaveBeforePro(){
@@ -112,13 +116,6 @@ function forSaveBeforePro(){
 		}
 		//queryList("reload");
 	}); 
-}
-
-function sortIndex(){
-	var rows=$("#mmg_p tr:visible");
-	for(var i=0;i<rows.length;i++){
-		$(rows[i]).find(".mmg-index").text(i+1);
-	}
 }
 
 </script>

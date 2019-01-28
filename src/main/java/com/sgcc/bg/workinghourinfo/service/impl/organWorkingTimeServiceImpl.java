@@ -929,8 +929,9 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 			empList.addAll(workerList);
 			Set<String> set = new HashSet<>();
 			for (Map<String, Object> emp : empList) {
-				String username = (String) emp.get("USERNAME");
-				if(set.add(username)) resultList.add(emp);
+				String hrCode = (String) emp.get("HRCODE");
+				String deptCode = (String) emp.get("DEPTCODE");
+				if(set.add(hrCode+deptCode)) resultList.add(emp);
 			}
 			
 			/*if (list.isEmpty()) {

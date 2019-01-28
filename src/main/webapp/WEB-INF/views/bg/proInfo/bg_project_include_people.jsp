@@ -303,7 +303,7 @@ function forSave_stuff(){
 						//console.log("hrcode: "+hrcode+"/HRCODE: "+item.HRCODE);
 						if(hrcode==item.HRCODE){
 							$(this).show();
-							sortIndex();
+							sortIndex("mmg");
 						}
 					});
 					note+=item.NAME+"("+item.WORK_TIME+")、";
@@ -501,7 +501,7 @@ function forDelete_stuff(){
 	layer.confirm('确认删除吗?', {icon: 7,title:'提示',shift:-1},function(index){
 		layer.close(index);
 		selectedRows.hide();
-		sortIndex();
+		sortIndex("mmg");
 		resize();
 	});
 }
@@ -519,7 +519,7 @@ function popEvent(){
 	}
 	var rows=$("#mmg tr");
 	rows.each(function(i){
-		$(this).css("display","table-row");
+		//$(this).css("display","table-row");
 		$(this).find(".mmg-index").text(i+1);
 	});
 	var index=rows.length;

@@ -589,8 +589,8 @@
 	     <if test="!isRelated" >
 			 AND T.RELATED_PROJECT_ID IS NULL
 	     </if>
-	     <if test="isRelated and relProId != null and relProId != ''" >
-			 AND T.RELATED_PROJECT_ID = #{relProId}
+	     <if test="isRelated" >
+			 AND T.RELATED_PROJECT_ID = #{relProId,jdbcType=VARCHAR}
 	     </if>
 	   	 <if test="proName != null and proName != ''" >
 			 AND T.PROJECT_NAME LIKE '%'||#{proName}||'%'

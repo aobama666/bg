@@ -222,6 +222,13 @@
 		return date;
 	}
 	
+	function sortIndex(grid_name){
+		var rows=$("#"+grid_name+" tr:visible");
+		for(var i=0;i<rows.length;i++){
+			$(rows[i]).find(".mmg-index").text(i+1);
+		}
+	}
+	
 </script>
 
 </html>
