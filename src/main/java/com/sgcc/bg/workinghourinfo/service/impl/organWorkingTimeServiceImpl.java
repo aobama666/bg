@@ -790,9 +790,9 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				count++;
 				
 				List<Map<String, Object>>  proList = 
-					bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, null, username , new String[]{"KY","HX","JS","QT"});
+					bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, deptid, null, username , new String[]{"KY","HX","JS","QT"});
 				List<Map<String, Object>>  noProList = 
-					bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, null, username, new String[]{"NP","CG"});
+					bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, deptid, null, username, new String[]{"NP","CG"});
 				List<Map<String,Object>> noRelatedBPList = null;
 					//bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, start, end, proList, false);
 				List<Map<String,Object>> relatedBPList = null;
@@ -805,10 +805,10 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				double totalSum = proSum+noProSum+noRelBPSum+relBPSum;
 				
 				if("1".equals(bpShow)){
-				proSum += relBPSum;
-				noProSum += noRelBPSum;
+					proSum += relBPSum;
+					noProSum += noRelBPSum;
 				}else{
-				noProSum += (relBPSum+noRelBPSum);
+					noProSum += (relBPSum+noRelBPSum);
 				}
 				
 				Map<String, Object> resultMap = new HashMap<String, Object>();

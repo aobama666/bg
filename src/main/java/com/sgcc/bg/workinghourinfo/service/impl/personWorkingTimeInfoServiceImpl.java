@@ -1,6 +1,8 @@
 package com.sgcc.bg.workinghourinfo.service.impl;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -433,6 +435,14 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 					dataList.add(map);
 				}
 			}*/
+			 Collections.sort(dataList, new Comparator<Map<String, Object>>() {
+				@Override
+				public int compare(Map<String, Object> map1, Map<String, Object> map2) {
+					long time1 = DateUtil.fomatDate(Rtext.toString(map1.get("WORK_TIME"))).getTime();
+					long time2 = DateUtil.fomatDate(Rtext.toString(map2.get("WORK_TIME"))).getTime();
+					return (int) (time1-time2);
+				}
+			});
 			 
 			//从数据字典获取类型
 			Map<String,String> dictMap= dict.getDictDataByPcode("category100002");

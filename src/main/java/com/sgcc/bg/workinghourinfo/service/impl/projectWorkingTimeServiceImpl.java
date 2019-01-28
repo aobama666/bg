@@ -1,6 +1,8 @@
 package com.sgcc.bg.workinghourinfo.service.impl;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -274,7 +276,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 				 if("0".equals(status)){
 					 Object[][] title = { 
 							 { "项目编号", "PROJECT_NUMBER" },
-							 //{ "WBS编号", "WBS_NUMBER" }, 
+							 { "WBS编号", "WBS_NUMBER" }, 
 							 { "项目名称","PROJECT_NAME"},
 							 { "统计周期", "StartAndEndData" },
 							 { "投入总工时(h)","PRO_HOUR"}
@@ -287,13 +289,14 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 				 }else{
 					 Object[][] title = { 
 							 { "项目编号", "PROJECT_NUMBER" },
-							 //{ "WBS编号", "WBS_NUMBER" }, 
+							 { "WBS编号", "WBS_NUMBER" }, 
 							 { "项目名称","PROJECT_NAME"},
 							 { "统计周期", "StartAndEndData" },
 							 { "项目投入总工时(h)","StandartHoursNum"},
 							 { "人员编号","HRCODE"},
 							 { "人员姓名","USERALIAS"},
-							 { "员工投入工时(h)","PRO_HOUR"}
+							 { "员工投入工时(h)","PRO_HOUR"},
+							 { "角色","ROLE"}
 							/* { "员工项目投入工时(h)","PRO_HOUR"},
 							 { "员工项目前期投入工时(h)","BP_HOUR"}*/
 							};
@@ -523,10 +526,10 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 				 }
 			 }
 			 Object[][] title = { 
-//					 { "项目编号", "PROJECT_NUMBER" },
-//					 { "WBS编号", "WBS_NUMBER" }, 
-//					 { "项目名称","PROJECT_NAME"},
-//					 { "统计周期", "startToEnd" },
+					 { "项目编号", "PROJECT_NUMBER" },
+					 { "WBS编号", "WBS_NUMBER" }, 
+					 { "项目名称","PROJECT_NAME"},
+					 { "统计周期", "startToEnd" },
 					 { "人员编号","HRCODE"}, 
 					 { "人员姓名","USERALIAS"},
 					 { "投入总工时(h)","WORKING_HOUR"}
@@ -650,9 +653,9 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 			 
 			 Object[][] title = { 
 					 { "日期", "WORK_TIME" }, 
-					 //{ "项目编号","PROJECT_NUMBER"},
-					 //{ "WBS编号","WBS_NUMBER"},
-					 //{ "项目名称", "PROJECT_NAME" },
+					 { "项目编号","PROJECT_NUMBER"},
+					 { "WBS编号","WBS_NUMBER"},
+					 { "项目名称", "PROJECT_NAME" },
 					 { "工作内容","JOB_CONTENT"}, 
 					 { "投入工时（h）","WORKING_HOUR"}
 					};
@@ -685,6 +688,15 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 			}else if("2".equals(type)){//项目前期工时链接
 				if("1".equals(bpShow)) list.addAll(relatedBPList);
 			}
+			
+			Collections.sort(list, new Comparator<Map<String, Object>>() {
+				@Override
+				public int compare(Map<String, Object> map1, Map<String, Object> map2) {
+					long time1 = DateUtil.fomatDate(Rtext.toString(map1.get("WORK_TIME"))).getTime();
+					long time2 = DateUtil.fomatDate(Rtext.toString(map2.get("WORK_TIME"))).getTime();
+					return (int) (time1-time2);
+				}
+			});
 			
 			return list;
 		}

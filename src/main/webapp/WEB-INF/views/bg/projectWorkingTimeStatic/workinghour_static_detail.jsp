@@ -102,7 +102,7 @@ function forSearch(){
 function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
-	            /* {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
+	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'项目编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:'center'},
 	            {title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
 	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
@@ -110,7 +110,7 @@ function queryList(load){
 	            	renderer:function(val,item,rowIndex){
             			return startTime+"至"+endTime;
             		}	
-	            }, */
+	            },
 	            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},
 	            {title:'人员姓名', name:'USERALIAS', width:100, sortable:false, align:'center'},
 	            {title:'投入总工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'}
