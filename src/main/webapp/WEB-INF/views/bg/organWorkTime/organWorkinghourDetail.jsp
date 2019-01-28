@@ -142,9 +142,9 @@ function init(){
 					$.each(titleMap,function(category,titles){
 						var innerCols = [];
 						$.each(titles,function(i,n){
-							innerCols.push({title:n, name:i, width:100, sortable:false, align:'center'});
+							innerCols.push({title:n, name:i, width:120, sortable:false, align:'center'});
 						});
-						cols.push({title:category, width:200, sortable:false, align:'center' ,cols:innerCols});
+						cols.push({title:category, width:120, sortable:false, align:'center' ,cols:innerCols});
 					});
 					
 					if(data.items.length>0){

@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +23,9 @@ import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.common.PageHelper;
 import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.Rtext;
-import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.mapper.BgWorkinghourInfoMapper;
+import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.workinghourinfo.Utils.DataBean;
 import com.sgcc.bg.workinghourinfo.Utils.DataUtil1;
 import com.sgcc.bg.workinghourinfo.Utils.ExcelUtils;
@@ -43,8 +42,8 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 		 @Autowired 
 		 private  WebUtils webUtils;
 	     @Autowired
-		 UserUtils userUtils;
-		 
+	     private DataDictionaryService dict;
+	     
 		 /** 
 		* 分页查询 
  		* @param 
@@ -53,29 +52,29 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 		* */ 
 		 @Override 
 		 public String selectForPagebgWorkinghourInfo(HttpServletRequest request){
-		 log.info("[bgWorkinghourInfo]: 分页查询 " );
-		 CommonUser userInfo = webUtils.getCommonUser();
-		 String userName = userInfo.getUserName();
-		 int pageNum=Integer.parseInt(request.getParameter("page")); 
-		 int limit=Integer.parseInt(request.getParameter("limit")); 
-		
-		 //Page<?> page=PageHelper.startPage(pageNum,limit); 
-		 String startDate = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); //开始时间
-		 String endDate = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
-		 String type = request.getParameter("type" ) == null ? "" : request.getParameter("type").toString(); //类型
-		 String bpShow = request.getParameter("bpShow" ) == null ? "" : request.getParameter("bpShow").toString(); //项目计入项目前期
-		 
-		 List<Map<String,Object>> dataList = getValiableList(bpShow , userName, type, startDate, endDate);
-		 
-		 //long total=page.getTotal(); 
-		 PageHelper<Map<String, Object>> page = new PageHelper<Map<String, Object>>(dataList,pageNum-1,limit);
-
-		//List<Map<String,String>> dataList=(List<Map<String, String>>) page.getResult(); 
+			 log.info("[bgWorkinghourInfo]: 分页查询 " );
+			 CommonUser userInfo = webUtils.getCommonUser();
+			 String userName = userInfo.getUserName();
+			 int pageNum=Integer.parseInt(request.getParameter("page")); 
+			 int limit=Integer.parseInt(request.getParameter("limit")); 
+			
+			 //Page<?> page=PageHelper.startPage(pageNum,limit); 
+			 String startDate = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); //开始时间
+			 String endDate = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
+			 String type = request.getParameter("type" ) == null ? "" : request.getParameter("type").toString(); //类型
+			 String bpShow = request.getParameter("bpShow" ) == null ? "" : request.getParameter("bpShow").toString(); //项目计入项目前期
+			 
+			 List<Map<String,Object>> dataList = getValiableList(bpShow , userName, type, startDate, endDate);
+			 
+			 //long total=page.getTotal(); 
+			 PageHelper<Map<String, Object>> page = new PageHelper<Map<String, Object>>(dataList,pageNum-1,limit);
+	
+			//List<Map<String,String>> dataList=(List<Map<String, String>>) page.getResult(); 
 			Map<String, Object> map = new HashMap<String, Object>();	
 		    map.put("items", page.getResult());
 			map.put("totalCount", page.getTotalNum());
 			String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
-			return jsonStr;
+			return jsonStr;	
 		  }
 		 
 		@Override
@@ -185,8 +184,8 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 			headermap1.put("StandartHoursNumBF", "");*/
 			headermaplist.add(headermap1);
 			
-			List<Map<String, Object>> valueList=Statistics(userName, type, bpShow, beginData, endData);
-			List<Map<String, Object>> datalist=new  ArrayList<Map<String, Object>>();
+			List<Map<String, Object>> valueList = Statistics(userName, type, bpShow, beginData, endData);
+			List<Map<String, Object>> datalist = new  ArrayList<Map<String, Object>>();
 			if(id==""){
 				datalist=valueList;
 			} else{
@@ -249,8 +248,8 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 				 //double totalHours = Rtext.ToDouble(bgworkinghourinfoMapper.selectForStartAndEnd(userName,"",startDate,endDate), 0d);//投入总工时
 				 double CGHours  = Rtext.ToDouble(bgworkinghourinfoMapper.selectForStartAndEnd(userName,"CG",startDate,endDate), 0d);//常规项目投入工时
 				 double NPHours  = Rtext.ToDouble(bgworkinghourinfoMapper.selectForStartAndEnd(userName,"NP",startDate,endDate), 0d);//非项目投入工时
-				 List<Map<String,Object>> allListWithoutBP = bgworkinghourinfoMapper.getWorkingHourInfoByDateAndType(userName, startDate, endDate, null, new String[]{"BP"});
-				 List<Map<String,Object>> proList = bgworkinghourinfoMapper.getWorkingHourInfoByDateAndType(userName, startDate, endDate, null, new String[]{"NP","CG","BP"});
+				 List<Map<String,Object>> allListWithoutBP = bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, null, null, userName , new String[]{"KY","HX","JS","QT","NP"});
+				 List<Map<String,Object>> proList = bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, null, null, userName , new String[]{"KY","HX","JS","QT"});
 				 /*List<Map<String,Object>> relatedBPList = bgworkinghourinfoMapper.getBPByWorkingHourInfo(userName, startDate, endDate, proList);
 				 List<Map<String,Object>> noRelatedBPList = bgworkinghourinfoMapper.getBPByDateAndIsRelated(userName, startDate, endDate, "0");
 				 List<Map<String,Object>> allBPList = bgworkinghourinfoMapper.getBPByDateAndIsRelated(userName, startDate, endDate, null);*/
@@ -394,13 +393,13 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 		public  List<Map<String, Object>> getValiableList(String bpShow,String userName,String type,String startDate,String endDate){
 			 List<Map<String,Object>> dataList = new ArrayList<>();
 			
-			 List<Map<String,Object>> proList = bgworkinghourinfoMapper.getWorkingHourInfoByDateAndType(userName, startDate, endDate, null, new String[]{"NP","CG","BP"});
+			 List<Map<String,Object>> proList = bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, null, null, userName , new String[]{"KY","HX","JS","QT"});
 			 List<Map<String,Object>> relatedBPList = bgworkinghourinfoMapper.getBPByDateAndIsRelated(userName, null, startDate, endDate, proList, true);
 			 List<Map<String,Object>> noRelatedBPList = bgworkinghourinfoMapper.getBPByDateAndIsRelated(userName, null, startDate, endDate, proList, false);
 			 
 			 if(type.equals("0")){
 				 //bgworkinghourinfoMapper.selectForTime("",userName,"",beginData,endData);  
-				 dataList = bgworkinghourinfoMapper.getWorkingHourInfoByDateAndType(userName, startDate, endDate, null, new String[]{"BP"});
+				 dataList = bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, null, null, userName , new String[]{"KY","HX","JS","QT","NP"});
 				 dataList.addAll(relatedBPList);
 			     dataList.addAll(noRelatedBPList);
 				 /*if("1".equals(bpShow)){
@@ -424,7 +423,7 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 		    	 }
 		    	 //bgworkinghourinfoMapper.selectForTime("",userName,"BP",beginData,endData);  
 		     }else if(type.equals("3")){
-		    	 dataList = bgworkinghourinfoMapper.getWorkingHourInfoByDateAndType(userName, startDate, endDate, new String[]{"NP","CG"}, null);
+				 dataList = bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, null, null, userName , new String[]{"QT","NP"});
 		     }
 			
 			/*if(dataList.size()>0){
@@ -434,6 +433,10 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 					dataList.add(map);
 				}
 			}*/
+			 
+			//从数据字典获取类型
+			Map<String,String> dictMap= dict.getDictDataByPcode("category100002");
+			for (Map<String, Object> map : dataList) map.put("CATEGORY", dictMap.get((String) map.get("CATEGORY")));
 		    
 			return dataList;
 		}
