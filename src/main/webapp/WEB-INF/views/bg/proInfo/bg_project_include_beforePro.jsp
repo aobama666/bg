@@ -77,12 +77,30 @@ function forDeleteBeforePro(){
 		layer.msg("请至少选择一条数据！");
 		return;
 	}  
-	mmg_p.removeRow(index);
-	var rows = $("#mmg_p tr:visible");
+	
+	var items = mmg_p.selectedRows();
+	var idsArr = [];
+	
+	$.each( items, function(i, item){
+		idsArr.push(item.id);
+	});
+	
+	var idsStr = idsArr.toString();
+	$.post('<%=request.getContextPath()%>/project/deleteBeforePro',{idsStr:idsStr},function(data){
+		if(data.success == "true"){
+			layer.msg("删除成功!");
+			mmg_p.load();
+			parent.queryList("reload");
+		}else{
+			layer.msg("删除失败!");
+		}
+	}); 
+	/* var rows = $("#mmg_p tr:visible");
 	for(var i=0;i<rows.length;i++){
 		$(rows[i]).find(".mmg-index").text(i+1);
 	}
 	sortIndex("mmg_p");
+	*/
 }
 
 function forSaveBeforePro(){

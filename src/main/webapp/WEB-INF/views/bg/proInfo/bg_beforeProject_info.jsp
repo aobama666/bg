@@ -120,7 +120,7 @@ function queryList(load){
 				return $(".query-box").sotoCollecter();
 			}
 		}).on('loadSuccess', function(e, data){
-			$(".checkAll").css("display","none").parent().text("选择");
+			$(".checkAll").css("display","none").parent().text("选择");			
 		});
 	if(load == "reload"){
 		mmg.load();
@@ -128,7 +128,7 @@ function queryList(load){
 
 }
 
-// 删除
+// 确定
 function forCommit(){
 	var items = mmg.selectedRows();
 	if(items.length==0){
@@ -137,7 +137,7 @@ function forCommit(){
 	} 
 	//新增项目信息页面
 	var iframes = parent.document.getElementsByTagName("iframe");
-	var mmg_p = iframes[0].contentWindow.mmg_p;//iframe为定新增项目信息页面
+	var mmg_p = iframes[0].contentWindow.mmg_p;//iframe为项目前期信息页面
 	for (var int = 0; int < items.length; int++) {
 		var item = items[int];
 		mmg_p.addRow(item);

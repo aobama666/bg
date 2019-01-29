@@ -425,7 +425,7 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 		    	 }
 		    	 //bgworkinghourinfoMapper.selectForTime("",userName,"BP",beginData,endData);  
 		     }else if(type.equals("3")){
-				 dataList = bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, null, null, userName , new String[]{"QT","NP"});
+				 dataList = bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, null, null, userName , new String[]{"NP"});
 		     }
 			
 			/*if(dataList.size()>0){

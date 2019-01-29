@@ -1110,20 +1110,6 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		dataList = sumWorkingHourByHrCodeAndDeptCode(dataList,proTitleMap.keySet());
 		
 		//设置默认值
-		for (String proNumber : proTitleMap.keySet()) {
-			for (Map<String, Object> userMap : dataList) {
-				if(!userMap.containsKey(proNumber)){
-					int d=bgworkinghourinfoMapper.validateAuthority(proNumber,String.valueOf(userMap.get("hrcode")));
-					if(d==0 && !"NP000".equals(proNumber)){
-						userMap.put(proNumber,"--");
-					}else{
-						userMap.put(proNumber,"0");
-					}
-				}
-			}
-		}
-		
-		//设置默认值
 		Set<String> set = new HashSet<>();
 		set.addAll(proTitleMap.keySet());
 		set.addAll(noProTitleMap.keySet());
@@ -1131,8 +1117,8 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		for (String proNumber : set) {
 			for (Map<String, Object> userMap : dataList) {
 				if(!userMap.containsKey(proNumber)){
-					int d=bgworkinghourinfoMapper.validateAuthority(proNumber,String.valueOf(userMap.get("hrcode")));
-					if(d==0 && !"NP000".equals(proNumber)){
+					int d = bgworkinghourinfoMapper.validateAuthority(proNumber,String.valueOf(userMap.get("HRCODE")));
+					if(d==0 && !"NP000".equals(proNumber) && !"BP000".equals(proNumber)){
 						userMap.put(proNumber,"--");
 					}else{
 						userMap.put(proNumber,"0");

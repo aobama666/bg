@@ -534,19 +534,6 @@
 		});
 	} --%>
 	
-	function checkNumberic(planHours){
-		var result = {};
-		var reg=/^(0(\.\d)?|[1-9]+\d*(\.\d)?)$/;
-		if($.trim(planHours)!="" && !reg.test(planHours)){
-			result.result = false;
-			result.info = "必须为正数；";
-		}else{
-			result.result = true;
-			result.info = "";
-		}
-		return result;
-	}
-	
 	/* function arrRepeat(arr){
 		var arrStr = JSON.stringify(arr);
 		for (var i = 0; i < arr.length; i++) {

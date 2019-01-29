@@ -573,5 +573,14 @@ public class BgController {
 		return jsonStr;
 	}
 	
+	/**
+	 * 删除关联的项目前期
+	 * @return
+	 */
+	@RequestMapping(value="/deleteBeforePro",method = RequestMethod.POST)
+	@ResponseBody
+	public String deleteBeforePro(String idsStr) {
+		return  bgService.deleteBeforePro(idsStr);
+	}
 	
 }

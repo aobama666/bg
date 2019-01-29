@@ -331,6 +331,19 @@ function roleChange(_this){
 	});
 }
 
+
+function checkNumberic(planHours){
+	var result = {};
+	var reg=/^(0(\.\d+)?|[1-9]+\d*(\.\d+)?)$/;
+	if($.trim(planHours)!="" && !reg.test(planHours)){
+		result.result = false;
+		result.info = "数字格式错误；";
+	}else{
+		result.result = true;
+		result.info = "";
+	}
+	return result;
+}
 <%-- function forSave_stuff(){
 	var ran = Math.random()*1000000;
 	var proId=$("#proId").val();

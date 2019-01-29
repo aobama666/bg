@@ -225,4 +225,11 @@ public interface IBGService {
 	 * @param src 项目来源系统   proUserId,srcProId,hrCode,src
 	 */
 	void addEmpRelation(String proUserId, String proId, String hrCode, String src);
+
+	/**
+	 * 删除关联的项目前期
+	 * @param idsStr 项目前期id
+	 * @return
+	 */
+	public String deleteBeforePro(String idsStr);
 }

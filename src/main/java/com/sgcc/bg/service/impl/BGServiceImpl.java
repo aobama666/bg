@@ -1262,6 +1262,7 @@ public class BGServiceImpl implements IBGService {
 	 * @param src
 	 * @param list
 	 */
+	@SuppressWarnings("unchecked")
 	private int saveEmpAfterProSaved(String proId,Date startDate,Date endDate,String src,List<HashMap> list){
 		//删除旧的项目下所有人员以及关联关系
 		deleteEmpAndRelation(proId);
@@ -1331,5 +1332,20 @@ public class BGServiceImpl implements IBGService {
 			String deptId = user.getDeptId();
 			return bgMapper.getBeforeProjects(deptId,proName,isRelated,relProId);
 		}
+	}
+
+	@Override
+	public String deleteBeforePro(String idsStr) {
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		if(Rtext.isEmpty(idsStr)){
+			jsonMap.put("success", "false");
+			return JSON.toJSONString(jsonMap);
+		}
+		
+		String[] idsArr = idsStr.split(",");
+		boolean res = bgMapper.deleteBeforeProById(idsArr);
+		
+		jsonMap.put("success", String.valueOf(res));
+		return JSON.toJSONString(jsonMap);
 	}
 }
