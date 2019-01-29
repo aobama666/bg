@@ -11,7 +11,7 @@ import com.sgcc.bg.model.Recode;
 
 @Repository
 public interface SearchWorkTaskMapper {
-	public List<Map<String,String>> search(@Param("startTime")String startTime,@Param("endTime")String endTime,@Param("type")String type,@Param("projectName")String projectName,@Param("hrCode")String hrCode);
+	public List<Map<String,String>> search(@Param("startTime")String startTime,@Param("endTime")String endTime,@Param("type")String type,@Param("projectName")String projectName,@Param("hrCode")String hrCode,@Param("deptId")String deptId);
 	
 	public List<Map<String,String>> searchExamine(@Param("startTime")String startTime,@Param("endTime")String endTime,@Param("projectName")String projectName,@Param("type")String type,@Param("userName")String userName,@Param("userCode")String userCode,@Param("hrCode")String hrCode);
 	

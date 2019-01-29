@@ -53,6 +53,31 @@ a{
 		</div>
 	</div>
 	<hr>
+	<div class="query-box">
+		<div class="query-box-left">
+			<form name="queryBox" action=""
+				style="width: 100%; padding-left: 10px">
+				<div class="form-group col-xs-6">
+					<label for="querySex">工作任务编号</label>
+					<div class="controls">
+						<input name="proNumber" property="proNumber">
+					</div>
+				</div>
+				<div class="form-group col-xs-6">
+					<label>工作任务名称</label>
+					<div class="controls">
+						<input name="proName" property="proName">
+					</div>
+				</div>
+				<input type="hidden" id="startDate" name="startDate">
+				<input type="hidden" id="endDate" name="endDate">
+			</form>
+		</div>
+		<div class="query-box-right">
+			<button type="button" class="btn btn-primary btn-xs"
+				onclick="forSearch()">查询</button>
+		</div>
+	</div>
 	<div>
 		<table id="mmg" class="mmg bg-white">
 			<tr>
@@ -68,19 +93,32 @@ var mmg;
 var iframes=parent.document.getElementsByTagName("iframe");
 var iframe=iframes[1].contentWindow;//iframe为定支模板页面
 var doc=$(iframe.document);
+var startDate = doc.find("#startDate").val();
+var endDate = doc.find("#endDate").val();
+var category = ${categoryJson};
 $(function(){
+	$('#startDate').val(startDate);
+	$('#endDate').val(endDate);
 	queryList();
 });
+
+function forSearch(){
+	queryList("reload");
+}
 
 // 初始化列表数据
 function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 				{title:'序列', name:'ID', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'项目名称', name:'PROJECT_NAME', width:150, sortable:false, align:'left'},
-	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center'},
-	            {title:'项目编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:'center'},
-	            {title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'}
+	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center',
+					renderer:function(val,item,rowIndex){
+	            		val=val==undefined?"":val;
+	            		return category[val];
+	            	}},
+	            {title:'工作任务编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:'center'},
+	            {title:'工作任务名称', name:'PROJECT_NAME', width:150, sortable:false, align:'left'}
+	            //{title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'}
 	    		];
 	var mmGridHeight = $("body").parent().height() - 80;
 	mmg = $('#mmg').mmGrid({
@@ -91,11 +129,13 @@ function queryList(load){
 		height: mmGridHeight,
 		cols: cols,
 		nowrap: true,
-		url: '<%=request.getContextPath()%>/staffWorkbench/getAllProjects?startDate='
-			+doc.find("#startDate").val()+'&endDate='+doc.find("#endDate").val()+'&ran='+ran,
+		url: '<%=request.getContextPath()%>/staffWorkbench/getAllProjects?ran='+ran,
 		fullWidthRows: true,
 		multiSelect: true,
-		root: 'items'
+		root: 'items',
+		params: function(){
+			return $(".query-box").sotoCollecter();
+			} 
 		}).on('loadSuccess', function(e, data){
 			$(".checkAll").css("display","none").parent().text("选择");
 			//默认选中行
@@ -110,6 +150,9 @@ function queryList(load){
 				}
 			});
 		});
+	if(load == "reload"){
+		mmg.load();
+	}
 }
 
 function forAdd(){

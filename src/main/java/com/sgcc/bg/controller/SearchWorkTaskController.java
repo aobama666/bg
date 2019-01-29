@@ -1,6 +1,7 @@
 package com.sgcc.bg.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
+import com.sgcc.bg.common.CommonCurrentUser;
 import com.sgcc.bg.common.CommonUser;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ExportExcelHelper;
@@ -53,7 +55,7 @@ public class SearchWorkTaskController {
 	@ResponseBody
 	@RequestMapping(value="/index")
 	public ModelAndView Index(HttpServletRequest res){
-		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category_show");
 		String statusJson=dict.getDictDataJsonStr("pstatus100001");
 		res.setAttribute("categoryMap", categoryMap);
 		res.setAttribute("statusJson", statusJson);
@@ -67,7 +69,7 @@ public class SearchWorkTaskController {
 	@ResponseBody
 	@RequestMapping(value="/examineIndex")
 	public ModelAndView examineIndex(HttpServletRequest res){
-		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category_show");
 		res.setAttribute("categoryMap", categoryMap);
 		ModelAndView model = new ModelAndView("searchWorkTask/examineWokingHour");
 		return model;
@@ -78,7 +80,7 @@ public class SearchWorkTaskController {
 	@ResponseBody
 	@RequestMapping(value="/examined")
 	public ModelAndView examined(HttpServletRequest res){
-		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category_show");
 		res.setAttribute("categoryMap", categoryMap);
 		String statusJson=dict.getDictDataJsonStr("cstatus100003");
 		res.setAttribute("statusJson", statusJson);
@@ -107,12 +109,12 @@ public class SearchWorkTaskController {
 	}
 	
 	/*
-	 *员工工时管理导入页面
+	 *个人工时管理导入页面
 	 */
 	@ResponseBody
 	@RequestMapping(value="/personWorkManage")
 	public ModelAndView personWorkManage(HttpServletRequest res){
-		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category_show");
 		Map<String,String> statusMap= dict.getDictDataByPcode("cstatus100003");
 		String statusJson=dict.getDictDataJsonStr("cstatus100003");
 		res.setAttribute("categoryMap", categoryMap);
@@ -215,9 +217,11 @@ public class SearchWorkTaskController {
 		CommonUser userInfo = webUtils.getCommonUser();
 		/* 获取人自编号 */
 		String hrCode = userInfo.getSapHrCode();
-		System.out.println("----hrCode-----"+hrCode);
+		CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByHrCode(hrCode);
+		String deptId = currentUser.getDeptId();
+		//System.out.println("----hrCode-----"+hrCode);
 		/* 根据人资编号和查询条件去查项目 */
-		String rw = searchWorkTaskService.search(page,limit,startTime,endTime,type,projectName,hrCode);
+		String rw = searchWorkTaskService.search(page,limit,startTime,endTime,type,projectName,hrCode,deptId);
 		return rw;
 	}
 	/*
@@ -254,21 +258,25 @@ public class SearchWorkTaskController {
 			String type = request.getParameter("type")==null?"":request.getParameter("type").trim();
 			String projectName = request.getParameter("projectName")==null?"":request.getParameter("projectName").trim();
 			String idsStr = request.getParameter("selectList")==null?"":request.getParameter("selectList").trim();
-			List<String>  list =new  ArrayList<String>();
+			List<String>  list = null;
 			if(idsStr!=""){
 				String [] strings=idsStr.split(",");
-				for(int i=0;i<strings.length;i++){
-					String num=strings[i];
-					list.add(num);
-				}	
+				list = new  ArrayList<String>(Arrays.asList(strings));
 			}
 			
 			CommonUser userInfo = webUtils.getCommonUser();
 			/* 获取人自编号 */
 			String hrCode = userInfo.getSapHrCode();
+			CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByHrCode(hrCode);
+			String deptId = currentUser.getDeptId();
 			//获取Excel数据信息
-			List<Map<String, Object>> valueList = new ArrayList<Map<String,Object>>();
-			valueList = searchWorkTaskService.queryOutDelegationExport(startTime,endTime,type,projectName,hrCode,list);	
+			List<Map<String, String>> valueList = new ArrayList<Map<String,String>>();
+			valueList = searchWorkTaskService.queryOutDelegationExport(startTime,endTime,type,projectName,hrCode,deptId,list);	
+			Map<String, String> dictMap = dict.getDictDataByPcode("pstatus100001");
+			for (Map<String, String> map : valueList) {
+				map.put("PROJECT_STATUS", dictMap.get(map.get("PROJECT_STATUS")));
+			}
+			
 			Object[][] title = { 
 					 { "项目类型", "CATEGORY" }, 
 					 { "项目编号","PROJECT_NUMBER"},
@@ -277,9 +285,11 @@ public class SearchWorkTaskController {
 					 { "项目开始时间","START_DATE"}, 
 					 { "项目结束时间","END_DATE"},
 					 { "项目负责人","PRINCIPAL"},
-					 { "项目状态","PROTYPE"}, 
+					 { "项目状态","PROJECT_STATUS"}, 
 					 { "本人参与开始时间","PERSONSTART"},
-					 { "本人参与结束时间","PERSONEND"} 
+					 { "本人参与结束时间","PERSONEND"},
+					 { "工作任务","TASK"},
+					 { "计划投入工时","PLANHOURS"} 
 					};
 			String time = dateUtils.getDays();
 			ExportExcelHelper.getExcel(response, "报工系统-工作任务查询-"+time, title, valueList, "normal");

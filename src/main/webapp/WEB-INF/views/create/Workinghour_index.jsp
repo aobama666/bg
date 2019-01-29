@@ -65,7 +65,7 @@
 		<form name="queryBox" action="" style="width:100%;padding-left:10px"  method="post">
 		<hidden name="uuid" property="uuid"></hidden>
 		<div class="form-group col-xs-3">
-			<label>统计报表</label>
+			<label>统计报表：</label>
 			<div class="controls"  data-date-format="yyyy-mm-dd">
 				<select name="type">
 				   
@@ -91,6 +91,13 @@
 					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 				</div>
 			</div>
+		</div>
+		<div class="form-group col-xs-4"  >
+			<!-- <label>数据显示：</label> -->
+			<div class="controls datashow">
+				<div class='showcheck'><input type="checkbox" name="bpShow" value="1" checked="checked"/></div>
+				<div class="showText">项目计入项目前期</div>
+			</div>	    
 		</div>
 		</form>
 	</div>
@@ -155,8 +162,8 @@ function queryList(load){
 	            		 return '<span  >' +val + '</span>';
 	            	 }
 	            }},
-	            {title:'项目工作投入工时统计',  width:200, sortable:false, align:'center' ,cols:[
-                 {title:'项目投入总工时（h）', name:'ProjectTotalHoursNum', width:200, sortable:false, align:'center',  renderer: function(val,row){
+	            {title:'项目',  width:200, sortable:false, align:'center' ,cols:[
+                 {title:'项目工作投入总工时（h）', name:'ProjectTotalHoursNum', width:200, sortable:false, align:'center',  renderer: function(val,row){
                 	 if(val>0){
 	            		 return '<span  Style="Color: #00b"  class="popup" startTime="'+row.StartData+'"  endTime="'+row.EndData+'" type="1">' +val + '</span>';
 	            	 }else{
@@ -165,16 +172,23 @@ function queryList(load){
 	            }},
                  {title:'工时占比（%）', name:'ProjectTotalHoursNumBF', width:200, sortable:false, align:'center'}
                  ]}, 
-                 {title:'非项目工作投入工时统计',   width:200, sortable:false, align:'center' ,cols:[
-                   {title:'非项目投入总工时（h）', name:'NoProjectTotalHoursNum', width:200, sortable:false, align:'center',  renderer: function(val,row){
+                 {title:'非项目',   width:200, sortable:false, align:'center' ,cols:[
+                   {title:'项目前期投入工时（h）', name:'BPHoursNum', width:200, sortable:false, align:'center',  renderer: function(val,row){
 	            	 if(val>0){
 	            		 return '<span   Style="Color: #00b" class="popup" startTime="'+row.StartData+'"  endTime="'+row.EndData+'" type="2">' +val + '</span>';
 	            	 }else{
 	            		 return '<span  >' +val + '</span>';
 	            	 }
 	             }},
+	             {title:'常规工作投入工时（h）', name:'NP_CGHoursNum', width:200, sortable:false, align:'center',  renderer: function(val,row){
+	            	 if(val>0){
+	            		 return '<span   Style="Color: #00b" class="popup" startTime="'+row.StartData+'"  endTime="'+row.EndData+'" type="3">' +val + '</span>';
+	            	 }else{
+	            		 return '<span  >' +val + '</span>';
+	            	 }
+	             }},
                    {title:'工时占比（%）', name:'NoProjectTotalHoursNumBF', width:200, sortable:false, align:'center' }
-                 ]}, 
+                 ]}/* , 
  	            {title:'标准工时', name:'StandartHoursNum', width:100, sortable:false, align:'center'},
  	            {title:'工作饱和度', name:'StandartHoursNumBF', width:100, sortable:false, align:'center' ,renderer: function(val,row){
  	            	 if(row.StandartHoursNumBJ>0){
@@ -182,7 +196,7 @@ function queryList(load){
  	            	 }else{
  	            		 return '<span   >' +val + '</span>';
  	            	 }
- 	            }}
+ 	            }} */
 	    		];
 	var mmGridHeight = $("body").parent().height() - 190;
 	mmg = $('#mmg').mmGrid({
@@ -229,24 +243,29 @@ function reject(){
 	
 }
 $("body").on("click",".popup",function(){
-	var type=$(this).attr("type");
-	var title="";
-	if(type==0){
-		title = "投入总工时统计详情";
-	}else if(type==1){
-		title = "项目投入总工时统计详情";
-	}else{
-		title = "非项目投入总工时统计详情";
-	}
+	var type = $(this).attr("type");
 	var startTime = $(this).attr("startTime");
 	var endTime = $(this).attr("endTime");
+	var bpShow = $('input[name="bpShow"]').prop("checked") ? "1":"0";
+	var title="查询日期："+startTime+"至"+endTime+"&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp查询类型：";
+	
+	if(type==0){
+		title += "投入总工时";
+	}else if(type==1){
+		title += "项目工作投入总工时";
+	}else if(type==2){
+		title += "项目前期投入工时";
+	}else{
+		title += "常规工作投入工时";
+	}
+	
 	index = layer.open({
 		type:2,
 		title:title,
 		area:['80%', '80%'],
 		resize:false,
 		scrollbar:false,
-		content:['/bg/BgWorkinghourInfo/Workinghour_detail?type='+type+"&startTime="+startTime+"&endTime="+endTime,'no'],
+		content:['/bg/BgWorkinghourInfo/Workinghour_detail?type='+type+"&startTime="+startTime+"&endTime="+endTime+"&bpShow="+bpShow,'no'],
 		end: function(){
 			//queryList("reload");
 		}

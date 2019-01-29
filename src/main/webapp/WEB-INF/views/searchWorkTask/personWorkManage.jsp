@@ -239,7 +239,7 @@ function queryList(load){
 				]
 		}).on('loadSuccess', function(e, data){
 		 
-			$(".checkAll").css("display","none").parent().text("选择");
+			//$(".checkAll").css("display","none").parent().text("选择");
 			
 			if(data.status==201){
 				layer.msg(data.res);

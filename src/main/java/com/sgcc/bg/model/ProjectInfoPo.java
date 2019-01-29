@@ -44,8 +44,32 @@ public class ProjectInfoPo implements Serializable {
 	private String updateUser;
 	// 最近一次修改时间
 	private Date updateDate;
+	//关联到的项目id，作为项目前期）
+	private String relatedProjectId;
+
 	//数据来源
 	private String src;
+	
+	/*ID
+	PROJECT_NAME
+	CATEGORY
+	WBS_NUMBER
+	PROJECT_NUMBER
+	PROJECT_INTRODUCE
+	ORGAN_INFO
+	START_DATE
+	END_DATE
+	PLAN_HOURS
+	PROJECT_STATUS
+	DECOMPOSE
+	STATUS
+	CREATE_DATE
+	CREATE_USER
+	UPDATE_USER
+	UPDATE_DATE
+	SRC
+	RELATED_PROJECT_ID*/
+
 	
 	public ProjectInfoPo() {
 		super();
@@ -187,6 +211,14 @@ public class ProjectInfoPo implements Serializable {
 		this.updateDate = updateDate;
 	}
 
+	public String getRelatedProjectId() {
+		return relatedProjectId;
+	}
+
+	public void setRelatedProjectId(String relatedProjectId) {
+		this.relatedProjectId = relatedProjectId;
+	}
+
 	public String getSrc() {
 		return src;
 	}
@@ -229,8 +261,7 @@ public class ProjectInfoPo implements Serializable {
 				+ projectIntroduce + ", decompose=" + decompose + ", status=" + status + ", projectStatus="
 				+ projectStatus + ", planHours=" + planHours + ", startDate=" + startDate + ", endDate=" + endDate
 				+ ", createUser=" + createUser + ", createDate=" + createDate + ", updateUser=" + updateUser
-				+ ", updateDate=" + updateDate + ", src=" + src + "]";
+				+ ", updateDate=" + updateDate + ", relatedProId=" + relatedProjectId + ", src=" + src + "]";
 	}
 
-	
 }

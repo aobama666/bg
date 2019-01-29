@@ -66,7 +66,7 @@ public class QuartzJob {
 	 * 
 	 * @return String
 	 */
-	private static String getLocalIP() {
+	 static String getLocalIP() {
 		String sIP = "";
 		InetAddress ip = null;
 		try {

@@ -71,13 +71,13 @@ a{
 			<form name="queryBox" action=""
 				style="width: 100%; padding-left: 10px">
 				<div class="form-group col-xs-4">
-					<label>项目名称</label>
+					<label>项目名称：</label>
 					<div class="controls">
 						<input name="proName" property="proName">
 					</div>
 				</div>
 				<div class="form-group col-xs-4">
-					<label for="querySex">项目状态</label>
+					<label for="querySex">项目状态：</label>
 					<div class="controls">
 						<select name="proStatus" property="proStatus">
 							<option></option>
@@ -151,6 +151,24 @@ function queryList(load){
 	            {title:'计划投入工时(h)', name:'planHours', width:120, sortable:false, align:'center'},
 	            {title:'项目负责人', name:'principal', width:90, sortable:false, align:'center'},
 	            {title:'参与人数', name:'amount', width:90,sortable:false, align:'center'},
+	            {title:'项目来源', name:'src', width:90,sortable:false, align:'center',
+	            	renderer:function(val,item,rowIndex){
+	            		val = $.trim(val);
+	            		if(val=='0' || val=='1'){
+	            			return '报工系统';
+	            		}else if(val=='2'){
+	            			return '科研系统';
+	            		}else if(val=='3'){
+	            			return '横向系统';
+	            		}
+	            		return "";
+	            	}
+	            },
+	            {title:'项目前期', name:'isRelated', width:90,sortable:false, align:'center',
+	            	renderer:function(val,item,rowIndex){
+	            		return val=='0'?'无':'有';
+	            	}
+	            },
 	            {title:'项目状态', name:'projectStatus', width:90,sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		var dict=${dictJson};
@@ -183,7 +201,7 @@ function queryList(load){
 	    		];
 	var mmGridHeight = $("body").parent().height() - 190;
 	mmg = $('#mmg').mmGrid({
-		cosEdit:"4,13",//声明需要编辑，取消点击选中的列
+		cosEdit:"5,16",//声明需要编辑，取消点击选中的列
 		indexCol: true,
 		indexColWidth: 40,
 		checkCol: true,
@@ -213,14 +231,14 @@ function queryList(load){
 
 //详细信息
 function forDetails(proId){
-	var height=$(window).height()*0.9;
+	/* var height=$(window).height()*0.9;
 	if(height>520){
 		height = 520;
-	}
+	} */
 	layer.open({
 		type:2,
 		title:"项目信息-查看",
-		area:['865px', height+"px"],
+		area:['865px', '80%'],
 		//scrollbar:false,
 		skin:'query-box',
 		content:['<%=request.getContextPath()%>/project/pro_details?proId='+proId]
@@ -229,14 +247,13 @@ function forDetails(proId){
 
 // 新增
 function forAdd(){
-	var height=$(window).height()*0.9;
-	if(height>560){
-		height = 560;
-	}
+	//var height=$(window).height()*0.9;
+	//height=height>570?570:height;
 	layer.open({
 		type:2,
 		title:"项目信息-新增",
-		area:['620px', height+'px'],
+		//area:['865px', height+'px'],
+		area:['865px', '85%'],
 		//scrollbar:false,
 		skin:'query-box',
 		content:['<%=request.getContextPath()%>/project/pro_add']
@@ -250,17 +267,18 @@ function forUpdate(){
 			layer.msg("该项目无法修改!");
 			return;
 		}
-		var proId = mmg.selectedRowsByName("id");
-		var height=$(window).height()*0.9;
+		var proId = $.trim(mmg.selectedRowsByName("id"));
+		var src = $.trim(mmg.selectedRowsByName("src"));
+		/* var height=$(window).height()*0.9;
 		if(height>560){
 			height = 560;
-		}
+		} */
 		layer.open({
 			type:2,
 			title:"项目信息-修改",
-			area:['620px', height+'px'],
+			area:['865px', '85%'],
 			//scrollbar:false,
-		 	content:['<%=request.getContextPath()%>/project/pro_update?proId='+proId]
+		 	content:['<%=request.getContextPath()%>/project/pro_update?proId='+proId+'&src='+src]
 		});
 	}else{
 		layer.msg("请选择一条数据!");
@@ -364,8 +382,8 @@ function forExport(){
 
 function forImport(){
 	var height=$(window).height()*0.8;
-	if(height>300){
-		height = 300;
+	if(height>320){
+		height = 320;
 	}
 	layer.open({
 		type:2,

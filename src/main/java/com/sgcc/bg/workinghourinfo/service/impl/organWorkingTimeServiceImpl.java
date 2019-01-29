@@ -1,9 +1,10 @@
 package com.sgcc.bg.workinghourinfo.service.impl;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,6 +17,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.sgcc.bg.common.CommonCurrentUser;
 import com.sgcc.bg.common.CommonUser;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ExportExcelHelper;
@@ -32,9 +33,11 @@ import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.mapper.BgWorkinghourInfoMapper;
+import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.OrganStuffTreeService;
 import com.sgcc.bg.workinghourinfo.Utils.DataBean;
 import com.sgcc.bg.workinghourinfo.Utils.DataUtil1;
+import com.sgcc.bg.workinghourinfo.Utils.ExcelUtils;
 import com.sgcc.bg.workinghourinfo.service.organWorkingTimeService;
 
 @Service
@@ -49,6 +52,8 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 	UserUtils userUtils;
 	@Autowired
 	private OrganStuffTreeService organStuffTreeService;
+	@Autowired
+	DataDictionaryService dict;
 	 
 	/**
 	 * 周期分割 
@@ -218,12 +223,13 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		 String useralias = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //人员
 		 String status = request.getParameter("Btype" ) == null ? "" : request.getParameter("Btype").toString(); //统计纬度 0部门1处室2员工
 		 String type = request.getParameter("Atype" ) == null ? "" : request.getParameter("Atype").toString(); //统计类型
-		 String pdeptid = request.getParameter("pdeptid" ) == null ? "" : request.getParameter("pdeptid").toString(); //组织机构 （父ID）
-		 String deptid = request.getParameter("deptid" ) == null ? "" : request.getParameter("deptid").toString(); //组织机构 （ID）
+//		 String pdeptid = request.getParameter("pdeptid" ) == null ? "" : request.getParameter("pdeptid").toString(); //组织机构 （父ID）
+//		 String deptid = request.getParameter("deptid" ) == null ? "" : request.getParameter("deptid").toString(); //组织机构 （ID）
 		 String deptCode = request.getParameter("deptCode" ) == null ? "" : request.getParameter("deptCode").toString(); //组织机构 （code）
 		 String level = request.getParameter("level" ) == null ? "" : request.getParameter("level").toString(); //组织机构 （ID）
 		 String dataShow = request.getParameter("dataShow" ) == null ? "" : request.getParameter("dataShow").toString(); //显示数据
-		  int pageNum=Integer.parseInt(request.getParameter("page")); 
+		 String bpShow = request.getParameter("bpShow" ) == null ? "" : request.getParameter("bpShow").toString(); //项目计入项目前期
+		 int pageNum=Integer.parseInt(request.getParameter("page")); 
 		 int limit=Integer.parseInt(request.getParameter("limit")); 
 		 /**
 		  * 验证
@@ -236,27 +242,12 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		 if(level==""){
 			 level="0";
 		 }
-		 //List<Map<String, Object>>  organTreelist= initOrganTree(userName);
-		
-		 //默认全院
-		 deptCode=Rtext.isEmpty(deptCode)?"41000001":deptCode;
-		 List<Map<String, Object>> datalist = null;
-		 List<Map<String, Object>>  organTreelist=new ArrayList<>();
-		 if(status.equals("0")){
-			 //List<Map<String, Object>> neworganTreelist=findFordept(organTreelist,level,pdeptid,deptid);
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
-			 datalist=selectForHouseManager(organTreelist, type,beginData,endData);
-		 }else if(status.equals("1")){
-			 //List<Map<String, Object>> neworganTreelist=findForlab(organTreelist,level,pdeptid,deptid );
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
-			 datalist=selectForLatManager(organTreelist,type,beginData,endData ); 
-		 }else if(status.equals("2")){
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
-			 List<Map<String, Object>> neworganTreelist=findForPersonnel(organTreelist , useralias);
-			 datalist=selectForPersonnelManager(neworganTreelist, type, beginData, endData);
-		 }
-		 datalist= dataShow(datalist,dataShow);
-	     Map<String, Object> resultMap = pageAndNum(datalist, pageNum, limit);
+
+		 List<Map<String, Object>> dataList = getDataOfOrganWorkTime(beginData,endData,status,deptCode,type,useralias,bpShow);
+		 
+		 dataList= dataShow(dataList,dataShow);
+		 
+	     Map<String, Object> resultMap = pageAndNum(dataList, pageNum, limit);
 		 String jsonStr = JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
 		 return jsonStr;
 	}
@@ -272,12 +263,14 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		String useralias = request.getParameter("userName") == null ? "" : request.getParameter("userName").toString(); // 人员
 		String status = request.getParameter("Btype") == null ? "" : request.getParameter("Btype").toString(); // 统计纬度// 0部门1处室2员工
 		String type = request.getParameter("Atype") == null ? "" : request.getParameter("Atype").toString(); // 统计类型
-		String pdeptid = request.getParameter("pdeptid") == null ? "" : request.getParameter("pdeptid").toString(); // 组织机构																										 
-		String deptid = request.getParameter("deptid") == null ? "" : request.getParameter("deptid").toString(); // 组织机构 （ID）
+//		String pdeptid = request.getParameter("pdeptid") == null ? "" : request.getParameter("pdeptid").toString(); // 组织机构																										 
+//		String deptid = request.getParameter("deptid") == null ? "" : request.getParameter("deptid").toString(); // 组织机构 （ID）
 		String deptCode = request.getParameter("deptCode" ) == null ? "" : request.getParameter("deptCode").toString(); //组织机构 （code）
 		String level = request.getParameter("level") == null ? "" : request.getParameter("level").toString(); // 组织机构 （ID）
 		String ids = request.getParameter("selectList") == null ? "" : request.getParameter("selectList").toString(); // 组织机构 （ID）
 		String dataShow = request.getParameter("dataShow" ) == null ? "" : request.getParameter("dataShow").toString(); //显示数据
+		String bpShow = request.getParameter("bpShow" ) == null ? "" : request.getParameter("bpShow").toString(); //项目计入项目前期
+
 		 /**
 		  * 验证
 		  * **/	
@@ -296,37 +289,10 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				list.add(num);
 			}
 		}
-/*		List<Map<String, Object>> organTreelist = initOrganTree(userName);
-		List<Map<String, Object>> datalist = null;
-		if (status.equals("0")) {
-			List<Map<String, Object>> neworganTreelist=findFordept(organTreelist,level,pdeptid,deptid);
-			 datalist=selectForHouseManager(neworganTreelist, type,beginData,endData,organTreelist);
-		} else if (status.equals("1")) {
-			List<Map<String, Object>> neworganTreelist = findForlab(organTreelist, level, pdeptid, deptid);
-			datalist = selectForLatManager(neworganTreelist, type, beginData, endData);
-		} else if (status.equals("2")) {
-			List<Map<String, Object>> neworganTreelist = findForPersonnel(organTreelist, level, pdeptid, deptid,
-					useralias);
-			datalist = selectForPersonnelManager(neworganTreelist, type, beginData, endData);
-		}*/
-		//默认全院
-		 deptCode=Rtext.isEmpty(deptCode)?"41000001":deptCode;
-		 List<Map<String, Object>> datalist = null;
-		 List<Map<String, Object>>  organTreelist=new ArrayList<>();
-		 if(status.equals("0")){
-			 //List<Map<String, Object>> neworganTreelist=findFordept(organTreelist,level,pdeptid,deptid);
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
-			 datalist=selectForHouseManager(organTreelist, type,beginData,endData);
-		 }else if(status.equals("1")){
-			 //List<Map<String, Object>> neworganTreelist=findForlab(organTreelist,level,pdeptid,deptid );
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
-			 datalist=selectForLatManager(organTreelist,type,beginData,endData ); 
-		 }else if(status.equals("2")){
-			 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
-			 List<Map<String, Object>> neworganTreelist=findForPersonnel(organTreelist , useralias);
-			 datalist=selectForPersonnelManager(neworganTreelist, type, beginData, endData);
-		 }
-		 datalist= dataShow(datalist,dataShow);
+		
+		List<Map<String, Object>> datalist = getDataOfOrganWorkTime(beginData,endData,status,deptCode,type,useralias,bpShow);
+		
+		datalist= dataShow(datalist,dataShow);
 		
 		if (list.size() > 0) {
 			List<Map<String, Object>> datalistA = new ArrayList<Map<String, Object>>();
@@ -343,25 +309,58 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		}
 	 
 		if (status.equals("0")) {
-			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门", "deptName" }, { "投入工时(h)", "TotalHoursNum" },
+			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门（单位）", "deptName" }, { "投入工时(h)", "TotalHoursNum" },
 					{ "项目投入工时(h)", "ProjectTotalHoursNum" }, { "非项目投入工时(h)", "NoProjectTotalHoursNum" }  };
 			 String excelName="组织工时详情（项目）-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, datalist, "normal");
 		} else if (status.equals("1")) {
-			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门", "parentName" }, { "处室", "deptName" },
+			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门（单位）", "parentName" }, { "处室", "deptName" },
 					{ "投入工时(h)", "TotalHoursNum" }, { "项目投入工时(h)", "ProjectTotalHoursNum" },
 					{ "非项目投入工时(h)", "NoProjectTotalHoursNum" }  };
 			 String excelName="组织工时详情（处室）-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, datalist, "normal");
 		} else if (status.equals("2")) {
-			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门", "pdeptName" }, { "处室", "deptName" },
-					{ "人员姓名", "Useralias" }, { "投入工时(h)", "TotalHoursNum" }, { "项目投入工时(h)", "ProjectTotalHoursNum" },
-					{ "非项目投入工时(h)", "NoProjectTotalHoursNum" }  };
+			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门（单位）", "pdeptName" }, { "处室", "deptName" },
+					{ "人员编号", "hrCode" },{ "人员姓名", "Useralias" }, { "投入工时(h)", "TotalHoursNum" }, 
+					{ "项目投入工时(h)", "ProjectTotalHoursNum" },{ "非项目投入工时(h)", "NoProjectTotalHoursNum" }  };
 			 String excelName="组织工时详情（人员）-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, datalist, "normal");
 		}
 
 		return "";
+	}
+	
+	/**
+	 * 获取组织工时统计的页面展示基本数据
+	 * @param startDate
+	 * @param endDate
+	 * @param status
+	 * @param deptCode
+	 * @param type
+	 * @param useralias
+	 * @param bpShow
+	 * @return
+	 */
+	private  List<Map<String, Object>> getDataOfOrganWorkTime(String startDate,String endDate,String status,String deptCode,String type,String useralias,String bpShow){
+		String userName =webUtils.getUsername();
+		//默认全院
+		 deptCode=Rtext.isEmpty(deptCode)?"41000001":deptCode;
+		 List<Map<String, Object>> datalist = null;
+		 List<Map<String, Object>>  organTreelist=new ArrayList<>();
+		 
+		 //获取权限组织（最末级的组织）
+		 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
+		 
+		 if(status.equals("0")){
+			 datalist=selectForHouseManager(organTreelist, type,startDate,endDate,bpShow);
+		 }else if(status.equals("1")){
+			 datalist=selectForLatManager(organTreelist,type,startDate,endDate,bpShow); 
+		 }else if(status.equals("2")){
+			 List<Map<String, Object>> neworganTreelist = findForPersonnel(organTreelist , useralias);
+			 datalist=selectForPersonnelManager(neworganTreelist, type, startDate, endDate,bpShow);
+		 }
+		 
+		 return datalist;
 	}
     
     /**
@@ -550,7 +549,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 	
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> selectForHouseManager(List<Map<String, Object>> organTreelist, String type,
-			String startDate, String endDate) {
+			String startDate, String endDate,String bpShow) {
 		
 		Map<String,Object> dataMap = new HashMap<>(); 
 		for (Map<String, Object> organTree : organTreelist) {
@@ -591,25 +590,28 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				count++;
 				String start = dataBean.getStartData();
 				String end = dataBean.getEndData();
-				Map<String, Object>  resultMap = bgworkinghourinfoMapper.selectForWorkingHour(start, end, "", "", Lablist, "");
-				/*String TotalHoursNum = bgworkinghourinfoMapper.selectForDepts(StartData, EndData, deptId, Lablist, "", "",
-						"");
-				if (TotalHoursNum == null) {
-					TotalHoursNum = "0";
+				List<Map<String, Object>>  proList = 
+						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, Lablist, null , new String[]{"KY","HX","JS","QT"});
+				List<Map<String, Object>>  noProList = 
+						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, Lablist, null, new String[]{"NP","CG"});
+				List<Map<String,Object>> noRelatedBPList = null;
+						//bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, start, end, proList, false);
+				List<Map<String,Object>> relatedBPList = null;
+						//bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, start, end, proList, true);
+				
+				double proSum = sumWorkingHour(proList);
+				double noProSum = sumWorkingHour(noProList);
+				double noRelBPSum = sumWorkingHour(noRelatedBPList);
+				double relBPSum = sumWorkingHour(relatedBPList);
+				double totalSum = proSum+noProSum+noRelBPSum+relBPSum;
+				
+				if("1".equals(bpShow)){
+					proSum += relBPSum;
+					noProSum += noRelBPSum;
+				}else{
+					noProSum += (relBPSum+noRelBPSum);
 				}
-				String NoProjectTotalHoursNum = bgworkinghourinfoMapper.selectForDepts(StartData, EndData, deptId, Lablist,
-						"", "NP", "");
-				if (NoProjectTotalHoursNum == null) {
-					NoProjectTotalHoursNum = "0";
-				}
-				String ProjectTotalHoursNum = bgworkinghourinfoMapper.selectForDepts(StartData, EndData, deptId, Lablist, "",
-						"", "NP");
-				if (ProjectTotalHoursNum == null) {
-					ProjectTotalHoursNum = "0";
-				}*/
-				BigDecimal ProjectTotalHoursNum = (BigDecimal) resultMap.get("PROHOUR");
-				BigDecimal NoProjectTotalHoursNum = (BigDecimal)resultMap.get("NPHOUR");
-				BigDecimal TotalHoursNum = ProjectTotalHoursNum.add(NoProjectTotalHoursNum);
+				
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("pdeptId", deptId + "");
 				map.put("deptId", "");
@@ -618,9 +620,9 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				map.put("EndData", end);
 				map.put("deptName", deptName);
 				map.put("StartAndEndData", start + "至" + end);
-				map.put("TotalHoursNum", TotalHoursNum.toString().replace(".0", ""));
-				map.put("NoProjectTotalHoursNum", NoProjectTotalHoursNum.toString().replace(".0", ""));
-				map.put("ProjectTotalHoursNum", ProjectTotalHoursNum.toString().replace(".0", ""));
+				map.put("TotalHoursNum", String.valueOf(totalSum).replace(".0", ""));
+				map.put("ProjectTotalHoursNum", String.valueOf(proSum).replace(".0", ""));
+				map.put("NoProjectTotalHoursNum", String.valueOf(noProSum).replace(".0", ""));
 				
 				maplist.add(map);
 	        }
@@ -680,22 +682,9 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 
 	}
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-  
-
 
 	public List<Map<String, Object>> selectForLatManager(List<Map<String, Object>> organTreelist, String type,
-			String beginData, String endData) {
+			String beginData, String endData,String bpShow) {
 		int count = 0;
 		String deptId;
 		String deptName;
@@ -710,41 +699,68 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 			pdeptName = (String) organTree.get("parentName");
 			for (DataBean dataBean : datalist) {
 				count++;
-				String StartData = dataBean.getStartData();
-				String EndData = dataBean.getEndData();
-				/*String TotalHoursNum = bgworkinghourinfoMapper.selectForDept(StartData, EndData, pdeptId, deptId, "",
-						"", "");
-				if (TotalHoursNum == null) {
-					TotalHoursNum = "0";
+				String start = dataBean.getStartData();
+				String end = dataBean.getEndData();
+
+				List<String> labList = new ArrayList<>();
+				labList.add(deptId);
+				
+				/////////////////////////////////////
+				List<Map<String, Object>>  proList = 
+						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, labList, null , new String[]{"KY","HX","JS","QT"});
+				List<Map<String, Object>>  noProList = 
+						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, labList, null, new String[]{"NP","CG"});
+				List<Map<String,Object>> noRelatedBPList = null;
+						//bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,labList, start, end, proList, false);
+				List<Map<String,Object>> relatedBPList = null;
+						//bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,labList, start, end, proList, true);
+				
+				double proSum = sumWorkingHour(proList);
+				double noProSum = sumWorkingHour(noProList);
+				double noRelBPSum = sumWorkingHour(noRelatedBPList);
+				double relBPSum = sumWorkingHour(relatedBPList);
+				double totalSum = proSum+noProSum+noRelBPSum+relBPSum;
+				
+				if("1".equals(bpShow)){
+					proSum += relBPSum;
+					noProSum += noRelBPSum;
+				}else{
+					noProSum += (relBPSum+noRelBPSum);
 				}
-				String NoProjectTotalHoursNum = bgworkinghourinfoMapper.selectForDept(StartData, EndData, pdeptId,
-						deptId, "", "NP", "");
-				if (NoProjectTotalHoursNum == null) {
-					NoProjectTotalHoursNum = "0";
-				}
-				String ProjectTotalHoursNum = bgworkinghourinfoMapper.selectForDept(StartData, EndData, pdeptId, deptId,
-						"", "", "NP");
-				if (ProjectTotalHoursNum == null) {
-					ProjectTotalHoursNum = "0";
-				}*/
-				Map<String, Object>  dataMap = bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, "", deptId, null, "");
-				BigDecimal ProjectTotalHoursNum = (BigDecimal) dataMap.get("PROHOUR");
-				BigDecimal NoProjectTotalHoursNum = (BigDecimal)dataMap.get("NPHOUR");
-				BigDecimal TotalHoursNum = ProjectTotalHoursNum.add(NoProjectTotalHoursNum);
-		 
+				
 				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("pdeptId", pdeptId + "");
-				map.put("deptId", deptId + "");
-				map.put("Count", count + "");		 
-				map.put("StartData", StartData);
-				map.put("EndData", EndData);
+				map.put("pdeptId", pdeptId);
+				map.put("deptId", deptId);
+				map.put("Count", count + "");
+				map.put("StartData", start);
+				map.put("EndData", end);
 				map.put("deptName", deptName);
 				map.put("parentName", pdeptName);
-				map.put("StartAndEndData", StartData + "至" + EndData);
-				map.put("TotalHoursNum", TotalHoursNum.toString().replace(".0", ""));
-				map.put("NoProjectTotalHoursNum", NoProjectTotalHoursNum.toString().replace(".0", ""));
-				map.put("ProjectTotalHoursNum", ProjectTotalHoursNum.toString().replace(".0", ""));
+				map.put("StartAndEndData", start + "至" + end);
+				map.put("TotalHoursNum", String.valueOf(totalSum).replace(".0", ""));
+				map.put("ProjectTotalHoursNum", String.valueOf(proSum).replace(".0", ""));
+				map.put("NoProjectTotalHoursNum", String.valueOf(noProSum).replace(".0", ""));
 				maplist.add(map);
+				//////////////////////////
+//				
+//				Map<String, Object>  dataMap = bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, "", deptId, null, "");
+//				BigDecimal ProjectTotalHoursNum = (BigDecimal) dataMap.get("PROHOUR");
+//				BigDecimal NoProjectTotalHoursNum = (BigDecimal)dataMap.get("NPHOUR");
+//				BigDecimal TotalHoursNum = ProjectTotalHoursNum.add(NoProjectTotalHoursNum);
+//		 
+//				Map<String, Object> map = new HashMap<String, Object>();
+//				map.put("pdeptId", pdeptId + "");
+//				map.put("deptId", deptId + "");
+//				map.put("Count", count + "");		 
+//				map.put("StartData", StartData);
+//				map.put("EndData", EndData);
+//				map.put("deptName", deptName);
+//				map.put("parentName", pdeptName);
+//				map.put("StartAndEndData", StartData + "至" + EndData);
+//				map.put("TotalHoursNum", TotalHoursNum.toString().replace(".0", ""));
+//				map.put("NoProjectTotalHoursNum", NoProjectTotalHoursNum.toString().replace(".0", ""));
+//				map.put("ProjectTotalHoursNum", ProjectTotalHoursNum.toString().replace(".0", ""));
+//				maplist.add(map);
 
 			}
 
@@ -754,60 +770,89 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 	}
 
 	public List<Map<String, Object>> selectForPersonnelManager(List<Map<String, Object>> organTreelist, String type,
-			String beginData, String endData) {
+			String beginData, String endData,String bpShow) {
 		int count = 0;
 
 		List<Map<String, Object>> maplist = new ArrayList<Map<String, Object>>();
 		List<DataBean> datalist = StatisticsForProjectName(type, beginData, endData);
 		 
-			for (Map<String, Object> organMap : organTreelist) {
-				String useralias = (String) organMap.get("USERALIAS");
-				String username = (String) organMap.get("USERNAME");
-				String deptname = (String) organMap.get("DEPTNAME");
-				String pdeptname = (String) organMap.get("PDEPTNAME");
-				String pdeptid = (String) organMap.get("PDEPTID");
-				String deptid = (String) organMap.get("DEPTID");
-				for (DataBean dataBean : datalist) {
-					String StartData = dataBean.getStartData();
-					String EndData = dataBean.getEndData();
-					count++;
-					/*String TotalHoursNum = bgworkinghourinfoMapper.selectForDept(StartData, EndData, pdeptid, deptid,
-							username, "", "");
-					if (TotalHoursNum == null) {
-						TotalHoursNum = "0";
-					}
-					String NoProjectTotalHoursNum = bgworkinghourinfoMapper.selectForDept(StartData, EndData, pdeptid,
-							deptid, username, "NP", "");
-					if (NoProjectTotalHoursNum == null) {
-						NoProjectTotalHoursNum = "0";
-					}
-					String ProjectTotalHoursNum = bgworkinghourinfoMapper.selectForDept(StartData, EndData, pdeptid, deptid,
-							username, "", "NP");
-					if (ProjectTotalHoursNum == null) {
-						ProjectTotalHoursNum = "0";
-					}*/
-					Map<String, Object>  dataMap = bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, "", deptid, null, username);
-					BigDecimal ProjectTotalHoursNum = (BigDecimal) dataMap.get("PROHOUR");
-					BigDecimal NoProjectTotalHoursNum = (BigDecimal)dataMap.get("NPHOUR");
-					BigDecimal TotalHoursNum = ProjectTotalHoursNum.add(NoProjectTotalHoursNum);
-					
-					Map<String, Object> resultMap = new HashMap<String, Object>();
-					resultMap.put("username", username + "");
-					resultMap.put("pdeptId", pdeptid + "");
-					resultMap.put("deptId", deptid + "");
-					resultMap.put("Count", count + "");
-					resultMap.put("Useralias", useralias);
-					resultMap.put("StartData", StartData);
-					resultMap.put("EndData", EndData);
-					resultMap.put("deptName", deptname);
-					resultMap.put("pdeptName", pdeptname);
-					resultMap.put("StartAndEndData", StartData + "至" + EndData);
-					resultMap.put("TotalHoursNum", TotalHoursNum.toString().replace(".0", ""));
-					resultMap.put("NoProjectTotalHoursNum", NoProjectTotalHoursNum.toString().replace(".0", ""));
-					resultMap.put("ProjectTotalHoursNum", ProjectTotalHoursNum.toString().replace(".0", ""));
-					maplist.add(resultMap);
+		for (Map<String, Object> organMap : organTreelist) {
+			String useralias = (String) organMap.get("USERALIAS");
+			String hrCode = (String) organMap.get("HRCODE");
+			String username = (String) organMap.get("USERNAME");
+			String deptname = (String) organMap.get("DEPTNAME");
+			String pdeptname = (String) organMap.get("PDEPTNAME");
+			String pdeptid = (String) organMap.get("PDEPTID");
+			String deptid = (String) organMap.get("DEPTID");
+			for (DataBean dataBean : datalist) {
+				String start = dataBean.getStartData();
+				String end = dataBean.getEndData();
+				count++;
+				
+				List<Map<String, Object>>  proList = 
+					bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, deptid, null, username , new String[]{"KY","HX","JS","QT"});
+				List<Map<String, Object>>  noProList = 
+					bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, deptid, null, username, new String[]{"NP","CG"});
+				List<Map<String,Object>> noRelatedBPList = null;
+					//bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, start, end, proList, false);
+				List<Map<String,Object>> relatedBPList = null;
+					//bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, start, end, proList, true);
+				
+				double proSum = sumWorkingHour(proList);
+				double noProSum = sumWorkingHour(noProList);
+				double noRelBPSum = sumWorkingHour(noRelatedBPList);
+				double relBPSum = sumWorkingHour(relatedBPList);
+				double totalSum = proSum+noProSum+noRelBPSum+relBPSum;
+				
+				if("1".equals(bpShow)){
+					proSum += relBPSum;
+					noProSum += noRelBPSum;
+				}else{
+					noProSum += (relBPSum+noRelBPSum);
 				}
+				
+				Map<String, Object> resultMap = new HashMap<String, Object>();
+				resultMap.put("username", username);
+				resultMap.put("hrCode", hrCode);
+				resultMap.put("pdeptId", pdeptid);
+				resultMap.put("deptId", deptid);
+				resultMap.put("Count", count+"");
+				resultMap.put("Useralias", useralias);
+				resultMap.put("StartData", start);
+				resultMap.put("EndData", end);
+				resultMap.put("deptName", deptname);
+				resultMap.put("pdeptName", pdeptname);
+				resultMap.put("StartAndEndData", start + "至" + end);
+				resultMap.put("TotalHoursNum", String.valueOf(totalSum).replace(".0", ""));
+				resultMap.put("ProjectTotalHoursNum", String.valueOf(proSum).replace(".0", ""));
+				resultMap.put("NoProjectTotalHoursNum", String.valueOf(noProSum).replace(".0", ""));
+				maplist.add(resultMap);
+				
+				
+				//////////////////////////////
+				
+//				Map<String, Object>  dataMap = null;//bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, "", deptid, null, username);
+//				BigDecimal ProjectTotalHoursNum = (BigDecimal) dataMap.get("PROHOUR");
+//				BigDecimal NoProjectTotalHoursNum = (BigDecimal)dataMap.get("NPHOUR");
+//				BigDecimal TotalHoursNum = ProjectTotalHoursNum.add(NoProjectTotalHoursNum);
+//				
+//				Map<String, Object> resultMap = new HashMap<String, Object>();
+//				resultMap.put("username", username + "");
+//				resultMap.put("pdeptId", pdeptid + "");
+//				resultMap.put("deptId", deptid + "");
+//				resultMap.put("Count", count + "");
+//				resultMap.put("Useralias", useralias);
+//				resultMap.put("StartData", StartData);
+//				resultMap.put("EndData", EndData);
+//				resultMap.put("deptName", deptname);
+//				resultMap.put("pdeptName", pdeptname);
+//				resultMap.put("StartAndEndData", StartData + "至" + EndData);
+//				resultMap.put("TotalHoursNum", TotalHoursNum.toString().replace(".0", ""));
+//				resultMap.put("NoProjectTotalHoursNum", NoProjectTotalHoursNum.toString().replace(".0", ""));
+//				resultMap.put("ProjectTotalHoursNum", ProjectTotalHoursNum.toString().replace(".0", ""));
+//				maplist.add(resultMap);
 			}
+		}
 			
 		return maplist;
 
@@ -880,13 +925,13 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 			//从报工表中获取该部门下已存在报工信息（已通过）的所有报工人员
 			List<Map<String, Object>> workerList = bgworkinghourinfoMapper.selectUserFromWorkHourInfo(deptId, useralias, "");
 			//获取当前该部门下的所有人员
-			List<Map<String, Object>> empList = bgworkinghourinfoMapper.selectForUser("", deptId, useralias, "");
-			
+			List<Map<String, Object>> empList = bgworkinghourinfoMapper.selectForUser("", deptId, null,useralias,"");
 			empList.addAll(workerList);
 			Set<String> set = new HashSet<>();
 			for (Map<String, Object> emp : empList) {
-				String username = (String) emp.get("USERNAME");
-				if(set.add(username)) resultList.add(emp);
+				String hrCode = (String) emp.get("HRCODE");
+				String deptCode = (String) emp.get("DEPTCODE");
+				if(set.add(hrCode+deptCode)) resultList.add(emp);
 			}
 			
 			/*if (list.isEmpty()) {
@@ -941,7 +986,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		for (int i = 0; i < maplist.size(); i++) {
 			Map<String, Object> map = maplist.get(i);
 
-			int counts = Integer.valueOf((String) map.get("Count"));
+			int counts = Integer.parseInt((String) map.get("Count"));
 			if (begin <= counts && counts <= end) {
 				Datalist.add(map);
 			}
@@ -965,7 +1010,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		
 		Map<String, Object> resultMap = pageAndNum((List<Map<String, Object>>) dataMap.get("dataList"), pageNum, limit);
 		
-		resultMap.put("title", dataMap.get("titleMap"));
+		resultMap.put("titleMap", dataMap.get("titleMap"));
 		
 		String jsonStr = JSON.toJSONStringWithDateFormat(resultMap, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
 		return jsonStr;
@@ -981,7 +1026,8 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		String EndData = request.getParameter("EndData") == null ? "" : request.getParameter("EndData").toString(); // 结束时间
 	    String dataShow = request.getParameter("dataShow" ) == null ? "" : request.getParameter("dataShow").toString(); //显示数据
 	    String type = request.getParameter("type" ) == null ? "" : request.getParameter("type").toString(); 
-        
+	    String bpShow = request.getParameter("bpShow" ) == null ? "" : request.getParameter("bpShow").toString(); 
+	    
 	    List<String> Lablist=new ArrayList<String>();
 		//List<Map<String, Object>>  organTreelist= initOrganTree(userName);
 		if(labid==""){
@@ -1000,94 +1046,74 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		}else{
 			Lablist.add(labid);
 		}
-		//List<Map<String, Object>> dataList = bgworkinghourinfoMapper.selectForUsers(deptid, Lablist, "", "");
+		
+		List<Map<String, Object>>  proList = 
+				bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, null, null, Lablist, null , new String[]{"KY","HX","JS","QT"});
+		List<Map<String, Object>>  noProList = 
+				bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, null, null, Lablist, null, new String[]{"NP","CG"});
+		List<Map<String,Object>> noRelatedBPList = 
+				bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, StartData, EndData, proList, false);
+		List<Map<String,Object>> relatedBPList = 
+				bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, StartData, EndData, proList, true);
+		
 		List<Map<String, Object>> dataList = new ArrayList<>();
-		for (String labId : Lablist) {
-			//从报工表中获取该部门下已存在报工信息（已通过）的所有报工人员
-			List<Map<String, Object>> workerList = bgworkinghourinfoMapper.selectUserFromWorkHourInfo(labId, "", "");
-			
-			//获取当前该部门下的所有人员
-			List<Map<String, Object>> empList = bgworkinghourinfoMapper.selectForUser("", labId, "", "");
-			
-			empList.addAll(workerList);
-			Set<String> set = new HashSet<>();
-			for (Map<String, Object> emp : empList) {
-				String username = (String) emp.get("USERNAME");
-				if(set.add(username)) dataList.add(emp);
-			}
-		}
-		 
-		int count = 0;
-		List<Map<String, Object>> dataLists = new ArrayList<Map<String, Object>>();
-		Set<String> set=new HashSet<>();//用于项目去重
-		Map<String,String> titleMap=new LinkedHashMap<>();//存放将要被前台列出的项目
-		for (Map<String, Object> maps : dataList) {
-			String username = (String) maps.get("USERNAME");
-			String hrcode = (String) maps.get("HRCODE");
-			String useralias = (String) maps.get("USERALIAS");
-			String deptname = (String) maps.get("PDEPTNAME");
-			String labname = (String) maps.get("DEPTNAME");
-			String pdeptid = (String) maps.get("PDEPTID");
-			String plabids = (String) maps.get("DEPTID");
-
-			/*String TotalHoursNum = bgworkinghourinfoMapper.selectForDept(StartData, EndData, pdeptid, plabids, username,
-					"", "");
-			if (TotalHoursNum == null) {
-				TotalHoursNum = "0";
-			}
-			String NoProjectTotalHoursNum = bgworkinghourinfoMapper.selectForDept(StartData, EndData, pdeptid, plabids,
-					username, "NP", "");
-			if (NoProjectTotalHoursNum == null) {
-				NoProjectTotalHoursNum = "0";
-			}
-			String ProjectTotalHoursNum = bgworkinghourinfoMapper.selectForDept(StartData, EndData, pdeptid, plabids,
-					username, "", "NP");
-			if (ProjectTotalHoursNum == null) {
-				ProjectTotalHoursNum = "0";
-			}*/
-			List<Map<String, String>> list=bgworkinghourinfoMapper.selectForProjectAndWorkHour(StartData, EndData, pdeptid, plabids, username);
-			//项目名称有可能重名，所以用项目编号唯一标识
-			if(list!=null && list.size()>0){
-				for (Map<String, String> proMap : list) {
-					String proNumber=proMap.get("PROJECT_NUMBER");
-					String proName=proMap.get("PROJECT_NAME");
-					String workHour=proMap.get("WORK_HOUR");
-					if(set.add(proMap.get("PROJECT_NUMBER"))) titleMap.put(proNumber, proName);
-					maps.put(proNumber, workHour);
-				}
+		Map<String,Map<String,String>> titleMap = new LinkedHashMap<>();//存放将要被前台列出项目编号和名称
+		Map<String,String> proTitleMap = new LinkedHashMap<>();//存放将要被前台列出的项目编号
+		Map<String,String> noProTitleMap = new LinkedHashMap<>();//存放将要被前台列出的非项目编号
+		//noProTitleMap.put("BP000", "项目前期");
+		noProTitleMap.put("NP000", "常规工作");
+		
+		if("1".equals(type)){
+			if("1".equals(bpShow)){
+				proList.addAll(relatedBPList);
+				noProList.addAll(noRelatedBPList);
 			}else{
-				//如果不显示无报工人员
-				if(dataShow.equals("1")) continue;
+				noProList.addAll(relatedBPList);
+				noProList.addAll(noRelatedBPList);
 			}
-			count++;
-			maps.put("Count", count + "");
-			maps.put("useralias", useralias);
-			maps.put("hrcode", hrcode);
-			maps.put("deptname", deptname);
-			maps.put("labname", labname);
-			maps.put("StartAndEndData", StartData + "至" + EndData);
-			//maps.put("TotalHoursNum", TotalHoursNum);
-			//maps.put("NoProjectTotalHoursNum", NoProjectTotalHoursNum);
-			//maps.put("ProjectTotalHoursNum", ProjectTotalHoursNum);
-			dataLists.add(maps);
-		}
-		//////
-		//查询内容：1总工时，2项目工时，3非项目工时
-		if (type.equals("1")) {
-			titleMap.remove("NP000");//顺序：非项目工作排最后
-			titleMap.put("NP000","非项目工作");
-		}else if(type.equals("2")) {
-			titleMap.remove("NP000");
-		} else if (type.equals("3")) {
-			titleMap.clear();
-			titleMap.put("NP000","非项目工作");
+			proTitleMap = getTitle(proList);
+			//noProTitleMap = getTitle(noProList);
+			titleMap.put("项目工作", proTitleMap);
+			titleMap.put("非项目工作", noProTitleMap);
+			
+			dataList.addAll(proList);
+			dataList.addAll(noProList);
+		}else if("2".equals(type)){
+			if("1".equals(bpShow)){
+				proList.addAll(relatedBPList);
+			}
+			
+			proTitleMap = getTitle(proList);
+			titleMap.put("项目工作", proTitleMap);
+			
+			dataList.addAll(proList);
+			
+		}else if("3".equals(type)){
+			if("1".equals(bpShow)){
+				noProList.addAll(noRelatedBPList);
+			}else{
+				noProList.addAll(relatedBPList);
+				noProList.addAll(noRelatedBPList);
+			}
+			
+			//noProTitleMap = getTitle(noProList);
+			titleMap.put("非项目工作", noProTitleMap);
+			
+			dataList.addAll(noProList);
 		}
 		
+		if(!"1".equals(dataShow)){//显示工时为0的数据
+			List<Map<String, Object>> empList = bgworkinghourinfoMapper.selectForUser("", "",Lablist ,"", "");
+			dataList.addAll(empList);
+		}
+		
+		dataList = sumWorkingHourByHrCodeAndDeptCode(dataList,proTitleMap.keySet());
+		
 		//设置默认值
-		for (String proNumber : titleMap.keySet()) {
-			for (Map<String, Object> userMap : dataLists) {
+		for (String proNumber : proTitleMap.keySet()) {
+			for (Map<String, Object> userMap : dataList) {
 				if(!userMap.containsKey(proNumber)){
-					int d=bgworkinghourinfoMapper.validateAuthority(proNumber,String.valueOf(userMap.get("HRCODE")));
+					int d=bgworkinghourinfoMapper.validateAuthority(proNumber,String.valueOf(userMap.get("hrcode")));
 					if(d==0 && !"NP000".equals(proNumber)){
 						userMap.put(proNumber,"--");
 					}else{
@@ -1097,10 +1123,91 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 			}
 		}
 		
+		//设置默认值
+		Set<String> set = new HashSet<>();
+		set.addAll(proTitleMap.keySet());
+		set.addAll(noProTitleMap.keySet());
+		
+		for (String proNumber : set) {
+			for (Map<String, Object> userMap : dataList) {
+				if(!userMap.containsKey(proNumber)){
+					int d=bgworkinghourinfoMapper.validateAuthority(proNumber,String.valueOf(userMap.get("hrcode")));
+					if(d==0 && !"NP000".equals(proNumber)){
+						userMap.put(proNumber,"--");
+					}else{
+						userMap.put(proNumber,"0");
+					}
+				}
+			}
+		}
+		
+		for (int i=0; i<dataList.size() ; i++) {
+			Map<String,Object> userMap = dataList.get(i);
+			userMap.put("Count", (i+1)+"");
+			userMap.put("StartAndEndData", StartData + "至" + EndData);
+		}
+		
 		Map<String, Object> dataMap = new HashMap<>();
-		dataMap.put("dataList", dataLists);
+		dataMap.put("dataList", dataList);
 		dataMap.put("titleMap", titleMap);
+//		dataMap.put("proTitleMap", proTitleMap);
+//		dataMap.put("noProTitleMap", noProTitleMap);
 		return dataMap;
+	}
+	
+	/**
+	 * 统计人员工时(根据项目分别统计)
+	 * @param dataList
+	 * @param set 归类到项目工作的项目编号（可能包含项目前期）
+	 * @return
+	 */
+	private List<Map<String, Object>> sumWorkingHourByHrCodeAndDeptCode(List<Map<String, Object>> dataList,Set<String> set) {
+		Map<String, Map<String,Object>> resultMap = new HashMap<>();
+		for (Map<String, Object> map : dataList) {
+			String deptCode = Rtext.toString(map.get("DEPTCODE"));
+			String hrCode = Rtext.toString(map.get("HRCODE"));	
+			String proNumber = Rtext.toString(map.get("PROJECT_NUMBER"));
+			String category = Rtext.toString(map.get("CATEGORY"));
+			double workHour = Rtext.ToDouble(map.get("WORKING_HOUR"),0d);	
+			
+			if(deptCode.isEmpty() || hrCode.isEmpty()) continue;
+			
+			if(!set.contains(proNumber)){//不在项目工作分组的所有都归类到非项目组
+				if("BP".equals(category)){
+					proNumber = "BP000";
+				}else if("NP".equals(category)){
+					proNumber = "NP000";
+				}
+			}
+			
+			String key = hrCode+deptCode;
+			Map<String,Object> dataMap = resultMap.get(key);
+			if(dataMap==null){
+				if(!proNumber.isEmpty()) map.put(proNumber, workHour);
+				resultMap.put(key, map);
+			}else {
+				if(!proNumber.isEmpty()){
+					double hours = Rtext.ToDouble(dataMap.get(proNumber),0d);
+					dataMap.put(proNumber, workHour+hours);
+				}
+			}
+		}
+		
+		return new ArrayList<>(resultMap.values());
+	}
+	/**
+	 * 获取所有工时信息中的项目编号和名称
+	 * @param list
+	 * @return
+	 */
+	private Map<String, String> getTitle(List<Map<String, Object>> list) {
+		Map<String,String> titleMap = new HashMap<>();//存放将要被前台列出的项目编号
+		for (Map<String, Object> map : list) {
+			String proNumber = Rtext.toString(map.get("PROJECT_NUMBER"));
+			String proName = Rtext.toString(map.get("PROJECT_NAME"));
+			if(!Rtext.isEmpty(proNumber) && !Rtext.isEmpty(proName)) titleMap.put(proNumber, proName);
+		}
+		return titleMap;
 	}
 	
 	/**
@@ -1148,38 +1255,89 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 //			dataLists = datalistA;
 //		}
 		
-		Map<String,String> titleMap=(Map<String, String>) dataMap.get("titleMap");
-		int len = 5;
-		int size = titleMap.size();
-		Object[][] title = new Object[len+size][2];
-		title[0]=new Object[]{"统计周期","StartAndEndData"};
-		title[1]=new Object[]{"部门","deptname"};
-		title[2]=new Object[]{"处室","labname"};
-		title[3]=new Object[]{"人员编号","HRCODE"};
-		title[4]=new Object[]{"人员姓名","USERALIAS"};
+		Map<String,Map<String,String>> titleMap = (Map<String, Map<String, String>>) dataMap.get("titleMap");
+//		int len = 5;
+//		int size = titleMap.size();
+//		Object[][] title = new Object[len+size][2];
+//		title[0]=new Object[]{"统计周期","StartAndEndData"};
+//		title[1]=new Object[]{"部门（单位）","deptname"};
+//		title[2]=new Object[]{"处室","labname"};
+//		title[3]=new Object[]{"人员编号","HRCODE"};
+//		title[4]=new Object[]{"人员姓名","USERALIAS"};
+//		
+//		for (Entry<String, Map<String,String>> entry : titleMap.entrySet()) {
+//			title[len++]=new Object[]{entry.getValue(),entry.getKey()};
+//		}
+//		
+//		String excelName="投入工时详情-"+DateUtil.getDays();
+//		ExportExcelHelper.getExcel(response, excelName, title, dataLists, "normal");
+
+		//构建Excel表头
+		List<Map<String,String>>  headermaplist=new ArrayList<Map<String,String>>();
 		
-		for (Entry<String, String> entry : titleMap.entrySet()) {
-			title[len++]=new Object[]{entry.getValue(),entry.getKey()};
+		LinkedHashMap<String,String> headermap0 = new LinkedHashMap<>(); 
+		headermap0.put("Count", "序号"); 
+		headermap0.put("StartAndEndData", "统计周期");
+		headermap0.put("PDEPTNAME", "部门（单位）");
+		headermap0.put("DEPTNAME", "处室");
+		headermap0.put("HRCODE", "人员编号");
+		headermap0.put("USERALIAS", "人员姓名");
+		
+		LinkedHashMap<String,String> headermap1 = new LinkedHashMap<>(); 
+		headermap1.put("Count", "序号"); 
+		headermap1.put("StartAndEndData", "统计周期");
+		headermap1.put("PDEPTNAME", "部门（单位）");
+		headermap1.put("DEPTNAME", "处室");
+		headermap1.put("HRCODE", "人员编号");
+		headermap1.put("USERALIAS", "人员姓名");
+		headermaplist.add(headermap1);
+		
+		//设定要合并的单元格
+		List<int[]> mregeList = new ArrayList<>();
+		mregeList.add(new int[]{0,1,0,0});
+		mregeList.add(new int[]{0,1,1,1});
+		mregeList.add(new int[]{0,1,2,2});
+		mregeList.add(new int[]{0,1,3,3});
+		mregeList.add(new int[]{0,1,4,4});
+		mregeList.add(new int[]{0,1,5,5});
+		
+		int count0 = 5;//开始合并的列索引
+		Map<String, String> proTitleMap = titleMap.get("项目工作");
+		if(proTitleMap!=null && !proTitleMap.isEmpty()){
+			for (Entry<String, String>  proEntry: proTitleMap.entrySet()) {
+				String proNumber = proEntry.getKey();
+				String proName = proEntry.getValue();
+				if((count0++)==5){
+					headermap0.put(proNumber, "项目工作");
+				}else{
+					headermap0.put(proNumber, "");
+				}
+				headermap1.put(proNumber, proName);
+			}
+			
+			if(count0-5>1) mregeList.add(new int[]{0,0,6,count0});
 		}
-		String excelName="投入工时详情-"+DateUtil.getDays();
-		ExportExcelHelper.getExcel(response, excelName, title, dataLists, "normal");
 		
-		/*if (type.equals("1")) {
-			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门", "deptname" }, { "处室", "labname" },
-					{ "人员编号", "HRCODE" }, { "人员姓名", "USERALIAS" }, { "投入总工时(h)", "TotalHoursNum" } };
-			String excelName="投入总工时详情-"+DateUtil.getDays();
-			ExportExcelHelper.getExcel(response, excelName, title, dataLists, "normal");
-		} else if (type.equals("2")) {
-			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门", "deptname" }, { "处室", "labname" },
-					{ "人员编号", "HRCODE" }, { "人员姓名", "USERALIAS" }, { "项目投入工时(h)", "ProjectTotalHoursNum" } };
-			String excelName="项目投入工时详情-"+DateUtil.getDays();
-			ExportExcelHelper.getExcel(response, excelName, title, dataLists, "normal");
-		} else if (type.equals("3")) {
-			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门", "deptname" }, { "处室", "labname" },
-					{ "人员编号", "HRCODE" }, { "人员姓名", "USERALIAS" }, { "非项目投入工时(h)", "NoProjectTotalHoursNum" } };
-			String excelName="非项目投入工时详情-"+DateUtil.getDays();
-			ExportExcelHelper.getExcel(response, excelName, title, dataLists, "normal");
-		}*/
+		int count1 = count0;//开始合并的列索引
+		Map<String, String> noProTitleMap = titleMap.get("非项目工作");
+		if(noProTitleMap!=null && !noProTitleMap.isEmpty()){
+			for (Entry<String, String>  noProEntry: noProTitleMap.entrySet()) {
+				String proNumber = noProEntry.getKey();
+				String proName = noProEntry.getValue();
+				if((count1++) == count0){
+					headermap0.put(proNumber, "非项目工作");
+				}else{
+					headermap0.put(proNumber, "");
+				}
+				headermap1.put(proNumber, proName);
+			}
+			if(count1-count0>1) mregeList.add(new int[]{0,0,count0+1,count1});
+		}
+		
+		//获取Excel数据信息
+		HSSFWorkbook workbook = ExcelUtils.PaddingExcel(headermap0,dataLists,headermaplist,mregeList);
+		String fileName="员工工时明细"+DateUtil.getDays();
+		ExportExcelHelper.getExcels(response,workbook,fileName);
 		return "";
 	}
     /**
@@ -1207,92 +1365,142 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 	
 	private Map<String, Object> getDataMapForUser(HttpServletRequest request){
 		String type = request.getParameter("type") == null ? "" : request.getParameter("type").toString(); // 组织机构																							 
-		String deptid = request.getParameter("deptid") == null ? "" : request.getParameter("deptid").toString(); // 组织机构																										 
-		String labid = request.getParameter("labid") == null ? "" : request.getParameter("labid").toString(); // 组织机构																									 
+		//String deptid = request.getParameter("deptid") == null ? "" : request.getParameter("deptid").toString(); // 组织机构																										 
+		//String labid = request.getParameter("labid") == null ? "" : request.getParameter("labid").toString(); // 组织机构																									 
 		String username = request.getParameter("username") == null ? "" : request.getParameter("username").toString(); // 用户名称
 		String startDate = request.getParameter("StartData") == null ? "": request.getParameter("StartData").toString(); // 开始时间
 		String endDate = request.getParameter("EndData") == null ? "" : request.getParameter("EndData").toString(); // 结束时间
-		String dataShow = request.getParameter("dataShow" ) == null ? "" : request.getParameter("dataShow").toString(); //显示数据
+		//String dataShow = request.getParameter("dataShow" ) == null ? "" : request.getParameter("dataShow").toString(); //显示数据
+		String bpShow = request.getParameter("bpShow" ) == null ? "" : request.getParameter("bpShow").toString(); //项目计入项目前期
 		
-//		Page<?> page = PageHelper.startPage(pageNum, limit);
-//		if(dataShow.equals("1")){
-//			dataShow="0";
-//		}else{
-//			dataShow="";
-//		}
-		/*if (type.equals("1")) {
-			bgworkinghourinfoMapper.selectForNumber(StartData, EndData, deptid, labid, username, "", "",dataShow);
-		} else if (type.equals("3")) {
-			bgworkinghourinfoMapper.selectForNumber(StartData, EndData, deptid, labid, username, "NP", "",dataShow);
-		} else if (type.equals("2")) {
-			bgworkinghourinfoMapper.selectForNumber(StartData, EndData, deptid, labid, username, "", "NP",dataShow);
-		}
-		*/
-		//
-		int count = 0;
-		Set<String> set=new HashSet<>();//用于项目去重
-		Map<String,String> titleMap=new LinkedHashMap<>();//存放将要被前台列出的项目
+		//int count = 0;
 		List<Map<String, Object>> dataList=new ArrayList<>();
-		CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(username);
-		Calendar calendar1 = Calendar.getInstance();// 开始日期
-		Calendar calendar2 = Calendar.getInstance();// 结束的日期
-		calendar1.setTime(DateUtil.fomatDate(startDate));
-		calendar2.setTime(DateUtil.fomatDate(endDate));
-		while (calendar1.compareTo(calendar2)<=0) {
-			Map<String,Object> dataMap=new HashMap<>();
-			String dateStr=DateUtil.getFormatDateString(calendar1.getTime(),"yyyy-MM-dd");
-			dataMap.put("HRCODE",user.getHrCode());
-			dataMap.put("NAME",user.getUserAlias());
-			dataMap.put("WORK_TIME",dateStr);
-			List<Map<String, String>> resultList=bgworkinghourinfoMapper.selectForProjectAndWorkHour(dateStr, dateStr, deptid, labid, username);
-			if(resultList!=null && resultList.size()>0){
-				for (Map<String, String> proMap : resultList) {
-					String proNumber=proMap.get("PROJECT_NUMBER");
-					String proName=proMap.get("PROJECT_NAME");
-					String workHour=proMap.get("WORK_HOUR");
-					dataMap.put(proNumber, workHour);
-					if(set.add(proNumber)) titleMap.put(proNumber, proName);
-				}
-				count++;
-				dataMap.put("Count", count+"");
-				dataList.add(dataMap);
+		//List<Map<String, String>> resultList=bgworkinghourinfoMapper.selectForProjectAndWorkHour(dateStr, dateStr, deptid, labid, username);
+		
+		List<Map<String, Object>>  proList = 
+			bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, null, null, username , new String[]{"KY","HX","JS","QT"});
+		List<Map<String, Object>>  noProList = 
+			bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, null, null, username, new String[]{"NP","CG"});
+		List<Map<String,Object>> noRelatedBPList = new ArrayList<>();
+			//bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, startDate, endDate, proList, false);
+		List<Map<String,Object>> relatedBPList =  new ArrayList<>();
+			//bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, startDate, endDate, proList, true);
+		
+		if("1".equals(type)){
+			if("1".equals(bpShow)){
+				proList.addAll(relatedBPList);
+				noProList.addAll(noRelatedBPList);
 			}else{
-				//如果显示无报工人员
-				if(!dataShow.equals("1")){
-					count++;
-					dataMap.put("Count", count+"");
-					dataList.add(dataMap);
-				};
+				noProList.addAll(relatedBPList);
+				noProList.addAll(noRelatedBPList);
 			}
-			calendar1.add(Calendar.DATE, 1);// 把日期往后增加一天
+			
+			dataList.addAll(proList);
+			dataList.addAll(noProList);
+		}else if("2".equals(type)){
+			if("1".equals(bpShow)){
+				proList.addAll(relatedBPList);
+			}
+			
+			dataList.addAll(proList);
+		}else if("3".equals(type)){
+			if("1".equals(bpShow)){
+				noProList.addAll(noRelatedBPList);
+			}else{
+				noProList.addAll(relatedBPList);
+				noProList.addAll(noRelatedBPList);
+			}
+			
+			dataList.addAll(noProList);
 		}
 		
-		//查询内容：1总工时，2项目工时，3非项目工时
-		if (type.equals("1")) {
-			titleMap.remove("NP000");//顺序：非项目工作排最后
-			titleMap.put("NP000","非项目工作");
-		}else if(type.equals("2")) {
-			titleMap.remove("NP000");
-		} else if (type.equals("3")) {
-			titleMap.clear();
-			titleMap.put("NP000","非项目工作");
+		dataList = sumWorkingHourByProjectAndDate(dataList);
+
+		Collections.sort(dataList, new Comparator<Map<String, Object>>() {
+			@Override
+			public int compare(Map<String, Object> map1, Map<String, Object> map2) {
+				long time1 = DateUtil.fomatDate(Rtext.toString(map1.get("WORK_TIME"))).getTime();
+				long time2 = DateUtil.fomatDate(Rtext.toString(map2.get("WORK_TIME"))).getTime();
+				return (int) (time1-time2);
+			}
+		});
+		
+		int count = 0;
+		Map<String,String> dictMap= dict.getDictDataByPcode("category100002");
+		for (Map<String, Object> map : dataList) {
+			map.put("Count", ++count + "");
+			String category = (String) map.get("CATEGORY");
+			map.put("CATEGORY", dictMap.get(category));
+			if("NP".equals(category)) map.put("PROJECT_NUMBER", "--");
 		}
+		
+//		Calendar calendar1 = Calendar.getInstance();// 开始日期
+//		Calendar calendar2 = Calendar.getInstance();// 结束的日期
+//		calendar1.setTime(DateUtil.fomatDate(startDate));
+//		calendar2.setTime(DateUtil.fomatDate(endDate));
+//		while (calendar1.compareTo(calendar2)<=0) {
+//			String dateStr = DateUtil.getFormatDateString(calendar1.getTime(),"yyyy-MM-dd");
+//			
+//			
+//			calendar1.add(Calendar.DATE, 1);// 把日期往后增加一天
+//		 }
+		
+		//resultList = sumWorkingHourByProjectAndDate(resultList);
+		//查询内容：1总工时，2项目工时，3非项目工时
+//		if (type.equals("1")) {
+//			titleMap.remove("NP000");//顺序：非项目工作排最后
+//			titleMap.put("NP000","非项目工作");
+//		}else if(type.equals("2")) {
+//			titleMap.remove("NP000");
+//		} else if (type.equals("3")) {
+//			titleMap.clear();
+//			titleMap.put("NP000","非项目工作");
+//		}
 		
 		//设置默认值
-		for (String proNumber : titleMap.keySet()) {
-			for (Map<String, Object> userMap : dataList) {
-				if(!userMap.containsKey(proNumber)){
-					userMap.put(proNumber,"0");
-				}
-			}
-		}
+//		for (String proNumber : titleMap.keySet()) {
+//			for (Map<String, Object> userMap : dataList) {
+//				if(!userMap.containsKey(proNumber)){
+//					userMap.put(proNumber,"0");
+//				}
+//			}
+//		}
 		
 		Map<String, Object> dataMap = new HashMap<>();
 		dataMap.put("dataList", dataList);
-		dataMap.put("titleMap", titleMap);
+		//dataMap.put("titleMap", titleMap);
 		return dataMap;
 	}
 
+	/**
+	 * 统计人员工时(根据项目和日期统计)
+	 * @param dataList
+	 * @return
+	 */
+	private List<Map<String, Object>> sumWorkingHourByProjectAndDate(List<Map<String, Object>> dataList) {
+		Map<String, Map<String,Object>> resultMap = new HashMap<>();
+		for (Map<String, Object> map : dataList) {
+			String proNumber = Rtext.toString(map.get("PROJECT_NUMBER"));
+			String workDate = Rtext.toString(map.get("WORK_TIME"));
+			String category = Rtext.toString(map.get("CATEGORY"));
+			double workHour = Rtext.ToDouble(map.get("WORKING_HOUR"),0d);	
+
+			proNumber = "NP".equals(category)?"NP000":proNumber;
+			
+			if(proNumber.isEmpty() || workDate.isEmpty()) continue;
+			String key = proNumber+workDate;
+			
+			Map<String,Object> dataMap = resultMap.get(key);
+			if(dataMap==null){
+				map.put("WORKING_HOUR", workHour);
+				resultMap.put(key, map);
+			}else {
+				double hours = Rtext.ToDouble(dataMap.get("WORKING_HOUR"),0d);
+				dataMap.put("WORKING_HOUR", workHour+hours);
+			}
+		}
+		return new ArrayList<>(resultMap.values());
+	}
 	/**
 	 * 组织工时统计-----〉人员维度导出 
 	 */
@@ -1300,18 +1508,16 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 	@Override
 	public String findForUserExport(HttpServletRequest request, HttpServletResponse response) {
 		String ids = request.getParameter("ids") == null ? "" : request.getParameter("ids").toString(); // 结束时间
-		List<String> list = new ArrayList<String>();
+		List<String> list = null;
 		if (ids != "") {
-			String[] strings = ids.split(",");
-			for (int i = 0; i < strings.length; i++) {
-				String num = strings[i];
-				list.add(num);
-			}
+			String[] idsArr = ids.split(",");
+			list = Arrays.asList(idsArr);
 		}
 		Map<String, Object> dataMap = getDataMapForUser(request);
 		
 		List<Map<String, Object>> dataList = (List<Map<String, Object>>) dataMap.get("dataList");
-		if (list.size() > 0) {
+		
+		if (list != null && list.size() > 0) {
 			List<Map<String, Object>> datalistA = new ArrayList<>();
 			for (int i = 0; i < list.size(); i++) {
 				int selectId = Integer.parseInt(list.get(i));
@@ -1322,46 +1528,61 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 			dataList = datalistA;
 		}
 		
+		Object[][] title = { { "日期", "WORK_TIME" }, { "人员编号", "HRCODE" }, { "人员姓名", "USERALIAS" },
+				{ "工作任务类型", "CATEGORY" }, { "工作任务编号", "PROJECT_NUMBER" },/* { "WBS编号", "WBS_NUMBER" },*/ { "工作任务名称", "PROJECT_NAME" },
+				{ "工作内容", "JOB_CONTENT" }, { "投入总工时(h)", "WORKING_HOUR" } };
 		
-		Map<String,String> titleMap=(Map<String, String>) dataMap.get("titleMap");
-		int len = 3;
-		int size = titleMap.size();
-		Object[][] title = new Object[len+size][2];
-		title[0]=new Object[]{"日期","WORK_TIME"};
-		title[1]=new Object[]{"人员编号","HRCODE"};
-		title[2]=new Object[]{"人员姓名","NAME"};
-		//Object[][] title = { { "日期", "WORK_TIME" }, { "人员编号", "HRCODE" }, { "人员姓名", "NAME" }};
-		for (Entry<String, String> entry : titleMap.entrySet()) {
-			title[len++]=new Object[]{entry.getValue(),entry.getKey()};
-		}
-		String excelName="投入工时详情-"+DateUtil.getDays();
+		String excelName="投入工时信息-"+DateUtil.getDays();
 		ExportExcelHelper.getExcel(response, excelName, title, dataList, "normal");
-		/*if (type.equals("1")) {
-			int len = 3;
-			int size = titleMap.size();
-			Object[][] title = new Object[len+size][2];
-			title[0]=new Object[]{"日期","WORK_TIME"};
-			title[1]=new Object[]{"人员编号","HRCODE"};
-			title[2]=new Object[]{"人员姓名","NAME"};
-			//Object[][] title = { { "日期", "WORK_TIME" }, { "人员编号", "HRCODE" }, { "人员姓名", "NAME" }};
-			for (Entry<String, String> entry : titleMap.entrySet()) {
-				title[len++]=new Object[]{entry.getKey(),entry.getValue()};
-			}
-			String excelName="投入总工时详情-"+DateUtil.getDays();
-			ExportExcelHelper.getExcel(response, excelName, title, dataList, "normal");
-		} else if (type.equals("2")) {
-			Object[][] title = { { "日期", "WORK_TIME" }, { "人员编号", "HRCODE" }, { "人员姓名", "NAME" },
-					{ "项目类别", "CATEGORY" }, { "项目编号", "PROJECT_NUMBER" }, { "WBS编号", "WBS_NUMBER" }, { "项目名称", "PROJECT_NAME" },
-					{ "工作内容", "JOB_CONTENT" }, { "投入总工时(h)", "WORKING_HOUR" } };
-			 String excelName="项目投入工时详情-"+DateUtil.getDays();
-			ExportExcelHelper.getExcel(response, excelName, title, dataList, "normal");
-		} else if (type.equals("3")) {
-			Object[][] title = { { "日期", "WORK_TIME" }, { "人员编号", "HRCODE" }, { "人员姓名", "NAME" },
-					{ "项目类别", "CATEGORY" }, { "项目编号", "PROJECT_NUMBER" }, { "WBS编号", "WBS_NUMBER" }, { "项目名称", "PROJECT_NAME" },
-					{ "工作内容", "JOB_CONTENT" }, { "投入总工时(h)", "WORKING_HOUR" } };
-			 String excelName="非项目投入工时详情-"+DateUtil.getDays();
-			ExportExcelHelper.getExcel(response, excelName, title, dataList, "normal");
-		}*/
+		//Map<String,String> titleMap=(Map<String, String>) dataMap.get("titleMap");
+		//int len = 3;
+		//int size = titleMap.size();
+		//Object[][] title = new Object[len+size][2];
+//		title[0]=new Object[]{"日期","WORK_TIME"};
+//		title[1]=new Object[]{"人员编号","HRCODE"};
+//		title[2]=new Object[]{"人员姓名","NAME"};
+		//Object[][] title = { { "日期", "WORK_TIME" }, { "人员编号", "HRCODE" }, { "人员姓名", "NAME" }};
+//		for (Entry<String, String> entry : titleMap.entrySet()) {
+//			title[len++]=new Object[]{entry.getValue(),entry.getKey()};
+//		}
+//		String excelName="投入工时详情-"+DateUtil.getDays();
+//		ExportExcelHelper.getExcel(response, excelName, title, dataList, "normal");
+//		if (type.equals("1")) {
+//			int len = 3;
+//			int size = titleMap.size();
+//			Object[][] title = new Object[len+size][2];
+//			title[0]=new Object[]{"日期","WORK_TIME"};
+//			title[1]=new Object[]{"人员编号","HRCODE"};
+//			title[2]=new Object[]{"人员姓名","NAME"};
+//			//Object[][] title = { { "日期", "WORK_TIME" }, { "人员编号", "HRCODE" }, { "人员姓名", "NAME" }};
+//			for (Entry<String, String> entry : titleMap.entrySet()) {
+//				title[len++]=new Object[]{entry.getKey(),entry.getValue()};
+//			}
+//			String excelName="投入总工时详情-"+DateUtil.getDays();
+//			ExportExcelHelper.getExcel(response, excelName, title, dataList, "normal");
+//		} else if (type.equals("2")) {
+//			Object[][] title = { { "日期", "WORK_TIME" }, { "人员编号", "HRCODE" }, { "人员姓名", "NAME" },
+//					{ "项目类别", "CATEGORY" }, { "项目编号", "PROJECT_NUMBER" }, { "WBS编号", "WBS_NUMBER" }, { "项目名称", "PROJECT_NAME" },
+//					{ "工作内容", "JOB_CONTENT" }, { "投入总工时(h)", "WORKING_HOUR" } };
+//			 String excelName="项目投入工时详情-"+DateUtil.getDays();
+//			ExportExcelHelper.getExcel(response, excelName, title, dataList, "normal");
+//		} else if (type.equals("3")) {
+//			Object[][] title = { { "日期", "WORK_TIME" }, { "人员编号", "HRCODE" }, { "人员姓名", "NAME" },
+//					{ "项目类别", "CATEGORY" }, { "项目编号", "PROJECT_NUMBER" }, { "WBS编号", "WBS_NUMBER" }, { "项目名称", "PROJECT_NAME" },
+//					{ "工作内容", "JOB_CONTENT" }, { "投入总工时(h)", "WORKING_HOUR" } };
+//			 String excelName="非项目投入工时详情-"+DateUtil.getDays();
+//			ExportExcelHelper.getExcel(response, excelName, title, dataList, "normal");
+//		}
 		return "";
+	}
+	
+	private double sumWorkingHour(List<Map<String,Object>> list){
+		double sum = 0d;
+		if(list==null || list.size()==0)  return 0d;
+		
+		for (Map<String, Object> map : list) {
+			sum += Rtext.ToDouble(map.get("WORKING_HOUR"), 0d);
+		}
+		return sum;
 	}
 }

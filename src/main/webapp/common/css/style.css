@@ -127,6 +127,9 @@ fieldset[disabled] .form-box input,fieldset[disabled] .form-box select,fieldset[
 .controls {
 	margin-left: 100px;
 }
+.noncontrols {
+	margin-left: 120px;
+}
 .form-box {
 	border: 1px solid #1b9974;
 	background: #ffffff;

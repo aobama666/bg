@@ -94,7 +94,7 @@
 			<form name="queryBox" action=""
 				style="width: 100%; padding-left: 10px">
 				<div class="form-group col-xs-4" style="margin-bottom:0;">
-					<label>查询日期</label>
+					<label>查询日期：</label>
 					<div class="controls">
 						<div class="input-group date form_date bg-white">
 							<input name="startDate" property="startDate"  readonly="true" placeholder='开始时间'>
@@ -110,7 +110,7 @@
 				
 				
 				<div class="form-group col-xs-4">
-					<label>组织机构</label>
+					<label>组织机构：</label>
 					<div class="controls">
 						<div id="organTree" class="input-group input-groups organ bg-white">
 							<input type="hidden" name="deptCode" id="deptCode" property="deptCode">
@@ -120,7 +120,7 @@
 					</div>
 				</div>
 				<div class="form-group col-xs-4">
-					<label for="querySex">类型</label>
+					<label for="querySex">类型：</label>
 					<div class="controls">
 						<select name="category" property="category">
 							<option></option>
@@ -131,19 +131,19 @@
 					</div>
 				</div>
 				<div class="form-group col-xs-4">
-					<label>项目名称</label>
+					<label>项目名称：</label>
 					<div class="controls">
 						<input name="proName" property="proName">
 					</div>
 				</div>
 				<div class="form-group col-xs-4">
-					<label>人员姓名</label>
+					<label>人员姓名：</label>
 					<div class="controls">
 						<input name="empName" property="empName">
 					</div>
 				</div>
 				<div class="form-group col-xs-4">
-					<label>审核状态</label>
+					<label>审核状态：</label>
 					<div class="controls">
 						<select name="status" property="status">
 							<option></option>
@@ -249,7 +249,7 @@ function queryList(load){
 				]
 		}).on('loadSuccess', function(e, data){
 			pn = data.page;
-			$(".checkAll").css("display","none").parent().text("选择");
+			//$(".checkAll").css("display","none").parent().text("选择");
 		});
 	if(load == "reload"){
 		mmg.load({page:pn});

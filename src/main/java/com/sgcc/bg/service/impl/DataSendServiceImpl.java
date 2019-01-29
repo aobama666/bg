@@ -66,7 +66,7 @@ public class DataSendServiceImpl implements DataSendService{
 				type = "NP";
 			}
 			Double totalTime = dataSendMapper.queryCounted(startTime,endTime,empCode,wbsCode,projectId,type);
-			System.out.println(totalTime);
+			//System.out.println(totalTime);
 			String pullTime = "";
 			String pullDate = "";
 			//if(totalTime.size()>0){

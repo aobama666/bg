@@ -53,6 +53,30 @@ a{
 		</div>
 	</div>
 	<hr>
+	<div class="query-box">
+		<div class="query-box-left">
+			<form name="queryBox" action=""
+				style="width: 100%; padding-left: 10px">
+				<div class="form-group col-xs-6">
+					<label for="querySex">工作任务编号</label>
+					<div class="controls">
+						<input name="proNumber" property="proNumber">
+					</div>
+				</div>
+				<div class="form-group col-xs-6">
+					<label>工作任务名称</label>
+					<div class="controls">
+						<input name="proName" property="proName">
+					</div>
+				</div>
+				<input type="hidden" name="selectedDate" value="${selectedDate}">
+			</form>
+		</div>
+		<div class="query-box-right">
+			<button type="button" class="btn btn-primary btn-xs"
+				onclick="forSearch()">查询</button>
+		</div>
+	</div>
 	<div>
 		<table id="mmg" class="mmg bg-white">
 			<tr>
@@ -68,15 +92,23 @@ $(function(){
 	queryList();
 });
 
+function forSearch(){
+	queryList("reload");
+}
+
 // 初始化列表数据
 function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 				{title:'序列', name:'ID', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'项目名称', name:'PROJECT_NAME', width:150, sortable:false, align:'left'},
-	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center'},
-	            {title:'项目编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:'center'},
-	            {title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'}
+	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center',
+	            	renderer:function(val,item,rowIndex){
+						val=val==undefined?"":val;
+	            		return parent.categoryObj[val];
+	            	}},
+	            {title:'工作任务编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:'center'},
+	            {title:'工作任务名称', name:'PROJECT_NAME', width:150, sortable:false, align:'left'}
+	            //{title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'}
 	    		];
 	var mmGridHeight = $("body").parent().height()*0.8;
 	mmg = $('#mmg').mmGrid({
@@ -87,30 +119,37 @@ function queryList(load){
 		height: mmGridHeight,
 		cols: cols,
 		nowrap: true,
-		url: '<%=request.getContextPath()%>/staffWorkbench/getProjectsByDate?selectedDate=${selectedDate}&ran='+ran,
+		url: '<%=request.getContextPath()%>/staffWorkbench/getProjectsByDate?ran='+ran,
 		fullWidthRows: true,
 		multiSelect: true,
-		root: 'items'
+		root: 'items',
+		params: function(){
+			return $(".query-box").sotoCollecter();
+			} 
 		}).on('loadSuccess', function(e, data){
 			$(".checkAll").css("display","none").parent().text("选择");
 		});
+	if(load == "reload"){
+		mmg.load();
+	}
 }
 
 function forAdd(){
 	var items = mmg.selectedRows();
-	var approverHrcode;
-	var approverName;
-	var edit;
+	
 	for(var i=0;i<items.length;i++){
-		approverHrcode=items[i].HRCODE;
-		approverName=items[i].PRINCIPAL;
-		edit='no';
-		//新增项目，如果项目负责人是本人，则选择负责人的审核人,可编辑
-		if(items[i].HRCODE==parent.currentUserHrcode){
+		var approverHrcode = items[i].HRCODE;
+		var approverName = items[i].PRINCIPAL;
+		var category = items[i].CATEGORY;
+		var editable = "true";
+		//新增项目，如果是常规工作和项目前期类型,或者项目负责人为当前登录人，则审核人为按审批层级的默认审核人
+		if('CG,BP'.indexOf(category)!=-1 || approverHrcode==parent.currentUserHrcode){
 			approverHrcode=parent.approverHrcode;
 			approverName=parent.approverName;
-			edit='yes';
+		}else{
+			editable = "false";
 		}
+		 
 		parent.mmg.addRow({
 			"PROJECT_ID":items[i].ID,
 			"CATEGORY":items[i].CATEGORY,
@@ -120,7 +159,7 @@ function forAdd(){
 			"STATUS":"0",
 			"JOB_CONTENT":"",
 			"WORKING_HOUR":"",
-			"EDIT":edit
+			"EDITABLE":editable
 		});
 	}
 	forClose();

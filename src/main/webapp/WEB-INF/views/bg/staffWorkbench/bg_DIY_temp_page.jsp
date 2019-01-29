@@ -38,6 +38,12 @@
 	<script src="<%=request.getContextPath()%>/common/plugins/respond/respond.js"></script>
 	<script src="<%=request.getContextPath()%>/common/plugins/pseudo/jquery.pseudo.js"></script>
 <![endif]-->
+<style type="text/css">
+	label{
+		width: 110px;
+    	text-align: right;
+	}
+</style>
 </head>
 <body >
 	<div class="page-header-sl">
@@ -48,21 +54,22 @@
 	</div>
 	<hr>
 	<form class="form-inline bg-white" sytle="width:500px" method="post" target="hidden_frame">
+		<!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期： -->
+		<label>日期：</label>
 		<div class="form-group" style="display: inline-block">
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期：
 			<input type="text" readonly style="display: inline-block;width:196px" name="startDate" class="form-control form_date" id="startDate" placeholder="">
 		</div>
 		<div class="form-group" style="display: inline-block">
-			至 
+			-- 
 			<input type="text" readonly style="display: inline-block;width:196px" name="endDate" class="form-control form_date" id="endDate" placeholder="">
 		</div>
+		<input type="hidden" name="proIds" id="selectProIds">
 	</form>
 	<form class="form-inline">
 		<div class="form-group">
-			选择项目：
+			<label>选择工作任务：</label>
 			<div class="input-group bg-white" id="selectProject" style="width: 415px; display: inline-table; vertical-align: middle">
 				<input type="text" name="selectProject" id="selectNames" class="form-control" readonly> 
-				<input type="hidden" name="proIds" id="selectProIds">
 				<span class="input-group-addon"><span class="glyphicon glyphicon-briefcase"></span></span>
 			</div>
 		</div>
@@ -85,7 +92,7 @@ $(function(){
 		var ran = Math.random()*1000;
 		parent.layer.open({
 			type:2,
-			title:"项目工作选择框",
+			title:"工作任务选择框",
 			area:['730px', '60%'],
 			scrollbar:true,
 			skin:'query-box',
@@ -118,7 +125,7 @@ function downLoadTemp(){
 		parent.layer.msg("请选择项目");
 		return;
 	}
-	document.forms[0].action ="<%=request.getContextPath()%>/staffWorkbench/downLoadDIYTemp?proIds="+proIds+"&ran="+ran;
+	document.forms[0].action ="<%=request.getContextPath()%>/staffWorkbench/downLoadDIYTemp?ran="+ran;
 	document.forms[0].submit();
 }
 

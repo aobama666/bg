@@ -112,7 +112,6 @@
 		var empCode = $("#empCode").val();
 		var deptCode = $("#deptCode").val();
 		var roleCode = $("#roleCode").val();
-		console.log(empCode+"///"+deptCode+"///"+roleCode);
 		var validator=[
 	              	      {name:'empName',vali:'required'},
 	             	      {name:'deptName',vali:'required'},

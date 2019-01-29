@@ -220,4 +220,15 @@ public class DutyController {
 		log.info("从ftp导出出错文件"+fileName);
 	}
 	
+	/**
+	 * 批量导出
+	 * @param params
+	 * @param response
+	 */
+	@RequestMapping(value = "/exportSelectedItems", method = RequestMethod.POST)
+	public void exportSelectedItems(String username,String deptCode,String roleCode,String index, HttpServletResponse response) {
+		 dutyService.exportSelectedItems(username,deptCode,roleCode,index,response);
+		 log.info("将要导出的条目index:"+index);
+	}
+	
 }

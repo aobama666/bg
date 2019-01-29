@@ -17,12 +17,15 @@ public interface IStaffWorkbenchService {
 	List<Map<String, String>> getWorkingHourInfo(String selectedDate);
 
 	/**
-	 * 获取当前员工名下的项目信息
-	 * 条件：项目开始日期<=填报日期<=项目结束日期，且员工参与开始日期<=填报日期<=参与结束日期
+	 *获取当前员工名下的项目信息 条件：1.项目开始日期<=填报日期<=项目结束日期 
+	 *2.如果为项目信息，员工参与开始日期<=填报日期<=参与结束日期
+	 *3.如果为非项目信息，则为本人所属处室或部门下的项目
 	 * @param selectedDate
+	 * @param proName
+	 * @param wbsNumber
 	 * @return
 	 */
-	List<Map<String, String>> getProjectsByDate(String selectedDate);
+	List<Map<String, String>> getProjectsByDate(String selectedDate,String proName,String wbsNumber);
 	
 	/**
 	 * 添加报工信息
@@ -80,12 +83,12 @@ public interface IStaffWorkbenchService {
 	String checkWorkHour(String selectedDate, double totalHours);
 
 	/**
-	 * 获取当前登录人名下所有参与的项目（在日期范围内有可填报的）
+	 * 获取当前登录人可填报的项目（在日期范围内有可填报的）
 	 * @param startDate
 	 * @param endDate
 	 * @return
 	 */
-	List<Map<String, String>> getAllProjects(String startDate,String endDate);
+	List<Map<String, String>> getAllProjects(String startDate,String endDate,String proName,String wbsNumber);
 
 	/**
 	 * 据id撤回已提交工时

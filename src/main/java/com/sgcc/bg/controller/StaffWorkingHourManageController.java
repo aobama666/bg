@@ -59,7 +59,7 @@ public class StaffWorkingHourManageController {
 
 	@RequestMapping("/index")
 	public ModelAndView index(HttpServletRequest res) {
-		Map<String,String> categoryMap= dict.getDictDataByPcode("category100002");
+		Map<String,String> categoryMap= dict.getDictDataByPcode("category_show");
 		String statusJson=dict.getDictDataJsonStr("cstatus100003");
 		Map<String,String> statusMap= dict.getDictDataByPcode("cstatus100003");
 		res.setAttribute("categoryMap", categoryMap);

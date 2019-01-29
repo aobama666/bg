@@ -19,7 +19,7 @@
 		       DECODE(T.CATEGORY, 'NP', T.PROJECT_NAME, P.PROJECT_NAME) AS PROJECT_NAME,
 		       DECODE(T.CATEGORY,
 		              'NP',
-		              '非项目工作',
+		              '常规工作',
 		              (SELECT NAME
 		                 FROM BG_SYS_DATADICTIONARY
 		                WHERE PCODE = 'category100002'
@@ -70,21 +70,24 @@
 			  <if test="endDate != null and endDate != ''" >
 			  		 <![CDATA[AND t.work_time <= TO_DATE(#{endDate}, 'yyyy-mm-dd')]]>
 			  </if>
-              <if test="category != null and category != ''" >
+              <if test="category != null and category != '' and category != 'CG_NP'" >
                 	AND  DECODE(t.category,'NP',t.category,p.category) = #{category}
-               </if>
-               <if test="proName != null and proName != ''" >
+              </if>
+              <if test="category == 'CG_NP'" >
+                	AND  DECODE(t.category,'NP',t.category,p.category) in  ('CG','NP')
+              </if>
+              <if test="proName != null and proName != ''" >
                	AND DECODE(t.category,
 	              'NP',
 	              t.project_name,
 	              p.project_name) LIKE '%'||#{proName}||'%'
-               </if>
-               <if test="empName != null and empName != ''" >
+              </if>
+              <if test="empName != null and empName != ''" >
               	AND u.useralias LIKE '%'||#{empName}||'%'
-               </if>
-               <if test="status != null and status != ''" >
-              	 AND t.status=#{status}
-               </if>
+              </if>
+              <if test="status != null and status != ''" >
+              	AND t.status=#{status}
+              </if>
 	</select>
 	
 	<select id="getItemCount" parameterType="String" resultType="java.lang.Integer">

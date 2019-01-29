@@ -82,7 +82,7 @@ function DIYTemp(){
 	parent.layer.open({
 		type:2,
 		title:"定制模板内容",
-		area:['550px', '80%'],
+		area:['580px', '65%'],
 		resize:true,
 		scrollbar:true,
 		content:['<%=request.getContextPath()%>/staffWorkbench/DIY_temp_page'],

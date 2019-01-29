@@ -54,14 +54,14 @@
 </div>
 <div class="">
    <form name="queryBox" action="" style="width:100%;padding-left:10px;display:none;"  method="post" >
-   		<input name="projectName" type="hidden"/>
-   		<input name="WbsNumber" type="hidden"/>
+   		<input name="type" type="hidden"/>
+   		<input name="bpShow" type="hidden"/>
    		<input name="userName" type="hidden"/>
    		<input name="startTime" type="hidden"/>
    		<input name="endTime" type="hidden"/>
    		<input name="hrcode" type="hidden"/>
    	    <input name="ids" type="hidden"/>
-   	    <input name="projectId" type="hidden"/>
+   	    <input name="projectNumber" type="hidden"/>
    </form>
 	<table id="mmg" class="mmg">
 		<tr>
@@ -73,20 +73,20 @@
 </div>
 </body>
 <script type="text/javascript">
-var projectName=common.getQueryString("projectName");
-var WbsNumber=common.getQueryString("WbsNumber");
+var type=common.getQueryString("type");
+var bpShow=common.getQueryString("bpShow");
 var userName=common.getQueryString("userName");
 var startTime=common.getQueryString("StartData");
 var endTime=common.getQueryString("EndData");
 var hrcode=common.getQueryString("hrcode");
-var projectId=common.getQueryString("projectId");
-$("input[name=projectName]").val(projectName);
-$("input[name=WbsNumber]").val(WbsNumber);
+var projectNumber=common.getQueryString("projectNumber");
+$("input[name=type]").val(type);
+$("input[name=bpShow]").val(bpShow);
 $("input[name=userName]").val(userName);
 $("input[name=startTime]").val(startTime);
 $("input[name=endTime]").val(endTime);
 $("input[name=hrcode]").val(hrcode);
-$("input[name=projectId]").val(projectId);
+$("input[name=projectNumber]").val(projectNumber);
 var mmg;
 var pn = 1;
 var limit = 30;
@@ -107,8 +107,8 @@ function queryList(load){
 	            {title:'项目编号', name:'PROJECT_NUMBER', width:100, sortable:false, align:'center'},
 	            {title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
 	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
-	            {title:'工作内容', name:'JOB_CONTENT', width:100, sortable:false, align:'left'},
-	            {title:'投入工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'},
+	            {title:'工作内容', name:'JOB_CONTENT', width:300, sortable:false, align:'left'},
+	            {title:'投入工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'}
 	    		];
 	var mmGridHeight = $("body").parent().height() - 100;
 	mmg = $('#mmg').mmGrid({
@@ -128,9 +128,10 @@ function queryList(load){
 			userName:userName,
 			startTime:startTime,
 			endTime:endTime,
-			WbsNumber:WbsNumber,
-			projectName:projectName,
-			hrcode:hrcode
+			bpShow:bpShow,
+			type:type,
+			hrcode:hrcode,
+			projectNumber:projectNumber
 		},
 		plugins: [
 			$("#pg").mmPaginator({page:pn, limit:limit, totalCountName:'totalCount'})
@@ -145,13 +146,13 @@ function queryList(load){
 }
 //导出
 function forConfirm(){
-	var ids="";
-	var selectList = mmg.selectedRows();
+	var ids = mmg.selectedRowsIndex();
+	/* var selectList = mmg.selectedRows();
 	var reason = $(".reason").val();
 	for(var i=0;i<selectList.length;i++){
-		ids += (selectList[i].ID)+",";
+		ids += (selectList[i].ROW_ID-1)+",";
 	}
-	ids = ids.slice(0,ids.length-1);
+	ids = ids.slice(0,ids.length-1); */
 	$("input[name=ids]").val(ids);
 	document.forms[0].action ="<%=request.getContextPath()%>/BgWorkinghourInfo/selectForWorkerReport";
 	document.forms[0].submit();

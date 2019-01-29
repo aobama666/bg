@@ -63,6 +63,7 @@
    		<input name="ids" type="hidden"/>
    		<input name="username" type="hidden"/>
    		<input name="dataShow" type="hidden"/>
+   		<input name="bpShow" type="hidden"/>
    </form>
 	<table id="mmg" class="mmg">
 		<tr>
@@ -80,8 +81,9 @@ var StartData=common.getQueryString("StartData");
 var EndData=common.getQueryString("EndData");
 var type=common.getQueryString("type");
 var dataShow=common.getQueryString("dataShow");
-var ran = Math.random()*1000;
+var bpShow=common.getQueryString("bpShow");
 var username=common.getQueryString("username");
+var ran = Math.random()*1000;
 
 var params={
 	ran:ran,
@@ -92,6 +94,7 @@ var params={
 	type:type,
 	username:username,
 	dataShow:dataShow,
+	bpShow:bpShow,
 	page:1,
 	limit:30
 };
@@ -104,28 +107,30 @@ $("input[name=EndData]").val(EndData);
 $("input[name=type]").val(type);
 $("input[name=username]").val(username);
 $("input[name=dataShow]").val(dataShow); 
+$("input[name=bpShow]").val(bpShow); 
 var mmg;
 var pn = 1;
 var limit = 30;
-var cols=[];
+//var cols=[];
 $(function(){
-	init();
+	queryList();
+	//init();
 });
 
-function init(){
+<%-- function init(){
 	$.post('<%=request.getContextPath()%>/BgWorkinghourInfo/findForUser', params,
 			   function(data){
 					cols = [
 				            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 				            {title:'日期', name:'WORK_TIME', width:70, sortable:false, align:'center'},
 				            {title:'人员编号', name:'HRCODE', width:70, sortable:false, align:'center'},
-				            {title:'人员姓名', name:'NAME', width:70, sortable:false, align:'center'}
-				            //{title:'项目类别', name:'CATEGORY', width:100, sortable:false, align:'center'},
-				            //{title:'项目编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:'center'},
+				            {title:'人员姓名', name:'USERALIAS', width:70, sortable:false, align:'center'},
+				            {title:'工作任务类型', name:'CATEGORY', width:100, sortable:false, align:'center'},
+				            {title:'工作任务编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:'center'},
 				            //{title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
-				            //{title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
-				            //{title:'工作内容', name:'JOB_CONTENT', width:100, sortable:false, align:'left'},
-				            //{title:'投入总工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'}
+				            {title:'工作任务名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
+				            {title:'工作内容', name:'JOB_CONTENT', width:100, sortable:false, align:'left'},
+				            {title:'投入总工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'}
 				    	];
 					var title=data.title;
 					$.each(title,function(i,n){
@@ -133,12 +138,8 @@ function init(){
 					});
 					queryList();
 			 	});
-}
+} --%>
 
-function forSearch(){
-	pn = 1;
-	queryList("reload");
-}
 // 初始化列表数据
 function queryList(load){
 	var ran = Math.random()*100000000;
@@ -149,7 +150,18 @@ function queryList(load){
 		checkCol: true,
 		checkColWidth: 50,
 		height: mmGridHeight,
-		cols: cols,
+		cols: [
+	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
+	            {title:'日期', name:'WORK_TIME', width:70, sortable:false, align:'center'},
+	            {title:'人员编号', name:'HRCODE', width:70, sortable:false, align:'center'},
+	            {title:'人员姓名', name:'USERALIAS', width:70, sortable:false, align:'center'},
+	            {title:'工作任务类型', name:'CATEGORY', width:100, sortable:false, align:'center'},
+	            {title:'工作任务编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:'center'},
+	            //{title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
+	            {title:'工作任务名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
+	            {title:'工作内容', name:'JOB_CONTENT', width:100, sortable:false, align:'left'},
+	            {title:'投入总工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'}
+	    	],
 		nowrap: true,
 		url: '<%=request.getContextPath()%>/BgWorkinghourInfo/findForUser?ran='+ran,
 		fullWidthRows: true,
@@ -169,11 +181,11 @@ function queryList(load){
 }
 //导出
 function forConfirm(){
-	var ids="";
-	var selectList = mmg.selectedRows();
-	for(var i=0;i<selectList.length;i++){
+	var selectList = mmg.selectedRowsIndex();
+	var ids=selectList.toString();
+	/* for(var i=0;i<selectList.length;i++){
 		ids += (parseInt(selectList[i].Count)-1)+",";
-	}
+	} */
 	$("input[name=ids]").val(ids);
 	document.forms[0].action ="<%=request.getContextPath()%>/BgWorkinghourInfo/findForUserExport";
 	document.forms[0].submit();

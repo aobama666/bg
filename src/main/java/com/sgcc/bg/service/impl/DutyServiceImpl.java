@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -19,7 +21,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sgcc.bg.common.CommonCurrentUser;
+import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ExcelUtil;
 import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.common.FtpUtils;
@@ -273,6 +277,39 @@ public class DutyServiceImpl implements DutyService {
 		String[] object = {"成功导入项目信息"+ count +"条，失败"+errorList.size()+"条",errorUUID};
 		return object;
 		//
+	}
+
+	@Override
+	public String exportSelectedItems(String username, String deptCode, String roleCode, String index,
+			HttpServletResponse response) {
+		username = Rtext.toStringTrim(username, "");
+		deptCode = Rtext.toStringTrim(deptCode, "");
+		roleCode = Rtext.toStringTrim(roleCode, "");
+		index = Rtext.toStringTrim(index, "");
+		List<Map<String,Object>> resultList=new ArrayList<Map<String,Object>>();
+		//复用页面查询方法
+		List<Map<String,Object>> dataList = getAllDuties(username, deptCode, roleCode);
+		
+		if(Rtext.isEmpty(index)){
+			resultList = dataList;
+		}else{
+			String[] numArr = index.split(",");
+			for (String numStr : numArr) {
+				int num = Integer.parseInt(numStr);
+				resultList.add(dataList.get(num));
+			}
+		}
+		
+		Object[][] title = { 
+							 { "人员姓名", "USERALIAS","nowrap" },
+							 { "人员编号", "HRCODE","nowrap" },
+							 { "人员角色", "ROLE_NAME","nowrap" }, 
+							 { "组织机构","DEPTNAME"},
+							 //{ "项目类型", "TYPE","nowrap" },
+							 { "组织编号","DEPTCODE","nowrap"}
+							};
+		ExportExcelHelper.getExcel(response, "报工管理-专责授权-"+DateUtil.getDays(), title, resultList, "normal");
+		return "";
 	}
 	
 	/*	public static void main(String[] args) {

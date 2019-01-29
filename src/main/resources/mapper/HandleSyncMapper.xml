@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.mapper.HandleSyncMapper">
+
+	<insert id="addKYToProTemp">
+		INSERT INTO BG_SYNC_KY_PROJECT_TEMP
+		  SELECT PROJECT_ID,
+		         PROJECT_TYPE,
+		         PROJECT_NAME,
+		         PROJECT_WBS,
+		         PROJECT_REMARK,
+		         PROJECT_START_DATE,
+		         PROJECT_END_DATE,
+		         SYSDATE
+		    FROM BG_KY_PRJ_VIEW
+	</insert>
+	
+	<delete id="cutKYProTemp" parameterType="int">
+		DELETE FROM BG_SYNC_KY_PROJECT_TEMP
+    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt;= TRUNC(SYSDATE)
+	</delete>
+	
+	<insert id="addKYToEmpTemp">
+		INSERT INTO BG_SYNC_KY_EMP_TEMP
+		  SELECT PROJECT_ID,
+		         USER_NAME,
+		         USER_HRCODE,
+		         JOIN_START_DATE,
+		         JOIN_END_DATE,
+		         PROJECT_ROLE,
+		         WORK_TIME,
+		         SYSDATE
+		    FROM BG_KY_EMP_VIEW
+	</insert>
+	
+	<delete id="cutKYEmpTemp" parameterType="int">
+		DELETE FROM BG_SYNC_KY_EMP_TEMP
+    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt;= TRUNC(SYSDATE)
+	</delete>
+	
+	<select id="getAllSyncProFromKY" resultType="java.util.Map">
+	    SELECT PROJECT_NAME,
+	           PROJECT_ID,
+	           PROJECT_TYPE,
+	           PROJECT_WBS,
+	           PROJECT_REMARK,
+	           PROJECT_START_DATE,
+	           PROJECT_END_DATE
+	      FROM BG_KY_PRJ_VIEW
+	</select>
+	
+	<select id="getAllSyncEmpFromKY" resultType="java.util.Map">
+	    SELECT USER_NAME,
+	        USER_HRCODE,
+	        PROJECT_ID,
+	        JOIN_START_DATE,
+	        JOIN_END_DATE,
+	        PROJECT_ROLE,
+	        WORK_TIME
+	    FROM  BG_KY_EMP_VIEW
+	</select>
+	
+	<insert id="saveProFromKY" >
+		INSERT INTO BG_SYNC_KY_PROJECT
+		  (ID,
+		   PROJECT_ID,
+		   CATEGORY,
+		   PROJECT_NAME,
+		   WBS_NUMBER,
+		   PROJECT_INTRODUCE,
+		   START_DATE,
+		   END_DATE,
+		   CREATE_DATE,
+		   CREATE_USER,
+		   UPDATE_DATE,
+		   UPDATE_USER,
+		   VALID)
+		VALUES
+		  (SYS_GUID(),
+		   #{PROJECT_ID,jdbcType=VARCHAR},
+		   #{PROJECT_TYPE,jdbcType=VARCHAR},
+		   #{PROJECT_NAME,jdbcType=VARCHAR},
+		   #{PROJECT_WBS,jdbcType=VARCHAR},
+		   #{PROJECT_REMARK,jdbcType=VARCHAR},
+		   #{PROJECT_START_DATE,jdbcType=VARCHAR},
+		   #{PROJECT_END_DATE,jdbcType=VARCHAR},
+		   SYSDATE,
+		   'admin',
+		   SYSDATE,
+		   'admin',
+		   '1')
+	</insert>
+	
+	<insert id="saveEmpFromKY">
+		INSERT INTO BG_SYNC_KY_EMP
+		  (ID,
+		   PROJECT_ID,
+		   HRCODE,
+		   EMPNAME,
+		   START_DATE,
+		   END_DATE,
+		   ROLE,
+		   PLANHOURS,
+		   CREATE_DATE,
+		   CREATE_USER,
+		   UPDATE_DATE,
+		   UPDATE_USER,
+		   VALID)
+		VALUES
+		  (SYS_GUID(),
+		   #{PROJECT_ID,jdbcType=VARCHAR},
+		   #{USER_HRCODE,jdbcType=VARCHAR},
+		   #{USER_NAME,jdbcType=VARCHAR},
+		   #{JOIN_START_DATE,jdbcType=VARCHAR},
+		   #{JOIN_END_DATE,jdbcType=VARCHAR},
+		   #{PROJECT_ROLE,jdbcType=VARCHAR},
+		   #{WORK_TIME,jdbcType=NUMERIC},
+		   SYSDATE,
+		   'admin',
+		   SYSDATE,
+		   'admin',
+		   '1')
+	</insert>
+	
+	
+	<select id="getProRelationById" resultType="java.util.Map">
+		SELECT BG_ID, SYNC_ID, CREATE_TIME, UPDATE_TIME
+		  FROM BG_SYNC_PROJECT_RELATION T
+		 WHERE T.VALID = 1
+		  <if test="bgId != null and bgId != ''" >
+			 AND T.BG_ID = #{bgId}
+		  </if>
+		  <if test="sycnId != null and sycnId != ''" >
+			 AND T.SYNC_ID = #{sycnId}
+		  </if>
+	</select>
+	
+	<insert id="addProRelation"  parameterType="String">
+		INSERT INTO BG_SYNC_PROJECT_RELATION (BG_ID, SYNC_ID) VALUES (#{bgId,jdbcType=VARCHAR}, #{sycnId,jdbcType=VARCHAR})
+	</insert>
+	
+	<insert id="addErrorRecord"  parameterType="String">
+		INSERT INTO BG_SYNC_ERROR_RECORD
+		  (SYSTEM, TNAME, SYNC_ID, ERROR)
+		VALUES
+		  (#{system, jdbcType=VARCHAR}, #{tName, jdbcType=VARCHAR}, #{syncId, jdbcType=VARCHAR} ,#{errorInfo, jdbcType=VARCHAR})
+	</insert>
+	
+	<select id="getEmpRelation" resultType="java.util.Map">
+		SELECT BG_EMP_ID, BG_PROJECT_ID , HRCODE , SRC , CREATE_TIME, UPDATE_TIME
+		  FROM BG_SYNC_EMP_RELATION T
+		 WHERE T.VALID = 1
+		  <if test="bgProId != null and bgProId != ''" >
+			 AND T.BG_PROJECT_ID = #{bgProId}
+		  </if>
+		  <if test="bgEmpId != null and bgEmpId != ''" >
+			 AND T.BG_EMP_ID = #{bgEmpId}
+		  </if>
+		  <if test="hrCode != null and hrCode != ''" >
+			 AND T.HRCODE = #{hrCode}
+		  </if>
+		  <if test="src != null and src != ''" >
+			 AND T.SRC = #{src}
+		  </if>
+	</select>
+	
+	<insert id="addEmpRelation"  parameterType="String">
+		INSERT INTO BG_SYNC_EMP_RELATION
+		  (BG_EMP_ID, BG_PROJECT_ID, HRCODE, SRC)
+		VALUES
+		  (	#{bgEmpId,jdbcType=VARCHAR}, 
+			#{bgProId,jdbcType=VARCHAR}, 
+			#{hrCode,jdbcType=VARCHAR}, 
+			#{src,jdbcType=VARCHAR})
+	</insert>
+	
+	<insert id="addHXToProTemp">
+		INSERT INTO BG_SYNC_HX_PROJECT_TEMP
+		   SELECT PROJECT_ID,
+		         PROJECT_TYPE,
+		         PROJECT_NAME,
+		         PROJECT_WBS,
+		         PROJECT_REMARK,
+		         PROJECT_START_DATE,
+		         PROJECT_END_DATE,
+		         SYSDATE
+		    FROM BG_HX_PRJ_VIEW
+	</insert>
+	
+	<delete id="cutHXProTemp" parameterType="int">
+		DELETE FROM BG_SYNC_HX_PROJECT_TEMP
+    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt;= TRUNC(SYSDATE)
+	</delete>
+	
+	<insert id="addHXToEmpTemp">
+		INSERT INTO BG_SYNC_HX_EMP_TEMP
+		   SELECT PROJECT_ID,
+		         USER_NAME,
+		         USER_HRCODE,
+		         JOIN_START_DATE,
+		         JOIN_END_DATE,
+		         PROJECT_ROLE,
+		         WORK_TIME,
+		         SYSDATE
+		    FROM BG_HX_EMP_VIEW
+	</insert>
+	
+	<delete id="cutHXEmpTemp" parameterType="int">
+		DELETE FROM BG_SYNC_HX_EMP_TEMP
+    	 WHERE TRUNC(CREATE_DATE + #{days}) &lt;= TRUNC(SYSDATE)
+	</delete>
+	
+	
+	<select id="getAllSyncProFromHX" resultType="java.util.Map">
+	    SELECT PROJECT_NAME,
+	           PROJECT_ID,
+	           PROJECT_TYPE,
+	           PROJECT_WBS,
+	           PROJECT_REMARK,
+	           PROJECT_START_DATE,
+	           PROJECT_END_DATE
+	      FROM BG_HX_PRJ_VIEW
+	</select>
+	
+	<select id="getAllSyncEmpFromHX" resultType="java.util.Map">
+	    SELECT USER_NAME,
+	        USER_HRCODE,
+	        PROJECT_ID,
+	        JOIN_START_DATE,
+	        JOIN_END_DATE,
+	        PROJECT_ROLE,
+	        WORK_TIME
+	    FROM BG_HX_EMP_VIEW
+	</select>
+	
+	<insert id="saveProFromHX" >
+		INSERT INTO BG_SYNC_HX_PROJECT
+		  (ID,
+		   PROJECT_ID,
+		   CATEGORY,
+		   PROJECT_NAME,
+		   WBS_NUMBER,
+		   PROJECT_INTRODUCE,
+		   START_DATE,
+		   END_DATE,
+		   CREATE_DATE,
+		   CREATE_USER,
+		   UPDATE_DATE,
+		   UPDATE_USER,
+		   VALID)
+		VALUES
+		  (SYS_GUID(),
+		   #{PROJECT_ID,jdbcType=VARCHAR},
+		   #{PROJECT_TYPE,jdbcType=VARCHAR},
+		   #{PROJECT_NAME,jdbcType=VARCHAR},
+		   #{PROJECT_WBS,jdbcType=VARCHAR},
+		   #{PROJECT_REMARK,jdbcType=VARCHAR},
+		   #{PROJECT_START_DATE,jdbcType=VARCHAR},
+		   #{PROJECT_END_DATE,jdbcType=VARCHAR},
+		   SYSDATE,
+		   'admin',
+		   SYSDATE,
+		   'admin',
+		   '1')
+	</insert>
+	
+	<insert id="saveEmpFromHX">
+		INSERT INTO BG_SYNC_HX_EMP
+		  (ID,
+		   PROJECT_ID,
+		   HRCODE,
+		   EMPNAME,
+		   START_DATE,
+		   END_DATE,
+		   ROLE,
+		   PLANHOURS,
+		   CREATE_DATE,
+		   CREATE_USER,
+		   UPDATE_DATE,
+		   UPDATE_USER,
+		   VALID)
+		VALUES
+		  (SYS_GUID(),
+		   #{PROJECT_ID,jdbcType=VARCHAR},
+		   #{USER_HRCODE,jdbcType=VARCHAR},
+		   #{USER_NAME,jdbcType=VARCHAR},
+		   #{JOIN_START_DATE,jdbcType=VARCHAR},
+		   #{JOIN_END_DATE,jdbcType=VARCHAR},
+		   #{PROJECT_ROLE,jdbcType=VARCHAR},
+		   #{WORK_TIME,jdbcType=NUMERIC},
+		   SYSDATE,
+		   'admin',
+		   SYSDATE,
+		   'admin',
+		   '1')
+	</insert>
+	
+	<delete id="truncateTable">
+		TRUNCATE TABLE ${tableName}
+	</delete>
+	
+	<delete id="cutErrorRecord" parameterType="int">
+		DELETE FROM BG_SYNC_ERROR_RECORD
+ 		 WHERE TRUNC(CREATE_TIME + #{days}) &lt;= TRUNC(SYSDATE)
+	</delete>
+</mapper>

@@ -117,6 +117,10 @@ var delayDate;
 var approverHrcode='${approverHrcode}';//默认审核人
 var approverName='${approverName}';//默认审核人
 var currentUserHrcode='${currentUserHrcode}';//当前提报人
+//项目类型数据字典
+var categoryObj = ${categoryJson};
+var statusObj = ${statusJson};
+
 $(function(){
 	$(".form_date").datepicker({
 		autoclose:true,
@@ -194,13 +198,13 @@ function queryList(load){
 	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center',
 					renderer:function(val,item,rowIndex){
 						val=val==undefined?"":val;
-	            		return '<span title="'+val+'">'+val+'</span><input type="hidden" property="category" value="'+val+'">';
+	            		return '<span title="'+categoryObj[val]+'">'+categoryObj[val]+'</span><input type="hidden" property="category" value="'+val+'">';
 	            	}
 	            },
 	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'start',
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
-	            		if(item.CATEGORY=="非项目工作" && (item.STATUS=="0" || item.STATUS=="2") ){
+	            		if(item.CATEGORY=="NP" && (item.STATUS=="0" || item.STATUS=="2") ){
 	            			val='<div style="display:inline"><input onblur="checkInput(this)" class="form-control" name="projectName" value="'+val+'" property="projectName"></div>';
 	            		}else{
 	            			val='<span title="'+val+'">'+val+'</span><input type="hidden" property="projectName" value="'+val+'">';
@@ -235,8 +239,8 @@ function queryList(load){
 	            {titleHtml:'审核人<font class="glyphicon glyphicon-asterisk text-danger"></font>', name:'PRINCIPAL',width:90, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
-	            		//EDIT是一个标记，解决复杂情况下是否可编辑的问题,当审核人为本人时不可编辑
-	            		if(item.EDIT=='yes' && currentUserHrcode!=item.HRCODE && (item.STATUS=="0" || item.STATUS=="2")){
+	            		//EDITABLE 是在赋值id时确定的一个值，标记是否审核人可编辑
+	            		if(item.EDITABLE=="true" && (item.STATUS=="0" || item.STATUS=="2")){
 	            			val='<div title="'+val+'" style="display:inline" class="" onclick="forAddApprover(this)"><input  onblur="removeHint(this)" class="form-control" value="'+val+'" readonly style="text-align:center;width:90%;display:inline-block" name="principal" property="principal">'
 	            				+'<span style="width:10%;" class="glyphicon glyphicon-user"></span></div>';
 	            		}else{
@@ -248,8 +252,7 @@ function queryList(load){
 	            {title:'状态', name:'STATUS', width:90, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
-	            		var status=${statusJson};
-	            		return status[val];
+	            		return statusObj[val];
 	            	}
 	            },
 	            {title:'审核备注', name:'PROCESS_NOTE', width:200, sortable:false, align:'center'},
@@ -453,14 +456,14 @@ function forAddProJob(){
 function forAddNonProJob(){
 	//var edit=currentUserHrcode==approverHrcode?'no':'yes';//非项目，如果默认审核人是本人时，不可编辑
 	mmg.addRow({
-		"CATEGORY":"非项目工作",
+		"CATEGORY":"NP",
 		"PROJECT_NAME":"",
 		"STATUS":"0",
 		"JOB_CONTENT":"",
 		"WORKING_HOUR":"",
 		"HRCODE":approverHrcode,
 		"PRINCIPAL":approverName,
-		"EDIT":'yes'
+		"EDITABLE":"true"
 		});
 } 
 
@@ -548,21 +551,14 @@ function forSubmit(){
 		var paramArr =new Array();
 		for(var i=0;i<rows.length;i++){
 			var $row=$(rows[i]);
-			var empName=$row.find("input[property='principal']").attr("name");
 			var checkResult;
-			if(empName!=undefined){
-				checkResult =$row.sotoValidate([
+			
+			checkResult =$row.sotoValidate([
 											  {name:'projectName',vali:'length[-50]'},
 	                                   	      {name:'jobContent',vali:'length[-200]'},//required;暂不做必须校验
 	                                   	      {name:'workHour',vali:'required;checkNumberFormat()'},
-	                                   	      {name:empName,vali:'required;'}
+	                                   	      {name:'principal',vali:'required;'}
 				                               ]);
-			}else{
-				checkResult =$row.sotoValidate([
-	                                   	      {name:'jobContent',vali:'length[-200]'},//required;暂不做必须校验
-	                                   	      {name:'workHour',vali:'required;checkNumberFormat()'}
-				                               ]);
-			}
 			
 			if(!checkResult){
 				isPass=false;

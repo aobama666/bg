@@ -61,60 +61,67 @@
 <div class="query-box">
 	<div class="query-box-left">
 		<form name="queryBox" action="" style="width:100%;padding-left:10px"   method="post" >
-		<hidden name="uuid" property="uuid"></hidden>
-		<input type="hidden" name="selectList"/>
-		<div class="form-group col-xs-3">
-			<label>统计报表：</label>
-			<div class="controls"  data-date-format="yyyy-mm-dd">
-				<select name="type">
-				 
-				    <option value="0">日报</option>
-					<option value="1" selected='selected'>周报</option>
-					<option value="2">月报</option>
-					<option value="3">季报</option>
-					<option value="4">年报</option>
-					<option value="5">自定义</option>
+			<hidden name="uuid" property="uuid"></hidden>
+			<input type="hidden" name="selectList"/>
+			<div class="form-group col-xs-3">
+				<label>统计报表：</label>
+				<div class="controls"  data-date-format="yyyy-mm-dd">
+					<select name="type">
 					 
-				</select>
-			</div>
-		</div>
-		<div class="form-group col-xs-5" style="margin-bottom:0;">
-			<label>统计日期：</label>
-			<div class="controls"  data-date-format="yyyy-mm-dd">
-				<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
-					<input name="startTime" property="startTime"  readonly="true" placeholder='开始时间'>
-					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-				</div>
-				<div class="floatLeft">--</div>
-				<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
-					<input name="endTime" property="endTime"  readonly="true" placeholder='结束时间'>
-					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+					    <option value="0">日报</option>
+						<option value="1" selected='selected'>周报</option>
+						<option value="2">月报</option>
+						<option value="3">季报</option>
+						<option value="4">年报</option>
+						<option value="5">自定义</option>
+						 
+					</select>
 				</div>
 			</div>
-		</div>
-		<div class="form-group col-xs-3">
-			<label>统计维度：</label>
-			<div class="controls">
-				<select name="status">
-					<option value="0" selected='selected'>项目</option>
-					<option value="1">人员</option>
-				</select>
+			<div class="form-group col-xs-5" style="margin-bottom:0;">
+				<label>统计日期：</label>
+				<div class="controls"  data-date-format="yyyy-mm-dd">
+					<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
+						<input name="startTime" property="startTime"  readonly="true" placeholder='开始时间'>
+						<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+					</div>
+					<div class="floatLeft">--</div>
+					<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
+						<input name="endTime" property="endTime"  readonly="true" placeholder='结束时间'>
+						<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+					</div>
+				</div>
 			</div>
-		</div>
-		<div class="form-group col-xs-3">
-			<label>项目名称：</label>
-			<div class="controls">
-				<input name="projectName" property="projectName" >
+			<div class="form-group col-xs-3">
+				<label>统计维度：</label>
+				<div class="controls">
+					<select name="status">
+						<option value="0" selected='selected'>项目</option>
+						<option value="1">人员</option>
+					</select>
+				</div>
 			</div>
-		</div>
-		
-		<div class="form-group col-xs-5 hidden"   id="username">
-			<label>人员姓名：</label>
-			<div class="controls" >
-				<input name="userName" property="userName" >
+			<div class="form-group col-xs-3">
+				<label>项目名称：</label>
+				<div class="controls">
+					<input name="projectName" property="projectName" >
+				</div>
 			</div>
-		</div>
-		
+			
+			<div class="form-group col-xs-5 hidden"   id="username">
+				<label>人员姓名：</label>
+				<div class="controls" >
+					<input name="userName" property="userName" >
+				</div>
+			</div>
+			<!-- 年前不上，把计前期取消 -->
+			<!-- <div class="form-group col-xs-4"  >
+				<label>数据显示：</label>
+				<div class="controls datashow">
+					<div class='showcheck'><input type="checkbox" name="bpShow" value="1" /></div>checked="checked" 
+					<div class="showText">项目计入项目前期</div>
+				</div>	    
+			</div> -->
 		</form>
 	</div>
 	<div class="query-box-right">
@@ -199,18 +206,44 @@ function queryListPro(load){
             		}		
 	            },
 	            {title:'统计周期', name:'StartAndEndData', width:100, sortable:false, align:'center'},
-	            {title:'投入总工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center',
+	            {title:'投入总工时(h)', name:'PRO_HOUR', width:150, sortable:false, align:'center',
+	            	renderer:function(val,item,rowIndex){
+	            		if(item.PRO_HOUR == 0){
+	            			return '0';
+	            		}
+            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetails(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+1+'\' )">'+val+'</a>';
+            		}	
+	            }
+	            /* {title:'投入总工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.WORKING_HOUR == 0){
 	            			return '0';
 	            		}
-            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetails(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+item.PROJECT_NAME+'\' )">'+val+'</a>';
+            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetails(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+0+'\' )">'+val+'</a>';
             		}	
-	            }
+	            }/* ,
+	            {title:'项目工作投入工时(h)', name:'PRO_HOUR', width:150, sortable:false, align:'center',
+	            	renderer:function(val,item,rowIndex){
+	            		if(item.PRO_HOUR == 0){
+	            			return '0';
+	            		}
+            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetails(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+1+'\' )">'+val+'</a>';
+            		}	
+	            },
+	            {title:'项目前期投入工时(h)', name:'BP_HOUR', width:150, sortable:false, align:'center',
+	            	renderer:function(val,item,rowIndex){
+	            		if(item.BP_HOUR == 0){
+	            			return '0';
+	            		}else if(item.BP_HOUR == '--'){
+	            			return '--';
+	            		}
+            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetails(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+2+'\' )">'+val+'</a>';
+            		}	
+	            } */
 	    		];
 	var mmGridHeight = $("body").parent().height() - 220;
 	mmg = $('#mmg').mmGrid({
-		cosEdit:"5,7",//声明需要编辑，取消点击选中的列
+		cosEdit:"4,6,7,8",//声明需要编辑，取消点击选中的列
 		indexCol: true,
 		indexColWidth: 30,
 		checkCol: true,
@@ -251,17 +284,18 @@ function forDetails(proId){
 	});
 }
 //项目工时详情
-function forHourDetails(projectNumber,StartData,EndData,projectName){
-	var userName = escape($("input[name=userName]").val());
-	var projectNames=escape(projectName);
+function forHourDetails(projectNumber,StartData,EndData,type){
+	//var userName = escape($("input[name=userName]").val());
+	//var projectNames=escape(projectName);
+	var bpShow = $('input[name="bpShow"]').prop("checked") ? "1":"0";
 	var projectNumber=escape(projectNumber);
     layer.open({
 		type:2,
-		title:"员工工时明细",
-		area:['80%', '85%'],
+		title:"项目工时明细",
+		area:['80%', '80%'],
 		scrollbar:false,
 		skin:'query-box',
-		content:['<%=request.getContextPath()%>/searchWorkTask/workinghourStaticDetail?projcetNumber='+projectNumber+'&StartData='+StartData+'&EndData='+EndData+'&projectName='+projectNames+'&userName='+userName,'no']
+		content:['<%=request.getContextPath()%>/searchWorkTask/workinghourStaticDetail?projectNumber='+projectNumber+'&StartData='+StartData+'&EndData='+EndData+'&type='+type+'&bpShow='+bpShow,'no']
 	});
 }
 
@@ -281,22 +315,40 @@ function queryListPer(load){
             		}		
 	            },
 	            {title:'统计周期', name:'StartAndEndData', width:100, sortable:false, align:'center'},
-	            {title:'项目投入总工时(h)', name:'StandartHoursNum', width:100, sortable:false, align:'center'},
+	            {title:'项目投入总工时(h)', name:'StandartHoursNum', width:150, sortable:false, align:'center'},
 	            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},
 	            {title:'人员姓名', name:'USERALIAS', width:100, sortable:false, align:'center'},
-	            {title:'员工投入工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center',
+	            {title:'投入总工时(h)', name:'PRO_HOUR', width:150, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
-	            		if(item.WORKING_HOUR == 0){
+	            		if(item.PRO_HOUR == 0){
 	            			return '0';
 	            		}
-            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+item.PROJECT_NAME+'\' ,\''+item.HRCODE+'\',\''+item.PROJECT_ID+'\')">'+val+'</a>';
+            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+1+'\' ,\''+item.HRCODE+'\',\''+item.WORKER+'\')">'+val+'</a>';
             		}	
 	            },
+	            /* {title:'员工项目投入工时(h)', name:'PRO_HOUR', width:150, sortable:false, align:'center',
+	            	renderer:function(val,item,rowIndex){
+	            		if(item.PRO_HOUR == 0){
+	            			return '0';
+	            		}
+            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+1+'\' ,\''+item.HRCODE+'\',\''+item.WORKER+'\')">'+val+'</a>';
+            		}	
+	            }/* ,
+	            {title:'员工项目前期投入工时(h)', name:'BP_HOUR', width:150, sortable:false, align:'center',
+	            	renderer:function(val,item,rowIndex){
+	            		if(item.BP_HOUR == 0){
+	            			return '0';
+	            		}else if(item.BP_HOUR == '--'){
+	            			return '--';
+	            		}
+            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+2+'\' ,\''+item.HRCODE+'\',\''+item.WORKER+'\')">'+val+'</a>';
+            		}	
+	            } */
 	            {title:'角色', name:'ROLE', width:100, sortable:false, align:'center'}
 	    		];
 	var mmGridHeight = $("body").parent().height() - 220;
 	mmg2 = $('#mmg2').mmGrid({
-		cosEdit:"3,9",//声明需要编辑，取消点击选中的列
+		cosEdit:"4,9,10",//声明需要编辑，取消点击选中的列
 		indexCol: true,
 		indexColWidth: 30,
 		checkCol: true,
@@ -325,20 +377,20 @@ function queryListPer(load){
 		mmg2.load({page:pn2});
 	}
 }
-function forHourDetailA(projectNumber,StartData,EndData,projectName ,hrcode,projectId){
-	var userName = escape($("input[name=userName]").val());
-	 
-	var projectNames=escape(projectName);
+function forHourDetailA(projectNumber,StartData,EndData,type ,hrcode,userName){
+	//var userName = escape($("input[name=userName]").val());
+	//var projectNames=escape(projectName);
 	var projectNumber=escape(projectNumber);
+	var bpShow = $('input[name="bpShow"]').prop("checked") ? "1":"0";
 	 
 	 
     layer.open({
 		type:2,
 		title:"员工工时明细",
-		area:['80%', '85%'],
+		area:['80%', '80%'],
 		scrollbar:false,
 		skin:'query-box',
-		content:['<%=request.getContextPath()%>/searchWorkTask/workinghourStaticDetails?projectNumber='+projectNumber+'&StartData='+StartData+'&EndData='+EndData+'&projectName='+projectNames+'&userName='+userName+'&hrcode='+hrcode+'&projectId='+projectId,'no']
+		content:['<%=request.getContextPath()%>/searchWorkTask/workinghourStaticDetails?projectNumber='+projectNumber+'&StartData='+StartData+'&EndData='+EndData+'&type='+type+'&userName='+userName+'&hrcode='+hrcode+'&bpShow='+bpShow,'no']
 	});
 }
 

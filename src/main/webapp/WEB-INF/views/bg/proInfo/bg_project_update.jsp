@@ -43,17 +43,23 @@
 	src="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmPaginator.js"></script>
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmGrid.js"></script>
-<!--[if lt IE 9>
-	<script src="<%=request.getContextPath()%>/common/plugins/html5shiv/html5shiv.min.js"></script>
-	<script src="<%=request.getContextPath()%>/common/plugins/respond/respond.js"></script>
-	<script src="<%=request.getContextPath()%>/common/plugins/pseudo/jquery.pseudo.js"></script>
-<![endif]-->
+<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/common.js"></script>
 
 <style type="text/css">
 	.italic{
 		color:#999;
 		font-style:italic;
 	}
+	
+	/* #proSelect{
+		position: absolute;
+    	top: 0px;
+    	right: 15px;
+   		height: 25px;
+    	display: none;
+    	width: 78px;
+  		padding: 0px 3px;
+	} */
 </style>
 </head>
 <body>
@@ -71,6 +77,7 @@
 	<ul id="myTab" class="nav nav-tabs">
 		<li class="active"><a href="#proInfo" data-toggle="tab">项目信息</a></li>
 		<li><a href="#people" data-toggle="tab" onclick="setTimeout(resize,200)">参与人员</a></li>
+		<li><a href="#beforePro" data-toggle="tab">项目前期维护</a></li>
 	</ul>
 	<div id="myTabContent" class="tab-content">
 		<div class="tab-pane fade in active" id="proInfo">
@@ -85,7 +92,7 @@
 			<hr>
 			<div class="form-box">
 				<div class="form-group col-xs-11">
-					<label for=""category""><font
+					<label for="category"><font
 						class="glyphicon glyphicon-asterisk required"></font>项目分类</label>
 					<div class="controls">
 						<select name="category" property="category" onchange="typeChange(this)">
@@ -105,6 +112,8 @@
 					<div class="controls">
 						<input type="text" name="projectName" property="projectName" value="${projectName}">
 					</div>
+					<!-- <button id="proSelect" type="button" class="btn btn-info"
+						aria-label="Left Align">选择项目</button> -->
 				</div>
 				<div class="form-group col-xs-11">
 					<label for="projectNumber"><font
@@ -176,55 +185,22 @@
 				</div> -->
 			</div>
 		</div>
-		<div class="tab-pane fade" id="people">
-			<div class="page-header-sl">
-				<div class="button-box">
-				    <span id="stuffTree">
-					<button type="button"  id="popStuffTree" class="btn btn-primary btn-xs" name="kOne">新增人员</button>
-					</span>
-					<button type="button" class="btn btn-danger btn-xs" name="kOne"
-						onclick="forDelete_stuff()">删除</button>
-					<button type="button" class="btn btn-success btn-xs" name="kOne"
-						onclick="forSave_stuff()">保存</button>
-					<!-- <button type="button" class="btn btn-warning btn-xs" name="kOne"
-						onclick="forClose()">关闭</button> -->
-				</div>
-			</div>
-			<hr>
-			<div class="query-box">
-				<div class="query-box-left">
-					<form name="queryBox" action=""
-						style="width: 100%; padding-left: 10px">
-						<hidden name="uuid" property="uuid"></hidden>
-						<div class="form-group col-xs-12">
-							<label>人员姓名</label>
-							<div class="controls">
-								<input id="queryEmpName" name="queryEmpName" property="queryEmpName">
-							</div>
-						</div>
-					</form>
-				</div>
-				<div class="query-box-right">
-					<button type="button" class="btn btn-info btn-xs"
-						onclick="forSearch()">查询</button>
-				</div>
-			</div>
-			<div>
-				<table id="mmg" class="mmg" style="width:500px !important;">
-					<tr>
-						<th rowspan="" colspan=""></th>
-					</tr>
-				</table>
-				<!-- <div id="pg" style="text-align: right;"></div> -->
-			</div>
-		</div>
+		<!-- 参与人员页 -->
+		<%@include file="bg_project_include_people.jsp" %>
+		<!-- 项目前期维护页 -->
+		<%@include file="bg_project_include_beforePro.jsp" %>
 	</div>
 </body>
 <script type="text/javascript">
 	var mmg;
+	var src = "BG"//项目来源系统 BG,KY.HX
+	//var srcProId;//项目信息来源系统的项目id
+	var isSaved = false;//标记是否项目已被成功保存
 	var tempStartDate;
 	$(function(){
+		init();
 		queryList();
+		queryList_beforePro();
 		$(".form_date").datepicker({
 			autoclose:true,
 			orientation:'auto',
@@ -235,6 +211,38 @@
 		$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'self',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'});
 		$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio'});
 	}); 
+	
+	//初始化操作,当不为其他类型,并且来源是其他系统,项目类型、项目名称、WBS页面不可更改
+	function init(){
+		srcNum = common.getQueryString("src");
+		var srcArr = ['BG','BGB','KY','HX'];
+		src = srcArr[srcNum];
+		if(src=='KY' || src=='HX'){
+			//禁用输入框
+			$('#proInfo select[name="category"],input[name="projectName"],input[name="WBSNumber"]').prop("disabled",true);
+			//显示关联项目按钮
+			//$('#proSelect').show();
+		}
+	}
+	
+	<%-- $("#proSelect").click(function(){
+		var category = $("select[name='category']").val();
+		var title = "项目选择-科研项目";
+		if(category=="HX") title = "项目选择-横向项目";
+		
+		parent.layer.open({
+			type:2,
+			title:title,
+			area:['865px', '80%'],
+			resize:true,
+			scrollbar:true,
+			content:['<%=request.getContextPath()%>/project/proSelectPage?queryFor='+category],
+			end: function(){
+				//document.execCommand("Refresh");
+			}
+		});
+		//forClose();
+	}); --%>
 
 	function forSave_pro(){
 		var ran = Math.random()*1000000;
@@ -265,9 +273,9 @@
         var wbs=$("#WBSNumber input");
         //当为科研、横向项目时，校验wbs编号,否则如果天了wbs编号的话，只校验其唯一性
         if(category=='HX' || category=='KY' ){
-        	validator[2].vali='required;checkUniqueness()';
+        	validator[2].vali='required;length[-50];checkUniqueness()';
         }else if($.trim(wbs.val())!=''){
-        	validator[2].vali='checkUniqueness()';
+        	validator[2].vali='length[-50];checkUniqueness()';
         }
 		//当为技术服务项目时候，不校验项编号，并移除错误提示
 		/*if($("select[name='category']").val()=="JS"){
@@ -283,6 +291,7 @@
 			var param = $(".form-box").sotoCollecter();
 			param["proId"] = proId;
 			param["method"] = proId==""?"save":"update";//要执行的操作方法，存在proId为更新，否则保存
+			param["src"] = src;//项目信息来源
 			$.ajax({
 				type:"POST",
 				url:"<%=request.getContextPath()%>/project/ajaxSavePro?ran="+ran,
@@ -309,9 +318,9 @@
 								stuffShow();
 								return;
 							} 
-							layer.confirm('保存成功！项目开始日期/项目结束日期变动，请修改参与人的参与开始日期/结束日期，以免影响员工工时填报。', {icon: 7, btn:"修改",title:'提示 ',shift:-1},
+							parent.layer.confirm('保存成功！项目开始日期/项目结束日期变动，请修改参与人的参与开始日期/结束日期，以免影响员工工时填报。', {icon: 7, btn:"修改",title:'提示 ',shift:-1},
 								function(index){
-									layer.close(index);
+									parent.layer.close(index);
 									stuffShow();
 									setTimeout(function(){
 										var rows=$("#mmg tr");
@@ -397,7 +406,7 @@
 		return result;
 	}
 	
-	function forSave_stuff(){
+	<%-- function forSave_stuff(){
 		var ran = Math.random()*1000000;
 		var nameArr=new Array();
 		var hrcodeArr=new Array();
@@ -419,7 +428,9 @@
 	                                     	      {name:'stuffName',vali:'required'},
 	                                     	      {name:'startDate',vali:'required;date;setStartDate();checkDateRange()'},
 	                                     	      {name:'endDate',vali:'required;date;checkDateOrder();checkDateRange()'},
-	                                     	      {name:'role',vali:'required'}
+	                                     	      {name:'role',vali:'required'},
+	                                     	      {name:'task',vali:'length[-200]'},
+	                                     	      {name:'planHours',vali:'checkNumberic()'}
 				                               ]);
 			if(!checkResult){
 				isPass=false;
@@ -521,6 +532,19 @@
 				parent.layer.msg("异常!");
 			}
 		});
+	} --%>
+	
+	function checkNumberic(planHours){
+		var result = {};
+		var reg=/^(0(\.\d)?|[1-9]+\d*(\.\d)?)$/;
+		if($.trim(planHours)!="" && !reg.test(planHours)){
+			result.result = false;
+			result.info = "必须为正数；";
+		}else{
+			result.result = true;
+			result.info = "";
+		}
+		return result;
 	}
 	
 	/* function arrRepeat(arr){
@@ -576,6 +600,18 @@
 		return result;
 	} 
  	
+	/* function checkDate(endDate){
+		var result = {};
+		if(getDate(endDate)>=getDate(tempStartDate)){
+			result.result = true;
+			result.info = "";
+		}else{
+			result.result = false;
+			result.info = "项目结束时间不能小于项目开始时间；";
+		}
+		return result;
+	}  */
+ 	
  	function checkDateRange(date){
  		//alert($("input[name='startDate']").val()+"/"+$("input[name='endDate']").val());
 		var result = {};
@@ -596,24 +632,8 @@
 	}
 	
 	
-	// 删除
-	function forDelete_stuff(){
-		var selectedRows = mmg.selectedRowsIndex();
-		if(selectedRows.length == 0){
-			layer.msg("请选择一条数据!");
-			return;
-		}
-		layer.confirm('确认删除吗?', {icon: 7,title:'提示',shift:-1},function(index){
-			layer.close(index);
-			var selectedRows=$("#mmg .selected");
-			selectedRows.hide();
-			sortIndex();
-			resize();
-		});
-	}
- 	
-	function sortIndex(){
-		var rows=$("#mmg tr:visible");
+	function sortIndex(grid_name){
+		var rows=$("#"+grid_name+" tr:visible");
 		for(var i=0;i<rows.length;i++){
 			$(rows[i]).find(".mmg-index").text(i+1);
 		}
@@ -688,7 +708,7 @@
 		}
 	}
 	
-	// 初始化人员列表数据
+	<%-- // 初始化人员列表数据
 	function queryList(load){
 		var ran = Math.random()*100000000;
 		var cols = [
@@ -727,11 +747,23 @@
 		            		}
 			            	return  text;
 			            }	
-		            }
+		             },
+		             {title:'工作任务', name:'TASK',sortable:false, width:150,align:'left',
+		            	 renderer:function(val,item,rowIndex){
+		            		 if(val==undefined) val="";
+			            	 return  '<div style="display:inline"><textarea rows="2" class="form-control" name="task" property="task" style="padding:6px 2px;border:none;text-align:start">'+val+'</textarea></div>';			            
+			             }
+			          },
+			          {title:'计划投入工时', name:'PLANHOURS',sortable:false, width:95,align:'center',
+		            	 renderer:function(val,item,rowIndex){
+		            		 if(val==undefined) val="";
+			            	 return  '<div style="display:inline"><input value="'+val+'"  class="form-control" name="planHours" property="planHours" style="padding:6px 2px;text-align:center"></div>';			            
+			             }
+			          }
 		    		];
 		var mmGridHeight = $("body").parent().height() - 220;
 		mmg = $('#mmg').mmGrid({
-			cosEdit:"4,5,6",//声明需要编辑，取消点击选中的列
+			cosEdit:"4,5,6,7,8",//声明需要编辑，取消点击选中的列
 			noDataText:"",
 			indexCol: true,
 			indexColWidth:30,
@@ -772,7 +804,7 @@
 			}
 		});
 	}
-	
+	 --%>
 	function resize(){
 		mmg._fullWidthRows();
 		mmg.resize();
@@ -806,67 +838,5 @@
 		return date;
 	}
 	
-	//防止过快点击，重复添加
-	var isClick=true;
-	function popEvent(){
-		if(isClick){
-			isClick=false;
-			setTimeout(function(){
-				isClick=true;
-			},1000);
-		}else{
-			return;
-		}
-		var rows=$("#mmg tr");
-		/* rows.each(function(i){
-			$(this).css("display","table-row");
-			$(this).find(".mmg-index").text(i+1);
-		}); */
-		//var hrcode="";
-		//var empName=""; 
-		//var spareNames=new Array();
-		var codes=$("#empCode").val();
-		var texts=$("#empName").val();
-		var code_arr = codes.split(",");
-		var text_arr = texts.split(",");
-		for(var i=0;i<code_arr.length;i++){
-			var code = code_arr[i];
-			var text = text_arr[i];
-			var flag=true;
-			if(code=="" || text==""){
-				continue;
-			}
-			/* for(var j=0;j<rows.length;j++){
-				$row=$(rows[j]);
-				hrcode=$row.find("input[name='hrcode']").val();
-				empName=$row.find("input[name='stuffName']").val();
-				if(hrcode==code){
-					flag=false;
-					spareNames.push(empName);
-				}
-			} */
-			var defaultStartDate=$("input[name='startDate']").val();
-			var	defaultEndDate=$("input[name='endDate']").val();
-			var role="0";
-			//var role=$("#currentHrcode").val()==code?"1":"0";
-			for(var j=0;j<rows.length;j++){
-				$row=$(rows[j]);
-				if($row.find("select[name='role']").val()=="项目负责人"){
-					flag=false;
-					break;
-				}
-			}
-			if($("#currentHrcode").val()==code && flag){
-				role="1";
-			}
-			mmg.addRow({"HRCODE":code,"NAME":text,"START_DATE":defaultStartDate,"END_DATE":defaultEndDate,"ROLE":role});
-			resize();
-			sortIndex();
-			/* if(flag){
-			}else{
-				layer.msg("已存在，请勿重复添加");
-			} */
-		} 
-	}
 </script>
 </html>

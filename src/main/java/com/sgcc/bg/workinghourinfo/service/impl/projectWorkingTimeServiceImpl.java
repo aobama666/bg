@@ -1,23 +1,31 @@
 package com.sgcc.bg.workinghourinfo.service.impl;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
 import com.sgcc.bg.common.CommonUser;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ExportExcelHelper;
+import com.sgcc.bg.common.PageHelper;
 import com.sgcc.bg.common.ResultWarp;
+import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.mapper.BgWorkinghourInfoMapper;
@@ -131,12 +139,12 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 					num=1;
 				}
 			 } 
-			  int count=0;
+			 int count=0;
 			 List<Map>	maplists = new ArrayList<Map>();
 			 if(num==1){
 				 maplists=maplist;
 			 }else{
-				 List<Map<String, Object>> usernamelist=bgworkinghourinfoMapper.selectForUserName(userName);
+				 List<Map<String, Object>> usernamelist = bgworkinghourinfoMapper.selectForUserName(userName);
 				 if(!usernamelist.isEmpty()){
 					 for(Map<String, Object>  map:usernamelist){
 						String projectid= (String) map.get("PROJECT_ID");
@@ -216,6 +224,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 			 String status = request.getParameter("status" ) == null ? "" : request.getParameter("status").toString(); //项目----人员
 			 String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString(); //项目----人员
 			 String worker = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //项目----人员
+			 String bpShow = request.getParameter("bpShow" ) == null ? "" : request.getParameter("bpShow").toString(); //项目计入项目前期
 			 /**
 			  * 验证
 			  * **/	
@@ -224,7 +233,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 				 return Str;
 			 }
 			 @SuppressWarnings("rawtypes")
-			 List<Map>	maplist= selectForProjectName( status, type, beginData, endData,  projectName,  worker );
+			 List<Map>	maplist= selectForProjectName( status, type, bpShow,beginData, endData,  projectName,  worker );
 			  /**
 			   * 分页
 			   * **/
@@ -242,6 +251,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 			String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString(); //项目----人员
 			String worker = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //项目----人员
 			String ids = request.getParameter("selectList" ) == null ? "" : request.getParameter("selectList").toString(); //项目----人员
+			String bpShow = request.getParameter("bpShow" ) == null ? "" : request.getParameter("bpShow").toString(); //项目----人员
 			 /**
 			  * 验证
 			  * **/	
@@ -258,110 +268,175 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 				  }		
 			 }	 
 			 @SuppressWarnings("rawtypes")
-		     List<Map>	valueList= selectForProjectName(status, type, beginData, endData,  projectName,  worker );
-				   if(list.size()>0){
-					   valueList=selectByIdData(list,valueList);
-					 }
-					 if("0".equals(status)){
-						 Object[][] title = { 
-								 { "项目编号", "PROJECT_NUMBER" },
-								 { "WBS编号", "WBS_NUMBER" }, 
-								 { "项目名称","PROJECT_NAME"},
-								 { "统计周期", "StartAndEndData" },
-								 { "投入总工时(h)","WORKING_HOUR"}
-								};
-						 String excelName="项目工时统计-"+DateUtil.getDays();
-						 ExportExcelHelper.getExcel(response, excelName, title, valueList, "normal");
-					 }else{
-						 Object[][] title = { 
-								 { "项目编号", "PROJECT_NUMBER" },
-								 { "WBS编号", "WBS_NUMBER" }, 
-								 { "项目名称","PROJECT_NAME"},
-								 { "统计周期", "StartAndEndData" },
-								 { "项目投入总工时(h)","StandartHoursNum"},
-								 { "人员编号","HRCODE"},
-								 { "人员姓名","USERALIAS"},
-								 { "员工投入工时(h)","WORKING_HOUR"},
-								 { "角色","ROLE"}
-								};
-							String excelName="项目工时统计-"+DateUtil.getDays();
-						 ExportExcelHelper.getExcel(response, excelName, title, valueList, "normal");
-					 }
-					 return "";
+		     List<Map>	valueList = selectForProjectName(status, type, bpShow,beginData, endData,  projectName,  worker );
+			 	if(list.size()>0){
+				   valueList = selectByIdData(list,valueList);
+				 }
+			 	
+				 if("0".equals(status)){
+					 Object[][] title = { 
+							 { "项目编号", "PROJECT_NUMBER" },
+							 { "WBS编号", "WBS_NUMBER" }, 
+							 { "项目名称","PROJECT_NAME"},
+							 { "统计周期", "StartAndEndData" },
+							 { "投入总工时(h)","PRO_HOUR"}
+							 /*{ "投入总工时(h)","WORKING_HOUR"},
+							 { "项目工作投入工时(h)","PRO_HOUR"},
+							 { "项目前期投入工时(h)","BP_HOUR"}*/
+							};
+					 String excelName="项目工时统计-"+DateUtil.getDays();
+					 ExportExcelHelper.getExcel(response, excelName, title, valueList, "normal");
+				 }else{
+					 Object[][] title = { 
+							 { "项目编号", "PROJECT_NUMBER" },
+							 { "WBS编号", "WBS_NUMBER" }, 
+							 { "项目名称","PROJECT_NAME"},
+							 { "统计周期", "StartAndEndData" },
+							 { "项目投入总工时(h)","StandartHoursNum"},
+							 { "人员编号","HRCODE"},
+							 { "人员姓名","USERALIAS"},
+							 { "员工投入工时(h)","PRO_HOUR"},
+							 { "角色","ROLE"}
+							/* { "员工项目投入工时(h)","PRO_HOUR"},
+							 { "员工项目前期投入工时(h)","BP_HOUR"}*/
+							};
+						String excelName="项目工时统计-"+DateUtil.getDays();
+					 ExportExcelHelper.getExcel(response, excelName, title, valueList, "normal");
+				 }
+				 return "";
+			}
+
+	/**
+	 * 项目数据的查询
+	 */
+	@SuppressWarnings("rawtypes")
+	public List<Map> selectForProjectName(String status, String type, String bpShow, String beginData, String endData,
+			String projectName, String worker) {
+
+		List<DataBean> DataBeanlist = StatisticsForProjectName(type, beginData, endData);
+		List<Map> lists = new ArrayList<Map>();
+		int count = 0;
+		if (status.equals("0")) {
+			for (int i = 0; i < DataBeanlist.size(); i++) {
+				String StartData = DataBeanlist.get(i).getStartData();
+				String EndData = DataBeanlist.get(i).getEndData();
+
+				List<Map<String, Object>> list = getAuthorityList(StartData, EndData, projectName, worker, null,null);
+
+				list = sumProWorkingHour(list);
+				
+				if (!list.isEmpty()) {
+					for (int j = 0; j < list.size(); j++) {
+						count++;
+						Map<String, Object> map = list.get(j);
+						double proHours = Rtext.ToDouble(map.get("WORKING_HOUR"), 0d);
+//						double bpHours = Rtext.ToDouble(map.get("BP_HOUR"), 0d);
+						if ("1".equals(bpShow)) {
+							//计算项目前期工时
+							String proNumber = Rtext.toString(map.get("PROJECT_NUMBER")); 
+							List<Map<String,Object>> relatedBPList = bgworkinghourinfoMapper.getBPByProNumberAndHrCode(proNumber,null,StartData,EndData);
+							double bpHours = 0d;
+							for (Map<String, Object> BPMap : relatedBPList) bpHours += Rtext.ToDouble(BPMap.get("WORKING_HOUR"), 0d);
+							
+							map.put("PRO_HOUR", String.valueOf(proHours).replace(".0", ""));
+							map.put("BP_HOUR", String.valueOf(bpHours).replace(".0", ""));
+							map.put("WORKING_HOUR", String.valueOf(proHours + bpHours).replace(".0", ""));
+						} else {
+							map.put("PRO_HOUR", String.valueOf(proHours).replace(".0", ""));
+							map.put("BP_HOUR", "--");
+							map.put("WORKING_HOUR", String.valueOf(proHours).replace(".0", ""));
+						}
+						
+						map.put("StartData", StartData);
+						map.put("EndData", EndData);
+						map.put("Count", count + "");
+						map.put("StartAndEndData", StartData + "至" + EndData);
+
+						lists.add(map);
+					}
 				}
-		/**
-		 * 项目数据的查询
-		 * */
-		@SuppressWarnings("rawtypes")
-		public   List<Map>   selectForProjectName(String status,String type,String beginData,String endData,String projectName,String worker) {
-			
-			 CommonUser userInfo = webUtils.getCommonUser();
-			 String userName = userInfo.getUserName();
-			 List<DataBean>  DataBeanlist=StatisticsForProjectName(type,beginData,endData);
-			 List<Map>  lists=new ArrayList<Map>();
-			 int count = 0 ;
-			 if(status.equals("0")){
-				 for(int i=0;i<DataBeanlist.size();i++){
-					 String StartData=DataBeanlist.get(i).getStartData();
-					 String EndData=DataBeanlist.get(i).getEndData();
-					 List<Map> list= bgworkinghourinfoMapper.selectForProjectName(StartData, EndData, projectName, worker);
-					 if(!list.isEmpty()){
-						 for(int j=0;j<list.size();j++){
-							 count++;
-							 @SuppressWarnings("unchecked")
-							 Map<String ,String>  map= list.get(j);
-							 map.put("StartData", StartData);
-							 map.put("EndData", EndData);
-							 map.put("Count", count+"");
-							 map.put("StartAndEndData", StartData+"至"+EndData);
-							 lists.add(map);
-						 }
-					 }
-				 } 
-			 }else if(status.equals("1")){
-				 for(int i=0;i<DataBeanlist.size();i++){
-					 String StartData=DataBeanlist.get(i).getStartData();
-					 String EndData=DataBeanlist.get(i).getEndData();
-					 List<Map> list= bgworkinghourinfoMapper.selectForProjectName(StartData, EndData, projectName, worker);
-					 if(!list.isEmpty()){
-						 for(int j=0;j<list.size();j++){
-							 @SuppressWarnings("unchecked")
-							 Map<String ,Object>  map= list.get(j);
-							 String projectNumber=(String) map.get("PROJECT_NUMBER");
-							 List<Map> workinghourinfos= bgworkinghourinfoMapper.selectForProjectNameAndWorker(StartData, EndData, projectName, worker,projectNumber);
-							 if(!workinghourinfos.isEmpty()){
-								 for(int a=0;a<workinghourinfos.size();a++){
-									String   projectid= (String) workinghourinfos.get(a).get("PROJECT_ID");
-									 String  hrcode=(String) workinghourinfos.get(a).get("HRCODE");
-									 List<Map<String, Object>> rolelist= bgworkinghourinfoMapper.selectForRole(projectid,hrcode);
-									 String role="";
-									 if(!rolelist.isEmpty()){
-										  role= (String) rolelist.get(0).get("ROLE");
-									 }
-									 count++;
-									 @SuppressWarnings("unchecked")
-									 Map<String ,String>  maps= workinghourinfos.get(a);
-									 String workingHour=map.get("WORKING_HOUR").toString();
-									 maps.put("StandartHoursNum",workingHour);
-									 maps.put("StartAndEndData", StartData+"至"+EndData);
-									 maps.put("StartData", StartData);
-									 maps.put("EndData", EndData);
-									 maps.put("Count", count+"");
-									 maps.put("ROLE", role );
-									 lists.add(maps);
-								 }
-								 
-							 } 
-						 }
-					 }
-				 } 
-			 }
+			}
+		} else if (status.equals("1")) {
+			for (int i = 0; i < DataBeanlist.size(); i++) {
+				String StartData = DataBeanlist.get(i).getStartData();
+				String EndData = DataBeanlist.get(i).getEndData();
+				// List<Map<String, Object>> list =
+				// bgworkinghourinfoMapper.selectForProjectName(StartData,EndData, null, projectName, worker, null);
+				List<Map<String, Object>> proList = getAuthorityList(StartData, EndData, projectName, worker, null,null);
+				List<Map<String, Object>> list = new ArrayList<>(proList);
+ 				if ("1".equals(bpShow)) {//如果统计项目前期
+					Set<String> proNumbers = new HashSet<>();
+					for (Map<String, Object> proMap : proList) {
+						String proNumber = Rtext.toString(proMap.get("PROJECT_NUMBER")); 
+						if(proNumbers.contains(proNumber)) continue;
+						List<Map<String,Object>> relatedBPList = bgworkinghourinfoMapper.getBPByProNumberAndHrCode(proNumber,null,StartData,EndData);
+						list.addAll(relatedBPList);
+						proNumbers.add(proNumber);
+					}
+				}
+				
+				list = sumProAndEmpWorkingHour(list);
+				
+				if (!list.isEmpty()) {
+					for (int j = 0; j < list.size(); j++) {
+						count++;
+						Map<String, Object> map = list.get(j);
+						double proHours = Rtext.ToDouble(map.get("PRO_HOUR"), 0d);
+						double bpHours = Rtext.ToDouble(map.get("BP_HOUR"), 0d);
+						if ("1".equals(bpShow)) {
+							map.put("BP_HOUR", String.valueOf(bpHours).replace(".0", ""));
+							map.put("PRO_HOUR", String.valueOf(proHours).replace(".0", ""));
+							map.put("StandartHoursNum", String.valueOf(proHours + bpHours).replace(".0", ""));
+						} else {
+							map.put("BP_HOUR", "--");
+							map.put("PRO_HOUR", String.valueOf(proHours).replace(".0", ""));
+							map.put("StandartHoursNum", String.valueOf(proHours).replace(".0", ""));
+						}
+						
+						map.put("StartAndEndData", StartData + "至" + EndData);
+						map.put("StartData", StartData);
+						map.put("EndData", EndData);
+						map.put("Count", count + "");
+						// maps.put("ROLE", role);
+						lists.add(map);
+//						List<Map> workinghourinfos = bgworkinghourinfoMapper.selectForProjectNameAndWorker(StartData,
+//								EndData, projectName, worker, projectNumber);
+//						if (!workinghourinfos.isEmpty()) {
+//							for (int a = 0; a < workinghourinfos.size(); a++) {
+//								// String projectid = (String)
+//								// workinghourinfos.get(a).get("PROJECT_ID");
+//								// String hrcode = (String)
+//								// workinghourinfos.get(a).get("HRCODE");
+//								// List<Map<String, Object>> rolelist =
+//								// bgworkinghourinfoMapper.selectForRole(projectid,
+//								// hrcode);
+//								// String role = "";
+//								// if (!rolelist.isEmpty()) {
+//								// role = (String) rolelist.get(0).get("ROLE");
+//								// }
+//								count++;
+//								@SuppressWarnings("unchecked")
+//								Map<String, String> maps = workinghourinfos.get(a);
+//								String workingHour = map.get("WORKING_HOUR").toString();
+//								maps.put("StandartHoursNum", workingHour);
+//								maps.put("StartAndEndData", StartData + "至" + EndData);
+//								maps.put("StartData", StartData);
+//								maps.put("EndData", EndData);
+//								maps.put("Count", count + "");
+//								// maps.put("ROLE", role);
+//								lists.add(maps);
+//							}
+//
+//						}
+					}
+				}
+			}
+		}
 			 /**
 			  * 获取用户负责的项目或专责 
 			  * */
-			 
-			 List<Map>	maplists=specificResponsibility(lists,userName);
-			 return maplists;
+			 //List<Map>	maplists = specificResponsibility(lists,userName);
+			 return lists;
           
 		}
 		
@@ -370,28 +445,35 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 		 * */
 		@Override
 		public String selectForProjectNameAndWorker(HttpServletRequest request) {
-			 int pageNum=Integer.parseInt(request.getParameter("page")); 
+		     int pageNum=Integer.parseInt(request.getParameter("page")); 
 			 int limit=Integer.parseInt(request.getParameter("limit")); 
-			 String beginData = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); //开始时间
-			 String endData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
-			 String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString(); //项目----人员
-			 String worker = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //项目----人员
-			 String projectNumber = request.getParameter("projectNumber" ) == null ? "" : request.getParameter("projectNumber").toString(); //WBS
+			 String startDate = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); //开始时间
+			 String endDate = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
+			 //String worker = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //项目----人员
+			 String projectNumber = request.getParameter("projectNumber" ) == null ? "" : request.getParameter("projectNumber").toString(); //项目编号
+			 String type = request.getParameter("type" ) == null ? "" : request.getParameter("type").toString(); //项目----类型
+			 String bpShow = request.getParameter("bpShow" ) == null ? "" : request.getParameter("bpShow").toString(); //项目计入项目前期
 			 /**
 			  * 验证
 			  * **/	
-			 String Str=checkData(beginData,endData); 
+			 String Str=checkData(startDate,endDate); 
 			 if(Str!=""){
 				 return Str;
 			 }
-			 Page<?> page2 = PageHelper.startPage(pageNum, limit); 
-			 bgworkinghourinfoMapper.selectForProjectNameAndWorker(beginData, endData, projectName, worker,projectNumber);
-			 long total = page2.getTotal();
-			 @SuppressWarnings("unchecked")
-			 List<Map<String, String>> list = (List<Map<String, String>>) page2.getResult();
+			 
+			// Page<?> page2 = PageHelper.startPage(pageNum, limit); 
+			 //bgworkinghourinfoMapper.selectForProjectNameAndWorker(beginData, endData, projectName, worker,projectNumber);
+			 //bgworkinghourinfoMapper.selectForProjectName(startDate, endDate, null, null, null ,projectNumber);
+			 //long total = page2.getTotal();
+			 List<Map<String, Object>> list = selectForProjectNameAndWorkerData(startDate, endDate, bpShow , type, projectNumber);
+			
+			 list = sumEmpWorkingHour(list);
+			 
+			 PageHelper<Map<String, Object>> page = new PageHelper<Map<String, Object>>(list,pageNum-1,limit);
+			 //List<Map<String, String>> list = (List<Map<String, String>>) page2.getResult();
 			 Map<String, Object> map = new HashMap<String, Object>();
-			 map.put("items", list);
-			 map.put("totalCount", total);
+			 map.put("items", page.getResult());
+			 map.put("totalCount",page.getTotalNum());
 			 String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
 			 return jsonStr;
  
@@ -399,14 +481,15 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 		/**
 		 *  项目个人工时统计详情----项目维度统计详情列表导出
 		 * */
-		@SuppressWarnings("unchecked")
 		public String selectForProjectNameAndWorkerExport(HttpServletRequest request,HttpServletResponse response) {
 			 String beginData = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); //开始时间
 			 String endData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
-			 String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString(); //项目----人员
-			 String worker = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //项目----人员
+//			 String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString(); //项目----人员
+//			 String worker = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //项目----人员
 			 String projectNumber = request.getParameter("projectNumber" ) == null ? "" : request.getParameter("projectNumber").toString(); //WBS
 			 String idsStr = request.getParameter("ids" ) == null ? "" : request.getParameter("ids").toString(); //WBS
+			 String type = request.getParameter("type" ) == null ? "" : request.getParameter("type").toString(); //项目----类型
+			 String bpShow = request.getParameter("bpShow" ) == null ? "" : request.getParameter("bpShow").toString(); //项目计入项目前期
 			 /**
 			  * 验证
 			  * **/	
@@ -414,6 +497,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 			 if(Str!=""){
 				 return Str;
 			 }
+			 
 			 List<String>  list =new  ArrayList<String>();
 				if(idsStr!=""){
 					String [] strings=idsStr.split(",");
@@ -422,15 +506,16 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 						list.add(num);
 					}	
 				} 
-			 @SuppressWarnings("rawtypes")
-			 List<Map> valueList = bgworkinghourinfoMapper.selectForProjectNameAndWorker(beginData, endData, projectName, worker,projectNumber);
+			 //List<Map> valueList = bgworkinghourinfoMapper.selectForProjectNameAndWorker(beginData, endData, projectName, worker,projectNumber);
+			 List<Map<String, Object>> valueList = selectForProjectNameAndWorkerData(beginData, endData, bpShow , type, projectNumber);
+			 
+			 valueList = sumEmpWorkingHour(valueList);
+			 
 			 if(list.size()>0){
-				 @SuppressWarnings("rawtypes")
-				 List<Map> datalist=new  ArrayList<Map>();
+				 List<Map<String,Object>> datalist=new  ArrayList<>();
 				 for(int i=0;i<list.size();i++){
 					int selectId = Integer.parseInt(list.get(i));
-					Map<String, String> map = new HashMap<>();
-					map = valueList.get(selectId);
+					Map<String, Object> map = valueList.get(selectId);
 					map.put("startToEnd", beginData+"至"+endData);
 					datalist.add(map);
 				 }
@@ -453,6 +538,31 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 			ExportExcelHelper.getExcel(response, excelName, title, valueList, "normal");
 			return "";
 		}
+		
+		/**
+		 * 获取项目维度下的工时链接内容
+		 * @param startDate
+		 * @param endDate
+		 * @param bpShow
+		 * @param type
+		 * @param projectNumber
+		 * @return
+		 */
+		private List<Map<String,Object>> selectForProjectNameAndWorkerData(String startDate,String endDate,String bpShow ,String type,String projectNumber){
+			 List<Map<String, Object>> list = new ArrayList<>();
+			 List<Map<String, Object>> proList = getAuthorityList(startDate, endDate, null, null,projectNumber,null);
+			 List<Map<String,Object>> relatedBPList = bgworkinghourinfoMapper.getBPByProNumberAndHrCode(projectNumber,null,startDate,endDate);
+			 if("0".equals(type)){//总工时链接
+				 list.addAll(proList);
+				 if("1".equals(bpShow)) list.addAll(relatedBPList);
+			 }else if("1".equals(type)){//项目工时链接
+				list.addAll(proList);
+			 }else if("2".equals(type)){//项目前期工时链接
+				if("1".equals(bpShow)) list.addAll(relatedBPList);
+			 }
+			return list;
+		}
+		
 		/**
 		 * 项目个人工时统计详情----人员维度的人员列表查询
 		 * **/
@@ -461,28 +571,36 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 		public String selectForWorker(HttpServletRequest request) {
 			 int pageNum=Integer.parseInt(request.getParameter("page")); 
 			 int limit=Integer.parseInt(request.getParameter("limit")); 
-			 String beginData = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); //开始时间
-			 String endData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
-			 String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString(); //项目----人员
-			 String worker = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //项目----人员
+			 String startDate = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); //开始时间
+			 String endDate = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
+			 //String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString(); //项目----人员
+			 //String worker = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //项目----人员
 			 String projectNumber = request.getParameter("projectNumber" ) == null ? "" : request.getParameter("projectNumber").toString(); //WBS
-			 String hrcode = request.getParameter("hrcode" ) == null ? "" : request.getParameter("hrcode").toString(); //WBS
-				
+			 String hrCode = request.getParameter("hrcode" ) == null ? "" : request.getParameter("hrcode").toString(); //人员编号
+			 String bpShow = request.getParameter("bpShow" ) == null ? "" : request.getParameter("bpShow").toString(); //项目计入项目前期
+			 String type = request.getParameter("type" ) == null ? "" : request.getParameter("type").toString(); //类型
+
 			 /**
 			  * 验证
 			  * **/	
-			 String Str=checkData(beginData,endData); 
+			 String Str=checkData(startDate,endDate); 
 			 if(Str!=""){
 				 return Str;
 			 }
-			 Page<?> page2 = PageHelper.startPage(pageNum, limit); 
-			 bgworkinghourinfoMapper.selectForWorker(beginData, endData, projectName, worker,projectNumber,hrcode);
-			 long total = page2.getTotal();
-			 @SuppressWarnings("unchecked")
-			 List<Map<String, String>> list = (List<Map<String, String>>) page2.getResult();
+			 
+			 List<Map<String, Object>> list = selectForWorkerData(startDate, endDate, bpShow, type, projectNumber, hrCode);
+			 
+//			 list = sumEmpAndDateWorkingHour(list);
+//			 Page<?> page2 = com.github.pagehelper.PageHelper.startPage(pageNum, limit); 
+//			 bgworkinghourinfoMapper.selectForWorker(beginData, endData, projectName, worker,projectNumber,hrcode);
+//			 long total = page2.getTotal();
+//			 @SuppressWarnings("unchecked")
+//			 List<Map<String, String>> list = (List<Map<String, String>>) page2.getResult();
+			 
+			 PageHelper<Map<String, Object>> page = new PageHelper<Map<String, Object>>(list,pageNum-1,limit);
 			 Map<String, Object> map = new HashMap<String, Object>();
-			 map.put("items", list);
-			 map.put("totalCount", total);
+			 map.put("items", page.getResult());
+			 map.put("totalCount",page.getTotalNum());
 			 String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
 			 return jsonStr;
  
@@ -490,50 +608,49 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 	    /**
 	     * 项目工时统计----人员维度的人员列表导出
 	     * **/
-		@SuppressWarnings("unchecked")
 		@Override
 		public String selectForWorkerReport(HttpServletRequest request,HttpServletResponse response) {
-			 String beginData = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); //开始时间
-			 String endData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
-			 String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString(); //项目----人员                                        
-			 String worker = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //项目----人员
+			 String startDate = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); //开始时间
+			 String endDate = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
+			// String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString(); //项目----人员                                        
+			// String worker = request.getParameter("userName" ) == null ? "" : request.getParameter("userName").toString(); //项目----人员
 			 String projectNumber = request.getParameter("projectNumber" ) == null ? "" : request.getParameter("projectNumber").toString(); //WBS
-			 String hrcode = request.getParameter("hrcode" ) == null ? "" : request.getParameter("hrcode").toString(); //WBS
+			 String hrCode = request.getParameter("hrcode" ) == null ? "" : request.getParameter("hrcode").toString(); //WBS
 			 String ids = request.getParameter("ids" ) == null ? "" : request.getParameter("ids").toString(); //WBS
+			 String bpShow = request.getParameter("bpShow" ) == null ? "" : request.getParameter("bpShow").toString(); //项目计入项目前期
+			 String type = request.getParameter("type" ) == null ? "" : request.getParameter("type").toString(); //类型
+
 			 /**
 			  * 验证
 			  * **/	
-			 String Str=checkData(beginData,endData); 
+			 String Str=checkData(startDate,endDate); 
 			 if(Str!=""){
 				 return Str;
 			 }
 			 
-			 List<String>  list =new  ArrayList<String>();
-				if(ids!=""){
-					String [] strings=ids.split(",");
-					for(int i=0;i<strings.length;i++){
-						String num=strings[i];
-						list.add(num);
-					}	
-				}
+			 List<Map<String, Object>> valueList = selectForWorkerData(startDate, endDate, bpShow, type, projectNumber, hrCode);
 			 
-			@SuppressWarnings("rawtypes")
-			List<Map> valueList =bgworkinghourinfoMapper.selectForWorker(beginData, endData, projectName, worker,projectNumber,hrcode);
+			 //valueList = sumEmpAndDateWorkingHour(valueList);
+			 
+			 List<String>  list =new  ArrayList<String>();
+			 if(ids!=""){
+				 String [] strings=ids.split(",");
+				 for(int i=0;i<strings.length;i++){
+					 String num=strings[i];
+					 list.add(num);
+				 }	
+			 }
+			 
+			//List<Map> valueList =bgworkinghourinfoMapper.selectForWorker(beginData, endData, projectName, worker,projectNumber,hrcode);
 			 if(list.size()>0){
-				 @SuppressWarnings("rawtypes")
-				List<Map> datalist=new  ArrayList<Map>();
+				List<Map<String, Object>> datalist=new  ArrayList<>();
 				 for(int i=0;i<list.size();i++){
-					String id = list.get(i);
-					for(Map<String,Object>	datamap:valueList){
-						 String  Ids=datamap.get("ID").toString();
-						 if(id.equals(Ids)){
-							 datalist.add(datamap);
-						 }
-					} 
+					int selectId = Integer.parseInt(list.get(i));
+					datalist.add(valueList.get(selectId));
 				 }
-				 
 				 valueList=datalist;
 			 }
+			 
 			 Object[][] title = { 
 					 { "日期", "WORK_TIME" }, 
 					 { "项目编号","PROJECT_NUMBER"},
@@ -547,6 +664,179 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 			return "";
  
 		}
+		
+		/**
+		 * 获取人员维度下的工时链接内容
+		 * @param startDate
+		 * @param endDate
+		 * @param bpShow
+		 * @param type
+		 * @param projectNumber
+		 * @param worker
+		 * @param hrCode
+		 * @return
+		 */
+		private List<Map<String,Object>> selectForWorkerData(String startDate,String endDate,String bpShow ,String type,String projectNumber,String hrCode){
+			List<Map<String, Object>> list = new ArrayList<>();
+			List<Map<String, Object>> proList = getAuthorityList(startDate, endDate,null, null,projectNumber,hrCode);
+			List<Map<String,Object>> relatedBPList = bgworkinghourinfoMapper.getBPByProNumberAndHrCode(projectNumber,hrCode,startDate,endDate);
+			if("0".equals(type)){//总工时链接
+				list.addAll(proList);
+				if("1".equals(bpShow)) list.addAll(relatedBPList);
+			}else if("1".equals(type)){//项目工时链接
+				list.addAll(proList);
+			}else if("2".equals(type)){//项目前期工时链接
+				if("1".equals(bpShow)) list.addAll(relatedBPList);
+			}
+			
+			Collections.sort(list, new Comparator<Map<String, Object>>() {
+				@Override
+				public int compare(Map<String, Object> map1, Map<String, Object> map2) {
+					long time1 = DateUtil.fomatDate(Rtext.toString(map1.get("WORK_TIME"))).getTime();
+					long time2 = DateUtil.fomatDate(Rtext.toString(map2.get("WORK_TIME"))).getTime();
+					return (int) (time1-time2);
+				}
+			});
+			
+			return list;
+		}
 		 
-	 
+		/**
+		 * 根据项目计算工时合计
+		 * @param list
+		 * @return
+		 */
+		private List<Map<String,Object>> sumProWorkingHour(List<Map<String,Object>> list){
+			Map<String,Map<String,Object>> dataMap = new HashMap<>();
+			for (Map<String, Object> map : list) {
+				String proNumber = Rtext.toString(map.get("PROJECT_NUMBER"));
+				Double hours = Rtext.ToDouble(map.get("WORKING_HOUR"), 0d);
+				Map<String,Object> whMap = dataMap.get(proNumber);
+				if(whMap==null){
+					dataMap.put(proNumber,map);
+				}else{
+					Double workingHour = Rtext.ToDouble(whMap.get("WORKING_HOUR"), 0d);
+					whMap.put("WORKING_HOUR",workingHour+hours);
+				}
+			}
+			
+			return new ArrayList<>(dataMap.values());
+		}
+		
+		/**
+		 * 根据人员计算工时合计
+		 * @param list
+		 * @return
+		 */
+		private List<Map<String,Object>> sumEmpWorkingHour(List<Map<String,Object>> list){
+			Map<String,Map<String,Object>> dataMap = new HashMap<>();
+			for (Map<String, Object> map : list) {
+				String hrCode = Rtext.toString(map.get("HRCODE"));
+				Double hours = Rtext.ToDouble(map.get("WORKING_HOUR"), 0d);
+				Map<String,Object> whMap = dataMap.get(hrCode);
+				if(whMap==null){
+					dataMap.put(hrCode,map);
+				}else{
+					Double workingHour = Rtext.ToDouble(whMap.get("WORKING_HOUR"), 0d);
+					whMap.put("WORKING_HOUR",workingHour+hours);
+				}
+			}
+			
+			return new ArrayList<>(dataMap.values());
+		}
+		
+		/**
+		 * 根据项目和人员计算工时合计
+		 * @param list
+		 * @return
+		 */
+		private List<Map<String,Object>> sumProAndEmpWorkingHour(List<Map<String,Object>> list){
+			Map<String,Map<String,Object>> dataMap = new HashMap<>();
+			for (Map<String, Object> map : list) {
+				String hrCode = Rtext.toString(map.get("HRCODE"));
+				String proNumber = Rtext.toString(map.get("PROJECT_NUMBER"));
+				String category = Rtext.toString(map.get("CATEGORY"));
+				Double hours = Rtext.ToDouble(map.get("WORKING_HOUR"), 0d);
+				String key = hrCode+proNumber;//人员编号和项目编号作为key
+				Map<String,Object> whMap = dataMap.get(key);
+				if(whMap==null){
+					if("BP".equals(category)){
+						map.put("BP_HOUR",hours);
+					}else{
+						map.put("PRO_HOUR",hours);
+					}
+					dataMap.put(key,map);
+				}else{
+					if("BP".equals(category)){
+						Double workingHour = Rtext.ToDouble(whMap.get("BP_HOUR"), 0d);
+						whMap.put("BP_HOUR",workingHour+hours);
+					}else{
+						Double workingHour = Rtext.ToDouble(whMap.get("PRO_HOUR"), 0d);
+						whMap.put("PRO_HOUR",workingHour+hours);
+					}
+				}
+			}
+			
+			return new ArrayList<>(dataMap.values());
+		}
+		
+		
+		/**
+		 * 根据日期和人员计算工时合计
+		 * @param list
+		 * @return
+		 */
+		private List<Map<String,Object>> sumEmpAndDateWorkingHour(List<Map<String,Object>> list){
+			Map<String,Map<String,Object>> dataMap = new HashMap<>();
+			for (Map<String, Object> map : list) {
+				String hrCode = Rtext.toString(map.get("HRCODE"));
+				String workTime = Rtext.toString(map.get("WORK_TIME"));
+				Double hours = Rtext.ToDouble(map.get("WORKING_HOUR"), 0d);
+				String key = hrCode+workTime;//人员编号和日期作为key
+				Map<String,Object> whMap = dataMap.get(key);
+				if(whMap==null){
+					dataMap.put(key,map);
+				}else{
+					Double workingHour = Rtext.ToDouble(whMap.get("WORKING_HOUR"), 0d);
+					whMap.put("WORKING_HOUR",workingHour+hours);
+				}
+			}
+			
+			return new ArrayList<>(dataMap.values());
+		}
+		
+		/**
+		 * 获取有权限的项目工时工时记录：只能查看本人负责的项目信息；科技部专责可以查看全院的项目统计信息
+		 * 只有项目工时，不含项目前期
+		 * @param startDate 查询开始日期
+		 * @param endDate 查询结束日期
+		 * @param projectName 项目名称
+		 * @param worker 报工人员姓名（模糊查询）
+		 * @param projectNumber 项目编号
+ 		 * @param hrCode 报工人员编号
+		 * @return
+		 */
+		private List<Map<String, Object>> getAuthorityList(String startDate,String endDate,String projectName,String worker,String projectNumber,String hrCode) {
+			String userName = webUtils.getUsername();
+			
+			// 获取专责权限
+			List<Map<String, Object>> list;
+	
+			List<Map<String, Object>> roleList = userInfoMapper.getUserRoleByUserName(userName);
+			boolean isKJBZZ = false;
+			for (Map<String, Object> roles : roleList) {
+				String roleName = (String) roles.get("ROLE_NAME");
+				if (roleName.trim().equals("科技部专责"))
+					isKJBZZ = true;
+			}
+			
+			if (isKJBZZ) {
+				list = bgworkinghourinfoMapper.selectForProjectName(startDate, endDate, null, projectName, worker ,projectNumber ,hrCode);
+			} else {
+				list = bgworkinghourinfoMapper.selectForProjectName(startDate, endDate, userName, projectName, worker ,projectNumber,hrCode);
+			}
+			
+			return list;
+		}
+		
 	}

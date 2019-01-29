@@ -239,11 +239,11 @@
 				success : function(data) {
 					if(data.hint=='success'){
 						parent.layer.msg("提交成功！");
+						parent.mmg.load();
 						forClose();
 					}else{
 						layer.msg(data.hint);
 					}
-					parent.mmg.load();
 				}
 			});
 		});
