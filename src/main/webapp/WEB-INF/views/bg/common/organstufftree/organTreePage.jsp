@@ -7,6 +7,8 @@
 	String treelist = request.getAttribute("treelist").toString();
 	String popEvent = request.getAttribute("popEvent").toString();
 	String ct = request.getAttribute("ct").toString();
+	String iframeId = request.getAttribute("iframeId").toString();
+	String iframe = request.getAttribute("iframe").toString();
 %>
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -140,15 +142,33 @@ function selected() {
 	if(level.length>0){
 		level = level.substr(0,level.length-1);
 	}
-	//console.log(codes,texts);
-	parent.$("input[name=<%=organCode%>]").val(codes);
-	parent.$("input[name=<%=organName%>]").val(texts);
-	//新增返回事件
-	try{
-		if('<%=popEvent%>'=='pop'){
-			parent.popEvent(ids,codes,texts,pId,level);
-		}
-	}catch(e){}
+	
+	/////////////////////
+	debugger;
+	if('parent' == '<%=iframe%>'){
+		var iframWin = parent.document.getElementById('<%=iframeId%>').contentWindow; 
+		var doc = iframWin.document;
+		$(doc).find("input[name=<%=organCode%>]").val(codes);
+		$(doc).find("input[name=<%=organName%>]").val(texts);
+		
+		//返回事件
+		try{
+			if('<%=popEvent%>'=='pop'){
+				iframWin.popEvent(ids,codes,texts,pId,level);
+			}
+		}catch(e){}
+	}else{
+		parent.$("input[name=<%=organCode%>]").val(codes);
+		parent.$("input[name=<%=organName%>]").val(texts);
+		//返回事件
+		try{
+			if('<%=popEvent%>'=='pop'){
+				parent.popEvent(ids,codes,texts,pId,level);
+			}
+		}catch(e){}
+	}
+	
+	//////////////////////
 	
 	var index = parent.layer.getFrameIndex(window.name);
 	parent.layer.close(index);

@@ -127,7 +127,7 @@ function initPro(){
 		todayHighlight:true,
 		});//clearBtn:true todayHighlight:true,
 	$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'parent',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'});
-	$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio'});
+	$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'parent',checkType:'radio'});
 }
 
 function typeChange(type){	

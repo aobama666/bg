@@ -209,6 +209,8 @@ public class OrganStuffTreeController {
 		String index = request.getParameter("index")==null?"":request.getParameter("index").toString();
 		//iframe  self 作用域：当前窗口   parent 作用域：父类窗口 
 		String iframe = request.getParameter("iframe")==null?"":request.getParameter("iframe").toString();
+		//iframeId  要传值的iframe的id
+		String iframeId = request.getParameter("iframeId")==null?"":request.getParameter("iframeId").toString();
 		//ct      树形节点选择框样式：radio，checkbox
 		String ct = request.getParameter("ct")==null?"":request.getParameter("ct").toString();
 		//root    树形节点id（起始节点id）
@@ -222,7 +224,7 @@ public class OrganStuffTreeController {
 				
 		logger.info("[initOrganTree:in param]:organCode="+organCode+";"
 							                +"organName="+organName+";"
-							                +"index="+index+";"
+							                +"iframeId="+iframeId+";"
 							                +"iframe="+iframe+";"
 							                +"root="+root+";"
 							                +"ct="+ct+";"
@@ -322,7 +324,7 @@ public class OrganStuffTreeController {
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		modelMap.put("organCode", organCode);
 		modelMap.put("organName", organName);
-		modelMap.put("index", index);
+		modelMap.put("iframeId", iframeId);
 		modelMap.put("iframe", iframe);
 		modelMap.put("ct", ct);
 		modelMap.put("root", root);
