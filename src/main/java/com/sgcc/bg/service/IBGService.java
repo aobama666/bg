@@ -231,5 +231,5 @@ public interface IBGService {
 	 * @param idsStr 项目前期id
 	 * @return
 	 */
-	public String deleteBeforePro(String idsStr);
+	//public String deleteBeforePro(String idsStr);
 }

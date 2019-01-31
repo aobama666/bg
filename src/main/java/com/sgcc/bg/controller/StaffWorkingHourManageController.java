@@ -273,6 +273,11 @@ public class StaffWorkingHourManageController {
 		String[] ids = whId.split(",");
 		int affectedRows = 0;
 		for (String id : ids) {
+			if(Rtext.isEmpty(id)) {
+				smLog.info("ID为空！");
+				continue;
+			}
+			
 			if(SWService.isConmmited(id)){//如果该记录已被通过或正在审批中则无法删除
 				smLog.info("该记录已被通过或正在审批中,无法删除");
 				continue;

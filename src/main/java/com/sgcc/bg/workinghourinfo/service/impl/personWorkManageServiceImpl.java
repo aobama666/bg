@@ -1,8 +1,10 @@
 package com.sgcc.bg.workinghourinfo.service.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -189,25 +191,35 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 			@Override 
 			public String deletebgWorkinghourInfo(HttpServletRequest request){
 				 log.info("[bgWorkinghourInfo]: 删除" );
-				 String id = request.getParameter("id" ) == null ? "" : request.getParameter("id").toString(); 
-				 /**
-				  * 验证
-				  * */
-				 if(id==""){
-					  rw = new ResultWarp(ResultWarp.FAILED ,"ID不能为空"); 
-					  return JSON.toJSONString(rw);  
-				 }
-				 String valid="0";
-				 if(swService.isConmmited(id)){//如果该条记录已被提交或通过，则无法删除
-					 rw = new ResultWarp(ResultWarp.FAILED ,"无法删除已被提交或通过信息！"); 
+				 //String id = request.getParameter("id" ) == null ? "" : request.getParameter("id").toString(); 
+				 String paramStr = request.getParameter("paramStr" ) == null ? "" : request.getParameter("paramStr").toString(); 
+				 if(paramStr.isEmpty()) {
+					 rw = new ResultWarp(ResultWarp.FAILED ,"无可删除数据！"); 
 					 return JSON.toJSONString(rw);
 				 }
-				 int res=bgworkinghourinfoMapper.deletebgWorkinghourInfo(id,valid);   
-				 if(res>0){ 
-				  rw = new ResultWarp(ResultWarp.SUCCESS ,"删除成功"); 
-				  }else{
-				  rw = new ResultWarp(ResultWarp.FAILED ,"删除失败");
+				 
+				 Map<String,String> paramMap = JSON.parseObject(paramStr,LinkedHashMap.class);
+				 int count = 0;
+				 for (Entry<String, String> entry: paramMap.entrySet()) {
+					 String id = entry.getKey();
+					 int index = Rtext.ToInteger(entry.getValue(), -1);
+					/**
+					  * 验证
+					  * */
+					 if(Rtext.isEmpty(id)) {
+						log.info("ID为空！");
+						continue;
+					 }
+					 
+					 if(swService.isConmmited(id)){//如果该条记录已被提交或通过，则无法删除
+						 log.info("第"+(index-count)+"行已通过或审批中无法删除！");
+						 continue;
+					 }
+					 
+					 String valid="0";
+					 count += bgworkinghourinfoMapper.deletebgWorkinghourInfo(id,valid);   
 				  }
+				  rw = new ResultWarp(ResultWarp.SUCCESS ,"成功删除" + count + "条数据，失败" + (paramMap.size() - count) + "条!");
 				  return JSON.toJSONString(rw);  
 			  }
 			  /** 

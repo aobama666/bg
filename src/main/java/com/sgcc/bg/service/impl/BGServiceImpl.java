@@ -1334,7 +1334,7 @@ public class BGServiceImpl implements IBGService {
 		}
 	}
 
-	@Override
+	/*@Override
 	public String deleteBeforePro(String idsStr) {
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		if(Rtext.isEmpty(idsStr)){
@@ -1347,5 +1347,5 @@ public class BGServiceImpl implements IBGService {
 		
 		jsonMap.put("success", String.valueOf(res));
 		return JSON.toJSONString(jsonMap);
-	}
+	}*/
 }
