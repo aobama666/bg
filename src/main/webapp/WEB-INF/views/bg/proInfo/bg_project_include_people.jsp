@@ -581,7 +581,9 @@ function popEvent(){
 			"TASK":"",
 			"PLANHOURS":"",
 			"SYNC":"0"});
+		
 		resize();
+		sortIndex("mmg");		
 		/* if(flag){
 		}else{
 			layer.msg(spareNames.toString()+"已存在，请勿重复添加");

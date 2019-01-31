@@ -56,7 +56,9 @@ public class OrganStuffTreeController {
 		//empName 员工姓名
 		String empName = request.getParameter("empName")==null?"":request.getParameter("empName").toString();
 		//index   窗口索引，关闭窗口使用
-		String index = request.getParameter("index")==null?"":request.getParameter("index").toString();
+		//String index = request.getParameter("index")==null?"":request.getParameter("index").toString();
+		//index   窗口名，获取窗口对象用
+		String winName = request.getParameter("winName")==null?"":request.getParameter("winName").toString();
 		//iframe  self 作用域：当前窗口   parent 作用域：父类窗口 
 		String iframe = request.getParameter("iframe")==null?"":request.getParameter("iframe").toString();
 		//ct      树形节点选择框样式：radio，checkbox
@@ -68,7 +70,7 @@ public class OrganStuffTreeController {
 		
 		logger.info("[initStuffTree:in param]：empCode="+empCode+";"
 				                          +"empName="+empName+";"
-				                          +"index="+index+";"
+				                          +"winName="+winName+";"
 				                          +"iframe="+iframe+";"
 				                          +"ct="+ct+";"
 				                          +"root="+root+";"
@@ -82,7 +84,7 @@ public class OrganStuffTreeController {
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		modelMap.put("empCode", empCode);
 		modelMap.put("empName", empName);
-		modelMap.put("index", index);
+		modelMap.put("winName", winName);
 		modelMap.put("iframe", iframe);
 		modelMap.put("ct", ct);
 		modelMap.put("root", root);

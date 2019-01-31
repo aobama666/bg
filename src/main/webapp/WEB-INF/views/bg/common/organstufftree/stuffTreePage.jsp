@@ -4,7 +4,8 @@
 	String path = request.getContextPath();
 	String empCode = request.getAttribute("empCode").toString();
 	String empName = request.getAttribute("empName").toString();
-	String index = request.getAttribute("index").toString();
+	//String index = request.getAttribute("index").toString();
+	String winName = request.getAttribute("winName").toString();
 	String iframe = request.getAttribute("iframe").toString();
 	String ct = request.getAttribute("ct").toString();
 	String root = request.getAttribute("root").toString();
@@ -235,20 +236,31 @@ function selected() {
 		ids = ids.substr(0,ids.length-1);
 	}
 	if('parent' == '<%=iframe%>'){
-		var body = parent.layer.getChildFrame('body','<%=index%>');
+		<%-- var body = parent.layer.getChildFrame('body','<%=index%>');
 		$(body).find("input[name=<%=empCode%>]").val(codes);
-		$(body).find("input[name=<%=empName%>]").val(texts);
+		$(body).find("input[name=<%=empName%>]").val(texts); --%>
+		var iframWin = parent.document.getElementById('<%=winName%>').contentWindow; 
+		var doc = iframWin.document;
+		$(doc).find("input[name=<%=empCode%>]").val(codes);
+		$(doc).find("input[name=<%=empName%>]").val(texts);
+		
+		//返回事件
+		try{
+			if('<%=popEvent%>'=='pop'){
+				iframWin.popEvent(ids,codes,texts);
+			}
+		}catch(e){}
 	}else{
 		parent.$("input[name=<%=empCode%>]").val(codes);
 		parent.$("input[name=<%=empName%>]").val(texts);
+		
+		//返回事件
+		try{
+			if('<%=popEvent%>'=='pop'){
+				parent.popEvent(ids,codes,texts);
+			}
+		}catch(e){}
 	}
-	//新增返回事件
-	try{
-		if('<%=popEvent%>'=='pop'){
-			parent.popEvent(ids,codes,texts);
-		}
-	}catch(e){}
-	
 	
 	var this_index = parent.layer.getFrameIndex(window.name);
 	parent.layer.close(this_index);

@@ -154,7 +154,7 @@ function queryList(load){
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'日期', name:'WORK_TIME', width:70, sortable:false, align:'center'},
 	            {title:'人员编号', name:'HRCODE', width:70, sortable:false, align:'center'},
-	            {title:'人员姓名', name:'USERALIAS', width:70, sortable:false, align:'center'},
+	            //{title:'人员姓名', name:'USERALIAS', width:70, sortable:false, align:'center'},
 	            {title:'工作任务类型', name:'CATEGORY', width:100, sortable:false, align:'center'},
 	            {title:'工作任务编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:'center'},
 	            //{title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
