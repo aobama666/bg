@@ -387,7 +387,7 @@ public class BGServiceImpl implements IBGService {
 							String OrganDeptId="";
 							if(Rtext.isEmpty(cellValue[7])){
 								CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(currentUsername);
-								String deptCode=currentUser.getDeptCode();
+								String deptCode=currentUser==null?"":currentUser.getDeptCode();
 								OrganDeptId=getDeptIdByDeptCode(deptCode);
 							}else{
 								OrganDeptId=getDeptIdByDeptCode(cellValue[7]);
@@ -1329,7 +1329,7 @@ public class BGServiceImpl implements IBGService {
 			return bgMapper.getBeforeProjects(null,proName,isRelated,relProId);
 		}else{
 			CommonCurrentUser user = userUtils.getCommonCurrentUserByUsername(username);
-			String deptId = user.getDeptId();
+			String deptId = user==null?"":user.getDeptId();
 			return bgMapper.getBeforeProjects(deptId,proName,isRelated,relProId);
 		}
 	}

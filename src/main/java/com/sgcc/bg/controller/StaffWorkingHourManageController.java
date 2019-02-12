@@ -245,7 +245,7 @@ public class StaffWorkingHourManageController {
 			} 
 			//添加到流程记录表
 			String processId=SWService.addSubmitRecord(id, processUsername);
-			if(approverUsername.equals(user.getUserName())){//如果审核人就是本人，则默认通过
+			if(approverUsername.equals(user==null?"":user.getUserName())){//如果审核人就是本人，则默认通过
 				processId=SWService.addExamineRecord(id, processUsername, "2", "");
 				status="3";
 			}

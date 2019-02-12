@@ -424,9 +424,9 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						wh.setWorkHour(Double.parseDouble(cellValue[6]));
 						//获取填报人填报日期时的信息
 						CommonCurrentUser thenWorker=userUtils.getCommonCurrentUserByHrCode(cellValue[8],cellValue[1]);
-						wh.setWorker(thenWorker.getUserName());
-						wh.setDeptId(thenWorker.getpDeptId());
-						wh.setLabId(thenWorker.getDeptId());
+						wh.setWorker(thenWorker==null?"":thenWorker.getUserName());
+						wh.setDeptId(thenWorker==null?"":thenWorker.getpDeptId());
+						wh.setLabId(thenWorker==null?"":thenWorker.getDeptId());
 						wh.setStatus("0");
 						wh.setValid("1");
 						wh.setCreateUser(currentUsername);

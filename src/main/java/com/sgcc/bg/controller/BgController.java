@@ -112,9 +112,9 @@ public class BgController {
 	public ModelAndView projectAdd() {
 		Map<String, String> map = new HashMap<>();
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
-		map.put("hrcode", currentUser.getHrCode());
-		map.put("deptName", currentUser.getDeptName());
-		map.put("deptCode", currentUser.getDeptCode());
+		map.put("hrcode", currentUser==null?"":currentUser.getHrCode());
+		map.put("deptName", currentUser==null?"":currentUser.getDeptName());
+		map.put("deptCode", currentUser==null?"":currentUser.getDeptCode());
 		ModelAndView model = new ModelAndView("bg/proInfo/bg_project_add",map);
 		return model;
 	}
@@ -123,11 +123,11 @@ public class BgController {
 	public ModelAndView projectUpdate(String proId, HttpServletRequest request) {
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		Map<String, String> proInfo = bgService.getProInfoByProId(proId);
-		proInfo.put("hrcode",currentUser.getHrCode());
+		proInfo.put("hrcode",currentUser==null?"":currentUser.getHrCode());
 		//如果当前项目无组织信息或为非技术服务项目，则默认登录人组织信息
 		if(!"JS".equals(proInfo.get("category")) || Rtext.isEmpty(proInfo.get("deptName")) || Rtext.isEmpty(proInfo.get("deptCode"))){
-			proInfo.put("deptName",currentUser.getDeptName());
-			proInfo.put("deptCode",currentUser.getDeptCode());
+			proInfo.put("deptName",currentUser==null?"":currentUser.getDeptName());
+			proInfo.put("deptCode",currentUser==null?"":currentUser.getDeptCode());
 		}
 		ModelAndView model = new ModelAndView("bg/proInfo/bg_project_update", proInfo);
 		return model;

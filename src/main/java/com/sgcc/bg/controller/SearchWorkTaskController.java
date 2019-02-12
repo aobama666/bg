@@ -218,7 +218,7 @@ public class SearchWorkTaskController {
 		/* 获取人自编号 */
 		String hrCode = userInfo.getSapHrCode();
 		CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByHrCode(hrCode);
-		String deptId = currentUser.getDeptId();
+		String deptId = currentUser==null?"":currentUser.getDeptId();
 		//System.out.println("----hrCode-----"+hrCode);
 		/* 根据人资编号和查询条件去查项目 */
 		String rw = searchWorkTaskService.search(page,limit,startTime,endTime,type,projectName,hrCode,deptId);
@@ -268,7 +268,7 @@ public class SearchWorkTaskController {
 			/* 获取人自编号 */
 			String hrCode = userInfo.getSapHrCode();
 			CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByHrCode(hrCode);
-			String deptId = currentUser.getDeptId();
+			String deptId = currentUser==null?"":currentUser.getDeptId();
 			//获取Excel数据信息
 			List<Map<String, String>> valueList = new ArrayList<Map<String,String>>();
 			valueList = searchWorkTaskService.queryOutDelegationExport(startTime,endTime,type,projectName,hrCode,deptId,list);	

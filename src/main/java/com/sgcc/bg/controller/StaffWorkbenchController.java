@@ -223,8 +223,8 @@ public class StaffWorkbenchController {
 				//获取报工人指定日期所属部门信息
 				CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(username,selectedDate);
 				wp.setWorker(username);
-				wp.setDeptId(user.getpDeptId());
-				wp.setLabId(user.getDeptId());
+				wp.setDeptId(user==null?"":user.getpDeptId());
+				wp.setLabId(user==null?"":user.getDeptId());
 				wp.setWorkTime(DateUtil.fomatDate(selectedDate));
 				wp.setStatus("0");
 				wp.setValid("1");
@@ -376,8 +376,8 @@ public class StaffWorkbenchController {
 				//获取报工人指定日期所属部门信息
 				CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(username,selectedDate);
 				wp.setWorker(username);
-				wp.setDeptId(user.getpDeptId());
-				wp.setLabId(user.getDeptId());
+				wp.setDeptId(user==null?"":user.getpDeptId());
+				wp.setLabId(user==null?"":user.getDeptId());
 				wp.setWorkTime(DateUtil.fomatDate(selectedDate));
 				wp.setStatus(status);
 				wp.setValid("1");

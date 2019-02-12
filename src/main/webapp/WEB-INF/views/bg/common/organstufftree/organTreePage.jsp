@@ -143,8 +143,6 @@ function selected() {
 		level = level.substr(0,level.length-1);
 	}
 	
-	/////////////////////
-	debugger;
 	if('parent' == '<%=iframe%>'){
 		var iframWin = parent.document.getElementById('<%=iframeId%>').contentWindow; 
 		var doc = iframWin.document;
@@ -167,8 +165,6 @@ function selected() {
 			}
 		}catch(e){}
 	}
-	
-	//////////////////////
 	
 	var index = parent.layer.getFrameIndex(window.name);
 	parent.layer.close(index);

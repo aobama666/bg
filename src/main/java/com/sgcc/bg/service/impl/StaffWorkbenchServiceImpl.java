@@ -86,7 +86,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	public List<Map<String, String>> getProjectsByDate(String selectedDate,String proName,String proNumber) {
 		String username = webUtils.getUsername();
 		CommonCurrentUser user = userUtils.getCommonCurrentUserByUsername(username);
-		String deptId = user.getDeptId();
+		String deptId = user==null?"":user.getDeptId();
 		List<Map<String, String>>  list=SWMapper.getProjectsByDate(selectedDate,username,deptId,proName,proNumber);
 		return list;
 	}
@@ -148,8 +148,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		String[] ids=proIds.split(",");
 		String currentUsername = webUtils.getUsername();
 		CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByUsername(currentUsername);
-		String currentHrcode=currentUser.getHrCode();
-		String currentDeptId = currentUser.getDeptId();
+		String currentHrcode=currentUser==null?"":currentUser.getHrCode();
+		String currentDeptId = currentUser==null?"":currentUser.getDeptId();
 		Map<String, String> approverMap=getDefaultApprover();
 
 		while (calendar1.compareTo(calendar2)<=0) {
@@ -170,8 +170,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						dataMap.putAll(proMap);
 						//如果负责人为空或者本人即负责人
 						if(Rtext.isEmpty(proMap.get("HRCODE")) || (currentHrcode).equals(proMap.get("HRCODE"))){
-							dataMap.put("HRCODE",approverMap.get("hrcode"));
-							dataMap.put("PRINCIPAL",approverMap.get("name"));
+							dataMap.put("HRCODE",approverMap==null?"":approverMap.get("hrcode"));
+							dataMap.put("PRINCIPAL",approverMap==null?"":approverMap.get("name"));
 						}
 						dataMap.put("DATE",dataStr);
 						dataList.add(dataMap);
@@ -252,9 +252,9 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 					String principal="";//项目负责人
 					String currentUsername = webUtils.getUsername();
 					CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(currentUsername);
-					String currentUserHrcode=currentUser.getHrCode();//当前登录人hrcode
-					String currentUserId = currentUser.getUserId();//当前登录人的id
-					String currentDeptId = currentUser.getDeptId();//当前登录人所处处室（部门）id
+					String currentUserHrcode=currentUser==null?"":currentUser.getHrCode();//当前登录人hrcode
+					String currentUserId = currentUser==null?"":currentUser.getUserId();//当前登录人的id
+					String currentDeptId = currentUser==null?"":currentUser.getDeptId();//当前登录人所处处室（部门）id
 					CommonCurrentUser approverUser=null;
 					boolean isNP = ("常规工作".equals(cellValue[2]) && Rtext.isEmpty(cellValue[3]))?true:false;//判断是否非项目
 					
@@ -434,8 +434,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						wh.setWorker(currentUsername);
 						//获取填报人填报日期时的信息
 						CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(currentUsername,cellValue[1]);
-						wh.setDeptId(user.getpDeptId());
-						wh.setLabId(user.getDeptId());
+						wh.setDeptId(user==null?"":user.getpDeptId());
+						wh.setLabId(user==null?"":user.getDeptId());
 						wh.setStatus("0");
 						wh.setValid("1");
 						wh.setCreateUser(currentUsername);
@@ -564,7 +564,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		
 		String username=webUtils.getUsername();
 		CommonCurrentUser user = userUtils.getCommonCurrentUserByUsername(username);
-		String deptId = user.getDeptId();
+		String deptId = user==null?"":user.getDeptId();
 		
 		//获取登录人名下所有已启动（不含结束和废止）项目项目
 		//List<Map<String, String>> proList=SWMapper.getAllProjects(webUtils.getUsername());
@@ -627,8 +627,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		//获取处理人当前信息
 		CommonCurrentUser processUser=userUtils.getCommonCurrentUserByUsername(processUsername);
 		pr.setProcessUserId(processUsername);
-		pr.setProcessDeptId(processUser.getpDeptId());
-		pr.setProcessLabtId(processUser.getDeptId());
+		pr.setProcessDeptId(processUser==null?"":processUser.getpDeptId());
+		pr.setProcessLabtId(processUser==null?"":processUser.getDeptId());
 		pr.setProcessResult(result);
 		pr.setProcessNote(note);
 		pr.setProcessCreateTime(new Date());
@@ -672,6 +672,9 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		/*CommonUser user=webUtils.getCommonUser();
 		String username=user.getUserName();*/
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(username);
+		
+		if(currentUser==null) return new ArrayList<>();
+		
 		String userId=currentUser.getUserId();
 		String deptId=currentUser.getDeptId();//获取当前提报人当前所在部门
 		return SWMapper.getApproverList(userId,deptId);
@@ -682,6 +685,14 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		CommonUser user=webUtils.getCommonUser();
 		String username=user.getUserName();
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(username);
+		Map<String,String> approver=new HashMap<>();
+		
+		if(currentUser==null){
+			approver.put("hrcode", "");
+			approver.put("name", "");
+			return approver;
+		}
+		
 		String hrcode=currentUser.getHrCode();
 		String useralias=currentUser.getUserAlias();
 		String userId=currentUser.getUserId();
@@ -700,10 +711,9 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		*/
 		String subType=SWMapper.getTopSubmitType(userId);
 		int subTypeNum=Rtext.ToInteger(subType, 0);
-		Map<String,String> approver=new HashMap<>();
 		//如果审核类型在部门副职及以上，则默认审批通过，返回自己
 		if(subTypeNum>5){
-			approver=SWMapper.getDefaultApprover(subType,deptId);
+			approver.putAll(SWMapper.getDefaultApprover(subType,deptId));
 		}else{
 			approver.put("hrcode", hrcode);
 			approver.put("name", useralias);

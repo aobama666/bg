@@ -82,7 +82,7 @@ var type=common.getQueryString("type");
 var dataShow=common.getQueryString("dataShow");
 var bpShow=common.getQueryString("bpShow");
  
-ran = Math.random()*1000;
+var ran = Math.random()*1000;
 $("input[name=ran]").val(ran);
 $("input[name=deptid]").val(deptid);
 $("input[name=labid]").val(labid);
@@ -147,12 +147,7 @@ function init(){
 						cols.push({title:category, width:120, sortable:false, align:'center' ,cols:innerCols});
 					});
 					
-					if(data.items.length>0){
-						queryList(data.items);
-					}else{
-						queryList({});
-					}
-					
+					queryList();
 			 	});
 }
 
@@ -162,7 +157,7 @@ function init(){
 } */
 
 // 初始化列表数据
-function queryList(items){
+function queryList(){
 	var mmGridHeight = $("body").parent().height() - 100;
 	mmg = $('#mmg').mmGrid({
 		indexCol: true,
@@ -172,8 +167,8 @@ function queryList(items){
 		height: mmGridHeight,
 		cols: cols,
 		nowrap: true,
-		items:items,
-		//url: '<%=request.getContextPath()%>/BgWorkinghourInfo/selectFororganAndUser',
+		//items:items,
+		url: '<%=request.getContextPath()%>/BgWorkinghourInfo/selectFororganAndUser',
 		root: 'items',
 		fullWidthRows: true,
 		multiSelect: true,
@@ -185,10 +180,8 @@ function queryList(items){
 			$(".checkAll").css("display","none").parent().text("选择"); 
 			pn = data.page;
 		});
-/* 	if(load == "reload"){
-		mmg.load({page:pn});
-	} */
 }
+
 //导出
 function forExport(){
 	var ids="";
