@@ -787,14 +787,17 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				String end = dataBean.getEndData();
 				count++;
 				
+				List<String> labList = new ArrayList<>();
+				labList.add(deptid);
+				
 				List<Map<String, Object>>  proList = 
 					bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, deptid, null, username , new String[]{"KY","HX","JS","QT"});
 				List<Map<String, Object>>  noProList = 
 					bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, deptid, null, username, new String[]{"NP","CG"});
 				List<Map<String,Object>> noRelatedBPList = 
-					bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, start, end, proList, false);
+					bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,labList, start, end, proList, false);
 				List<Map<String,Object>> relatedBPList = 
-					bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, start, end, proList, true);
+					bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,labList, start, end, proList, true);
 				
 				double proSum = sumWorkingHour(proList);
 				double noProSum = sumWorkingHour(noProList);
@@ -1350,7 +1353,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 	private Map<String, Object> getDataMapForUser(HttpServletRequest request){
 		String type = request.getParameter("type") == null ? "" : request.getParameter("type").toString(); // 组织机构																							 
 		//String deptid = request.getParameter("deptid") == null ? "" : request.getParameter("deptid").toString(); // 组织机构																										 
-		//String labid = request.getParameter("labid") == null ? "" : request.getParameter("labid").toString(); // 组织机构																									 
+		String labid = request.getParameter("labid") == null ? "" : request.getParameter("labid").toString(); // 组织机构																									 
 		String username = request.getParameter("username") == null ? "" : request.getParameter("username").toString(); // 用户名称
 		String startDate = request.getParameter("StartData") == null ? "": request.getParameter("StartData").toString(); // 开始时间
 		String endDate = request.getParameter("EndData") == null ? "" : request.getParameter("EndData").toString(); // 结束时间
@@ -1359,16 +1362,18 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		
 		//int count = 0;
 		List<Map<String, Object>> dataList=new ArrayList<>();
+		List<String> labList = new ArrayList<>();
+		labList.add(labid);
 		//List<Map<String, String>> resultList=bgworkinghourinfoMapper.selectForProjectAndWorkHour(dateStr, dateStr, deptid, labid, username);
 		
 		List<Map<String, Object>>  proList = 
-			bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, null, null, username , new String[]{"KY","HX","JS","QT"});
+			bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, labid, null, username , new String[]{"KY","HX","JS","QT"});
 		List<Map<String, Object>>  noProList = 
-			bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, null, null, username, new String[]{"NP","CG"});
+			bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, labid, null, username, new String[]{"NP","CG"});
 		List<Map<String,Object>> noRelatedBPList = 
-			bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, startDate, endDate, proList, false);
+			bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,labList, startDate, endDate, proList, false);
 		List<Map<String,Object>> relatedBPList =  
-			bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,null, startDate, endDate, proList, true);
+			bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,labList, startDate, endDate, proList, true);
 		
 		if("1".equals(type)){
 			if("1".equals(bpShow)){
