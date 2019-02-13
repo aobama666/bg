@@ -330,17 +330,19 @@ function queryListPer(load){
 	            		if(item.PRO_HOUR == 0){
 	            			return '0';
 	            		}
-            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+1+'\' ,\''+item.HRCODE+'\',\''+item.WORKER+'\')">'+val+'</a>';
+            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''
+            					+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+1+'\' ,\''+item.HRCODE+'\',\''+item.PROJECT_NAME+'\' ,\''+item.USERALIAS+'\',\''+item.WORKER+'\')">'+val+'</a>';
             		}	
 	            },
-	            {title:'员工项目前期投入工时(h)', name:'BP_HOUR', width:150, sortable:false, align:'center',
+	            {title:'员工项目前期投入工时(h)', name:'BP_HOUR', width:170, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.BP_HOUR == 0){
 	            			return '0';
 	            		}else if(item.BP_HOUR == '--'){
 	            			return '--';
 	            		}
-            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+2+'\' ,\''+item.HRCODE+'\',\''+item.WORKER+'\')">'+val+'</a>';
+            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''
+            					+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+2+'\' ,\''+item.HRCODE+'\',\''+item.PROJECT_NAME+'\' ,\''+item.USERALIAS+'\',\''+item.WORKER+'\')">'+val+'</a>';
             		}	
 	            }
 	            //{title:'角色', name:'ROLE', width:100, sortable:false, align:'center'}
@@ -376,20 +378,21 @@ function queryListPer(load){
 		mmg2.load({page:pn2});
 	}
 }
-function forHourDetailA(projectNumber,StartData,EndData,type ,hrcode,userName){
+function forHourDetailA(projectNumber,StartData,EndData,type ,hrcode,projectName,userAlias,userName){
 	//var userName = escape($("input[name=userName]").val());
 	//var projectNames=escape(projectName);
 	var projectNumber=escape(projectNumber);
 	var bpShow = $('input[name="bpShow"]').prop("checked") ? "1":"0";
-	 
-	 
+	var detail=escape(StartData+"至"+EndData+"　　"+projectName+"　　"+userAlias);
+	
     layer.open({
 		type:2,
 		title:"员工工时明细",
 		area:['50%', '80%'],
 		scrollbar:false,
 		skin:'query-box',
-		content:['<%=request.getContextPath()%>/searchWorkTask/workinghourStaticDetails?projectNumber='+projectNumber+'&StartData='+StartData+'&EndData='+EndData+'&type='+type+'&userName='+userName+'&hrcode='+hrcode+'&bpShow='+bpShow,'no']
+		content:['<%=request.getContextPath()%>/searchWorkTask/workinghourStaticDetails?projectNumber='
+				+projectNumber+'&StartData='+StartData+'&EndData='+EndData+'&type='+type+'&userName='+userName+'&hrcode='+hrcode+'&bpShow='+bpShow+'&detail='+detail,'no']
 	});
 }
 

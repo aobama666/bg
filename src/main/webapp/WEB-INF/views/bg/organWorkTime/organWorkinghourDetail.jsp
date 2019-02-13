@@ -131,10 +131,10 @@ function init(){
 					cols = [
 					            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 					            {title:'统计周期', name:'StartAndEndData', width:150, sortable:false, align:'center'},
-					            {title:'部门（单位）', name:'PDEPTNAME', width:100, sortable:false, align:'left'},
-					            {title:'处室', name:'DEPTNAME', width:100, sortable:false, align:'left'},
-					            {title:'人员编号', name:'HRCODE', width:70, sortable:false, align:'center'},
-					            {title:'人员姓名', name:'USERALIAS', width:70, sortable:false, align:'center'}
+					            {title:'部门（单位）', name:'PDEPTNAME', width:150, sortable:false, align:'left'},
+					            {title:'处室', name:'DEPTNAME', width:150, sortable:false, align:'left'},
+					            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},
+					            {title:'人员姓名', name:'USERALIAS', width:100, sortable:false, align:'center'}
 					            //{title:nameType, name:workType, width:100, sortable:false, align:'center'}
 					    		];
 					

@@ -89,7 +89,7 @@ function queryList(){
 		            	return  text;
 		            }	
 	           	 },
-	           	 {title:'来源', name:'SYNC',sortable:false, hidden: true,width:95,align:'center',
+	           	 {title:'来源', name:'SYNC',sortable:false, hidden: true,width:0,align:'center',
 		            	renderer:function(val,item,rowIndex){
 		            		//val = val=='0'?'录入':'同步';
 			            	return  '<div style="display:inline"><input value="'+val+'"  class="form-control" name="sync" property="sync" readonly="true" style="padding:6px 2px;border:none;text-align:center"></div>';			            
@@ -101,7 +101,7 @@ function queryList(){
 		            	 return  '<div style="display:inline"><textarea rows="2" value="" class="form-control" name="task" property="task" style="padding:6px 2px;border:none;text-align:start">'+val+'</textarea></div>';			            
 		             }
 		          },
-		          {title:'计划投入工时', name:'PLANHOURS',sortable:false, width:95,align:'center',
+		          {title:'计划投入工时(h)', name:'PLANHOURS',sortable:false, width:125,align:'center',
 	            	 renderer:function(val,item,rowIndex){
 	            		if(val==undefined) val="";
 		             	return  '<div style="display:inline"><input value="'+val+'"  class="form-control" name="planHours" property="planHours" style="padding:6px 2px;text-align:center"></div>';			            

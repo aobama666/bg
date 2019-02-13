@@ -44,10 +44,15 @@
 		margin:0;
 		margin-bottom:10px;
 	}
+	
+	.left{
+		float:left;
+	}
 </style>
 </head>
 <body>
 <div class="page-header-sl">
+	<div id="detail" class="left"></div>
 	<div class="button-box">
 		<button type="button" class="btn btn-info btn-xs" onclick="forConfirm()"  > 导出</button>
 	</div>
@@ -80,6 +85,8 @@ var startTime=common.getQueryString("StartData");
 var endTime=common.getQueryString("EndData");
 var hrcode=common.getQueryString("hrcode");
 var projectNumber=common.getQueryString("projectNumber");
+var detail=common.getQueryString("detail");
+
 $("input[name=type]").val(type);
 $("input[name=bpShow]").val(bpShow);
 $("input[name=userName]").val(userName);
@@ -87,6 +94,7 @@ $("input[name=startTime]").val(startTime);
 $("input[name=endTime]").val(endTime);
 $("input[name=hrcode]").val(hrcode);
 $("input[name=projectNumber]").val(projectNumber);
+$("#detail").text(detail);
 var mmg;
 var pn = 1;
 var limit = 30;

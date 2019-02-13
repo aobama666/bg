@@ -112,15 +112,15 @@
 			</div>
 		</div>
 	</div>
-	<div class="form-group col-xs-4 hidden" id="username">
+	<div class="form-group col-xs-3 hidden" id="username">
 		<label>人员姓名：</label>
 		<div class="controls">
 			<input name="userName" property="userName" >
 		</div>
 	</div>
-	<div class="form-group col-xs-4"  >
+	<div class="form-group col-xs-5"  >
 		<!-- <label>数据显示：</label> -->
-		<div class="controls datashow">
+		<div class="datashow" style="margin-left:33px">
 			<div class='showcheck'><input type="checkbox" name="bpShow" value="1" checked="checked"/></div>
 			<div class="showText">项目计入项目前期</div>
 			<div>&nbsp;&nbsp;&nbsp;&nbsp;</div> 
@@ -222,7 +222,7 @@ function queryListPart(load){
             			return '<a href="#" title="'+val+'" type="1" class="forDetails" value="'+item.ID+'"  deptId="'+item.deptId+'"  pdeptId="'+item.pdeptId+'"  StartData="'+item.StartData+'"  EndData="'+item.EndData+'">'+val+'</a>';
             		}	
 	            },
-	            {title:'项目投入总工时(h)', name:'ProjectTotalHoursNum', width:100, sortable:false, align:'center',
+	            {title:'项目投入工时(h)', name:'ProjectTotalHoursNum', width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.ProjectTotalHoursNum==0){
 	            			return '0';
@@ -230,7 +230,7 @@ function queryListPart(load){
             			return '<a href="#" title="'+val+'" type="2" class="forDetails" value="'+item.ID+'"  deptId="'+item.deptId+'"  pdeptId="'+item.pdeptId+'"  StartData="'+item.StartData+'"  EndData="'+item.EndData+'">'+val+'</a>';
             		}	
 	            },
-	            {title:'非项目投入总工时(h)', name:'NoProjectTotalHoursNum', width:100, sortable:false, align:'center',
+	            {title:'非项目投入工时(h)', name:'NoProjectTotalHoursNum', width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.NoProjectTotalHoursNum==0){
 	            			return '0';
@@ -336,7 +336,7 @@ function queryListLab(load){
 	            {title:'统计周期', name:'StartAndEndData', width:100, sortable:false, align:'center'},
 	            {title:'部门（单位）', name:'parentName', width:100, sortable:false, align:'left'},
 	            {title:'处室', name:'deptName', width:100, sortable:false, align:'left'},
-	            {title:'投入工时(h)', name:'TotalHoursNum', width:100, sortable:false, align:'center',
+	            {title:'投入总工时(h)', name:'TotalHoursNum', width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.TotalHoursNum==0){
 	            			return '0';
@@ -403,7 +403,7 @@ function queryListPer(load){
 	            {title:'处室', name:'deptName', width:100, sortable:false, align:'left'},
 	            {title:'人员编号', name:'hrCode', width:100, sortable:false, align:'center'},
 	            {title:'人员姓名', name:'Useralias', width:100, sortable:false, align:'center'},
-	            {title:'投入工时(h)', name:'TotalHoursNum', width:100, sortable:false, align:'center',
+	            {title:'投入总工时(h)', name:'TotalHoursNum', width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.TotalHoursNum==0){
 	            			return '0';

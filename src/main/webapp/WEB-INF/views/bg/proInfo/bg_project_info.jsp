@@ -253,7 +253,7 @@ function forAdd(){
 		type:2,
 		title:"项目信息-新增",
 		//area:['865px', height+'px'],
-		area:['865px', '85%'],
+		area:['910px', '85%'],
 		//scrollbar:false,
 		skin:'query-box',
 		content:['<%=request.getContextPath()%>/project/pro_add']
@@ -276,7 +276,7 @@ function forUpdate(){
 		layer.open({
 			type:2,
 			title:"项目信息-修改",
-			area:['865px', '85%'],
+			area:['910px', '85%'],
 			//scrollbar:false,
 		 	content:['<%=request.getContextPath()%>/project/pro_update?proId='+proId+'&src='+src]
 		});

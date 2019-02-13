@@ -113,7 +113,7 @@ function queryList(load){
 	            }, */
 	            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},
 	            {title:'人员姓名', name:'USERALIAS', width:100, sortable:false, align:'center'},
-	            {title:'投入总工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'}
+	            {title:'投入工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'}
 	    		];
 	var mmGridHeight = $("body").parent().height() - 100;
 	mmg = $('#mmg').mmGrid({

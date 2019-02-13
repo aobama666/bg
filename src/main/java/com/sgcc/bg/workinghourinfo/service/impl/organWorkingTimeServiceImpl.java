@@ -309,19 +309,19 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		}
 	 
 		if (status.equals("0")) {
-			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门（单位）", "deptName" }, { "投入工时(h)", "TotalHoursNum" },
+			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门（单位）", "deptName" }, { "投入总工时(h)", "TotalHoursNum" },
 					{ "项目投入工时(h)", "ProjectTotalHoursNum" }, { "非项目投入工时(h)", "NoProjectTotalHoursNum" }  };
 			 String excelName="组织工时详情（项目）-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, datalist, "normal");
 		} else if (status.equals("1")) {
 			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门（单位）", "parentName" }, { "处室", "deptName" },
-					{ "投入工时(h)", "TotalHoursNum" }, { "项目投入工时(h)", "ProjectTotalHoursNum" },
+					{ "投入总工时(h)", "TotalHoursNum" }, { "项目投入工时(h)", "ProjectTotalHoursNum" },
 					{ "非项目投入工时(h)", "NoProjectTotalHoursNum" }  };
 			 String excelName="组织工时详情（处室）-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, datalist, "normal");
 		} else if (status.equals("2")) {
 			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门（单位）", "pdeptName" }, { "处室", "deptName" },
-					{ "人员编号", "hrCode" },{ "人员姓名", "Useralias" }, { "投入工时(h)", "TotalHoursNum" }, 
+					{ "人员编号", "hrCode" },{ "人员姓名", "Useralias" }, { "投入总工时(h)", "TotalHoursNum" }, 
 					{ "项目投入工时(h)", "ProjectTotalHoursNum" },{ "非项目投入工时(h)", "NoProjectTotalHoursNum" }  };
 			 String excelName="组织工时详情（人员）-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, datalist, "normal");
