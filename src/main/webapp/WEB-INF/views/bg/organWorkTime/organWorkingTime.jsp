@@ -47,6 +47,10 @@
 		width:10%;
 		text-align:center;
 	}
+	.linHeight{
+		height:20px;
+		line-height:20px;
+	}
 </style>
 </head>
 <body>
@@ -121,11 +125,24 @@
 	<div class="form-group col-xs-5"  >
 		<!-- <label>数据显示：</label> -->
 		<div class="datashow" style="margin-left:33px">
+			<div>
+				<div class='showcheck'><input type="checkbox" name="bpShow" value="1" checked="checked"/></div>
+				<div class='linHeight'>项目计入项目前期　</div>
+			</div>
+			<!-- <div>&nbsp;&nbsp;&nbsp;&nbsp;</div> --> 
+			<div>
+				<div class='showcheck'><input type="checkbox" name="dataShow" value="1"/></div>
+				<div class='linHeight' >仅显示工时大于0的数据</div>
+			</div>
+			<!-- <div>
+				<div class='showcheck'><input type="checkbox" name="bpShow" value="1" checked="checked"/></div>
+				<div style="height:20px;line-height:20px;">项目计入项目前期</div>
+			</div>
 			<div class='showcheck'><input type="checkbox" name="bpShow" value="1" checked="checked"/></div>
-			<div class="showText">项目计入项目前期</div>
-			<div>&nbsp;&nbsp;&nbsp;&nbsp;</div> 
+			<div class="showText" style="width: 18%;">项目计入项目前期</div>
+			
 			<div class='showcheck'><input type="checkbox" name="dataShow" value="1"/></div>
-			<div class="showText">仅显示工时大于0的数据</div>
+			<div class="showText" >仅显示工时大于0的数据</div> -->
 		</div>	    
 	</div>
 	</form>

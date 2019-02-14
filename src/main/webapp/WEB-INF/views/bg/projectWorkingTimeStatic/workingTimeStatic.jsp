@@ -116,7 +116,7 @@
 			</div>
 			<div class="form-group col-xs-4"  >
 				<!-- <label>数据显示：</label> -->
-				<div class="controls datashow">
+				<div class="datashow" style="margin-left:33px">
 					<div class='showcheck'><input type="checkbox" name="bpShow" checked="checked" value="1" /></div> 
 					<div class="showText">项目计入项目前期</div>
 				</div>	    
@@ -315,8 +315,8 @@ function queryListPer(load){
 	            },
 	            {title:'统计周期', name:'StartAndEndData', width:100, sortable:false, align:'center'},
 	            {title:'项目投入总工时(h)', name:'StandartHoursNum', width:150, sortable:false, align:'center'},
-	            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},
-	            {title:'人员姓名', name:'USERALIAS', width:100, sortable:false, align:'center'},
+	            {title:'人员编号', name:'HRCODE', width:85, sortable:false, align:'center'},
+	            {title:'人员姓名', name:'USERALIAS', width:85, sortable:false, align:'center'},
 	            /* {title:'投入总工时(h)', name:'PRO_HOUR', width:150, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.PRO_HOUR == 0){
@@ -334,7 +334,7 @@ function queryListPer(load){
             					+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+1+'\' ,\''+item.HRCODE+'\',\''+item.PROJECT_NAME+'\' ,\''+item.USERALIAS+'\',\''+item.WORKER+'\')">'+val+'</a>';
             		}	
 	            },
-	            {title:'员工项目前期投入工时(h)', name:'BP_HOUR', width:170, sortable:false, align:'center',
+	            {title:'员工项目前期投入工时(h)', name:'BP_HOUR', width:180, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.BP_HOUR == 0){
 	            			return '0';

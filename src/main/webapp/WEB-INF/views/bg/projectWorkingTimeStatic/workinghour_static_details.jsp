@@ -48,11 +48,18 @@
 	.left{
 		float:left;
 	}
+	
+	.ellipsis{
+		max-width: 85%;
+	    text-overflow: ellipsis;
+	    white-space: nowrap;
+	    overflow: hidden;
+	}
 </style>
 </head>
 <body>
 <div class="page-header-sl">
-	<div id="detail" class="left"></div>
+	<div id="detail" class="left ellipsis"></div>
 	<div class="button-box">
 		<button type="button" class="btn btn-info btn-xs" onclick="forConfirm()"  > 导出</button>
 	</div>
