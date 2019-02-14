@@ -29,10 +29,12 @@ $.fn.extend({
 			var basePath = localObj.protocol+"//"+localObj.host+"/"+contextPath;
 			organBox.find("#"+bindLayId+",span>span,input[name="+organName+"]").off().click(function(){
 				var iframeId = window.name;
+				var height=$(window).height()*0.85;
+				if(height>520) height = 520;
 				var p = {
 						type:2,
 						title:"组织机构选择页面",
-						area:['480px','520px'],
+						area:['480px',height+'px'],//520px
 						scrollbar:true,
 						content:[basePath+'/organstufftree/initOrganTree?root='
 						         +root+'&ct='+ct+'&level='+level+'&organCode='

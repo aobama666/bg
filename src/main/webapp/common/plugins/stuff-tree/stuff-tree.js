@@ -38,10 +38,12 @@ $.fn.extend({
 			organBox.find("#"+bindLayId+",span>span,input[name="+empName+"]").click(function(){
 				//var index = iframe == "parent" ? parent.layer.getFrameIndex(window.name) : layer.getFrameIndex(window.name);
 				var winName = window.name;
+				var height=$(window).height()*0.85;
+				if(height>555) height = 555;
 				var p = {
 						type:2,// 0 content中填写显示的内容 ；1 content中为对象，弹出当前页面的一个块，如：contend:$(#id01) ；2 content中为文件地址，弹出一个文件 ，如：contend:'a.html'
 						title:"人员选择页面",
-						area:['480px','555px'],
+						area:['480px',height+'px'],//555px
 						scrollbar:true,
 						content:[basePath+'/organstufftree/initStuffTree?iframe='+iframe+'&ct='+ct+'&winName='+winName+'&root='+root+'&empCode='+empCode+'&empName='+empName+'&popEvent='+popEvent,'no']
 				};

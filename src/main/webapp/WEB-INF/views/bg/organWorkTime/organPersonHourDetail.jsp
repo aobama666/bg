@@ -160,7 +160,7 @@ function queryList(load){
 	            //{title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
 	            {title:'工作任务名称', name:'PROJECT_NAME', width:120, sortable:false, align:'left'},
 	            {title:'工作内容', name:'JOB_CONTENT', width:120, sortable:false, align:'left'},
-	            {title:'投入总工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'}
+	            {title:'投入工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'}
 	    	],
 		nowrap: true,
 		url: '<%=request.getContextPath()%>/BgWorkinghourInfo/findForUser?ran='+ran,
