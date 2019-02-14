@@ -29,7 +29,7 @@ $.fn.extend({
 			var basePath = localObj.protocol+"//"+localObj.host+"/"+contextPath;
 			organBox.find("#"+bindLayId+",span>span,input[name="+organName+"]").off().click(function(){
 				var iframeId = window.name;
-				var height=$(window).height()*0.85;
+				var height=$(window).height()*0.9;
 				if(height>520) height = 520;
 				var p = {
 						type:2,
@@ -39,7 +39,12 @@ $.fn.extend({
 						content:[basePath+'/organstufftree/initOrganTree?root='
 						         +root+'&ct='+ct+'&level='+level+'&organCode='
 						         +organCode+'&organName='+organName+'&limit='+limit
-						         +'&popEvent='+popEvent+'&iframeId='+iframeId+'&iframe='+iframe,'no']
+						         +'&popEvent='+popEvent+'&iframeId='+iframeId+'&iframe='+iframe,'no'],
+						success: function(layero, index){//弹窗加载完毕后，调整人员组织树的高度不被遮挡
+					    	var iframes = layero.find("iframe");
+					    	var stuffPage = iframes[0].contentWindow.document;
+					    	$(stuffPage).find('.tree-box').height(height-110);
+					 	}
 					};
 				if(iframe == "parent")
 					parent.layer.open(p);
