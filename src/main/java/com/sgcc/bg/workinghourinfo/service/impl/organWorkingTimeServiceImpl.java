@@ -311,7 +311,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		if (status.equals("0")) {
 			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门（单位）", "deptName" }, { "投入总工时(h)", "TotalHoursNum" },
 					{ "项目投入工时(h)", "ProjectTotalHoursNum" }, { "非项目投入工时(h)", "NoProjectTotalHoursNum" }  };
-			 String excelName="报工管理-组织员工工时统计（项目）-"+DateUtil.getDays();
+			 String excelName="报工管理-组织员工工时统计（部门）-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, datalist, "normal");
 		} else if (status.equals("1")) {
 			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门（单位）", "parentName" }, { "处室", "deptName" },
