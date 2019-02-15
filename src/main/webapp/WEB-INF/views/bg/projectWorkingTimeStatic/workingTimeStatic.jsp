@@ -273,13 +273,15 @@ function queryListPro(load){
 }
 //项目详情
 function forDetails(proId){
+	var height=$(window).height()*0.9;
+	if(height>570) height = 570;
 	layer.open({
 		type:2,
 		title:"项目信息-查看",
-		area:[ '865px','530px'],
+		area:[ '865px',height+'px'],
 		scrollbar:false,
 		skin:'query-box',
-		content:['<%=request.getContextPath()%>/project/pro_details?proId='+proId,'no']
+		content:['<%=request.getContextPath()%>/project/pro_details?proId='+proId]
 	});
 }
 //项目工时详情
