@@ -404,7 +404,7 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 						}else{
 						  datalist= bgworkinghourinfoMapper.selectForbgWorkinghourInfos(idlist,"","","","","","");				  
 						}
-						String excelName="个人工时管理-"+DateUtil.getDays();
+						String excelName="报工管理-个人工时管理-"+DateUtil.getDays();
 						ExportExcelHelper.getExcel(response, excelName, title, datalist, "normal"); 
 				return "";
 		}

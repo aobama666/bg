@@ -283,7 +283,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 							 { "项目工作投入工时(h)","PRO_HOUR"},
 							 { "项目前期投入工时(h)","BP_HOUR"}
 							};
-					 String excelName="项目工时统计-"+DateUtil.getDays();
+					 String excelName="报工管理-项目工时统计（项目）-"+DateUtil.getDays();
 					 ExportExcelHelper.getExcel(response, excelName, title, valueList, "normal");
 				 }else{
 					 Object[][] title = { 
@@ -299,7 +299,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 							 { "员工项目投入工时(h)","PRO_HOUR"},
 							 { "员工项目前期投入工时(h)","BP_HOUR"}
 							};
-						String excelName="项目工时统计-"+DateUtil.getDays();
+						String excelName="报工管理-项目工时统计（人员）-"+DateUtil.getDays();
 					 ExportExcelHelper.getExcel(response, excelName, title, valueList, "normal");
 				 }
 				 return "";
@@ -533,7 +533,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 					 { "人员姓名","USERALIAS"},
 					 { "投入工时(h)","WORKING_HOUR"}
 					};
-			 String excelName="项目工时明细-"+DateUtil.getDays();
+			 String excelName="报工管理-项目工时统计-项目工时明细-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, valueList, "normal");
 			return "";
 		}
@@ -658,7 +658,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 					 { "工作内容","JOB_CONTENT"}, 
 					 { "投入工时（h）","WORKING_HOUR"}
 					};
-			 String excelName="员工工时明细-"+DateUtil.getDays();
+			 String excelName="报工管理-项目工时统计-员工工时明细-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, valueList, "normal");
 			return "";
  

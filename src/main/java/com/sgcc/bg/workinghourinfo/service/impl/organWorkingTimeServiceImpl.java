@@ -311,19 +311,19 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		if (status.equals("0")) {
 			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门（单位）", "deptName" }, { "投入总工时(h)", "TotalHoursNum" },
 					{ "项目投入工时(h)", "ProjectTotalHoursNum" }, { "非项目投入工时(h)", "NoProjectTotalHoursNum" }  };
-			 String excelName="组织工时详情（项目）-"+DateUtil.getDays();
+			 String excelName="报工管理-组织员工工时统计（项目）-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, datalist, "normal");
 		} else if (status.equals("1")) {
 			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门（单位）", "parentName" }, { "处室", "deptName" },
 					{ "投入总工时(h)", "TotalHoursNum" }, { "项目投入工时(h)", "ProjectTotalHoursNum" },
 					{ "非项目投入工时(h)", "NoProjectTotalHoursNum" }  };
-			 String excelName="组织工时详情（处室）-"+DateUtil.getDays();
+			 String excelName="报工管理-组织员工工时统计（处室）-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, datalist, "normal");
 		} else if (status.equals("2")) {
 			Object[][] title = { { "统计周期", "StartAndEndData" }, { "部门（单位）", "pdeptName" }, { "处室", "deptName" },
 					{ "人员编号", "hrCode" },{ "人员姓名", "Useralias" }, { "投入总工时(h)", "TotalHoursNum" }, 
 					{ "项目投入工时(h)", "ProjectTotalHoursNum" },{ "非项目投入工时(h)", "NoProjectTotalHoursNum" }  };
-			 String excelName="组织工时详情（人员）-"+DateUtil.getDays();
+			 String excelName="报工管理-组织员工工时统计（人员）-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, datalist, "normal");
 		}
 
@@ -1323,7 +1323,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		
 		//获取Excel数据信息
 		HSSFWorkbook workbook = ExcelUtils.PaddingExcel(headermap0,dataLists,headermaplist,mregeList);
-		String fileName="员工工时明细"+DateUtil.getDays();
+		String fileName="报工管理-组织员工工时统计-员工工时明细-"+DateUtil.getDays();
 		ExportExcelHelper.getExcels(response,workbook,fileName);
 		return "";
 	}
@@ -1521,7 +1521,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				{ "工作任务类型", "CATEGORY" }, { "工作任务编号", "PROJECT_NUMBER" },/* { "WBS编号", "WBS_NUMBER" },*/ { "工作任务名称", "PROJECT_NAME" },
 				{ "工作内容", "JOB_CONTENT" }, { "投入工时(h)", "WORKING_HOUR" } };
 		
-		String excelName="投入工时信息-"+DateUtil.getDays();
+		String excelName="报工管理-组织员工工时统计-投入工时信息-"+DateUtil.getDays();
 		ExportExcelHelper.getExcel(response, excelName, title, dataList, "normal");
 		//Map<String,String> titleMap=(Map<String, String>) dataMap.get("titleMap");
 		//int len = 3;

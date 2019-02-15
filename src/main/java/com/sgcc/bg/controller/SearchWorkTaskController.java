@@ -46,9 +46,6 @@ public class SearchWorkTaskController {
 	@Autowired
  	private IStaffWorkbenchService swService;
 	
-
-	
-	DateUtil dateUtils = new DateUtil();
 	/*
 	 *工作任务查询页面 index
 	 */
@@ -291,8 +288,8 @@ public class SearchWorkTaskController {
 					 { "工作任务","TASK"},
 					 { "计划投入工时","PLANHOURS"} 
 					};
-			String time = dateUtils.getDays();
-			ExportExcelHelper.getExcel(response, "报工系统-工作任务查询-"+time, title, valueList, "normal");
+			
+			ExportExcelHelper.getExcel(response, "报工管理-工作任务查询-"+DateUtil.getDays(), title, valueList, "normal");
 			return "";
 	}
 	
@@ -412,8 +409,7 @@ public class SearchWorkTaskController {
 				 { "审核结果","PROSTATUS"},
 				 { "审核备注","PROCESS_NOTE"}
 				};
-		String time = dateUtils.getDays();
-		ExportExcelHelper.getExcel(response, "报工系统-已审核工时-"+time, title, valueList, "normal");
+		ExportExcelHelper.getExcel(response, "报工管理-已审核工时信息-"+DateUtil.getDays(), title, valueList, "normal");
 		return "";
 	}
 }

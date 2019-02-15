@@ -295,18 +295,18 @@ $(".content").on("click",".forDetails",function(){
 	var labid = $(this).attr("deptid");
 	var StartData = $(this).attr("StartData");
 	var EndData = $(this).attr("EndData");
-	var title = "";
+	/* var title = "";
 	if(type=='1'){
 		title = "员工工时明细";
 	}else if(type=='2'){
 		title = "项目投入工时";
 	}else{
 		title = "非项目投入工时";
-	}
+	} */
 	
 	layer.open({
 		type:2,
-		title:title,
+		title:'员工工时明细',
 		area:['80%','85%'],
 		scrollbar:false,
 		skin:'query-box',
