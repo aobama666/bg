@@ -28,11 +28,11 @@ var allRelatedRows;//所有已关联的项目前期
 function queryList_beforePro(){
 	var ran = Math.random()*100000000;
 	var cols = [
-				{title:'工作任务编号', name:'projectNumber',width:145,sortable:false, align:'center'},
-				{title:'工作任务名称', name:'projectName',width:170,sortable:false, align:'center'},
-				{title:'开始日期', name:'startDate', width:145, sortable:false, align:'center'},
-				{title:'结束日期', name:'endDate', width:145,sortable:false, align:'center'},
-				{title:'已投入工时(h)', name:'workTime', width:145, sortable:false, align:'center'}
+				{title:'工作任务编号', name:'projectNumber',width:150,sortable:false, align:'center'},
+				{title:'工作任务名称', name:'projectName',width:198,sortable:false, align:'center'},
+				{title:'开始日期', name:'startDate', width:150, sortable:false, align:'center'},
+				{title:'结束日期', name:'endDate', width:150,sortable:false, align:'center'},
+				{title:'已投入工时(h)', name:'workTime', width:150, sortable:false, align:'center'}
 	    		];
 	var mmGridHeight = $("body").parent().height() - 180;
 	mmg_p = $('#mmg_p').mmGrid({
