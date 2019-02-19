@@ -208,6 +208,10 @@ function queryList(load){
 	            	{title:'操作', name:'aa', width:100, sortable:false, align:'center',renderer:function(title,row){
 	            		if(row.STATUS==1){
 	            			return "<span class='backManage' id='"+row.ID+"'>撤回</span>"
+	            		}else if(row.STATUS==0){
+	            			return "<span class='updateManage' id='"+row.ID+"'>修改</span>"
+	            		}else if(row.STATUS==2){
+	            			return "<span class='updateManage' id='"+row.ID+"'>修改</span>"
 	            		}else{
 	            			return ""
 	            		}

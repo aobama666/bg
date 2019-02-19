@@ -119,7 +119,7 @@
 			</div>
 		</div>
 		<div class="form-group col-xs-11">
-			<label for="workHour">投入工时（h）：</label>
+			<label for="workHour">投入工时(h)：</label>
 			<div class="controls">
 				<input type="text" id="workHour" name="workHour" onblur="checkInput(this)" property="workHour" value="${WORKING_HOUR}">
 			</div>
