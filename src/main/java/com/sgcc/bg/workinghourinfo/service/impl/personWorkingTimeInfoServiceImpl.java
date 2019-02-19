@@ -218,7 +218,7 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 			
 			//获取Excel数据信息
 			HSSFWorkbook workbook = ExcelUtils.PaddingExcel(headermap0,datalists,headermaplist,mregeList);
-			String fileName="报工管理-个人工时统计-"+DateUtil.getDays();
+			String fileName="报工管理-工时统计-"+DateUtil.getDays();
 			ExportExcelHelper.getExcels(response,workbook,fileName);
 			return "";
 		}
@@ -355,8 +355,8 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 			 Object[][] title = { 
 					 { "日期", "WORK_TIME" }, 
 					 { "类型","CATEGORY"},
-					 { "项目名称","PROJECT_NAME"},
-					 { "工作内容","JOB_CONTENT"},
+					 { "任务名称","PROJECT_NAME"},
+					 { "工作内容简述","JOB_CONTENT"},
 					 { "投入工时(h)","WORKING_HOUR"}
 					};
 			List<Map<String, Object>> valueList = excelExportList(id , bpShow , userName, type, beginData, endData);
@@ -372,7 +372,7 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 			}else if(type.equals("3")){
 				fileName="常规工作投入工时";
 			}
-			String excelName="报工管理-个人工时统计-"+fileName+"-"+DateUtil.getDays();
+			String excelName="报工管理-工时统计-"+fileName+"-"+DateUtil.getDays();
 			ExportExcelHelper.getExcel(response, excelName, title, valueList, "normal");
 			 
 			return "";

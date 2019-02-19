@@ -15,7 +15,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>个人工时统计</title>
+<title>工时统计</title>
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmGrid.css">
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmPaginator.css">
@@ -54,7 +54,7 @@
 </head>
 <body>
 <div class="page-header-sl">
-	<h5> 个人工时统计</h5>
+	<h5> 工时统计</h5>
 	<div class="button-box">
 		<button type="button" class="btn btn-info btn-xs" onclick="forConfirm()"> 导出</button>
 	</div>

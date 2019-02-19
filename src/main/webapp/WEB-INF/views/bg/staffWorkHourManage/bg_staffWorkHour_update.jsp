@@ -94,13 +94,13 @@
 			</div>
 		</div>
 		<div class="form-group col-xs-11">
-			<label for="projectName">项目类型：</label>
+			<label for="projectName">类型：</label>
 			<div class="controls">
 				<input type="text" disabled name="category" property="category" value="${CATEGORY}">
 			</div>
 		</div>
 		<div class="form-group col-xs-11">
-			<label for="projectName">项目名称：</label>
+			<label for="projectName">任务名称：</label>
 			<div class="controls">
 				<c:choose>
 					<c:when test="${CATEGORY=='非项目工作'}">
@@ -113,7 +113,7 @@
 			</div>
 		</div>
 		<div class="form-group col-xs-11">
-			<label for="jobContent">工作内容：</label>
+			<label for="jobContent">工作内容简述：</label>
 			<div class="controls">
 				<textarea name="jobContent" class="" id="jobContent" onblur="checkInput(this)" property="jobContent" style="height:75px">${JOB_CONTENT}</textarea>
 			</div>

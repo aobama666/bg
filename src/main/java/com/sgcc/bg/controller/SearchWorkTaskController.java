@@ -286,7 +286,7 @@ public class SearchWorkTaskController {
 					 { "本人参与开始时间","PERSONSTART"},
 					 { "本人参与结束时间","PERSONEND"},
 					 { "工作任务","TASK"},
-					 { "计划投入工时","PLANHOURS"} 
+					 { "计划投入工时(h)","PLANHOURS"} 
 					};
 			
 			ExportExcelHelper.getExcel(response, "报工管理-工作任务查询-"+DateUtil.getDays(), title, valueList, "normal");
@@ -402,14 +402,14 @@ public class SearchWorkTaskController {
 				 { "人员编号","HRCODE"}, 
 				 { "人员姓名","USERALIAS"},
 				 { "类型","CATEGORY"},
-				 { "项目名称","PROJECT_NAME"}, 
-				 { "工作内容","JOB_CONTENT"},
+				 { "任务名称","PROJECT_NAME"}, 
+				 { "工作内容简述","JOB_CONTENT"},
 				 { "投入工时(h)","WORKING_HOUR"},
 				 { "审核时间","UPDATE_TIME"}, 
 				 { "审核结果","PROSTATUS"},
-				 { "审核备注","PROCESS_NOTE"}
+				 { "审核意见","PROCESS_NOTE"}
 				};
-		ExportExcelHelper.getExcel(response, "报工管理-已审核工时信息-"+DateUtil.getDays(), title, valueList, "normal");
+		ExportExcelHelper.getExcel(response, "报工管理-已审核信息查询-"+DateUtil.getDays(), title, valueList, "normal");
 		return "";
 	}
 }

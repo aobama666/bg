@@ -14,7 +14,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>个人工时填报</title>
+<title>工时填报</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css"
@@ -68,12 +68,12 @@ td span{
 </head>
 <body>
 	<div class="page-header-sl">
-		<h5>个人工时填报</h5>
+		<h5>工时填报</h5>
 		<div class="button-box">
 			<button type="button" class="btn btn-primary btn-xs" name="kOne"
-				onclick="forAddProJob()">新增项目工作</button>
+				onclick="forAddProJob()">新增项目任务</button>
 			<button type="button" class="btn btn-primary btn-xs" name="kOne"
-				onclick="forAddNonProJob()">新增非项目工作</button>
+				onclick="forAddNonProJob()">新增非项目任务</button>
 			<button type="button" class="btn btn-success btn-xs" name="kOne"
 				onclick="forSave()">保存</button>
 			<button type="button" class="btn btn-warning btn-xs" name="kOne"
@@ -201,7 +201,7 @@ function queryList(load){
 	            		return '<span title="'+categoryObj[val]+'">'+categoryObj[val]+'</span><input type="hidden" property="category" value="'+val+'">';
 	            	}
 	            },
-	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'start',
+	            {title:'任务名称', name:'PROJECT_NAME', width:100, sortable:false, align:'start',
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
 	            		if(item.CATEGORY=="NP" && (item.STATUS=="0" || item.STATUS=="2") ){
@@ -212,7 +212,7 @@ function queryList(load){
 	            		return val;
 	            	}
 	            },
-	            {titleHtml:'工作内容（200字以内）', name:'JOB_CONTENT', width:300, sortable:false, align:'start',//<font class="glyphicon glyphicon-asterisk text-danger"></font>
+	            {titleHtml:'工作内容简述（200字以内）', name:'JOB_CONTENT', width:300, sortable:false, align:'start',//<font class="glyphicon glyphicon-asterisk text-danger"></font>
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
 	            		if(item.STATUS=="0" || item.STATUS=="2"){
@@ -255,7 +255,7 @@ function queryList(load){
 	            		return statusObj[val];
 	            	}
 	            },
-	            {title:'审核备注', name:'PROCESS_NOTE', width:200, sortable:false, align:'center'},
+	            {title:'审核意见', name:'PROCESS_NOTE', width:200, sortable:false, align:'center'},
 	            {title:'操作', name:'handle', width:60, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		var id=item.ID==undefined?"":item.ID;

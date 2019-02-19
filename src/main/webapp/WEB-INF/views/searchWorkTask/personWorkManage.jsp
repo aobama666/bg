@@ -12,7 +12,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>个人工时管理</title>
+<title>工时管理</title>
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmGrid.css">
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmPaginator.css">
@@ -62,7 +62,7 @@
 </head>
 <body>
 <div class="page-header-sl">
-	<h5>个人工时管理</h5>
+	<h5>工时管理</h5>
 	<div class="button-box">
 	<!-- 
 	   <button type="button" class="btn btn-success btn-xs" onclick="workUpdate()"> 修改</button>
@@ -106,7 +106,7 @@
 			</div>
 		</div>
 		<div class="form-group col-xs-6">
-			<label>项目名称：</label>
+			<label>任务名称：</label>
 			<div class="controls">
 				<input name="projectName" property="projectName" >
 			</div>
@@ -195,8 +195,8 @@ function queryList(load){
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},
 	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center'},
-	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
-	            {title:'工作内容', name:'JOB_CONTENT', width:100, sortable:false, align:'left'},
+	            {title:'任务名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
+	            {title:'工作内容简述', name:'JOB_CONTENT', width:100, sortable:false, align:'left'},
 	            {title:'投入工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'},
 	            {title:'审核人', name:'USERALIAS', width:100, sortable:false, align:'center'},
 	            {title:'审核结果', name:'STATUS', width:100, sortable:false, align:'center',
@@ -204,7 +204,7 @@ function queryList(load){
 	            		var dict=${statusJson};
 	            		return dict[val];
 	            	}},
-	            	{title:'审核备注', name:'PROCESS_NOTE', width:100, sortable:false, align:'left'},
+	            	{title:'审核意见', name:'PROCESS_NOTE', width:100, sortable:false, align:'left'},
 	            	{title:'操作', name:'aa', width:100, sortable:false, align:'center',renderer:function(title,row){
 	            		if(row.STATUS==1){
 	            			return "<span class='backManage' id='"+row.ID+"'>撤回</span>"

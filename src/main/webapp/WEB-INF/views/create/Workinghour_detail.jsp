@@ -15,7 +15,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>个人工时统计详情</title>
+<title>工时统计详情</title>
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmGrid.css">
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmPaginator.css">
@@ -115,8 +115,8 @@ function queryList(load){
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},
 	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center'},
-	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
-	            {title:'工作内容', name:'JOB_CONTENT', width:100, sortable:false, align:'left'},
+	            {title:'任务名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
+	            {title:'工作内容简述', name:'JOB_CONTENT', width:100, sortable:false, align:'left'},
 	            {title:'投入工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'}
 	    		];
 	var mmGridHeight = $("body").parent().height() - 140;

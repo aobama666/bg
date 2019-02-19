@@ -1518,8 +1518,8 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		}
 		
 		Object[][] title = { { "日期", "WORK_TIME" }, { "人员编号", "HRCODE" }, /*{ "人员姓名", "USERALIAS" },*/
-				{ "工作任务类型", "CATEGORY" }, { "工作任务编号", "PROJECT_NUMBER" },/* { "WBS编号", "WBS_NUMBER" },*/ { "工作任务名称", "PROJECT_NAME" },
-				{ "工作内容", "JOB_CONTENT" }, { "投入工时(h)", "WORKING_HOUR" } };
+				{ "类型", "CATEGORY" }, { "任务编号", "PROJECT_NUMBER" },/* { "WBS编号", "WBS_NUMBER" },*/ { "任务名称", "PROJECT_NAME" },
+				{ "工作内容简述", "JOB_CONTENT" }, { "投入工时(h)", "WORKING_HOUR" } };
 		
 		String excelName="报工管理-组织员工工时统计-投入工时信息-"+DateUtil.getDays();
 		ExportExcelHelper.getExcel(response, excelName, title, dataList, "normal");

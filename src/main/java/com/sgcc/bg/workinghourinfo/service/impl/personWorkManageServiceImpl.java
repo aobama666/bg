@@ -384,12 +384,12 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 						 Object[][] title = { 
 								 { "日期", "WORK_TIME" }, 
 								 { "类型","CATEGORY"},
-								 { "项目名称","PROJECT_NAME"},
-								 { "工作内容","JOB_CONTENT"},
+								 { "任务名称","PROJECT_NAME"},
+								 { "工作内容简述","JOB_CONTENT"},
 								 { "投入工时(h)","WORKING_HOUR"},
 								 { "审核人","USERALIAS"},
 								 { "审核结果","STATUS"},
-								 { "审核备注","PROCESS_NOTE"},
+								 { "审核意见","PROCESS_NOTE"},
 								};
 						List<String > idlist=new ArrayList<>();
 						if(id!=""){
@@ -404,7 +404,7 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 						}else{
 						  datalist= bgworkinghourinfoMapper.selectForbgWorkinghourInfos(idlist,"","","","","","");				  
 						}
-						String excelName="报工管理-个人工时管理-"+DateUtil.getDays();
+						String excelName="报工管理-工时管理-"+DateUtil.getDays();
 						ExportExcelHelper.getExcel(response, excelName, title, datalist, "normal"); 
 				return "";
 		}
