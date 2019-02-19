@@ -183,15 +183,15 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		}
 		Object[][] title = { 
 							 { "填报日期\r\n（必填，格式：YYYY-MM-DD）", "DATE","nowrap"},
-							 { "项目类型\r\n（必填）", "CATEGORY" ,"nowrap"},
-							 { "项目编号\r\n（项目工作必填，非项目工作不填）", "PROJECT_NUMBER" ,"nowrap"}, 
-							 { "项目名称\r\n（选填）","PROJECT_NAME","nowrap"},
-							 { "工作内容\r\n（选填，200字以内）",""}, 
-							 { "投入工时\r\n(必填，数字 h）","","nowrap"},
+							 { "类型\r\n（必填）", "CATEGORY" ,"nowrap"},
+							 { "任务编号\r\n（项目工作必填，非项目工作不填）", "PROJECT_NUMBER" ,"nowrap"}, 
+							 { "任务名称\r\n（选填）","PROJECT_NAME","nowrap"},
+							 { "工作内容简述\r\n（选填，200字以内）",""}, 
+							 { "投入工时(h)\r\n(必填，数字 ）","","nowrap"},
 							 { "审核人员姓名\r\n（选填）","PRINCIPAL","nowrap"}, 
 							 { "审核人员员工编号\r\n（项目前期、常规工作必填，工作任务负责人必填）","HRCODE","nowrap"} 
 							};
-		ExportExcelHelper.getExcel(response, "定制模板", title, dataList, "normal");
+		ExportExcelHelper.getExcel(response, "工时填报定制模板", title, dataList, "normal");
 		return "success";
 	}
 
