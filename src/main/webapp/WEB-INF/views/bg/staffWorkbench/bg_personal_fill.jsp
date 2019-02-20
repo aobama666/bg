@@ -372,7 +372,7 @@ function removeHint(_this){
 
 function checkNumberFormat(workHour){
 	var result = {};
-	var reg=/^([1-9]+|[1-9]*\.[05]|0\.5)$/;
+	var reg=/^([1-9]\d*|[1-9]\d*\.[05]|0\.5)$/;
 	if($.trim(workHour)!="" && !reg.test(workHour)){
 		result.result = false;
 		result.info = "必须为数字且最小时间单位为0.5h；";
