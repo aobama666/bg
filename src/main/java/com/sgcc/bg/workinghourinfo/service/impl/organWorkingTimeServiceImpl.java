@@ -384,8 +384,8 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		 }else if(status.equals("1")){
 			 resultMap = selectForLatManager(organTreelist,type,startDate,endDate,bpShow,dataShow,begin,end); 
 		 }else if(status.equals("2")){
-			 List<Map<String, Object>> neworganTreelist = findForPersonnel(organTreelist , useralias);
-			 resultMap = selectForPersonnelManager(neworganTreelist, type, startDate, endDate, bpShow, dataShow,begin,end);
+			 List<Map<String, Object>> emplist = findForPersonnel(organTreelist , useralias);
+			 resultMap = selectForPersonnelManager(organTreelist, emplist, type, startDate, endDate, bpShow, dataShow,begin,end);
 		 }
 		 
 		 return resultMap;
@@ -802,22 +802,48 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		return resultMap;
 	}
 
-	public Map<String, Object> selectForPersonnelManager(List<Map<String, Object>> organTreelist, String type,
-			String beginData, String endData,String bpShow,String dataShow,int pageBegin,int pageEnd) {
+	public Map<String, Object> selectForPersonnelManager(
+			List<Map<String, Object>> organTreelist, List<Map<String, Object>> empList,String type,
+			String startDate, String endDate,String bpShow,String dataShow,int pageBegin,int pageEnd) {
 
 		List<Map<String, Object>> maplist = new ArrayList<Map<String, Object>>();
-		List<DataBean> datalist = StatisticsForProjectName(type, beginData, endData);
+		List<DataBean> datalist = StatisticsForProjectName(type, startDate, endDate);
 		 
 		int count = 0;//序号
 		
-		for (Map<String, Object> organMap : organTreelist) {
-			String useralias = (String) organMap.get("USERALIAS");
-			String hrCode = (String) organMap.get("HRCODE");
-			String username = (String) organMap.get("USERNAME");
-			String deptname = (String) organMap.get("DEPTNAME");
-			String pdeptname = (String) organMap.get("PDEPTNAME");
-			String pdeptid = (String) organMap.get("PDEPTID");
-			String deptid = (String) organMap.get("DEPTID");
+		//存储的是 hrCode+deptCode+start+end，用于判断人员在指定部门指定日期是否存在报工
+		Set<String> set = new HashSet<>();
+		
+		{
+			List<String> labIdList = new ArrayList<>();
+			for (Map<String, Object> organMap : organTreelist) 
+				labIdList.add(Rtext.toString(organMap.get("deptId")));
+				
+			for (DataBean dataBean : datalist) {
+				String start = dataBean.getStartData();
+				String end = dataBean.getEndData();
+				List<Map<String, Object>>  allList = 
+						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, labIdList, null , null);
+				
+				for (Map<String, Object> map : allList) {
+					String hrCode = Rtext.toString(map.get("HRCODE"));
+					String deptCode = Rtext.toString(map.get("DEPTCODE"));
+					set.add(hrCode+deptCode+start+end);
+				}
+			}
+		}
+		
+		for (Map<String, Object> map : empList) {
+			String useralias = Rtext.toString(map.get("USERALIAS"));
+			String hrCode = Rtext.toString(map.get("HRCODE"));
+			String deptCode = Rtext.toString(map.get("DEPTCODE"));
+			String username = Rtext.toString(map.get("USERNAME"));
+			String deptname = Rtext.toString(map.get("DEPTNAME"));
+			String pdeptname = Rtext.toString(map.get("PDEPTNAME"));
+			String pdeptid = Rtext.toString(map.get("PDEPTID"));
+			String deptid = Rtext.toString(map.get("DEPTID"));
+			String history = Rtext.toString(map.get("history"));//非本组织员工，但存在报工记录标记
+			
 			for (DataBean dataBean : datalist) {
 				String start = dataBean.getStartData();
 				String end = dataBean.getEndData();
@@ -826,11 +852,10 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				labList.add(deptid);
 				
 				//判断是否本条目总工时为零
-				List<Map<String, Object>>  allList = 
-						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, deptid, null, username , null);
-				double allSum = sumWorkingHour(allList);
-				if(dataShow.equals("1") && allSum==0) continue;//仅显示工时大于0的数据
-
+				String key = hrCode+deptCode+start+end;
+				if("1".equals(dataShow) && !set.contains(key)) continue;//仅显示工时大于0的数据
+				if(!"1".equals(dataShow) && "1".equals(history) && !set.contains(key)) continue;//全部显示时,如员工已不在该组织，则仅显示不为零的工时
+				
 				count++;
 
 				if(count<pageBegin || count>pageEnd) continue;//超出分页容量
@@ -953,12 +978,31 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 			List<Map<String, Object>> workerList = bgworkinghourinfoMapper.selectUserFromWorkHourInfo(deptId, useralias, "");
 			//获取当前该部门下的所有人员
 			List<Map<String, Object>> empList = bgworkinghourinfoMapper.selectForUser("", deptId, null,useralias,"");
-			empList.addAll(workerList);
-			Set<String> set = new HashSet<>();
+//			empList.addAll(workerList);
+//			Set<String> set = new HashSet<>();
+//			for (Map<String, Object> emp : empList) {
+//				String hrCode = (String) emp.get("HRCODE");
+//				String deptCode = (String) emp.get("DEPTCODE");
+//				if(set.add(hrCode+deptCode)) resultList.add(emp);
+//			}
+			
+			
+			Set<String> empSet = new HashSet<>();
 			for (Map<String, Object> emp : empList) {
 				String hrCode = (String) emp.get("HRCODE");
-				String deptCode = (String) emp.get("DEPTCODE");
-				if(set.add(hrCode+deptCode)) resultList.add(emp);
+				if(empSet.add(hrCode)) {
+					emp.put("history", "0");
+					resultList.add(emp);
+				}
+			}
+			
+			Set<String> workerSet = new HashSet<>();
+			for (Map<String, Object> worker : workerList) {
+				String hrCode = (String) worker.get("HRCODE");
+				if(!empSet.contains(hrCode) && workerSet.add(hrCode)) {
+					worker.put("history", "1");//现在不属于该处室，但曾经在该处室下存在报工信息的，添加标记
+					resultList.add(worker);
+				}
 			}
 			
 			/*if (list.isEmpty()) {
