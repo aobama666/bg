@@ -624,27 +624,61 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				
 				if(count<pageBegin || count>pageEnd) continue;//超出分页容量
 				
-				List<Map<String, Object>>  proList = 
-						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, Lablist, null , new String[]{"KY","HX","JS","QT"});
-				List<Map<String, Object>>  noProList = 
-						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, Lablist, null, new String[]{"NP","CG"});
-				List<Map<String,Object>> noRelatedBPList = 
-						bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, start, end, proList, false);
-				List<Map<String,Object>> relatedBPList = 
-						bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, start, end, proList, true);
+//				List<Map<String, Object>>  proList = 
+//						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, Lablist, null , new String[]{"KY","HX","JS","QT"});
+//				List<Map<String, Object>>  noProList = 
+//						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, Lablist, null, new String[]{"NP","CG"});
+//				List<Map<String,Object>> noRelatedBPList = 
+//						bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, start, end, proList, false);
+//				List<Map<String,Object>> relatedBPList = 
+//						bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, start, end, proList, true);
 				
-				double proSum = sumWorkingHour(proList);
-				double noProSum = sumWorkingHour(noProList);
-				double noRelBPSum = sumWorkingHour(noRelatedBPList);
-				double relBPSum = sumWorkingHour(relatedBPList);
-				double totalSum = proSum+noProSum+noRelBPSum+relBPSum;
+				 List<Map<String,Object>> NPList = new ArrayList<>();
+						//bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, Lablist, null, new String[]{"NP"});
+				 List<Map<String,Object>> proList = new ArrayList<>();
+						 //bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, Lablist, null , new String[]{"KY","HX","JS","QT"});
+				 List<Map<String,Object>> BPList = new ArrayList<>();
+						 //bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, Lablist, null, new String[]{"BP"});
 				
-				if("1".equals(bpShow)){
-					proSum += relBPSum;
-					noProSum += noRelBPSum;
-				}else{
-					noProSum += (relBPSum+noRelBPSum);
+				 for (Map<String, Object> map : allList) {
+					 String category = Rtext.toString(map.get("CATEGORY"));
+					 Object relProId = map.get("RELATED_PROJECT_ID");
+					 if("NP".equals(category)){
+						 NPList.add(map);
+					 }else if("BP".equals(category)){
+						 if("1".equals(bpShow) && relProId != null) {
+							 proList.add(map);
+						 }else{
+							 BPList.add(map);
+						 }
+					 }else if("KY-HX-JS-QT".contains(category)){
+						 proList.add(map);
+					 }
 				}
+				 
+//				 if("1".equals(bpShow)){
+//					Iterator<Map<String,Object>> it = BPList.iterator();
+//					while (it.hasNext()) {
+//						Map<String, Object> BPMap = (Map<String, Object>) it.next();
+//						Object relProId = BPMap.get("RELATED_PROJECT_ID");
+//						if(relProId != null) {
+//							proList.add(BPMap);
+//							it.remove();
+//						}
+//					}
+//				 }
+				 
+				double proSum = sumWorkingHour(proList);
+				double NPSum = sumWorkingHour(NPList);
+				double BPSum = sumWorkingHour(BPList);
+				double totalSum = proSum+NPSum+BPSum;
+				
+//				if("1".equals(bpShow)){
+//					proSum += relBPSum;
+//					noProSum += noRelBPSum;
+//				}else{
+//					noProSum += (relBPSum+noRelBPSum);
+//				}
 				
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("pdeptId", deptId + "");
@@ -656,7 +690,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				map.put("StartAndEndData", start + "至" + end);
 				map.put("TotalHoursNum", String.valueOf(totalSum).replace(".0", ""));
 				map.put("ProjectTotalHoursNum", String.valueOf(proSum).replace(".0", ""));
-				map.put("NoProjectTotalHoursNum", String.valueOf(noProSum).replace(".0", ""));
+				map.put("NoProjectTotalHoursNum", String.valueOf(NPSum+BPSum).replace(".0", ""));
 				
 				maplist.add(map);
 	        }
@@ -755,27 +789,66 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 
 				if(count<pageBegin || count>pageEnd) continue;//超出分页容量
 				
-				List<Map<String, Object>>  proList = 
-						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, labList, null , new String[]{"KY","HX","JS","QT"});
-				List<Map<String, Object>>  noProList = 
-						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, labList, null, new String[]{"NP","CG"});
-				List<Map<String,Object>> noRelatedBPList = 
-						bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,labList, start, end, proList, false);
-				List<Map<String,Object>> relatedBPList = 
-						bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,labList, start, end, proList, true);
+//				List<Map<String, Object>>  proList = 
+//						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, labList, null , new String[]{"KY","HX","JS","QT"});
+//				List<Map<String, Object>>  noProList = 
+//						bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, labList, null, new String[]{"NP","CG"});
+//				List<Map<String,Object>> noRelatedBPList = 
+//						bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,labList, start, end, proList, false);
+//				List<Map<String,Object>> relatedBPList = 
+//						bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,labList, start, end, proList, true);
+//				
+//				double proSum = sumWorkingHour(proList);
+//				double noProSum = sumWorkingHour(noProList);
+//				double noRelBPSum = sumWorkingHour(noRelatedBPList);
+//				double relBPSum = sumWorkingHour(relatedBPList);
+//				double totalSum = proSum+noProSum+noRelBPSum+relBPSum;
+				 List<Map<String,Object>> NPList = new ArrayList<>();
+						 //bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, labList, null, new String[]{"NP"});
+				 List<Map<String,Object>> proList = new ArrayList<>();
+						 //bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, labList, null , new String[]{"KY","HX","JS","QT"});
+				 List<Map<String,Object>> BPList = new ArrayList<>();
+						 //bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, null, labList, null, new String[]{"BP"});
 				
-				double proSum = sumWorkingHour(proList);
-				double noProSum = sumWorkingHour(noProList);
-				double noRelBPSum = sumWorkingHour(noRelatedBPList);
-				double relBPSum = sumWorkingHour(relatedBPList);
-				double totalSum = proSum+noProSum+noRelBPSum+relBPSum;
-				
-				if("1".equals(bpShow)){
-					proSum += relBPSum;
-					noProSum += noRelBPSum;
-				}else{
-					noProSum += (relBPSum+noRelBPSum);
+				 for (Map<String, Object> map : allList) {
+					 String category = Rtext.toString(map.get("CATEGORY"));
+					 Object relProId = map.get("RELATED_PROJECT_ID");
+					 if("NP".equals(category)){
+						 NPList.add(map);
+					 }else if("BP".equals(category)){
+						 if("1".equals(bpShow) && relProId != null) {
+							 proList.add(map);
+						 }else{
+							 BPList.add(map);
+						 }
+					 }else if("KY-HX-JS-QT".contains(category)){
+						 proList.add(map);
+					 }
 				}
+				 
+//				 if("1".equals(bpShow)){
+//					Iterator<Map<String,Object>> it = BPList.iterator();
+//					while (it.hasNext()) {
+//						Map<String, Object> BPMap = (Map<String, Object>) it.next();
+//						Object relProId = BPMap.get("RELATED_PROJECT_ID");
+//						if(relProId != null) {
+//							proList.add(BPMap);
+//							it.remove();
+//						}
+//					}
+//				 }
+				 
+				double proSum = sumWorkingHour(proList);
+				double NPSum = sumWorkingHour(NPList);
+				double BPSum = sumWorkingHour(BPList);
+				double totalSum = proSum+NPSum+BPSum;
+				
+//				if("1".equals(bpShow)){
+//					proSum += relBPSum;
+//					noProSum += noRelBPSum;
+//				}else{
+//					noProSum += (relBPSum+noRelBPSum);
+//				}
 				
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("pdeptId", pdeptId);
@@ -788,7 +861,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				map.put("StartAndEndData", start + "至" + end);
 				map.put("TotalHoursNum", String.valueOf(totalSum).replace(".0", ""));
 				map.put("ProjectTotalHoursNum", String.valueOf(proSum).replace(".0", ""));
-				map.put("NoProjectTotalHoursNum", String.valueOf(noProSum).replace(".0", ""));
+				map.put("NoProjectTotalHoursNum", String.valueOf(BPSum+NPSum).replace(".0", ""));
 				
 				maplist.add(map);
 			}
@@ -860,27 +933,70 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 
 				if(count<pageBegin || count>pageEnd) continue;//超出分页容量
 				
-				List<Map<String, Object>>  proList = 
-					bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, deptid, null, username , new String[]{"KY","HX","JS","QT"});
-				List<Map<String, Object>>  noProList = 
-					bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, deptid, null, username, new String[]{"NP","CG"});
-				List<Map<String,Object>> noRelatedBPList = 
-					bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,labList, start, end, proList, false);
-				List<Map<String,Object>> relatedBPList = 
-					bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,labList, start, end, proList, true);
+//				List<Map<String, Object>>  proList = 
+//					bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, deptid, null, username , new String[]{"KY","HX","JS","QT"});
+//				List<Map<String, Object>>  noProList = 
+//					bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, deptid, null, username, new String[]{"NP","CG"});
+//				List<Map<String,Object>> noRelatedBPList = 
+//					bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,labList, start, end, proList, false);
+//				List<Map<String,Object>> relatedBPList = 
+//					bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,labList, start, end, proList, true);
+//				
+//				double proSum = sumWorkingHour(proList);
+//				double noProSum = sumWorkingHour(noProList);
+//				double noRelBPSum = sumWorkingHour(noRelatedBPList);
+//				double relBPSum = sumWorkingHour(relatedBPList);
+//				double totalSum = proSum+noProSum+noRelBPSum+relBPSum;
+//				
+//				if("1".equals(bpShow)){
+//					proSum += relBPSum;
+//					noProSum += noRelBPSum;
+//				}else{
+//					noProSum += (relBPSum+noRelBPSum);
+//				}
 				
-				double proSum = sumWorkingHour(proList);
-				double noProSum = sumWorkingHour(noProList);
-				double noRelBPSum = sumWorkingHour(noRelatedBPList);
-				double relBPSum = sumWorkingHour(relatedBPList);
-				double totalSum = proSum+noProSum+noRelBPSum+relBPSum;
+				 List<Map<String,Object>> allUserlist = 
+						 bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, deptid, null, username, null);
+				 
+				 List<Map<String,Object>> NPList = new ArrayList<>();
+						//bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, deptid, null, username, new String[]{"NP"});
+				 List<Map<String,Object>> proList = new ArrayList<>();
+						 //bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, deptid, null, username , new String[]{"KY","HX","JS","QT"});
+				 List<Map<String,Object>> BPList = new ArrayList<>();
+						 //bgworkinghourinfoMapper.selectForWorkingHour(start, end, null, deptid, null, username, new String[]{"BP"});
 				
-				if("1".equals(bpShow)){
-					proSum += relBPSum;
-					noProSum += noRelBPSum;
-				}else{
-					noProSum += (relBPSum+noRelBPSum);
+				 for (Map<String, Object> userMap : allUserlist) {
+					 String category = Rtext.toString(userMap.get("CATEGORY"));
+					 Object relProId = userMap.get("RELATED_PROJECT_ID");
+					 if("NP".equals(category)){
+						 NPList.add(userMap);
+					 }else if("BP".equals(category)){
+						 if("1".equals(bpShow) && relProId != null) {
+							 proList.add(userMap);
+						 }else{
+							 BPList.add(userMap);
+						 }
+					 }else if("KY-HX-JS-QT".contains(category)){
+						 proList.add(userMap);
+					 }
 				}
+				 
+//				 if("1".equals(bpShow)){
+//					Iterator<Map<String,Object>> it = BPList.iterator();
+//					while (it.hasNext()) {
+//						Map<String, Object> BPMap = (Map<String, Object>) it.next();
+//						Object relProId = BPMap.get("RELATED_PROJECT_ID");
+//						if(relProId != null) {
+//							proList.add(BPMap);
+//							it.remove();
+//						}
+//					}
+//				 }
+				 
+				double proSum = sumWorkingHour(proList);
+				double NPSum = sumWorkingHour(NPList);
+				double BPSum = sumWorkingHour(BPList);
+				double totalSum = proSum+NPSum+BPSum;
 				
 				Map<String, Object> resultMap = new HashMap<String, Object>();
 				resultMap.put("username", username);
@@ -896,7 +1012,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				resultMap.put("StartAndEndData", start + "至" + end);
 				resultMap.put("TotalHoursNum", String.valueOf(totalSum).replace(".0", ""));
 				resultMap.put("ProjectTotalHoursNum", String.valueOf(proSum).replace(".0", ""));
-				resultMap.put("NoProjectTotalHoursNum", String.valueOf(noProSum).replace(".0", ""));
+				resultMap.put("NoProjectTotalHoursNum", String.valueOf(BPSum+NPSum).replace(".0", ""));
 				
 				maplist.add(resultMap);
 			}
@@ -1118,14 +1234,52 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 			Lablist.add(labid);
 		}
 		
-		List<Map<String, Object>>  proList = 
-				bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, null, null, Lablist, null , new String[]{"KY","HX","JS","QT"});
-		List<Map<String, Object>>  noProList = 
-				bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, null, null, Lablist, null, new String[]{"NP","CG"});
-		List<Map<String,Object>> noRelatedBPList = 
-				bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, StartData, EndData, proList, false);
-		List<Map<String,Object>> relatedBPList = 
-				bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, StartData, EndData, proList, true);
+//		List<Map<String, Object>>  proList = 
+//				bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, null, null, Lablist, null , new String[]{"KY","HX","JS","QT"});
+//		List<Map<String, Object>>  noProList = 
+//				bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, null, null, Lablist, null, new String[]{"NP","CG"});
+//		List<Map<String,Object>> noRelatedBPList = 
+//				bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, StartData, EndData, proList, false);
+//		List<Map<String,Object>> relatedBPList = 
+//				bgworkinghourinfoMapper.getBPByDateAndIsRelated(null ,Lablist, StartData, EndData, proList, true);
+		
+		 List<Map<String,Object>> allList = bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, null, null, Lablist, null, null);
+		
+		 List<Map<String,Object>> NPList = new ArrayList<>();
+				//bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, null, null, Lablist, null, new String[]{"NP"});
+		 List<Map<String,Object>> proList = new ArrayList<>();
+				 //bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, null, null, Lablist, null , new String[]{"KY","HX","JS","QT"});
+		 List<Map<String,Object>> BPList = new ArrayList<>();
+				 //bgworkinghourinfoMapper.selectForWorkingHour(StartData, EndData, null, null, Lablist, null, new String[]{"BP"});
+		
+		 for (Map<String, Object> map : allList) {
+			 String category = Rtext.toString(map.get("CATEGORY"));
+			 Object relProId = map.get("RELATED_PROJECT_ID");
+			 if("NP".equals(category)){
+				 NPList.add(map);
+			 }else if("BP".equals(category)){
+				 if("1".equals(bpShow) && relProId != null) {
+					 proList.add(map);
+				 }else{
+					 BPList.add(map);
+				 }
+			 }else if("KY-HX-JS-QT".contains(category)){
+				 proList.add(map);
+			 }
+		}
+		 
+//		 if("1".equals(bpShow)){
+//			Iterator<Map<String,Object>> it = BPList.iterator();
+//			while (it.hasNext()) {
+//				Map<String, Object> BPMap = (Map<String, Object>) it.next();
+//				Object relProId = BPMap.get("RELATED_PROJECT_ID");
+//				if(relProId != null) {
+//					proList.add(BPMap);
+//					it.remove();
+//				}
+//			}
+//		 }
+//		
 		
 		List<Map<String, Object>> dataList = new ArrayList<>();
 		Map<String,Map<String,String>> titleMap = new LinkedHashMap<>();//存放将要被前台列出项目编号和名称
@@ -1135,42 +1289,43 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		noProTitleMap.put("NP000", "常规工作");
 		
 		if("1".equals(type)){
-			if("1".equals(bpShow)){
-				proList.addAll(relatedBPList);
-				noProList.addAll(noRelatedBPList);
-			}else{
-				noProList.addAll(relatedBPList);
-				noProList.addAll(noRelatedBPList);
-			}
+//			if("1".equals(bpShow)){
+//				proList.addAll(relatedBPList);
+//				noProList.addAll(noRelatedBPList);
+//			}else{
+//				noProList.addAll(relatedBPList);
+//				noProList.addAll(noRelatedBPList);
+//			}
 			proTitleMap = getTitle(proList);
 			//noProTitleMap = getTitle(noProList);
 			titleMap.put("项目工作", proTitleMap);
 			titleMap.put("非项目工作", noProTitleMap);
 			
 			dataList.addAll(proList);
-			dataList.addAll(noProList);
+			dataList.addAll(NPList);
+			dataList.addAll(BPList);
 		}else if("2".equals(type)){
-			if("1".equals(bpShow)){
-				proList.addAll(relatedBPList);
-			}
+//			if("1".equals(bpShow)){
+//				proList.addAll(relatedBPList);
+//			}
 			
 			proTitleMap = getTitle(proList);
 			titleMap.put("项目工作", proTitleMap);
 			
 			dataList.addAll(proList);
-			
 		}else if("3".equals(type)){
-			if("1".equals(bpShow)){
-				noProList.addAll(noRelatedBPList);
-			}else{
-				noProList.addAll(relatedBPList);
-				noProList.addAll(noRelatedBPList);
-			}
+//			if("1".equals(bpShow)){
+//				noProList.addAll(noRelatedBPList);
+//			}else{
+//				noProList.addAll(relatedBPList);
+//				noProList.addAll(noRelatedBPList);
+//			}
 			
 			//noProTitleMap = getTitle(noProList);
 			titleMap.put("非项目工作", noProTitleMap);
 			
-			dataList.addAll(noProList);
+			dataList.addAll(NPList);
+			dataList.addAll(BPList);
 		}
 		
 		if(!"1".equals(dataShow)){//显示工时为0的数据
@@ -1436,41 +1591,80 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		labList.add(labid);
 		//List<Map<String, String>> resultList=bgworkinghourinfoMapper.selectForProjectAndWorkHour(dateStr, dateStr, deptid, labid, username);
 		
-		List<Map<String, Object>>  proList = 
-			bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, labid, null, username , new String[]{"KY","HX","JS","QT"});
-		List<Map<String, Object>>  noProList = 
-			bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, labid, null, username, new String[]{"NP","CG"});
-		List<Map<String,Object>> noRelatedBPList = 
-			bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,labList, startDate, endDate, proList, false);
-		List<Map<String,Object>> relatedBPList =  
-			bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,labList, startDate, endDate, proList, true);
+//		List<Map<String, Object>>  proList = 
+//			bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, labid, null, username , new String[]{"KY","HX","JS","QT"});
+//		List<Map<String, Object>>  noProList = 
+//			bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, labid, null, username, new String[]{"NP","CG"});
+//		List<Map<String,Object>> noRelatedBPList = 
+//			bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,labList, startDate, endDate, proList, false);
+//		List<Map<String,Object>> relatedBPList =  
+//			bgworkinghourinfoMapper.getBPByDateAndIsRelated(username ,labList, startDate, endDate, proList, true);
+		 List<Map<String,Object>> allList = 
+					bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, labid, null, username, null);
+		 
+	     List<Map<String,Object>> NPList = new ArrayList<>();
+				//bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, labid, null, username, new String[]{"NP"});
+		 List<Map<String,Object>> proList = new ArrayList<>(); 
+				 //bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, labid, null, username , new String[]{"KY","HX","JS","QT"});
+		 List<Map<String,Object>> BPList = new ArrayList<>(); 
+				 //bgworkinghourinfoMapper.selectForWorkingHour(startDate, endDate, null, labid, null, username, new String[]{"BP"});
 		
+		 for (Map<String, Object> map : allList) {
+			 String category = Rtext.toString(map.get("CATEGORY"));
+			 Object relProId = map.get("RELATED_PROJECT_ID");
+			 if("NP".equals(category)){
+				 NPList.add(map);
+			 }else if("BP".equals(category)){
+				 if("1".equals(bpShow) && relProId != null) {
+					 proList.add(map);
+				 }else{
+					 BPList.add(map);
+				 }
+			 }else if("KY-HX-JS-QT".contains(category)){
+				 proList.add(map);
+			 }
+		}
+		 
+//		 if("1".equals(bpShow)){
+//			Iterator<Map<String,Object>> it = BPList.iterator();
+//			while (it.hasNext()) {
+//				Map<String, Object> BPMap = (Map<String, Object>) it.next();
+//				Object relProId = BPMap.get("RELATED_PROJECT_ID");
+//				if(relProId != null) {
+//					proList.add(BPMap);
+//					it.remove();
+//				}
+//			}
+//		 }
+		 
 		if("1".equals(type)){
-			if("1".equals(bpShow)){
-				proList.addAll(relatedBPList);
-				noProList.addAll(noRelatedBPList);
-			}else{
-				noProList.addAll(relatedBPList);
-				noProList.addAll(noRelatedBPList);
-			}
+//			if("1".equals(bpShow)){
+//				proList.addAll(relatedBPList);
+//				noProList.addAll(noRelatedBPList);
+//			}else{
+//				noProList.addAll(relatedBPList);
+//				noProList.addAll(noRelatedBPList);
+//			}
 			
 			dataList.addAll(proList);
-			dataList.addAll(noProList);
+			dataList.addAll(NPList);
+			dataList.addAll(BPList);
 		}else if("2".equals(type)){
-			if("1".equals(bpShow)){
-				proList.addAll(relatedBPList);
-			}
+//			if("1".equals(bpShow)){
+//				proList.addAll(relatedBPList);
+//			}
 			
 			dataList.addAll(proList);
 		}else if("3".equals(type)){
-			if("1".equals(bpShow)){
-				noProList.addAll(noRelatedBPList);
-			}else{
-				noProList.addAll(relatedBPList);
-				noProList.addAll(noRelatedBPList);
-			}
+//			if("1".equals(bpShow)){
+//				noProList.addAll(noRelatedBPList);
+//			}else{
+//				noProList.addAll(relatedBPList);
+//				noProList.addAll(noRelatedBPList);
+//			}
 			
-			dataList.addAll(noProList);
+			dataList.addAll(NPList);
+			dataList.addAll(BPList);
 		}
 		
 		dataList = sumWorkingHourByProjectAndDate(dataList);

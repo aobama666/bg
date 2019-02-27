@@ -43,50 +43,70 @@ public class DataUtil1 {
         tempStart.setTime(start);
         Calendar tempEnd = Calendar.getInstance();
         tempEnd.setTime(end);
+        
         int count = 1;
-        if(tempStart.equals(tempEnd)){
-        	 SimpleDateFormat simpleDateFormat =new SimpleDateFormat("yyyy-MM-dd");
-      	     String begindata =simpleDateFormat.format(getMondayOfWeek(start));
- 		     String enddata  =simpleDateFormat.format(getSundayOfWeek(start ));
- 		     DataBean dataBean1=new DataBean();
- 		     dataBean1.setStartData(begindata );
- 		     dataBean1.setEndData(enddata );
- 		     dataBean1.setCount(count);
- 		     DataBeanlsit.add(dataBean1);
-		     return  DataBeanlsit;
-        }
-        while (tempStart.before(tempEnd) ) {
+        
+        while (tempStart.compareTo(tempEnd)<=0) {
         	DataBean dataBean=new DataBean();
-        	if(count==1){
-        		if(tempStart.get(Calendar.DAY_OF_WEEK)==1){
-                  	     SimpleDateFormat simpleDateFormat =new SimpleDateFormat("yyyy-MM-dd");
-                  	     String begindata =simpleDateFormat.format(getMondayOfWeek(start));
-             		     String enddata  =simpleDateFormat.format(getSundayOfWeek(start ));
-             		     DataBean dataBean1=new DataBean();
-             		     dataBean1.setStartData(begindata );
-             		     dataBean1.setEndData(enddata );
-             		     dataBean1.setCount(count);
-             		     DataBeanlsit.add(dataBean1);
-               	}
-        	}else{
-                 int we = tempStart.get(Calendar.DAY_OF_WEEK);
-                 if (we == 2) {
-                     dataBean.setStartData(sdf.format(tempStart.getTime()));
-                 }
-                 if (DataBeanlsit.isEmpty()) { //检测map是否为空
-                      tempStart.add(Calendar.DAY_OF_YEAR, 1);
-                 }else{
-                       tempStart.add(Calendar.DAY_OF_YEAR, 6);
-                       dataBean.setEndData(sdf.format(tempStart.getTime()));
-                       dataBean.setCount(count);
-                       DataBeanlsit.add(dataBean);
-                 }
-        	}
-        	 if(tempStart.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY){
- 		         count++;
- 		     }
-        	 tempStart.add(Calendar.DAY_OF_YEAR, 1);
+        	
+        	Date beginDay = getMondayOfWeek(tempStart.getTime());
+        	Date endDay = getSundayOfWeek(tempStart.getTime());
+        	
+        	dataBean.setStartData(sdf.format(beginDay));
+        	dataBean.setEndData(sdf.format(endDay));
+        	dataBean.setCount(count++);
+        	DataBeanlsit.add(dataBean);
+        	
+        	tempStart.setTime(endDay);
+        	tempStart.add(Calendar.DAY_OF_YEAR, 1);
         }
+        
+//        if(tempStart.equals(tempEnd)){
+//        	 SimpleDateFormat simpleDateFormat =new SimpleDateFormat("yyyy-MM-dd");
+//      	     String begindata =simpleDateFormat.format(getMondayOfWeek(start));
+// 		     String enddata  =simpleDateFormat.format(getSundayOfWeek(start ));
+// 		     DataBean dataBean1=new DataBean();
+// 		     dataBean1.setStartData(begindata );
+// 		     dataBean1.setEndData(enddata );
+// 		     dataBean1.setCount(count);
+// 		     DataBeanlsit.add(dataBean1);
+//		     return  DataBeanlsit;
+//        }
+//        
+        
+//        while (tempStart.before(tempEnd) ) {
+//        	DataBean dataBean=new DataBean();
+//        	if(count==1){
+//        		if(tempStart.get(Calendar.DAY_OF_WEEK)==1){
+//                  	     SimpleDateFormat simpleDateFormat =new SimpleDateFormat("yyyy-MM-dd");
+//                  	     String begindata =simpleDateFormat.format(getMondayOfWeek(start));
+//             		     String enddata  =simpleDateFormat.format(getSundayOfWeek(start ));
+//             		     DataBean dataBean1=new DataBean();
+//             		     dataBean1.setStartData(begindata );
+//             		     dataBean1.setEndData(enddata );
+//             		     dataBean1.setCount(count);
+//             		     DataBeanlsit.add(dataBean1);
+//               	}
+//        	}else{
+//                 int we = tempStart.get(Calendar.DAY_OF_WEEK);
+//                 if (we == 2) {
+//                     dataBean.setStartData(sdf.format(tempStart.getTime()));
+//                 }
+//                 if (DataBeanlsit.isEmpty()) { //检测map是否为空
+//                      tempStart.add(Calendar.DAY_OF_YEAR, 1);
+//                 }else{
+//                       tempStart.add(Calendar.DAY_OF_YEAR, 6);
+//                       dataBean.setEndData(sdf.format(tempStart.getTime()));
+//                       dataBean.setCount(count);
+//                       DataBeanlsit.add(dataBean);
+//                 }
+//        	}
+//        	 if(tempStart.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY){
+// 		         count++;
+// 		     }
+//        	 tempStart.add(Calendar.DAY_OF_YEAR, 1);
+//        }
+        
         return DataBeanlsit;
     }
     
