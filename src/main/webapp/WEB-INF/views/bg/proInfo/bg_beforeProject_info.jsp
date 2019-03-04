@@ -80,16 +80,40 @@ a{
 </body>
 <script type="text/javascript">
 var mmg;
+//项目信息页面
+var iframes = parent.document.getElementsByTagName("iframe");
+var parentWindow = iframes[0].contentWindow;//iframe为项目前期信息页面
+var mmg_p = parentWindow.mmg_p;
+var allRelatedRows = parentWindow.allRelatedRows;
+
 $(function(){
-	init();
 	queryList();
 });
 
-function init(){
-	//
-}
 function forSearch(){
-	queryList("reload");
+	mmg.removeRow();
+	var ran = Math.random()*100000000;
+	$.post('<%=request.getContextPath()%>/project/getBeforePro?ran='+ran, $(".query-box").sotoCollecter(),function(data){
+		var remainingProNumbers = [];
+		var remainingRows = mmg_p.rows();
+		var deletedRows = [];
+		
+		if(!$(mmg_p).find("tr").hasClass('emptyRow')){
+			$.each(remainingRows,function(i,row){
+				remainingProNumbers.push(row.projectNumber);
+			});
+		}
+		
+		var allItems = allRelatedRows.concat(data.items);
+		var proName = $('input[name="proName"]').val();
+		$.each(allItems,function(i,row){
+			if(row !=  undefined
+					&& (row.projectName).match(proName)
+					&& $.inArray(row.projectNumber,remainingProNumbers) == -1){
+				mmg.addRow(row);
+			}
+		});
+	});
 }
 // 初始化列表数据
 function queryList(load){
@@ -104,7 +128,7 @@ function queryList(load){
 				];
 	var mmGridHeight = $("body").parent().height() - 190;
 	mmg = $('#mmg').mmGrid({
-		cosEdit:"4,13",//声明需要编辑，取消点击选中的列
+		//cosEdit:"4,13",//声明需要编辑，取消点击选中的列
 		indexCol: true,
 		indexColWidth: 40,
 		checkCol: true,
@@ -112,15 +136,19 @@ function queryList(load){
 		height: mmGridHeight,
 		cols: cols,
 		nowrap: true,
-		url: '<%=request.getContextPath()%>/project/getBeforePro?ran='+ran,
+		//url: '<%=request.getContextPath()%>/project/getBeforePro?ran='+ran,
+		items : [],
 		fullWidthRows: true,
 		multiSelect: true,
+		noDataText: ''
+		/* ,
 		root: 'items',
 		params: function(){
 				return $(".query-box").sotoCollecter();
-			}
+			} */
 		}).on('loadSuccess', function(e, data){
-			$(".checkAll").css("display","none").parent().text("选择");
+			$(".checkAll").css("display","none").parent().text("选择");	
+			forSearch();
 		});
 	if(load == "reload"){
 		mmg.load();
@@ -128,16 +156,14 @@ function queryList(load){
 
 }
 
-// 删除
+// 确定
 function forCommit(){
 	var items = mmg.selectedRows();
 	if(items.length==0){
 		layer.msg("请至少选择一条数据！");
 		return;
 	} 
-	//新增项目信息页面
-	var iframes = parent.document.getElementsByTagName("iframe");
-	var mmg_p = iframes[0].contentWindow.mmg_p;//iframe为定新增项目信息页面
+	
 	for (var int = 0; int < items.length; int++) {
 		var item = items[int];
 		mmg_p.addRow(item);

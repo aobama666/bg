@@ -4,15 +4,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sgcc.bg.common.CommonCurrentUser;
-import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.mapper.BGMapper;
@@ -20,7 +21,6 @@ import com.sgcc.bg.mapper.HandleSyncMapper;
 import com.sgcc.bg.model.ProjectInfoPo;
 import com.sgcc.bg.model.ProjectUserPo;
 import com.sgcc.bg.service.HandleSyncService;
-import com.sgcc.bg.service.IBGService;
 
 import ch.qos.logback.classic.Logger;
 
@@ -110,6 +110,8 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 			String bgProId = Rtext.toString(map.get("BG_ID"));
 			String kyProId = Rtext.toString(map.get("SYNC_ID"));
 			
+			if(bgProId.isEmpty() || kyProId.isEmpty()) continue;
+			
 			//更新已经关联到报工系统的项目信息的部分字段（项目类型，项目名称，wbs编号）
 			Map<String, Object> kyProMap = bgMapper.getProInfoByProIdFromKY(kyProId);
 			
@@ -133,23 +135,24 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 			List<Map<String, String>> bgEmpList = bgMapper.getProUsersByProId(bgProId);
 			List<HashMap> kyEmpList = bgMapper.getEmpByProIdFromKY(kyProId);
 			
+			//遍历报工系统中的参与人员获取必要信息
+			Set<String> bgEmpSet = new HashSet<>();
+			boolean existsPrincipal = false;//是否存在项目负责人
+			for (Map<String, String> bgEmp : bgEmpList) {
+				String bgHrCode = bgEmp.get("HRCODE");
+				String role = bgEmp.get("ROLE");
+				bgEmpSet.add(bgHrCode);
+				if("1".equals(role)) existsPrincipal = true;
+			}
+			
 			for (HashMap kyEmp : kyEmpList) {
-				boolean existsInBg = false;
 				String kyHrCode = (String) kyEmp.get("hrcode");
 				
-				for (Map<String, String> bgEmp : bgEmpList) {
-					String bgHrCode = bgEmp.get("HRCODE");
-					if(bgHrCode.equals(kyHrCode)){
-						existsInBg = true ;
-						break;
-					}
-				}
-				
-				if(!existsInBg){//如果报工系统中不存在则同步到报工系统并添加关联
+				if(!bgEmpSet.contains(kyHrCode)){//如果报工系统中不存在则同步到报工系统并添加关联
 					ProjectUserPo proUser = new ProjectUserPo();
 					String empId = Rtext.getUUID();
 					proUser.setId(empId);
-					proUser.setRole(Rtext.toString(kyEmp.get("role")));
+					proUser.setRole(existsPrincipal?"0":Rtext.toString(kyEmp.get("role")));
 					proUser.setProjectId(bgProId);
 					proUser.setHrcode(kyHrCode);
 					proUser.setEmpName(Rtext.toString(kyEmp.get("stuffName")));
@@ -426,6 +429,7 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 		
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void updateFromHX() {
 		//获取所有已关联的横向系统项目关联关系
@@ -433,6 +437,8 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 		for (Map<String, Object> map : proRelList) {
 			String bgProId = Rtext.toString(map.get("BG_ID"));
 			String hxProId = Rtext.toString(map.get("SYNC_ID"));
+			
+			if(bgProId.isEmpty() || hxProId.isEmpty()) continue;
 			
 			//更新已经关联到报工系统的项目信息的部分字段（项目类型，项目名称，wbs编号）
 			Map<String, Object> hxProMap = bgMapper.getProInfoByProIdFromHX(hxProId);
@@ -457,23 +463,24 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 			List<Map<String, String>> bgEmpList = bgMapper.getProUsersByProId(bgProId);
 			List<HashMap> hxEmpList = bgMapper.getEmpByProIdFromHX(hxProId);
 			
+			//遍历报工系统中的参与人员获取必要信息
+			Set<String> bgEmpSet = new HashSet<>();
+			boolean existsPrincipal = false;//是否存在项目负责人
+			for (Map<String, String> bgEmp : bgEmpList) {
+				String bgHrCode = bgEmp.get("HRCODE");
+				String role = bgEmp.get("ROLE");
+				bgEmpSet.add(bgHrCode);
+				if("1".equals(role)) existsPrincipal = true;
+			}
+			
 			for (HashMap hxEmp : hxEmpList) {
-				boolean existsInBg = false;
 				String hxHrCode = (String) hxEmp.get("hrcode");
 				
-				for (Map<String, String> bgEmp : bgEmpList) {
-					String bgHrCode = bgEmp.get("HRCODE");
-					if(bgHrCode.equals(hxHrCode)) {
-						existsInBg = true;
-						break;
-					}
-				}
-				
-				if(!existsInBg){//如果报工系统中不存在则同步到报工系统并添加关联
+				if(!bgEmpSet.contains(hxHrCode)){//如果报工系统中不存在则同步到报工系统并添加关联
 					ProjectUserPo proUser = new ProjectUserPo();
 					String empId = Rtext.getUUID();
 					proUser.setId(empId);
-					proUser.setRole(Rtext.toString(hxEmp.get("role")));
+					proUser.setRole(existsPrincipal?"0":Rtext.toString(hxEmp.get("role")));
 					proUser.setProjectId(bgProId);
 					proUser.setHrcode(hxHrCode);
 					proUser.setEmpName(Rtext.toString(hxEmp.get("stuffName")));

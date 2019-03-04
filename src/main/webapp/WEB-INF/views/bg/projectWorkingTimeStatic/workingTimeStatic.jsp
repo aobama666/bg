@@ -114,14 +114,13 @@
 					<input name="userName" property="userName" >
 				</div>
 			</div>
-			<!-- 年前不上，把计前期取消 -->
-			<!-- <div class="form-group col-xs-4"  >
-				<label>数据显示：</label>
-				<div class="controls datashow">
-					<div class='showcheck'><input type="checkbox" name="bpShow" value="1" /></div>checked="checked" 
+			<div class="form-group col-xs-4"  >
+				<!-- <label>数据显示：</label> -->
+				<div class="datashow" style="margin-left:33px">
+					<div class='showcheck'><input type="checkbox" name="bpShow" checked="checked" value="1" /></div> 
 					<div class="showText">项目计入项目前期</div>
 				</div>	    
-			</div> -->
+			</div>
 		</form>
 	</div>
 	<div class="query-box-right">
@@ -196,7 +195,7 @@ function queryListPro(load){
 	var cols = [
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'项目编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:' center'},
-	            {title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
+	            //{title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
 	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left',
 	            	renderer:function(val,item,rowIndex){
 	            		if(!item.PROJECT_ID){
@@ -206,22 +205,22 @@ function queryListPro(load){
             		}		
 	            },
 	            {title:'统计周期', name:'StartAndEndData', width:100, sortable:false, align:'center'},
-	            {title:'投入总工时(h)', name:'PRO_HOUR', width:150, sortable:false, align:'center',
+	            /* {title:'投入总工时(h)', name:'PRO_HOUR', width:150, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.PRO_HOUR == 0){
 	            			return '0';
 	            		}
             			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetails(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+1+'\' )">'+val+'</a>';
             		}	
-	            }
-	            /* {title:'投入总工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center',
+	            } */
+	            {title:'投入总工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.WORKING_HOUR == 0){
 	            			return '0';
 	            		}
             			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetails(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+0+'\' )">'+val+'</a>';
             		}	
-	            }/* ,
+	            },
 	            {title:'项目工作投入工时(h)', name:'PRO_HOUR', width:150, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.PRO_HOUR == 0){
@@ -239,7 +238,7 @@ function queryListPro(load){
 	            		}
             			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetails(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+2+'\' )">'+val+'</a>';
             		}	
-	            } */
+	            } 
 	    		];
 	var mmGridHeight = $("body").parent().height() - 220;
 	mmg = $('#mmg').mmGrid({
@@ -274,13 +273,15 @@ function queryListPro(load){
 }
 //项目详情
 function forDetails(proId){
+	var height=$(window).height()*0.9;
+	if(height>570) height = 570;
 	layer.open({
 		type:2,
 		title:"项目信息-查看",
-		area:[ '865px','530px'],
+		area:[ '865px',height+'px'],
 		scrollbar:false,
 		skin:'query-box',
-		content:['<%=request.getContextPath()%>/project/pro_details?proId='+proId,'no']
+		content:['<%=request.getContextPath()%>/project/pro_details?proId='+proId]
 	});
 }
 //项目工时详情
@@ -292,7 +293,7 @@ function forHourDetails(projectNumber,StartData,EndData,type){
     layer.open({
 		type:2,
 		title:"项目工时明细",
-		area:['80%', '80%'],
+		area:['50%', '80%'],
 		scrollbar:false,
 		skin:'query-box',
 		content:['<%=request.getContextPath()%>/searchWorkTask/workinghourStaticDetail?projectNumber='+projectNumber+'&StartData='+StartData+'&EndData='+EndData+'&type='+type+'&bpShow='+bpShow,'no']
@@ -305,7 +306,7 @@ function queryListPer(load){
 	var cols = [
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'项目编号', name:'PROJECT_NUMBER', width:110, sortable:false, align:' center'},
-	            {title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
+	            //{title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
 	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left',
 	            	renderer:function(val,item,rowIndex){
 	            		if(!item.PROJECT_ID){
@@ -316,35 +317,37 @@ function queryListPer(load){
 	            },
 	            {title:'统计周期', name:'StartAndEndData', width:100, sortable:false, align:'center'},
 	            {title:'项目投入总工时(h)', name:'StandartHoursNum', width:150, sortable:false, align:'center'},
-	            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},
-	            {title:'人员姓名', name:'USERALIAS', width:100, sortable:false, align:'center'},
-	            {title:'投入总工时(h)', name:'PRO_HOUR', width:150, sortable:false, align:'center',
+	            {title:'人员编号', name:'HRCODE', width:85, sortable:false, align:'center'},
+	            {title:'人员姓名', name:'USERALIAS', width:85, sortable:false, align:'center'},
+	            /* {title:'投入总工时(h)', name:'PRO_HOUR', width:150, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.PRO_HOUR == 0){
 	            			return '0';
 	            		}
             			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+1+'\' ,\''+item.HRCODE+'\',\''+item.WORKER+'\')">'+val+'</a>';
+            		}	
+	            }, */
+	            {title:'员工项目投入工时(h)', name:'PRO_HOUR', width:150, sortable:false, align:'center',
+	            	renderer:function(val,item,rowIndex){
+	            		if(item.PRO_HOUR == 0){
+	            			return '0';
+	            		}
+            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''
+            					+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+1+'\' ,\''+item.HRCODE+'\',\''+item.PROJECT_NAME+'\' ,\''+item.USERALIAS+'\',\''+item.WORKER+'\')">'+val+'</a>';
             		}	
 	            },
-	            /* {title:'员工项目投入工时(h)', name:'PRO_HOUR', width:150, sortable:false, align:'center',
-	            	renderer:function(val,item,rowIndex){
-	            		if(item.PRO_HOUR == 0){
-	            			return '0';
-	            		}
-            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+1+'\' ,\''+item.HRCODE+'\',\''+item.WORKER+'\')">'+val+'</a>';
-            		}	
-	            }/* ,
-	            {title:'员工项目前期投入工时(h)', name:'BP_HOUR', width:150, sortable:false, align:'center',
+	            {title:'员工项目前期投入工时(h)', name:'BP_HOUR', width:180, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.BP_HOUR == 0){
 	            			return '0';
 	            		}else if(item.BP_HOUR == '--'){
 	            			return '--';
 	            		}
-            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+2+'\' ,\''+item.HRCODE+'\',\''+item.WORKER+'\')">'+val+'</a>';
+            			return '<a href="javascript:void(0)" title="'+val+'" onclick="forHourDetailA(\''
+            					+item.PROJECT_NUMBER+'\',\''+item.StartData+'\',\''+item.EndData+'\' ,\''+2+'\' ,\''+item.HRCODE+'\',\''+item.PROJECT_NAME+'\' ,\''+item.USERALIAS+'\',\''+item.WORKER+'\')">'+val+'</a>';
             		}	
-	            } */
-	            {title:'角色', name:'ROLE', width:100, sortable:false, align:'center'}
+	            }
+	            //{title:'角色', name:'ROLE', width:100, sortable:false, align:'center'}
 	    		];
 	var mmGridHeight = $("body").parent().height() - 220;
 	mmg2 = $('#mmg2').mmGrid({
@@ -377,20 +380,21 @@ function queryListPer(load){
 		mmg2.load({page:pn2});
 	}
 }
-function forHourDetailA(projectNumber,StartData,EndData,type ,hrcode,userName){
+function forHourDetailA(projectNumber,StartData,EndData,type ,hrcode,projectName,userAlias,userName){
 	//var userName = escape($("input[name=userName]").val());
 	//var projectNames=escape(projectName);
 	var projectNumber=escape(projectNumber);
 	var bpShow = $('input[name="bpShow"]').prop("checked") ? "1":"0";
-	 
-	 
+	var detail=escape(StartData+"至"+EndData+"　　"+projectName+"　　"+userAlias);
+	
     layer.open({
 		type:2,
 		title:"员工工时明细",
-		area:['80%', '80%'],
+		area:['50%', '80%'],
 		scrollbar:false,
 		skin:'query-box',
-		content:['<%=request.getContextPath()%>/searchWorkTask/workinghourStaticDetails?projectNumber='+projectNumber+'&StartData='+StartData+'&EndData='+EndData+'&type='+type+'&userName='+userName+'&hrcode='+hrcode+'&bpShow='+bpShow,'no']
+		content:['<%=request.getContextPath()%>/searchWorkTask/workinghourStaticDetails?projectNumber='
+				+projectNumber+'&StartData='+StartData+'&EndData='+EndData+'&type='+type+'&userName='+userName+'&hrcode='+hrcode+'&bpShow='+bpShow+'&detail='+detail,'no']
 	});
 }
 

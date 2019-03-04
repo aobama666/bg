@@ -291,7 +291,7 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 							String OrganDeptId="";
 							if(Rtext.isEmpty(cellValue[6])){
 								CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(currentUsername);
-								String deptCode=currentUser.getDeptCode();
+								String deptCode=currentUser==null?"":currentUser.getDeptCode();
 								OrganDeptId=getDeptIdByDeptCode(deptCode);
 							}else{
 								OrganDeptId=getDeptIdByDeptCode(cellValue[6]);

@@ -82,7 +82,7 @@ var type=common.getQueryString("type");
 var dataShow=common.getQueryString("dataShow");
 var bpShow=common.getQueryString("bpShow");
  
-ran = Math.random()*1000;
+var ran = Math.random()*1000;
 $("input[name=ran]").val(ran);
 $("input[name=deptid]").val(deptid);
 $("input[name=labid]").val(labid);
@@ -131,10 +131,10 @@ function init(){
 					cols = [
 					            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 					            {title:'统计周期', name:'StartAndEndData', width:150, sortable:false, align:'center'},
-					            {title:'部门（单位）', name:'PDEPTNAME', width:100, sortable:false, align:'left'},
-					            {title:'处室', name:'DEPTNAME', width:100, sortable:false, align:'left'},
-					            {title:'人员编号', name:'HRCODE', width:70, sortable:false, align:'center'},
-					            {title:'人员姓名', name:'USERALIAS', width:70, sortable:false, align:'center'}
+					            {title:'部门（单位）', name:'PDEPTNAME', width:150, sortable:false, align:'left'},
+					            {title:'处室', name:'DEPTNAME', width:150, sortable:false, align:'left'},
+					            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},
+					            {title:'人员姓名', name:'USERALIAS', width:100, sortable:false, align:'center'}
 					            //{title:nameType, name:workType, width:100, sortable:false, align:'center'}
 					    		];
 					
@@ -147,12 +147,7 @@ function init(){
 						cols.push({title:category, width:120, sortable:false, align:'center' ,cols:innerCols});
 					});
 					
-					if(data.items.length>0){
-						queryList(data.items);
-					}else{
-						queryList({});
-					}
-					
+					queryList();
 			 	});
 }
 
@@ -162,7 +157,7 @@ function init(){
 } */
 
 // 初始化列表数据
-function queryList(items){
+function queryList(){
 	var mmGridHeight = $("body").parent().height() - 100;
 	mmg = $('#mmg').mmGrid({
 		indexCol: true,
@@ -172,8 +167,8 @@ function queryList(items){
 		height: mmGridHeight,
 		cols: cols,
 		nowrap: true,
-		items:items,
-		//url: '<%=request.getContextPath()%>/BgWorkinghourInfo/selectFororganAndUser',
+		//items:items,
+		url: '<%=request.getContextPath()%>/BgWorkinghourInfo/selectFororganAndUser',
 		root: 'items',
 		fullWidthRows: true,
 		multiSelect: true,
@@ -185,10 +180,8 @@ function queryList(items){
 			$(".checkAll").css("display","none").parent().text("选择"); 
 			pn = data.page;
 		});
-/* 	if(load == "reload"){
-		mmg.load({page:pn});
-	} */
 }
+
 //导出
 function forExport(){
 	var ids="";

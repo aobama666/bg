@@ -66,25 +66,25 @@
 		</div>
 	</div>
 	<div class="form-group col-xs-12">
-		<label for="documentCode">项目名称</label>
-		<div class="controls">
-			<input type="text" name="proName" property="proName"   >
-		</div>
-	</div>
-	<div class="form-group col-xs-12">
-		<label for="empCode">项目类型</label>
+		<label for="empCode">类型</label>
 		<div class="controls">
 			<input type="text" name="proType" property="proType" disabled="disabled">
 		</div>
 	</div>
 	<div class="form-group col-xs-12">
-		<label for="classification">工作内容</label><!--<font class="glyphicon glyphicon-asterisk required"></font>-->
+		<label for="documentCode">任务名称</label>
+		<div class="controls">
+			<input type="text" name="proName" property="proName"   >
+		</div>
+	</div>
+	<div class="form-group col-xs-12">
+		<label for="classification">工作内容简述</label><!--<font class="glyphicon glyphicon-asterisk required"></font>-->
 		<div class="controls">
 			<textarea style="height:60px;" name="workContent"></textarea>
 		</div>
 	</div>
 	<div class="form-group col-xs-12">
-		<label for="documentType"><font class="glyphicon glyphicon-asterisk required"></font>投入工时</label>
+		<label for="documentType"><!-- <font class="glyphicon glyphicon-asterisk required"></font> -->投入工时(h)</label>
 		<div class="controls">
 			<input type="text" name="hours" property="hours">
 		</div>
@@ -195,7 +195,7 @@ function workCommit(){
 
 function checkNumberFormat(workHour){
 	var result = {};
-	var reg=/^([1-9]+|[1-9]*\.[05]|0\.5)$/;
+	var reg=/^([1-9]\d*|[1-9]\d*\.[05]|0\.5)$/;
 	if($.trim(workHour)!="" && !reg.test(workHour)){
 		result.result = false;
 		result.info = "必须为数字且最小时间单位为0.5h；";

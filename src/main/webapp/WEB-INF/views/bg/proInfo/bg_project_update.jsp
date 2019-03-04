@@ -208,8 +208,8 @@
 			format: 'yyyy-mm-dd',
 			todayHighlight:true,
 		});				
-		$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'self',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'});
-		$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio'});
+		$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'parent',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'});
+		$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'parent',checkType:'radio'});
 	}); 
 	
 	//初始化操作,当不为其他类型,并且来源是其他系统,项目类型、项目名称、WBS页面不可更改
@@ -533,19 +533,6 @@
 			}
 		});
 	} --%>
-	
-	function checkNumberic(planHours){
-		var result = {};
-		var reg=/^(0(\.\d)?|[1-9]+\d*(\.\d)?)$/;
-		if($.trim(planHours)!="" && !reg.test(planHours)){
-			result.result = false;
-			result.info = "必须为正数；";
-		}else{
-			result.result = true;
-			result.info = "";
-		}
-		return result;
-	}
 	
 	/* function arrRepeat(arr){
 		var arrStr = JSON.stringify(arr);

@@ -46,9 +46,6 @@ public class SearchWorkTaskController {
 	@Autowired
  	private IStaffWorkbenchService swService;
 	
-
-	
-	DateUtil dateUtils = new DateUtil();
 	/*
 	 *工作任务查询页面 index
 	 */
@@ -218,7 +215,7 @@ public class SearchWorkTaskController {
 		/* 获取人自编号 */
 		String hrCode = userInfo.getSapHrCode();
 		CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByHrCode(hrCode);
-		String deptId = currentUser.getDeptId();
+		String deptId = currentUser==null?"":currentUser.getDeptId();
 		//System.out.println("----hrCode-----"+hrCode);
 		/* 根据人资编号和查询条件去查项目 */
 		String rw = searchWorkTaskService.search(page,limit,startTime,endTime,type,projectName,hrCode,deptId);
@@ -268,7 +265,7 @@ public class SearchWorkTaskController {
 			/* 获取人自编号 */
 			String hrCode = userInfo.getSapHrCode();
 			CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByHrCode(hrCode);
-			String deptId = currentUser.getDeptId();
+			String deptId = currentUser==null?"":currentUser.getDeptId();
 			//获取Excel数据信息
 			List<Map<String, String>> valueList = new ArrayList<Map<String,String>>();
 			valueList = searchWorkTaskService.queryOutDelegationExport(startTime,endTime,type,projectName,hrCode,deptId,list);	
@@ -289,10 +286,10 @@ public class SearchWorkTaskController {
 					 { "本人参与开始时间","PERSONSTART"},
 					 { "本人参与结束时间","PERSONEND"},
 					 { "工作任务","TASK"},
-					 { "计划投入工时","PLANHOURS"} 
+					 { "计划投入工时(h)","PLANHOURS"} 
 					};
-			String time = dateUtils.getDays();
-			ExportExcelHelper.getExcel(response, "报工系统-工作任务查询-"+time, title, valueList, "normal");
+			
+			ExportExcelHelper.getExcel(response, "报工管理-工作任务查询-"+DateUtil.getDays(), title, valueList, "normal");
 			return "";
 	}
 	
@@ -405,15 +402,14 @@ public class SearchWorkTaskController {
 				 { "人员编号","HRCODE"}, 
 				 { "人员姓名","USERALIAS"},
 				 { "类型","CATEGORY"},
-				 { "项目名称","PROJECT_NAME"}, 
-				 { "工作内容","JOB_CONTENT"},
+				 { "任务名称","PROJECT_NAME"}, 
+				 { "工作内容简述","JOB_CONTENT"},
 				 { "投入工时(h)","WORKING_HOUR"},
 				 { "审核时间","UPDATE_TIME"}, 
 				 { "审核结果","PROSTATUS"},
-				 { "审核备注","PROCESS_NOTE"}
+				 { "审核意见","PROCESS_NOTE"}
 				};
-		String time = dateUtils.getDays();
-		ExportExcelHelper.getExcel(response, "报工系统-已审核工时-"+time, title, valueList, "normal");
+		ExportExcelHelper.getExcel(response, "报工管理-已审核信息查询-"+DateUtil.getDays(), title, valueList, "normal");
 		return "";
 	}
 }

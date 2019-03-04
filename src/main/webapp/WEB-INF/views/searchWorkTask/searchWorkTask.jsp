@@ -64,7 +64,7 @@
 		<hidden name="uuid" property="uuid"></hidden>
 		<input type="hidden" name="selectList"/>
 		<div class="form-group col-xs-5"  style="margin-bottom:0;">
-			<label>工作任务日期：</label>
+			<label>日期：</label>
 			<div class="controls"  data-date-format="yyyy-mm-dd">
 				<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
 					<input name="startTime" property="startTime"  readonly="true" placeholder='开始时间'>
@@ -155,7 +155,7 @@ function queryList(load){
 	            {title:'本人参与开始时间', name:'PERSONSTART', width:120, sortable:false, align:'center'},
 	            {title:'本人参与结束时间', name:'PERSONEND', width:120, sortable:false, align:'center'},
 	            {title:'工作任务', name:'TASK', width:150, sortable:false, align:'left'},
-	            {title:'计划投入工时', name:'PLANHOURS', width:100, sortable:false, align:'center'}
+	            {title:'计划投入工时(h)', name:'PLANHOURS', width:120, sortable:false, align:'center'}
 	    		];
 	var mmGridHeight = $("body").parent().height() - $(".query-box").height()-$("#pg").height()-140;
 	mmg = $('#mmg').mmGrid({

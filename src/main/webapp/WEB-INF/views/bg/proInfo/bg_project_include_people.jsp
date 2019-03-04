@@ -89,7 +89,7 @@ function queryList(){
 		            	return  text;
 		            }	
 	           	 },
-	           	 {title:'来源', name:'SYNC',sortable:false, hidden: true,width:95,align:'center',
+	           	 {title:'来源', name:'SYNC',sortable:false, hidden: true,width:0,align:'center',
 		            	renderer:function(val,item,rowIndex){
 		            		//val = val=='0'?'录入':'同步';
 			            	return  '<div style="display:inline"><input value="'+val+'"  class="form-control" name="sync" property="sync" readonly="true" style="padding:6px 2px;border:none;text-align:center"></div>';			            
@@ -101,7 +101,7 @@ function queryList(){
 		            	 return  '<div style="display:inline"><textarea rows="2" value="" class="form-control" name="task" property="task" style="padding:6px 2px;border:none;text-align:start">'+val+'</textarea></div>';			            
 		             }
 		          },
-		          {title:'计划投入工时', name:'PLANHOURS',sortable:false, width:95,align:'center',
+		          {title:'计划投入工时(h)', name:'PLANHOURS',sortable:false, width:125,align:'center',
 	            	 renderer:function(val,item,rowIndex){
 	            		if(val==undefined) val="";
 		             	return  '<div style="display:inline"><input value="'+val+'"  class="form-control" name="planHours" property="planHours" style="padding:6px 2px;text-align:center"></div>';			            
@@ -331,6 +331,19 @@ function roleChange(_this){
 	});
 }
 
+
+function checkNumberic(planHours){
+	var result = {};
+	var reg=/^(0(\.\d+)?|[1-9]+\d*(\.\d+)?)$/;
+	if($.trim(planHours)!="" && !reg.test(planHours)){
+		result.result = false;
+		result.info = "数字格式错误；";
+	}else{
+		result.result = true;
+		result.info = "";
+	}
+	return result;
+}
 <%-- function forSave_stuff(){
 	var ran = Math.random()*1000000;
 	var proId=$("#proId").val();
@@ -568,7 +581,9 @@ function popEvent(){
 			"TASK":"",
 			"PLANHOURS":"",
 			"SYNC":"0"});
+		
 		resize();
+		sortIndex("mmg");		
 		/* if(flag){
 		}else{
 			layer.msg(spareNames.toString()+"已存在，请勿重复添加");

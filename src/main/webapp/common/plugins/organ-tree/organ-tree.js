@@ -28,12 +28,23 @@ $.fn.extend({
 			var contextPath = localObj.pathname.split("/")[1];
 			var basePath = localObj.protocol+"//"+localObj.host+"/"+contextPath;
 			organBox.find("#"+bindLayId+",span>span,input[name="+organName+"]").off().click(function(){
+				var iframeId = window.name;
+				var height=$(window).height()*0.9;
+				if(height>520) height = 520;
 				var p = {
 						type:2,
 						title:"组织机构选择页面",
-						area:['480px','520px'],
+						area:['480px',height+'px'],//520px
 						scrollbar:true,
-						content:[basePath+'/organstufftree/initOrganTree?root='+root+'&ct='+ct+'&level='+level+'&organCode='+organCode+'&organName='+organName+'&limit='+limit+'&popEvent='+popEvent,'no']
+						content:[basePath+'/organstufftree/initOrganTree?root='
+						         +root+'&ct='+ct+'&level='+level+'&organCode='
+						         +organCode+'&organName='+organName+'&limit='+limit
+						         +'&popEvent='+popEvent+'&iframeId='+iframeId+'&iframe='+iframe,'no'],
+						success: function(layero, index){//弹窗加载完毕后，调整人员组织树的高度不被遮挡
+					    	var iframes = layero.find("iframe");
+					    	var stuffPage = iframes[0].contentWindow.document;
+					    	$(stuffPage).find('.tree-box').height(height-110);
+					 	}
 					};
 				if(iframe == "parent")
 					parent.layer.open(p);

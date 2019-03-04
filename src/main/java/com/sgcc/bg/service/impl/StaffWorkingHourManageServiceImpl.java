@@ -424,9 +424,9 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						wh.setWorkHour(Double.parseDouble(cellValue[6]));
 						//获取填报人填报日期时的信息
 						CommonCurrentUser thenWorker=userUtils.getCommonCurrentUserByHrCode(cellValue[8],cellValue[1]);
-						wh.setWorker(thenWorker.getUserName());
-						wh.setDeptId(thenWorker.getpDeptId());
-						wh.setLabId(thenWorker.getDeptId());
+						wh.setWorker(thenWorker==null?"":thenWorker.getUserName());
+						wh.setDeptId(thenWorker==null?"":thenWorker.getpDeptId());
+						wh.setLabId(thenWorker==null?"":thenWorker.getDeptId());
 						wh.setStatus("0");
 						wh.setValid("1");
 						wh.setCreateUser(currentUsername);
@@ -543,8 +543,8 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							 { "人员编号", "HRCODE" ,"nowrap"}, 
 							 { "人员姓名","USERNAME","nowrap"}, 
 							 { "类型","CATEGORY","nowrap"},
-							 { "项目名称","PROJECT_NAME","nowrap"}, 
-							 { "工作内容","JOB_CONTENT"},
+							 { "任务名称","PROJECT_NAME","nowrap"}, 
+							 { "工作内容简述","JOB_CONTENT"},
 							 { "投入工时（h）","WORKING_HOUR","nowrap"},
 							 { "审核人","APPROVER","nowrap"},
 							 { "状态","STATUS","nowrap"}

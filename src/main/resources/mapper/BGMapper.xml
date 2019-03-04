@@ -596,4 +596,14 @@
 			 AND T.PROJECT_NAME LIKE '%'||#{proName}||'%'
 	     </if>
 	</select>
+	
+	<update id="deleteBeforeProById">
+		 UPDATE BG_PROJECT_INFO T
+		     SET T.RELATED_PROJECT_ID = NULL
+		   WHERE T.ID IN
+		   <foreach  collection="array" item="id" open="("  separator="," close=")">
+		        #{id} 
+		   </foreach>
+	</update>
+	
 </mapper>

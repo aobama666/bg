@@ -12,7 +12,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>个人工时管理</title>
+<title>工时管理</title>
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmGrid.css">
 <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmPaginator.css">
@@ -62,12 +62,13 @@
 </head>
 <body>
 <div class="page-header-sl">
-	<h5>个人工时管理</h5>
+	<h5>工时管理</h5>
 	<div class="button-box">
 	<!-- 
 	   <button type="button" class="btn btn-success btn-xs" onclick="workUpdate()"> 修改</button>
 		<button type="button" class="btn btn-success btn-xs" onclick="workDelete()"> 删除</button>
 	 -->
+		<button type="button" class="btn btn-warning btn-xs" onclick="workDelete()">删除</button>
 		<button type="button" class="btn btn-success btn-xs" onclick="workCommit()"> 提交</button>
 		<button type="button" class="btn btn-info  btn-xs" onclick="workExport()"> 导出</button>
 	</div>
@@ -105,7 +106,7 @@
 			</div>
 		</div>
 		<div class="form-group col-xs-6">
-			<label>项目名称：</label>
+			<label>任务名称：</label>
 			<div class="controls">
 				<input name="projectName" property="projectName" >
 			</div>
@@ -194,8 +195,8 @@ function queryList(load){
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},
 	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center'},
-	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
-	            {title:'工作内容', name:'JOB_CONTENT', width:100, sortable:false, align:'left'},
+	            {title:'任务名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
+	            {title:'工作内容简述', name:'JOB_CONTENT', width:100, sortable:false, align:'left'},
 	            {title:'投入工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'},
 	            {title:'审核人', name:'USERALIAS', width:100, sortable:false, align:'center'},
 	            {title:'审核结果', name:'STATUS', width:100, sortable:false, align:'center',
@@ -203,18 +204,22 @@ function queryList(load){
 	            		var dict=${statusJson};
 	            		return dict[val];
 	            	}},
-	            	{title:'审核备注', name:'PROCESS_NOTE', width:100, sortable:false, align:'left'},
+	            	{title:'审核意见', name:'PROCESS_NOTE', width:100, sortable:false, align:'left'},
 	            	{title:'操作', name:'aa', width:100, sortable:false, align:'center',renderer:function(title,row){
 	            		if(row.STATUS==1){
 	            			return "<span class='backManage' id='"+row.ID+"'>撤回</span>"
 	            		}else if(row.STATUS==0){
-	            			return "<span class='updateManage' id='"+row.ID+"'>修改</span><span class='deleteManage' id='"+row.ID+"'>删除</span>"
+	            			return "<span class='updateManage' id='"+row.ID+"'>修改</span>"
 	            		}else if(row.STATUS==2){
-	            			return "<span class='updateManage' id='"+row.ID+"'>修改</span><span class='deleteManage' id='"+row.ID+"'>删除</span>"
+	            			return "<span class='updateManage' id='"+row.ID+"'>修改</span>"
 	            		}else{
 	            			return ""
 	            		}
-	            		
+	            		/* else if(row.STATUS==0){
+	            			return "<span class='updateManage' id='"+row.ID+"'>修改</span><span class='deleteManage' id='"+row.ID+"'>删除</span>"
+	            		}else if(row.STATUS==2){
+	            			return "<span class='updateManage' id='"+row.ID+"'>修改</span><span class='deleteManage' id='"+row.ID+"'>删除</span>"
+	            		} */
 	            	}},
 	    		];
 	var mmGridHeight = $("body").parent().height() - 220;
@@ -333,7 +338,7 @@ function workUpdate(){
 	}
 }
  
-$("body").on("click",".deleteManage",function(){
+<%-- $("body").on("click",".deleteManage",function(){
 	var id=$(this).attr("id");
 	layer.confirm("确认删除吗?",{icon:3,title:"提示"},function(index){
 		$.ajax({
@@ -348,7 +353,48 @@ $("body").on("click",".deleteManage",function(){
 			}
 		}); 
 	})
-});
+}); --%>
+
+function workDelete(){
+	var rows = mmg.selectedRows();
+	if(rows.length == 0){
+		layer.msg("请至少选择一条数据!");
+		return;
+	}
+	
+	var params = {};
+	var index = [];
+	
+	$.each(rows,function(i,row){
+		var status = row.STATUS;
+		if(status=='1' || status=='3'){
+			index.push(row.ROW_ID);
+		}
+		params[row.ID] = row.ROW_ID+'';
+	});
+	
+	if(index.length>0){
+		layer.msg("第"+index.toString()+"行已提交或通过，无法删除！");
+		return;
+	}
+	
+	var paramStr = JSON.stringify(params);
+	
+	$.ajax({
+		type: 'POST',
+		url:'<%=request.getContextPath()%>/BgWorkinghourInfo/deletebgWorkinghourInfo',
+		async: false,
+		data: {paramStr:paramStr},
+		success:function(data){
+			layer.msg(data.msg);
+			mmg.load();
+			layer.close(index);
+		}
+	}); 
+	/* layer.confirm("确认删除吗?",{icon:3,title:"提示"},function(index){
+	}); */
+}
+
 $("body").on("click",".backManage",function(){
 	var id=$(this).attr("id");
 	layer.confirm("确认撤回吗?",{icon:3,title:"提示"},function(index){

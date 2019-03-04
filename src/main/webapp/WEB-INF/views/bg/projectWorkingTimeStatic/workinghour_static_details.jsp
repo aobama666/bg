@@ -44,10 +44,22 @@
 		margin:0;
 		margin-bottom:10px;
 	}
+	
+	.left{
+		float:left;
+	}
+	
+	.ellipsis{
+		max-width: 85%;
+	    text-overflow: ellipsis;
+	    white-space: nowrap;
+	    overflow: hidden;
+	}
 </style>
 </head>
 <body>
 <div class="page-header-sl">
+	<div id="detail" class="left ellipsis"></div>
 	<div class="button-box">
 		<button type="button" class="btn btn-info btn-xs" onclick="forConfirm()"  > 导出</button>
 	</div>
@@ -80,6 +92,8 @@ var startTime=common.getQueryString("StartData");
 var endTime=common.getQueryString("EndData");
 var hrcode=common.getQueryString("hrcode");
 var projectNumber=common.getQueryString("projectNumber");
+var detail=common.getQueryString("detail");
+
 $("input[name=type]").val(type);
 $("input[name=bpShow]").val(bpShow);
 $("input[name=userName]").val(userName);
@@ -87,6 +101,7 @@ $("input[name=startTime]").val(startTime);
 $("input[name=endTime]").val(endTime);
 $("input[name=hrcode]").val(hrcode);
 $("input[name=projectNumber]").val(projectNumber);
+$("#detail").text(detail);
 var mmg;
 var pn = 1;
 var limit = 30;
@@ -104,9 +119,9 @@ function queryList(load){
 	var cols = [
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},
-	            {title:'项目编号', name:'PROJECT_NUMBER', width:100, sortable:false, align:'center'},
+	           /*  {title:'项目编号', name:'PROJECT_NUMBER', width:100, sortable:false, align:'center'},
 	            {title:'WBS编号', name:'WBS_NUMBER', width:100, sortable:false, align:'left'},
-	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
+	            {title:'项目名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'}, */
 	            {title:'工作内容', name:'JOB_CONTENT', width:300, sortable:false, align:'left'},
 	            {title:'投入工时(h)', name:'WORKING_HOUR', width:100, sortable:false, align:'center'}
 	    		];
