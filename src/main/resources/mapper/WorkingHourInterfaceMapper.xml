@@ -161,7 +161,7 @@
 		AND U.HRCODE IS NOT NULL
 		AND W.STATUS = '3'
 		AND W.VALID = 1
-		--以下为新添加的代码,作用是将已经关联的项目的项目前期作为项目一部分统计工时，不是单独作为项目处理
+		/*以下为新添加的代码,作用是将已经关联的项目的项目前期作为项目一部分统计工时，不是单独作为项目处理*/
 		AND W.CATEGORY != 'BP'
 		UNION ALL
 		SELECT NULL ID,
@@ -188,7 +188,7 @@
 		AND P.STATUS = 1
 		WHERE U.STATUS = 1
 		AND U.ROLE = '1'
-		AND EXISTS (SELECT W.ID
+		AND (EXISTS (SELECT W.ID
 		FROM BG_WORKINGHOUR_INFO W
 		WHERE 1 = 1
 		AND W.PROJECT_ID = U.PROJECT_ID
@@ -218,7 +218,7 @@
 		WHERE 1 = 1
 		AND W.PROJECT_ID = U.PROJECT_ID
 		AND W.STATUS = '3'
-		AND W.CATEGORY IN('BP')
+		AND W.CATEGORY ='BP'
 		<choose>
 			<when test="WT_SEASON==null or WT_SEASON == ''">
 				AND 1=2
@@ -237,8 +237,8 @@
 			</otherwise>
 		</choose>
 		AND W.VALID = 1
-		)
-		AND NOT EXISTS (SELECT W.ID
+		))
+		AND (NOT EXISTS (SELECT W.ID
 		FROM BG_WORKINGHOUR_INFO W
 		INNER JOIN BG_SYS_USER SU
 		ON SU.USERNAME = W.WORKER
@@ -290,7 +290,7 @@
 			</otherwise>
 		</choose>
 		AND SU.HRCODE = U.HRCODE
-		AND W.VALID = 1)) U
+		AND W.VALID = 1))) U
 		INNER JOIN BG_PROJECT_INFO P
 		ON P.ID = U.PROJECT_ID
 		AND P.STATUS = 1
@@ -388,7 +388,7 @@
 		M.APPROVER,
 		M.ROLE,
 		to_date(#{update_time,jdbcType=VARCHAR},'yyyy-MM-dd HH24:mi:ss')
-		FROM (<include refid = "queryBaseInfo"/>  UNION ALL <include refid="queryBaseInfoBefore"/>) M WHERE M.ID IS NOT NULL
+		FROM (<include refid = "queryBaseInfo"/>) M WHERE M.ID IS NOT NULL
 
 	</insert>
 </mapper>
