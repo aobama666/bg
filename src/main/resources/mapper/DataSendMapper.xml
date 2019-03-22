@@ -60,6 +60,16 @@
     	LEFT JOIN BG_PROJECT_INFO A
     	ON A.ID = t.PROJECT_ID
     	    where 1=1 and t.status='3' and t.valid = 1
+		--得到关联项目的项目前期
+		<if test="projectId!=null and projectId!=''">
+			AND t.project_id IN (
+			SELECT P.ID FROM BG_PROJECT_INFO P
+			WHERE P.STATUS=1
+			AND P.CATEGORY = 'BP'
+			AND P.RELATED_PROJECT_ID = #{projectId}
+			--and t.PROJECT_ID = #{projectId}
+		</if>
+		OR
 		<if test="startTime!=null and startTime!=''"> 
 			 <![CDATA[and t.work_time >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
