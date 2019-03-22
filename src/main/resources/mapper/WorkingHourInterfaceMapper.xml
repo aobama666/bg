@@ -6,218 +6,333 @@
  -->
 <mapper namespace="com.sgcc.bg.mapper.BgInterFaceMapper">
 	<!--  验证期间内是否有数据 -->
-    <select id="getInterfaceBaseData" resultType="java.util.Map">
-			SELECT W.ID
-			  FROM BG_WORKINGHOUR_INFO W
-			  LEFT JOIN BG_SYS_USER U
-			    ON U.USERNAME = W.WORKER
-			  LEFT JOIN BG_PROJECT_INFO P
-			    ON P.ID = W.PROJECT_ID
-			  LEFT JOIN BG_PROJECT_USER PU1
-			    ON W.PROJECT_ID = PU1.PROJECT_ID
-			   AND PU1.HRCODE = U.HRCODE
-			   AND ROWNUM = 1
-			  LEFT JOIN BG_PROJECT_USER PU2
-			    ON W.PROJECT_ID = PU2.PROJECT_ID
-			   AND PU2.ROLE = '1'
-			  LEFT JOIN BG_SYS_USER U1
-			    ON U1.HRCODE = PU2.HRCODE
-			   AND ROWNUM = 1
-			 WHERE 1 = 1
-			   <choose>
-					<when test="WT_SEASON==null or WT_SEASON == ''">
-					    AND 1=2
-					</when>
-					<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
-					    AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
-					</when>
-					<when test='WT_SEASON.substring(0,1).toString() == "S"'>
-					    AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
-					</when>
-					<when test='WT_SEASON.substring(0,1).toString() == "M"'>
-					    AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
-					</when>
-					<otherwise>
-					   1=2
-					 </otherwise>
-				</choose>
-			   AND U.HRCODE IS NOT NULL
-			   AND W.STATUS = '3'
-			   AND W.VALID = 1			 
-	</select> 
-	
+	<select id="getInterfaceBaseData" resultType="java.util.Map">
+		SELECT W.ID
+		FROM BG_WORKINGHOUR_INFO W
+		LEFT JOIN BG_SYS_USER U
+		ON U.USERNAME = W.WORKER
+		LEFT JOIN BG_PROJECT_INFO P
+		ON P.ID = W.PROJECT_ID
+		LEFT JOIN BG_PROJECT_USER PU1
+		ON W.PROJECT_ID = PU1.PROJECT_ID
+		AND PU1.HRCODE = U.HRCODE
+		AND ROWNUM = 1
+		LEFT JOIN BG_PROJECT_USER PU2
+		ON W.PROJECT_ID = PU2.PROJECT_ID
+		AND PU2.ROLE = '1'
+		LEFT JOIN BG_SYS_USER U1
+		ON U1.HRCODE = PU2.HRCODE
+		AND ROWNUM = 1
+		WHERE 1 = 1
+		<choose>
+			<when test="WT_SEASON==null or WT_SEASON == ''">
+				AND 1=2
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
+				AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "S"'>
+				AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "M"'>
+				AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+			</when>
+			<otherwise>
+				1=2
+			</otherwise>
+		</choose>
+		AND U.HRCODE IS NOT NULL
+		AND W.STATUS = '3'
+		AND W.VALID = 1
+	</select>
+
+	<!--sql语句块,获取审核通过、有效的且关联了项目的项目前期-->
+	<sql id="queryBaseInfoBefore">
+		SELECT W.ID,
+		W.WORK_TIME,
+		U.HRCODE EMP_CODE,
+		U.USERNAME,
+		U.USERALIAS,
+		P.RELATED_PROJECT_ID AS PROJECT_ID,
+		DECODE(P.CATEGORY, NULL,'0', '', '0', 1) WT_TYPE,
+		P.PROJECT_NUMBER WBS_CODE,
+		P.PROJECT_NAME WBS_NAME,
+		NVL(P.CATEGORY,W.CATEGORY) as CATEGORY,
+		NVL(P.PROJECT_NAME, W.PROJECT_NAME) as PROJECT_NAME,
+		PU1.ROLE,
+		DECODE(PU1.ROLE, NULL, NULL, '', NULL, '1', '1', '0', '0') PROJECT_ROLE,
+		U1.HRCODE PROJECT_LEADER,
+		U1.USERALIAS LEADER_USERNAME,
+		NVL(W.WORKING_HOUR,0) WORKING_HOUR,
+		NVL(U1.USERNAME,W.APPROVER) as APPROVER
+		FROM BG_WORKINGHOUR_INFO W
+		LEFT JOIN BG_SYS_USER U
+		ON U.USERNAME = W.WORKER
+		LEFT JOIN BG_PROJECT_INFO P
+		ON P.ID = W.PROJECT_ID
+		LEFT JOIN BG_PROJECT_USER PU1
+		ON W.PROJECT_ID = PU1.PROJECT_ID
+		AND PU1.HRCODE = U.HRCODE
+		AND ROWNUM = 1
+		LEFT JOIN BG_PROJECT_USER PU2
+		ON W.PROJECT_ID = PU2.PROJECT_ID
+		AND PU2.ROLE = '1'
+		LEFT JOIN BG_SYS_USER U1
+		ON U1.HRCODE = PU2.HRCODE
+		AND ROWNUM = 1
+		WHERE 1 = 1
+		<choose>
+			<when test="WT_SEASON==null or WT_SEASON == ''">
+				AND 1=2
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
+				AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "S"'>
+				AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "M"'>
+				AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+			</when>
+			<otherwise>
+				1=2
+			</otherwise>
+		</choose>
+		AND U.HRCODE IS NOT NULL
+		AND W.STATUS = '3'
+		AND W.VALID = 1
+		AND P.RELATED_PROJECT_ID IN (
+		SELECT ID FROM BG_PROJECT_INFO WHERE STATUS=1 AND CATEGORY IN('JS','KY','HX','QT')
+		)
+	</sql>
+
 	<!--  sql语句块  获取基本信息 -->
-    <sql id="queryBaseInfo">
-			SELECT W.ID,
-				   W.WORK_TIME,
-			       U.HRCODE EMP_CODE,
-			       U.USERNAME,
-			       U.USERALIAS,
-			       W.PROJECT_ID,
-			       DECODE(P.CATEGORY, NULL,'0', '', '0', 1) WT_TYPE,
-			       P.PROJECT_NUMBER WBS_CODE,
-			       P.PROJECT_NAME WBS_NAME,
-			       NVL(P.CATEGORY,W.CATEGORY) as CATEGORY,
-			       NVL(P.PROJECT_NAME, W.PROJECT_NAME) as PROJECT_NAME,
-			       PU1.ROLE,
-			       DECODE(PU1.ROLE, NULL, NULL, '', NULL, '1', '1', '0', '0') PROJECT_ROLE,
-			       U1.HRCODE PROJECT_LEADER,
-			       U1.USERALIAS LEADER_USERNAME,
-			       NVL(W.WORKING_HOUR,0) WORKING_HOUR,
-			       NVL(U1.USERNAME,W.APPROVER) as APPROVER
-			  FROM BG_WORKINGHOUR_INFO W
-			  LEFT JOIN BG_SYS_USER U
-			    ON U.USERNAME = W.WORKER
-			  LEFT JOIN BG_PROJECT_INFO P
-			    ON P.ID = W.PROJECT_ID
-			  LEFT JOIN BG_PROJECT_USER PU1
-			    ON W.PROJECT_ID = PU1.PROJECT_ID
-			   AND PU1.HRCODE = U.HRCODE
-			   AND ROWNUM = 1
-			  LEFT JOIN BG_PROJECT_USER PU2
-			    ON W.PROJECT_ID = PU2.PROJECT_ID
-			   AND PU2.ROLE = '1'
-			  LEFT JOIN BG_SYS_USER U1
-			    ON U1.HRCODE = PU2.HRCODE
-			   AND ROWNUM = 1
-			 WHERE 1 = 1
-			   <choose>
-					<when test="WT_SEASON==null or WT_SEASON == ''">
-					    AND 1=2
-					</when>
-					<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
-					    AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
-					</when>
-					<when test='WT_SEASON.substring(0,1).toString() == "S"'>
-					    AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
-					</when>
-					<when test='WT_SEASON.substring(0,1).toString() == "M"'>
-					    AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
-					</when>
-					<otherwise>
-					   1=2
-					 </otherwise>
-				</choose>
-			   AND U.HRCODE IS NOT NULL
-			   AND W.STATUS = '3'
-			   AND W.VALID = 1	
-			UNION ALL
-			SELECT NULL ID,
-			       NULL WORK_TIME,
-			       U.HRCODE EMP_CODE,
-			       U2.USERNAME USERNAME,
-			       U2.USERALIAS USERALIAS,			       
-			       U.PROJECT_ID PROJECT_ID,
-			       DECODE(P.CATEGORY, NULL, '0', '', '0', '1') WT_TYPE,
-			       P.PROJECT_NUMBER WBS_CODE,
-			       P.PROJECT_NAME WBS_NAME,
-			       P.CATEGORY CATEGORY,
-			       P.PROJECT_NAME PROJECT_NAME,
-			       U.ROLE ROLE,
-			       DECODE(U.ROLE, NULL, NULL, '', NULL, '1', '1', '0', '0') PROJECT_ROLE,
-			       U.HRCODE PROJECT_LEADER,
-			       U2.USERNAME LEADER_USERNAME,
-			       0 WORKING_HOUR,
-			       U2.USERNAME APPROVER
-			  FROM (SELECT DISTINCT U.HRCODE, U.PROJECT_ID, U.ROLE
-			          FROM BG_PROJECT_USER U
-			         INNER JOIN BG_PROJECT_INFO P
-			            ON P.ID = U.PROJECT_ID
-			           AND P.STATUS = 1
-			         WHERE U.STATUS = 1
-			           AND U.ROLE = '1'
-			           AND EXISTS (SELECT W.ID
-			                  FROM BG_WORKINGHOUR_INFO W
-			                 WHERE 1 = 1
-			                   AND W.PROJECT_ID = U.PROJECT_ID                   
-			                   AND W.STATUS = '3'
-			                   <choose>
-									<when test="WT_SEASON==null or WT_SEASON == ''">
-									    AND 1=2
-									</when>
-									<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
-									    AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
-									</when>
-									<when test='WT_SEASON.substring(0,1).toString() == "S"'>
-									    AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
-									</when>
-									<when test='WT_SEASON.substring(0,1).toString() == "M"'>
-									    AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
-									</when>
-									<otherwise>
-									   1=2
-									 </otherwise>
-								</choose>
-			                   AND W.VALID = 1)
-			           AND NOT EXISTS (SELECT W.ID
-			                  FROM BG_WORKINGHOUR_INFO W
-			                 INNER JOIN BG_SYS_USER SU
-			                    ON SU.USERNAME = W.WORKER
-			                 WHERE 1 = 1
-			                   AND W.PROJECT_ID = U.PROJECT_ID
-			                   AND W.STATUS = '3'
-			                   <choose>
-									<when test="WT_SEASON==null or WT_SEASON == ''">
-									    AND 1=2
-									</when>
-									<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
-									    AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
-									</when>
-									<when test='WT_SEASON.substring(0,1).toString() == "S"'>
-									    AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
-									</when>
-									<when test='WT_SEASON.substring(0,1).toString() == "M"'>
-									    AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
-									</when>
-									<otherwise>
-									   1=2
-									 </otherwise>
-								</choose>
-			                   AND SU.HRCODE = U.HRCODE
-			                   AND W.VALID = 1
-			                   )) U
-			 INNER JOIN BG_PROJECT_INFO P
-			    ON P.ID = U.PROJECT_ID
-			   AND P.STATUS = 1
-			 INNER JOIN BG_SYS_USER U2
-			    ON U2.HRCODE = U.HRCODE		 
-	</sql>  
-    <!-- 获取基本信息 -->
-    <select id="getInterfaceBaseInfo" resultType="java.util.Map">
-    	SELECT M.EMP_CODE,
-    		   M.PROJECT_ID,
-		       M.WT_TYPE,
-		       M.WBS_CODE,
-		       M.WBS_NAME,
-		       M.PROJECT_ROLE,
-		       M.PROJECT_LEADER		       
-		 FROM (<include refid = "queryBaseInfo"/>)  M
-		 GROUP BY  M.EMP_CODE,
-		           M.PROJECT_ID,
-			       M.WT_TYPE,
-			       M.WBS_CODE,
-			       M.WBS_NAME,
-			       M.PROJECT_ROLE,
-			       M.PROJECT_LEADER			 
-    </select>
-    <!-- 获取员工投入总工时 -->
-    <select id="getInterfaceTotalByUser" resultType="java.util.Map">
-    	SELECT M.EMP_CODE,
-    		   SUM(M.WORKING_HOUR) WORKING_HOUR   		          
-		 FROM (<include refid = "queryBaseInfo"/>) M
-		 GROUP BY M.EMP_CODE  
-    </select>
-    <!-- 获取员工项目投入总工时 -->
-    <select id="getInterfaceTotalByProj" resultType="java.util.Map">
-    	SELECT M.EMP_CODE,
-    		   M.PROJECT_ID,
-    		   SUM(M.WORKING_HOUR) WORKING_HOUR   		          
-		 FROM (<include refid = "queryBaseInfo"/>) M
-		 GROUP BY  M.EMP_CODE,
-    		       M.PROJECT_ID  
-    </select>
-    <!-- 记录传输数据 -->
-    <insert id="addInterfaceBspData">        
+	<sql id="queryBaseInfo">
+		SELECT W.ID,
+		W.WORK_TIME,
+		U.HRCODE EMP_CODE,
+		U.USERNAME,
+		U.USERALIAS,
+		W.PROJECT_ID,
+		DECODE(P.CATEGORY, NULL,'0', '', '0', 1) WT_TYPE,
+		P.PROJECT_NUMBER WBS_CODE,
+		P.PROJECT_NAME WBS_NAME,
+		NVL(P.CATEGORY,W.CATEGORY) as CATEGORY,
+		NVL(P.PROJECT_NAME, W.PROJECT_NAME) as PROJECT_NAME,
+		PU1.ROLE,
+		DECODE(PU1.ROLE, NULL, NULL, '', NULL, '1', '1', '0', '0') PROJECT_ROLE,
+		U1.HRCODE PROJECT_LEADER,
+		U1.USERALIAS LEADER_USERNAME,
+		NVL(W.WORKING_HOUR,0) WORKING_HOUR,
+		NVL(U1.USERNAME,W.APPROVER) as APPROVER
+		FROM BG_WORKINGHOUR_INFO W
+		LEFT JOIN BG_SYS_USER U
+		ON U.USERNAME = W.WORKER
+		LEFT JOIN BG_PROJECT_INFO P
+		ON P.ID = W.PROJECT_ID
+		LEFT JOIN BG_PROJECT_USER PU1
+		ON W.PROJECT_ID = PU1.PROJECT_ID
+		AND PU1.HRCODE = U.HRCODE
+		AND ROWNUM = 1
+		LEFT JOIN BG_PROJECT_USER PU2
+		ON W.PROJECT_ID = PU2.PROJECT_ID
+		AND PU2.ROLE = '1'
+		LEFT JOIN BG_SYS_USER U1
+		ON U1.HRCODE = PU2.HRCODE
+		AND ROWNUM = 1
+		WHERE 1 = 1
+		<choose>
+			<when test="WT_SEASON==null or WT_SEASON == ''">
+				AND 1=2
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
+				AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "S"'>
+				AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "M"'>
+				AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+			</when>
+			<otherwise>
+				1=2
+			</otherwise>
+		</choose>
+		AND U.HRCODE IS NOT NULL
+		AND W.STATUS = '3'
+		AND W.VALID = 1
+		--以下为新添加的代码,作用是将已经关联的项目的项目前期作为项目一部分统计工时，不是单独作为项目处理
+		AND W.CATEGORY != 'BP'
+		UNION ALL
+		SELECT NULL ID,
+		NULL WORK_TIME,
+		U.HRCODE EMP_CODE,
+		U2.USERNAME USERNAME,
+		U2.USERALIAS USERALIAS,
+		U.PROJECT_ID PROJECT_ID,
+		DECODE(P.CATEGORY, NULL, '0', '', '0', '1') WT_TYPE,
+		P.PROJECT_NUMBER WBS_CODE,
+		P.PROJECT_NAME WBS_NAME,
+		P.CATEGORY CATEGORY,
+		P.PROJECT_NAME PROJECT_NAME,
+		U.ROLE ROLE,
+		DECODE(U.ROLE, NULL, NULL, '', NULL, '1', '1', '0', '0') PROJECT_ROLE,
+		U.HRCODE PROJECT_LEADER,
+		U2.USERNAME LEADER_USERNAME,
+		0 WORKING_HOUR,
+		U2.USERNAME APPROVER
+		FROM (SELECT DISTINCT U.HRCODE, U.PROJECT_ID, U.ROLE
+		FROM BG_PROJECT_USER U
+		INNER JOIN BG_PROJECT_INFO P
+		ON P.ID = U.PROJECT_ID
+		AND P.STATUS = 1
+		WHERE U.STATUS = 1
+		AND U.ROLE = '1'
+		AND EXISTS (SELECT W.ID
+		FROM BG_WORKINGHOUR_INFO W
+		WHERE 1 = 1
+		AND W.PROJECT_ID = U.PROJECT_ID
+		AND W.STATUS = '3'
+		AND 	W.CATEGORY IN('JS','KY','HX','QT')
+		<choose>
+			<when test="WT_SEASON==null or WT_SEASON == ''">
+				AND 1=2
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
+				AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "S"'>
+				AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "M"'>
+				AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+			</when>
+			<otherwise>
+				1=2
+			</otherwise>
+		</choose>
+		AND W.VALID = 1)
+		OR  EXISTS (
+		SELECT W.ID
+		FROM BG_WORKINGHOUR_INFO W
+		WHERE 1 = 1
+		AND W.PROJECT_ID = U.PROJECT_ID
+		AND W.STATUS = '3'
+		AND W.CATEGORY IN('BP')
+		<choose>
+			<when test="WT_SEASON==null or WT_SEASON == ''">
+				AND 1=2
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
+				AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "S"'>
+				AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "M"'>
+				AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+			</when>
+			<otherwise>
+				1=2
+			</otherwise>
+		</choose>
+		AND W.VALID = 1
+		)
+		AND NOT EXISTS (SELECT W.ID
+		FROM BG_WORKINGHOUR_INFO W
+		INNER JOIN BG_SYS_USER SU
+		ON SU.USERNAME = W.WORKER
+		WHERE 1 = 1
+		AND W.PROJECT_ID = U.PROJECT_ID
+		AND W.STATUS = '3'
+		<choose>
+			<when test="WT_SEASON==null or WT_SEASON == ''">
+				AND 1=2
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
+				AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "S"'>
+				AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "M"'>
+				AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+			</when>
+			<otherwise>
+				1=2
+			</otherwise>
+		</choose>
+		AND SU.HRCODE = U.HRCODE
+		AND W.VALID = 1
+		)
+		OR NOT EXISTS (SELECT W.ID
+		FROM BG_WORKINGHOUR_INFO W
+		INNER JOIN BG_SYS_USER SU
+		ON SU.USERNAME = W.WORKER
+		WHERE 1 = 1
+		AND W.PROJECT_ID = U.PROJECT_ID
+		AND W.STATUS = '3'
+		<choose>
+			<when test="WT_SEASON==null or WT_SEASON == ''">
+				AND 1=2
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
+				AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "S"'>
+				AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
+			</when>
+			<when test='WT_SEASON.substring(0,1).toString() == "M"'>
+				AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+			</when>
+			<otherwise>
+				1=2
+			</otherwise>
+		</choose>
+		AND SU.HRCODE = U.HRCODE
+		AND W.VALID = 1)) U
+		INNER JOIN BG_PROJECT_INFO P
+		ON P.ID = U.PROJECT_ID
+		AND P.STATUS = 1
+		INNER JOIN BG_SYS_USER U2
+		ON U2.HRCODE = U.HRCODE
+	</sql>
+	<!-- 获取基本信息 -->
+	<select id="getInterfaceBaseInfo" resultType="java.util.Map">
+		SELECT M.EMP_CODE,
+		M.PROJECT_ID,
+		M.WT_TYPE,
+		M.WBS_CODE,
+		M.WBS_NAME,
+		M.PROJECT_ROLE,
+		M.PROJECT_LEADER
+		FROM (<include refid = "queryBaseInfo"/>  UNION ALL <include refid="queryBaseInfoBefore"/>)  M
+		GROUP BY  M.EMP_CODE,
+		M.PROJECT_ID,
+		M.WT_TYPE,
+		M.WBS_CODE,
+		M.WBS_NAME,
+		M.PROJECT_ROLE,
+		M.PROJECT_LEADER
+	</select>
+	<!-- 获取员工投入总工时 -->
+	<select id="getInterfaceTotalByUser" resultType="java.util.Map">
+		SELECT M.EMP_CODE,
+		SUM(M.WORKING_HOUR) WORKING_HOUR
+		FROM (<include refid = "queryBaseInfo"/>  UNION ALL <include refid="queryBaseInfoBefore"/>) M
+		GROUP BY M.EMP_CODE
+	</select>
+	<!-- 获取员工项目投入总工时 -->
+	<select id="getInterfaceTotalByProj" resultType="java.util.Map">
+		SELECT M.EMP_CODE,
+		M.PROJECT_ID,
+		SUM(M.WORKING_HOUR) WORKING_HOUR
+		FROM (<include refid = "queryBaseInfo"/> UNION ALL <include refid="queryBaseInfoBefore"/>) M
+		GROUP BY  M.EMP_CODE,
+		M.PROJECT_ID
+	</select>
+	<!-- 记录传输数据 -->
+	<insert id="addInterfaceBspData">
         INSERT INTO BG_INTERFACE_BSP
 		  (wt_year,
 		   wt_season,
@@ -248,32 +363,32 @@
 		   to_date(#{update_time,jdbcType=VARCHAR},'yyyy-MM-dd HH24:mi:ss')
 		   )
     </insert>
-    <!-- 记录传输明细数据 -->
-    <insert id="addInterfaceBspDetailData">
-        INSERT INTO BG_INTERFACE_BSP_DETAIL
-		  (business_id,
-		   work_time,
-		   hr_code,
-		   category,
-		   project_id,
-		   wbs_number,
-		   projcet_name,
-		   working_hour,
-		   approver,
-		   project_role,
-		   update_time)
-	   SELECT  M.ID,
-			   M.WORK_TIME,
-			   M.EMP_CODE,
-			   M.CATEGORY,
-			   M.PROJECT_ID,
-			   M.WBS_CODE,
-			   M.PROJECT_NAME,
-			   M.WORKING_HOUR,
-			   M.APPROVER,
-			   M.ROLE,
-			   to_date(#{update_time,jdbcType=VARCHAR},'yyyy-MM-dd HH24:mi:ss')		   
-		 FROM (<include refid = "queryBaseInfo"/>) M WHERE M.ID IS NOT NULL
-		 
+	<!-- 记录传输明细数据 -->
+	<insert id="addInterfaceBspDetailData">
+		INSERT INTO BG_INTERFACE_BSP_DETAIL
+		(business_id,
+		work_time,
+		hr_code,
+		category,
+		project_id,
+		wbs_number,
+		projcet_name,
+		working_hour,
+		approver,
+		project_role,
+		update_time)
+		SELECT  M.ID,
+		M.WORK_TIME,
+		M.EMP_CODE,
+		M.CATEGORY,
+		M.PROJECT_ID,
+		M.WBS_CODE,
+		M.PROJECT_NAME,
+		M.WORKING_HOUR,
+		M.APPROVER,
+		M.ROLE,
+		to_date(#{update_time,jdbcType=VARCHAR},'yyyy-MM-dd HH24:mi:ss')
+		FROM (<include refid = "queryBaseInfo"/>  UNION ALL <include refid="queryBaseInfoBefore"/>) M WHERE M.ID IS NOT NULL
+
 	</insert>
 </mapper>
