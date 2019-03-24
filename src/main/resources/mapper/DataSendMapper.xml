@@ -124,7 +124,7 @@
 	<select id="queryCounts"  resultType="java.util.Map">
        
        SELECT * FROM (
-        SELECT W.* ,Z.HRCODE   as XMHRCODE ，X.USERALIAS as  XMUSERALIAS  from   (
+        SELECT W.* ,Z.HRCODE   as XMHRCODE ,X.USERALIAS as  XMUSERALIAS  from   (
         
              SELECT HRCODE,
                WORKER,
