@@ -9,7 +9,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +19,15 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators.StringIdGenerator;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.mapper.DataSendMapper;
+import com.sgcc.bg.service.BgInterfaceService;
 import com.sgcc.bg.service.DataSendService;
 @Service
 public class DataSendServiceImpl implements DataSendService{
 	@Autowired
 	DataSendMapper dataSendMapper;
-	Logger logger = Logger.getLogger(DataSendServiceImpl.class);
+	Logger logger = LoggerFactory.getLogger(DataSendServiceImpl.class);
+	@Autowired
+	private BgInterfaceService bgInterfaceService;
 	
 	DateUtil dateUtils = new DateUtil();
 	/*
@@ -52,7 +56,13 @@ public class DataSendServiceImpl implements DataSendService{
 		String startTime = startAndEndTime.get("startTime").toString();//根据季度或者月份计算开始时间
 		String endTime = startAndEndTime.get("endTime").toString();//根据季度或者月份计算结束时间
 		List<Map<String, Object>> list2= dataSendMapper.queryList(year,Ctype,projectName,Btype,time,userName);
-		System.out.println("22"+Ctype+"1122111----------111111");
+//		System.out.println("22"+Ctype+"1122111----------111111");
+		
+		String startDate = getStartDate(year, Ctype);
+		String endDate = getEndDate(year, Ctype);
+		String monthName = getMonthName(year, Ctype);
+		List<Map<String,Object>> totalBgProj = bgInterfaceService.getInterfaceTotalByProj(Ctype, year, startDate, endDate, monthName);
+		
 		for(int i=0;i<list2.size();i++){
 			Map<String, Object>	mapList = new HashMap<String, Object>();
 			String empCode = list2.get(i).get("EMP_CODE").toString();
@@ -65,7 +75,23 @@ public class DataSendServiceImpl implements DataSendService{
 			if("".equals(projectId)||projectId ==null){
 				type = "NP";
 			}
-			Double totalTime = dataSendMapper.queryCounted(startTime,endTime,empCode,wbsCode,projectId,type);
+			//Double totalTime = dataSendMapper.queryCounted(startTime,endTime,empCode,wbsCode,projectId,type);
+			Double totalTime = (double) 0;
+			for(int k=0;k<totalBgProj.size();k++){
+				Map<String, Object>	n = totalBgProj.get(k);
+				String hr = n.get("EMP_CODE")==null?null:n.get("EMP_CODE").toString();
+				String proj = n.get("PROJECT_ID")==null?null:n.get("PROJECT_ID").toString();
+				if(hr!=null&&hr.equals(empCode)&&proj!=null&&proj.equals(projectId)){
+					String hour = n.get("WORKING_HOUR")==null?"0":n.get("WORKING_HOUR").toString();
+					totalTime = Double.valueOf(hour);
+					break;
+				}
+				else if(hr!=null&&hr.equals(empCode)&&proj==null&&projectId==null){
+					String hour = n.get("WORKING_HOUR")==null?"0":n.get("WORKING_HOUR").toString();
+					totalTime = Double.valueOf(hour);
+					break;
+				}
+			}
 			//System.out.println(totalTime);
 			String pullTime = "";
 			String pullDate = "";
@@ -336,7 +362,7 @@ public class DataSendServiceImpl implements DataSendService{
 			break;
 		case "S1":
 			startTime = year+"-01-01";
-			endTime = year+"-03-30";
+			endTime = year+"-03-31";
 			map.put("startTime", startTime);
 			map.put("endTime", endTime);
 			break;
@@ -423,5 +449,57 @@ public class DataSendServiceImpl implements DataSendService{
 			break;
 		}
 		return mouth;
+	}
+	/**
+	 * 获取月份   yyyy-MM
+	 * @param year yyyy
+	 * @param period M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12
+	 * @return
+	 */
+	private String getMonthName(String year,String period){
+		String monthName = null;
+		if("M1".equals(period)){monthName = year +"-01";}
+		else if("M2".equals(period)){monthName = year +"-02";}
+		else if("M3".equals(period)){monthName = year +"-03";}
+		else if("M4".equals(period)){monthName = year +"-04";}
+		else if("M5".equals(period)){monthName = year +"-05";}
+		else if("M6".equals(period)){monthName = year +"-06";}
+		else if("M7".equals(period)){monthName = year +"-07";}
+		else if("M8".equals(period)){monthName = year +"-08";}
+		else if("M9".equals(period)){monthName = year +"-09";}
+		else if("M10".equals(period)){monthName = year +"-10";}
+		else if("M11".equals(period)){monthName = year +"-11";}
+		else if("M12".equals(period)){monthName = year +"-12";}		
+		return monthName;
+	}
+	/**
+	 * 获取开始时间   yyyy-MM
+	 * @param year yyyy
+	 * @param period S1,S2,S3,S4
+	 * @return
+	 */
+	private String getStartDate(String year,String period){
+		String startDate = null;
+		if("S1".equals(period)){startDate = year +"-01-01";}
+		else if("S2".equals(period)){startDate = year +"-04-01";}
+		else if("S3".equals(period)){startDate = year +"-07-01";}
+		else if("S4".equals(period)){startDate = year +"-10-01";}
+		
+		return startDate;
+	}
+	/**
+	 * 获取结束时间   yyyy-MM
+	 * @param year yyyy
+	 * @param period S1,S2,S3,S4
+	 * @return
+	 */
+	private String getEndDate(String year,String period){
+		String endDate = null;
+		if("S1".equals(period)){endDate = year +"-03-31";}
+		else if("S2".equals(period)){endDate = year +"-06-30";}
+		else if("S3".equals(period)){endDate = year +"-09-30";}
+		else if("S4".equals(period)){endDate = year +"-12-31";}
+		
+		return endDate;
 	}
 }
