@@ -59,8 +59,6 @@ public class BgWebService {
 		log.info("---------人资系统请求参数:"+xml);
 		//生成时间戳
 		String batchTime = getBatch();		
-		log.info("---------[batch:"+batchTime+"]:人资系统请求参数:"+xml);
-		
 		String year = "";
 		String period = "";
 		log.info("---------[batch:"+batchTime+"]:开始解析请求参数！");
@@ -112,6 +110,7 @@ public class BgWebService {
 		}catch(Exception e){
 			log.info("---------[batch:"+batchTime+"]:请求参数解析异常:"+e.getMessage());
 			e.printStackTrace();
+			return returnErrorMessage("请求参数解析异常！");
 		}
 
 		//获取报工数据
