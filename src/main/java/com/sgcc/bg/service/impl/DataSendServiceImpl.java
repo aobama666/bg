@@ -210,6 +210,12 @@ public class DataSendServiceImpl implements DataSendService{
 		String startTime = startAndEndTime.get("startTime").toString();//根据季度或者月份计算开始时间
 		String endTime = startAndEndTime.get("endTime").toString();//根据季度或者月份计算结束时间
 		List<Map<String, Object>> list2= dataSendMapper.queryList(year,Ctype,projectName,Btype,time,userName);
+		
+		String startDate = getStartDate(year, Ctype);
+		String endDate = getEndDate(year, Ctype);
+		String monthName = getMonthName(year, Ctype);
+		List<Map<String,Object>> totalBgProj = bgInterfaceService.getInterfaceTotalByProj(Ctype, year, startDate, endDate, monthName);
+		
 		for(int i=0;i<list2.size();i++){
 			Map<String, Object>	mapList = new HashMap<String, Object>();
 			String empCode = list2.get(i).get("EMP_CODE").toString();
@@ -219,8 +225,24 @@ public class DataSendServiceImpl implements DataSendService{
 			if("0".equals(Btype)){
 				type = "非项目工作";
 			}
-			Double totalTime = dataSendMapper.queryCounted(startTime,endTime,empCode,wbsCode,projectId,type);
-			System.out.println(totalTime);
+//			Double totalTime = dataSendMapper.queryCounted(startTime,endTime,empCode,wbsCode,projectId,type);
+//			System.out.println(totalTime);
+			Double totalTime = (double) 0;
+			for(int k=0;k<totalBgProj.size();k++){
+				Map<String, Object>	n = totalBgProj.get(k);
+				String hr = n.get("EMP_CODE")==null?null:n.get("EMP_CODE").toString();
+				String proj = n.get("PROJECT_ID")==null?null:n.get("PROJECT_ID").toString();
+				if(hr!=null&&hr.equals(empCode)&&proj!=null&&proj.equals(projectId)){
+					String hour = n.get("WORKING_HOUR")==null?"0":n.get("WORKING_HOUR").toString();
+					totalTime = Double.valueOf(hour);
+					break;
+				}
+				else if(hr!=null&&hr.equals(empCode)&&proj==null&&projectId==null){
+					String hour = n.get("WORKING_HOUR")==null?"0":n.get("WORKING_HOUR").toString();
+					totalTime = Double.valueOf(hour);
+					break;
+				}
+			}
 			String pullTime = "";
 			String pullDate = "";
 			//if(totalTime.size()>0){
