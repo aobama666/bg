@@ -162,10 +162,12 @@ public class BgWebService {
 						if(hr!=null&&hr.equals(hrcode)&&proj!=null&&proj.equals(project)){
 							String hour = n.get("WORKING_HOUR")==null?"0":n.get("WORKING_HOUR").toString();
 							m.put("INPUT_TIME", hour);
+							break;
 						}
 						else if(hr!=null&&hr.equals(hrcode)&&proj==null&&project==null){
 							String hour = n.get("WORKING_HOUR")==null?"0":n.get("WORKING_HOUR").toString();
 							m.put("INPUT_TIME", hour);
+							break;
 						}
 					}
 				}
