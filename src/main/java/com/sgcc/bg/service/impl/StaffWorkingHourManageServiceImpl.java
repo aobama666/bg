@@ -129,7 +129,10 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 		//获取当天已提交总工时数
 		double submitedWorkHour=smMapper.todaySubmitedWorkHour(username,selectedDate);
 		double dayWorkHour=totalHours+submitedWorkHour;
-		smServiceLog.info("目前当天已提交"+dayWorkHour+"(h)");
+		smServiceLog.info("目前当天已提交"+submitedWorkHour+"(h)");
+		
+		//当月已加班工时
+		double curMonthWorkHour = monthOvertime + submitedWorkHour;
 		
 		//判断某天的类型，0工作日，1节假日
 		int dayType=smMapper.getDayType(selectedDate);
@@ -144,11 +147,11 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 			if(dayWorkHour>8){
 				return "周末、节假日允许录入工时不能超过8小时";
 			}else{
-				monthOvertime+=totalHours;
+				monthOvertime+=dayWorkHour;
 			}
 		}
 		if(monthOvertime>36){
-			return "每月加班不能超过36小时，本月已加班"+monthOvertime+"小时，当天加班时长不能超过"+(monthOvertime-36)+"小时";
+			return "每月加班不能超过36小时，本月已加班"+curMonthWorkHour+"小时，当天加班时长不能超过"+(monthOvertime-36)+"小时";
 		}
 		return "";
 	}
