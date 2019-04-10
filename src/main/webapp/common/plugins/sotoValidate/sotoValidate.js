@@ -54,7 +54,7 @@ $.fn.extend({
 		var yOffset = 30;
 		var thisbox = $(this);
 		for(var i=0;i<properties.length;i++){
-			var c = thisbox.find('[name='+properties[i].name+']');
+			var k = thisbox.find('[name='+properties[i].name+']');
 			// 只给可见元素增加校验
 			if(c.is(":visible")){
 				var v = c.val() == null ? "" : c.val();

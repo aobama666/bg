@@ -1,0 +1,201 @@
+a{color:blue;text-decoration: underline;}
+a:HOVER{color:red;}
+/* start 鐠佸墽鐤嗘潏鎾冲弳濡楀棜绔熷鍡涱杹閼癸拷  outline--閸樼粯甯�婢舵牞绔熷锟�*/
+input[type=text],select{
+	border: 1px solid #019271;
+	outline:none;  
+	height:30px;
+}
+input:HOVER,select:HOVER,input:FOCUS,select:FOCUS{
+	box-shadow:rgba(0,0,0,0.2)0px 1px 3px;
+}
+/* end 鐠佸墽鐤嗘潏鎾冲弳濡楀棝顤侀懝锟�  */
+
+/* 鐠佸墽鐤嗛弬鍥ㄦ拱濡楋拷  */
+textarea{
+	border: 1px solid #019271;
+	outline:none;  
+	height:300px;
+	width:100%;
+	resize:none;
+	font-size:16px;
+}
+
+/* 婢堆傜箽鐎涙ɑ褰佹禍銈嗗瘻闁斤拷 */
+.main_btn_box{
+	width:100%;
+	height:40px;
+}
+/* 濮ｅ繋閲滄い鐢殿劮娑撳娈戞穱婵嗙摠閹稿鎸� */
+.basic_into_title,.prj_introduction_title,.tech_innovate_title{
+	width:100%;
+	height:30px;
+	margin-top: 5px;
+}
+
+/* start 鐠佸墽鐤嗛幍锟介張澶婂涧鐠囪鐡у▓浣冪翻閸忋儲顢嬫稉铏逛紗閼癸拷  */
+input[rom=true],textarea[rom=true]{
+	background-color: #E3E3E3;
+}
+/* end 鐠佸墽鐤嗛幍锟介張澶婂涧鐠囪鐡у▓浣冪翻閸忋儲顢嬫稉铏逛紗閼癸拷*/
+
+/* start 鐠佸墽鐤嗘潏鎾冲弳濡楋拷*/
+.inputForm>span{
+	width: 180px;
+    position: absolute;
+    display: inline-block;
+    left: 0;
+    top: 10px;
+    padding: 3px;
+}
+/* end 鐠佸墽鐤嗘潏鎾冲弳濡楋拷*/
+
+/* start 婢舵岸锟藉绗呴幏澶嬵攱  */
+.checkSelectBox li{
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	margin-left:2px;
+	-webkit-user-select:none;
+	-moz-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+}
+/* 婢舵岸锟藉绗呴幏澶嬵攱娑撶挻i閺�鍙ョ瑐閸樿绨抽懝鍙夋暭閸欙拷  */
+.checkSelectBox li:HOVER {
+	background-color: #1E90FF;
+	color: #fff;
+}
+/* end 婢舵岸锟藉绗呴幏澶嬵攱 */
+
+/* start 鐠佸墽鐤嗙悰銊︾壐閸氬嫬宕熼崗鍐╃壐閻ㄥ嫭鐗卞锟� */
+td{
+    position: relative;
+    padding-right: 5px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+/* end 鐠佸墽鐤嗙悰銊︾壐閸氬嫬宕熼崗鍐╃壐閻ㄥ嫭鐗卞锟�  */
+
+
+.table td .inputForm{
+    margin-left: 190px;
+}
+.table td .detailInput{
+    background-color:#efefef;
+}
+.table td .inputForm>div>input{
+    width: 400px;
+    line-height: 25px;
+    height: 29px;
+    font-size: 100%;
+    text-indent: 6px;
+    border: solid 1px #019271;
+    outline: none;
+     
+}
+
+/* start 鐠佸墽鐤嗘稉瀣濡楀棛娈戠�硅棄瀹� */
+.inputForm select{
+	width:100%;
+}	
+/* end 鐠佸墽鐤嗘稉瀣濡楀棗顔旀惔锟� */	
+
+.input_div{
+	position:relative;
+}
+
+/* 閹稿鎸� */
+.btn{
+	/* width:60px; */
+	border-radius:3px;
+	text-align: center;
+	-webkit-user-select:none;
+	-moz-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+}
+
+/* start 閹碉拷鐏炵偛娴楀鎴犵病濞村骸顦块柅澶夌瑓閹峰顢� */
+.table td .checkSelectBox{
+	width:100%;
+	height:150px;
+	overflow:auto;
+	border: 1px solid #BBBBBB;
+	text-align:left;
+	position: absolute;
+	z-index: 1;
+	background-color: #fff;
+	display: none;
+}
+/* end 閹碉拷鐏炵偛娴楀鎴犵病濞村骸顦块柅澶夌瑓閹峰顢� */
+
+/* 娑撳濯洪崶鐐垼 */
+.dropDownImg{
+	width:1%;
+	height:30px;
+}
+
+/* 婢舵岸锟藉绗呴幏澶夎厬娑撳濯虹亸蹇曨唲婢讹拷 */
+.iconfont.icon-xiayige{
+    position: absolute;
+    top: 7px;
+    right: 3px;
+    font-size: 12px;
+    z-index: 10;
+}
+/* 鏉堟挸鍙嗗鍡涳拷蹇旀 閺勫墽銇氭稉瀣鐏忓繒顔勬径锟�  */
+.multiCheckBox{
+	background: transparent;
+}
+/* start 椤电 */
+.tablePanel_box{
+	border-bottom: 3px solid #D8D8D8 ;
+	display: block;
+}
+.panel{
+	display: inline;
+	height:30px;
+	background-color: #F2F2F2;
+	text-align: center;
+	font-size:15px;
+	padding-right:10px;
+	padding-left:10px;
+	-webkit-user-select:none;
+	-moz-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+}
+.panel:HOVER {
+	background-color: #D8D8D8;
+	cursor: pointer;
+}
+/* end 椤电*/
+
+/* 闁瀚ㄦ潏鎾冲弳濡楀棙瀵滈柦锟�  */
+.customBtn{
+	background-color:#009688 ;
+	width:30px;
+	height:29px;
+	text-align: center;
+	line-height: 29px;
+	font-weight: bold;
+	display: inline-block;
+	color:#fff;
+	-webkit-user-select:none;
+	-moz-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+}
+.customBtn:HOVER {
+	background-color: #058379;
+}
+
+/*閺嶏繝鐛欓柅姘崇箖 */
+.table td .inputForm>div>.validPass{
+	border:solid 1px #019271;
+}
+/* 閺嶏繝鐛欐稉宥夛拷姘崇箖 */
+.table td .inputForm>div>.validRefuse{
+	border:solid 2px red;
+}

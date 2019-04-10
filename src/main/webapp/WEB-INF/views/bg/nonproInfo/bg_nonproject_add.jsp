@@ -226,7 +226,6 @@
 	}); 
 
 	function typeChange(type){	
-	   
 			$("#organInfo").show();
 			if($("#deptCode").val()==""){
 				$("#deptName").val($("#currentDeptName").val());
@@ -248,7 +247,7 @@
 					$("#WBSNumber input").val(data);
 				  }
 			});
-		}
+	 
 		*/
 		var validator=[
 	              	      {name:'category',vali:'required'},  

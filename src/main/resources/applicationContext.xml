@@ -53,8 +53,7 @@
 	<context:property-placeholder
 			ignore-resource-not-found="true" location="classpath*:/application.properties" />
 
-	<rabbit:connection-factory id="connectionFactory"
-							   host="${rabbitmq.host}" username="${rabbitmq.username}" password="${rabbitmq.password}" port="${rabbitmq.port}" />
+	<rabbit:connection-factory id="connectionFactory" host="${rabbitmq.host}" username="${rabbitmq.username}" password="${rabbitmq.password}" port="${rabbitmq.port}" />
 
 	<rabbit:admin connection-factory="connectionFactory" />
 
