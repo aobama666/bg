@@ -344,4 +344,11 @@ public interface BGMapper {
 			@Param("isRelated")boolean isRelated,
 			@Param("relProId")String relProId);
 
+	/**
+	 * 根据项目前期id删除其关联
+	 * @param idsArr
+	 * @return
+	 */
+	public boolean deleteBeforeProById(String[] idsArr);
+
 }

@@ -47,6 +47,10 @@
 		width:10%;
 		text-align:center;
 	}
+	.linHeight{
+		height:20px;
+		line-height:20px;
+	}
 </style>
 </head>
 <body>
@@ -103,14 +107,7 @@
 				</select>
 			</div>
 		</div>
-		<div class="form-group col-xs-4"  >
-			<label>数据显示：</label>
-			<div class="controls datashow">
-				<div class='showcheck'><input type="checkbox" name="dataShow" value="1"/></div>
-				<div class="showText">仅显示工时大于0的数据</div>
-			</div>	    
-		</div>
-		<div class="form-group col-xs-5">
+		<div class="form-group col-xs-4">
 		<label for="deptName2">组织机构：</label>
 		<div class="controls">
 			<div id="organTree2" class="input-group organ bg-white" style='width:100%'>
@@ -119,16 +116,36 @@
 			</div>
 		</div>
 	</div>
-		<div class="form-group col-xs-3 hidden" id="username">
-			<label>人员姓名：</label>
-			<div class="controls">
-				<input name="userName" property="userName" >
-			</div>
+	<div class="form-group col-xs-3 hidden" id="username">
+		<label>人员姓名：</label>
+		<div class="controls">
+			<input name="userName" property="userName" >
 		</div>
-		
-		
-		
-		</form>
+	</div>
+	<div class="form-group col-xs-5"  >
+		<!-- <label>数据显示：</label> -->
+		<div class="datashow" style="margin-left:33px">
+			<div>
+				<div class='showcheck'><input type="checkbox" name="bpShow" value="1" checked="checked"/></div>
+				<div class='linHeight'>项目计入项目前期　</div>
+			</div>
+			<!-- <div>&nbsp;&nbsp;&nbsp;&nbsp;</div> --> 
+			<div>
+				<div class='showcheck'><input type="checkbox" name="dataShow" value="1"/></div>
+				<div class='linHeight' >仅显示工时大于0的数据</div>
+			</div>
+			<!-- <div>
+				<div class='showcheck'><input type="checkbox" name="bpShow" value="1" checked="checked"/></div>
+				<div style="height:20px;line-height:20px;">项目计入项目前期</div>
+			</div>
+			<div class='showcheck'><input type="checkbox" name="bpShow" value="1" checked="checked"/></div>
+			<div class="showText" style="width: 18%;">项目计入项目前期</div>
+			
+			<div class='showcheck'><input type="checkbox" name="dataShow" value="1"/></div>
+			<div class="showText" >仅显示工时大于0的数据</div> -->
+		</div>	    
+	</div>
+	</form>
 	</div>
 	<div class="query-box-right">
 		<button type="button" class="btn btn-primary btn-xs" onclick="forSearch()">统计</button>
@@ -213,8 +230,8 @@ function queryListPart(load){
 	var cols = [
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'统计周期', name:'StartAndEndData', width:100, sortable:false, align:'center'},
-	            {title:'部门', name:'deptName', width:100, sortable:false, align:'left'},
-	            {title:'投入工时(h)', name:'TotalHoursNum', width:100, sortable:false, align:'center',
+	            {title:'部门（单位）', name:'deptName', width:100, sortable:false, align:'left'},
+	            {title:'投入总工时(h)', name:'TotalHoursNum', width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.TotalHoursNum==0){
 	            			return '0';
@@ -272,33 +289,38 @@ function queryListPart(load){
 }
 $(".content").on("click",".forDetails",function(){
 	var type = $(this).attr("type");
-	var dataShow = $("input[name=dataShow]:checked").val();
-	
+	var dataShow = $('input[name="dataShow"]').prop("checked") ? "1":"0";
+	var bpShow = $('input[name="bpShow"]').prop("checked") ? "1":"0";
 	var deptid = $(this).attr("pdeptid");
 	var labid = $(this).attr("deptid");
 	var StartData = $(this).attr("StartData");
 	var EndData = $(this).attr("EndData");
-	var title = "";
+	/* var title = "";
 	if(type=='1'){
-		title = "投入工时";
+		title = "员工工时明细";
 	}else if(type=='2'){
 		title = "项目投入工时";
 	}else{
 		title = "非项目投入工时";
-	}
+	} */
+	
 	layer.open({
 		type:2,
-		title:title,
+		title:'员工工时明细',
 		area:['80%','85%'],
 		scrollbar:false,
 		skin:'query-box',
-		content:["<%=request.getContextPath()%>/searchWorkTask/organWorkinghourDetail?deptid="+deptid+"&labid="+labid+"&StartData="+StartData+"&EndData="+EndData+"&type="+type+"&dataShow="+dataShow,'no']
+		content:["<%=request.getContextPath()%>/searchWorkTask/organWorkinghourDetail?deptid="+deptid
+				+"&labid="+labid+"&StartData="+StartData+"&EndData="+EndData+"&type="+type
+				+"&dataShow="+dataShow+"&bpShow="+bpShow,'no']
 	});
 });
+
 $(".content").on("click",".perForDetails",function(){
 	var type = $(this).attr("type");
 	 
-	var dataShow = $("input[name=dataShow]:checked").val();
+	var dataShow = $('input[name="dataShow"]').prop("checked") ? "1":"0";
+	var bpShow = $('input[name="bpShow"]').prop("checked") ? "1":"0";
 	var StartData = $(this).attr("StartData");
 	var EndData = $(this).attr("EndData");
 	var deptid = $(this).attr("pdeptid");
@@ -306,7 +328,7 @@ $(".content").on("click",".perForDetails",function(){
 	var username = $(this).attr("username");
 	var title = "";
 	if(type=='1'){
-		title = "投入工时";
+		title = "员工工时明细";
 	}else if(type=='2'){
 		title = "项目投入工时";
 	}else{
@@ -318,7 +340,9 @@ $(".content").on("click",".perForDetails",function(){
 		area:['80%','85%'],
 		scrollbar:false,
 		skin:'query-box',
-		content:["<%=request.getContextPath()%>/searchWorkTask/organPersonHourDetail?deptid="+deptid+"&labid="+labid+"&StartData="+StartData+"&EndData="+EndData+"&type="+type+"&username="+username+"&dataShow="+dataShow,'no']
+		content:["<%=request.getContextPath()%>/searchWorkTask/organPersonHourDetail?deptid="
+				+deptid+"&labid="+labid+"&StartData="+StartData+"&EndData="+EndData+"&type="
+				+type+"&username="+username+"&dataShow="+dataShow+"&bpShow="+bpShow,'no']
 	});
 })
 //初始化列表数据
@@ -327,9 +351,9 @@ function queryListLab(load){
 	var cols = [
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'统计周期', name:'StartAndEndData', width:100, sortable:false, align:'center'},
-	            {title:'部门', name:'parentName', width:100, sortable:false, align:'left'},
+	            {title:'部门（单位）', name:'parentName', width:100, sortable:false, align:'left'},
 	            {title:'处室', name:'deptName', width:100, sortable:false, align:'left'},
-	            {title:'投入工时(h)', name:'TotalHoursNum', width:100, sortable:false, align:'center',
+	            {title:'投入总工时(h)', name:'TotalHoursNum', width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.TotalHoursNum==0){
 	            			return '0';
@@ -392,10 +416,11 @@ function queryListPer(load){
 	var cols = [
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'统计周期', name:'StartAndEndData', width:100, sortable:false, align:'center'},
-	            {title:'部门', name:'pdeptName', width:100, sortable:false, align:'left'},
+	            {title:'部门（单位）', name:'pdeptName', width:100, sortable:false, align:'left'},
 	            {title:'处室', name:'deptName', width:100, sortable:false, align:'left'},
+	            {title:'人员编号', name:'hrCode', width:100, sortable:false, align:'center'},
 	            {title:'人员姓名', name:'Useralias', width:100, sortable:false, align:'center'},
-	            {title:'投入工时(h)', name:'TotalHoursNum', width:100, sortable:false, align:'center',
+	            {title:'投入总工时(h)', name:'TotalHoursNum', width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		if(item.TotalHoursNum==0){
 	            			return '0';
@@ -422,7 +447,7 @@ function queryListPer(load){
 	    		];
 	var mmGridHeight = $("body").parent().height() - 220;
 	mmg3 = $('#mmg3').mmGrid({
-		cosEdit:"7,8,9",//声明需要编辑，取消点击选中的列
+		cosEdit:"8,9,10",//声明需要编辑，取消点击选中的列
 		indexCol: true,
 		indexColWidth: 30,
 		checkCol: true,

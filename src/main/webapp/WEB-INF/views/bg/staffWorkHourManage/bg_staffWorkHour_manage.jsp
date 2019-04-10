@@ -131,7 +131,7 @@
 					</div>
 				</div>
 				<div class="form-group col-xs-4">
-					<label>项目名称：</label>
+					<label>任务名称：</label>
 					<div class="controls">
 						<input name="proName" property="proName">
 					</div>
@@ -212,8 +212,8 @@ function queryList(load){
 	            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},
 	            {title:'人员姓名', name:'USERNAME', width:100, sortable:false, align:'center'},
 	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center'},
-	            {title:'项目名称', name:'PROJECT_NAME', width:120, sortable:false, align:'left'},
-	            {title:'工作内容', name:'JOB_CONTENT', width:200, sortable:false, align:'left',
+	            {title:'任务名称', name:'PROJECT_NAME', width:120, sortable:false, align:'left'},
+	            {title:'工作内容简述', name:'JOB_CONTENT', width:200, sortable:false, align:'left',
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
 	            		return '<span style="display:block;word-wrap:break-word;word-break:break-all">'+val+'</span>';
@@ -249,7 +249,7 @@ function queryList(load){
 				]
 		}).on('loadSuccess', function(e, data){
 			pn = data.page;
-			$(".checkAll").css("display","none").parent().text("选择");
+			//$(".checkAll").css("display","none").parent().text("选择");
 		});
 	if(load == "reload"){
 		mmg.load({page:pn});

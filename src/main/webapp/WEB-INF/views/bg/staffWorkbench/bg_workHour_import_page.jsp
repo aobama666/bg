@@ -41,7 +41,7 @@
 	<div class="button-box">
 		<button type="button" class="btn btn-danger btn-xs" style="display:none;" id="ErrInfoButton" onclick="downLoadErr(this)"> 工时错误信息下载</button>
 		<button type="button" class="btn btn-primary btn-xs" onclick="DIYTemp()"> 定制模板内容</button>
-		<button type="button" class="btn btn-primary btn-xs" onclick="downLoadTemp('个人工时填报模板.xls')"> 模板下载</button>
+		<button type="button" class="btn btn-primary btn-xs" onclick="downLoadTemp('工时填报模板.xls')"> 模板下载</button>
 		<button type="button" class="btn btn-success btn-xs" onclick="uploadProFile()"> 确定</button>
 	</div>
 </div>

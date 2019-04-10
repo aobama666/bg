@@ -157,19 +157,6 @@
 		return result;
 	}
 	
- 	function checkNumberic(planHours){
-		var result = {};
-		var reg=/^(0(\.\d)?|[1-9]+\d*(\.\d)?)$/;
-		if($.trim(planHours)!="" && !reg.test(planHours)){
-			result.result = false;
-			result.info = "不能为负数；";
-		}else{
-			result.result = true;
-			result.info = "";
-		}
-		return result;
-	}
-	
 	
 	//仅用于保存当前行的开始日期数据
 	function setStartDate(val){
@@ -220,6 +207,13 @@
 		var date=new Date();
 		date.setTime(millisSeconds);
 		return date;
+	}
+	
+	function sortIndex(grid_name){
+		var rows=$("#"+grid_name+" tr:visible");
+		for(var i=0;i<rows.length;i++){
+			$(rows[i]).find(".mmg-index").text(i+1);
+		}
 	}
 	
 </script>

@@ -49,7 +49,7 @@
 	<div class="page-header-sl">
 		<div class="button-box">
 			<button type="button" class="btn btn-success btn-xs"
-				onclick="downLoadTemp('个人工时填报模板.xls')">模板下载</button>
+				onclick="downLoadTemp('工时填报模板.xls')">模板下载</button>
 		</div>
 	</div>
 	<hr>

@@ -245,7 +245,7 @@ public class StaffWorkingHourManageController {
 			} 
 			//添加到流程记录表
 			String processId=SWService.addSubmitRecord(id, processUsername);
-			if(approverUsername.equals(user.getUserName())){//如果审核人就是本人，则默认通过
+			if(approverUsername.equals(user==null?"":user.getUserName())){//如果审核人就是本人，则默认通过
 				processId=SWService.addExamineRecord(id, processUsername, "2", "");
 				status="3";
 			}
@@ -273,6 +273,11 @@ public class StaffWorkingHourManageController {
 		String[] ids = whId.split(",");
 		int affectedRows = 0;
 		for (String id : ids) {
+			if(Rtext.isEmpty(id)) {
+				smLog.info("ID为空！");
+				continue;
+			}
+			
 			if(SWService.isConmmited(id)){//如果该记录已被通过或正在审批中则无法删除
 				smLog.info("该记录已被通过或正在审批中,无法删除");
 				continue;

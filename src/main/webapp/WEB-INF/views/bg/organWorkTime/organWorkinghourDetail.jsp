@@ -61,6 +61,7 @@
    		<input name="EndData" type="hidden"/>
    		<input name="type" type="hidden"/>
    		<input name="dataShow" type="hidden"/>
+   		<input name="bpShow" type="hidden"/>
    		<input name="ids" type="hidden"/>
    </form>
 	<table id="mmg" class="mmg">
@@ -79,8 +80,9 @@ var StartData=common.getQueryString("StartData");
 var EndData=common.getQueryString("EndData");
 var type=common.getQueryString("type");
 var dataShow=common.getQueryString("dataShow");
+var bpShow=common.getQueryString("bpShow");
  
-ran = Math.random()*1000;
+var ran = Math.random()*1000;
 $("input[name=ran]").val(ran);
 $("input[name=deptid]").val(deptid);
 $("input[name=labid]").val(labid);
@@ -88,6 +90,7 @@ $("input[name=StartData]").val(StartData);
 $("input[name=EndData]").val(EndData);
 $("input[name=type]").val(type);
 $("input[name=dataShow]").val(dataShow);
+$("input[name=bpShow]").val(bpShow);
 
 var workType = '';
 var nameType = '';
@@ -113,8 +116,9 @@ var params={
 	EndData:EndData,
 	type:type,
 	dataShow:dataShow,
-	page:1,
-	limit:30
+	bpShow:bpShow,
+	page:pn,
+	limit:limit
 }
 
 $(function(){
@@ -127,48 +131,33 @@ function init(){
 					cols = [
 					            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 					            {title:'统计周期', name:'StartAndEndData', width:150, sortable:false, align:'center'},
-					            {title:'部门', name:'PDEPTNAME', width:100, sortable:false, align:'left'},
-					            {title:'处室', name:'DEPTNAME', width:100, sortable:false, align:'left'},
-					            {title:'人员编号', name:'HRCODE', width:70, sortable:false, align:'center'},
-					            {title:'人员姓名', name:'useralias', width:70, sortable:false, align:'center'}
+					            {title:'部门（单位）', name:'PDEPTNAME', width:150, sortable:false, align:'left'},
+					            {title:'处室', name:'DEPTNAME', width:150, sortable:false, align:'left'},
+					            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},
+					            {title:'人员姓名', name:'USERALIAS', width:100, sortable:false, align:'center'}
 					            //{title:nameType, name:workType, width:100, sortable:false, align:'center'}
 					    		];
-					var title=data.title;
-					$.each(title,function(i,n){
-						cols.push({title:n, name:i, width:100, sortable:false, align:'center'});
+					
+					var titleMap = data.titleMap;
+					$.each(titleMap,function(category,titles){
+						var innerCols = [];
+						$.each(titles,function(i,n){
+							innerCols.push({title:n, name:i, width:120, sortable:false, align:'center'});
+						});
+						cols.push({title:category, width:120, sortable:false, align:'center' ,cols:innerCols});
 					});
-					/* delete title['NP000'];
-					if(type==1){
-						$.each(title,function(i,n){
-							cols.push({title:n, name:i, width:100, sortable:false, align:'center'});
-						});
-						cols.push({title:"非项目工作", name:"NP000", width:100, sortable:false, align:'center',
-							renderer:function(val,item,rowIndex){
-			            		return val==undefined?'0':val;;
-			            	}	
-						});
-					}else if(type==2){
-						$.each(title,function(i,n){
-							cols.push({title:n, name:i, width:100, sortable:false, align:'center'});
-						});
-					}else if(type==3){
-						cols.push({title:"非项目工作", name:"NP000", width:100, sortable:false, align:'center',
-							renderer:function(val,item,rowIndex){
-			            		return val==undefined?'0':val;;
-			            	}	
-						});
-					} */
+					
 					queryList();
-
 			 	});
 }
 
-function forSearch(){
+/* function forSearch(){
 	pn = 1;
 	queryList("reload");
-}
+} */
+
 // 初始化列表数据
-function queryList(load){
+function queryList(){
 	var mmGridHeight = $("body").parent().height() - 100;
 	mmg = $('#mmg').mmGrid({
 		indexCol: true,
@@ -178,7 +167,7 @@ function queryList(load){
 		height: mmGridHeight,
 		cols: cols,
 		nowrap: true,
-		//items:[],
+		//items:items,
 		url: '<%=request.getContextPath()%>/BgWorkinghourInfo/selectFororganAndUser',
 		root: 'items',
 		fullWidthRows: true,
@@ -191,10 +180,8 @@ function queryList(load){
 			$(".checkAll").css("display","none").parent().text("选择"); 
 			pn = data.page;
 		});
-	if(load == "reload"){
-		mmg.load({page:pn});
-	}
 }
+
 //导出
 function forExport(){
 	var ids="";

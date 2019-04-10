@@ -22,15 +22,17 @@
 <!-- 项目前期维护javascrip代码 -->
 <script type="text/javascript">
 var mmg_p;
+var allRelatedRows;//所有已关联的项目前期
+
 // 初始化项目前期列表
 function queryList_beforePro(){
 	var ran = Math.random()*100000000;
 	var cols = [
-				{title:'工作任务编号', name:'projectNumber',width:145,sortable:false, align:'center'},
-				{title:'工作任务名称', name:'projectName',width:171,sortable:false, align:'center'},
-				{title:'开始日期', name:'startDate', width:145, sortable:false, align:'center'},
-				{title:'结束日期', name:'endDate', width:145,sortable:false, align:'center'},
-				{title:'已投入工时(h)', name:'workTime', width:145, sortable:false, align:'center'}
+				{title:'工作任务编号', name:'projectNumber',width:150,sortable:false, align:'center'},
+				{title:'工作任务名称', name:'projectName',width:198,sortable:false, align:'center'},
+				{title:'开始日期', name:'startDate', width:150, sortable:false, align:'center'},
+				{title:'结束日期', name:'endDate', width:150,sortable:false, align:'center'},
+				{title:'已投入工时(h)', name:'workTime', width:150, sortable:false, align:'center'}
 	    		];
 	var mmGridHeight = $("body").parent().height() - 180;
 	mmg_p = $('#mmg_p').mmGrid({
@@ -43,16 +45,11 @@ function queryList_beforePro(){
 		cols: cols,
 		nowrap: true,
 		url: '<%=request.getContextPath()%>/project/getBeforePro?isRelated=y&relProId=${id}&ran='+ran,
-		//items:[],
 		multiSelect: true,
 		root: 'items'
-		/*params : function() {
-			return $(".query-box").sotoCollecter();
-		} ,
-		plugins: [
-			$("#pg").mmPaginator({page:pn, limit:limit, totalCountName:'totalCount'})
-		] */
-	})
+	}).on('loadSuccess', function(e, data){
+		allRelatedRows = data.items;
+	});
 }
 
 //添加项目前期
@@ -77,8 +74,9 @@ function forDeleteBeforePro(){
 		layer.msg("请至少选择一条数据！");
 		return;
 	}  
+	
 	mmg_p.removeRow(index);
-	sortIndex();
+	sortIndex("mmg_p");
 }
 
 function forSaveBeforePro(){
@@ -106,19 +104,13 @@ function forSaveBeforePro(){
 	$.post('<%=request.getContextPath()%>/project/saveBeforePro',{proId:proId,ids:ids},function(data){
 		if(data.success == "true"){
 			layer.msg("保存成功!");
+			allRelatedRows = mmg_p.rows();//保存成功后更新关联项目前期
 			parent.queryList("reload");
 		}else{
 			layer.msg("保存失败!");
 		}
 		//queryList("reload");
 	}); 
-}
-
-function sortIndex(){
-	var rows=$("#mmg_p tr:visible");
-	for(var i=0;i<rows.length;i++){
-		$(rows[i]).find(".mmg-index").text(i+1);
-	}
 }
 
 </script>

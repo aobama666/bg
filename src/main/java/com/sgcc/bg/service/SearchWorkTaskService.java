@@ -13,7 +13,7 @@ public interface SearchWorkTaskService {
 	
 	public String searchExamine(int page,int limit,String startTime,String endTime,String projectName,String type,String userName,String userCode,String hrCode);
 	
-	public List<Map<String,Object>> queryOutDelegationExport(String startTime,String endTime,String type,String projectName,String hrCode,List<String> ids);
+	public List<Map<String,String>> queryOutDelegationExport(String startTime,String endTime,String type,String projectName,String hrCode,String deptId,List<String> ids);
 	
 	public String searchExamined(int page,int limit,String startTime,String endTime,String projectName,String type,String userName,String userCode,String hrName);
 	

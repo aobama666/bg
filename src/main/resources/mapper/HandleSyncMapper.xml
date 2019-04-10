@@ -299,4 +299,9 @@
 	<delete id="truncateTable">
 		TRUNCATE TABLE ${tableName}
 	</delete>
+	
+	<delete id="cutErrorRecord" parameterType="int">
+		DELETE FROM BG_SYNC_ERROR_RECORD
+ 		 WHERE TRUNC(CREATE_TIME + #{days}) &lt;= TRUNC(SYSDATE)
+	</delete>
 </mapper>
