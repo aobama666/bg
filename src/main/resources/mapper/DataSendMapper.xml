@@ -17,25 +17,15 @@
 	       A.useralias as project_leader,
 	       DECODE(t.project_role, '0', '项目参与人', '1', '项目负责人') as project_role,
 	       TO_CHAR(t.update_time, 'yyyy-MM-dd') AS update_time
-	  from (select *
-	          from (select ROW_NUMBER() OVER(PARTITION BY WT_TYPE, WT_SEASON, WT_YEAR, EMP_CODE, PROJECT_ID, WBS_CODE, WBS_NAME ORDER BY UPDATE_TIME DESC) rn,
-	                       bg_interface_bsp.*
-	                  from bg_interface_bsp where 1=1
-	                  <if test="time!=null and time!=''">
-			 			and to_char(update_time,'yyyy-mm-dd') = #{time}
-					  </if>
-	                  ) a
-	         where a.rn = 1) t
+	  from bg_interface_bsp t
 	  LEFT JOIN bg_sys_user u
 	    ON u.HRCODE = t.emp_code
 	     LEFT JOIN bg_sys_user A
     	ON A.HRCODE = t.project_leader
-	 where 1 = 1
-		
+	 where 1 = 1		
 		<if test="year!=null and year!='' and year!=0">
 			 and t.wt_year = #{year}
-		</if>
-		
+		</if>		
 		<if test="timeSort!=null and timeSort!=''">
 			 and t.wt_season = #{timeSort}
 		</if>	
@@ -51,7 +41,21 @@
 		<if test="userName!=null and userName!=''">
 			 and u.useralias like '%'||#{userName}||'%'
 		</if>
-	</select>	
+		and t.update_time = (select max(t1.update_time)
+	                          from BG_INTERFACE_BSP t1
+	                         where 1=1
+	                           <if test="year!=null and year!='' and year!=0">
+									 and t1.wt_year = #{year}
+								</if>		
+								<if test="timeSort!=null and timeSort!=''">
+									 and t1.wt_season = #{timeSort}
+								</if>
+								<if test="time!=null and time!=''">	
+	                                and to_char(t1.update_time, 'yyyy-mm-dd') =  #{time}
+	                           </if>
+	                         )
+	</select>
+	<!---->
 	<select id="queryCounted" resultType="double">
 		select decode(SUM(t.working_hour),null,0,SUM(t.working_hour))
 	  	from BG_WORKINGHOUR_INFO t
@@ -60,6 +64,15 @@
     	LEFT JOIN BG_PROJECT_INFO A
     	ON A.ID = t.PROJECT_ID
     	    where 1=1 and t.status='3' and t.valid = 1
+		<if test="projectId!=null and projectId!=''">
+			AND t.project_id IN (
+			SELECT P.ID FROM BG_PROJECT_INFO P
+			WHERE P.STATUS=1
+			AND P.CATEGORY = 'BP'
+			AND P.RELATED_PROJECT_ID = #{projectId})
+			OR 1=1
+		</if>
+
 		<if test="startTime!=null and startTime!=''"> 
 			 <![CDATA[and t.work_time >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
@@ -70,7 +83,7 @@
 			 and  u.hrcode = #{empCode}
 		</if>
 		<if test="wbsCode!=null and wbsCode!=''">
-			 and A.WBS_NUMBER = #{wbsCode}
+			 and A.PROJECT_NUMBER = #{wbsCode}
 		</if>
 		<if test="projectId!=null and projectId!=''">
 			 and t.PROJECT_ID = #{projectId}
@@ -114,7 +127,7 @@
 	<select id="queryCounts"  resultType="java.util.Map">
        
        SELECT * FROM (
-        SELECT W.* ,Z.HRCODE   as XMHRCODE ，X.USERALIAS as  XMUSERALIAS  from   (
+        SELECT W.* ,Z.HRCODE   as XMHRCODE ,X.USERALIAS as  XMUSERALIAS  from   (
         
              SELECT HRCODE,
                WORKER,
