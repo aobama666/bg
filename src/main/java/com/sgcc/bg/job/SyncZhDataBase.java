@@ -33,22 +33,22 @@ public class SyncZhDataBase {
         String time = DateUtil.getTime();
         logger.info("[SyncZhDataBase]执行同步任务的时间"+time);
         /*********************************同步新增组织***********************************************************/
-        syncDataForZHService.syncNewOrganForZH(time);
+//        syncDataForZHService.syncNewOrganForZH(time);
         /*******************************************************************************************************/
         logger.info("新增组织更新完成");
         logger.info("综合系统部门排序开始同步");
         /*********************************同步部门排序**********************************************************/
-        syncDataForZHService.syncDeptSortForZH(time);
+//        syncDataForZHService.syncDeptSortForZH(time);
         logger.info("综合系统部门排序结束同步");
         /*******************************************************************************************************/
         logger.info("处室排序开始同步");
         /**********************************处室排序************************************************************/
-        syncDataForZHService.syncPartSortForZH(time);
+//        syncDataForZHService.syncPartSortForZH(time);
         /******************************************************************************************************/
         logger.info("综合系统处室排序同步结束");
         logger.info("综合系统人员排序同步开始");
         /*********************************人员排序************************************************************/
-        syncDataForZHService.syncEmpSortForZh(time);
+//        syncDataForZHService.syncEmpSortForZh(time);
         /******************************************************************************************************/
         logger.info("综合系统人员排序同步结束");
         logger.info("综合系统同步日历开始");
@@ -58,12 +58,12 @@ public class SyncZhDataBase {
         logger.info("综合系统同步日历班次结束");
         logger.info("综合系统同步人员关系变更开始");
         /*********************************人员关系变更********************************************************/
-        syncDataForZHService.syncEmpRelationForZH(time);
+//        syncDataForZHService.syncEmpRelationForZH(time);
         /*****************************************************************************************************/
         logger.info("综合系统同步人员关系变更结束");
         logger.info("综合系统同步部门类型开始");
         /********************************部门类型排序*********************************************************/
-        syncDataForZHService.syncDeptTypeForZH(time);
+//        syncDataForZHService.syncDeptTypeForZH(time);
         /*****************************************************************************************************/
         logger.info("综合系统同步部门类型结束");
 

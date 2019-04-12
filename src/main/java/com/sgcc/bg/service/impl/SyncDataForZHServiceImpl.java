@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-@Service(value = "syncDataForZH")
+@Service(value = "syncDataForZHService")
 public class SyncDataForZHServiceImpl implements SyncDataForZHService {
 
     @Autowired
@@ -108,6 +108,8 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         syncDataForZHMapper.updateTempByStatusForEmpSort();
         //根据中间表的数据更新员工信息表中的排序信息
         syncDataForZHMapper.insertUserByTempEmpSort();
+        //对比报工系统与同步数据，如果报工系统数据多余综合系统则失效
+        syncDataForZHMapper.deleteNewOrganForBGMore();
         System.out.println("人员信息更新完毕");
     }
 
@@ -129,6 +131,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         syncDataForZHMapper.updateTempByStatusForSchedule();
         //将中间表数据更新到日历表中
         syncDataForZHMapper.insertScheduleForTemp();
+
         //将报工系统日历表中多余的数据逻辑删除
         syncDataForZHMapper.deleteScheduleForMoreDate();
         System.out.println("日历班次信息更新完成");
@@ -153,6 +156,8 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         syncDataForZHMapper.updateTempByStatusForEmpRelation();
         //根据中间表信息更新用户与部门关系表
         syncDataForZHMapper.insertUserAndDeptRelationByTemp();
+        //删除报工系统用户部门中间表中多于综合系统的相关数据
+        syncDataForZHMapper.deleteUaerAndDeptRelationForMore();
         System.out.println("用户与部门关系同步完成");
     }
 
@@ -176,6 +181,8 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         syncDataForZHMapper.updateTempByStatusForDeptType();
         //将中间表中数据添加到部门关系表中
         syncDataForZHMapper.insertDeptTypeByTemp();
+        //删除报工系统多于综合系统的相关数据
+        syncDataForZHMapper.deleteDeptTypeForBGMore();
     }
 
 
