@@ -19,6 +19,8 @@ public interface SyncDataForZHMapper {
     * 根据新增组织中间表更新部门信息
     * */
     void insertDeptByTempNewOrgan();
+    /*删除报工系统中多与综合系统中的数据*/
+    void deleteNewOrganForBGMore();
     /*
      * 获取综合系统的部门排序关系，保存到中间表
      * */
@@ -63,14 +65,21 @@ public interface SyncDataForZHMapper {
     void deleteTempByStatusForEmpRelation();
 
     void updateTempByStatusForEmpRelation();
-
+    /*根据中间表更新用户部门关系表中的数据*/
     void insertUserAndDeptRelationByTemp();
-
+    /*删除报工系统用户部门中间表中多于综合系统的相关数据*/
+    void deleteUaerAndDeptRelationForMore();
+    /*将部门类型数据插入报工中间表中*/
     void insertTempDeptType(Map<String, Object> stringObjectMap);
-
+    /*删除中间表中数据状态为1的数据*/
     void deleteTempByStatusForDeptType();
-
+    /*更新部门类型中新插入数据的状态为1*/
     void updateTempByStatusForDeptType();
-
+    /*根据中间表更新部门类型*/
     void insertDeptTypeByTemp();
+
+    /*删除报工系统部门类型多于综合系统的相关数据*/
+    void deleteDeptTypeForBGMore();
+
+
 }

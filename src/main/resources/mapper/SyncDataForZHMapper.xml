@@ -83,6 +83,15 @@
              CR.ORGAN_TYPE,
              1)
      </insert>
+
+    <!--删除报工系统中多于综合系统的数据-->
+    <update id="deleteNewOrganForBGMore">
+        UPDATE BG_SYS_DEPT SET VALID = 0,UPDATE_DATE= (
+        SELECT UPDATE_DATE FROM BG_CEPRI_ZYSY_NEW_ORGAN WHERE ROWNUM = 1
+        ) WHERE SRC=1 AND DEPTCODE NOT IN (
+         SELECT ORGAN_CODE FROM BG_CEPRI_ZYSY_NEW_ORGAN WHERE ISENABLE = 1
+        )
+    </update>
     <!--将获取的部门排序信息保存到中间表-->
     <!--SELECT UUID,ORGAN_CODE,ORGAN_NAME,ORGAN_ORDER,ISENABLE,ORGAN_TYPE FROM CEPRI_DHB_DEPT_ORDER-->
     <insert id="insertTempDeptSort" parameterType="java.util.Map">
@@ -285,7 +294,7 @@
     <update id="updateTempByStatusForEmpRelation">
          UPDATE BG_CEPRI_ZYSY_SPECIAL_EMP_INFO SET VALID = 1
     </update>
-
+    <!--更新用户关系变更表-->
     <!-- UPDATE SET UD.DEPTID = R.DEPTID ,UD.EXP_START_time = TO_DATE(R.BEGIN_DATE,'yyyy-MM-dd HH24:MI:SS') , UD.EXP_END_time=TO_DATE(R.END_DATE,'yyyy-MM-dd HH24:MI:SS'),UD.UPDATE_DATE = R.UPDATE_DATE WHERE UD.DEPTID != R.DEPTID-->
     <insert id="insertUserAndDeptRelationByTemp">
     MERGE INTO BG_SYS_USER_DEPT_RELATION UD
@@ -311,6 +320,33 @@
          TO_DATE(R.END_DATE, 'yyyy-MM-dd HH24:MI:SS')
          ,'admin',R.UPDATE_DATE)
     </insert>
+
+    <!--将报工多于综合系统的人员关系表删除-->
+    <update id="deleteUaerAndDeptRelationForMore">
+        UPDATE BG_SYS_USER_DEPT_RELATION UD
+           SET UD.VALID       = 0,
+               UD.UPDATE_DATE =
+               (SELECT EMP.UPDATE_DATE
+                  FROM BG_CEPRI_ZYSY_SPECIAL_EMP_INFO EMP
+                 WHERE ROWNUM = 1)
+
+         WHERE (UD.USERID IN (SELECT U.USERID
+                                FROM BG_CEPRI_ZYSY_SPECIAL_EMP_INFO T
+                                LEFT JOIN BG_SYS_USER U
+                                  ON T.EMP_CODE = U.HRCODE
+                                LEFT JOIN BG_SYS_DEPT D
+                                  ON D.DEPTCODE = T.ST_OFFICE_CODE
+                               WHERE U.USERID IS NOT NULL
+                                 AND D.DEPTID IS NOT NULL) AND
+               UD.DEPTID NOT IN (SELECT D.DEPTID
+                                    FROM BG_CEPRI_ZYSY_SPECIAL_EMP_INFO T
+                                    LEFT JOIN BG_SYS_USER U
+                                      ON T.EMP_CODE = U.HRCODE
+                                    LEFT JOIN BG_SYS_DEPT D
+                                      ON D.DEPTCODE = T.ST_OFFICE_CODE
+                                   WHERE U.USERID IS NOT NULL
+                                     AND D.DEPTID IS NOT NULL))
+    </update>
     <!--将部门类型数据添加到中间表中-->
     <insert id="insertTempDeptType" parameterType="java.util.Map">
       INSERT INTO BG_CEPRI_JXGL_ORGAN_TYPE_M
@@ -365,4 +401,20 @@
           VALUES
             (SYS_GUID(), TEM.DEPTID, TEM.ID, 1, SYSDATE, 'admin')
     </insert>
+    <!--删除组织关系表中多于综合系统表的相关数据-->
+    <update id="deleteDeptTypeForBGMore">
+        UPDATE BG_SYS_APPROVAL_DEPT_R_ORGTYPE DO
+           SET DO.VALID    = 0,
+               UPDATE_TIME =
+               (SELECT UPDATE_DATE FROM BG_CEPRI_JXGL_ORGAN_TYPE_M WHERE ROWNUM = 1)
+         WHERE DO.ORGAN_ID NOT IN (SELECT D.DEPTID
+                                   FROM BG_CEPRI_JXGL_ORGAN_TYPE_M T
+                                   LEFT JOIN BG_SYS_DEPT D
+                                     ON T.ORGAN_CODE = D.DEPTCODE
+                                   LEFT JOIN BG_SYS_DATADICTIONARY SD
+                                     ON SD.CODE = T.ORGAN_TYPE_CODE
+                                  WHERE T.ORGAN_TYPE_CODE IN ('OT1', 'OT2', 'OT3')
+                                    AND D.VALID = 1
+                                    AND D.DEPTID IS NOT NULL)
+    </update>
 </mapper>

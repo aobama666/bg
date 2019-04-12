@@ -31,5 +31,9 @@ public interface SyncDataForZHService {
      */
     void syncEmpRelationForZH(String time);
 
+    /**
+     * 从综合系统同步部门类型
+     * @param time
+     */
     void syncDeptTypeForZH(String time);
 }
