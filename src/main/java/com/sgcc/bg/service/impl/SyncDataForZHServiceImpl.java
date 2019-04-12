@@ -183,6 +183,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         syncDataForZHMapper.insertDeptTypeByTemp();
         //删除报工系统多于综合系统的相关数据
         syncDataForZHMapper.deleteDeptTypeForBGMore();
+        System.out.println("部门类型数据同步完成");
     }
 
 
