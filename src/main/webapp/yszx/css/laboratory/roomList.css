@@ -186,7 +186,7 @@ body div.btn_type_box .btn_type:ACTIVE {
     background-color: #2D9592;
 }
 .maxBox{
-	max-height:93px;
+	height:121px;
 	overflow-y:auto;
 	width:94%;
 	margin:0 auto;
@@ -256,4 +256,39 @@ body div.btn_type_box .btn_type:ACTIVE {
 .btnContent{
     text-align: center;
     margin: 50px 0 20px;
-    }
+   }
+ .reserveState{
+ 	width:98%;
+ }
+ .reserveState tr th{
+ padding:15px 0;
+ 
+  }
+  .thTableStyle tr td,.thTableStyle tr th{
+  	text-align:center;
+  }
+.thTableStyle tr td:nth-child(2n+1){
+	background-color:#fff;
+}
+.thTableStyle tr th{
+	background-color:#D5E7E7;
+}
+.tableStyle  .redColor{
+	color:red;
+}
+.visitApprove th{
+	font-weight:normal;
+	padding-top:12px;
+	padding-bottom:12px;
+	
+}
+.textbox{
+	width:100%!important;
+	border:0!important;
+}
+.panel-header, .panel-body{
+	border-color:#ccc!important;
+}
+.combo-arrow{
+	    background:#fff!important;
+}

@@ -7,14 +7,22 @@ var index = 0;
 roomList.btn_type_flag = 0;
 $(function(){
 	//‘新增’页面，院领导姓名多选下拉框
-	 $(".tree-data").combotree('loadData',[{
+	var localData = [{
 		 id:1,
-		 text:'姓名',
+		 text:'',
 		 children:[{
 			 id:11,
 			 text:'王晓红',
+		 },{
+			 id:12,
+			 text:'王平',
 		 }]
-		 }]);
+	}]
+	$(".tree-data").combotree({
+		data:localData,
+		multiple:true
+	})
+	 
 	roomList.initDataGrid();
 	var classQuery = $(".changeQuery");
 	/* 输入框的change事件，在输入过程中自动查询  */
@@ -365,4 +373,28 @@ function delLeader(obj){
             }
         });
     }
+}
+function messageSubmit(){
+	layer.confirm('<table class="visitUnitAccompany tableStyle thTableStyle">'+
+			'<tr>'+
+				'<th>选择</th>'+
+				'<th>审批人</th>'+
+				'<th>审批部门</th>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>'+
+					'<input type="checkbox" style="width:16px;"/>'+
+				'</td>'+
+				'<td class="addInputStyle">'+
+					'王平'+
+				'</td>'+
+				'<td class="addInputStyle">'+
+					'信息中心'+
+				'</td>'+
+			'</tr>'+
+		
+		'</table>',{title:'请选择审批人', skin:'demo-class'},function(index){
+
+
+        })
 }
