@@ -7,7 +7,6 @@ import java.util.Map;
 public interface ManualSyncZHDataService {
     String syncDataForZH(HttpServletRequest request);
 
-    String queryList(HttpServletRequest request);
 
     List<Map<String,String>> getAllOperationRecord(String userName, Integer dataType);
 }

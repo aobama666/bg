@@ -21,7 +21,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
      * 从综合系统同步新增组织信息
      */
     @Override
-    public void syncNewOrganForZH(String time) {
+    public void syncNewOrganForZH(String time,String userName) {
         //通过jdbc链接获取综合系统的新增组织数据
         String sql =
                 "SELECT UUID,ORGAN_ID,PARENT_ID,ORGAN_CODE,ORANG_NAME,PARENT_CODE,BEGIN_DATE,END_DATE,INNER_ORGAN_LEV_CODE," +
@@ -34,6 +34,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         //将获取到的结果保存到报工系统的中间表中BG_CEPRI_ZYSY_NEW_ORGAN设置状态为0
         for (int i = 0; i < maps.size(); i++) {
             maps.get(i).put("time", time);//添加同一批次更新的时间戳
+            maps.get(i).put("userName", userName);//添加更新用户
             syncDataForZHMapper.insertTempNewOrgan(maps.get(i));
         }
         System.out.println("获取的新增组织信息已经插入中间表");
@@ -50,7 +51,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
     }
 
     @Override
-    public void syncDeptSortForZH(String time) {
+    public void syncDeptSortForZH(String time,String userName) {
         //通过jdbc获取综合系统中的部门排序数据
         String sql = "SELECT UUID,ORGAN_CODE,ORGAN_NAME,ORGAN_ORDER,ISENABLE,ORGAN_TYPE,SJC FROM CEPRI_DHB_DEPT_ORDER";
         List<Map<String, Object>> maps = getJdbcQuery(sql, null);
@@ -59,6 +60,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         }
         for (int i = 0; i < maps.size(); i++) {
             maps.get(i).put("time", time);//添加同一批次更新的时间戳,由执行定时任务的时候获取，并传入相关执行流程
+            maps.get(i).put("userName", userName);//添加更新用户
             syncDataForZHMapper.insertTempDeptSort(maps.get(i));
         }
         //删除中间表的数据状态为1
@@ -72,7 +74,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
     }
 
     @Override
-    public void syncPartSortForZH(String time) {
+    public void syncPartSortForZH(String time,String userName) {
         String sql = "SELECT T.PART_CODE,T.PART_NAME,T.PART_ORDER,T.ORGAN_TYPE,T.SJC,T.ISENABLE FROM CEPRI_DHB_PART_ORDER T";
         List<Map<String, Object>> maps = getJdbcQuery(sql, null);
         if (maps == null || maps.size() == 0) {
@@ -80,6 +82,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         }
         for (int i = 0; i < maps.size(); i++) {
             maps.get(i).put("time", time);//添加同一批次更新的时间戳,由执行定时任务的时候获取，并传入相关执行流程
+            maps.get(i).put("userName", userName);//添加更新用户
             syncDataForZHMapper.insertTempPartSort(maps.get(i));
         }
         //删除中间表中状态为1的数据
@@ -91,7 +94,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
     }
 
     @Override
-    public void syncEmpSortForZh(String time) {
+    public void syncEmpSortForZh(String time,String userName) {
         String sql =
                 "SELECT T.EMP_CODE,T.EMP_NAME,T.EMP_ORDER,T.ZHUANZE_DEPT_CODE,T.ZHUANZE_USER_ID,T.ORGAN_CODE,T.SJC,T.ISENABLE FROM CEPRI_DHB_EMP_ORDER T";
         List<Map<String, Object>> maps = getJdbcQuery(sql, null);
@@ -100,6 +103,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         }
         for (int i = 0; i < maps.size(); i++) {
             maps.get(i).put("time", time);//添加同一批次更新的时间戳,由执行定时任务的时候获取，并传入相关执行流程
+            maps.get(i).put("userName", userName);//添加更新用户
             syncDataForZHMapper.insertTempEmpSort(maps.get(i));
         }
         //删除中间表中状态为1的数据
@@ -114,7 +118,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
     }
 
     @Override
-    public void syncScheduleForZH(String time) {
+    public void syncScheduleForZH(String time,String userName) {
         String sql =
                 "SELECT T.BCXX_DATE,T.BCXX_WEEK,T.BC_CODE,T.RBC_CODE,T.IS_HOLIDAY,T.SJC,T.ISENABLE FROM CEPRI_KAOQIN_BCXX T";
         List<Map<String, Object>> maps = getJdbcQuery(sql, null);
@@ -123,6 +127,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         }
         for (int i = 0; i < maps.size(); i++) {
             maps.get(i).put("time", time);//添加同一批次更新的时间戳,由执行定时任务的时候获取，并传入相关执行流程
+            maps.get(i).put("userName", userName);//添加更新用户
             syncDataForZHMapper.insertTempSchedule(maps.get(i));
         }
         //删除中间表中状态为1的数据
@@ -138,7 +143,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
     }
 
     @Override
-    public void syncEmpRelationForZH(String time) {
+    public void syncEmpRelationForZH(String time,String userName) {
         String sql =
                 "SELECT T.EMP_CODE,T.BEGIN_DATE,T.END_DATE,T.EMP_PERSON_AREA,T.EMP_PERSON_BTRTL," +
                         "T.ST_OFFICE_CODE,T.ERP_POST_CODE,T.ST_OFFICE_NAME,T.ST_DEPT_CODE,T.ST_DEPT_NAME,T.ST_OFFICE_ID,T.REMARKS,T.SJC,T.ISENABLE,T.UPDATE_TIME FROM CEPRI_ZYSY_SPECIAL_EMP_INFO T";
@@ -148,6 +153,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         }
         for (int i = 0; i < maps.size(); i++) {
             maps.get(i).put("time", time);//添加同一批次更新的时间戳,由执行定时任务的时候获取，并传入相关执行流程
+            maps.get(i).put("userName", userName);//添加更新用户
             syncDataForZHMapper.insertTempEmpRelaion(maps.get(i));
         }
         //将中间表状态为1的数据删除
@@ -162,7 +168,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
     }
 
     @Override
-    public void syncDeptTypeForZH(String time) {
+    public void syncDeptTypeForZH(String time,String userName) {
         //部门类型（实时）
         String sql = "SELECT * FROM CEPRI_JXGL_ORGAN_TYPE_M";
         List<Map<String, Object>> maps = getJdbcQuery(sql, null);
@@ -171,6 +177,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         }
         for (int i = 0; i < maps.size(); i++) {
             maps.get(i).put("time", time);//添加同一批次更新的时间戳,由执行定时任务的时候获取，并传入相关执行流程
+            maps.get(i).put("userName", userName);//添加更新用户
             syncDataForZHMapper.insertTempDeptType(maps.get(i));
         }
 

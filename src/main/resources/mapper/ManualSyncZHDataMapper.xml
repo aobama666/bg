@@ -6,32 +6,32 @@
  -->
 <mapper namespace="com.sgcc.bg.mapper.ManualSyncZHDataMapper">
    <!--将同步操作信息保存到数据库表中-->
-    <insert id="insertOperationRecord" parameterType="com.sgcc.bg.model.OperationRecordPo">
-        INSERT INTO BG_SYNC_ZH_OPERATION_RECORD
+    <insert id="insertOperationRecord" parameterType="java.util.Map">
+        INSERT INTO BG_SYNC_REQUEST
         (
-        UUID,OPERATION_USER,OPERATION_CONTENT,OPERATION_STATUS,OPERATION_START_DATE,OPERATION_END_DATE,CREATE_DATE,CREATE_USER,ERROR_INFO,DATA_MARK
+        UUID,REQUEST_TYPE,OPERATION_STATUS,START_DATE,END_DATE,CREATE_DATE,CREATE_USER_ID,ERROR_MESSAGE,REMARK
         )
         VALUES (
-           SYS_GUID(),#{operationUser,jdbcType=VARCHAR},
-           #{operationContent,jdbcType=VARCHAR},
+           SYS_GUID(),
+           #{requestType,jdbcType=VARCHAR},
            #{operationStatus,jdbcType=VARCHAR},
-           #{operationStartDate,jdbcType=VARCHAR},
-           #{operationEndDate,jdbcType=VARCHAR},
+           #{startDate,jdbcType=VARCHAR},
+           #{endDate,jdbcType=VARCHAR},
            #{createDate,jdbcType=VARCHAR},
-           #{createUser,jdbcType=VARCHAR},
-           #{errorInfo,jdbcType=VARCHAR},
-           #{dataMark,jdbcType=VARCHAR}
+           #{createUserId,jdbcType=VARCHAR},
+           #{errorMessage,jdbcType=VARCHAR},
+           #{requestRemark,jdbcType=VARCHAR}
         )
     </insert>
 
     <select id="getAllOperationRecord" resultType="java.util.Map">
         SELECT
-        OPERATION_USER,OPERATION_CONTENT,OPERATION_STATUS,OPERATION_START_DATE,OPERATION_END_DATE,ERROR_INFO
-         FROM
-        BG_SYNC_ZH_OPERATION_RECORD
+        CREATE_USER_ID,OPERATION_STATUS,START_DATE,END_DATE,ERROR_MESSAGE,REQUEST_TYPE
+        FROM
+        BG_SYNC_REQUEST
         WHERE 1=1
         <if test="dataType != null">
-            AND DATA_MARK = #{dataType}
+            AND REQUEST_TYPE = #{dataType}
         </if>
         <if test="userName != null and userName != ''">
             AND  OPERATION_USER LIKE '%'||#{userName}||'%'
