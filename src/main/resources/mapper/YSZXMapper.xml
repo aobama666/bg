@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.mapper.YSZXMapper">
+
+
+	<insert id="addIdeaInfo"  parameterType="com.sgcc.bg.yszx.bean.IdeaInfo">
+		INSERT INTO TB_YSZX_IDEA ( 
+			UUID,	 
+            APPLYID, 
+            CONTACTNAME,
+			CONTACTMOBILE, 
+			APPLYSTATUS,
+			STATEDATE, 		
+			ENDDATE,	 
+			REMARK,	
+			ISFINISH, 		
+			USERID,	 
+			DEPTID,	
+			APPLYDATE,
+			VISITUNITTYPE,	 		
+			VISITUNITNAME,	 	
+			VISITNUMBER, 	
+			COMPANYNUMBER,	 	
+			TYPE,
+			STATUS,
+			DATECREATED
+			)
+		VALUES(
+			#{id,jdbcType=VARCHAR}, 
+			#{applyId,jdbcType=VARCHAR},
+			#{contactName,jdbcType=VARCHAR}, 
+			#{contactMoile,jdbcType=VARCHAR},
+			#{applyStatus,jdbcType=NUMERIC},
+			#{stateDate,jdbcType=DATE},
+			#{endDate,jdbcType=DATE},
+			#{remark,jdbcType=VARCHAR},
+			#{isFinish,jdbcType=NUMERIC},
+			#{userId,jdbcType=VARCHAR},
+			#{deptId,jdbcType=VARCHAR},
+			#{applyDate,jdbcType=DATE},
+			#{visitunitType,jdbcType=VARCHAR},
+			#{visitunitName,jdbcType=VARCHAR},
+			#{visitNumber,jdbcType=NUMERIC},
+			#{companyNumber,jdbcType=NUMERIC},
+			#{type,jdbcType=VARCHAR},
+			#{status,jdbcType=VARCHAR},
+			#{dateCreated,jdbcType=DATE}
+			)
+	</insert>
+	
+	<insert id="addVisitInfo"  parameterType="com.sgcc.bg.yszx.bean.VisitInfo">
+		INSERT INTO TB_YSZX_VISIT ( 
+			UUID,	 		
+            IDEAID,	 
+            VISITUSERNAME,	 
+   			CREATOR,	 	
+			DATECREATED,	 	
+			VISITLEVEL,	 
+			VISITPOSITION,	 		
+			CREATEDATE,	 
+			STATUS	 		
+			)
+		VALUES(
+			#{id,jdbcType=VARCHAR}, 
+			#{ideaId,jdbcType=VARCHAR},
+			#{visitUserName,jdbcType=VARCHAR}, 
+			#{creator,jdbcType=VARCHAR},
+			#{dataCreated,jdbcType=DATE},
+			#{visitLevel,jdbcType=VARCHAR},
+			#{visitPosition,jdbcType=VARCHAR},
+			#{createDate,jdbcType=DATE},
+			#{status,jdbcType=VARCHAR}
+			)
+	</insert>
+	
+	<insert id="addCompanyLeadershipInfo"  parameterType="com.sgcc.bg.yszx.bean.CompanyLeadershipInfo">
+		INSERT INTO TB_YSZX_COMPANY_LEADERSHIP ( 
+			UUID,	 		
+            IDEAID,	 
+            COMPANYUSERNAME,	 
+   			COMPANYHRCODE,	 	
+			DATECREATED,
+			CREATEDATE,	 	 		
+			STATUS,
+			CREATOR 		
+			)
+		VALUES(
+			#{id,jdbcType=VARCHAR}, 
+			#{ideaId,jdbcType=VARCHAR},
+			#{companyUserName,jdbcType=VARCHAR}, 
+			#{companyHRcode,jdbcType=VARCHAR}, 
+			#{dataCreated,jdbcType=DATE},
+			#{createDate,jdbcType=DATE},
+			#{status,jdbcType=VARCHAR},
+			#{creator,jdbcType=VARCHAR}
+			)
+	</insert>
+	<insert id="addCompanyDeptInfo"  parameterType="com.sgcc.bg.yszx.bean.CompanyDeptInfo">
+		INSERT INTO TB_YSZX_COMPANY_DEPT ( 
+			UUID,	 		
+            IDEAID,	 
+            COMPANYUSERID,	 
+   			COMPANYUSERNAME,	 	
+   			COMPANYPOSITION,	 	
+			DATECREATED,
+			CREATEDATE,	 	 		
+			STATUS,
+			CREATOR 		
+			)
+		VALUES(
+			#{id,jdbcType=VARCHAR}, 
+			#{ideaId,jdbcType=VARCHAR},
+			#{companyUserId,jdbcType=VARCHAR}, 
+			#{companyUserName,jdbcType=VARCHAR}, 
+			#{companyPosition,jdbcType=VARCHAR}, 
+			#{dataCreated,jdbcType=DATE},
+			#{createDate,jdbcType=DATE},
+			#{status,jdbcType=VARCHAR},
+			#{creator,jdbcType=VARCHAR}
+			)
+	</insert>
+	<select id="getUserId" resultType="java.util.Map">
+		SELECT 
+		USERNAME,USERALIAS,HRDEPTNAME,HRDEPTCODE,POSTCODE,POSTNAME
+		  FROM BG_SYS_USER
+		WHERE SRC = 0  AND STATE = 1
+		   AND USERID = #{userid,jdbcType=VARCHAR}
+	</select>
+	
+	
+	
+</mapper>
