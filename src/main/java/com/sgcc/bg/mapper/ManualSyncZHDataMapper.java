@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Repository
 public interface ManualSyncZHDataMapper {
-    void insertOperationRecord(OperationRecordPo recordPo);
+    void insertOperationRecord(Map<String,String> recordPo);
 
     List<Map<String,String>> getAllOperationRecord(@Param("userName") String userName,@Param("dataType") Integer dataType);
 }

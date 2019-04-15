@@ -139,17 +139,21 @@
                 {title:'序列', name:'hex2', width:40, sortable:false, align:'center', hidden: true, lockDisplay: true},
                 // {title:'', name:'startToEnd', width:100, sortable:false, align:'center'},
                 // {title:'人员编号', name:'userCode', width:100, sortable:false, align:'center'},
-                {title:'操作内容', name:'OPERATION_CONTENT', width:80, sortable:false, align:'center'},
+                {title:'请求类型', name:'REQUEST_TYPE', width:80, sortable:false, align:'center',
+                    renderer:function(val,item,rowIndex){
+                        var dict=${requestStatusJson};
+                        return dict[val];
+                    }},
                 // {title:'工作类型', name:'workType', width:80, sortable:false, align:'center'},
-                {title:'操作人员', name:'OPERATION_USER', width:120, sortable:false, align:'center'},
+                {title:'操作人员', name:'CREATE_USER_ID', width:120, sortable:false, align:'center'},
                 {title:'状态', name:'OPERATION_STATUS', width:100, sortable:false, align:'center',
                     renderer:function(val,item,rowIndex){
                         var dict=${statusJson};
                         return dict[val];
                     }},
-                {title:'开始时间', name:'OPERATION_START_DATE', width:80, sortable:false, align:'center'},
-                {title:'结束时间', name:'OPERATION_END_DATE', width:120, sortable:false, align:'center'},
-                {title:'错误信息', name:'errorInfo', width:120, sortable:false, align:'center'}
+                {title:'开始时间', name:'START_DATE', width:80, sortable:false, align:'center'},
+                {title:'结束时间', name:'END_DATE', width:120, sortable:false, align:'center'},
+                {title:'错误信息', name:'ERROR_MESSAGE', width:120, sortable:false, align:'center'}
             ];
             var mmGridHeight = $("body").parent().height() - 220;
             mmg = $('#mmg').mmGrid({

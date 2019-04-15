@@ -7,7 +7,7 @@ import java.util.Map;
 
 @Repository
 public interface SyncDataForZHMapper {
-    /*
+    /**
     将获取到的新增组织信息保存到中间表中
      */
     void insertTempNewOrgan(Map<String, Object> stringObjectMap);
@@ -15,13 +15,13 @@ public interface SyncDataForZHMapper {
     void deleteTempByStatus();
     //  将新插入的新增组织信息状态更改为1
     void updateTempForIsenable();
-    /*
+    /**
     * 根据新增组织中间表更新部门信息
     * */
     void insertDeptByTempNewOrgan();
     /*删除报工系统中多与综合系统中的数据*/
     void deleteNewOrganForBGMore();
-    /*
+    /**
      * 获取综合系统的部门排序关系，保存到中间表
      * */
     void insertTempDeptSort(Map<String, Object> stringObjectMap);

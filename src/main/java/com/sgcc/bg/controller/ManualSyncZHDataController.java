@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.gson.Gson;
 import com.sgcc.bg.common.*;
+import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.ManualSyncZHDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,11 +30,16 @@ public class ManualSyncZHDataController {
     @Autowired
     private ManualSyncZHDataService manualSyncZHDataService;
 
+    @Autowired
+    private DataDictionaryService dataDictionaryService;
+
 
     @RequestMapping(value = "/index")
     public ModelAndView goManualSyncPage(HttpServletRequest request){
         String statusJson ="{\"0\":\"失败\",\"1\":\"成功\"}";
+        String requestStatusJson = dataDictionaryService.getDictDataJsonStr("request_type");
         request.setAttribute("statusJson", statusJson);
+        request.setAttribute("requestStatusJson", requestStatusJson);
         ModelAndView mv = new ModelAndView("syncZHData/index");
         return mv;
     }
@@ -50,10 +56,22 @@ public class ManualSyncZHDataController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "operationSync",produces = "application/json")
+    @RequestMapping(value = "/operationSync",produces = "application/json")
     public String operationSyncData(HttpServletRequest request, Model model){
 //        System.out.println("用户名是："+webUtils.getUsername());
-        return manualSyncZHDataService.syncDataForZH(request);
+        Map<String, Object> map = manualSyncZHDataService.syncDataForZH(request);
+//        Map<String , String> stringMap = new HashMap<>();
+        Map<String ,String> recordPo = null;
+        if("0".equals(map.get("status")) && map.get("recordPo") != null){//代表失败
+            recordPo = (Map<String, String>) map.get("recordPo");
+            manualSyncZHDataService.insertOperationRecord(recordPo);
+            map.remove("recordPo");
+        }else{
+            recordPo = (Map<String, String>) map.get("recordPo");
+            manualSyncZHDataService.insertOperationRecord(recordPo);
+            map.remove("recordPo");
+        }
+        return JSON.toJSONString(map);
     }
 
     /*
