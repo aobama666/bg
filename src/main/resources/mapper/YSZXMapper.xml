@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.mapper.YSZXMapper">
+
+
+	<insert id="addIdeaInfo"  parameterType="com.sgcc.bg.yszx.bean.IdeaInfo">
+		INSERT INTO TB_YSZX_IDEA ( 
+			UUID,	 
+            APPLY_DEPT, 
+            START_DATE,
+			END_DATE, 
+			CONTACT_USER,
+			CONTACT_PHONE, 		
+			VISIT_UNIT_TYPE,	 
+			VISIT_UNIT_NAME,	
+			VISITOR_NUMBER, 		
+			COMPANY_USER_NUMBER,	 
+			REMARK,	
+			STATUS,
+			APPLY_ID,	 		
+			VISIT_LEVEL,	 	
+			VALID, 	
+			CREATE_USER,	 	
+			CREATE_TIME,
+			UPDATE_USER,
+			UPDATE_TIME
+			)
+		VALUES(
+			#{id,jdbcType=VARCHAR}, 
+			#{applyDept,jdbcType=VARCHAR},
+			to_date(#{stateDate},'YYYY-MM-DD HH24:MI:SS'), 
+			to_date(#{endDate},'YYYY-MM-DD HH24:MI:SS'), 
+			#{contactUser,jdbcType=VARCHAR}, 
+			#{contactPhone,jdbcType=VARCHAR},
+			#{visitUnitType,jdbcType=VARCHAR},
+			#{visitUnitName,jdbcType=VARCHAR},
+			#{visitorNumber,jdbcType=NUMERIC},
+			#{companyUserNumber,jdbcType=NUMERIC},
+			#{remark,jdbcType=VARCHAR},
+			#{status,jdbcType=VARCHAR},
+			#{applyId,jdbcType=VARCHAR},
+			#{visitLevel,jdbcType=VARCHAR},
+			#{valId,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{updateUser,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=TIMESTAMP}
+			)
+	</insert>
+	
+	
+	
+	
+	<insert id="addVisitInfo"  parameterType="com.sgcc.bg.yszx.bean.VisitInfo">
+		INSERT INTO TB_YSZX_VISIT ( 
+			UUID,	 		
+            IDEAID,	 
+            USERNAME,	 
+   			POSITION,	 	
+			USERLEVEL,	 	
+			SORT_ID,	 
+			REMARK,	 		
+			VALID,	 
+			CREATE_USER,
+			CREATE_TIME,
+			UPDATE_USER,
+			UPDATE_TIME 		
+			)
+		VALUES(
+			#{id,jdbcType=VARCHAR}, 
+			#{ideaId,jdbcType=VARCHAR},
+			#{userName,jdbcType=VARCHAR}, 
+			#{position,jdbcType=VARCHAR},
+			#{userLevel,jdbcType=VARCHAR},
+			#{sortId,jdbcType=NUMERIC},
+			#{remark,jdbcType=VARCHAR},
+			#{valId,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{updateUser,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=TIMESTAMP}
+			)
+	</insert>
+	
+	<insert id="addCompanyLeaderInfo"  parameterType="com.sgcc.bg.yszx.bean.CompanyLeaderInfo">
+		INSERT INTO TB_YSZX_COMPANY_LEADER ( 
+			UUID,	 		
+            IDEAID,	 
+            USERID,	 
+   			REMARK,	 	
+			VALID,
+			CREATE_USER,
+			CREATE_TIME,
+			UPDATE_USER,
+			UPDATE_TIME
+			)
+		VALUES(
+			#{id,jdbcType=VARCHAR}, 
+			#{ideaId,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR}, 
+			#{remark,jdbcType=VARCHAR}, 
+			#{valid,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{updateUser,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=TIMESTAMP}
+			)
+	</insert>
+	
+	<insert id="addCompanyUserInfo"  parameterType="com.sgcc.bg.yszx.bean.CompanyUserInfo">
+		INSERT INTO TB_YSZX_COMPANY_USER ( 
+			UUID,	 		
+            IDEAID,	 
+            USERID,	 
+   			REMARK,	 	
+   			VALID,	 	
+			CREATE_USER,
+			CREATE_TIME,	 	 		
+			UPDATE_USER,
+			UPDATE_TIME 		
+			)
+		VALUES(
+			#{id,jdbcType=VARCHAR}, 
+			#{ideaId,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR}, 
+			#{remark,jdbcType=VARCHAR}, 
+			#{valid,jdbcType=VARCHAR}, 
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{updateUser,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=TIMESTAMP} 
+			)
+	</insert>
+	
+	
+	
+	<select id="getUserId" resultType="java.util.Map">
+		SELECT 
+		USERNAME,USERALIAS,HRDEPTNAME,HRDEPTCODE,POSTCODE,POSTNAME
+		  FROM BG_SYS_USER
+		WHERE SRC = 0  AND STATE = 1
+		   AND USERID = #{userid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectForIdeaDate" resultType="java.util.Map">
+		SELECT 
+		  TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI:SS') AS START_DATE,
+		  TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI:SS')  AS  END_DATE
+		  FROM TB_YSZX_IDEA
+		WHERE VALID =  '1'
+	</select>
+	
+	
+	
+</mapper>

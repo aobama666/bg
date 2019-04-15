@@ -55,7 +55,7 @@ public class WebUtils {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	private CommonUser getCurrentUserJson(){
+	public CommonUser getCurrentUserJson(){
 		String cookiename = "loginSessionId";
 		String cookievalue = "";
 		Cookie[] cookies = getHttpServletRequest().getCookies();
