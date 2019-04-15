@@ -56,10 +56,22 @@ public class ManualSyncZHDataController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "operationSync",produces = "application/json")
+    @RequestMapping(value = "/operationSync",produces = "application/json")
     public String operationSyncData(HttpServletRequest request, Model model){
 //        System.out.println("用户名是："+webUtils.getUsername());
-        return manualSyncZHDataService.syncDataForZH(request);
+        Map<String, Object> map = manualSyncZHDataService.syncDataForZH(request);
+//        Map<String , String> stringMap = new HashMap<>();
+        Map<String ,String> recordPo = null;
+        if("0".equals(map.get("status")) && map.get("recordPo") != null){//代表失败
+            recordPo = (Map<String, String>) map.get("recordPo");
+            manualSyncZHDataService.insertOperationRecord(recordPo);
+            map.remove("recordPo");
+        }else{
+            recordPo = (Map<String, String>) map.get("recordPo");
+            manualSyncZHDataService.insertOperationRecord(recordPo);
+            map.remove("recordPo");
+        }
+        return JSON.toJSONString(map);
     }
 
     /*

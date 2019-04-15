@@ -74,9 +74,7 @@
                        N.UPDATE_DATE
                   FROM BG_CEPRI_ZYSY_NEW_ORGAN N
                  INNER JOIN BG_SYS_DEPT D
-                    ON D.PDEPTCODE = N.PARENT_CODE
-                   AND N.ORGAN_CODE = D.DEPTCODE
-
+                   ON N.ORGAN_CODE = D.DEPTCODE
                  WHERE N.VALID = 1
                    AND D.VALID = 1
                    AND D.DEPTID IS NOT NULL) CR
@@ -330,7 +328,10 @@
                ON D.DEPTCODE = T.ST_OFFICE_CODE
             WHERE U.USERID IS NOT NULL
               AND D.DEPTID IS NOT NULL) R
-    ON (UD.USERID = R.USERID AND UD.DEPTID = R.DEPTID AND UD.EXP_START_TIME != TO_DATE(R.BEGIN_DATE, 'yyyy-MM-dd HH24:MI:SS') AND UD.SRC = '1')
+    ON (UD.USERID = R.USERID AND UD.DEPTID = R.DEPTID
+       AND UD.EXP_START_TIME = TO_DATE(R.BEGIN_DATE, 'yyyy-MM-dd HH24:MI:SS')
+       AND UD.EXP_END_TIME = TO_DATE(R.END_DATE, 'yyyy-MM-dd HH24:MI:SS')
+       AND UD.SRC = '1')
     WHEN MATCHED THEN
       UPDATE SET UD.UPDATE_DATE = R.UPDATE_DATE
     WHEN NOT MATCHED THEN

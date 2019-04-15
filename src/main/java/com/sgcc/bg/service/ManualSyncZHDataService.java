@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface ManualSyncZHDataService {
-    String syncDataForZH(HttpServletRequest request);
+    Map<String , Object> syncDataForZH(HttpServletRequest request);
 
-
+    void insertOperationRecord(Map<String, String> recordPo);
     List<Map<String,String>> getAllOperationRecord(String userName, Integer dataType);
 }

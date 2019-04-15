@@ -39,10 +39,9 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
     private ManualSyncZHDataMapper manualSyncZHDataMapper;
 
     @Override
-    public String syncDataForZH(HttpServletRequest request) {
-        Map<String, String> resultMap = new HashMap<>();
+    public Map<String , Object> syncDataForZH(HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
         Map<String, String> recordPo = new HashMap<>();
-//        OperationRecordPo recordPo = new OperationRecordPo();
         String category = Rtext.toStringTrim(request.getParameter("category"),"");
         String requestRemark = Rtext.toStringTrim(request.getParameter("requestRemark"),"");
         //将备注存入map中
@@ -55,7 +54,8 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
         if(null == category || category==""){
             resultMap.put("status","0");
             resultMap.put("info","选择同步的数据类型有误，传值错误");
-            return JSON.toJSONString(resultMap);
+            resultMap.put("recordPo",recordPo);
+            return resultMap;
         }
         /*   <option value="1">新增组织</option>
                         <option value="2">部门排序</option>
@@ -121,11 +121,12 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
             recordPo.put("errorMessage",errorInfo);
             System.out.println("错误信息的长度是："+errorInfo.length());
             //将相关的操作痕迹保存到数据库
-            insertOperationRecord(recordPo);
+//            insertOperationRecord(recordPo);
             resultMap.put("status","0");
             resultMap.put("info","选择同步的数据过程出错");
+            resultMap.put("recordPo",recordPo);
 //            e.printStackTrace();
-            return JSON.toJSONString(resultMap);
+            return resultMap;
         }
         //程序正常执行到此处
         recordPo.put("operationStatus","1");//1代表成功
@@ -133,14 +134,16 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
         recordPo.put("endDate",endDate);
         recordPo.put("createDate",endDate);
         recordPo.put("errorMessage","");
-        manualSyncZHDataMapper.insertOperationRecord(recordPo);
+//        manualSyncZHDataMapper.insertOperationRecord(recordPo);
         end= System.currentTimeMillis();
         logger.info(webUtils.getUsername()+"   手动更新成功,执行耗时："+(end-start));
         resultMap.put("status","1");
         resultMap.put("info","手动执行同步成功");
-        return JSON.toJSONString(resultMap);
+        resultMap.put("recordPo",recordPo);
+        return resultMap;
     }
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+//    @Transactional(propagation = Propagation.NESTED)
+    @Override
     public void insertOperationRecord(Map<String, String> recordPo) {
         manualSyncZHDataMapper.insertOperationRecord(recordPo);
     }
