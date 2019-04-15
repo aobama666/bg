@@ -59,19 +59,51 @@ public class ManualSyncZHDataController {
     @RequestMapping(value = "/operationSync",produces = "application/json")
     public String operationSyncData(HttpServletRequest request, Model model){
 //        System.out.println("用户名是："+webUtils.getUsername());
-        Map<String, Object> map = manualSyncZHDataService.syncDataForZH(request);
-//        Map<String , String> stringMap = new HashMap<>();
-        Map<String ,String> recordPo = null;
-        if("0".equals(map.get("status")) && map.get("recordPo") != null){//代表失败
-            recordPo = (Map<String, String>) map.get("recordPo");
-            manualSyncZHDataService.insertOperationRecord(recordPo);
-            map.remove("recordPo");
-        }else{
-            recordPo = (Map<String, String>) map.get("recordPo");
-            manualSyncZHDataService.insertOperationRecord(recordPo);
-            map.remove("recordPo");
+        Map<String, String> recordPo = new HashMap<>();
+        String category = Rtext.toStringTrim(request.getParameter("category"),"");
+
+        String requestRemark = Rtext.toStringTrim(request.getParameter("requestRemark"),"");
+        Map resultMap =new HashMap<>();
+
+        if(null == category || category==""){
+            resultMap.put("status","0");
+            resultMap.put("info","选择同步的数据类型有误，传值错误");
+            return JSON.toJSONString(resultMap);
         }
-        return JSON.toJSONString(map);
+
+        String startDate = DateUtil.getTime();//手动更新数据开始时间
+        String username = webUtils.getCommonUser().getSapHrCode();
+        System.out.println("获取登录用户的id"+username);
+
+        String data = null;
+        try {
+            data= manualSyncZHDataService.syncDataForZH(request, startDate,category,requestRemark,username);
+        } catch (Exception e) {
+            String endDate = DateUtil.getTime();
+            recordPo.put("requestType",category);
+            recordPo.put("operationStatus","0");//0代表失败
+            recordPo.put("startDate",startDate);
+            recordPo.put("endDate",endDate);
+            recordPo.put("createDate",endDate);
+            recordPo.put("createUserId",username);
+            //将备注存入map中
+            recordPo.put("requestRemark",requestRemark);
+            String errorInfo = "";
+            if(e.getMessage().length()>=400){//将多余的错误信息截取
+                String message = e.getMessage();
+                errorInfo = message.substring(0,198).replaceAll("\r\n","");
+            }else{
+                errorInfo = e.getMessage();
+            }
+            recordPo.put("errorMessage",errorInfo);
+            System.out.println("错误信息的长度是："+errorInfo.length());
+            manualSyncZHDataService.insertOperationRecord(recordPo);
+            System.out.println("捕捉异常信息");
+            resultMap.put("status","0");
+            resultMap.put("info","选择同步的数据过程出错");
+            return JSON.toJSONString(resultMap);
+        }
+        return data;
     }
 
     /*
@@ -79,7 +111,7 @@ public class ManualSyncZHDataController {
      * */
     @ResponseBody
     @RequestMapping(value="/queryList")
-    public String queryList(String userName,Integer dataType,Integer page, Integer limit){
+    public String queryList(String userName,String dataType,Integer page, Integer limit){
         userName= Rtext.toStringTrim(userName, "");
 //        dataType=Rtext.toStringTrim(dataType, "");
         List<Map<String, String>> content = manualSyncZHDataService.getAllOperationRecord(userName, dataType);

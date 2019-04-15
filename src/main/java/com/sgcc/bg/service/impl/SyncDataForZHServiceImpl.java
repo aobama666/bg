@@ -42,7 +42,6 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         //删除中间表的数据状态为1
         syncDataForZHMapper.deleteTempByStatus();
         System.out.println("删除了中间表状态为1的旧数据");
-        int i = 9/0;
         //更新中间表数数据状态为1
         syncDataForZHMapper.updateTempForIsenable();
         System.out.println("更改新添加的数据状态为1");
