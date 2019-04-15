@@ -41,4 +41,5 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
 		String dictJson=JSON.toJSONString(dictMap);
 		return dictJson;
 	}
+
 }

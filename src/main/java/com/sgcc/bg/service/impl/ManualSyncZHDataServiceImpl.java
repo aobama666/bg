@@ -39,11 +39,11 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
     private ManualSyncZHDataMapper manualSyncZHDataMapper;
 
     @Override
-    public String syncDataForZH(HttpServletRequest request,String startDate,String category,String requestRemark,String username) {
+    public String syncDataForZH(HttpServletRequest request, String startDate, String category, String requestRemark, String username) {
         Map<String, Object> resultMap = new HashMap<>();
         Map<String, String> recordPo = new HashMap<>();
         //将备注存入map中
-        recordPo.put("requestRemark",requestRemark);
+        recordPo.put("requestRemark", requestRemark);
         //从数据字典中获取同步信息对应的数据
         String requestType = dataDictionaryService.getDictDataJsonStr("request_type");
 //        JSONObject jsonObject = JSON.parseObject(requestType);
@@ -61,61 +61,62 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
         long start = System.currentTimeMillis();
 //        String username = webUtils.getCommonUser().getId();
 
-        recordPo.put("createUserId",username);
-        recordPo.put("startDate",startDate);
+        recordPo.put("createUserId", username);
+        recordPo.put("startDate", startDate);
 
         String endDate = "";
         long end = 0;
         logger.info("开始手动同步数据");
         try {
-            switch (category){
+            switch (category) {
                 case "ANG":
-                    recordPo.put("requestType",category);
-                    syncDataForZHService.syncNewOrganForZH(startDate,username);
+                    recordPo.put("requestType", category);
+                    syncDataForZHService.syncNewOrganForZH(startDate, username);
                     break;
                 case "DS":
-                    recordPo.put("requestType",category);
-                    syncDataForZHService.syncDeptSortForZH(startDate,username);
+                    recordPo.put("requestType", category);
+                    syncDataForZHService.syncDeptSortForZH(startDate, username);
                     break;
                 case "PS":
-                    recordPo.put("requestType",category);
-                    syncDataForZHService.syncPartSortForZH(startDate,username);
+                    recordPo.put("requestType", category);
+                    syncDataForZHService.syncPartSortForZH(startDate, username);
                     break;
                 case "ES":
-                    recordPo.put("requestType",category);
-                    syncDataForZHService.syncEmpSortForZh(startDate,username);
+                    recordPo.put("requestType", category);
+                    syncDataForZHService.syncEmpSortForZh(startDate, username);
                     break;
                 case "SC":
-                    syncDataForZHService.syncScheduleForZH(startDate,username);
-                    recordPo.put("requestType",category);
+                    syncDataForZHService.syncScheduleForZH(startDate, username);
+                    recordPo.put("requestType", category);
                     break;
                 case "ER":
-                    syncDataForZHService.syncEmpRelationForZH(startDate,username);
-                   recordPo.put("requestType",category);
+                    syncDataForZHService.syncEmpRelationForZH(startDate, username);
+                    recordPo.put("requestType", category);
                     break;
                 case "DT":
-                    recordPo.put("requestType",category);
-                    syncDataForZHService.syncEmpRelationForZH(startDate,username);
+                    recordPo.put("requestType", category);
+                    syncDataForZHService.syncEmpRelationForZH(startDate, username);
                     break;
             }
         } catch (Exception e) {
             throw e;
         }
         //程序正常执行到此处
-        recordPo.put("operationStatus","1");//1代表成功
+        recordPo.put("operationStatus", "1");//1代表成功
         endDate = DateUtil.getTime();
-        recordPo.put("endDate",endDate);
-        recordPo.put("createDate",endDate);
-        recordPo.put("errorMessage","");
+        recordPo.put("endDate", endDate);
+        recordPo.put("createDate", endDate);
+        recordPo.put("message", "");
         //将数据保存到数据库
         insertOperationRecord(recordPo);
-        end= System.currentTimeMillis();
-        logger.info(webUtils.getUsername()+"   手动更新成功,执行耗时："+(end-start));
-        resultMap.put("status","1");
-        resultMap.put("info","手动执行同步成功");
-        resultMap.put("recordPo",recordPo);
+        end = System.currentTimeMillis();
+        logger.info(webUtils.getUsername() + "   手动更新成功,执行耗时：" + (end - start));
+        resultMap.put("status", "1");
+        resultMap.put("info", "手动执行同步成功");
+//        resultMap.put("recordPo", recordPo);
         return JSON.toJSONString(resultMap);
     }
+
     @Override
     public void insertOperationRecord(Map<String, String> recordPo) {
         manualSyncZHDataMapper.insertOperationRecord(recordPo);
@@ -124,6 +125,6 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
 
     @Override
     public List<Map<String, String>> getAllOperationRecord(String userName, String dataType) {
-        return manualSyncZHDataMapper.getAllOperationRecord(userName,dataType);
+        return manualSyncZHDataMapper.getAllOperationRecord(userName, dataType);
     }
 }

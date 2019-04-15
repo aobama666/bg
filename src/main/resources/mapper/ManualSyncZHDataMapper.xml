@@ -7,9 +7,9 @@
 <mapper namespace="com.sgcc.bg.mapper.ManualSyncZHDataMapper">
    <!--将同步操作信息保存到数据库表中-->
     <insert id="insertOperationRecord" parameterType="java.util.Map">
-        INSERT INTO BG_SYNC_REQUEST
+        INSERT INTO BG_SYS_REQUEST_MANAGER
         (
-        UUID,REQUEST_TYPE,OPERATION_STATUS,START_DATE,END_DATE,CREATE_DATE,CREATE_USER_ID,ERROR_MESSAGE,REMARK,UPDATE_DATE
+        UUID,REQUEST_TYPE,STATUS,START_DATE,END_DATE,CREATE_DATE,CREATE_USER,MESSAGE,REMARK,UPDATE_DATE,UPDATE_USER
         )
         VALUES (
            SYS_GUID(),
@@ -19,31 +19,35 @@
            #{endDate,jdbcType=VARCHAR},
            #{createDate,jdbcType=VARCHAR},
            #{createUserId,jdbcType=VARCHAR},
-           #{errorMessage,jdbcType=VARCHAR},
+           #{message,jdbcType=VARCHAR},
            #{requestRemark,jdbcType=VARCHAR},
-           SYSDATE
+           #{createDate,jdbcType=VARCHAR},
+           #{createUserId,jdbcType=VARCHAR}
+
         )
     </insert>
 
     <select id="getAllOperationRecord" resultType="java.util.Map">
-        SELECT R.CREATE_USER_ID,
-                R.OPERATION_STATUS,
+        SELECT R.CREATE_USER,
+                R.STATUS,
                 R.START_DATE,
                 R.END_DATE,
-                R.ERROR_MESSAGE,
+                R.MESSAGE,
                 R.REQUEST_TYPE,
-                R.UPDATE_DATE,
+                R.CREATE_DATE,
                 U.USERNAME
-        FROM BG_SYNC_REQUEST R
+        FROM BG_SYS_REQUEST_MANAGER R
         LEFT JOIN BG_SYS_USER U
-        ON R.CREATE_USER_ID = U.HRCODE
+        ON R.CREATE_USER = U.HRCODE
         WHERE 1=1
         <if test="dataType != null and dataType !=''">
             AND REQUEST_TYPE = #{dataType}
         </if>
         <if test="userName != null and userName != ''">
-            AND  OPERATION_USER LIKE '%'||#{userName}||'%'
+            AND  R.CREATE_USER IN(
+            SELECT HRCODE FROM BG_SYS_USER WHERE USERNAME LIKE '%'||#{userName}||'%'
+            )
         </if>
-        ORDER BY UPDATE_DATE DESC
+        ORDER BY  R.CREATE_DATE DESC
     </select>
 </mapper>
