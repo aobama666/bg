@@ -30,6 +30,8 @@
             src="<%=request.getContextPath()%>/common/plugins/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript"
             src="<%=request.getContextPath()%>/common/plugins/bootstrap-datepicker-master/dist/js/bootstrap-datepicker.js"></script>
+<%--    <script type="text/javascript"
+            src="<%=request.getContextPath()%>/common/plugins/bootstrap-datepicker-master/dist/js/bootstrap-picker.min.js"></script>--%>
     <script type="text/javascript"
             src="<%=request.getContextPath()%>/common/plugins/layer/layer.min.js"></script>
     <script type="text/javascript"
@@ -77,16 +79,16 @@
         <div class="form-group col-xs-11">
             <label for="category">同步类型</label>
             <div class="controls">
-                <select name="category" property="category">
+                <select name="category" property="category" id="category">
                     <options collection="typeList" property="label"
                              labelProperty="value">
-                        <option value="ANG">新增组织</option><%--new oragan--%>
-                        <option value="DS">部门排序</option><%--department sort--%>
-                        <option value="PS">处室排序</option><%--part sort--%>
-                        <option value="ES">员工排序</option> <%--empployee sort--%>
-                        <option value="SC">日历班次</option><%--schedule calender--%>
-                        <option value="ER">人员关系变更</option> <%--employee relation--%>
-                        <option value="DT">部门类型</option><%--departent type--%>
+                <%--        <option value="ANG">新增组织</option>&lt;%&ndash;new oragan&ndash;%&gt;
+                        <option value="DS">部门排序</option>&lt;%&ndash;department sort&ndash;%&gt;
+                        <option value="PS">处室排序</option>&lt;%&ndash;part sort&ndash;%&gt;
+                        <option value="ES">员工排序</option> &lt;%&ndash;empployee sort&ndash;%&gt;
+                        <option value="SC">日历班次</option>&lt;%&ndash;schedule calender&ndash;%&gt;
+                        <option value="ER">人员关系变更</option> &lt;%&ndash;employee relation&ndash;%&gt;
+                        <option value="DT">部门类型</option>&lt;%&ndash;departent type&ndash;%&gt;--%>
                     </options>
                 </select>
             </div>
@@ -101,17 +103,32 @@
     </div>
 </div>
 <script type="text/javascript">
+    $(function () {
+        $.ajax({
+            type:'post',
+            url:'<%=request.getContextPath()%>/manualSyncData/findCategory',
+            dataType:'json',
+            success:function (data) {
+                var selectpick = $('#category');
+                selectpick.empty();
+                selectpick.append('<option value=""></option>')
+                for(var key in data){
+                    selectpick.append("<option value='"+key+"'>"+data[key]+"</option>")
+                }
+                /*      $('.selectpicker').selectpicker('val','');
+                      $('.selectpicker').selectpicker('refresh');*/
+            }
+        })
+    })
     function forSave() {
         var category=$("select[name='category']").val();
         var requestRemark=$("textarea[name='requestRemark']").val();
-        // alert(requestRemark);
         var param = {};
         param['category']=category;
         param['requestRemark']=requestRemark;
         $.post('<%=request.getContextPath()%>/manualSyncData/operationSync',param,function (data) {
             if(data.status==1){
                 parent.layer.msg(data.info);
-                $("textarea[name='requestRemark']").empty();
             }else{
                 parent.layer.msg(data.info);
             }

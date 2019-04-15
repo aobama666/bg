@@ -17,4 +17,5 @@ public interface DataDictionaryService {
 	 * @return 返回json字符串
 	 */
 	String getDictDataJsonStr(String pcode);
+
 }

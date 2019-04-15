@@ -72,15 +72,15 @@
                 <div class="form-group col-xs-4">
                     <label>同步类型：</label>
                     <div class="controls">
-                        <select  name="dataType" id="syncDataZh">
-                            <option value=""></option>
-                            <option value="ANG">新增组织</option>
+                        <select  name="dataType" id="syncDataZh" class="form-control selectpicker">
+                            <%--<option value=""></option>--%>
+                          <%--  <option value="ANG">新增组织</option>
                             <option value="DS">部门排序</option>
                             <option value="PS">处室排序</option>
                             <option value="ES">员工排序</option>
                             <option value="SC">日历班次</option>
                             <option value="ER">人员关系变更</option>
-                            <option value="DT">部门类型</option>
+                            <option value="DT">部门类型</option>--%>
                         </select>
                     </div>
                 </div>
@@ -112,7 +112,26 @@
         var limit = 30,limit2 = 30;
         $(function () {
            queryList('reload');
+           getPicker();
         })
+
+        function getPicker() {
+            $.ajax({
+                type:'post',
+                url:'<%=request.getContextPath()%>/manualSyncData/findCategory',
+                dataType:'json',
+                success:function (data) {
+                var selectpick = $('#syncDataZh');
+                selectpick.empty();
+                selectpick.append('<option value=""></option>')
+                for(var key in data){
+                    selectpick.append("<option value='"+key+"'>"+data[key]+"</option>")
+                }
+          /*      $('.selectpicker').selectpicker('val','');
+                $('.selectpicker').selectpicker('refresh');*/
+            }
+            })
+        }
 
         // 弹出同步数据窗口
         function forAdd(){
@@ -146,7 +165,7 @@
                     }},
                 // {title:'工作类型', name:'workType', width:80, sortable:false, align:'center'},
                 {title:'操作人员', name:'USERNAME', width:120, sortable:false, align:'center'},
-                {title:'状态', name:'OPERATION_STATUS', width:100, sortable:false, align:'center',
+                {title:'状态', name:'STATUS', width:100, sortable:false, align:'center',
                     renderer:function(val,item,rowIndex){
                         var dict=${statusJson};
                         return dict[val];
