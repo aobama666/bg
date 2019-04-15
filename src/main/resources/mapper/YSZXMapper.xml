@@ -7,125 +7,148 @@
 	<insert id="addIdeaInfo"  parameterType="com.sgcc.bg.yszx.bean.IdeaInfo">
 		INSERT INTO TB_YSZX_IDEA ( 
 			UUID,	 
-            APPLYID, 
-            CONTACTNAME,
-			CONTACTMOBILE, 
-			APPLYSTATUS,
-			STATEDATE, 		
-			ENDDATE,	 
+            APPLY_DEPT, 
+            START_DATE,
+			END_DATE, 
+			CONTACT_USER,
+			CONTACT_PHONE, 		
+			VISIT_UNIT_TYPE,	 
+			VISIT_UNIT_NAME,	
+			VISITOR_NUMBER, 		
+			COMPANY_USER_NUMBER,	 
 			REMARK,	
-			ISFINISH, 		
-			USERID,	 
-			DEPTID,	
-			APPLYDATE,
-			VISITUNITTYPE,	 		
-			VISITUNITNAME,	 	
-			VISITNUMBER, 	
-			COMPANYNUMBER,	 	
-			TYPE,
 			STATUS,
-			DATECREATED
+			APPLY_ID,	 		
+			VISIT_LEVEL,	 	
+			VALID, 	
+			CREATE_USER,	 	
+			CREATE_TIME,
+			UPDATE_USER,
+			UPDATE_TIME
 			)
 		VALUES(
 			#{id,jdbcType=VARCHAR}, 
-			#{applyId,jdbcType=VARCHAR},
-			#{contactName,jdbcType=VARCHAR}, 
-			#{contactMoile,jdbcType=VARCHAR},
-			#{applyStatus,jdbcType=NUMERIC},
-			#{stateDate,jdbcType=DATE},
-			#{endDate,jdbcType=DATE},
+			#{applyDept,jdbcType=VARCHAR},
+			to_date(#{stateDate},'YYYY-MM-DD HH24:MI:SS'), 
+			to_date(#{endDate},'YYYY-MM-DD HH24:MI:SS'), 
+			#{contactUser,jdbcType=VARCHAR}, 
+			#{contactPhone,jdbcType=VARCHAR},
+			#{visitUnitType,jdbcType=VARCHAR},
+			#{visitUnitName,jdbcType=VARCHAR},
+			#{visitorNumber,jdbcType=NUMERIC},
+			#{companyUserNumber,jdbcType=NUMERIC},
 			#{remark,jdbcType=VARCHAR},
-			#{isFinish,jdbcType=NUMERIC},
-			#{userId,jdbcType=VARCHAR},
-			#{deptId,jdbcType=VARCHAR},
-			#{applyDate,jdbcType=DATE},
-			#{visitunitType,jdbcType=VARCHAR},
-			#{visitunitName,jdbcType=VARCHAR},
-			#{visitNumber,jdbcType=NUMERIC},
-			#{companyNumber,jdbcType=NUMERIC},
-			#{type,jdbcType=VARCHAR},
 			#{status,jdbcType=VARCHAR},
-			#{dateCreated,jdbcType=DATE}
+			#{applyId,jdbcType=VARCHAR},
+			#{visitLevel,jdbcType=VARCHAR},
+			#{valId,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{updateUser,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=TIMESTAMP}
 			)
 	</insert>
+	
+	
+	
 	
 	<insert id="addVisitInfo"  parameterType="com.sgcc.bg.yszx.bean.VisitInfo">
 		INSERT INTO TB_YSZX_VISIT ( 
 			UUID,	 		
             IDEAID,	 
-            VISITUSERNAME,	 
-   			CREATOR,	 	
-			DATECREATED,	 	
-			VISITLEVEL,	 
-			VISITPOSITION,	 		
-			CREATEDATE,	 
-			STATUS	 		
+            USERNAME,	 
+   			POSITION,	 	
+			USERLEVEL,	 	
+			SORT_ID,	 
+			REMARK,	 		
+			VALID,	 
+			CREATE_USER,
+			CREATE_TIME,
+			UPDATE_USER,
+			UPDATE_TIME 		
 			)
 		VALUES(
 			#{id,jdbcType=VARCHAR}, 
 			#{ideaId,jdbcType=VARCHAR},
-			#{visitUserName,jdbcType=VARCHAR}, 
-			#{creator,jdbcType=VARCHAR},
-			#{dataCreated,jdbcType=DATE},
-			#{visitLevel,jdbcType=VARCHAR},
-			#{visitPosition,jdbcType=VARCHAR},
-			#{createDate,jdbcType=DATE},
-			#{status,jdbcType=VARCHAR}
+			#{userName,jdbcType=VARCHAR}, 
+			#{position,jdbcType=VARCHAR},
+			#{userLevel,jdbcType=VARCHAR},
+			#{sortId,jdbcType=NUMERIC},
+			#{remark,jdbcType=VARCHAR},
+			#{valId,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{updateUser,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=TIMESTAMP}
 			)
 	</insert>
 	
-	<insert id="addCompanyLeadershipInfo"  parameterType="com.sgcc.bg.yszx.bean.CompanyLeadershipInfo">
-		INSERT INTO TB_YSZX_COMPANY_LEADERSHIP ( 
+	<insert id="addCompanyLeaderInfo"  parameterType="com.sgcc.bg.yszx.bean.CompanyLeaderInfo">
+		INSERT INTO TB_YSZX_COMPANY_LEADER ( 
 			UUID,	 		
             IDEAID,	 
-            COMPANYUSERNAME,	 
-   			COMPANYHRCODE,	 	
-			DATECREATED,
-			CREATEDATE,	 	 		
-			STATUS,
-			CREATOR 		
+            USERID,	 
+   			REMARK,	 	
+			VALID,
+			CREATE_USER,
+			CREATE_TIME,
+			UPDATE_USER,
+			UPDATE_TIME
 			)
 		VALUES(
 			#{id,jdbcType=VARCHAR}, 
 			#{ideaId,jdbcType=VARCHAR},
-			#{companyUserName,jdbcType=VARCHAR}, 
-			#{companyHRcode,jdbcType=VARCHAR}, 
-			#{dataCreated,jdbcType=DATE},
-			#{createDate,jdbcType=DATE},
-			#{status,jdbcType=VARCHAR},
-			#{creator,jdbcType=VARCHAR}
+			#{userId,jdbcType=VARCHAR}, 
+			#{remark,jdbcType=VARCHAR}, 
+			#{valid,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{updateUser,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=TIMESTAMP}
 			)
 	</insert>
-	<insert id="addCompanyDeptInfo"  parameterType="com.sgcc.bg.yszx.bean.CompanyDeptInfo">
-		INSERT INTO TB_YSZX_COMPANY_DEPT ( 
+	
+	<insert id="addCompanyUserInfo"  parameterType="com.sgcc.bg.yszx.bean.CompanyUserInfo">
+		INSERT INTO TB_YSZX_COMPANY_USER ( 
 			UUID,	 		
             IDEAID,	 
-            COMPANYUSERID,	 
-   			COMPANYUSERNAME,	 	
-   			COMPANYPOSITION,	 	
-			DATECREATED,
-			CREATEDATE,	 	 		
-			STATUS,
-			CREATOR 		
+            USERID,	 
+   			REMARK,	 	
+   			VALID,	 	
+			CREATE_USER,
+			CREATE_TIME,	 	 		
+			UPDATE_USER,
+			UPDATE_TIME 		
 			)
 		VALUES(
 			#{id,jdbcType=VARCHAR}, 
 			#{ideaId,jdbcType=VARCHAR},
-			#{companyUserId,jdbcType=VARCHAR}, 
-			#{companyUserName,jdbcType=VARCHAR}, 
-			#{companyPosition,jdbcType=VARCHAR}, 
-			#{dataCreated,jdbcType=DATE},
-			#{createDate,jdbcType=DATE},
-			#{status,jdbcType=VARCHAR},
-			#{creator,jdbcType=VARCHAR}
+			#{userId,jdbcType=VARCHAR}, 
+			#{remark,jdbcType=VARCHAR}, 
+			#{valid,jdbcType=VARCHAR}, 
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{updateUser,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=TIMESTAMP} 
 			)
 	</insert>
+	
+	
+	
 	<select id="getUserId" resultType="java.util.Map">
 		SELECT 
 		USERNAME,USERALIAS,HRDEPTNAME,HRDEPTCODE,POSTCODE,POSTNAME
 		  FROM BG_SYS_USER
 		WHERE SRC = 0  AND STATE = 1
 		   AND USERID = #{userid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectForIdeaDate" resultType="java.util.Map">
+		SELECT 
+		  TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI:SS') AS START_DATE,
+		  TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI:SS')  AS  END_DATE
+		  FROM TB_YSZX_IDEA
+		WHERE VALID =  '1'
 	</select>
 	
 	

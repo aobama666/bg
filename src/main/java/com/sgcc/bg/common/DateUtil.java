@@ -66,6 +66,21 @@ public class DateUtil {
 	 * 格式化日期
 	 * @return
 	 */
+	public static Date fomatTime(String date) {
+		DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+			return fmt.parse(date);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+
+	/**
+	 * 格式化日期
+	 * @return
+	 */
 	public static Date fomatDate(String date) {
 		DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
 		try {
@@ -381,19 +396,28 @@ public class DateUtil {
 		}
 		
 	}
-	 public static void main(String[] args) {
-		    String stateDate="2019-04-12 08:31:00";
-		    String endDate="2019-04-12 09:31:00";
-		    String time="2019-04-12 08:32:00";
-		    boolean flag = false;
-			try {
-				flag = compareDay(stateDate,endDate, time);
+	  public static String minutes (String s,int num){
+	    	SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	        String  res = null;
+	    	try {
+				Date date=f.parse(s);
+				Calendar c=Calendar.getInstance();
+				 c.setTime(date);
+		         c.add(Calendar.MINUTE , num);
+		       
+		        res = f.format(c.getTime());
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+	        return res;
+	    }  
+	 public static void main(String[] args) {
+		   
+		    String time="2019-04-12 08:32:00";
+		   String ddd= minutes(time,30);
 		 
-	       	System.out.print(flag);
+	       	System.out.print(ddd);
 	   	}
    
 }
