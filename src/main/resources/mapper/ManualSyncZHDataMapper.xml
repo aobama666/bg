@@ -9,7 +9,7 @@
     <insert id="insertOperationRecord" parameterType="java.util.Map">
         INSERT INTO BG_SYNC_REQUEST
         (
-        UUID,REQUEST_TYPE,OPERATION_STATUS,START_DATE,END_DATE,CREATE_DATE,CREATE_USER_ID,ERROR_MESSAGE,REMARK
+        UUID,REQUEST_TYPE,OPERATION_STATUS,START_DATE,END_DATE,CREATE_DATE,CREATE_USER_ID,ERROR_MESSAGE,REMARK,UPDATE_DATE
         )
         VALUES (
            SYS_GUID(),
@@ -20,21 +20,30 @@
            #{createDate,jdbcType=VARCHAR},
            #{createUserId,jdbcType=VARCHAR},
            #{errorMessage,jdbcType=VARCHAR},
-           #{requestRemark,jdbcType=VARCHAR}
+           #{requestRemark,jdbcType=VARCHAR},
+           SYSDATE
         )
     </insert>
 
     <select id="getAllOperationRecord" resultType="java.util.Map">
-        SELECT
-        CREATE_USER_ID,OPERATION_STATUS,START_DATE,END_DATE,ERROR_MESSAGE,REQUEST_TYPE
-        FROM
-        BG_SYNC_REQUEST
+        SELECT R.CREATE_USER_ID,
+                R.OPERATION_STATUS,
+                R.START_DATE,
+                R.END_DATE,
+                R.ERROR_MESSAGE,
+                R.REQUEST_TYPE,
+                R.UPDATE_DATE,
+                U.USERNAME
+        FROM BG_SYNC_REQUEST R
+        LEFT JOIN BG_SYS_USER U
+        ON R.CREATE_USER_ID = U.HRCODE
         WHERE 1=1
-        <if test="dataType != null">
+        <if test="dataType != null and dataType !=''">
             AND REQUEST_TYPE = #{dataType}
         </if>
         <if test="userName != null and userName != ''">
             AND  OPERATION_USER LIKE '%'||#{userName}||'%'
         </if>
+        ORDER BY UPDATE_DATE DESC
     </select>
 </mapper>

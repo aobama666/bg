@@ -39,11 +39,9 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
     private ManualSyncZHDataMapper manualSyncZHDataMapper;
 
     @Override
-    public Map<String , Object> syncDataForZH(HttpServletRequest request) {
+    public String syncDataForZH(HttpServletRequest request,String startDate,String category,String requestRemark,String username) {
         Map<String, Object> resultMap = new HashMap<>();
         Map<String, String> recordPo = new HashMap<>();
-        String category = Rtext.toStringTrim(request.getParameter("category"),"");
-        String requestRemark = Rtext.toStringTrim(request.getParameter("requestRemark"),"");
         //将备注存入map中
         recordPo.put("requestRemark",requestRemark);
         //从数据字典中获取同步信息对应的数据
@@ -51,12 +49,6 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
 //        JSONObject jsonObject = JSON.parseObject(requestType);
 
 //        System.out.println(requestType.contains("SC"));
-        if(null == category || category==""){
-            resultMap.put("status","0");
-            resultMap.put("info","选择同步的数据类型有误，传值错误");
-            resultMap.put("recordPo",recordPo);
-            return resultMap;
-        }
         /*   <option value="1">新增组织</option>
                         <option value="2">部门排序</option>
                         <option value="3">处室排序</option>
@@ -65,11 +57,11 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
                         <option value="6">人员关系变更</option>
                         <option value="7">部门类型</option>*/
 
-        String startDate = DateUtil.getTime();//手动更新数据开始时间
+
         long start = System.currentTimeMillis();
-        String username = webUtils.getUsername();
+//        String username = webUtils.getCommonUser().getId();
+
         recordPo.put("createUserId",username);
-//        recordPo.setCreateUser(webUtils.getUsername());
         recordPo.put("startDate",startDate);
 
         String endDate = "";
@@ -78,55 +70,36 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
         try {
             switch (category){
                 case "ANG":
-                    recordPo.put("requestType","ANG");
+                    recordPo.put("requestType",category);
                     syncDataForZHService.syncNewOrganForZH(startDate,username);
                     break;
                 case "DS":
-                    recordPo.put("requestType","DS");
+                    recordPo.put("requestType",category);
                     syncDataForZHService.syncDeptSortForZH(startDate,username);
                     break;
                 case "PS":
-                    recordPo.put("requestType","PS");
+                    recordPo.put("requestType",category);
                     syncDataForZHService.syncPartSortForZH(startDate,username);
                     break;
                 case "ES":
-                    recordPo.put("requestType","ES");
+                    recordPo.put("requestType",category);
                     syncDataForZHService.syncEmpSortForZh(startDate,username);
                     break;
                 case "SC":
                     syncDataForZHService.syncScheduleForZH(startDate,username);
-                    recordPo.put("requestType","SC");
+                    recordPo.put("requestType",category);
                     break;
                 case "ER":
                     syncDataForZHService.syncEmpRelationForZH(startDate,username);
-                   recordPo.put("requestType","ER");
+                   recordPo.put("requestType",category);
                     break;
                 case "DT":
-                    recordPo.put("requestType","DT");
+                    recordPo.put("requestType",category);
                     syncDataForZHService.syncEmpRelationForZH(startDate,username);
                     break;
             }
         } catch (Exception e) {
-            recordPo.put("operationStatus","0");//0代表失败
-            endDate = DateUtil.getTime();
-            recordPo.put("endDate",endDate);
-            recordPo.put("createDate",endDate);
-            String errorInfo = "";
-            if(e.getMessage().length()>=400){//将多余的错误信息截取
-                String message = e.getMessage();
-                errorInfo = message.substring(0,198).replaceAll("\r\n","");
-            }else{
-                errorInfo = e.getMessage();
-            }
-            recordPo.put("errorMessage",errorInfo);
-            System.out.println("错误信息的长度是："+errorInfo.length());
-            //将相关的操作痕迹保存到数据库
-//            insertOperationRecord(recordPo);
-            resultMap.put("status","0");
-            resultMap.put("info","选择同步的数据过程出错");
-            resultMap.put("recordPo",recordPo);
-//            e.printStackTrace();
-            return resultMap;
+            throw e;
         }
         //程序正常执行到此处
         recordPo.put("operationStatus","1");//1代表成功
@@ -134,15 +107,15 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
         recordPo.put("endDate",endDate);
         recordPo.put("createDate",endDate);
         recordPo.put("errorMessage","");
-//        manualSyncZHDataMapper.insertOperationRecord(recordPo);
+        //将数据保存到数据库
+        insertOperationRecord(recordPo);
         end= System.currentTimeMillis();
         logger.info(webUtils.getUsername()+"   手动更新成功,执行耗时："+(end-start));
         resultMap.put("status","1");
         resultMap.put("info","手动执行同步成功");
         resultMap.put("recordPo",recordPo);
-        return resultMap;
+        return JSON.toJSONString(resultMap);
     }
-//    @Transactional(propagation = Propagation.NESTED)
     @Override
     public void insertOperationRecord(Map<String, String> recordPo) {
         manualSyncZHDataMapper.insertOperationRecord(recordPo);
@@ -150,7 +123,7 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
 
 
     @Override
-    public List<Map<String, String>> getAllOperationRecord(String userName, Integer dataType) {
+    public List<Map<String, String>> getAllOperationRecord(String userName, String dataType) {
         return manualSyncZHDataMapper.getAllOperationRecord(userName,dataType);
     }
 }

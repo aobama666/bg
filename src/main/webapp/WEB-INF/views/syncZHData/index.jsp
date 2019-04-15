@@ -74,13 +74,13 @@
                     <div class="controls">
                         <select  name="dataType" id="syncDataZh">
                             <option value=""></option>
-                            <option value="1">新增组织</option>
-                            <option value="2">部门排序</option>
-                            <option value="3">处室排序</option>
-                            <option value="4">员工排序</option>
-                            <option value="5">日历班次</option>
-                            <option value="6">人员关系变更</option>
-                            <option value="7">部门类型</option>
+                            <option value="ANG">新增组织</option>
+                            <option value="DS">部门排序</option>
+                            <option value="PS">处室排序</option>
+                            <option value="ES">员工排序</option>
+                            <option value="SC">日历班次</option>
+                            <option value="ER">人员关系变更</option>
+                            <option value="DT">部门类型</option>
                         </select>
                     </div>
                 </div>
@@ -145,7 +145,7 @@
                         return dict[val];
                     }},
                 // {title:'工作类型', name:'workType', width:80, sortable:false, align:'center'},
-                {title:'操作人员', name:'CREATE_USER_ID', width:120, sortable:false, align:'center'},
+                {title:'操作人员', name:'USERNAME', width:120, sortable:false, align:'center'},
                 {title:'状态', name:'OPERATION_STATUS', width:100, sortable:false, align:'center',
                     renderer:function(val,item,rowIndex){
                         var dict=${statusJson};
