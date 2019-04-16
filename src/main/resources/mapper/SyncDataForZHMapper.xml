@@ -396,7 +396,7 @@
                      CREATE_USER,
                      CREATE_DATE,
                      SYNC_DATE,
-                     SYNC_UPDATE_DATE)
+                     SYNC_UPDATE_DATE,SRC)
                   VALUES
                     (R.USERID,
                      R.DEPTID,
@@ -406,7 +406,7 @@
                      R.CREATE_USER,
                      R.UPDATE_DATE,
                      R.UPDATE_DATE,
-                     SYSDATE)
+                     SYSDATE,'1')
 
     </insert>
 
