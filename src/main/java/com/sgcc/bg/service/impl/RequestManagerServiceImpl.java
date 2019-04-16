@@ -53,10 +53,6 @@ public class RequestManagerServiceImpl implements RequestManagerService {
 
         long start = System.currentTimeMillis();
 //        String username = webUtils.getCommonUser().getId();
-
-        recordPo.put("createUserId", username);
-        recordPo.put("startDate", startDate);
-
         String endDate = "";
         long end = 0;
         logger.info("开始手动同步数据");
@@ -95,10 +91,12 @@ public class RequestManagerServiceImpl implements RequestManagerService {
             throw e;
         }
         //程序正常执行到此处
+        recordPo.put("createUserId", username);
+        recordPo.put("startDate", startDate);
         recordPo.put("operationStatus", "1");//1代表成功
         endDate = DateUtil.getTime();
         recordPo.put("endDate", endDate);
-        recordPo.put("createDate", endDate);
+        recordPo.put("createDate", DateUtil.getTime());
         recordPo.put("message", "");
         //将数据保存到数据库
         insertOperationRecord(recordPo);

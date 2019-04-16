@@ -69,7 +69,7 @@
     <div class="page-header-sl">
         <div class="button-box">
             <button type="button" class="btn btn-success btn-xs"
-                    onclick="forSave()">保存</button>
+                    onclick="forSave()">执行</button>
             <!-- <button type="button" class="btn btn-warning btn-xs"
                         onclick="forClose()">关闭</button> -->
         </div>
@@ -128,9 +128,17 @@
         param['requestRemark']=requestRemark;
         $.post('<%=request.getContextPath()%>/manualSyncData/operationSync',param,function (data) {
             if(data.status==1){
-                parent.layer.msg(data.info);
+                parent.layer.msg(data.info,function () {
+                    parent.$('.btn-refresh').click();
+                    var mylayer = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(mylayer);
+                });
             }else{
-                parent.layer.msg(data.info);
+                parent.layer.msg(data.info,function () {
+                    parent.$('.btn-refresh').click();
+                    var mylayer = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(mylayer);
+                });
             }
         });
     }

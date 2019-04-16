@@ -83,7 +83,7 @@
                        N.UPDATE_DATE
                   FROM BG_CEPRI_ZYSY_NEW_ORGAN N
                  INNER JOIN BG_SYS_DEPT D
-                   ON N.ORGAN_CODE = D.DEPTCODE
+                   ON N.PARENT_CODE = D.DEPTCODE
                  WHERE N.VALID = 1
                    AND D.VALID = 1
                    AND D.DEPTID IS NOT NULL) CR

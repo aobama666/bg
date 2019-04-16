@@ -44,7 +44,7 @@ public class SyncZhDataBase {
                 /*********************************同步新增组织***********************************************************/
                 Map<String, String> stringMap = syncDataForZHService.syncNewOrganForZH(time, "admin");
                 if("0".equals(stringMap.get("status"))){
-                    System.out.println("错误信息："+stringMap.get("message"));
+                    logger.info("错误信息："+stringMap.get("message"));
                     return;
                 }
                 /*******************************************************************************************************/
@@ -53,7 +53,7 @@ public class SyncZhDataBase {
                 /*********************************同步部门排序**********************************************************/
                 Map<String, String> stringMap1 = syncDataForZHService.syncDeptSortForZH(time, "admin");
                 if("0".equals(stringMap1.get("status"))){
-                    System.out.println("错误信息："+stringMap1.get("message"));
+                    logger.info("错误信息："+stringMap1.get("message"));
                     return;
                 }
                 logger.info("综合系统部门排序结束同步");
@@ -62,7 +62,7 @@ public class SyncZhDataBase {
                 /**********************************处室排序************************************************************/
                 Map<String, String> stringMap2 = syncDataForZHService.syncPartSortForZH(time, "admin");
                 if("0".equals(stringMap2.get("status"))){
-                    System.out.println("错误信息："+stringMap2.get("message"));
+                    logger.info("错误信息："+stringMap2.get("message"));
                     return;
                 }
                 /******************************************************************************************************/
@@ -71,7 +71,7 @@ public class SyncZhDataBase {
                 /*********************************人员排序************************************************************/
                 Map<String, String> stringMap3 = syncDataForZHService.syncEmpSortForZh(time, "admin");
                 if("0".equals(stringMap3.get("status"))){
-                    System.out.println("错误信息："+stringMap3.get("message"));
+                    logger.info("错误信息："+stringMap3.get("message"));
                     return;
                 }
                 /******************************************************************************************************/
@@ -80,7 +80,7 @@ public class SyncZhDataBase {
                 /*********************************日历班次*************************************************************/
                 Map<String, String> stringMap4 = syncDataForZHService.syncScheduleForZH(time, "admin");
                 if("0".equals(stringMap4.get("status"))){
-                    System.out.println("错误信息："+stringMap4.get("message"));
+                    logger.info("错误信息："+stringMap4.get("message"));
                     return;
                 }
                 /******************************************************************************************************/
@@ -89,7 +89,7 @@ public class SyncZhDataBase {
                 /*********************************人员关系变更********************************************************/
                 Map<String, String> stringMap5 = syncDataForZHService.syncEmpRelationForZH(time, "admin");
                 if("0".equals(stringMap5.get("status"))){
-                    System.out.println("错误信息："+stringMap5.get("message"));
+                    logger.info("错误信息："+stringMap5.get("message"));
                     return;
                 }
                 /*****************************************************************************************************/
@@ -98,7 +98,7 @@ public class SyncZhDataBase {
                 /********************************部门类型排序*********************************************************/
                 Map<String, String> stringMap6 = syncDataForZHService.syncDeptTypeForZH(time, "admin");
                 if("0".equals(stringMap6.get("status"))){
-                    System.out.println("错误信息："+stringMap6.get("message"));
+                    logger.info("错误信息："+stringMap6.get("message"));
                     return;
                 }
                 /*****************************************************************************************************/

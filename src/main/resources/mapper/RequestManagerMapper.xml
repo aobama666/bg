@@ -21,7 +21,7 @@
            #{createUserId,jdbcType=VARCHAR},
            #{message,jdbcType=VARCHAR},
            #{requestRemark,jdbcType=VARCHAR},
-           TO_DATE(#{createDate},'yyyy-MM-dd HH24:MI:SS'),
+           SYSDATE,
            #{createUserId,jdbcType=VARCHAR}
 
         )
