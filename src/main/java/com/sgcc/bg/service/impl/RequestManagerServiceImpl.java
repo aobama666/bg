@@ -1,23 +1,16 @@
 package com.sgcc.bg.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.sgcc.bg.common.DateUtil;
-import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.WebUtils;
-import com.sgcc.bg.mapper.DataDictionaryMapper;
-import com.sgcc.bg.mapper.ManualSyncZHDataMapper;
-import com.sgcc.bg.model.OperationRecordPo;
+import com.sgcc.bg.mapper.RequestManagerMapper;
 import com.sgcc.bg.service.DataDictionaryService;
-import com.sgcc.bg.service.ManualSyncZHDataService;
+import com.sgcc.bg.service.RequestManagerService;
 import com.sgcc.bg.service.SyncDataForZHService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import sun.security.provider.PolicySpiFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -25,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 @Service(value = "manualSyncZHDataService")
-public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
-    private static Logger logger = LoggerFactory.getLogger(ManualSyncZHDataServiceImpl.class);
+public class RequestManagerServiceImpl implements RequestManagerService {
+    private static Logger logger = LoggerFactory.getLogger(RequestManagerServiceImpl.class);
     @Autowired
     private SyncDataForZHService syncDataForZHService;
     @Autowired
@@ -36,7 +29,7 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
     private DataDictionaryService dataDictionaryService;
 
     @Autowired
-    private ManualSyncZHDataMapper manualSyncZHDataMapper;
+    private RequestManagerMapper requestManagerMapper;
 
     @Override
     public String syncDataForZH(HttpServletRequest request, String startDate, String category, String requestRemark, String username) {
@@ -69,31 +62,31 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
         logger.info("开始手动同步数据");
         try {
             switch (category) {
-                case "ANG":
+                case "SYNC_ZHXT_NEWORGAN":
                     recordPo.put("requestType", category);
                     syncDataForZHService.syncNewOrganForZH(startDate, username);
                     break;
-                case "DS":
+                case "SYNC_ZHXT_DEPTSORT":
                     recordPo.put("requestType", category);
                     syncDataForZHService.syncDeptSortForZH(startDate, username);
                     break;
-                case "PS":
+                case "SYNC_ZHXT_PARTSORT":
                     recordPo.put("requestType", category);
                     syncDataForZHService.syncPartSortForZH(startDate, username);
                     break;
-                case "ES":
+                case "SYNC_ZHXT_EMPSORT":
                     recordPo.put("requestType", category);
                     syncDataForZHService.syncEmpSortForZh(startDate, username);
                     break;
-                case "SC":
+                case "SYNC_ZHXT_CALENDER":
                     syncDataForZHService.syncScheduleForZH(startDate, username);
                     recordPo.put("requestType", category);
                     break;
-                case "ER":
+                case "SYNC_ZHXT_EMPRELATION":
                     syncDataForZHService.syncEmpRelationForZH(startDate, username);
                     recordPo.put("requestType", category);
                     break;
-                case "DT":
+                case "SYNC_ZHXT_DEPTTYPE":
                     recordPo.put("requestType", category);
                     syncDataForZHService.syncEmpRelationForZH(startDate, username);
                     break;
@@ -119,12 +112,12 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
 
     @Override
     public void insertOperationRecord(Map<String, String> recordPo) {
-        manualSyncZHDataMapper.insertOperationRecord(recordPo);
+        requestManagerMapper.insertOperationRecord(recordPo);
     }
 
 
     @Override
     public List<Map<String, String>> getAllOperationRecord(String userName, String dataType) {
-        return manualSyncZHDataMapper.getAllOperationRecord(userName, dataType);
+        return requestManagerMapper.getAllOperationRecord(userName, dataType);
     }
 }
