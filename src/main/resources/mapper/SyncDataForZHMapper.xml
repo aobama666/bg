@@ -61,6 +61,15 @@
     <update id="updateTempForIsenable">
         UPDATE BG_CEPRI_ZYSY_NEW_ORGAN  SET VALID = 1  WHERE VALID = 0
     </update>
+    <!--更新新增组织的更新时间-->
+    <update id="updateDeptSysDateByTempNewOrgan">
+      UPDATE BG_SYS_DEPT D
+           SET D.SYNC_DATE = TO_DATE(#{TIME}, 'yyyy-MM-dd HH24:MI:SS')
+         WHERE D.SRC = '1'
+           AND D.VALID = 1 AND EXISTS (SELECT ORGAN_CODE
+                  FROM BG_CEPRI_ZYSY_NEW_ORGAN N
+                 WHERE D.DEPTCODE = N.ORGAN_CODE)
+    </update>
     <!--根据新增组织信息跟新部门信息-->
     <insert id="insertDeptByTempNewOrgan">
         MERGE INTO BG_SYS_DEPT D
@@ -86,13 +95,7 @@
                  D.TYPE        = CR.ORGAN_TYPE,
                  D.UPDATE_DATE = CR.UPDATE_DATE,
                  D.SYNC_UPDATE_DATE = SYSDATE
-             WHERE (D.DEPTNAME    != CR.ORANG_NAME AND D.PDEPTCODE   = CR.PARENT_CODE AND D.TYPE = CR.ORGAN_TYPE)
-                 OR (D.DEPTNAME    = CR.ORANG_NAME AND D.PDEPTCODE   != CR.PARENT_CODE AND D.TYPE = CR.ORGAN_TYPE)
-                 OR (D.DEPTNAME    = CR.ORANG_NAME AND D.PDEPTCODE   = CR.PARENT_CODE AND D.TYPE != CR.ORGAN_TYPE)
-                 OR (D.DEPTNAME    != CR.ORANG_NAME AND D.PDEPTCODE   != CR.PARENT_CODE AND D.TYPE = CR.ORGAN_TYPE)
-                 OR (D.DEPTNAME    = CR.ORANG_NAME AND D.PDEPTCODE   != CR.PARENT_CODE AND D.TYPE != CR.ORGAN_TYPE)
-                 OR (D.DEPTNAME    != CR.ORANG_NAME AND D.PDEPTCODE   = CR.PARENT_CODE AND D.TYPE != CR.ORGAN_TYPE)
-                 OR (D.DEPTNAME    != CR.ORANG_NAME AND D.PDEPTCODE   != CR.PARENT_CODE AND D.TYPE != CR.ORGAN_TYPE)
+             WHERE (D.DEPTNAME    != CR.ORANG_NAME OR D.PDEPTCODE   != CR.PARENT_CODE OR D.TYPE != CR.ORGAN_TYPE)
         WHEN NOT MATCHED THEN
           INSERT
             (D.DEPTID, D.DEPTCODE, D.DEPTNAME, D.PDEPTCODE, D.TYPE, SRC,D.PDEPTID,D.PDEPTNAME,D.CREATE_USER,D.CREATE_DATE,D.VALID,D.SYNC_DATE,D.SYNC_UPDATE_DATE)
@@ -107,7 +110,8 @@
              CR.DEPTNAME,
              CR.CREATE_USER,
              CR.UPDATE_DATE,
-             1, CR.UPDATE_DATE,
+             1,
+             CR.UPDATE_DATE,
              SYSDATE)
      </insert>
 
@@ -147,13 +151,21 @@
     <update id="updateStatusTempForDeptSort">
         UPDATE BG_CEPRI_DHB_DEPT_ORDER SET VALID = 1 WHERE VALID = 0
     </update>
+    <!--修改同步时间-->
+    <update id="updateDeptSysDateByDeptSort">
+       UPDATE BG_SYS_DEPT D
+           SET D.SYNC_DATE = TO_DATE(#{TIME}, 'yyyy-MM-dd HH24:MI:SS')
+         WHERE D.VALID = 1 AND EXISTS (SELECT ORGAN_CODE
+                  FROM BG_CEPRI_DHB_DEPT_ORDER N
+                 WHERE D.DEPTCODE = N.ORGAN_CODE)
+    </update>
     <!--将部门排序信息更新到部门表-->
     <insert id="insertDeptByTempDeptSort">
       MERGE INTO BG_SYS_DEPT D
       USING (SELECT ORGAN_CODE,ORGAN_NAME,ORGAN_ORDER,ORGAN_TYPE,UPDATE_DATE FROM BG_CEPRI_DHB_DEPT_ORDER WHERE VALID = 1) DS
       ON (D.DEPTCODE=DS.ORGAN_CODE)
       WHEN MATCHED THEN
-      UPDATE SET D.SORT_ID = DS.ORGAN_ORDER,D.SYNC_DATE=UPDATE_DATE,SYNC_UPDATE_DATE=SYSDATE WHERE D.SORT_ID != DS.ORGAN_ORDER
+      UPDATE SET D.SORT_ID = DS.ORGAN_ORDER,SYNC_UPDATE_DATE=SYSDATE WHERE D.SORT_ID != DS.ORGAN_ORDER
     </insert>
 
     <!--将处室排序加入到中间表-->
@@ -181,13 +193,21 @@
     <update id="updateTempStasutsForPartSort">
         UPDATE BG_CEPRI_DHB_PART_ORDER SET VALID = 1 WHERE VALID = 0
     </update>
+    <!--更新处室排序的同步时间-->
+    <update id="updateDeptSysDateByPartSort">
+        UPDATE BG_SYS_DEPT D
+           SET D.SYNC_DATE = TO_DATE(#{time},'yyyy-MM-dd HH24:MI:SS')
+         WHERE D.VALID = 1 AND EXISTS (SELECT PART_CODE
+                  FROM BG_CEPRI_DHB_PART_ORDER N
+                 WHERE D.DEPTCODE = N.PART_CODE)
+    </update>
     <!--根据处室排序中间表更新部门排序信息-->
     <insert id="insertDeptByTempPartSort">
         MERGE INTO BG_SYS_DEPT D
         USING (SELECT PART_CODE,PART_NAME,PART_ORDER,ORGAN_TYPE,UPDATE_DATE FROM BG_CEPRI_DHB_PART_ORDER WHERE VALID = 1 ) PS
         ON (D.DEPTCODE=PS.PART_CODE)
         WHEN MATCHED THEN
-        UPDATE SET D.SORT_ID = PS.PART_ORDER,SYNC_DATE=PS.UPDATE_DATE,SYNC_UPDATE_DATE=SYSDATE WHERE D.SORT_ID!=PS.PART_ORDER
+        UPDATE SET D.SORT_ID = PS.PART_ORDER,SYNC_UPDATE_DATE=SYSDATE WHERE D.SORT_ID!=PS.PART_ORDER
     </insert>
 
     <!--将获取的人员信息排序插入到中间表中-->
@@ -218,13 +238,20 @@
     <update id="updateTempByStatusForEmpSort">
         UPDATE BG_CEPRI_DHB_EMP_ORDER SET VALID = 1 WHERE VALID = 0
     </update>
-
+    <!--更新同步时间-->
+    <update id="updateDeptSysDateByEmpSort">
+        UPDATE BG_SYS_USER U
+           SET U.SYNC_DATE = TO_DATE(#{time},'yyyy-MM-dd HH24:MI:SS')
+         WHERE U.VALID = 1 AND EXISTS (SELECT EMP_CODE
+                  FROM BG_CEPRI_DHB_EMP_ORDER N
+                 WHERE U.HRCODE = N.EMP_CODE)
+    </update>
     <insert id="insertUserByTempEmpSort">
         MERGE INTO BG_SYS_USER U
         USING (SELECT EMP_CODE,EMP_ORDER,ORGAN_CODE,UPDATE_DATE FROM BG_CEPRI_DHB_EMP_ORDER WHERE VALID = 1 ) ES
         ON (U.HRCODE = ES.EMP_CODE)
         WHEN MATCHED THEN
-        UPDATE SET U.SORT_ID = ES.EMP_ORDER,U.SYNC_DATE= UPDATE_DATE,U.SYNC_UPDATE_DATE = SYSDATE WHERE U.SORT_ID != ES.EMP_ORDER
+        UPDATE SET U.SORT_ID = ES.EMP_ORDER,U.SYNC_UPDATE_DATE = SYSDATE WHERE U.SORT_ID != ES.EMP_ORDER
     </insert>
 
     <!--将获取的日历班次插入到中间表中-->
@@ -253,13 +280,24 @@
     <update id="updateTempByStatusForSchedule">
         UPDATE BG_CEPRI_KAOQIN_BCXX SET VALID = 1  WHERE VALID = 0
     </update>
+    <!--更新同步时间-->
+    <update id="updateDeptSysDateBySchedule">
+      UPDATE BG_SYS_WORK_SCHEDULE WS
+                   SET WS.SYNC_DATE = TO_DATE(#{time},'yyyy-MM-dd HH24:MI:SS')
+                 WHERE WS.VALID = 1
+                   AND EXISTS (SELECT BCXX_DATE
+                          FROM BG_CEPRI_KAOQIN_BCXX N
+                         WHERE WS.SCHEDULE_DATE = N.BCXX_DATE)
+
+    </update>
     <!--将日历中间表中的数据更新到日历表中-->
     <insert id="insertScheduleForTemp">
         MERGE INTO BG_SYS_WORK_SCHEDULE WS
         USING BG_CEPRI_KAOQIN_BCXX BC
         ON (WS.SCHEDULE_DATE =BC.BCXX_DATE)
         WHEN MATCHED THEN
-        UPDATE SET WS.IS_HOLIDAY = BC.IS_HOLIDAY,WS.SCHEDULE_WEEK = BC.BCXX_WEEK ,WS.UPDATE_time=BC.UPDATE_time
+        UPDATE SET WS.IS_HOLIDAY = BC.IS_HOLIDAY,SCHEDULE_TYPE= DECODE(BC.RBC_CODE,'RBC001',0,1),WS.SCHEDULE_WEEK = BC.BCXX_WEEK ,WS.SYNC_UPDATE_DATE=SYSDATE
+        WHERE(WS.IS_HOLIDAY != BC.IS_HOLIDAY OR WS.SCHEDULE_WEEK != BC.BCXX_WEEK OR SCHEDULE_TYPE!= DECODE(BC.RBC_CODE,'RBC001',0,1))
         WHEN NOT MATCHED THEN
         INSERT (ID,SCHEDULE_DATE,SCHEDULE_WEEK,SCHEDULE_TYPE,IS_HOLIDAY,VALID,CREATE_time,CREATE_USER,SYNC_DATE,SYNC_UPDATE_DATE)
         VALUES (
@@ -326,74 +364,95 @@
     <update id="updateTempByStatusForEmpRelation">
          UPDATE BG_CEPRI_ZYSY_SPECIAL_EMP_INFO SET VALID = 1 WHERE VALID = 0
     </update>
+    <!--更新同步时间-->
+    <update id="updateDeptSysDateByTempEmpRelation">
+        UPDATE BG_SYS_USER_DEPT_RELATION UD
+                   SET UD.SYNC_DATE =TO_DATE(#{TIME}, 'yyyy-MM-dd HH24:MI:SS')
+                 WHERE UD.SRC = '1'
+                   AND EXISTS
+                 (SELECT T.END_DATE, T.BEGIN_DATE, U.USERID, D.DEPTID, T.UPDATE_DATE
+                          FROM BG_CEPRI_ZYSY_SPECIAL_EMP_INFO T
+                          LEFT JOIN BG_SYS_USER U
+                            ON T.EMP_CODE = U.HRCODE
+                          LEFT JOIN BG_SYS_DEPT D
+                            ON D.DEPTCODE = T.ST_OFFICE_CODE
+                         WHERE U.USERID IS NOT NULL
+                           AND D.DEPTID IS NOT NULL
+                           AND U.USERID = UD.USERID)
+    </update>
     <!--更新用户关系变更表-->
     <!-- UPDATE SET UD.DEPTID = R.DEPTID ,UD.EXP_START_time = TO_DATE(R.BEGIN_DATE,'yyyy-MM-dd HH24:MI:SS') , UD.EXP_END_time=TO_DATE(R.END_DATE,'yyyy-MM-dd HH24:MI:SS'),UD.UPDATE_DATE = R.UPDATE_DATE WHERE UD.DEPTID != R.DEPTID-->
     <insert id="insertUserAndDeptRelationByTemp">
-            MERGE INTO BG_SYS_USER_DEPT_RELATION UD
-            USING (SELECT T.END_DATE, T.BEGIN_DATE, U.USERID, D.DEPTID, T.UPDATE_DATE
-                     FROM BG_CEPRI_ZYSY_SPECIAL_EMP_INFO T
-                     LEFT JOIN BG_SYS_USER U
-                       ON T.EMP_CODE = U.HRCODE
-                     LEFT JOIN BG_SYS_DEPT D
-                       ON D.DEPTCODE = T.ST_OFFICE_CODE
-                    WHERE U.USERID IS NOT NULL
-                      AND D.DEPTID IS NOT NULL) R
-            ON (UD.USERID = R.USERID AND UD.DEPTID = R.DEPTID
-               AND UD.EXP_START_TIME = TO_DATE(R.BEGIN_DATE, 'yyyy-MM-dd HH24:MI:SS')
-               AND UD.EXP_END_TIME = TO_DATE(R.END_DATE, 'yyyy-MM-dd HH24:MI:SS')
-               AND UD.SRC = '1')
-            WHEN MATCHED THEN
-              UPDATE SET UD.UPDATE_DATE = R.UPDATE_DATE
-            WHEN NOT MATCHED THEN
-              INSERT
-                (USERID,
-                 DEPTID,
-                 VALID,
-                 EXP_START_TIME,
-                 EXP_END_TIME,
-                 CREATE_USER,
-                 CREATE_DATE)
-              VALUES
-                (R.USERID,
-                 R.DEPTID,
-                 1,
-                 TO_DATE(R.BEGIN_DATE, 'yyyy-MM-dd HH24:MI:SS'),
-                 TO_DATE(R.END_DATE, 'yyyy-MM-dd HH24:MI:SS'),
-                 'admin',
-                 R.UPDATE_DATE)
+         MERGE INTO BG_SYS_USER_DEPT_RELATION UD
+                USING (<include refid="relationEmp"/>) R
+                ON (UD.USERID = R.USERID AND UD.DEPTID = R.DEPTID AND UD.EXP_END_TIME = TO_DATE(R.END_DATE, 'yyyy-MM-dd HH24:MI:SS') AND UD.EXP_START_TIME = TO_DATE(R.BEGIN_DATE, 'yyyy-MM-dd HH24:MI:SS') AND UD.SRC = '1')
+                WHEN NOT MATCHED THEN
+                  INSERT
+                    (USERID,
+                     DEPTID,
+                     VALID,
+                     EXP_START_TIME,
+                     EXP_END_TIME,
+                     CREATE_USER,
+                     CREATE_DATE,
+                     SYNC_DATE,
+                     SYNC_UPDATE_DATE)
+                  VALUES
+                    (R.USERID,
+                     R.DEPTID,
+                     1,
+                     TO_DATE(R.BEGIN_DATE, 'yyyy-MM-dd HH24:MI:SS'),
+                     TO_DATE(R.END_DATE, 'yyyy-MM-dd HH24:MI:SS'),
+                     R.CREATE_USER,
+                     R.UPDATE_DATE,
+                     R.UPDATE_DATE,
+                     SYSDATE)
+
     </insert>
 
     <!--将报工多于综合系统的人员关系表删除-->
     <update id="deleteUaerAndDeptRelationForMore">
        UPDATE BG_SYS_USER_DEPT_RELATION UD
-                           SET UD.VALID = 0,
-                               UD.UPDATE_DATE =SYSDATE
-                         WHERE EXISTS (SELECT USERID
-                                  FROM (SELECT U.USERID
-                                          FROM BG_CEPRI_ZYSY_SPECIAL_EMP_INFO T
-                                          LEFT JOIN BG_SYS_USER U
-                                            ON T.EMP_CODE = U.HRCODE
-                                          LEFT JOIN BG_SYS_DEPT D
-                                            ON D.DEPTCODE = T.ST_OFFICE_CODE
-                                         WHERE U.SRC = '1'
-                                           AND U.USERID IS NOT NULL
-                                           AND D.DEPTID IS NOT NULL) TEMP
-                                 WHERE TEMP.USERID = UD.USERID)
-                           AND NOT EXISTS (SELECT DEPTID
-                                  FROM (SELECT D.DEPTID
-                                          FROM BG_CEPRI_ZYSY_SPECIAL_EMP_INFO T
-                                          LEFT JOIN BG_SYS_USER U
-                                            ON T.EMP_CODE = U.HRCODE
-                                          LEFT JOIN BG_SYS_DEPT D
-                                            ON D.DEPTCODE = T.ST_OFFICE_CODE
-                                         WHERE U.SRC = '1'
-                                           AND U.USERID IS NOT NULL
-                                           AND D.DEPTID IS NOT NULL) TEMP
-                                 WHERE TEMP.DEPTID != UD.USERID
+           SET UD.VALID = 0, UD.UPDATE_DATE = SYSDATE
+         WHERE UD.SRC ='1' AND (EXISTS (SELECT USERID
+                  FROM (<include refid="relationEmp"/>) TEMP
+                 WHERE TEMP.USERID = UD.USERID)
+           AND EXISTS
+         (SELECT DEPTID
+                  FROM (<include refid="relationEmp"/>) TEMP
+                 WHERE TEMP.DEPTID = UD.USERID
 
-                                )
+                )
+           AND (EXISTS (SELECT BEGIN_DATE
+                              FROM (<include refid="relationEmp"/>) TEMP
+                             WHERE UD.EXP_START_TIME !=
+                                   TO_DATE(TEMP.BEGIN_DATE, 'yyyy-MM-dd HH24:MI:SS')) OR
+                EXISTS
+                (SELECT END_DATE
+                   FROM (<include refid="relationEmp"/>) TEMP
+                  WHERE UD.EXP_END_TIME !=
+                        TO_DATE(TEMP.END_DATE, 'yyyy-MM-dd HH24:MI:SS'))))
+      <!--      OR (EXISTS (SELECT USERID
+                                FROM (<include refid="relationEmp"/>) TEMP
+                                WHERE TEMP.USERID = UD.USERID)
+                AND EXISTS
+                (SELECT DEPTID
+                FROM (<include refid="relationEmp"/>) TEMP
+                WHERE TEMP.DEPTID != UD.USERID
+                )
+                )-->
 
     </update>
+    <sql id="relationEmp">
+        SELECT U.USERID,D.DEPTID,T.BEGIN_DATE,T.END_DATE,T.UPDATE_DATE,T.CREATE_USER
+          FROM BG_CEPRI_ZYSY_SPECIAL_EMP_INFO T
+          LEFT JOIN BG_SYS_USER U
+            ON T.EMP_CODE = U.HRCODE
+          LEFT JOIN BG_SYS_DEPT D
+            ON D.DEPTCODE = T.ST_OFFICE_CODE
+         WHERE U.USERID IS NOT NULL
+           AND D.DEPTID IS NOT NULL
+    </sql>
     <!--将部门类型数据添加到中间表中-->
     <insert id="insertTempDeptType" parameterType="java.util.Map">
       INSERT INTO BG_CEPRI_JXGL_ORGAN_TYPE_M
@@ -421,40 +480,52 @@
     <delete id="deleteTempByStatusForDeptType">
         DELETE FROM BG_CEPRI_JXGL_ORGAN_TYPE_M WHERE VALID = 1
     </delete>
-
+    <!--更新部门类型的同步时间-->
+    <update id="updateDeptSysDateByTempDeptType">
+          UPDATE BG_SYS_APPROVAL_DEPT_R_ORGTYPE DO SET DO.SYNC_DATE = TO_DATE(#{TIME}, 'yyyy-MM-dd HH24:MI:SS')
+        WHERE EXISTS(SELECT D.DEPTID, SD.ID,T.UPDATE_DATE,T.CREATE_USER
+                     FROM BG_CEPRI_JXGL_ORGAN_TYPE_M T
+                     LEFT JOIN BG_SYS_DEPT D
+                       ON T.ORGAN_CODE = D.DEPTCODE
+                     LEFT JOIN BG_SYS_DATADICTIONARY SD
+                       ON SD.CODE = T.ORGAN_TYPE_CODE
+                    WHERE T.ORGAN_TYPE_CODE IN ('OT1', 'OT2', 'OT3')
+                      AND D.VALID = 1
+                      AND D.DEPTID IS NOT NULL
+                      AND DO.ORGAN_ID = D.DEPTID)
+    </update>
     <update id="updateTempByStatusForDeptType">
         UPDATE BG_CEPRI_JXGL_ORGAN_TYPE_M SET VALID = 1
     </update>
     <!--更新部门类型-->
     <insert id="insertDeptTypeByTemp">
-        MERGE INTO BG_SYS_APPROVAL_DEPT_R_ORGTYPE DO
-        USING (SELECT D.DEPTID, SD.ID
-                 FROM BG_CEPRI_JXGL_ORGAN_TYPE_M T
-                 LEFT JOIN BG_SYS_DEPT D
-                   ON T.ORGAN_CODE = D.DEPTCODE
-                 LEFT JOIN BG_SYS_DATADICTIONARY SD
-                   ON SD.CODE = T.ORGAN_TYPE_CODE
-                WHERE T.ORGAN_TYPE_CODE IN ('OT1', 'OT2', 'OT3')
-                  AND D.VALID = 1
-                  AND D.DEPTID IS NOT NULL) TEM
-        ON (DO.ORGAN_ID = TEM.DEPTID)
-        WHEN MATCHED THEN
-          UPDATE
-             SET DO.ORGAN_TYPE = TEM.ID,
-                 UPDATE_time   = SYSDATE,
-                 UPDATE_USER   = 'admin'
-        WHEN NOT MATCHED THEN
-          INSERT
-            (UUID, ORGAN_ID, ORGAN_TYPE, VALID, CREATE_time, CREATE_USER)
-          VALUES
-            (SYS_GUID(), TEM.DEPTID, TEM.ID, 1, SYSDATE, 'admin')
+         MERGE INTO BG_SYS_APPROVAL_DEPT_R_ORGTYPE DO
+            USING (SELECT D.DEPTID, SD.ID,T.UPDATE_DATE,T.CREATE_USER
+                     FROM BG_CEPRI_JXGL_ORGAN_TYPE_M T
+                     LEFT JOIN BG_SYS_DEPT D
+                       ON T.ORGAN_CODE = D.DEPTCODE
+                     LEFT JOIN BG_SYS_DATADICTIONARY SD
+                       ON SD.CODE = T.ORGAN_TYPE_CODE
+                    WHERE T.ORGAN_TYPE_CODE IN ('OT1', 'OT2', 'OT3')
+                      AND D.VALID = 1
+                      AND D.DEPTID IS NOT NULL) TEM
+            ON (DO.ORGAN_ID = TEM.DEPTID)
+            WHEN MATCHED THEN
+              UPDATE
+                 SET DO.ORGAN_TYPE = TEM.ID,
+                     DO.UPDATE_time   = SYSDATE,
+                     DO.UPDATE_USER   =TEM.CREATE_USER,DO.SYNC_UPDATE_DATE = SYSDATE WHERE (DO.ORGAN_TYPE != TEM.ID)
+            WHEN NOT MATCHED THEN
+              INSERT
+                (UUID, ORGAN_ID, ORGAN_TYPE, VALID, CREATE_time, CREATE_USER,SYNC_DATE,SYNC_UPDATE_DATE)
+              VALUES
+                (SYS_GUID(), TEM.DEPTID, TEM.ID, 1, TEM.UPDATE_DATE, TEM.CREATE_USER,TEM.UPDATE_DATE ,SYSDATE)
     </insert>
     <!--删除组织关系表中多于综合系统表的相关数据-->
     <update id="deleteDeptTypeForBGMore">
         UPDATE BG_SYS_APPROVAL_DEPT_R_ORGTYPE DO
            SET DO.VALID    = 0,
-               UPDATE_TIME =
-               (SELECT UPDATE_DATE FROM BG_CEPRI_JXGL_ORGAN_TYPE_M WHERE ROWNUM = 1)
+               UPDATE_TIME =SYSDATE
          WHERE DO.ORGAN_ID NOT IN (SELECT D.DEPTID
                                    FROM BG_CEPRI_JXGL_ORGAN_TYPE_M T
                                    LEFT JOIN BG_SYS_DEPT D
