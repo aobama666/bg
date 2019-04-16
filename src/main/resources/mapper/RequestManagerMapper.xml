@@ -4,7 +4,7 @@
 	namespace：必须与对应的接口全类名一致
 	id:必须与对应接口的某个对应的方法名一致
  -->
-<mapper namespace="com.sgcc.bg.mapper.ManualSyncZHDataMapper">
+<mapper namespace="com.sgcc.bg.mapper.RequestManagerMapper">
    <!--将同步操作信息保存到数据库表中-->
     <insert id="insertOperationRecord" parameterType="java.util.Map">
         INSERT INTO BG_SYS_REQUEST_MANAGER
@@ -38,14 +38,14 @@
                 U.USERNAME
         FROM BG_SYS_REQUEST_MANAGER R
         LEFT JOIN BG_SYS_USER U
-        ON R.CREATE_USER = U.HRCODE
+        ON R.CREATE_USER = U.USERID
         WHERE 1=1
         <if test="dataType != null and dataType !=''">
             AND REQUEST_TYPE = #{dataType}
         </if>
         <if test="userName != null and userName != ''">
             AND  R.CREATE_USER IN(
-            SELECT HRCODE FROM BG_SYS_USER WHERE USERNAME LIKE '%'||#{userName}||'%'
+            SELECT USERID FROM BG_SYS_USER WHERE USERNAME LIKE '%'||#{userName}||'%'
             )
         </if>
         ORDER BY  R.CREATE_DATE DESC

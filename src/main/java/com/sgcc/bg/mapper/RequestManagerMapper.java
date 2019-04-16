@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public interface ManualSyncZHDataMapper {
+public interface RequestManagerMapper {
     void insertOperationRecord(Map<String,String> recordPo);
 
     List<Map<String,String>> getAllOperationRecord(@Param("userName") String userName,@Param("dataType") String dataType);

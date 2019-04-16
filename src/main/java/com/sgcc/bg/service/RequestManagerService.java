@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
-public interface ManualSyncZHDataService {
+public interface RequestManagerService {
     String syncDataForZH(HttpServletRequest request,String startDate,String category,String requestRemark,String userName);
 
     void insertOperationRecord(Map<String, String> recordPo);

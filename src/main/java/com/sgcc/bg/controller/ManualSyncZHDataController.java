@@ -2,10 +2,9 @@ package com.sgcc.bg.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.google.gson.Gson;
 import com.sgcc.bg.common.*;
 import com.sgcc.bg.service.DataDictionaryService;
-import com.sgcc.bg.service.ManualSyncZHDataService;
+import com.sgcc.bg.service.RequestManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,7 @@ public class ManualSyncZHDataController {
     private WebUtils webUtils;
 
     @Autowired
-    private ManualSyncZHDataService manualSyncZHDataService;
+    private RequestManagerService requestManagerService;
 
     @Autowired
     private DataDictionaryService dataDictionaryService;
@@ -84,20 +83,23 @@ public class ManualSyncZHDataController {
         }
 
         String startDate = DateUtil.getTime();//手动更新数据开始时间
-        String username = webUtils.getCommonUser().getSapHrCode();
-        System.out.println("获取登录用户的id" + username);
+        String username = webUtils.getCommonUser().getUserName();
+        CommonCurrentUser commonCurrentUserByUsername = userUtils.getCommonCurrentUserByUsername(username);
+        String userId = commonCurrentUserByUsername.getUserId();
+        System.out.println("获取登录用户的id" + userId);
 
         String data = null;
         try {
-            data = manualSyncZHDataService.syncDataForZH(request, startDate, category, requestRemark, username);
+            data = requestManagerService.syncDataForZH(request, startDate, category, requestRemark, userId);
         } catch (Exception e) {
+            //在控制层中捕获异常并将异常信息保存到数据库
             String endDate = DateUtil.getTime();
             recordPo.put("requestType", category);
             recordPo.put("operationStatus", "0");//0代表失败
             recordPo.put("startDate", startDate);
             recordPo.put("endDate", endDate);
             recordPo.put("createDate", endDate);
-            recordPo.put("createUserId", username);
+            recordPo.put("createUserId", userId);
             //将备注存入map中
             recordPo.put("requestRemark", requestRemark);
             String errorInfo = "";
@@ -109,7 +111,7 @@ public class ManualSyncZHDataController {
             }
             recordPo.put("message", errorInfo);
             System.out.println("错误信息的长度是：" + errorInfo.length());
-            manualSyncZHDataService.insertOperationRecord(recordPo);
+            requestManagerService.insertOperationRecord(recordPo);
             System.out.println("捕捉异常信息"+e.getMessage());
             resultMap.put("status", "0");
             resultMap.put("info", "选择同步的数据过程出错");
@@ -126,7 +128,7 @@ public class ManualSyncZHDataController {
     public String queryList(String userName, String dataType, Integer page, Integer limit) {
         userName = Rtext.toStringTrim(userName, "");
 //        dataType=Rtext.toStringTrim(dataType, "");
-        List<Map<String, String>> content = manualSyncZHDataService.getAllOperationRecord(userName, dataType);
+        List<Map<String, String>> content = requestManagerService.getAllOperationRecord(userName, dataType);
         int start = 0;
         int end = 30;
         if (page != null && limit != null) {
