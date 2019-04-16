@@ -1,6 +1,6 @@
 package com.sgcc.bg.service.impl;
 
-import com.sgcc.bg.common.JDBCUtil;
+import com.sgcc.bg.jdbcforzh.JDBCUtil;
 import com.sgcc.bg.mapper.SyncDataForZHMapper;
 import com.sgcc.bg.service.SyncDataForZHService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         List<Map<String, Object>> maps = getJdbcQuery(sql, null);
         if (maps == null || maps.size() == 0) {
             map.put("status","0");
-            map.put("message","无法从综合系统获取原始数据");
+            map.put("message","数据为空");
             return map;
         }
         //将获取到的结果保存到报工系统的中间表中BG_CEPRI_ZYSY_NEW_ORGAN设置状态为0
@@ -71,7 +71,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         List<Map<String, Object>> maps = getJdbcQuery(sql, null);
         if (maps == null || maps.size() == 0) {
             map.put("status","0");
-            map.put("message","无法从综合系统获取原始数据");
+            map.put("message","数据为空");
             return map;
         }
         for (int i = 0; i < maps.size(); i++) {
@@ -101,7 +101,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         List<Map<String, Object>> maps = getJdbcQuery(sql, null);
         if (maps == null || maps.size() == 0) {
             map.put("status","0");
-            map.put("message","无法从综合系统获取原始数据");
+            map.put("message","数据为空");
             return map;
         }
         for (int i = 0; i < maps.size(); i++) {
@@ -130,7 +130,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         List<Map<String, Object>> maps = getJdbcQuery(sql, null);
         if (maps == null || maps.size() == 0) {
             map.put("status","0");
-            map.put("message","无法从综合系统获取原始数据");
+            map.put("message","数据为空");
             return map;
         }
         for (int i = 0; i < maps.size(); i++) {
@@ -162,7 +162,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         List<Map<String, Object>> maps = getJdbcQuery(sql, null);
         if (maps == null || maps.size() == 0) {
             map.put("status","0");
-            map.put("message","无法从综合系统获取原始数据");
+            map.put("message","数据为空");
             return map;
         }
         for (int i = 0; i < maps.size(); i++) {
@@ -196,7 +196,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         List<Map<String, Object>> maps = getJdbcQuery(sql, null);
         if (maps == null || maps.size() == 0) {
             map.put("status","0");
-            map.put("message","无法从综合系统获取原始数据");
+            map.put("message","数据为空");
             return map;
         }
         for (int i = 0; i < maps.size(); i++) {
@@ -228,7 +228,7 @@ public class SyncDataForZHServiceImpl implements SyncDataForZHService {
         List<Map<String, Object>> maps = getJdbcQuery(sql, null);
         if (maps == null || maps.size() == 0) {
             map.put("status","0");
-            map.put("message","无法从综合系统获取原始数据");
+            map.put("message","数据为空");
             return map;
         }
         for (int i = 0; i < maps.size(); i++) {

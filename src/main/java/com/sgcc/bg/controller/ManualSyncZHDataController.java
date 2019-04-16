@@ -76,15 +76,15 @@ public class ManualSyncZHDataController {
         String requestRemark = Rtext.toStringTrim(request.getParameter("requestRemark"), "");
         Map resultMap = new HashMap<>();
 
-        if (null == category || category == "") {
+        if (null == category ||"".equals(category)) {
             resultMap.put("status", "0");
             resultMap.put("info", "选择同步的数据类型有误，传值错误");
             return JSON.toJSONString(resultMap);
         }
 
         String startDate = DateUtil.getTime();//手动更新数据开始时间
-        String username = webUtils.getCommonUser().getUserName();
-        CommonCurrentUser commonCurrentUserByUsername = userUtils.getCommonCurrentUserByUsername(username);
+//        String username = webUtils.getCommonUser().getUserName();
+        CommonCurrentUser commonCurrentUserByUsername = userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
         String userId = commonCurrentUserByUsername.getUserId();
         System.out.println("获取登录用户的id" + userId);
 
