@@ -15,13 +15,13 @@
            SYS_GUID(),
            #{requestType,jdbcType=VARCHAR},
            #{operationStatus,jdbcType=VARCHAR},
-           #{startDate,jdbcType=VARCHAR},
-           #{endDate,jdbcType=VARCHAR},
-           #{createDate,jdbcType=VARCHAR},
+           TO_DATE(#{startDate},'yyyy-MM-dd HH24:MI:SS'),
+           TO_DATE(#{endDate},'yyyy-MM-dd HH24:MI:SS'),
+           TO_DATE(#{createDate},'yyyy-MM-dd HH24:MI:SS'),
            #{createUserId,jdbcType=VARCHAR},
            #{message,jdbcType=VARCHAR},
            #{requestRemark,jdbcType=VARCHAR},
-           #{createDate,jdbcType=VARCHAR},
+           TO_DATE(#{createDate},'yyyy-MM-dd HH24:MI:SS'),
            #{createUserId,jdbcType=VARCHAR}
 
         )
@@ -30,8 +30,8 @@
     <select id="getAllOperationRecord" resultType="java.util.Map">
         SELECT R.CREATE_USER,
                 R.STATUS,
-                R.START_DATE,
-                R.END_DATE,
+                to_char(R.START_DATE,'yyyy-MM-dd HH24:MI:SS') AS START_DATE,
+                to_char(R.END_DATE,'yyyy-MM-dd HH24:MI:SS') AS END_DATE,
                 R.MESSAGE,
                 R.REQUEST_TYPE,
                 R.CREATE_DATE,
