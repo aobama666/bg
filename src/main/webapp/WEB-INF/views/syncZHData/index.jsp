@@ -77,41 +77,10 @@
             <form name="queryBox" action="" style="width:100%;padding-left:10px">
                 <hidden name="uuid" property="uuid"></hidden>
                 <input type="hidden" name="selectList"/>
-     <%--           <div class="form-group col-xs-5">
-                    <label>统计报表：</label>
-                    <div class="controls"  data-date-format="yyyy-mm-dd" id="oneLine">
-                        <select name="year" class='oneLine year'>
-                            <option>2018</option>
-                            <option>2017</option>
-                        </select>
-                        <select name="Atype" class='oneLine mouth'>
-                            <option value="Y">年度</option>
-                            <option selected='selected' value="J">季度</option>
-                            <option value="M">月度</option>
-                        </select>
-                        <select name="Ctype" class='oneLine dates'>
-                            <option></option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group col-xs-3">
-                    <label>项目名称：</label>
-                    <div class="controls">
-                        <input name="projectName" property="projectName" >
-                    </div>
-                </div>--%>
                 <div class="form-group col-xs-4">
                     <label>同步类型：</label>
                     <div class="controls">
                         <select  name="dataType" id="syncDataZh" class="form-control selectpicker">
-                            <%--<option value=""></option>--%>
-                          <%--  <option value="ANG">新增组织</option>
-                            <option value="DS">部门排序</option>
-                            <option value="PS">处室排序</option>
-                            <option value="ES">员工排序</option>
-                            <option value="SC">日历班次</option>
-                            <option value="ER">人员关系变更</option>
-                            <option value="DT">部门类型</option>--%>
                         </select>
                     </div>
                 </div>
