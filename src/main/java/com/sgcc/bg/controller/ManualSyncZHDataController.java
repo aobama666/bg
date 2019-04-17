@@ -68,7 +68,7 @@ public class ManualSyncZHDataController {
 
     @ResponseBody
     @RequestMapping(value = "/operationSync", produces = "application/json")
-    public String operationSyncData(HttpServletRequest request, Model model) {
+    public String operationSyncData(HttpServletRequest request) {
 //        System.out.println("用户名是："+webUtils.getUsername());
         Map<String, String> recordPo = new HashMap<>();
         String category = Rtext.toStringTrim(request.getParameter("category"), "");

@@ -296,21 +296,24 @@
         USING BG_CEPRI_KAOQIN_BCXX BC
         ON (WS.SCHEDULE_DATE =BC.BCXX_DATE)
         WHEN MATCHED THEN
-        UPDATE SET WS.IS_HOLIDAY = BC.IS_HOLIDAY,SCHEDULE_TYPE= DECODE(BC.RBC_CODE,'RBC001',0,1),WS.SCHEDULE_WEEK = BC.BCXX_WEEK ,WS.SYNC_UPDATE_DATE=SYSDATE
-        WHERE(WS.IS_HOLIDAY != BC.IS_HOLIDAY OR WS.SCHEDULE_WEEK != BC.BCXX_WEEK OR SCHEDULE_TYPE!= DECODE(BC.RBC_CODE,'RBC001',0,1))
+        UPDATE SET WS.IS_HOLIDAY = BC.IS_HOLIDAY,SCHEDULE_TYPE= DECODE(BC.RBC_CODE,'RBC001',0,'RBC002',1,'RBC003',0),WS.SCHEDULE_WEEK = BC.BCXX_WEEK ,WS.SYNC_UPDATE_DATE=SYSDATE
+        WHERE(WS.IS_HOLIDAY != BC.IS_HOLIDAY OR WS.SCHEDULE_WEEK != BC.BCXX_WEEK OR SCHEDULE_TYPE!= DECODE(BC.RBC_CODE,'RBC001',0,'RBC002',1,'RBC003',0)
+               OR WS.RBC_CODE != BC.RBC_CODE)
         WHEN NOT MATCHED THEN
-        INSERT (ID,SCHEDULE_DATE,SCHEDULE_WEEK,SCHEDULE_TYPE,IS_HOLIDAY,VALID,CREATE_time,CREATE_USER,SYNC_DATE,SYNC_UPDATE_DATE)
+        INSERT (ID,SCHEDULE_DATE,SCHEDULE_WEEK,SCHEDULE_TYPE,IS_HOLIDAY,VALID,CREATE_time,CREATE_USER,SYNC_DATE,SYNC_UPDATE_DATE,BC_CODE,RBC_CODE)
         VALUES (
             SYS_GUID(),
             BC.BCXX_DATE,
             BC.BCXX_WEEK,
-            DECODE(BC.RBC_CODE,'RBC001',0,1),
+            DECODE(BC.RBC_CODE,'RBC001',0,'RBC002',1,'RBC003',0,''),
             BC.IS_HOLIDAY,
             1,
             BC.UPDATE_time,
             BC.CREATE_USER,
             BC.UPDATE_TIME,
-            SYSDATE
+            SYSDATE,
+            BC.BC_CODE,
+            BC.RBC_CODE
         )
 
     </insert>
@@ -412,27 +415,39 @@
 
     <!--将报工多于综合系统的人员关系表删除-->
     <update id="deleteUaerAndDeptRelationForMore">
-       UPDATE BG_SYS_USER_DEPT_RELATION UD
-           SET UD.VALID = 0, UD.UPDATE_DATE = SYSDATE
-         WHERE UD.SRC ='1' AND (EXISTS (SELECT USERID
-                  FROM (<include refid="relationEmp"/>) TEMP
-                 WHERE TEMP.USERID = UD.USERID)
-           AND EXISTS
+        UPDATE BG_SYS_USER_DEPT_RELATION UD
+        SET UD.VALID = 0, UD.UPDATE_DATE = SYSDATE,UD.SYNC_UPDATE_DATE=SYSDATE
+        WHERE UD.SRC = '1'
+        AND (UD.USERID NOT IN
+        (SELECT USERID FROM (<include refid="relationEmp"/>) TEMP
+         ) OR
+        UD.DEPTID NOT IN
+        (SELECT DEPTID FROM (<include refid="relationEmp"/>) TEMP) OR
+        UD.EXP_START_TIME NOT IN
+        (SELECT TO_DATE(BEGIN_DATE, 'yyyy-MM-dd HH24:MI:SS')
+        FROM (<include refid="relationEmp"/>) TEMP) OR
+        UD.EXP_END_TIME NOT IN
+        (SELECT TO_DATE(END_DATE, 'yyyy-MM-dd HH24:MI:SS')
+        FROM (<include refid="relationEmp"/>) TEMP))
+      <!--
+        AND EXISTS
          (SELECT DEPTID
                   FROM (<include refid="relationEmp"/>) TEMP
                  WHERE TEMP.DEPTID = UD.USERID
 
                 )
-           AND (EXISTS (SELECT BEGIN_DATE
+           AND (NOT EXISTS (SELECT BEGIN_DATE
                               FROM (<include refid="relationEmp"/>) TEMP
                              WHERE UD.EXP_START_TIME !=
                                    TO_DATE(TEMP.BEGIN_DATE, 'yyyy-MM-dd HH24:MI:SS')) OR
-                EXISTS
+               NOT EXISTS
                 (SELECT END_DATE
                    FROM (<include refid="relationEmp"/>) TEMP
                   WHERE UD.EXP_END_TIME !=
-                        TO_DATE(TEMP.END_DATE, 'yyyy-MM-dd HH24:MI:SS'))))
-      <!--      OR (EXISTS (SELECT USERID
+                        TO_DATE(TEMP.END_DATE, 'yyyy-MM-dd HH24:MI:SS')))
+
+
+      OR (EXISTS (SELECT USERID
                                 FROM (<include refid="relationEmp"/>) TEMP
                                 WHERE TEMP.USERID = UD.USERID)
                 AND EXISTS

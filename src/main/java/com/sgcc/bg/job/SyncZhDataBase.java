@@ -19,7 +19,7 @@ public class SyncZhDataBase {
     private SyncDataForZHService syncDataForZHService;
 
     /**
-     * 需要从综合系统同步数据包括并且顺序如下所示：
+     * 需要从综合系统同步数据并且顺序如下所示：
      * 1.新增组织
      * 2.部门排序
      * 3.处室排序
