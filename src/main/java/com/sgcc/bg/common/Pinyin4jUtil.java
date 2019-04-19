@@ -95,7 +95,8 @@ public class Pinyin4jUtil {
         // return pinyinName.toString();  
         return parseTheChineseByObject(discountTheChinese(pinyinName.toString()));  
     }  
-  
+     
+
     /** 
      * 去除多音字重复数据 
      *  

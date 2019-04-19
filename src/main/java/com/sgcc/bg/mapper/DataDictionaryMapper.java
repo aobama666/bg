@@ -15,4 +15,10 @@ public interface DataDictionaryMapper {
 	 * @return
 	 */
 	List<Map<String, String>> getDictDataByPcode(@Param("pcode")String pcode);
+	/**
+	 * 根据pcode获取该组字典数据
+	 * @param pcode
+	 * @return
+	 */
+	List<Map<String, String>> selectDictDataByPcode(@Param("pcode")String pcode);
 }

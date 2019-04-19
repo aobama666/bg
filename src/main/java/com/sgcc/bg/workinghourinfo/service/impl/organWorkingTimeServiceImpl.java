@@ -88,7 +88,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
    	 if(beginData==""){
 			  map.put("status", 201);
 			  map.put("res", "开始时间不能为空");
-			   jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+			  jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
 			   
 		 }else{
 			boolean flag=DateUtil.isCheckDate(beginData);
@@ -108,7 +108,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 				boolean flag=DateUtil.isCheckDate(endData);
 				if(!flag){
 					  map.put("status", 201);
-					  map.put("res", "结束时间错误");
+					  map.put("res", "结束时间错误 ");
 					  jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
 				} 
 			 }

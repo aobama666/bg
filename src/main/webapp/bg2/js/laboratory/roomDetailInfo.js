@@ -17,6 +17,38 @@ roomDetailInfo.forSave_pro= function(){
 	}
 	 
 }
+
+
+
+roomDetailInfo.initSelected = function(){
+	/* start 查询数据字典集合  */
+	$.ajax({
+	    url: "/bg/DataDictionary/selectForDataDictionary",//获取 演示中心界面数据字典
+		type: "post",
+		success: function (data) {
+			if(data.success){
+				dicts = data[0];
+		    	var lbType = data[0].lbType;//成果类型数据字典
+				var lbTypeOption = '';
+				lbTypeOption += '<option value="">全部</option>';
+				for (var i = 0; i < lbType.length; i++) {
+					lbTypeOption += '<option value="' + lbType[i].KEY + '">' + lbType[i].VALUE + '</option>';
+				}
+				$('#lbType').html(lbTypeOption);
+			}
+			roomList.initDataGrid();
+		}
+	});
+	/* start 查询数据字典集合  */
+}
+
+
+
+
+
+
+
+
 function checkStartDate(startDate){
 	var result = {};
 	var currentYear=new Date().getFullYear();
