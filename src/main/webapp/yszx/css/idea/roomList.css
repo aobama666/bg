@@ -292,3 +292,8 @@ body div.btn_type_box .btn_type:ACTIVE {
 .combo-arrow{
 	    background:#fff!important;
 }
+
+/* cyj  验证字段为空   样式是修改 成红色*/
+table td .validRefuse{
+	border:solid 1px red;
+}

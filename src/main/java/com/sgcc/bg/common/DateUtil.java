@@ -225,7 +225,7 @@ public class DateUtil {
 	 */
     public static boolean isCheckTime(String time){
     	try{
-    		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     		df.setLenient(false);
     		Date date = df.parse(time);
     		return true;
@@ -331,7 +331,7 @@ public class DateUtil {
 	 * @throws ParseException
 	 */
 	public static boolean compareTime(String beginData,String endData) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		Date beginDatas = sdf.parse(beginData);
 		Date endDatas = sdf.parse(endData);
 		if(beginDatas.getTime()<endDatas.getTime()){

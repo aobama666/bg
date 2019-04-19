@@ -153,4 +153,26 @@
 	
 	
 	
+	<select id="selectForLeader" resultType="java.util.Map">
+		SELECT 
+		 USERID,
+		 USERALISA
+		  FROM TB_YSZX_CONFIG_COMPANY_LEADER
+		WHERE VALID =  '1'
+	</select>
+	
+	
+	<select id="selectForApplyId" resultType="java.util.Map">
+		SELECT 
+		APPLY_ID
+		  FROM TB_YSZX_IDEA
+		WHERE VALID =  '1'
+		<if test="applyId!=null and applyId!=''">
+			and APPLY_ID  like '%'||#{applyId}||'%'
+		</if>
+	</select>
+	
+	
+	
+	
 </mapper>

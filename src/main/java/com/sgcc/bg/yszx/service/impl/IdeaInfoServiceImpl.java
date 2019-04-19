@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.CommonCurrentUser;
 import com.sgcc.bg.common.CommonUser;
 import com.sgcc.bg.common.DateUtil;
@@ -32,7 +33,7 @@ import com.sgcc.bg.yszx.service.IdeaInfoService;
 @Service
 public class IdeaInfoServiceImpl implements IdeaInfoService {
 	@Autowired
-	private   YSZXMapper yszxMapper;
+	private    YSZXMapper yszxMapper;
 	@Autowired
 	private WebUtils webUtils;
 	@Autowired
@@ -40,34 +41,34 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	private static Logger bgServiceLog =  LoggerFactory.getLogger(IdeaInfoServiceImpl.class);
 
 	@Override
-	public String addIdeaInfo(HttpServletRequest request) {
+	public String addIdeaInfo(Map<String, Object> paramsMap) {
 	   bgServiceLog.info("演示中心参观预定的添加----->开始" );
-	   String visitLevel = request.getParameter("visitLevel" ) == null ? "" : request.getParameter("visitLevel").toString(); //提交|保存
+	   String visitLevel = paramsMap.get("visitLevel") == null ? "" : paramsMap.get("visitLevel").toString();  //提交|保存
 	   Map<String,String>  userInfoMap=userInfo();
 	   //演示中心参观预定的添加数据的验证
-	   String  ideaforRW=checkIdeaInfo(request);
+	   String  ideaforRW=checkIdeaInfo(paramsMap);
 	   if(!ideaforRW.equals("null")){
 		   return ideaforRW;
 	   } 
 	   //参观人信息参观预定的添加数据的验证
-	   String  visitforRW=checkVisitInfo(request);
+	   String  visitforRW=checkVisitInfo(paramsMap);
 	   if(!ideaforRW.equals("null")){
 		   return ideaforRW;
 	   } 
 	   //陪同领导人员信息添加数据的验证
-	   String  CompanyLeadershipforRW=checkCompanyLeaderInfo(request);
+	   String  CompanyLeadershipforRW=checkCompanyLeaderInfo(paramsMap);
 	   if(!CompanyLeadershipforRW.equals("null") ){
 		   return CompanyLeadershipforRW;
 	   }
-	   //陪同部门人员信息添加数据的验证
-	   String CompanyDeptforRW =checkCompanyUserInfo(request);
-	   if(!CompanyDeptforRW.equals("null")){
-		   return CompanyDeptforRW;
-	   }
+//	   //陪同部门人员信息添加数据的验证
+//	   String CompanyDeptforRW =checkCompanyUserInfo(request);
+//	   if(!CompanyDeptforRW.equals("null")){
+//		   return CompanyDeptforRW;
+//	   }
 	   IdeaInfo  ideaInfo=new IdeaInfo();
 	   String id=Rtext.getUUID();
 	   ideaInfo.setId(id);
-	   ideaInfo =IdeaInfo(request,ideaInfo,userInfoMap); //演示中心参观预定的添加数据实体的返回
+	   ideaInfo =IdeaInfo(paramsMap,ideaInfo,userInfoMap); //演示中心参观预定的添加数据实体的返回
 	   if(visitLevel.equals("save")){//保存
 		   ideaInfo.setStatus("SAVE");
 		   yszxMapper.addIdeaInfo(ideaInfo);
@@ -77,17 +78,17 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	   }
 	   if(!"0".equals(visitforRW)){
 		   //演示中心参观人员信息的添加
-		  visitInfo(request, id,userInfoMap); 
+		  visitInfo(paramsMap, id,userInfoMap); 
 	   }
-	   if(!"0".equals(CompanyLeadershipforRW)){
-		   //演示中心陪同领导人员信息的添加
-		   CompanyLeaderInfo(request,id,userInfoMap);
-	   }  
-	   if(!"0".equals(CompanyDeptforRW)){
-		 //演示中心陪同部门人员信息的添加
-		   CompanyUserInfo(request,id,userInfoMap);
-	   }
-	   
+//	   if(!"0".equals(CompanyLeadershipforRW)){
+//		   //演示中心陪同领导人员信息的添加
+//		   CompanyLeaderInfo(request,id,userInfoMap);
+//	   }  
+//	   if(!"0".equals(CompanyDeptforRW)){
+//		 //演示中心陪同部门人员信息的添加
+//		   CompanyUserInfo(request,id,userInfoMap);
+//	   }
+//	   
 	    
 	   return "";
 		//return yszxMapper.addIdeaInfo(ideaInfo);
@@ -99,18 +100,18 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	 * @param
 	 * @return
 	 */
-	public String  checkIdeaInfo(HttpServletRequest request){
+	public String  checkIdeaInfo(Map<String, Object> paramsMap){
 		 bgServiceLog.info("演示中心参观预定的添加----->IdeaInfo数据的验证" );
-		String contactUser = request.getParameter("contactUser" ) == null ? "" : request.getParameter("contactUser").toString(); //联系人名称
-		String contactPhone = request.getParameter("contactPhone" ) == null ? "" : request.getParameter("contactPhone").toString(); //联系人电话
-		String stateDate = request.getParameter("stateDate" ) == null ? "" : request.getParameter("stateDate").toString(); //参观开始时间
-		String endDate = request.getParameter("endDate" ) == null ? "" : request.getParameter("endDate").toString(); //参观结束时间
-		String remark = request.getParameter("remark" ) == null ? "" : request.getParameter("remark").toString(); //备注
-		String visitUnitType = request.getParameter("visitUnitType" ) == null ? "" : request.getParameter("visitUnitType").toString(); //参观单位性质
-		String visitUnitName = request.getParameter("visitUnitName" ) == null ? "" : request.getParameter("visitUnitName").toString(); //参观单位名称
-		String visitorNumber = request.getParameter("visitorNumber" ) == null ? "" : request.getParameter("visitorNumber").toString(); //参观人数
-		String companyUserNumber = request.getParameter("companyUserNumber" ) == null ? "" : request.getParameter("companyUserNumber").toString(); //陪同人数
-		ResultWarp rw =  null;
+		 String contactUser = paramsMap.get("contactUser") == null ? "" : paramsMap.get("contactUser").toString(); //联系人名称
+		 String contactPhone = paramsMap.get("contactPhone") == null ? "" : paramsMap.get("contactPhone").toString(); //联系人电话
+		 String stateDate = paramsMap.get("stateDate") == null ? "" : paramsMap.get("stateDate").toString(); //参观开始时间
+		 String endDate = paramsMap.get("endDate") == null ? "" : paramsMap.get("endDate").toString();  //参观结束时间
+		 String remark = paramsMap.get("remark") == null ? "" : paramsMap.get("remark").toString();  //参观结束时间
+		 String visitUnitType = paramsMap.get("visitUnitType") == null ? "" : paramsMap.get("visitUnitType").toString(); //参观单位性质
+		 String visitUnitName = paramsMap.get("visitUnitName") == null ? "" : paramsMap.get("visitUnitName").toString(); //参观单位名称
+		 String visitorNumber = paramsMap.get("visitorNumber") == null ? "" : paramsMap.get("visitorNumber").toString(); //参观人数
+		 String companyUserNumber = paramsMap.get("companyUserNumber") == null ? "" : paramsMap.get("companyUserNumber").toString(); //陪同人数
+		 ResultWarp rw =  null;
 		//联系人名称名称的验证
 		if(contactUser==""){
 			  rw = new ResultWarp(ResultWarp.FAILED ,"联系人名称不能为空");
@@ -196,18 +197,19 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	 * @param
 	 * @return
 	 */
-	public IdeaInfo IdeaInfo(HttpServletRequest request, IdeaInfo  ideaInfo,Map<String,String>  userInfoMap){
+	public IdeaInfo IdeaInfo(Map<String, Object> paramsMap, IdeaInfo  ideaInfo,Map<String,String>  userInfoMap){
 		bgServiceLog.info("演示中心参观预定的添加----->IdeaInfo实体返回" );
-		String contactUser = request.getParameter("contactUser" ) == null ? "" : request.getParameter("contactUser").toString(); //联系人名称
-		String contactPhone = request.getParameter("contactPhone" ) == null ? "" : request.getParameter("contactPhone").toString(); //联系人电话
-		String stateDate = request.getParameter("stateDate" ) == null ? "" : request.getParameter("stateDate").toString(); //参观开始时间
-		String endDate = request.getParameter("endDate" ) == null ? "" : request.getParameter("endDate").toString(); //参观结束时间
-		String remark = request.getParameter("remark" ) == null ? "" : request.getParameter("remark").toString(); //备注
-		String visitUnitType = request.getParameter("visitUnitType" ) == null ? "" : request.getParameter("visitUnitType").toString(); //参观单位性质
-		String visitUnitName = request.getParameter("visitUnitName" ) == null ? "" : request.getParameter("visitUnitName").toString(); //参观单位名称
-		String visitorNumber = request.getParameter("visitorNumber" ) == null ? "" : request.getParameter("visitorNumber").toString(); //参观人数
-		String companyUserNumber = request.getParameter("companyUserNumber" ) == null ? "" : request.getParameter("companyUserNumber").toString(); //陪同人数
-		String visitLevel = request.getParameter("visitLevel" ) == null ? "" : request.getParameter("visitLevel").toString(); //陪同人数
+		 
+		
+		String contactUser = paramsMap.get("contactUser") == null ? "" : paramsMap.get("contactUser").toString(); //联系人名称
+		 String contactPhone = paramsMap.get("contactPhone") == null ? "" : paramsMap.get("contactPhone").toString(); //联系人电话
+		 String stateDate = paramsMap.get("stateDate") == null ? "" : paramsMap.get("stateDate").toString(); //参观开始时间
+		 String endDate = paramsMap.get("endDate") == null ? "" : paramsMap.get("endDate").toString();  //参观结束时间
+		 String remark = paramsMap.get("remark") == null ? "" : paramsMap.get("remark").toString();  //参观结束时间
+		 String visitUnitType = paramsMap.get("visitUnitType") == null ? "" : paramsMap.get("visitUnitType").toString(); //参观单位性质
+		 String visitUnitName = paramsMap.get("visitUnitName") == null ? "" : paramsMap.get("visitUnitName").toString(); //参观单位名称
+		 String visitorNumber = paramsMap.get("visitorNumber") == null ? "" : paramsMap.get("visitorNumber").toString(); //参观人数
+		 String companyUserNumber = paramsMap.get("companyUserNumber") == null ? "" : paramsMap.get("companyUserNumber").toString(); //陪同人数
 		
 		
 		String applyDept= userInfoMap.get("deptId");
@@ -224,7 +226,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		String name= userInfoMap.get("name");
 		String applyId=applyId(name);
 		ideaInfo.setApplyId(applyId);
-		ideaInfo.setVisitLevel(visitLevel);
+		ideaInfo.setVisitLevel("dsfsdf");
 		ideaInfo.setValId("1");
 		String createUserId= userInfoMap.get("userId");
 		ideaInfo.setCreateUser(createUserId);
@@ -244,11 +246,19 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	 * @param
 	 * @return
 	 */
-	public static   String   applyId(String name){
+	public     String   applyId(String name){
 		name=Pinyin.getPinYin(name);
+		
+		String applyId="YSZX-"+name.toUpperCase()+"-"+DateUtil.getDays();
+		//List<Map<String, Object>> applyIdList =yszxMapper.selectForApplyId(applyId);
+		 
+		
 	    String serrialNum="001";
-		String applyId="YSZX-"+name.toUpperCase()+"-"+DateUtil.getDays()+"-"+serrialNum;
-		return applyId;
+	    
+	    
+	    
+		 
+		return applyId+"-"+serrialNum;
 	}
 	/**
 	 * 演示中心--参观预定的添加--查询用户信息
@@ -333,30 +343,30 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				  rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间不能大于参观结束时间");
 				  return JSON.toJSONString(rw);  
 			 } 	
-			List<Map<String, Object>> list=yszxMapper.selectForIdeaDate();
-			 if(list!=null){
-				 for(Map<String, Object> map:list){
-					String  startdate=String.valueOf(map.get("START_DATE"));
-					String  newEndDate=DateUtil.minutes(endDate,30);
-				 
-					flags=DateUtil.compareTime(startdate,newEndDate);
-					System.out.println(newEndDate+"<"+startdate);
-					if(!flags){
-						  rw = new ResultWarp(ResultWarp.FAILED ,"用户上一场结束时间和下一场申请开始时间间隔30分钟");
-						  return JSON.toJSONString(rw);  
-					 } 
-				
-					 
-				 
-				 
-					
-					 
-					
-				 }
-				
-				
-				  
-			 }
+//			List<Map<String, Object>> list=yszxMapper.selectForIdeaDate();
+//			 if(list!=null){
+//				 for(Map<String, Object> map:list){
+//					String  startdate=String.valueOf(map.get("START_DATE"));
+//					String  newEndDate=DateUtil.minutes(endDate,30);
+//				 
+//					flags=DateUtil.compareTime(startdate,newEndDate);
+//					System.out.println(newEndDate+"<"+startdate);
+//					if(!flags){
+//						  rw = new ResultWarp(ResultWarp.FAILED ,"用户上一场结束时间和下一场申请开始时间间隔30分钟");
+//						  return JSON.toJSONString(rw);  
+//					 } 
+//				
+//					 
+//				 
+//				 
+//					
+//					 
+//					
+//				 }
+//				
+//				
+//				  
+//			 }
 			 
 		} catch (ParseException e) {
 			  rw = new ResultWarp(ResultWarp.FAILED ,"系统异常，请联系管理员"); 
@@ -373,17 +383,17 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
     
     
   
-	public String  checkVisitInfo(HttpServletRequest request){
+	public String  checkVisitInfo(Map<String, Object> paramsMap){
     	bgServiceLog.info("演示中心参观人员信息----->VisitInfo数据的验证" );
     	ResultWarp rw =  null;
-    	String visitInfo = Rtext.toStringTrim(request.getParameter("visitInfo"),"");
-    	if(visitInfo==""){
+    	List<HashMap> list =  (List<HashMap>) paramsMap.get("visitinfo");
+    	if(list.isEmpty()){
     		return "0";
     	}
-		List<HashMap> list = JSON.parseArray(visitInfo, HashMap.class);
+		//List<HashMap> list = JSON.parseArray(visitInfo, HashMap.class);
 		for (Map<String, String> visitInfoMap : list) {
-			String userName=visitInfoMap.get("userName")== null ? "" : visitInfoMap.get("userName").toString().trim(); //参观人员名称
-			String position=visitInfoMap.get("position")== null ? "" : visitInfoMap.get("position").toString().trim(); //参观职务
+			String userName=visitInfoMap.get("visitUserName")== null ? "" : visitInfoMap.get("visitUserName").toString().trim(); //参观人员名称
+			String position=visitInfoMap.get("visitPosition")== null ? "" : visitInfoMap.get("visitPosition").toString().trim(); //参观职务
 			String userLevel=visitInfoMap.get("userLevel")== null ? "" : visitInfoMap.get("userLevel").toString().trim(); //级别
 			//参观人员名称
 			if(userName==""){
@@ -417,15 +427,17 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		return JSON.toJSONString(rw); 
     	
     }
-    public void  visitInfo(HttpServletRequest request ,String ideaId, Map<String,String>  userInfoMap){
+    public void  visitInfo(Map<String, Object> paramsMap ,String ideaId, Map<String,String>  userInfoMap){
     	bgServiceLog.info("演示中心参观人员信息----->visitInfo实体" );
-    	String visitInfo = Rtext.toStringTrim(request.getParameter("visitInfo"),"");
-		List<HashMap> list = JSON.parseArray(visitInfo, HashMap.class);
-		for (Map<String, String> visitInfoMap : list) {
-			String userName=visitInfoMap.get("userName")== null ? "" : visitInfoMap.get("userName").toString().trim(); //参观人员名称
-			String position=visitInfoMap.get("position")== null ? "" : visitInfoMap.get("position").toString().trim(); //参观职务
+    	List<HashMap> list =  (List<HashMap>) paramsMap.get("visitinfo");
+		 
+		for (Map<String, Object> visitInfoMap : list) {
+			String userName=visitInfoMap.get("visitUserName")== null ? "" : visitInfoMap.get("visitUserName").toString().trim(); //参观人员名称
+			String position=visitInfoMap.get("visitPosition")== null ? "" : visitInfoMap.get("visitPosition").toString().trim(); //参观职务
 			String userLevel=visitInfoMap.get("userLevel")== null ? "" : visitInfoMap.get("userLevel").toString().trim(); //级别
 			String sortId=visitInfoMap.get("sortId")== null ? "" : visitInfoMap.get("sortId").toString().trim(); //级别
+			//参观人员
+			int sortIds=Integer.parseInt(sortId); //级别
 			VisitInfo  visit=new VisitInfo();
 			visit.setUserName(userName);
 			visit.setPosition(position);
@@ -433,7 +445,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 			String visitId=Rtext.getUUID();
 			visit.setId(visitId);
 			visit.setIdeaId(ideaId);
-			visit.setSortId(Integer.parseInt(sortId));
+			visit.setSortId(sortIds);
 			visit.setRemark("");
 			visit.setValId("1");
 			String createUser= userInfoMap.get("userId");
@@ -444,46 +456,49 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 			yszxMapper.addVisitInfo(visit);
         }
     }
-    public String  checkCompanyLeaderInfo(HttpServletRequest request){
+    public String  checkCompanyLeaderInfo(Map<String, Object> paramsMap){
     	bgServiceLog.info("演示中心陪同领导人员信息----->CompanyLeadershipInfo数据的验证" );
     	ResultWarp rw =  null;
-    	String companyLeaderInfo = Rtext.toStringTrim(request.getParameter("companyLeaderInfo"),"");
+    	String companyLeaderInfo = Rtext.toStringTrim(paramsMap.get("companyLeaderName"),"");
     	if(companyLeaderInfo==""){
     		return "0";
     	}
-		List<HashMap> list = JSON.parseArray(companyLeaderInfo, HashMap.class);
-		for (Map<String, String> CompanyLeaderInfo : list) {
-			String userId=CompanyLeaderInfo.get("userId")== null ? "" : CompanyLeaderInfo.get("userId").toString(); //陪同人员名称
-			 //陪同领导人员名称
-			if(userId==""){
-				  rw = new ResultWarp(ResultWarp.FAILED ,"陪同领导人员名称不能为空");
+    	String[] companyLeaderInfoArr = companyLeaderInfo.split(",");
+		for (String companyLeaderName : companyLeaderInfoArr) {
+			try {
+				if(companyLeaderName==""){
+					  rw = new ResultWarp(ResultWarp.FAILED ,"陪同领导人员名称不能为空");
+					  return JSON.toJSONString(rw);  
+				} 
+			} catch (Exception e) {
+				   rw = new ResultWarp(ResultWarp.FAILED ,"陪同领导人员名称不能为空");
 				  return JSON.toJSONString(rw);  
-			} 
+			}
+			 
 		}
+    	
+
 		return JSON.toJSONString(rw); 	
     }
     public  void  CompanyLeaderInfo(HttpServletRequest request ,String ideaId,Map<String,String>  userInfoMap){
     	bgServiceLog.info("演示中心参观人员信息----->CompanyLeadershipInfo实体" );
-    	String companyLeaderInfo = Rtext.toStringTrim(request.getParameter("companyLeaderInfo"),"");
-		List<HashMap> list = JSON.parseArray(companyLeaderInfo, HashMap.class);
-		for (Map<String, String> CompanyLeaderInfo : list) {
-			String companyUserId=CompanyLeaderInfo.get("userId")== null ? "" : CompanyLeaderInfo.get("userId").toString(); //陪同人员名称
+    	String companyLeaderInfo = Rtext.toStringTrim(request.getParameter("companyLeaderName"),"");
+    	String[] companyLeaderInfoArr = companyLeaderInfo.split(",");
+		for (String companyLeaderName : companyLeaderInfoArr) {
 			CompanyLeaderInfo  companyInfo=new CompanyLeaderInfo();
 			String companyLeadershipId=Rtext.getUUID();
 			companyInfo.setId(companyLeadershipId);
 			companyInfo.setIdeaId(ideaId);
 			companyInfo.setRemark("");
 			companyInfo.setValid("1");
-			companyInfo.setUserId(companyUserId);
+			companyInfo.setUserId(companyLeaderName);
 			String userId= userInfoMap.get("userId");
 			companyInfo.setCreateUser(userId);
 			companyInfo.setCreateTime(new Date());
 			companyInfo.setUpdateUser(userId);
 			companyInfo.setUpdateTime(new Date());
-			yszxMapper.addCompanyLeaderInfo(companyInfo);
-			 
+			yszxMapper.addCompanyLeaderInfo(companyInfo); 
 		}
-		
     }
     public  String  checkCompanyUserInfo(HttpServletRequest request){
     	bgServiceLog.info("演示中心陪同部门人员信息----->CompanyDeptInfo数据的验证" );
@@ -527,5 +542,32 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		}
 		 
     }
+	@Override
+	public String selectForLeader(HttpServletRequest request) {
+		Map<String, Object>  map= new  HashMap<String, Object>();
+		 List<Map<String, Object>>   list=	yszxMapper.selectForLeader();
+		 if(list.isEmpty()){
+		    	map.put("leaderData", "");
+		 	    map.put("success", "false");
+		 	    map.put("msg", "查询失败");
+		    }else{
+		    	 List<Map<String, Object>>  leaderList=new  ArrayList<Map<String, Object>>();
+		    	for(Map<String, Object> leadermaps :list){
+		    		String id=String.valueOf( leadermaps.get("USERID")) ;
+		    		String text=String.valueOf( leadermaps.get("USERALISA"));
+		    		Map<String, Object>  leadermap=new  HashMap<String, Object>();
+		    		leadermap.put("id", id);
+		    		leadermap.put("text", text);
+		    		leaderList.add(leadermap);
+		    	}
+		    	map.put("leaderData",  leaderList);
+		 	    map.put("success", "ture");
+		 	    map.put("msg", "查询成功");
+		    }
+		   
+		    String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+			return jsonStr;
+		 
+	}
     
 }

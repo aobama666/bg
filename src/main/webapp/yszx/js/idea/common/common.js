@@ -5,19 +5,38 @@
  * Created by hanxifa05 on 2017-04-10.
  */
 var IsRight={
+     trim:function(ele){
+		        return ele.replace(/(^\s*)|(\s*$)/g,"");
+		    },
     //电话验证
     telePhone:function(ele){
+    	 
         var val=IsRight.trim($(ele).val());
         var exp=/(^1\d{10}$)|(^\d{3}-\d{8}$)|(^\d{4}-\d{7}$)/;
-
         if(exp.test(val)){
-            $(ele).removeClass("redColor");
-            $(ele).next("span").html("√");
+            $(ele).removeClass("validRefuse");
+            return true;
         }else{
-            $(ele).addClass("redColor");
-            $(ele).next("span").html("*手机号或者xxx-xxxxxxxx或者xxxx-xxxxxxx");
+        	$(ele).addClass("validRefuse");
+            return false;
         }
     },
+    
+    //只能含有中文或者英文
+    onlyTwo:function(ele){
+    	 
+        var val=IsRight.trim($(ele).val());
+        var exp1=/^[\u4e00-\u9fa5a-zA-Z]{1,50}$/;
+        if(exp1.test(val)){
+            $(ele).removeClass("validRefuse");
+            return true;
+        }else{
+        	$(ele).addClass("validRefuse");
+            return false;
+        }
+    },
+    
+    
     //只能含有中文、中划线、下划线、数字、字母且不能以中划线或下划线开头或结尾
     onlyMore:function(ele){
         var val=IsRight.trim($(ele).val());
@@ -32,22 +51,8 @@ var IsRight={
             $(ele).next("span").html("*只能含有中文、中划线、下划线、数字、字母且不能以中划线或下划线开头或结尾");
         }
     },
-    trim:function(ele){
-        return ele.replace(/(^\s*)|(\s*$)/g,"");
-    },
-    //只能含有中文或者英文
-    onlyTwo:function(ele){
-        var val=IsRight.trim($(ele).val());
-        var exp1=/^[\u4e00-\u9fa5a-zA-Z]{1,50}$/;
-
-        if(exp1.test(val)){
-            $(ele).removeClass("redColor");
-            $(ele).next("span").html("√");
-        }else{
-            $(ele).addClass("redColor");
-            $(ele).next("span").html("*50字以内的中文或英文");
-        }
-    },
+   
+  
     //只能是中文
     onlyChinese:function(ele) {
         var val = IsRight.trim($(ele).val());

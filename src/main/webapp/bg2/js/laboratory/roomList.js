@@ -132,6 +132,12 @@ roomList.initDataGrid = function(){
 
 }	
 	
+
+
+
+
+
+
 	/*项目前期工作维护-查看 */	
 	roomList.forDetails = function (id){
 		var url = "/bg/nonProject2/pro_details?proId="+id;
@@ -150,7 +156,7 @@ roomList.initDataGrid = function(){
 			parent.layer.open({
 				type:2,
 				title:'<h4 style="height:42px;line-height:25px;">项目前期工作维护-新增</h4>',
-				area:['40%','60%'],
+				area:['100%','100%'],
 				fixed:false,//不固定
 				maxmin:true,
 				content:url, 

@@ -6,22 +6,7 @@ var dataItems = new Array();
 var index = 0;
 roomList.btn_type_flag = 0;
 $(function(){
-	//‘新增’页面，院领导姓名多选下拉框
-	var localData = [{
-		 id:1,
-		 text:'',
-		 children:[{
-			 id:11,
-			 text:'王晓红',
-		 },{
-			 id:12,
-			 text:'王平',
-		 }]
-	}]
-	$(".tree-data").combotree({
-		data:localData,
-		multiple:true
-	})
+	
 	 
 	roomList.initDataGrid();
 	var classQuery = $(".changeQuery");
@@ -310,91 +295,4 @@ roomList.openRoomDetail = function (id,type){
 			}
 		});
 	}
-}
-
-/*2019.04.11演示中心页面新增*/
-//点击‘返回’按钮，弹出提示层
-function resignChange(){
-    layer.open({
-        title:'提示信息',
-        content:'确定要返回吗？',
-        area:'300px',
-        btn:['确定','取消'],
-        skin:'demo-class',
-        yes:function(index,layero){
-            layer.close(index);
-            
-        }
-    });
-}
-//新增页面，主要参观领导的新增
-function addLeader(obj){
-	var html = '';
-	html +='<tr>'+
-				'<td>'+
-					'<input type="checkbox"/>'+
-				'</td>'+
-				'<td class="addInputStyle">'+
-					'<input type="text"/>'+
-				'</td>'+
-				'<td class="addInputStyle">'+
-					'<input type="text"/>'+
-				'</td>'+
-				'<td class="addInputStyle">'+
-					'<select>'+
-						'<option>请选择</option>'+
-					'</select>'+
-				'</td>'+
-			'</tr>'
-				$(obj).parents(".contentBox").find(".visitLeader tr:last-child").after(html);
-}
-//新增页面，主要参观领导的删除
-
-/*调用选中的列表数据*/
-function delLeader(obj){
-	var checkedNumber = $(obj).parents(".contentBox").find("input[type=checkbox]:checked").length;
-    if(checkedNumber == 0){
-    	 layer.open({
-    	        title:'提示信息',
-    	        content:'请选中需要删除的数据',
-    	        area:'300px',
-    	        skin:'demo-class'
-    	    })
-    }else if(checkedNumber > 0){
-    	layer.open({
-            title:'提示信息',
-            content:'确定要删除选中的行吗？',
-            area:'300px',
-            btn:['确定','取消'],
-            skin:'demo-class',
-            yes:function(index,layero){
-                layer.close(index);
-                $(obj).parents(".contentBox").find("input[type=checkbox]:checked").parent().parent("tr").remove();
-            }
-        });
-    }
-}
-function messageSubmit(){
-	layer.confirm('<table class="visitUnitAccompany tableStyle thTableStyle">'+
-			'<tr>'+
-				'<th>选择</th>'+
-				'<th>审批人</th>'+
-				'<th>审批部门</th>'+
-			'</tr>'+
-			'<tr>'+
-				'<td>'+
-					'<input type="checkbox" style="width:16px;"/>'+
-				'</td>'+
-				'<td class="addInputStyle">'+
-					'王平'+
-				'</td>'+
-				'<td class="addInputStyle">'+
-					'信息中心'+
-				'</td>'+
-			'</tr>'+
-		
-		'</table>',{title:'请选择审批人', skin:'demo-class'},function(index){
-
-
-        })
 }

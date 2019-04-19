@@ -51,6 +51,19 @@ public interface YSZXMapper {
 	 * @return
 	 */
 	public  List<Map<String, Object>>  selectForIdeaDate();
+	/**
+	 * 添加演示中心陪同领导人信息
+	 * @param pro
+	 * @return
+	 */
+	public  List<Map<String, Object>>  selectForLeader();
+	
+	/**
+	 * 添加演示中心陪同领导人信息
+	 * @param pro
+	 * @return
+	 */
+	public  List<Map<String, Object>>  selectForApplyId(@Param("applyId")String applyId);
 
 
 }
