@@ -8,6 +8,8 @@ $(function(){
 	roomDetailInfo.initSelectForVisitunitType();//默认查询框
 	roomDetailInfo.initSelectForVisitunitLevel();//默认查询框
 	roomDetailInfo.initSelectForLeader();
+	//初始化人员选择树
+	$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'self',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'}); 
 });
 //获取当前时间
 function getNowFormatDate() {    
@@ -245,6 +247,14 @@ roomDetailInfo.initSelectForVisitunitLevel = function(){
 				}
 				$('.userLevel').html(visitUnitLevel); 
 				
+				//初始化主要院领导
+				var k = 1;
+				var obj = $("#delLeader");
+				for(var i=0;i<k;i++){
+					addLeader(obj);
+				}
+				
+				
 			}else{
 				 layer.open({
 		    	        title:'提示信息',
@@ -333,7 +343,8 @@ function resignChange(){
 //新增页面，主要参观领导的新增
 function addLeader(obj){
  
-	var html = '';
+	/*	var html = '';
+	
 	html +='<tr>'+
 				'<td>'+
 					'<input type="checkbox"/>'+
@@ -351,7 +362,12 @@ function addLeader(obj){
 				'</td>'+
 			'</tr>'
 				$(obj).parents(".contentBox").find(".visitLeader tr:last-child").after(html);
-	roomDetailInfo.initSelectForVisitunitLevel();
+	
+				roomDetailInfo.initSelectForVisitunitLevel();*/
+	
+    
+	var html = '<tr>'+$("#model_tr_leader").html()+'</td>';
+	$(obj).parents(".contentBox").find(".visitLeader tr:last-child").after(html);
 }
 //新增页面，主要参观领导的删除
 
@@ -409,7 +425,16 @@ function AccompanyLeader(obj){
  		/*
  			iframe:self 作用域：当前窗口   parent 作用域：父类窗口
  		*/
- 		$("#stuffTree2").stuffTree({root:'41000001',empCode:'empCode2',empName:'empName2',iframe:'self',checkType:'checkbox',popEvent:'pop'});
- 		 
+ 		$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'parent',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'}); 
+}
+
+function popEvent(ids,codes,names,pId,level){
+	//人员树时：pId,level为空
+	layer.msg("触发父层事件！");
+	alert("回传ids："+ids);
+//	alert("回传codes："+codes);
+//	alert("回传names："+names);
+//	alert("回传pId："+pId);
+//	alert("回传level："+level);
 }
  

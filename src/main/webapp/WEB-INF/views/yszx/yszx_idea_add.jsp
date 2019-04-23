@@ -138,7 +138,7 @@
 			<span title = "主要参观领导">主要参观领导：<b class="mustWrite">*</b></span>
 		</h4>
 		<div class="btnBox">
-			<div class='btn right leaderMessageDel' onclick="delLeader(this)">删除</div> 
+			<div id="delLeader" class='btn right leaderMessageDel' onclick="delLeader(this)">删除</div> 
 			<div class='btn right leaderMessageAdd' onclick="addLeader(this)">增加</div> 
 		</div>
 		<div class="maxBox">
@@ -149,7 +149,8 @@
 					<th>职务</th>
 					<th>级别</th>
 				</tr>
-				<tr>
+				<!-- 初始化自动创建 --> 
+				<!-- <tr>
 					<td>
 						<input type="checkbox"/>
 					</td>
@@ -160,15 +161,36 @@
 						<input type="text" id="visitPosition"  name = "visitPosition"  class = "validNull" len="100"/>
 					</td>
 					<td class="addInputStyle">
-						<select id="userLevel"  name = "userLevel"  class = "changeQuery userLevel validNull"    >
+						<select name = "userLevel"  class = "changeQuery userLevel validNull"    >
 					        <option>请选择</option>
 			        	</select>
 					</td>
-				</tr>
+				</tr> -->
 				 
 				 
 			</table>
 		</div>
+	</div>
+	<!-- 隐藏的初始化行 -->
+	<div class="contentBox_hidden" style="display:none">	
+			<table  class="visitLeader_hidden tableStyle thTableStyle">	
+				<tr id="model_tr_leader">
+					<td>
+						<input type="checkbox"/>
+					</td>
+					<td class="addInputStyle"    >
+						<input type="text"    id="visitUserName"  name = "visitUserName" class = "validNull" />
+					</td>
+					<td class="addInputStyle"   >
+						<input type="text" id="visitPosition"  name = "visitPosition"  class = "validNull" len="100"/>
+					</td>
+					<td class="addInputStyle">
+						<select name = "userLevel"  class = "changeQuery userLevel validNull"    >
+					        <option>请选择</option>
+			        	</select>
+					</td>
+				</tr>				 
+			</table>
 	</div>
 	
 	
@@ -200,8 +222,10 @@
 		</h4>
 		<div class="btnBox">
 			<div class='btn right AccompanyMessageDel' onclick="delLeader(this)">删除</div> 
-			<div   id='stuffTree2' class='btn right AccompanyMessageAdd empName2'  onclick="AccompanyLeader(this)"  style="padding:0;"  >
-		    	<input type="button" name="empName2" value="增加" style="background: none;border: none;width:51px;height:30px;line-height:30px;"/>
+			<div id='stuffTree' class='btn right AccompanyMessageAdd empName2'   style="padding:0;"  >
+		    	<input type="button" id="popStuffTree"  value="增加" style="background: none;border: none;width:51px;height:30px;line-height:30px;"/>
+		    	<input name="empName" id="empName" type="hidden"/>
+		    	<input name="empCode" id="empCode" type="hidden"/>
 			</div> 
 		</div>
 		<div class="maxBox">
