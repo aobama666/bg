@@ -218,12 +218,10 @@ function getTree() {
 }
 
 function selected() {
-	debugger;
 	var valueArray = tree.getCheckedNodes(true);
 	var codes = "";
 	var texts = "";
 	var ids   = "";
-	debugger;
 	for(var i=0;i<valueArray.length;i++){
 		var val = valueArray[i];
 		//hrcode 增加了前缀'P'，需要去除
@@ -235,7 +233,6 @@ function selected() {
 		texts += val.name + ',';
 		ids += val.id + ',';
 	}
-	debugger;
 	if(codes.length>0){
 		codes = codes.substr(0,codes.length-1);
 	}
@@ -245,7 +242,34 @@ function selected() {
 	if(ids.length>0){
 		ids = ids.substr(0,ids.length-1);
 	}
- 
+	if('parent' == '<%=iframe%>'){
+		<%-- var body = parent.layer.getChildFrame('body','<%=index%>');
+		$(body).find("input[name=<%=empCode%>]").val(codes);
+		$(body).find("input[name=<%=empName%>]").val(texts); --%>
+		var iframWin = parent.document.getElementById('<%=winName%>').contentWindow; 
+		var doc = iframWin.document;
+		$(doc).find("input[name=<%=empCode%>]").val(codes);
+		$(doc).find("input[name=<%=empName%>]").val(texts);
+		
+		//返回事件
+		try{
+			if('<%=popEvent%>'=='pop'){
+				iframWin.popEvent(ids,codes,texts);
+			}
+		}catch(e){}
+	}else{
+		parent.$("input[name=<%=empCode%>]").val(codes);
+		parent.$("input[name=<%=empName%>]").val(texts);
+		
+		//返回事件
+		try{
+			if('<%=popEvent%>'=='pop'){
+				parent.popEvent(ids,codes,texts);
+			}
+		}catch(e){}
+	}
+ 	var this_index = parent.layer.getFrameIndex(window.name);
+	parent.layer.close(this_index); 
 	
 }
 
