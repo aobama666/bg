@@ -569,5 +569,124 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 			return jsonStr;
 		 
 	}
-    
+	/**
+	 * 查询演示中心信息
+	 * @param pro
+	 * @return
+	 */
+	@Override
+	public List<Map<String, Object>> selectForIdeaInfo(String  applyId,String createTime) {
+		  List<Map<String, Object>>  ideaInfo=yszxMapper.selectForIdeaInfo(applyId, createTime);
+		  List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
+		  if(ideaInfo.isEmpty()){
+			  
+		  }else{
+			  for(Map<String, Object>  idea:ideaInfo){
+				  String  ideaId=Rtext.toStringTrim(idea.get("id"), "");
+				  String  visitName=selectForVisitInfo(ideaId);
+				  idea.put("visitName", visitName);
+				  String  leaderName=selectForCompanyLeaderInfo(ideaId);
+				  idea.put("leaderName", leaderName);
+				  String  userName=selectForCompanyUserInfo(ideaId);
+				  idea.put("userName", userName);
+				  list.add(idea);
+			  }
+		  }
+		return list;
+	}
+	/**
+	 * 查询演示---参观领导的查询根据ideaId
+	 * @param pro
+	 * @return
+	 */
+	  public  String   selectForVisitInfo(String  ideaId){
+		  List<Map<String, Object>>  visitInfo = yszxMapper.selectForVisitInfo(ideaId);
+		  String visitName = "";
+		  if(!visitInfo.isEmpty()){
+			  for(Map<String, Object>  visit:visitInfo){
+				  String userName=Rtext.toStringTrim(visit.get("userName"), "");
+				  if(!"".equals(userName)){
+					  visitName +=userName+",";
+				  }
+				  
+			  }
+			  String  visitNames =visitName.trim();
+			  visitName=visitNames.substring(0, visitNames.length()-1);
+			  System.out.print(visitName);
+		  } 
+		return visitName;
+		  
+	  }
+	  /**
+		 * 查询演示---	陪同领导的查询根据ideaId
+		 * @param pro
+		 * @return
+		 */
+		  public  String   selectForCompanyLeaderInfo(String  ideaId){
+			  List<Map<String, Object>>  leaderInfo = yszxMapper.selectForCompanyLeaderInfo(ideaId);
+			  String leaderName = "";
+			  if(!leaderInfo.isEmpty()){
+				  for(Map<String, Object>  visit:leaderInfo){
+					  String userName=Rtext.toStringTrim(visit.get("userAlisa"), "");
+					  if(!"".equals(userName)){
+						  leaderName +=userName+",";
+					  }
+				  }
+				  String  leaderNames =leaderName.trim();
+				  leaderName=leaderNames.substring(0, leaderNames.length()-1);
+				  System.out.print(leaderName);
+			  } 
+			return leaderName;
+			  
+		  }
+		  /**
+			 * 查询演示---陪同部门人员信息的查询根据ideaId
+			 * @param pro
+			 * @return
+			 */
+		public  String   selectForCompanyUserInfo(String  ideaId){
+			List<Map<String, Object>>  userInfo = yszxMapper.selectForCompanyUserInfo(ideaId);
+			String userName = "";
+				  if(!userInfo.isEmpty()){
+					  for(Map<String, Object>  visit:userInfo){
+						  String useralisa=Rtext.toStringTrim(visit.get("userAlisa"), "");
+						  if(!"".equals(useralisa)){
+							  userName+=useralisa+",";
+						  }
+					  }
+					String  userNames =userName.trim();
+					userName=userNames.substring(0, userNames.length()-1);
+					System.out.print(userName);
+				  } 
+				return userName;
+				  
+			  }  
+	  /**
+		* 查询演示---陪同部门人员信息的查询根据ideaId
+		* @param pro
+		* @return
+	    */								  
+		@Override
+		public Map<String, Object> selectForId(String id) {
+			 Map<String, Object>   ideaInfo = 	yszxMapper.selectForId(id);
+			 if(!ideaInfo.isEmpty()){
+				String ideaId= Rtext.toStringTrim(ideaInfo.get("id"), "");
+				List<Map<String, Object>>  visitInfo = yszxMapper.selectForVisitInfo(ideaId);
+				if(!visitInfo.isEmpty()){
+					ideaInfo.put("visitInfo", visitInfo);
+				}
+				List<Map<String, Object>>  leaderInfo = yszxMapper.selectForCompanyLeaderInfo(ideaId);
+				if(!leaderInfo.isEmpty()){
+					ideaInfo.put("leaderInfo", leaderInfo);
+				}
+				List<Map<String, Object>>  userInfo = yszxMapper.selectForCompanyUserInfo(ideaId);
+				if(!userInfo.isEmpty()){
+					ideaInfo.put("userInfo", userInfo);
+				}
+			 } 
+			return ideaInfo;
+		}
+ 	  
+		 
+				 
 }

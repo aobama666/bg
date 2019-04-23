@@ -15,12 +15,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.CommonCurrentUser;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.service.DataDictionaryService;
+import com.sgcc.bg.yszx.service.IdeaInfoService;
  
  
 
@@ -34,13 +38,14 @@ public class YSZXController {
 	private WebUtils webUtils;
 	@Autowired
 	DataDictionaryService dict;
+	@Autowired
+	private IdeaInfoService ideaInfoService;
 	/**
 	 * 返回列表展示页面
 	 * @return
 	 */
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String initPage(HttpServletRequest request){
-		
 		return "yszx/yszx_idea_info";
 	}
 	
@@ -66,6 +71,16 @@ public class YSZXController {
 		ModelAndView model = new ModelAndView("yszx/yszx_idea_add",map);
 		return model;
 		 
+	}
+	/**
+	 * 返回修改页面
+	 * @return
+	 */
+	@RequestMapping("/updatePage")
+	public ModelAndView projectUpdate(String id, HttpServletRequest request) {
+		Map<String, Object> proInfo = ideaInfoService.selectForId(id);
+		ModelAndView model = new ModelAndView("yszx/yszx_idea_update", proInfo);
+		return model;
 	}
 	/**
 	 * 返回预定状态页面
