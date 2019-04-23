@@ -54,7 +54,7 @@
 				 <span title = "申请部门（单位）（当前登录人所属部门）">申请部门（单位）<b class="mustWrite">*</b></span>
 			</td>
 			<td colspan="3" class="addInputStyle">
-				<input id="deptname" name="deptname"  type="text" value="${deptName}" disabled />
+				<input id="deptname" name="deptname"  type="text" value="${applyDept}" disabled />
             </td>
 		</tr>
 		<tr>
@@ -62,7 +62,7 @@
 			    <span title = "参观开始时间（格式：yyyy-MM-dd HH:mm）">参观开始时间<b class="mustWrite">*</b></span>
 			</td>
 			<td class="width-one addInputStyle"  >
-                <input id="stateDate" name="stateDate"  
+                <input id="stateDate" name="stateDate"    value = "${stateDate}"
                 onclick=" WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',enableInputMask:false})" readonly="true" 
                 type="text" 
                 class="Wdate validNull  "
@@ -74,7 +74,7 @@
 			   <span title = "参观结束时间（格式：yyyy-MM-dd HH:mm）">参观结束时间<b class="mustWrite">*</b></span>
 			</td>
 			<td class="width-one addInputStyle"   >
-				<input id="endDate" name="endDate" 
+				<input id="endDate" name="endDate"   value = "${endDate}"
 				onclick=" WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',enableInputMask:false})" readonly="true" 
 				type="text" 
 				class="Wdate validNull  "
@@ -89,13 +89,13 @@
 			  <span title = "联系人">联系人<b class="mustWrite">*</b></span>
 			</td>
 			<td class="addInputStyle">
-				  <input type="text"  id="contactUser"  name="contactUser"  class="validNull"   content="联系人" title="必填项，中文或英文"/>
+				  <input type="text"  id="contactUser"  name="contactUser"  class="validNull"  value = "${contactUser}"  content="联系人" title="必填项，中文或英文"/>
 			</td>
 			<td>
 			  <span title = "联系电话">联系电话<b class="mustWrite">*</b></span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="contactPhone" name="contactPhone"  class="validNull"  content="联系电话"  title="必填项  "/>
+				<input type="text"  id="contactPhone" name="contactPhone"  class="validNull"  value = "${contactPhone}" content="联系电话"  title="必填项  "/>
 			</td>
 		</tr>
 	</table>
@@ -111,7 +111,7 @@
 				<span title = "参观单位性质">参观单位性质<b class="mustWrite">*</b></span>
 			</td>
 			<td class="addInputStyle">
-				<select id="visitUnitType"  name = "visitUnitType"  class = "validNull select-person"   content="参观单位性质" data-visitUnitType="">
+				<select id="visitUnitType"  name = "visitUnitType"  class = "validNull select-person"   content="参观单位性质"   data-visitUnitType="${visitUnitType}" >
 					<option>请选择</option>
 				</select>
 			</td>
@@ -119,7 +119,7 @@
 				<span title = "参观人数">参观人数<b class="mustWrite">*</b></span>
 			</td>
 			<td class="addInputStyle">
-            	<input type="text"  id="visitorNumber"  name = "visitUnitType"  class = "validNull validNum"  content="参观人数"/>
+            	<input type="text"  id="visitorNumber"  name = "visitUnitType"  class = "validNull validNum"  content="参观人数"  value = "${visitorNumber}"/>
             </td>
 		</tr>
 		<tr>
@@ -127,7 +127,7 @@
 				<span title = "参观单位名称">参观单位名称<b class="mustWrite">*</b></span>
 			</td>
 			<td colspan="3" class="addInputStyle">
-				<input  id="visitUnitName"   name="visitUnitName"  type="text"   class = "validNull"   len="150"    content="参观单位名称" />
+				<input  id="visitUnitName"   name="visitUnitName"  type="text"   class = "validNull"   len="150"    content="参观单位名称" value = "${visitUnitName}" />
 			</td>
 		</tr>
 	</table>
@@ -138,7 +138,7 @@
 			<span title = "主要参观领导">主要参观领导：<b class="mustWrite">*</b></span>
 		</h4>
 		<div class="btnBox">
-			<div id="delLeader" class='btn right leaderMessageDel' onclick="delLeader(this)">删除</div> 
+			<div class='btn right leaderMessageDel' onclick="delLeader(this)">删除</div> 
 			<div class='btn right leaderMessageAdd' onclick="addLeader(this)">增加</div> 
 		</div>
 		<div class="maxBox">
@@ -149,48 +149,31 @@
 					<th>职务</th>
 					<th>级别</th>
 				</tr>
-				<!-- 初始化自动创建 --> 
-				<!-- <tr>
+				<c:forEach  var="visitInfo"  items="${visitInfo}">
+					
+				<tr>
 					<td>
 						<input type="checkbox"/>
 					</td>
 					<td class="addInputStyle"    >
-						<input type="text"    id="visitUserName"  name = "visitUserName" class = "validNull" />
+						<input type="text"    id="visitUserName"  name = "visitUserName" class = "validNull"  value = "${visitInfo.userName}"  />
 					</td>
 					<td class="addInputStyle"   >
-						<input type="text" id="visitPosition"  name = "visitPosition"  class = "validNull" len="100"/>
+						<input type="text" id="visitPosition"  name = "visitPosition"  class = "validNull" len="100"  value = "${visitInfo.position}" />
 					</td>
 					<td class="addInputStyle">
-						<select name = "userLevel"  class = "changeQuery userLevel validNull"    >
+						<select id="userLevel"  name = "userLevel"  class = "changeQuery userLevel validNull"   data-userLevel="${visitInfo.userLevel}" >
 					        <option>请选择</option>
 			        	</select>
 					</td>
-				</tr> -->
+				</tr>
+				
+				</c:forEach>
+			
 				 
 				 
 			</table>
 		</div>
-	</div>
-	<!-- 隐藏的初始化行 -->
-	<div class="contentBox_hidden" style="display:none">	
-			<table  class="visitLeader_hidden tableStyle thTableStyle">	
-				<tr id="model_tr_leader">
-					<td>
-						<input type="checkbox"/>
-					</td>
-					<td class="addInputStyle"    >
-						<input type="text"    id="visitUserName"  name = "visitUserName" class = "validNull" />
-					</td>
-					<td class="addInputStyle"   >
-						<input type="text" id="visitPosition"  name = "visitPosition"  class = "validNull" len="100"/>
-					</td>
-					<td class="addInputStyle">
-						<select name = "userLevel"  class = "changeQuery userLevel validNull"    >
-					        <option>请选择</option>
-			        	</select>
-					</td>
-				</tr>				 
-			</table>
 	</div>
 	
 	
@@ -209,7 +192,7 @@
 		<tr>
 		<td class="width-two">陪同人数</td>
 			<td colspan="3" class="addInputStyle">
-				<input type="text"  id="companyUserNumber" class = "validNull"  name="companyUserNumber"/>
+				<input type="text"  id="companyUserNumber" class = "validNull"  name="companyUserNumber"  value = "${companyUserNumber}" />
 			</td>
 		</tr>
 	</table>
@@ -222,10 +205,8 @@
 		</h4>
 		<div class="btnBox">
 			<div class='btn right AccompanyMessageDel' onclick="delLeader(this)">删除</div> 
-			<div id='stuffTree' class='btn right AccompanyMessageAdd empName2'   style="padding:0;"  >
-		    	<input type="button" id="popStuffTree"  value="增加" style="background: none;border: none;width:51px;height:30px;line-height:30px;"/>
-		    	<input name="empName" id="empName" type="hidden"/>
-		    	<input name="empCode" id="empCode" type="hidden"/>
+			<div   id='stuffTree2' class='btn right AccompanyMessageAdd empName2'  onclick="AccompanyLeader(this)"  style="padding:0;"  >
+		    	<input type="button" name="empName2" value="增加" style="background: none;border: none;width:51px;height:30px;line-height:30px;"/>
 			</div> 
 		</div>
 		<div class="maxBox">
@@ -266,7 +247,7 @@
 		<tr>
 			<td class="width-two"> 备注</td>
 			<td colspan="3" class="addInputStyle">
-				<input type="text"  id="remark"   name="remark"   maxlength="200"/>
+				<input type="text"  id="remark"   name="remark"   len="200"   value = "${remark}"/>
 			</td>
 		</tr>
 	</table>
@@ -281,4 +262,5 @@
 	
 
 </body>
+
 </html>

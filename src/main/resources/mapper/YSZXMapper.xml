@@ -173,6 +173,123 @@
 	</select>
 	
 	
+	<select id="selectForIdeaInfo" resultType="java.util.Map">
+	     SELECT 
+		      UUID   as  "id",	    
+              (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = APPLY_DEPT)   as "applyDept",
+              TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+              TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+			  CONTACT_USER as "contactUser",
+			  CONTACT_PHONE as "contactPhone", 		
+			  VISIT_UNIT_TYPE as "visitUnitType",	 
+			  VISIT_UNIT_NAME as "visitUnitName",	
+			  VISITOR_NUMBER as "visitorNumber", 		
+			  COMPANY_USER_NUMBER as "companyUserNumber",	 
+			  REMARK as "remark",	
+              (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=STATUS) as "status",
+			  APPLY_ID as "applyId",	 		
+			  VISIT_LEVEL as "visitLevel",	 	
+			  VALID as "valId", 	
+			  CREATE_USER as "createUser",
+			  TO_CHAR( CREATE_TIME,'YYYY-MM-DD') as "createTime"	 	
+		  FROM TB_YSZX_IDEA	
+		  WHERE VALID =  '1' 
+		<if test="applyId!=null and applyId!=''">
+			and APPLY_ID  like '%'||#{applyId}||'%'
+		</if>
+		<if test="createTime!=null and createTime!=''">
+			and CREATE_TIME  like '%'||#{createTime}||'%'
+		</if>
+	</select>
+	
+	
+	
+	
+	<select id="selectForVisitInfo" resultType="java.util.Map">
+	     SELECT 
+		    UUID  as  "visitId" ,    	 		
+            IDEAID  as  "ideaId",	 
+            USERNAME as  "userName",	 
+   			POSITION as  "position" ,	 	
+			USERLEVEL as  "userLevel",	 	
+			SORT_ID as "sortId" ,	 
+			REMARK as "remark",	 			 
+			CREATE_USER as "createUser",
+			TO_CHAR( CREATE_TIME,'YYYY-MM-DD HH24:MI:SS')  as  "createTime"   
+		  FROM TB_YSZX_VISIT
+		  WHERE VALID =  '1' 
+		<if test="ideaId!=null and ideaId!=''">
+			and IDEAID  like '%'||#{ideaId}||'%'
+		</if>
+		ORDER BY  SORT_ID
+	</select>
+	
+	<select id="selectForCompanyLeaderInfo" resultType="java.util.Map">
+	    SELECT 
+		  T.UUID as "leaderId",	 		
+          T.IDEAID as "ideaId",	 
+          T.USERID as "userId",	 
+   		  T.REMARK as "remark",	 	
+		  T.CREATE_USER as "createUser",
+		  TO_CHAR(T.CREATE_TIME,'YYYY-MM-DD HH24:MI:SS')   as "createTime",
+          U.USERALISA as "userAlisa",
+          U.DEPTNAME as "deptName",
+          U.SORTID as "sortId"
+		FROM TB_YSZX_COMPANY_LEADER  T
+        LEFT JOIN TB_YSZX_CONFIG_COMPANY_LEADER  U
+		        ON T.USERID = U.USERID
+		  WHERE T.VALID =  '1'
+		  <if test="ideaId!=null and ideaId!=''">
+			and T.IDEAID  like '%'||#{ideaId}||'%'
+		</if>
+      ORDER BY  U.SORTID
+	</select>
+	
+	<select id="selectForCompanyUserInfo" resultType="java.util.Map">
+	    SELECT 
+		   	T.UUID as "companyId",	 		
+      		T.IDEAID as "ideaId",	 
+      		T.USERID as "userId",	 
+   			T.REMARK as "remark",	 	
+			T.CREATE_USER as "createUser",
+			TO_CHAR(T.CREATE_TIME,'YYYY-MM-DD HH24:MI:SS')   as "createTime",	 	 		
+      		U.USERALIAS as "userAlisa",
+      		U.POSTNAME as "postName"
+		FROM TB_YSZX_COMPANY_USER  T
+        LEFT JOIN BG_SYS_USER  U
+		        ON T.USERID = U.USERID
+		  WHERE T.VALID =  '1'
+		  <if test="ideaId!=null and ideaId!=''">
+			and T.IDEAID  like '%'||#{ideaId}||'%'
+		</if>
+	</select>
+	
+	<select id="selectForId" resultType="java.util.Map">
+	     SELECT 
+		      UUID   as  "id",	    
+              (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = APPLY_DEPT)   as "applyDept",
+              TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+              TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+			  CONTACT_USER as "contactUser",
+			  CONTACT_PHONE as "contactPhone", 		
+			  VISIT_UNIT_TYPE as "visitUnitType",	 
+			  VISIT_UNIT_NAME as "visitUnitName",	
+			  VISITOR_NUMBER as "visitorNumber", 		
+			  COMPANY_USER_NUMBER as "companyUserNumber",	 
+			  REMARK as "remark",	
+              (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=STATUS) as "status",
+			  APPLY_ID as "applyId",	 		
+			  VISIT_LEVEL as "visitLevel",	 	
+			  VALID as "valId", 	
+			  CREATE_USER as "createUser",
+			  TO_CHAR( CREATE_TIME,'YYYY-MM-DD') as "createTime"	 	
+		  FROM TB_YSZX_IDEA	
+		  WHERE VALID =  '1' 
+		<if test="id!=null and id!=''">
+			and UUID  like '%'||#{id}||'%'
+		</if>
+		 
+	</select>
 	
 	
 </mapper>

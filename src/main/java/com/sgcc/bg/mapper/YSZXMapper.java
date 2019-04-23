@@ -64,6 +64,37 @@ public interface YSZXMapper {
 	 * @return
 	 */
 	public  List<Map<String, Object>>  selectForApplyId(@Param("applyId")String applyId);
+	/**
+	 * 查询演示主表数据
+	 * @param pro
+	 * @return
+	 */
+	public  List<Map<String, Object>>  selectForIdeaInfo(@Param("applyId")String applyId,@Param("createTime")String createTime);
+	/**
+	 * 查询演示参观领导数据
+	 * @param pro
+	 * @return
+	 */
+	public  List<Map<String, Object>>  selectForVisitInfo(@Param("ideaId")String ideaId);
+	/**
+	 * 查询演示陪同领导
+	 * @param pro
+	 * @return
+	 */
+	public  List<Map<String, Object>>  selectForCompanyLeaderInfo(@Param("ideaId")String ideaId);
+	/**
+	 * 查询演示陪同部门人员
+	 * @param pro
+	 * @return
+	 */
+	public  List<Map<String, Object>>  selectForCompanyUserInfo(@Param("ideaId")String ideaId);
+
+	/**
+	 * 查询演示信息ID
+	 * @param pro
+	 * @return
+	 */
+	public  Map<String, Object>  selectForId(@Param("id")String id);
 
 
 }

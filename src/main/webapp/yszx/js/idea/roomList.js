@@ -43,7 +43,7 @@ roomList.query = function(){
 /* 演示中心管理-初始化列表界面  */
 roomList.initDataGrid = function(){
 	    $("#datagrid").datagrid({
-		url: "/bg/nonProject2/initPage",
+		url: "/bg/IdeaInfo/selectIdeaInfo",
 		type: 'POST',
 		form:'#queryForm',
 		 
@@ -62,57 +62,51 @@ roomList.initDataGrid = function(){
 			  return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.id)+'"/>';
 		 	}
 		  },
-		  {name: '申请单号',style:{width:"5%"}, data: 'projectNumber',forMat:function(row){
-			  return "<a title = '"+row.projectNumber+"' style='width:150px;" + 
+		  {name: '申请单号',style:{width:"10%"}, data: 'applyId',forMat:function(row){
+			  return "<a title = '"+row.applyId+"' style='width:250px;" + 
 				  		"text-align:left;display:block;" +
 				  		"white-space: nowrap;" +
 				  		"text-overflow: ellipsis;" +
 				  		"overflow: hidden;' id = '"+row.id+"'" +
-				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.id+"')>"+row.projectNumber+"</a>";
+				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.id+"')>"+row.applyId+"</a>";
 				  		 
 		  }},
-		  {name: '申请时间', style:{width:"8%"},data: 'startDate'},
-		  {name: '申请部门（单位）',style:{width:"10%"}, data: 'projectName',forMat:function(row){
-			  if(row.projectName){
-				  	return "<span title='"+row.projectName+"' style='width:150px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.projectName+"</span>"
+		  {name: '申请时间', style:{width:"8%"},data: 'createTime'},
+		  {name: '申请部门（单位）',style:{width:"10%"}, data: 'applyDept',forMat:function(row){
+			  if(row.applyDept){
+				  	return "<span title='"+row.applyDept+"' style='width:150px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.applyDept+"</span>"
 				  }else{
 					  return "";
 			 }
 		  }},
 		 
-		  {name: '主要参观领导', style:{width:"10%"},data: 'projectIntroduce',forMat:function(row){
-			  if(row.projectIntroduce){
-				  	return "<span title='"+row.projectIntroduce+"' style='width:300px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.projectIntroduce+"</span>"
+		  {name: '主要参观领导', style:{width:"10%"},data: 'visitName',forMat:function(row){
+			  if(row.visitName){
+				  	return "<span title='"+row.visitName+"' style='width:150px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.visitName+"</span>"
 				  }else{
 					  return "";
 			     }
 		  }},
-		  {name: '院内陪同人员', style:{width:"10%"},data: 'projectIntroduce',forMat:function(row){
-			  if(row.projectIntroduce){
-				  	return "<span title='"+row.projectIntroduce+"' style='width:300px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.projectIntroduce+"</span>"
+		  {name: '院内陪同领导', style:{width:"10%"},data: 'leaderName',forMat:function(row){
+			  if(row.leaderName){
+				  	return "<span title='"+row.leaderName+"' style='width:150px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.leaderName+"</span>"
 				  }else{
 					  return "";
 			     }
 		  }},
-		  {name: '参观开始时间', style:{width:"8%"},data: 'startDate'},
+		  
+		  {name: '院内陪同人员', style:{width:"10%"},data: 'userName',forMat:function(row){
+			  if(row.userName){
+				  	return "<span title='"+row.userName+"' style='width:150px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.userName+"</span>"
+				  }else{
+					  return "";
+			     }
+		  }},
+		  {name: '参观开始时间', style:{width:"8%"},data: 'stateDate'},
 		  {name: '参观结束时间', style:{width:"8%"},data: 'endDate'},
-		  {name: '审批状态',style:{width:"7%"},data: 'projectStatus'  ,forMat:function(row){
-			   
-			      if(row.projectStatus=="0"){
-				  	return "未启动"
-				  }else if(row.projectStatus=="1"){
-					return "进行中";
-			      }else if(row.projectStatus=="2"){
-					return "暂停";
-			      }else if(row.projectStatus=="3"){
-					return "已结束";
-			      }else if(row.projectStatus=="4"){
-					return "废止";
-			      }
-		      }
-		  },
-		  {name: '联系人', style:{width:"6%"},data: 'planHours'},
-		  {name: '联系方式', style:{width:"8%"},data: 'planHours'}
+		  {name: '审批状态',style:{width:"7%"},data: 'status'   },
+		  {name: '联系人', style:{width:"6%"},data: 'contactUser'},
+		  {name: '联系方式', style:{width:"8%"},data: 'contactPhone'}
 		  
 		]
 	});
@@ -133,11 +127,11 @@ roomList.initDataGrid = function(){
 	}
 	/*演示中心管理-新增 */
 	roomList.addEvent = function (){
-		var url = "/bg/nonProject2/pro_add"
+		var url = "/bg/yszx/addPage"
 			parent.layer.open({
 				type:2,
-				title:'<h4 style="height:42px;line-height:25px;">项目前期工作维护-新增</h4>',
-				area:['40%','60%'],
+				title:'<h4 style="height:42px;line-height:25px;">参观中心-新增</h4>',
+				area:['100%','100%'],
 				fixed:false,//不固定
 				maxmin:true,
 				content:url, 
@@ -159,15 +153,16 @@ roomList.initDataGrid = function(){
 			return;
 		}
 		var id = dataGrid.getCheckedIds();
-		var url = "/bg/nonProject2/pro_update?proId="+id;
+		var url = "/bg/yszx/updatePage?id="+id;
 		parent.layer.open({
 			type:2,
-			title:'<h4 style="height:42px;line-height:42px;">项目前期工作维护-修改 </h4>',
-			area:['40%','60%'],
+			title:'<h4 style="height:42px;line-height:42px;">演示中心-修改 </h4>',
+			area:['100%','100%'],
 			fixed:false,//不固定
 			maxmin:true,
 			content:url, 
 		});
+		 
 	}
 		
 /*  start 全选、取消全选 */

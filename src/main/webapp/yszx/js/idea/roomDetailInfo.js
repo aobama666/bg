@@ -174,21 +174,30 @@ roomDetailInfo.messageSave= function(){
 	 
 }
 
-roomDetailInfo.initSelectForVisitunitType = function(){
+roomDetailInfo.initSelectForVisitunitType = function(details){
+	debugger;
 	var pcode='visitunit_type';
+	var optionSelectd = $(".select-person").attr("data-visitUnitType")
 	/* start 查询数据字典集合  */
 	$.ajax({
 	    url: "/bg/DataDictionary/selectForDataDictionary?pcode="+pcode,//获取申报界面数据字典
 		type: "post",
 		success: function (data) {
+			debugger;
 			if(data.success){
 				var dictData = data.dictData;
 				var visitUnitType = '';
 				    visitUnitType += '<option value="">请选择参观单位性质</option>';
 				for (var i = 0; i < dictData.length; i++) {
-					visitUnitType += '<option value="' + dictData[i].K + '">' + dictData[i].V + '</option>';
+					if(dictData[i].K==optionSelectd){
+						visitUnitType += '<option value="' + dictData[i].K +       '"    selected >' + dictData[i].V + '</option>';
+					}else{
+						visitUnitType += '<option value="' + dictData[i].K +       '" >' + dictData[i].V + '</option>';
+					}
+				
 				}
 				$('#visitUnitType').html(visitUnitType); 
+			
 				
 			}else{
 				 layer.open({
@@ -202,11 +211,23 @@ roomDetailInfo.initSelectForVisitunitType = function(){
 			 
 		}
 	});
+	if(details == 'details' ){
+		
+	}
 	/* start 查询数据字典集合  */
 }
+/*//详情预览页面
+roomDetailInfo.initSelectForVisitunitType = function(){
+	var 
+	$("#visitUnitType option").each(function(){
+		var optionText = $(this).text();
+		
+	}) 
+}*/
 
 roomDetailInfo.initSelectForVisitunitLevel = function(){
 	var pcode='visitunit_levle';
+	var optionSelectd = $(".userLevel").attr("data-userLevel")
 	/* start 查询数据字典集合  */
 	$.ajax({
 	    url: "/bg/DataDictionary/selectForDataDictionary?pcode="+pcode,//获取申报界面数据字典
@@ -217,7 +238,12 @@ roomDetailInfo.initSelectForVisitunitLevel = function(){
 				var visitUnitLevel = '';
 				visitUnitLevel += '<option value="">请选择参观领导级别</option>';
 				for (var i = 0; i < dictData.length; i++) {
-					visitUnitLevel += '<option value="' + dictData[i].K + '">' + dictData[i].V + '</option>';
+					if(dictData[i].K==optionSelectd){
+						visitUnitLevel += '<option value="' + dictData[i].K + '"   selected >' + dictData[i].V + '</option>';
+					}else{
+						visitUnitLevel += '<option value="' + dictData[i].K + '">' + dictData[i].V + '</option>';
+					}
+					
 				}
 				$('.userLevel').html(visitUnitLevel); 
 				

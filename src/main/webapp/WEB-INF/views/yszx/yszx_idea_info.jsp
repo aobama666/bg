@@ -15,9 +15,9 @@
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid/css/newPage.css" rel="stylesheet" type="text/css"/>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid/css/item.css" rel="stylesheet" type="text/css"/>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid/css/datagrid.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath()%>/yszx/css/laboratory/roomList.css" rel="stylesheet" type="text/css">
+ 
 	<!-- easyui用css -->
-	<link  href="<%=request.getContextPath()%>/yszx/css/laboratory/easyui.css" rel="stylesheet"/>
+	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet"/>
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.min.js"></script>
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/locale/easyui-lang-zh_CN.js"></script>
@@ -28,10 +28,10 @@
 	<!-- 引入日期选择框 -->
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
 	<!-- 验证校验公共方法，提示框公共方法 -->
-	<script src="<%=request.getContextPath()%>/yszx/js/laboratory/common/common.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/laboratory/common/recommonedCommon.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<!-- 本页面所需的js -->
- 	<script src="<%=request.getContextPath()%>/yszx/js/laboratory/roomList.js"></script>
+ 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomList.js"></script>
 </head>
 <body>
 	<div class="main_div"></div>
