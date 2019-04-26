@@ -36,11 +36,8 @@
  	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomDetailInfo.js"></script>
  </head>
 <body>
-
- 
 	<div class="main_div"></div>
-	<input type = "hidden" value = ${filter} id = "filter" >  
-	
+	<input type = "hidden" value = "${id}" id = "id" name="id">  
 	<!-- start  头部 -->
 	<div class="sheach details">
 		<div class='content_top'>参观设定详情</div>	 
@@ -54,7 +51,7 @@
 				 <span title = "申请部门（单位）（当前登录人所属部门）">申请部门（单位）<b class="mustWrite">*</b></span>
 			</td>
 			<td colspan="3" class="addInputStyle">
-				<input id="deptname" name="deptname"  type="text" value="${applyDept}" disabled />
+				<input id="deptname" name="deptname"  type="text" value="${applyDept}" disabled title = "申请部门（单位）（当前登录人所属部门）" />
             </td>
 		</tr>
 		<tr>
@@ -66,7 +63,7 @@
                 onclick=" WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',enableInputMask:false})" readonly="true" 
                 type="text" 
                 class="Wdate validNull  "
-                title="必填项"
+                title="必填项 ,参观开始时间（格式：yyyy-MM-dd HH:mm）"
                 content="参观开始时间"
                 />    
 			</td>
@@ -78,7 +75,7 @@
 				onclick=" WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',enableInputMask:false})" readonly="true" 
 				type="text" 
 				class="Wdate validNull  "
-				title="必填项"
+				title="必填项  ,参观结束时间（格式：yyyy-MM-dd HH:mm）"
 				content="参观结束时间"
 				/>
 		      
@@ -103,7 +100,7 @@
 	<!-- 参观人员信息展示 -->
 	<h4 class="tableTitle">
 	 
-		<span title = "参观人员信息">参观人员信息：<b class="mustWrite">*</b></span>
+		<span title = "参观人员信息">参观人员信息： </span>
 	</h4>
 	<table class="visitPerson tableStyle">
 		<tr>
@@ -111,15 +108,18 @@
 				<span title = "参观单位性质">参观单位性质<b class="mustWrite">*</b></span>
 			</td>
 			<td class="addInputStyle">
-				<select id="visitUnitType"  name = "visitUnitType"  class = "validNull select-person"   content="参观单位性质"   data-visitUnitType="${visitUnitType}" >
-					<option>请选择</option>
+				<select id="visitUnitType"  name = "visitUnitType"  class = "validNull select-person"   content="参观单位性质"  title="必填项  "    >
+					<option value=""   >请选择参观单位性质</option>
+					<c:forEach  var="visitUnitTypeInfo"  items="${visitUnitTypeInfo}">
+				       <option value ="${visitUnitTypeInfo.K}"   ${visitUnitTypeInfo.K == visitUnitType ?"selected='selected'":''}     > ${visitUnitTypeInfo.V}</option>
+					</c:forEach>
 				</select>
 			</td>
 			<td>
 				<span title = "参观人数">参观人数<b class="mustWrite">*</b></span>
 			</td>
 			<td class="addInputStyle">
-            	<input type="text"  id="visitorNumber"  name = "visitUnitType"  class = "validNull validNum"  content="参观人数"  value = "${visitorNumber}"/>
+            	<input type="text"  id="visitorNumber"  name = "visitUnitType"  class = "validNull validNum"  content="参观人数"  value = "${visitorNumber}" title="必填项  ，必须为正整数"/>
             </td>
 		</tr>
 		<tr>
@@ -127,7 +127,7 @@
 				<span title = "参观单位名称">参观单位名称<b class="mustWrite">*</b></span>
 			</td>
 			<td colspan="3" class="addInputStyle">
-				<input  id="visitUnitName"   name="visitUnitName"  type="text"   class = "validNull"   len="150"    content="参观单位名称" value = "${visitUnitName}" />
+				<input  id="visitUnitName"   name="visitUnitName"  type="text"   class = "validNull"   len="150"    content="参观单位名称" value = "${visitUnitName}"  title="必填项  " />
 			</td>
 		</tr>
 	</table>
@@ -135,64 +135,66 @@
 	<!-- 主要参观领导信息展示 -->
 	<div class="contentBox">
 		<h4 class="tableTitle">
-			<span title = "主要参观领导">主要参观领导：<b class="mustWrite">*</b></span>
+			<span title = "主要参观领导">主要参观领导：</span>
 		</h4>
-		<div class="btnBox">
-			<div class='btn right leaderMessageDel' onclick="delLeader(this)">删除</div> 
+		<div class="btnBox" >
+			<div  id="delLeader"  class='btn right leaderMessageDel' onclick="delLeader(this)">删除</div> 
 			<div class='btn right leaderMessageAdd' onclick="addLeader(this)">增加</div> 
 		</div>
 		<div class="maxBox">
 			<table class="visitLeader tableStyle thTableStyle">
 				<tr>
 					<th class="width-three">选择</th>
-					<th>姓名</th>
-					<th>职务</th>
-					<th>级别</th>
+					<th>姓名<b class="mustWrite">*</b></th>
+					<th>职务<b class="mustWrite">*</b></th>
+					<th>级别<b class="mustWrite">*</b></th>
 				</tr>
 				<c:forEach  var="visitInfo"  items="${visitInfo}">
-					
 				<tr>
 					<td>
-						<input type="checkbox"/>
+						<input type="checkbox"  id="visitId"  name = "visitId"  class="visitid"  value = "${visitInfo.visitId}"  />
 					</td>
 					<td class="addInputStyle"    >
-						<input type="text"    id="visitUserName"  name = "visitUserName" class = "validNull"  value = "${visitInfo.userName}"  />
+						<input type="text"    id="visitUserName"  name = "visitUserName"  class="visitUsername"  value = "${visitInfo.userName}"  />
 					</td>
 					<td class="addInputStyle"   >
-						<input type="text" id="visitPosition"  name = "visitPosition"  class = "validNull" len="100"  value = "${visitInfo.position}" />
+						<input type="text" id="visitPosition"  name = "visitPosition"  class="visitposition"  value = "${visitInfo.position}"  />
 					</td>
 					<td class="addInputStyle">
-						<select id="userLevel"  name = "userLevel"  class = "changeQuery userLevel validNull"   data-userLevel="${visitInfo.userLevel}" >
-					        <option>请选择</option>
+						<select id="userLevel"  name = "userLevel"  class = "changeQuery userlevel"  >
+						<option value=""  >请选择参观领导级别</option>
+						<c:forEach  var="visitUnitLevleInfo"  items="${visitUnitLevleInfo}">
+					        <option value ="${visitUnitLevleInfo.K}"   ${visitUnitLevleInfo.K == visitInfo.userLevel ?"selected='selected'":''}     > ${visitUnitLevleInfo.V}</option>
+					     </c:forEach>
 			        	</select>
 					</td>
 				</tr>
-				
 				</c:forEach>
-			
-				 
-				 
 			</table>
 		</div>
 	</div>
 	
+	 
+	
+	
+	
 	
 	<!-- 院内陪同人员信息展示 -->
 	<h4 class="tableTitle">
-		<spqn class="mustWrite">*</spqn>
-		院内陪同人员信息：
+		 
+		<span title = "院内陪同人员信息">院内陪同人员信息： </span>
 	</h4>
 	<table class="visitAccompany tableStyle">
 		<tr>
-			<td class="width-two">院领导姓名</td>
+			<td class="width-two">院领导姓名 <b class="mustWrite">*</b></td>
 			<td style="width:85%;" class="addInputStyle">
-				<input class="easyui-combotree tree-data"  id="companyLeaderName" name="companyLeaderName"/>
+				<input class="easyui-combotree tree-data"  id="companyLeaderName" name="companyLeaderName"   data-companyLeaderName= "${leaderInfo}" content="院领导姓名"   title="必填项  "/>
 			</td>	
 		</tr>
 		<tr>
-		<td class="width-two">陪同人数</td>
+		<td class="width-two">陪同人数<b class="mustWrite">*</b></td>
 			<td colspan="3" class="addInputStyle">
-				<input type="text"  id="companyUserNumber" class = "validNull"  name="companyUserNumber"  value = "${companyUserNumber}" />
+				<input type="text"  id="companyUserNumber" class = "validNull"  name="companyUserNumber"  value = "${companyUserNumber}" content="院内陪同人数"  title="必填项  ,必须为正整数"/>
 			</td>
 		</tr>
 	</table>
@@ -200,54 +202,47 @@
 	<!-- 各部门（单位）陪同人员信息展示 -->
 	<div class="contentBox">
 		<h4 class="tableTitle">
-			<spqn class="mustWrite">*</spqn>
-			各部门（单位）陪同人员：
+			<span title = "各部门（单位）陪同人员">各部门（单位）陪同人员： </span>
 		</h4>
 		<div class="btnBox">
-			<div class='btn right AccompanyMessageDel' onclick="delLeader(this)">删除</div> 
-			<div   id='stuffTree2' class='btn right AccompanyMessageAdd empName2'  onclick="AccompanyLeader(this)"  style="padding:0;"  >
-		    	<input type="button" name="empName2" value="增加" style="background: none;border: none;width:51px;height:30px;line-height:30px;"/>
+			 <div id="delUser" class='btn right AccompanyMessageDel' onclick="delUser(this)">删除</div> 
+			 <div id='stuffTree' class='btn right AccompanyMessageAdd empName2'   style="padding:0;"  >
+		    	<input type="button" id="popStuffTree"  value="增加" style="background: none;border: none;width:51px;height:30px;line-height:30px;"/>
+		    	<input name="empName" id="empName" type="hidden"/>
+		    	<input name="empCode" id="empCode" type="hidden"/>
 			</div> 
 		</div>
 		<div class="maxBox">
 			<table class="visitUnitAccompany tableStyle thTableStyle">
 				<tr>
 					<th class="width-three">选择</th>
-					<th>姓名</th>
-					<th>职务</th>
+					<th title="请点击添加按钮，添加用户">姓名</th>
+					<th title="请点击添加按钮，添加用户">职务</th>
 				</tr>
+				<c:forEach  var="userInfo"  items="${userInfo}">
 				<tr>
 					<td>
-						<input type="checkbox"/>
+					   <input  type="checkbox"   id = "userId"  name="userId" class="userId" value = "${userInfo.userId}" />
+					   <input  type = "hidden"   id = "companyId"  name="companyId" class="companyId" value = "${userInfo.companyId}">  
+					</td>
+					<td class="addInputStyle" >
+						<input type="text"  disabled    id="UserName" name="UserName"  class="UserName" value = "${userInfo.userAlisa}" title="请点击添加按钮，添加用户"/>
 					</td>
 					<td class="addInputStyle">
-						<input type="text"/>
-					</td>
-					<td class="addInputStyle">
-						<input type="text"/>
+						<input type="text"  disabled    id="Position" name="Position" class="Position" value = "${userInfo.postName}" title="请点击添加按钮，添加用户"/>
 					</td>
 				</tr>
-			 
+			    </c:forEach>
 				
 			</table>
 		</div>
-		
-			 
-		 
-		 
-		 
-		 
-	 
-		
 	</div>
-	
-	
 	<!-- 备注信息展示 -->
 	<table class="visitRemarks tableStyle" style="margin-top:10px;">
 		<tr>
 			<td class="width-two"> 备注</td>
 			<td colspan="3" class="addInputStyle">
-				<input type="text"  id="remark"   name="remark"   len="200"   value = "${remark}"/>
+				<input type="text"  id="remark"   name="remark"   len="200"   value = "${remark}" title="非必填项"/>
 			</td>
 		</tr>
 	</table>

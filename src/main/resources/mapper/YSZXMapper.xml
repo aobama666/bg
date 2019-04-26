@@ -50,6 +50,28 @@
 	</insert>
 	
 	
+	<update id="updataIdeaInfo"   parameterType="com.sgcc.bg.yszx.bean.IdeaInfo">
+		UPDATE TB_YSZX_IDEA SET
+            APPLY_DEPT =#{applyDept,jdbcType=VARCHAR},
+            START_DATE =to_date(#{stateDate},'YYYY-MM-DD HH24:MI:SS'), 
+			END_DATE =to_date(#{endDate},'YYYY-MM-DD HH24:MI:SS'),
+			CONTACT_USER =#{contactUser,jdbcType=VARCHAR},
+			CONTACT_PHONE =#{contactPhone,jdbcType=VARCHAR}, 		
+			VISIT_UNIT_TYPE =#{visitUnitType,jdbcType=VARCHAR},	 
+			VISIT_UNIT_NAME =#{visitUnitName,jdbcType=VARCHAR},	
+			VISITOR_NUMBER =#{visitorNumber,jdbcType=NUMERIC}, 		
+			COMPANY_USER_NUMBER=#{companyUserNumber,jdbcType=NUMERIC},	 
+			REMARK= #{remark,jdbcType=VARCHAR},	
+			STATUS =#{status,jdbcType=VARCHAR},
+			APPLY_ID =#{applyId,jdbcType=VARCHAR},	 		
+			VISIT_LEVEL =#{visitLevel,jdbcType=VARCHAR},	 	
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		 WHERE UUID=#{id,jdbcType=VARCHAR}   and  VALID='1'
+		 
+	</update>
+	
+	
 	
 	
 	<insert id="addVisitInfo"  parameterType="com.sgcc.bg.yszx.bean.VisitInfo">
@@ -83,6 +105,19 @@
 			)
 	</insert>
 	
+	<update id="updataVisitInfo"   parameterType="com.sgcc.bg.yszx.bean.VisitInfo">
+		UPDATE TB_YSZX_VISIT SET	
+            USERNAME=#{userName,jdbcType=VARCHAR},	 
+   	        POSITION=#{position,jdbcType=VARCHAR},	
+			USERLEVEL=#{userLevel,jdbcType=VARCHAR},	 	
+			SORT_ID=#{sortId,jdbcType=NUMERIC},	 
+			REMARK=#{remark,jdbcType=VARCHAR},	 			 
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		 WHERE  UUID=#{id,jdbcType=VARCHAR}  and  IDEAID =#{ideaId,jdbcType=VARCHAR}   and  VALID='1'
+		 
+	</update>
+	
 	<insert id="addCompanyLeaderInfo"  parameterType="com.sgcc.bg.yszx.bean.CompanyLeaderInfo">
 		INSERT INTO TB_YSZX_COMPANY_LEADER ( 
 			UUID,	 		
@@ -108,6 +143,14 @@
 			)
 	</insert>
 	
+	
+	 
+	
+	
+	
+	
+	
+	
 	<insert id="addCompanyUserInfo"  parameterType="com.sgcc.bg.yszx.bean.CompanyUserInfo">
 		INSERT INTO TB_YSZX_COMPANY_USER ( 
 			UUID,	 		
@@ -132,8 +175,6 @@
 			#{updateTime,jdbcType=TIMESTAMP} 
 			)
 	</insert>
-	
-	
 	
 	<select id="getUserId" resultType="java.util.Map">
 		SELECT 
@@ -200,6 +241,7 @@
 		<if test="createTime!=null and createTime!=''">
 			and CREATE_TIME  like '%'||#{createTime}||'%'
 		</if>
+			ORDER BY  CREATE_TIME     DESC
 	</select>
 	
 	
@@ -241,7 +283,10 @@
 		  WHERE T.VALID =  '1'
 		  <if test="ideaId!=null and ideaId!=''">
 			and T.IDEAID  like '%'||#{ideaId}||'%'
-		</if>
+		  </if>
+		   <if test="userId!=null and userId!=''">
+			and T.USERID  like '%'||#{userId}||'%'
+		  </if>
       ORDER BY  U.SORTID
 	</select>
 	
@@ -261,6 +306,9 @@
 		  WHERE T.VALID =  '1'
 		  <if test="ideaId!=null and ideaId!=''">
 			and T.IDEAID  like '%'||#{ideaId}||'%'
+		</if>
+		<if test="userId!=null and userId!=''">
+			and T.USERID  like '%'||#{userId}||'%'
 		</if>
 	</select>
 	
@@ -290,6 +338,65 @@
 		</if>
 		 
 	</select>
+	<select id="selectForuserName" resultType="java.util.Map">
+		 SELECT 
+		   USERID  as "userId",  
+		   USERNAME as "userName",
+		   USERALIAS as "userAlias",
+		   HRDEPTNAME as "hrDeptName",
+		   HRDEPTCODE as "hrDeptCode",
+		   POSTCODE as "postCode", 
+		   POSTNAME  as "postName"
+		  FROM BG_SYS_USER
+		  WHERE SRC = 0  
+		   AND USERID = #{userId,jdbcType=VARCHAR}
+	</select>
 	
+	
+	<update id="deleteVisitInfo"  >
+		UPDATE TB_YSZX_VISIT SET
+			VALID=#{valId,jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE UUID=#{visitId}  
+	</update> 
+	
+	 
+	<update id="deleteLeaderInfo"  >
+		UPDATE TB_YSZX_COMPANY_LEADER SET
+			VALID=#{valId,jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE  USERID = #{userid,jdbcType=VARCHAR}   and   IDEAID = #{ideaId,jdbcType=VARCHAR}  
+            	  
+	</update> 
+	
+	 
+	
+	
+	<update id="deleteCompanyUserInfo"  >
+		UPDATE TB_YSZX_COMPANY_USER SET
+			VALID=#{valId,jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE UUID=#{companyId}  
+	</update> 
+	
+	
+	<select id="selectForDictionary" resultType="java.util.Map"  parameterType="java.util.List">
+		 SELECT 
+		   CODE as "code",
+		   NAME as "name", 
+		   SORT_ID  as "sortId"
+		  FROM BG_SYS_DATADICTIONARY
+		  WHERE VAILD = '1'
+		   AND PCODE = #{pcode,jdbcType=VARCHAR}   
+		   AND CODE IN
+		    <foreach  collection="codes" item="code" open="("  separator="," close=")">
+		        #{code,jdbcType=VARCHAR} 
+		   </foreach> 
+		   ORDER BY  SORT_ID
+		   
+	</select>
 	
 </mapper>

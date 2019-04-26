@@ -115,11 +115,11 @@ roomList.initDataGrid = function(){
 	
 	/*演示中心管理-查看 */	
 	roomList.forDetails = function (id){
-		var url = "/bg/nonProject2/pro_details?proId="+id;
+		var url = "/bg/yszx/details?id="+id;
 			parent.layer.open({
 				type:2,
-				title:'<h4 style="height:42px;line-height:25px;">项目前期工作维护-查看</h4>',
-				area:['40%','60%'],
+				title:'<h4 style="height:42px;line-height:25px;">参观中心-查看</h4>',
+				area:['100%','100%'],
 				fixed:false,//不固定
 				maxmin:true,
 				content:url, 

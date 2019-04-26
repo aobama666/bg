@@ -149,7 +149,8 @@
     </select>
     <!--  获取人员树  局部加载 -->
     <select id="getUserTreeByOrgan" resultType="java.util.Map">
-		SELECT U.USERNAME DEPTID,
+		SELECT U.USERID  USERID,
+		       U.USERNAME DEPTID,
 		       BD.DEPTID PDEPTID,
 		       'P'||U.HRCODE DEPTCODE,
 		       U.USERALIAS DEPTNAME,

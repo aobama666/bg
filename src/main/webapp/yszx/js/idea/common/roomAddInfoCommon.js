@@ -31,7 +31,9 @@ var dataForm = {
 		 * @param   e 可传 可不传 需要验证的字段（经过jquery包装的）
 		 * @returns {Boolean}
 		 */
+		
 		validNullable:function(e){
+			 
 			/* 如果传了e 那么只验证e，没传e 验证所有的 */
 			if(!e){
 				e = $(".validNull");
