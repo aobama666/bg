@@ -100,6 +100,7 @@ public class newOrganStuffTreeController {
     		
     		//获取组织或组织人员数据列表
     		List<Map<String, Object>> list = organStuffTreeService.queryUserTreeByOrgan(organId);
+    		 
     		//格式化数据
     		List<Map<String, Object>> treelist = formatUserTreeData(list);
     		
@@ -159,6 +160,8 @@ public class newOrganStuffTreeController {
 			m.put("parentId", k.get("parentId").toString());
 			m.put("organCode", k.get("id").toString());
 			m.put("name", k.get("organName").toString());
+			m.put("userId", k.get("userId").toString());
+		 
 			//当前节点是否展开
 			if(k.get("id").toString().equals("41000001")){
 				m.put("open", true);

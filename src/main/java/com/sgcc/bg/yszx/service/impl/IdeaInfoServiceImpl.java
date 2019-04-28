@@ -14,13 +14,13 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.CommonCurrentUser;
-import com.sgcc.bg.common.CommonUser;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.StringUtil;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
+import com.sgcc.bg.common.getSet;
 import com.sgcc.bg.mapper.YSZXMapper;
 import com.sgcc.bg.yszx.Utils.NumberValidationUtil;
 import com.sgcc.bg.yszx.Utils.Pinyin;
@@ -39,203 +39,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	@Autowired
 	UserUtils userUtils;
 	private static Logger bgServiceLog =  LoggerFactory.getLogger(IdeaInfoServiceImpl.class);
-
-	@Override
-	public String addIdeaInfo(Map<String, Object> paramsMap) {
-	   bgServiceLog.info("演示中心参观预定的添加----->开始" );
-	   String visitLevel = paramsMap.get("visitLevel") == null ? "" : paramsMap.get("visitLevel").toString();  //提交|保存
-	   Map<String,String>  userInfoMap=userInfo();
-	   //演示中心参观预定的添加数据的验证
-	   String  ideaforRW=checkIdeaInfo(paramsMap);
-	   if(!ideaforRW.equals("null")){
-		   return ideaforRW;
-	   } 
-	   //参观人信息参观预定的添加数据的验证
-	   String  visitforRW=checkVisitInfo(paramsMap);
-	   if(!ideaforRW.equals("null")){
-		   return ideaforRW;
-	   } 
-	   //陪同领导人员信息添加数据的验证
-	   String  CompanyLeadershipforRW=checkCompanyLeaderInfo(paramsMap);
-	   if(!CompanyLeadershipforRW.equals("null") ){
-		   return CompanyLeadershipforRW;
-	   }
-//	   //陪同部门人员信息添加数据的验证
-//	   String CompanyDeptforRW =checkCompanyUserInfo(request);
-//	   if(!CompanyDeptforRW.equals("null")){
-//		   return CompanyDeptforRW;
-//	   }
-	   IdeaInfo  ideaInfo=new IdeaInfo();
-	   String id=Rtext.getUUID();
-	   ideaInfo.setId(id);
-	   ideaInfo =IdeaInfo(paramsMap,ideaInfo,userInfoMap); //演示中心参观预定的添加数据实体的返回
-	   if(visitLevel.equals("save")){//保存
-		   ideaInfo.setStatus("SAVE");
-		   yszxMapper.addIdeaInfo(ideaInfo);
-	   }else if(visitLevel.equals("submit")){//提交
-		   ideaInfo.setStatus("DEPT_HEAD_CHECK");
-		   yszxMapper.addIdeaInfo(ideaInfo);
-	   }
-	   if(!"0".equals(visitforRW)){
-		   //演示中心参观人员信息的添加
-		  visitInfo(paramsMap, id,userInfoMap); 
-	   }
-//	   if(!"0".equals(CompanyLeadershipforRW)){
-//		   //演示中心陪同领导人员信息的添加
-//		   CompanyLeaderInfo(request,id,userInfoMap);
-//	   }  
-//	   if(!"0".equals(CompanyDeptforRW)){
-//		 //演示中心陪同部门人员信息的添加
-//		   CompanyUserInfo(request,id,userInfoMap);
-//	   }
-//	   
-	    
-	   return "";
-		//return yszxMapper.addIdeaInfo(ideaInfo);
-	}
-	/**
-	 * 演示中心--参观预定的添加--主页数据的验证
-	 * 
-	 * @param
-	 * @param
-	 * @return
-	 */
-	public String  checkIdeaInfo(Map<String, Object> paramsMap){
-		 bgServiceLog.info("演示中心参观预定的添加----->IdeaInfo数据的验证" );
-		 String contactUser = paramsMap.get("contactUser") == null ? "" : paramsMap.get("contactUser").toString(); //联系人名称
-		 String contactPhone = paramsMap.get("contactPhone") == null ? "" : paramsMap.get("contactPhone").toString(); //联系人电话
-		 String stateDate = paramsMap.get("stateDate") == null ? "" : paramsMap.get("stateDate").toString(); //参观开始时间
-		 String endDate = paramsMap.get("endDate") == null ? "" : paramsMap.get("endDate").toString();  //参观结束时间
-		 String remark = paramsMap.get("remark") == null ? "" : paramsMap.get("remark").toString();  //参观结束时间
-		 String visitUnitType = paramsMap.get("visitUnitType") == null ? "" : paramsMap.get("visitUnitType").toString(); //参观单位性质
-		 String visitUnitName = paramsMap.get("visitUnitName") == null ? "" : paramsMap.get("visitUnitName").toString(); //参观单位名称
-		 String visitorNumber = paramsMap.get("visitorNumber") == null ? "" : paramsMap.get("visitorNumber").toString(); //参观人数
-		 String companyUserNumber = paramsMap.get("companyUserNumber") == null ? "" : paramsMap.get("companyUserNumber").toString(); //陪同人数
-		 ResultWarp rw =  null;
-		//联系人名称名称的验证
-		if(contactUser==""){
-			  rw = new ResultWarp(ResultWarp.FAILED ,"联系人名称不能为空");
-			  return JSON.toJSONString(rw);  
-		}else{
-			//联系人名称为中文或英文
-			boolean flag=StringUtil.checkNotNoOrC(contactUser);
-			if(!flag){
-				  rw = new ResultWarp(ResultWarp.FAILED ,"联系人名称只能为中文或英文");
-				  return JSON.toJSONString(rw); 
-			}
-			
-		}
-		//联系人电话的验证
-		if(contactPhone==""){
-			  rw = new ResultWarp(ResultWarp.FAILED ,"联系人电话不能为空");
-			  return JSON.toJSONString(rw);  
-		}else{
-			//联系人电话为手机格式和座机格式
-			boolean flag=StringUtil.checkPhone(contactPhone);
-			if(!flag){
-				 rw = new ResultWarp(ResultWarp.FAILED ,"联系人电话错误");
-				 return JSON.toJSONString(rw); 
-			}		
-			
-		}
-		//参观开始时间和参观结束时间的验证
-		String  checkreturn=checkData(stateDate,endDate);
-		if(checkreturn!=null){
-			return checkreturn;
-		}
-		//备注
-		if(remark!=""){
-			if(remark.length()>200){
-				  rw = new ResultWarp(ResultWarp.FAILED ,"备注不超过200个字");
-				  return JSON.toJSONString(rw);  
-			}
-		}
-		//参观单位性质
-		if(visitUnitType==""){
-			  rw = new ResultWarp(ResultWarp.FAILED ,"参观单位性质不能为空");
-			  return JSON.toJSONString(rw);  
-		}
-		//参观单位名称
-		if(visitUnitName==""){
-			  rw = new ResultWarp(ResultWarp.FAILED ,"参观单位名称不能为空");
-			  return JSON.toJSONString(rw);  
-		}else{
-			 if(visitUnitName.length()>150){
-				 rw = new ResultWarp(ResultWarp.FAILED ,"参观单位名称不超过150个字");
-				  return JSON.toJSONString(rw); 
-			 }
-		}
-		//参观人数
-		if(visitorNumber==""){
-			  rw = new ResultWarp(ResultWarp.FAILED ,"参观人数不能为空");
-			  return JSON.toJSONString(rw);  
-		}else{
-			boolean flag=NumberValidationUtil.isPositiveInteger(visitorNumber);
-			if(!flag){
-				 rw = new ResultWarp(ResultWarp.FAILED ,"参观人数必须为数字");
-				 return JSON.toJSONString(rw); 
-			}	
-		}
-		//陪同人数
-		if(companyUserNumber==""){
-			  rw = new ResultWarp(ResultWarp.FAILED ,"陪同人数不能为空");
-			  return JSON.toJSONString(rw);  
-		}else{
-			boolean flag=NumberValidationUtil.isPositiveInteger(companyUserNumber);
-			if(!flag){
-				 rw = new ResultWarp(ResultWarp.FAILED ,"陪同人数必须为数字");
-				 return JSON.toJSONString(rw); 
-			}	
-		}
-		 return JSON.toJSONString(rw);  
-	}
-	
-	/**
-	 * 演示中心--参观预定的添加--返回实体数据
-	 * 
-	 * @param
-	 * @param
-	 * @return
-	 */
-	public IdeaInfo IdeaInfo(Map<String, Object> paramsMap, IdeaInfo  ideaInfo,Map<String,String>  userInfoMap){
-		bgServiceLog.info("演示中心参观预定的添加----->IdeaInfo实体返回" );
-		 
-		
-		String contactUser = paramsMap.get("contactUser") == null ? "" : paramsMap.get("contactUser").toString(); //联系人名称
-		 String contactPhone = paramsMap.get("contactPhone") == null ? "" : paramsMap.get("contactPhone").toString(); //联系人电话
-		 String stateDate = paramsMap.get("stateDate") == null ? "" : paramsMap.get("stateDate").toString(); //参观开始时间
-		 String endDate = paramsMap.get("endDate") == null ? "" : paramsMap.get("endDate").toString();  //参观结束时间
-		 String remark = paramsMap.get("remark") == null ? "" : paramsMap.get("remark").toString();  //参观结束时间
-		 String visitUnitType = paramsMap.get("visitUnitType") == null ? "" : paramsMap.get("visitUnitType").toString(); //参观单位性质
-		 String visitUnitName = paramsMap.get("visitUnitName") == null ? "" : paramsMap.get("visitUnitName").toString(); //参观单位名称
-		 String visitorNumber = paramsMap.get("visitorNumber") == null ? "" : paramsMap.get("visitorNumber").toString(); //参观人数
-		 String companyUserNumber = paramsMap.get("companyUserNumber") == null ? "" : paramsMap.get("companyUserNumber").toString(); //陪同人数
-		
-		
-		String applyDept= userInfoMap.get("deptId");
-		ideaInfo.setApplyDept(applyDept);
-		ideaInfo.setStateDate(stateDate );
-		ideaInfo.setEndDate(endDate);
-		ideaInfo.setRemark(remark);
-		ideaInfo.setContactUser(contactUser);
-		ideaInfo.setContactPhone(contactPhone);
-		ideaInfo.setVisitUnitType(visitUnitType);
-		ideaInfo.setVisitUnitName(visitUnitName);
-		ideaInfo.setVisitorNumber(Integer.parseInt(visitorNumber));
-		ideaInfo.setCompanyUserNumber(Integer.parseInt(companyUserNumber));
-		String name= userInfoMap.get("name");
-		String applyId=applyId(name);
-		ideaInfo.setApplyId(applyId);
-		ideaInfo.setVisitLevel("dsfsdf");
-		ideaInfo.setValId("1");
-		String createUserId= userInfoMap.get("userId");
-		ideaInfo.setCreateUser(createUserId);
-		ideaInfo.setCreateTime(new Date());
-		ideaInfo.setUpdateUser(createUserId);
-		ideaInfo.setUpdateTime(new Date());
-		return ideaInfo;  
-	}
-	
+    
 	
 	/**
 	 * 演示中心--参观预定的添加--申请单号的生成
@@ -250,33 +54,8 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		name=Pinyin.getPinYin(name);
 		
 		String applyId="YSZX-"+name.toUpperCase()+"-"+DateUtil.getDays();
-		//List<Map<String, Object>> applyIdList =yszxMapper.selectForApplyId(applyId);
-		 
-		
 	    String serrialNum="001";
-	    
-	    
-	    
-		 
 		return applyId+"-"+serrialNum;
-	}
-	/**
-	 * 演示中心--参观预定的添加--查询用户信息
-	 * 
-	 * @param
-	 * @param
-	 * @return
-	 */
-	public   Map<String ,String >   userInfo(){
-		Map<String,String>  map=new HashMap<String,String>();
-		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
-		String userid=  currentUser.getUserId();
-		map.put("userId", userid);
-		String userAlias=  currentUser.getUserAlias();
-		map.put("name", userAlias );
-		String deptId=currentUser.getDeptId();
-		map.put("deptId", deptId);
-		return map;
 	}
 	/**
 	 * 演示中心--参观预定的添加--时间的验证  参观开始时间 参观结束时间
@@ -379,169 +158,624 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	return  JSON.toJSONString(rw);
 	   
     }
+    //演示中心--参观预定的添加--主要参观领导最高级别 VISIT_LEVEL
+    public    String  checkVisitLevel(Map<String, Object> paramsMap) {
+    	String bigvisitLevel="";
+		List<HashMap> list =  (List<HashMap>) paramsMap.get("visitinfo");
+    	if(!list.isEmpty()){
+    		List<String> levelList=new ArrayList<String>();
+    		for (Map<String, String> visitInfoMap : list) {
+    			String userLevel=visitInfoMap.get("userLevel")== null ? "" : visitInfoMap.get("userLevel").toString().trim(); //级别
+    			levelList.add(userLevel);
+    		}
+    		List<Map<String, Object>>    level =yszxMapper.selectForDictionary("visitunit_levle", levelList);
+    		bigvisitLevel= String.valueOf(level.get(0).get("code"));
+    	}
+		return bigvisitLevel; 
+    }
     
     
-    
-  
+	/**
+	 * 演示中心--参观预定的添加--主页数据的验证
+	 * 
+	 * @param
+	 * @param
+	 * @return
+	 */
+	public String  checkIdeaInfo(Map<String, Object> paramsMap){
+		 bgServiceLog.info("演示中心参观预定的添加----->IdeaInfo数据的验证开始" );
+		 String contactUser = paramsMap.get("contactUser") == null ? "" : paramsMap.get("contactUser").toString().trim(); //联系人名称
+		 String contactPhone = paramsMap.get("contactPhone") == null ? "" : paramsMap.get("contactPhone").toString().trim(); //联系人电话
+		 String stateDate = paramsMap.get("stateDate") == null ? "" : paramsMap.get("stateDate").toString().trim(); //参观开始时间
+		 String endDate = paramsMap.get("endDate") == null ? "" : paramsMap.get("endDate").toString();  //参观结束时间
+		 String remark = paramsMap.get("remark") == null ? "" : paramsMap.get("remark").toString();  //参观结束时间
+		 String visitUnitType = paramsMap.get("visitUnitType") == null ? "" : paramsMap.get("visitUnitType").toString().trim(); //参观单位性质
+		 String visitUnitName = paramsMap.get("visitUnitName") == null ? "" : paramsMap.get("visitUnitName").toString().trim(); //参观单位名称
+		 String visitorNumber = paramsMap.get("visitorNumber") == null ? "" : paramsMap.get("visitorNumber").toString().trim(); //参观人数
+		 String companyUserNumber = paramsMap.get("companyUserNumber") == null ? "" : paramsMap.get("companyUserNumber").toString().trim(); //陪同人数
+		 ResultWarp rw =  null;
+		//联系人名称名称的验证
+		if(contactUser==""){
+			  rw = new ResultWarp(ResultWarp.FAILED ,"联系人名称不能为空");
+			  return JSON.toJSONString(rw);  
+		}else{
+			//联系人名称为中文或英文
+			boolean flag=StringUtil.checkNotNoOrC(contactUser);
+			if(!flag){
+				  rw = new ResultWarp(ResultWarp.FAILED ,"联系人名称只能为中文或英文");
+				  return JSON.toJSONString(rw); 
+			}
+			
+		}
+		//联系人电话的验证
+		if(contactPhone==""){
+			  rw = new ResultWarp(ResultWarp.FAILED ,"联系人电话不能为空");
+			  return JSON.toJSONString(rw);  
+		}else{
+			//联系人电话为手机格式和座机格式
+			boolean flag=StringUtil.checkPhone(contactPhone);
+			if(!flag){
+				 rw = new ResultWarp(ResultWarp.FAILED ,"联系人电话错误");
+				 return JSON.toJSONString(rw); 
+			}		
+			
+		}
+		//参观开始时间和参观结束时间的验证
+		String  checkreturn=checkData(stateDate,endDate);
+		if(checkreturn!=null){
+			return checkreturn;
+		}
+		//备注
+		if(remark!=""){
+			if(remark.length()>200){
+				  rw = new ResultWarp(ResultWarp.FAILED ,"备注不超过200个字");
+				  return JSON.toJSONString(rw);  
+			}
+		}
+		//参观单位性质
+		if(visitUnitType==""){
+			  rw = new ResultWarp(ResultWarp.FAILED ,"参观单位性质不能为空");
+			  return JSON.toJSONString(rw);  
+		}
+		//参观单位名称
+		if(visitUnitName==""){
+			  rw = new ResultWarp(ResultWarp.FAILED ,"参观单位名称不能为空");
+			  return JSON.toJSONString(rw);  
+		}else{
+			 if(visitUnitName.length()>150){
+				 rw = new ResultWarp(ResultWarp.FAILED ,"参观单位名称不超过150个字");
+				  return JSON.toJSONString(rw); 
+			 }
+		}
+		//参观人数
+		if(visitorNumber==""){
+			  rw = new ResultWarp(ResultWarp.FAILED ,"参观人数不能为空");
+			  return JSON.toJSONString(rw);  
+		}else{
+			boolean flag=NumberValidationUtil.isPositiveInteger(visitorNumber);
+			if(!flag){
+				 rw = new ResultWarp(ResultWarp.FAILED ,"参观人数必须为数字");
+				 return JSON.toJSONString(rw); 
+			}	
+		}
+		//陪同人数
+		if(companyUserNumber==""){
+			  rw = new ResultWarp(ResultWarp.FAILED ,"陪同人数不能为空");
+			  return JSON.toJSONString(rw);  
+		}else{
+			boolean flag=NumberValidationUtil.isPositiveInteger(companyUserNumber);
+			if(!flag){
+				 rw = new ResultWarp(ResultWarp.FAILED ,"陪同人数必须为数字");
+				 return JSON.toJSONString(rw); 
+			}	
+		}
+		bgServiceLog.info("演示中心参观预定的添加----->IdeaInfo数据的验证结束" );
+		return JSON.toJSONString(rw);  
+	}
+
+	/**
+	 * 演示中心--参观预定的添加--参观领导的验证
+	 * 
+	 * @param
+	 * @param
+	 * @return
+	 */
 	public String  checkVisitInfo(Map<String, Object> paramsMap){
-    	bgServiceLog.info("演示中心参观人员信息----->VisitInfo数据的验证" );
+    	bgServiceLog.info("演示中心参观人员信息----->VisitInfo数据的验证开始" );
     	ResultWarp rw =  null;
     	List<HashMap> list =  (List<HashMap>) paramsMap.get("visitinfo");
-    	if(list.isEmpty()){
-    		return "0";
+    	if(!list.isEmpty()){
+    		//List<HashMap> list = JSON.parseArray(visitInfo, HashMap.class);
+    		for (Map<String, String> visitInfoMap : list) {
+    			String userName=visitInfoMap.get("visitUserName")== null ? "" : visitInfoMap.get("visitUserName").toString().trim(); //参观人员名称
+    			String position=visitInfoMap.get("visitPosition")== null ? "" : visitInfoMap.get("visitPosition").toString().trim(); //参观职务
+    			String userLevel=visitInfoMap.get("userLevel")== null ? "" : visitInfoMap.get("userLevel").toString().trim(); //级别
+    			//参观人员名称
+    			if(userName==""){
+    				  rw = new ResultWarp(ResultWarp.FAILED ,"参观人员名称不能为空");
+    				  return JSON.toJSONString(rw);  
+    			}else{
+    				//参观人员名称为中文或英文
+    				boolean flag=StringUtil.checkNotNoOrC(userName);
+    				if(!flag){
+    					  rw = new ResultWarp(ResultWarp.FAILED ,"参观人员名称只能为中文或英文");
+    					  return JSON.toJSONString(rw); 
+    				}
+    			}
+    			//参观人职务
+    			if(position==""){
+    				  rw = new ResultWarp(ResultWarp.FAILED ,"参观人职务不能为空");
+    				  return JSON.toJSONString(rw);  
+    			}else{
+    				if(position.length()>100){
+    					  rw = new ResultWarp(ResultWarp.FAILED ,"参观人职务不超过200个字");
+    					  return JSON.toJSONString(rw);  
+    				}	
+    			}
+    			//参观人级别
+    			if(userLevel==""){
+    				  rw = new ResultWarp(ResultWarp.FAILED ,"参观人级别不能为空");
+    				  return JSON.toJSONString(rw);  
+    			} 
+    		}
     	}
-		//List<HashMap> list = JSON.parseArray(visitInfo, HashMap.class);
-		for (Map<String, String> visitInfoMap : list) {
-			String userName=visitInfoMap.get("visitUserName")== null ? "" : visitInfoMap.get("visitUserName").toString().trim(); //参观人员名称
-			String position=visitInfoMap.get("visitPosition")== null ? "" : visitInfoMap.get("visitPosition").toString().trim(); //参观职务
-			String userLevel=visitInfoMap.get("userLevel")== null ? "" : visitInfoMap.get("userLevel").toString().trim(); //级别
-			//参观人员名称
-			if(userName==""){
-				  rw = new ResultWarp(ResultWarp.FAILED ,"参观人员名称不能为空");
-				  return JSON.toJSONString(rw);  
-			}else{
-				//参观人员名称为中文或英文
-				boolean flag=StringUtil.checkNotNoOrC(userName);
-				if(!flag){
-					  rw = new ResultWarp(ResultWarp.FAILED ,"参观人员名称只能为中文或英文");
-					  return JSON.toJSONString(rw); 
-				}
-			}
-			//参观人职务
-			if(position==""){
-				  rw = new ResultWarp(ResultWarp.FAILED ,"参观人职务不能为空");
-				  return JSON.toJSONString(rw);  
-			}else{
-				if(position.length()>100){
-					  rw = new ResultWarp(ResultWarp.FAILED ,"参观人职务不超过200个字");
-					  return JSON.toJSONString(rw);  
-				}	
-			}
-			//参观人级别
-			if(userLevel==""){
-				  rw = new ResultWarp(ResultWarp.FAILED ,"参观人级别不能为空");
-				  return JSON.toJSONString(rw);  
-			} 
-		   
-		}
+    	bgServiceLog.info("演示中心参观人员信息----->VisitInfo数据的验证结束" );
 		return JSON.toJSONString(rw); 
     	
     }
-    public void  visitInfo(Map<String, Object> paramsMap ,String ideaId, Map<String,String>  userInfoMap){
-    	bgServiceLog.info("演示中心参观人员信息----->visitInfo实体" );
-    	List<HashMap> list =  (List<HashMap>) paramsMap.get("visitinfo");
+	/**
+	 * 演示中心--参观预定的添加--陪同领导人员验证
+	 * 
+	 * @param
+	 * @param
+	 * @return
+	 */
+	 public String  checkCompanyLeaderInfo(Map<String, Object> paramsMap){
+	    	bgServiceLog.info("演示中心陪同领导人员信息----->CompanyLeadershipInfo数据的验证开始" );
+	    	ResultWarp rw =  null;
+	    	String companyLeaderInfo = Rtext.toStringTrim(paramsMap.get("companyLeaderName"),"");
+	    	if(companyLeaderInfo!=""){
+	    		String[] companyLeaderInfoArr = companyLeaderInfo.split(",");
+				for (String companyLeaderName : companyLeaderInfoArr) {
+					try {
+						if(companyLeaderName==""){
+							  rw = new ResultWarp(ResultWarp.FAILED ,"陪同领导人员名称不能为空");
+							  return JSON.toJSONString(rw);  
+						} 
+					} catch (Exception e) {
+						   rw = new ResultWarp(ResultWarp.FAILED ,"陪同领导人员名称不能为空");
+						  return JSON.toJSONString(rw);  
+					}
+					 
+				}
+	    	}
+	    	bgServiceLog.info("演示中心陪同领导人员信息----->CompanyLeadershipInfo数据的验证结束" );
+			return JSON.toJSONString(rw); 	
+	    }
+	 /**
+		 * 演示中心--参观预定的添加--陪同人员信息验证
+		 * 
+		 * @param
+		 * @param
+		 * @return
+		 */
+		 public String  checkCompanyUserInfo(Map<String, Object> paramsMap  ,String ideaId){
+		    	bgServiceLog.info("演示中心陪同人员信息----->CompanyUsershipInfo数据的验证开始" );
+		    	ResultWarp rw =  null;
+		    	List<HashMap> list =  (List<HashMap>) paramsMap.get("companyUserInfo");
+		    	if(list.isEmpty()){
+		    		for (Map<String, Object> companyUserMap : list) {
+		    			String companyUserId=companyUserMap.get("userId")== null ? "" : companyUserMap.get("userId").toString().trim(); //参观职务
+		    			try {
+							if(companyUserId==""){
+								  rw = new ResultWarp(ResultWarp.FAILED ,"陪同人员名称不能为空");
+								  return JSON.toJSONString(rw);  
+							} 
+							List<Map<String, Object>>  userInfoList = yszxMapper.selectForCompanyUserInfo(ideaId,companyUserId);
+							if(!userInfoList.isEmpty()){
+								for(  Map<String, Object> userInfo:userInfoList){
+									String userAlisa= String.valueOf(userInfo.get("userAlisa")) ;
+									 rw = new ResultWarp(ResultWarp.FAILED ,"陪同人员名"+userAlisa+"已在陪同人员序列");
+									 return JSON.toJSONString(rw);  
+								}
+							}
+						} catch (Exception e) {
+							   rw = new ResultWarp(ResultWarp.FAILED ,"陪同人员名称不能为空");
+							  return JSON.toJSONString(rw);  
+						}
+						}
+				   }
+		    	bgServiceLog.info("演示中心陪同领导人员信息----->CompanyLeadershipInfo数据的验证结束" );
+				return JSON.toJSONString(rw); 	
+		    }
+	/**
+	 * 演示中心--参观预定的添加--全部验证代码
+	 * 
+	 * @param
+	 * @param
+	 * @return
+	 */
+	 public   String    checkAllInfo(Map<String, Object> paramsMap ,String ideaId){
+		   //参观预定主页数据验证
+		   String  ideaforRW=checkIdeaInfo(paramsMap);
+		   if(!ideaforRW.equals("null")){
+			   return ideaforRW;
+		   } 
+		   //参观人信息参观预定的添加数据的验证
+		   String  visitforRW=checkVisitInfo(paramsMap);
+		   if(!ideaforRW.equals("null")){
+			   return ideaforRW;
+		   } 
+		   //陪同领导人员信息添加数据的验证
+		   String  CompanyLeadershipforRW=checkCompanyLeaderInfo(paramsMap);
+		   if(!CompanyLeadershipforRW.equals("null") ){
+			   return CompanyLeadershipforRW;
+		   }
+		   //陪同部门人员信息添加数据的验证
+		   String CompanyDeptforRW =checkCompanyUserInfo(paramsMap , ideaId);
+		   if(!CompanyDeptforRW.equals("null")){
+			   return CompanyDeptforRW;
+		   }
+		return "";
 		 
-		for (Map<String, Object> visitInfoMap : list) {
-			String userName=visitInfoMap.get("visitUserName")== null ? "" : visitInfoMap.get("visitUserName").toString().trim(); //参观人员名称
-			String position=visitInfoMap.get("visitPosition")== null ? "" : visitInfoMap.get("visitPosition").toString().trim(); //参观职务
-			String userLevel=visitInfoMap.get("userLevel")== null ? "" : visitInfoMap.get("userLevel").toString().trim(); //级别
-			String sortId=visitInfoMap.get("sortId")== null ? "" : visitInfoMap.get("sortId").toString().trim(); //级别
-			//参观人员
-			int sortIds=Integer.parseInt(sortId); //级别
-			VisitInfo  visit=new VisitInfo();
-			visit.setUserName(userName);
-			visit.setPosition(position);
-			visit.setUserLevel(userLevel);
-			String visitId=Rtext.getUUID();
-			visit.setId(visitId);
-			visit.setIdeaId(ideaId);
-			visit.setSortId(sortIds);
-			visit.setRemark("");
-			visit.setValId("1");
-			String createUser= userInfoMap.get("userId");
-			visit.setCreateUser(createUser);
-			visit.setCreateTime(new Date());
-			visit.setUpdateUser(createUser);
-			visit.setUpdateTime(new Date());
-			yszxMapper.addVisitInfo(visit);
-        }
+		 
+	 }  
+	@Override
+	public String addIdeaInfo(Map<String, Object> paramsMap) {
+	   bgServiceLog.info("演示中心参观预定的添加----->开始" );
+	   ResultWarp rw =  null;
+	   Map<String,String>  userInfoMap=userInfo();
+	   String ideaId = paramsMap.get("id") == null ? "" : paramsMap.get("id").toString();  //主ID
+	   //演示中心参观预定的添加全部数据的验证
+	  String checkRW =checkAllInfo(paramsMap,ideaId);
+	  if(!"".equals(checkRW)){
+		  return checkRW;
+	  } 
+	  //演示中心参观预定的添加数据
+	   IdeaInfo  ideaInfo=new IdeaInfo();
+	   String  IdeaRW=null;
+	   if("".equals(ideaId)){//添加
+		 ideaId=Rtext.getUUID();
+		 IdeaRW= IdeaInfo(paramsMap,ideaInfo,userInfoMap,"add",ideaId); //演示中心参观预定的添加数据实体的返回
+		 if(!IdeaRW.equals("null")){
+			 return IdeaRW;
+		 }
+	  }else{//修改
+		 IdeaRW =IdeaInfo(paramsMap,ideaInfo,userInfoMap,"updata",ideaId); //演示中心参观预定的添加数据实体的返回
+		 if(!IdeaRW.equals("null")){
+			 return IdeaRW;
+		 }
+	  }
+	  //演示中心参观人员信息的添加
+	  String  visitRW= visitInfo(paramsMap, ideaId,userInfoMap); 
+	  if(!visitRW.equals("null")){
+			 return IdeaRW;
+	  }  
+	  //演示中心陪同领导信息的添加
+	  String  leaderRW=CompanyLeaderInfo(paramsMap,ideaId,userInfoMap);
+	  if(!leaderRW.equals("null")){
+			 return IdeaRW;
+	  }  
+	  //演示中心陪同人员信息的添加
+	  String   companyUserRW=CompanyUserInfo(paramsMap,ideaId,userInfoMap);
+	  if(!companyUserRW.equals("null")){
+			 return IdeaRW;
+	  }  
+	  rw = new ResultWarp(ResultWarp.SUCCESS ,"添加成功");
+	  return JSON.toJSONString(rw);  
+	}
+
+	
+	/**
+	 * 演示中心--参观预定的添加--返回实体数据
+	 * 
+	 * @param
+	 * @param
+	 * @return
+	 */
+	public String IdeaInfo(Map<String, Object> paramsMap, IdeaInfo  ideaInfo,Map<String,String>  userInfoMap,String type,String ideaId){
+		 bgServiceLog.info("演示中心参观预定的添加----->IdeaInfo实体返回开始" );
+		 ResultWarp rw =  null;
+		 String visitLevel = paramsMap.get("visitLevel") == null ? "" : paramsMap.get("visitLevel").toString();  //提交|保存
+		 String contactUser = paramsMap.get("contactUser") == null ? "" : paramsMap.get("contactUser").toString(); //联系人名称
+		 String contactPhone = paramsMap.get("contactPhone") == null ? "" : paramsMap.get("contactPhone").toString(); //联系人电话
+		 String stateDate = paramsMap.get("stateDate") == null ? "" : paramsMap.get("stateDate").toString(); //参观开始时间
+		 String endDate = paramsMap.get("endDate") == null ? "" : paramsMap.get("endDate").toString();  //参观结束时间
+		 String remark = paramsMap.get("remark") == null ? "" : paramsMap.get("remark").toString();  //参观结束时间
+		 String visitUnitType = paramsMap.get("visitUnitType") == null ? "" : paramsMap.get("visitUnitType").toString(); //参观单位性质
+		 String visitUnitName = paramsMap.get("visitUnitName") == null ? "" : paramsMap.get("visitUnitName").toString(); //参观单位名称
+		 String visitorNumber = paramsMap.get("visitorNumber") == null ? "" : paramsMap.get("visitorNumber").toString(); //参观人数
+		 String companyUserNumber = paramsMap.get("companyUserNumber") == null ? "" : paramsMap.get("companyUserNumber").toString(); //陪同人数
+		 String applyDept= userInfoMap.get("deptId");
+		ideaInfo.setId(ideaId);
+		ideaInfo.setApplyDept(applyDept);
+		ideaInfo.setStateDate(stateDate );
+		ideaInfo.setEndDate(endDate);
+		ideaInfo.setRemark(remark);
+		ideaInfo.setContactUser(contactUser);
+		ideaInfo.setContactPhone(contactPhone);
+		ideaInfo.setVisitUnitType(visitUnitType);
+		ideaInfo.setVisitUnitName(visitUnitName);
+		ideaInfo.setVisitorNumber(Integer.parseInt(visitorNumber));
+		ideaInfo.setCompanyUserNumber(Integer.parseInt(companyUserNumber));
+		String name= userInfoMap.get("name");
+		String applyId=applyId(name);
+		ideaInfo.setApplyId(applyId);
+		String   bigVisitLevel=checkVisitLevel(paramsMap);
+		ideaInfo.setVisitLevel(bigVisitLevel);
+		ideaInfo.setValId("1");
+		String createUserId= userInfoMap.get("userId");
+		ideaInfo.setCreateUser(createUserId);
+		ideaInfo.setCreateTime(new Date());
+		ideaInfo.setUpdateUser(createUserId);
+		ideaInfo.setUpdateTime(new Date());
+		try {
+		if("add".equals(type)){//添加
+		     Map<String, Object>    ideaMap = yszxMapper.selectForId(ideaId);
+			   if("null".equals(ideaMap)){
+				      rw = new ResultWarp(ResultWarp.FAILED ,"该数据存在");
+					  return JSON.toJSONString(rw);  
+			   }
+			 if(visitLevel.equals("save")){//保存
+				   ideaInfo.setStatus("SAVE");
+				   yszxMapper.addIdeaInfo(ideaInfo);
+			   }else if(visitLevel.equals("submit")){//提交
+				   
+			   }
+		   }  
+		} catch (Exception e) {
+			  rw = new ResultWarp(ResultWarp.FAILED ,"添加异常，请重新添加");
+			  return JSON.toJSONString(rw);  
+		}
+		
+		try {
+		if("updata".equals(type)){//修改
+			  Map<String, Object>    ideaMap = yszxMapper.selectForId(ideaId);
+			   if(ideaMap.isEmpty()){
+				      rw = new ResultWarp(ResultWarp.FAILED ,"该数据不存在");
+					  return JSON.toJSONString(rw);  
+			   }
+			if(visitLevel.equals("save")){//保存
+				  ideaInfo.setStatus("SAVE");
+				  yszxMapper.updataIdeaInfo(ideaInfo);
+			   }else if(visitLevel.equals("submit")){//提交
+				    
+			   }
+			
+		}
+		} catch (Exception e) {
+			  rw = new ResultWarp(ResultWarp.FAILED ,"添加异常，请重新添加");
+			  return JSON.toJSONString(rw);  
+		}
+		bgServiceLog.info("演示中心参观预定的添加----->IdeaInfo实体返回结束" );
+		return   JSON.toJSONString(rw);  
+	}
+	/**
+	 * 演示中心--参观预定的添加--参观领导人信息实体
+	 * 
+	 * @param
+	 * @param
+	 * @return
+	 */
+    public String   visitInfo(Map<String, Object> paramsMap ,String ideaId, Map<String,String>  userInfoMap){
+    	bgServiceLog.info("演示中心参观人员信息----->visitInfo实体开始" );
+   	    ResultWarp rw =  null;
+    	List<HashMap> list =  (List<HashMap>) paramsMap.get("visitinfo"); 
+    	if(!list.isEmpty()){
+    		for (Map<String, Object> visitInfoMap : list) {
+    			String visitId=visitInfoMap.get("visitId")== null ? "" : visitInfoMap.get("visitId").toString().trim(); //参观主id
+    			String userName=visitInfoMap.get("visitUserName")== null ? "" : visitInfoMap.get("visitUserName").toString().trim(); //参观人员名称
+    			String position=visitInfoMap.get("visitPosition")== null ? "" : visitInfoMap.get("visitPosition").toString().trim(); //参观职务
+    			String userLevel=visitInfoMap.get("userLevel")== null ? "" : visitInfoMap.get("userLevel").toString().trim(); //级别
+    			String sortId=visitInfoMap.get("sortId")== null ? "" : visitInfoMap.get("sortId").toString().trim(); //级别
+    			//参观人员
+    			int sortIds=Integer.parseInt(sortId); //级别
+    			VisitInfo  visit=new VisitInfo();
+    			visit.setUserName(userName);
+    			visit.setPosition(position);
+    			visit.setUserLevel(userLevel);
+    			visit.setIdeaId(ideaId);
+    			visit.setSortId(sortIds);
+    			visit.setRemark("");
+    			visit.setValId("1");
+    			String createUser= userInfoMap.get("userId");
+    			visit.setCreateUser(createUser);
+    			visit.setCreateTime(new Date());
+    			visit.setUpdateUser(createUser);
+    			visit.setUpdateTime(new Date());
+    			try {
+	    			if(visitId==""){//添加
+	    				 visitId=Rtext.getUUID();
+	    				 visit.setId(visitId);
+	    				 yszxMapper.addVisitInfo(visit);
+	    			}else{//修改
+	    				visit.setId(visitId);
+	    				yszxMapper.updataVisitInfo(visit);
+	    			}
+    			} catch (Exception e) {
+    				  rw = new ResultWarp(ResultWarp.FAILED ,"添加异常，请重新添加");
+    				  return JSON.toJSONString(rw);  
+    			}
+    			
+            }
+    	}
+		return    JSON.toJSONString(rw);  
     }
-    public String  checkCompanyLeaderInfo(Map<String, Object> paramsMap){
-    	bgServiceLog.info("演示中心陪同领导人员信息----->CompanyLeadershipInfo数据的验证" );
-    	ResultWarp rw =  null;
+    /**
+	 * 演示中心--参观预定的添加--陪同领导人员实体
+	 * @param
+	 * @param
+	 * @return
+	 */
+    public  String   CompanyLeaderInfo(Map<String, Object> paramsMap ,String ideaId,Map<String,String>  userInfoMap){
+    	bgServiceLog.info("演示中心参观人员信息----->CompanyLeadershipInfo实体" );
+    	 ResultWarp rw =  null;
+    	//删除领导人信息
     	String companyLeaderInfo = Rtext.toStringTrim(paramsMap.get("companyLeaderName"),"");
     	if(companyLeaderInfo==""){
-    		return "0";
+    		return   JSON.toJSONString(rw); 
     	}
-    	String[] companyLeaderInfoArr = companyLeaderInfo.split(",");
-		for (String companyLeaderName : companyLeaderInfoArr) {
-			try {
-				if(companyLeaderName==""){
-					  rw = new ResultWarp(ResultWarp.FAILED ,"陪同领导人员名称不能为空");
-					  return JSON.toJSONString(rw);  
-				} 
-			} catch (Exception e) {
-				   rw = new ResultWarp(ResultWarp.FAILED ,"陪同领导人员名称不能为空");
-				  return JSON.toJSONString(rw);  
-			}
+    	 String[] companyLeaderInfoArr = companyLeaderInfo.split(",");
+    	 List<Map<String, Object>>   leaderList=yszxMapper.selectForCompanyLeaderInfo(ideaId,"");
+		 if(leaderList.isEmpty()){
+			 for (String companyLeaderName : companyLeaderInfoArr) {
+		    		CompanyLeaderInfo  companyInfo=new CompanyLeaderInfo();
+					String companyLeadershipId=Rtext.getUUID();
+					companyInfo.setId(companyLeadershipId);
+					companyInfo.setIdeaId(ideaId);
+					companyInfo.setRemark("");
+					companyInfo.setValid("1");
+					companyInfo.setUserId(companyLeaderName);
+					String userId= userInfoMap.get("userId");
+					companyInfo.setCreateUser(userId);
+					companyInfo.setCreateTime(new Date());
+					companyInfo.setUpdateUser(userId);
+					companyInfo.setUpdateTime(new Date());
+					try {
+						yszxMapper.addCompanyLeaderInfo(companyInfo); 
+					} catch (Exception e) {
+						  rw = new ResultWarp(ResultWarp.FAILED ,"添加异常，请重新添加");
+						  return JSON.toJSONString(rw);  
+					}
+		    	}
 			 
-		}
+			 
+		 } else{
+			   CompanyLeaderInfo  companyInfo=new CompanyLeaderInfo();
+			   companyInfo.setIdeaId(ideaId);
+			   companyInfo.setRemark("");
+			   companyInfo.setValid("1");
+			   String userId= userInfoMap.get("userId");
+			   companyInfo.setCreateUser(userId);
+			   companyInfo.setCreateTime(new Date());
+			   companyInfo.setUpdateUser(userId);
+			   companyInfo.setUpdateTime(new Date());
+			    //前端的用户信息
+			    List<String>  frontlist=new ArrayList<String>();
+		    	for(String userid : companyLeaderInfoArr){
+		    		frontlist.add(userid);
+		    	}
+		    	List<String>  afterlist=new ArrayList<String>();
+		    	//后端的用户信息
+		        for(Map<String, Object>     leaders: leaderList){
+		        	String  userid= String.valueOf(leaders.get("userId")) ;
+		        	afterlist.add(userid);
+		    	}
+		         String  frontRW    =  front(frontlist,afterlist,companyInfo);//添加
+				  if(!frontRW.equals("null")){
+						 return frontRW;
+				  }  
+				  String  after    =  after(frontlist,afterlist,ideaId, userId);//删除
+		        if(!after.equals("null")){
+					 return after;
+			     }  
+		        
+		 }
     	
-
-		return JSON.toJSONString(rw); 	
+    	
+    	
+    	
+		return   JSON.toJSONString(rw);  
     }
-    public  void  CompanyLeaderInfo(HttpServletRequest request ,String ideaId,Map<String,String>  userInfoMap){
-    	bgServiceLog.info("演示中心参观人员信息----->CompanyLeadershipInfo实体" );
-    	String companyLeaderInfo = Rtext.toStringTrim(request.getParameter("companyLeaderName"),"");
-    	String[] companyLeaderInfoArr = companyLeaderInfo.split(",");
-		for (String companyLeaderName : companyLeaderInfoArr) {
-			CompanyLeaderInfo  companyInfo=new CompanyLeaderInfo();
-			String companyLeadershipId=Rtext.getUUID();
-			companyInfo.setId(companyLeadershipId);
-			companyInfo.setIdeaId(ideaId);
-			companyInfo.setRemark("");
-			companyInfo.setValid("1");
-			companyInfo.setUserId(companyLeaderName);
-			String userId= userInfoMap.get("userId");
-			companyInfo.setCreateUser(userId);
-			companyInfo.setCreateTime(new Date());
-			companyInfo.setUpdateUser(userId);
-			companyInfo.setUpdateTime(new Date());
-			yszxMapper.addCompanyLeaderInfo(companyInfo); 
-		}
-    }
-    public  String  checkCompanyUserInfo(HttpServletRequest request){
-    	bgServiceLog.info("演示中心陪同部门人员信息----->CompanyDeptInfo数据的验证" );
+    //取差集
+    public  String front(List<String>frontlist,List<String>afterlist,CompanyLeaderInfo companyInfo){
     	ResultWarp rw =  null;
-    	String companyUserInfo = Rtext.toStringTrim(request.getParameter("companyUserInfo"),"");
-    	if(companyUserInfo==""){
-    		return "0";
+    	List<String> collectionList =getSet.receiveDefectList(frontlist, afterlist);
+    	if(!collectionList.isEmpty()){
+    		for(String userid:collectionList){//添加
+    			String companyLeadershipId=Rtext.getUUID();
+				companyInfo.setId(companyLeadershipId);
+				companyInfo.setUserId(userid);
+				try {
+					yszxMapper.addCompanyLeaderInfo(companyInfo); 
+				} catch (Exception e) {
+					  rw = new ResultWarp(ResultWarp.FAILED ,"添加异常，请重新添加");
+					  return JSON.toJSONString(rw);  
+				}
+        	}
     	}
-		List<HashMap> list = JSON.parseArray(companyUserInfo, HashMap.class);
-		for (Map<String, String> CompanyUserInfo : list) {
-			String userId=CompanyUserInfo.get("userId")== null ? "" : CompanyUserInfo.get("userId").toString(); //陪同人员名称
-			//查询
-			Map<String ,Object> userInfo=yszxMapper.getUserId(userId);
-			if(userInfo==null){
-				  rw = new ResultWarp(ResultWarp.FAILED ,"该陪同人信息异常，请联系管理员");
-				  return JSON.toJSONString(rw);  
-			}
-		}
-		return JSON.toJSONString(rw); 	
+    	
+    	 return JSON.toJSONString(rw); 
     }
-    public  void CompanyUserInfo(HttpServletRequest request,String  ideaId,Map<String,String>  userInfoMap){
+    //取差集
+    public  String after(List<String>frontlist,List<String>afterlist, String ideaId,String updateUser ){
+    	ResultWarp rw =  null;
+    	List<String> collectionList =getSet.receiveDefectList(afterlist, frontlist);
+    	if(!collectionList.isEmpty()){
+    		for(String userid:collectionList){//删除
+    			try {
+    			yszxMapper.deleteLeaderInfo(userid, ideaId, "0", updateUser, new  Date());
+    			} catch (Exception e) {
+					  rw = new ResultWarp(ResultWarp.FAILED ,"添加异常，请重新添加");
+					  return JSON.toJSONString(rw);  
+				}
+        	}
+    	}
+    	
+    	 return JSON.toJSONString(rw); 
+    }
+    
+    
+    
+    
+    /**
+   	 * 演示中心--参观预定的添加--陪同人员信息实体
+   	 * @param
+   	 * @param
+   	 * @return
+   	 */
+    public  String CompanyUserInfo(Map<String, Object> paramsMap,String  ideaId,Map<String,String>  userInfoMap ){
     	bgServiceLog.info("演示中心陪同部门人员信息----->CompanyDeptInfo数据的验证" );
-    	String companyUserInfo = Rtext.toStringTrim(request.getParameter("companyUserInfo"),"");
-		List<HashMap> list = JSON.parseArray(companyUserInfo, HashMap.class);
-		for (Map<String, String> CompanyUserInfo : list) {
-			String userid=CompanyUserInfo.get("userId")== null ? "" : CompanyUserInfo.get("userId").toString(); //陪同人员名称
+    	 ResultWarp rw =  null;
+    	List<HashMap> list =  (List<HashMap>) paramsMap.get("companyUserInfo");
+    	if(!list.isEmpty()){
+    		for (Map<String, Object> companyUserMap : list) {
+    			String companyId=companyUserMap.get("companyId")== null ? "" : companyUserMap.get("companyId").toString().trim(); //参观人员名称
+    			String companyUserId=companyUserMap.get("userId")== null ? "" : companyUserMap.get("userId").toString().trim(); //参观职务
 			//查询
-			Map<String ,Object> userInfo=yszxMapper.getUserId(userid);
 			CompanyUserInfo  companyUser=new CompanyUserInfo();
-			companyUser.setUserId(userid);
-			String companyUserId=Rtext.getUUID();
-			companyUser.setId(companyUserId);
+			companyUser.setUserId(companyUserId);
 			companyUser.setIdeaId(ideaId);
 			String userId= userInfoMap.get("userId");
 			companyUser.setCreateUser(userId);
 			companyUser.setCreateTime(new Date());
 			companyUser.setUpdateUser(userId);
 			companyUser.setUpdateTime(new Date());
-			companyUser.setValid("1");
-			yszxMapper.addCompanyUserInfo(companyUser);
-		}
-		 
+			companyUser.setValid("1"); 
+			try {
+			 if(companyId==""){
+				  companyId =Rtext.getUUID();
+				  companyUser.setId(companyId);
+				  yszxMapper.addCompanyUserInfo(companyUser);
+			 } 
+		    }catch (Exception e) {
+				  rw = new ResultWarp(ResultWarp.FAILED ,"添加异常，请重新添加");
+				  return JSON.toJSONString(rw);  
+			}
+    	  }
+    	}
+		return   JSON.toJSONString(rw); 
     }
+    
+    
+    /**
+	 * 演示中心--参观预定的添加--查询用户信息
+	 * 
+	 * @param
+	 * @param
+	 * @return
+	 */
+	public   Map<String ,String >   userInfo(){
+		Map<String,String>  map=new HashMap<String,String>();
+		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
+		String userid=  currentUser.getUserId();
+		map.put("userId", userid);
+		String userAlias=  currentUser.getUserAlias();
+		map.put("name", userAlias );
+		String deptId=currentUser.getDeptId();
+		map.put("deptId", deptId);
+		return map;
+	}
 	@Override
 	public String selectForLeader(HttpServletRequest request) {
 		Map<String, Object>  map= new  HashMap<String, Object>();
@@ -578,9 +812,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	public List<Map<String, Object>> selectForIdeaInfo(String  applyId,String createTime) {
 		  List<Map<String, Object>>  ideaInfo=yszxMapper.selectForIdeaInfo(applyId, createTime);
 		  List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
-		  if(ideaInfo.isEmpty()){
-			  
-		  }else{
+		  if(!ideaInfo.isEmpty()){
 			  for(Map<String, Object>  idea:ideaInfo){
 				  String  ideaId=Rtext.toStringTrim(idea.get("id"), "");
 				  String  visitName=selectForVisitInfo(ideaId);
@@ -591,7 +823,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				  idea.put("userName", userName);
 				  list.add(idea);
 			  }
-		  }
+		  } 
 		return list;
 	}
 	/**
@@ -611,6 +843,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				  
 			  }
 			  String  visitNames =visitName.trim();
+			 
 			  visitName=visitNames.substring(0, visitNames.length()-1);
 			  System.out.print(visitName);
 		  } 
@@ -623,11 +856,12 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		 * @return
 		 */
 		  public  String   selectForCompanyLeaderInfo(String  ideaId){
-			  List<Map<String, Object>>  leaderInfo = yszxMapper.selectForCompanyLeaderInfo(ideaId);
+			  List<Map<String, Object>>  leaderInfo = yszxMapper.selectForCompanyLeaderInfo(ideaId,"");
 			  String leaderName = "";
 			  if(!leaderInfo.isEmpty()){
 				  for(Map<String, Object>  visit:leaderInfo){
 					  String userName=Rtext.toStringTrim(visit.get("userAlisa"), "");
+					//    String userName=Rtext.toStringTrim(visit.get("userId"), "");
 					  if(!"".equals(userName)){
 						  leaderName +=userName+",";
 					  }
@@ -645,7 +879,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 			 * @return
 			 */
 		public  String   selectForCompanyUserInfo(String  ideaId){
-			List<Map<String, Object>>  userInfo = yszxMapper.selectForCompanyUserInfo(ideaId);
+			List<Map<String, Object>>  userInfo = yszxMapper.selectForCompanyUserInfo(ideaId,"");
 			String userName = "";
 				  if(!userInfo.isEmpty()){
 					  for(Map<String, Object>  visit:userInfo){
@@ -675,17 +909,85 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				if(!visitInfo.isEmpty()){
 					ideaInfo.put("visitInfo", visitInfo);
 				}
-				List<Map<String, Object>>  leaderInfo = yszxMapper.selectForCompanyLeaderInfo(ideaId);
+				List<Map<String, Object>>  leaderInfo = yszxMapper.selectForCompanyLeaderInfo(ideaId,"");
 				if(!leaderInfo.isEmpty()){
-					ideaInfo.put("leaderInfo", leaderInfo);
+					String leaders="";
+					for( Map<String, Object> leader:leaderInfo){
+					//	String userAlisa= Rtext.toStringTrim(leader.get("userAlisa"), "");
+						String userAlisa= Rtext.toStringTrim(leader.get("userId"), "");
+						if(userAlisa!=""){
+							leaders+=userAlisa+",";
+						} 
+					}
+					String  userNames =leaders.trim();
+					String userName=userNames.substring(0, userNames.length()-1);
+					ideaInfo.put("leaderInfo", userName);
 				}
-				List<Map<String, Object>>  userInfo = yszxMapper.selectForCompanyUserInfo(ideaId);
+				List<Map<String, Object>>  userInfo = yszxMapper.selectForCompanyUserInfo(ideaId,"");
 				if(!userInfo.isEmpty()){
 					ideaInfo.put("userInfo", userInfo);
 				}
 			 } 
 			return ideaInfo;
+		} 
+	@Override
+	public String selectForuserName(String userId) {	
+	    	Map<String, Object>  map= new  HashMap<String, Object>();
+		    userId = Rtext.toStringTrim(userId,"");
+		    if(userId==""){
+		    	map.put("data", "");
+		 	    map.put("success", "false");
+		 	    map.put("msg", "查询失败");
+		    }
+		    try{
+		    	List<Map<String, String>> UserInfoList=new ArrayList<Map<String, String>>();
+				String[] userIdArr = userId.split(",");
+				for (String userid : userIdArr) {
+							Map<String, String> userInfo=yszxMapper.selectForuserName(userid);
+							UserInfoList.add(userInfo);
+				}
+
+				map.put("userInfo",  UserInfoList);
+		 	    map.put("success", "ture");
+		 	    map.put("msg", "查询成功");
+		    }catch(Exception e){
+		    	map.put("data", "");
+		 	    map.put("success", "false");
+		 	    map.put("msg", "查询失败");
+		    	
+		    }
+		    String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+			return jsonStr;
+	  }
+	@Override
+	public String deleteVisitInfo(String visitId ) {
+		ResultWarp rw =  null;
+		try{
+			Map<String,String>  userInfoMap=userInfo();
+			String updateUser= userInfoMap.get("userId");
+			yszxMapper.deleteVisitInfo(visitId, "0", updateUser, new Date());
+			rw = new ResultWarp(ResultWarp.SUCCESS ,"陪同人员删除成功");  
+		}catch(Exception e){
+			rw = new ResultWarp(ResultWarp.FAILED ,"参观领导删除失败");
 		}
+		String jsonStr=JSON.toJSONStringWithDateFormat(rw,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+		return jsonStr;
+	}
+	@Override
+	public String deleteCompanyUserInfo(String companyId ) {
+		ResultWarp rw =  null;
+		try{
+		Map<String,String>  userInfoMap=userInfo();
+		String updateUser= userInfoMap.get("userId");
+		yszxMapper.deleteCompanyUserInfo(companyId, "0", updateUser, new Date());
+		 rw = new ResultWarp(ResultWarp.SUCCESS ,"陪同人员删除成功");  
+		}catch(Exception e){
+		   rw = new ResultWarp(ResultWarp.FAILED ,"陪同人员删除失败");   
+		}
+		String jsonStr=JSON.toJSONStringWithDateFormat(rw,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+		return jsonStr;
+		 
+	}
  	  
 		 
 				 
