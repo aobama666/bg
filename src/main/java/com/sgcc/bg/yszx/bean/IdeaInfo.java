@@ -48,6 +48,14 @@ public class IdeaInfo implements Serializable {
 	private String updateUser;
 	//  UPDATE_TIME	 	0:未结束;1:结束	 
 	private Date updateTime ;
+    //  UPDATE_TIME	 	0:未结束;1:结束	 
+	private String applyNumber ;
+    //  UPDATE_TIME	 	0:未结束;1:结束	 
+	private int applyOrder ;
+    //  UPDATE_TIME	 	0:未结束;1:结束	 
+	private int applyYear ;
+	
+	
 	public String getId() {
 		return id;
 	}
@@ -162,6 +170,25 @@ public class IdeaInfo implements Serializable {
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
+	public String getApplyNumber() {
+		return applyNumber;
+	}
+	public void setApplyNumber(String applyNumber) {
+		this.applyNumber = applyNumber;
+	}
+	public int getApplyOrder() {
+		return applyOrder;
+	}
+	public void setApplyOrder(int applyOrder) {
+		this.applyOrder = applyOrder;
+	}
+	public int getApplyYear() {
+		return applyYear;
+	}
+	public void setApplyYear(int applyYear) {
+		this.applyYear = applyYear;
+	}
+ 
 	
 	
 	 
