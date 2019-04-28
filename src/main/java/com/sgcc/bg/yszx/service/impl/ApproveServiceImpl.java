@@ -1,6 +1,5 @@
 package com.sgcc.bg.yszx.service.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +7,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sgcc.bg.common.Pinyin4jUtil;
 import com.sgcc.bg.model.HRUser;
 import com.sgcc.bg.service.UserService;
 import com.sgcc.bg.yszx.bean.IdeaInfo;
@@ -50,23 +48,8 @@ public class ApproveServiceImpl implements ApproveService{
 			return returnMessage;
 		}
 		
-//		Date applyDate = new Date();
-//		StringBuffer apply_number = new StringBuffer();
-//		if("YSZX".equals(functionType)){
-//			//创建申请单   规则：演示中心首字母＋申请人姓名＋申请日期＋序号（序号是唯一值，按年度开始和结束排号）生成为：YSZX-ZHANGMOUMOU-20190212-001
-//			String userAlias = Pinyin4jUtil.converterToSpell(user.getUserAlias()).toUpperCase();
-//			SimpleDateFormat sdfDays = new SimpleDateFormat("yyyyMMdd");
-//			String applyTime = sdfDays.format(applyDate);
-//			apply_number.append(functionType).append("_");
-//			apply_number.append(userAlias).append("_");
-//			apply_number.append(applyTime);
-//		}
-		
 		//创建申请记录
 		WLApply apply = new WLApply();
-//		apply.setApply_number(apply_number.toString());
-//		apply.setApply_user(user.getUserId());
-//		apply.setApply_time(applyDate);
 		apply.setFunction_type(functionType);
 		apply.setApply_status(nodeName);
 		apply.setCreate_user(user.getUserId());
@@ -125,7 +108,7 @@ public class ApproveServiceImpl implements ApproveService{
 		approveMapper.updateBussinessById(bussinessId, apply.getId(), approveRule.getNextNode(), user.getUserId());
 		//发送待办	
 		Map<String, Object> ideaInfoMap = ideaServcie.selectForId(bussinessId);
-		String deptId = ideaInfoMap.get("applyDept")==null?"":ideaInfoMap.get("applyDept").toString();
+		String deptId = ideaInfoMap.get("applyDeptId")==null?"":ideaInfoMap.get("applyDeptId").toString();
 		List<Map<String,Object>> list = authMapper.getApproveUsersByRoleAndDept(approveRule.getApproveRoleId(),deptId);
 		if(list!=null&&list.size()>0){
 			for(Map<String,Object> map:list){
@@ -188,7 +171,7 @@ public class ApproveServiceImpl implements ApproveService{
 			//处理审批记录
 			//当前节点-更新
 			String id = approveInfo.getId();
-			String approve_user   = userName;
+			String approve_user   = user.getUserId();
 			String approve_result = stauts;
 			String approve_remark = appproveRemark;
 			Date approve_date   = new Date();
@@ -228,8 +211,8 @@ public class ApproveServiceImpl implements ApproveService{
 				//更新业务记录		
 				approveMapper.updateBussinessById(approveInfo.getBussiness_id(), approveInfo.getApply_id(), approveRule.getNextNode(), user.getUserId());
 				//发送待办	
-				IdeaInfo ideaInfo = (IdeaInfo) ideaServcie.selectForId(approveInfo.getBussiness_id());
-				String deptId = ideaInfo.getApplyDept();
+				Map<String, Object> ideaInfoMap = ideaServcie.selectForId(approveInfo.getBussiness_id());
+				String deptId = ideaInfoMap.get("applyDeptId")==null?"":ideaInfoMap.get("applyDeptId").toString();
 				List<Map<String,Object>> list = authMapper.getApproveUsersByRoleAndDept(approveRule.getApproveRoleId(),deptId);
 				if(list!=null&&list.size()>0){
 					for(Map<String,Object> map:list){
