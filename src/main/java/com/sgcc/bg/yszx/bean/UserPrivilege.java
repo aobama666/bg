@@ -1,6 +1,6 @@
 package com.sgcc.bg.yszx.bean;
 
-public class PrivilegeUserManager {
+public class UserPrivilege {
 	private String userId;
 	private String userName;
 	private String userAlias;
