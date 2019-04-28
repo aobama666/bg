@@ -315,6 +315,7 @@
 	<select id="selectForId" resultType="java.util.Map">
 	     SELECT 
 		      UUID   as  "id",	    
+		      APPLY_DEPT   as "applyDeptId",
               (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = APPLY_DEPT)   as "applyDept",
               TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
               TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  

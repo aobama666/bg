@@ -69,4 +69,14 @@ public class WLApplyTest {
 		
 		service.startApprove(functionType, nodeName, bussinessId, applyUser);
 	}
+	
+	@Test
+	public void sendApprove(){
+		String approveId = "87939B5BA24F5059E0536C3C550A62E3";
+		String stauts = "0";
+		String appproveRemark = "不同意";
+		String userName = "epri_mengj"; 
+		
+		service.sendApprove(approveId, stauts, appproveRemark, userName);
+	}
 }
