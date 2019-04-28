@@ -2,11 +2,9 @@
 var roomDetailInfo = {};
 roomDetailInfo.saveBtnClickFlag = 0;//保存按钮点击事件
 roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
- 
+var  VisitunitLevelData='';
 $(function(){
 	//‘新增’页面，院领导姓名多选下拉框
-	roomDetailInfo.initSelectForVisitunitType();//默认查询框
-	roomDetailInfo.initSelectForVisitunitLevel();//默认查询框
 	roomDetailInfo.initSelectForLeader();
 	//初始化人员选择树
 	$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'self',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'}); 
@@ -62,6 +60,9 @@ function checkDate(stateDate,endDate){
 }
 /* 保存信息库信息 */
 roomDetailInfo.messageSave= function(){
+	   debugger;
+	   /* 主ID  */
+	    var id=$("#id").val();
 		/* 验证必填项   */
 		var validNull = dataForm.validNullable();
 		if(!validNull){
@@ -105,48 +106,60 @@ roomDetailInfo.messageSave= function(){
 	    var visitUnitName=$("#visitUnitName").val();
 	    //验证主要参观领导
 	    //说明: 类，名的调用 用 . 
-	    visitinfo=[];
+	    var visitinfo=[];
 	    var  sortId=0;
 		 $(".visitLeader tr:gt(0)").each(function(){
-		 
-			 //姓名
-			 var  checkteleUser=IsRight.onlyTwo("#visitUserName");
-				if(!checkteleUser){
-					messager.tip("参观领导姓名只能含有中文或者英文",2000);
-					roomDetailInfo.saveBtnClickFlag = 0;
-					return;
-				} 
-			 //职务
-			 var checkLength = dataForm.checkLength("#visitPosition");
-				if(!checkLength){
-					roomDetailInfo.saveBtnClickFlag = 0;
-					return;
-				} 
-				// 级别
-				 var userLevel=$("#userLevel option:selected");
-				//姓名
-				 var visitUserName=$("#visitUserName").val();
-				//职务
-				 var visitPosition=$("#visitPosition").val();
-				 //
-				 sortId++;
-				var visit={"userLevel":userLevel.val(),"visitUserName":visitUserName,"visitPosition":visitPosition,"sortId":sortId}
-				
-				 
-				 visitinfo.push(visit);
-			 
+			 var visitId = $(this).find(".visitid").val()//姓名
+			  //验证名称，职务，级别是否为空
+			 var username = $(this).find(".visitUsername").val()//姓名
+			 var position = $(this).find(".visitposition").val()//职务
+			 //var userLevel = $(this).find(".userlevel").val()//级别
+			 var userLevel =$(this).find("#userLevel").val();//级别
+			 if(username == ''){
+				 messager.tip("参观领导名称不能为空",2000);
+				 $(this).find(".visitUsername").addClass("validRefuse");
+				 roomDetailInfo.saveBtnClickFlag = 0;
+				 return;
+			 }else if(position == ''){
+				 messager.tip("参观领导职务不能为空",2000);
+				 $(this).find(".visitposition").addClass("validRefuse");
+				 roomDetailInfo.saveBtnClickFlag = 0;
+				 return;
+			 }else if(userLevel == ''){
+				 messager.tip("参观领导级别不能为空",2000)
+				 $(this).find(".userlevel").addClass("validRefuse");
+				 roomDetailInfo.saveBtnClickFlag = 0;
+				 return;
+			 }else{
+				   $(this).find(".visitUsername").removeClass("validRefuse");
+				   $(this).find(".visitposition").removeClass("validRefuse");
+				   $(this).find(".userlevel").removeClass("validRefuse");
+			 }
+			//序号
+			sortId++;
+			var visit={"visitId":visitId,"userLevel":userLevel,"visitUserName":username,"visitPosition":position,"sortId":sortId}
+		    visitinfo.push(visit);
 		 });
-		
+		var companyUserInfo=[];
+		//部门id的获取
+		 $(".visitUnitAccompany tr:gt(0)").each(function(){
+			 var userId = $(this).find(".userId").val()//用户id
+			 var companyId = $(this).find(".companyId").val()//陪同主ID
+			 var userInfo={"userId":userId,"companyId":companyId}
+			 companyUserInfo.push(userInfo);
+		 });
 	    // 院内陪同人员信息
 	    //院领导姓名
 	    var companyLeaderName=$("#companyLeaderName").val();
 	    //陪同人数
 	    var companyUserNumber=$("#companyUserNumber").val();
-	    //备注
-	    var remark=$("#remark").val();
-	 var roomDetailFormData = roomAddInfoCommon.getFormDataInfo();
-	 roomDetailFormData.visitLevel="save";
-	 roomDetailFormData.visitinfo=visitinfo;
+	  //备注
+      var remark=$("#remark").val();
+	  var roomDetailFormData = roomAddInfoCommon.getFormDataInfo();
+	  roomDetailFormData.visitLevel="save";
+	  roomDetailFormData.visitinfo=visitinfo;
+	  roomDetailFormData.companyUserInfo=companyUserInfo ;
+	  roomDetailFormData.id=id;
 	 //验证参观单位性质
 	 var visitUnitType=$("#visitUnitType option:selected");
 	 roomDetailFormData.visitUnitType=visitUnitType.val();
@@ -157,132 +170,48 @@ roomDetailInfo.messageSave= function(){
 			dataType:"json",
 			contentType: 'application/json',
 			data: JSON.stringify(roomDetailFormData),
-			success: function (p_content) {
-				var p_data = p_content.P_DATA;
+			success: function (data) {
+				 
 				roomDetailInfo.saveBtnClickFlag = 0;//保存按钮点击事件
-				if(p_data=="SUCCESS"){
+				if(data.success=="ture"){
 					alert("保存成功");
 					roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
 					var closeIndex = parent.layer.getFrameIndex(window.name);
 					parent.layer.close(closeIndex);
 				}else{
-					messager.tip("保存失败");
+					 layer.open({
+			    	        title:'提示信息',
+			    	        content:data.msg,
+			    	        area:'300px',
+			    	        skin:'demo-class'
+			    	    })
 				}
 			}
-		});
-	 
-	 
-}
-
-roomDetailInfo.initSelectForVisitunitType = function(details){
-	debugger;
-	var pcode='visitunit_type';
-	var optionSelectd = $(".select-person").attr("data-visitUnitType")
-	/* start 查询数据字典集合  */
-	$.ajax({
-	    url: "/bg/DataDictionary/selectForDataDictionary?pcode="+pcode,//获取申报界面数据字典
-		type: "post",
-		success: function (data) {
-			debugger;
-			if(data.success){
-				var dictData = data.dictData;
-				var visitUnitType = '';
-				    visitUnitType += '<option value="">请选择参观单位性质</option>';
-				for (var i = 0; i < dictData.length; i++) {
-					if(dictData[i].K==optionSelectd){
-						visitUnitType += '<option value="' + dictData[i].K +       '"    selected >' + dictData[i].V + '</option>';
-					}else{
-						visitUnitType += '<option value="' + dictData[i].K +       '" >' + dictData[i].V + '</option>';
-					}
-				
-				}
-				$('#visitUnitType').html(visitUnitType); 
-			
-				
-			}else{
-				 layer.open({
-		    	        title:'提示信息',
-		    	        content:data.msg,
-		    	        area:'300px',
-		    	        skin:'demo-class'
-		    	    })
-				 
-			}
-			 
-		}
-	});
-	if(details == 'details' ){
-		
-	}
-	/* start 查询数据字典集合  */
-}
-/*//详情预览页面
-roomDetailInfo.initSelectForVisitunitType = function(){
-	var 
-	$("#visitUnitType option").each(function(){
-		var optionText = $(this).text();
-		
-	}) 
-}*/
-
-roomDetailInfo.initSelectForVisitunitLevel = function(){
-	var pcode='visitunit_levle';
-	var optionSelectd = $(".userLevel").attr("data-userLevel")
-	/* start 查询数据字典集合  */
-	$.ajax({
-	    url: "/bg/DataDictionary/selectForDataDictionary?pcode="+pcode,//获取申报界面数据字典
-		type: "post",
-		success: function (data) {
-			if(data.success){
-				var dictData = data.dictData;
-				var visitUnitLevel = '';
-				visitUnitLevel += '<option value="">请选择参观领导级别</option>';
-				for (var i = 0; i < dictData.length; i++) {
-					if(dictData[i].K==optionSelectd){
-						visitUnitLevel += '<option value="' + dictData[i].K + '"   selected >' + dictData[i].V + '</option>';
-					}else{
-						visitUnitLevel += '<option value="' + dictData[i].K + '">' + dictData[i].V + '</option>';
-					}
-					
-				}
-				$('.userLevel').html(visitUnitLevel); 
-				
-				//初始化主要院领导
-				var k = 1;
-				var obj = $("#delLeader");
-				for(var i=0;i<k;i++){
-					addLeader(obj);
-				}
-				
-				
-			}else{
-				 layer.open({
-		    	        title:'提示信息',
-		    	        content:data.msg,
-		    	        area:'300px',
-		    	        skin:'demo-class'
-		    	    })
-			}
-			 
-		}
-	});
-	/* start 查询数据字典集合  */
+		}); 
 }
 
 roomDetailInfo.initSelectForLeader = function(){
+	debugger;
 	var pcode='visitunit_levle';
 	/* start 查询数据字典集合  */
 	$.ajax({
 	    url: "/bg/IdeaInfo/selectForLeader" ,//获取申报界面数据字典
 		type: "post",
 		success: function (data) {
-			if(data.success){
+			if(data.success=="ture"){
 				var leaderData = data.leaderData;
 				var localData =  leaderData;
 				$(".tree-data").combotree({
 					data:localData,
 					multiple:true
 				});
+				var companyLeaderName=$("#companyLeaderName").attr("data-companyLeaderName") ;
+				if(companyLeaderName!=""){
+					$(".tree-data").combotree(
+							'setValue',companyLeaderName.split(",")
+					);
+				}
+				
 			}else{
 				 layer.open({
 		    	        title:'提示信息',
@@ -301,12 +230,6 @@ roomDetailInfo.initSelectForLeader = function(){
 roomDetailInfo.messageSubmit= function(){
 	alert(stateDate); 
 }
-
- 
-
- 
-
- 
 
 /*时间控件change事件*/
 function datePackerChange(dp, el) {
@@ -341,40 +264,70 @@ function resignChange(){
     });
 }
 //新增页面，主要参观领导的新增
-function addLeader(obj){
- 
-	/*	var html = '';
-	
-	html +='<tr>'+
-				'<td>'+
-					'<input type="checkbox"/>'+
-				'</td>'+
-				'<td class="addInputStyle">'+
-					'<input type="text"/>'+
-				'</td>'+
-				'<td class="addInputStyle">'+
-					'<input type="text"/>'+
-				'</td>'+
-				'<td class="addInputStyle">'+
-					'<select id=""  name = "userLevel"  class = "changeQuery userLevel">'+
-						'<option>请选择</option>'+
-					'</select>'+
-				'</td>'+
-			'</tr>'
-				$(obj).parents(".contentBox").find(".visitLeader tr:last-child").after(html);
-	
-				roomDetailInfo.initSelectForVisitunitLevel();*/
-	
-    
-	var html = '<tr>'+$("#model_tr_leader").html()+'</td>';
-	$(obj).parents(".contentBox").find(".visitLeader tr:last-child").after(html);
+function addLeader(obj){ 
+	var visitInfoData='';
+	    visitInfoData+='<tr>' 
+	    visitInfoData+='<td>' 
+	    		visitInfoData+='<input type="checkbox"   id="visitId"  name = "visitId"  class="visitId"  value = ""  />' 
+	    visitInfoData+='</td>'
+	    	
+	    visitInfoData+='<td  class="addInputStyle">' 
+	    		visitInfoData+='<input type="text"    id="visitUserName"  name = "visitUserName"  class="visitUsername"  title="必填项 ,中文或英文 " />' 
+	    visitInfoData+='</td>'
+	    	
+	    visitInfoData+='<td class="addInputStyle">' 
+	    		visitInfoData+='<input type="text" id="visitPosition"  name = "visitPosition"  class="visitposition"  title="必填项,字段长度不能超过 150" />'
+	    visitInfoData+='</td>'
+	    visitInfoData+='<td class="addInputStyle">' 
+	    	   visitInfoData+='<select name = "userLevel" id="userLevel"  class = "changeQuery userLevel"  title="必填项  "  >'
+	    	   visitInfoData+=SelectForVisitunitLevel();
+	    	   visitInfoData+='</select>'
+	    visitInfoData+='</td>'	 	
+	    visitInfoData+='</tr>'
+	$(obj).parents(".contentBox").find(".visitLeader tr:last-child").after(visitInfoData);
 }
-//新增页面，主要参观领导的删除
+//新增页面，主要参观领导级别的查询
+function SelectForVisitunitLevel(){
+	var pcode='visitunit_levle';
+	var visitUnitLevel = '';
+	var optionSelectd = $(".userLevel").attr("data-userLevel")
+	$.ajax({
+	    url: "/bg/DataDictionary/selectForDataDictionary?pcode="+pcode,//获取申报界面数据字典
+		type: "post",
+		dataType: "json",
+		async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
+		success: function (data) {
+			if(data.success=="ture"){
+				var dictData = data.dictData;
+				visitUnitLevel += '<option value=""  >请选择参观领导级别</option>';
+				for (var i = 0; i < dictData.length; i++) {
+					if(dictData[i].K==optionSelectd){
+						visitUnitLevel += '<option value="' + dictData[i].K + '"   selected >' + dictData[i].V + '</option>';
+					}else{
+						visitUnitLevel += '<option value="' + dictData[i].K + '">' + dictData[i].V + '</option>';
+					}
+					
+				} 
+			} else{
+				layer.open({
+		    	        title:'提示信息',
+		    	        content:data.msg,
+		    	        area:'300px',
+		    	        skin:'demo-class'
+		    	    }) 
+			}
+		}
+	});
+    return visitUnitLevel;
+}
+ 
 
-/*调用选中的列表数据*/
+ 
+
+/*参观领导删除*/
 function delLeader(obj){
 	var checkedNumber = $(obj).parents(".contentBox").find("input[type=checkbox]:checked").length;
-    if(checkedNumber == 0){
+	if(checkedNumber == 0){
     	 layer.open({
     	        title:'提示信息',
     	        content:'请选中需要删除的数据',
@@ -390,11 +343,104 @@ function delLeader(obj){
             skin:'demo-class',
             yes:function(index,layero){
                 layer.close(index);
-                $(obj).parents(".contentBox").find("input[type=checkbox]:checked").parent().parent("tr").remove();
+            	delLeaderInfo(obj);  
             }
         });
     }
 }
+/*参观领导删除逻辑*/
+function delLeaderInfo(obj){
+	debugger;
+	     $(obj).parents(".contentBox").find("input[class=visitid]:checked").each(function(){
+         var  visitId= $(this).val();
+         if(visitId==""){
+        	 $(obj).parents(".contentBox").find("input[class=visitid]:checked").parent().parent("tr").remove();
+         }else{
+        	 $.ajax({
+        		    url: "/bg/IdeaInfo/deleteVisitInfo?visitId="+visitId,//获取申报界面数据字典
+        			type: "post",
+        			dataType: "json",
+        			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
+        			success: function (data) {
+        				if(data.success=="true"){
+        					 $(obj).parents(".contentBox").find("input[class=visitid]:checked").parent().parent("tr").remove();
+        				}else{
+        					layer.open({
+     			    	        title:'提示信息',
+     			    	        content:data.msg,
+     			    	        area:'300px',
+     			    	        skin:'demo-class'
+     			    	    }) 
+        					
+        				} 
+        			}
+        		});
+        	
+         }
+        
+    });	
+}
+
+/*陪同人员删除*/
+function delUser(obj){
+	var checkedNumber = $(obj).parents(".contentBox").find("input[type=checkbox]:checked").length;
+	if(checkedNumber == 0){
+    	 layer.open({
+    	        title:'提示信息',
+    	        content:'请选中需要删除的数据',
+    	        area:'300px',
+    	        skin:'demo-class'
+    	    })
+    }else if(checkedNumber > 0){
+    	layer.open({
+            title:'提示信息',
+            content:'确定要删除选中的行吗？',
+            area:'300px',
+            btn:['确定','取消'],
+            skin:'demo-class',
+            yes:function(index,layero){
+                layer.close(index);
+                delUserInfo(obj);
+                
+                
+            }
+        });
+    }
+}
+/*陪同人员信息删除逻辑*/
+function delUserInfo(obj){
+	debugger;
+	 $(obj).parents(".contentBox").find("input[type=checkbox]:checked").each(function(){
+		  var companyId=$(this).siblings(".companyId").val();
+          if(companyId==""){
+         	 $(obj).parents(".contentBox").find("input[type=checkbox]:checked").parent().parent("tr").remove();
+          }else{
+        	  $.ajax({
+      		    url: "/bg/IdeaInfo/deleteCompanyUserInfo?companyId="+companyId,//获取申报界面数据字典
+      			type: "post",
+      			dataType: "json",
+      			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
+      			success: function (data) {
+      				if(data.success=="true"){
+      					 $(obj).parents(".contentBox").find("input[type=checkbox]:checked").parent().parent("tr").remove();
+      				}else{
+      					layer.open({
+   			    	        title:'提示信息',
+   			    	        content:data.msg,
+   			    	        area:'300px',
+   			    	        skin:'demo-class'
+   			    	    }) 
+      					
+      				} 
+      			}
+      		});
+         	
+          }
+     });
+	
+	
+}
+
 function messageSubmit(){
 	layer.confirm('<table class="visitUnitAccompany tableStyle thTableStyle">'+
 			'<tr>'+
@@ -419,22 +465,44 @@ function messageSubmit(){
 
         })
 }
-
-//新增页面，各部门陪同人信息
-function AccompanyLeader(obj){
- 		/*
- 			iframe:self 作用域：当前窗口   parent 作用域：父类窗口
- 		*/
- 		$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'parent',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'}); 
+/* 各部门（单位）陪同人员信息 查询  */
+function popEvent(ids,codes,names,userId){
+	roomDetailInfo.SelectForUserId(userId);
 }
-
-function popEvent(ids,codes,names,pId,level){
-	//人员树时：pId,level为空
-	layer.msg("触发父层事件！");
-	alert("回传ids："+ids);
-//	alert("回传codes："+codes);
-//	alert("回传names："+names);
-//	alert("回传pId："+pId);
-//	alert("回传level："+level);
+roomDetailInfo.SelectForUserId = function(userId){
+	$.ajax({
+	    url: "/bg/IdeaInfo/selectForuserName?userId="+userId,//获取申报界面数据字典
+		type: "post",
+		success: function (data) {
+			if(data.success=="ture"){
+				var userData = data.userInfo;
+				var userInfoData = '';
+				for (var i = 0; i < userData.length; i++) {
+					userInfoData+='<tr >' 
+				    userInfoData+='<td>' 
+				    	 userInfoData+='<input type="checkbox"   id = "userId"  name="userId" class="userId"   value="' + userData[i].userId + '" />' 
+				    	 userInfoData+='<input type="hidden"   id = "companyId"  name="companyId" class="companyId" value=""/>' 
+				    	 userInfoData+='</td>'
+				    userInfoData+='<td  class="addInputStyle">' 
+						  userInfoData+='<input type="text" disabled    id="UserName" name="UserName"  class="UserName"  value="' + userData[i].userAlias + '" />' 
+				    userInfoData+='</td>'
+				    userInfoData+='<td class="addInputStyle">' 
+						  userInfoData+='<input type="text" disabled    id="Position" name="Position" class="Position"   value="' + userData[i].postName + '" />'
+					 userInfoData+='</td>'
+				    userInfoData+='</tr>' 	
+				}
+				$(".model_tr_userInfo").remove();
+				$(".visitUnitAccompany tr:last-child").after(userInfoData);
+			}else{
+				 layer.open({
+		    	        title:'提示信息',
+		    	        content:data.msg,
+		    	        area:'300px',
+		    	        skin:'demo-class'
+		    	    })
+				 
+			}
+			 
+		}
+	});
 }
- 

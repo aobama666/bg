@@ -141,6 +141,7 @@ $(function(){
 	});
 });
 function initTree(){
+ 
 	var setting = {
 			view: {
 				selectedMulti: false
@@ -162,7 +163,7 @@ function initTree(){
 				beforeExpand: function(event, treeNode){
 					if(!treeNode.hasOwnProperty("children")){
 						var ran = Math.random()*1000000;
-						$.ajax({url:'<%=path %>/organstufftree/queryUserTreeByOrgan?ran='+ran,
+						$.ajax({url:'<%=path %>/newOrganstufftree/queryUserTreeByOrgan?ran='+ran,
 							type:'post',
 							data:{organId:treeNode.id,organCode:treeNode.organCode},
 							success:function(data){
@@ -177,6 +178,7 @@ function initTree(){
 	tree = $.fn.zTree.init($("#tree"), setting, getTree());
 }
 function reLoadTree() {
+	
 	var root = '<%=root %>';
 	var queryEmpCode = $.trim($("#queryEmpCode").val());
 	var queryEmpName = $.trim($("#queryEmpName").val());
@@ -184,7 +186,7 @@ function reLoadTree() {
 		var ran = Math.random()*1000000;
 		$.ajax({
 			type:"POST",
-			url:"<%=path %>/organstufftree/queryUserTreeByUser?ran="+ran,
+			url:"<%=path %>/newOrganstufftree/queryUserTreeByUser?ran="+ran,
 			data:{root:root,queryEmpCode:queryEmpCode,queryEmpName:queryEmpName},
 			success:function(data){
 				var setting = {
@@ -222,6 +224,7 @@ function selected() {
 	var codes = "";
 	var texts = "";
 	var ids   = "";
+	var userIds   = "";
 	for(var i=0;i<valueArray.length;i++){
 		var val = valueArray[i];
 		//hrcode 增加了前缀'P'，需要去除
@@ -232,6 +235,7 @@ function selected() {
 		}
 		texts += val.name + ',';
 		ids += val.id + ',';
+		userIds += val.userId + ',';
 	}
 	if(codes.length>0){
 		codes = codes.substr(0,codes.length-1);
@@ -242,6 +246,10 @@ function selected() {
 	if(ids.length>0){
 		ids = ids.substr(0,ids.length-1);
 	}
+	if(userIds.length>0){
+		userIds = userIds.substr(0,userIds.length-1);
+	}
+
 	if('parent' == '<%=iframe%>'){
 		<%-- var body = parent.layer.getChildFrame('body','<%=index%>');
 		$(body).find("input[name=<%=empCode%>]").val(codes);
@@ -254,7 +262,7 @@ function selected() {
 		//返回事件
 		try{
 			if('<%=popEvent%>'=='pop'){
-				iframWin.popEvent(ids,codes,texts);
+				iframWin.popEvent(ids,codes,texts,userIds);
 			}
 		}catch(e){}
 	}else{
@@ -264,7 +272,7 @@ function selected() {
 		//返回事件
 		try{
 			if('<%=popEvent%>'=='pop'){
-				parent.popEvent(ids,codes,texts);
+				parent.popEvent(ids,codes,texts,userIds);
 			}
 		}catch(e){}
 	}
