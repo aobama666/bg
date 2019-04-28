@@ -140,6 +140,7 @@ roomList.initDataGrid = function(){
 		
 	/* 演示中心管理-修改*/
 	roomList.updateEvent = function(){
+		 
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
 			messager.tip("请选择要操作的数据",1000);
@@ -164,7 +165,40 @@ roomList.initDataGrid = function(){
 		});
 		 
 	}
-		
+	/* 演示中心管理-删除方法*/
+	roomList.delEvent = function(){
+		var checkedIds = dataGrid.getCheckedIds();
+		if(checkedIds.length==0){
+			messager.tip("请选择要操作的数据",1000);
+			return;
+		}
+		$.messager.confirm( "删除提示", "确认删除选中数据吗",
+			function(r){
+				if(r){
+					$.ajax({
+					    url: "/bg/IdeaInfo/deleteIdeaInfo?ideaId="+checkedIds,//删除
+						type: "post",
+						dataType:"json",
+						contentType: 'application/json',
+						success: function (data) {
+							if(data.success == "true"){
+								messager.tip("删除成功",1000);
+								roomList.query();
+							}else{
+								messager.tip("删除失败",1000);
+								roomList.query();
+							}
+						}
+					});
+				}
+			}
+		);
+	}
+	
+	
+	
+	
+	
 /*  start 全选、取消全选 */
 $(".check_").change(function(){
 	if(this.checked==true){
@@ -189,38 +223,7 @@ roomList.initItems = function(){
 
 
 
-/* start 删除方法*/
-roomList.delEvent = function(){
-	var delDataInfo = {};
-	var checkedIds = dataGrid.getCheckedIds();
-	delDataInfo.LBIDS = checkedIds;
-	if(checkedIds.length==0){
-		messager.tip("请选择要操作的数据",1000);
-		return;
-	}
-	$.messager.confirm( "删除提示", "确认删除选中数据吗",
-		function(r){
-			if(r){
-				$.ajax({
-				    url: "/newtygl/laboratory/roomDel",//删除
-					type: "post",
-					dataType:"json",
-					contentType: 'application/json',
-					data:JSON.stringify(delDataInfo),//传递的需要删除的数据
-					success: function (p_content) {
-						if( p_content.P_DATA == "SUCCESS"){
-							messager.tip("删除成功",1000);
-							roomList.query();
-						}else{
-							messager.tip("删除失败",1000);
-							roomList.query();
-						}
-					}
-				});
-			}
-		}
-	);
-}
+
 /* end 删除方法*/
 
 

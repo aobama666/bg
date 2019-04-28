@@ -353,6 +353,17 @@
 	</select>
 	
 	
+	<update id="deleteIdeaInfo"  >
+		UPDATE TB_YSZX_IDEA SET
+			VALID=#{valId,jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE UUID=#{ideaId}  
+	</update> 
+	
+	
+	
+	
 	<update id="deleteVisitInfo"  >
 		UPDATE TB_YSZX_VISIT SET
 			VALID=#{valId,jdbcType=VARCHAR},

@@ -182,7 +182,7 @@
 		<tr>
 			<td class="width-two">院领导姓名<b class="mustWrite">*</b></td>
 			<td style="width:100%;background-color:#EBEBE4" class="addInputStyle"      >
-				<input class="easyui-combotree tree-data" disabled  id="companyLeaderName" name="companyLeaderName" value = "${leaderInfo}" title="必填项  "       />
+				<input class="easyui-combotree tree-data" disabled  id="companyLeaderName" data-companyLeaderName= "${leaderInfo}"  content="院领导姓名"  title="必填项  "       />
 			</td>	
 		</tr>
 		<tr>
