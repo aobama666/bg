@@ -22,10 +22,10 @@
     	</selectKey>    
 		insert into tb_wl_apply
 		  (id,
-		   apply_number,
-		   apply_order,
+		   <!-- apply_number,
+		   apply_order, 
 		   apply_user,
-		   apply_time,
+		   apply_time,-->
 		   function_type,
 		   apply_status,
    		   approve_id,
@@ -37,10 +37,10 @@
 		   update_time)
 		values
 		  (#{id},
-		   #{apply_number},
-		   (select nvl(max(nvl(p.apply_order,0)),0)+1 from tb_wl_apply p where to_char(p.apply_time,'yyyy') = to_char(sysdate,'yyyy')),
+		  <!--  #{apply_number},
+		   (select nvl(max(nvl(p.apply_order,0)),0)+1 from tb_wl_apply p where to_char(p.apply_time,'yyyy') = to_char(sysdate,'yyyy')), 
 		   #{apply_user},
-		   #{apply_time},
+		   #{apply_time},-->
 		   #{function_type},
 		   #{apply_status},
 		   null,
@@ -107,6 +107,7 @@
 		   AND R.VALID = '1'
 		 WHERE T.FUNCTION_TYPE = #{functionType}
 		   AND T.NODE = #{nodeName}
+		   AND T.status = #{status}
 		   AND T.VALID = '1'
     </select>    
     <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓审批表↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
@@ -152,13 +153,51 @@
 		   sysdate,
 		   #{create_user},
 		   '1')
-    </insert>
+    </insert>    
     <!-- 声明当前的下一节点-->
-    <update id="updateNextApproveById">
+    <update id="updateNextApproveIdById">
 		update tb_wl_approve t
 		   set t.next_approve_id = #{next_approve_id}
 		 where t.id = #{id}                        
 	</update>
+	 <!-- 更新当前节点-->
+    <update id="updateApproveById">
+		update tb_wl_approve t
+		   set t.approve_user   = #{approve_user},
+		       t.approve_status = '1',
+		       t.approve_result = #{approve_result},
+		       t.approve_remark = #{approve_remark},
+		       t.approve_date   = #{approve_date}
+		 where t.id = #{id}                     
+	</update>
+	<!--  根据审批记录id获取审批相关信息-->
+    <select id="getApproveInfoByApproveId" resultType="java.util.Map">
+		select T.ID             APPROVE_ID,
+		       APP.ID           APPLY_ID,
+		       R.BUSINESS_ID,
+		       WRULE.ID         RULE_ID,
+		       T.APPROVE_STATUS,
+		       T.AUDIT_FLAG,
+		       WRULE.NODE,
+		       IDEA.VISIT_LEVEL,
+       		   APP.FUNCTION_TYPE
+		  from tb_wl_approve t
+		  left join tb_wl_apply app
+		    on APP.ID = t.apply_id
+		   and app.valid = '1'
+		  left join tb_wl_business_r_apply r
+		    on r.apply_id = app.id
+		   and r.valid = '1'
+		  left join tb_wl_rule wrule
+		    on wrule.id = t.approve_node
+		   and wrule.valid = '1'
+		  left join tb_yszx_idea idea
+		    on idea.uuid = r.business_id
+		   and idea.valid = '1'
+		 where t.id = #{approveId}
+		   and t.valid = '1'
+		
+    </select>
 	<!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓待办用户表↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
 	<!-- 新增待办用户记录 -->
     <insert id="addAuditUser" parameterType="com.sgcc.bg.yszx.bean.WLAuditUser">
