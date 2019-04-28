@@ -51,6 +51,12 @@ public interface IdeaInfoService {
 	 * @return
 	 */
 	public String deleteCompanyUserInfo( String companyId );
+	/**
+	 * 修改演示中心信息---主页信息的删除
+	 * @param pro
+	 * @return
+	 */
+	public String deleteIdeaInfo(String ideaId);
 	
 	
 	

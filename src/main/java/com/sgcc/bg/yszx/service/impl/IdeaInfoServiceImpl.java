@@ -988,6 +988,22 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		return jsonStr;
 		 
 	}
+	@Override
+	public String deleteIdeaInfo(String ideaId) {
+		bgServiceLog.info("演示中心参观预定主页面删除----->删除开始" );
+		ResultWarp rw =  null;
+		try{
+			Map<String,String>  userInfoMap=userInfo();
+			String updateUser= userInfoMap.get("userId");
+			yszxMapper.deleteIdeaInfo(ideaId, "0", updateUser, new Date());
+			rw = new ResultWarp(ResultWarp.SUCCESS ,"删除成功");  
+		}catch(Exception e){
+			rw = new ResultWarp(ResultWarp.FAILED ,"删除失败");  
+		}
+		bgServiceLog.info("演示中心参观预定主页面删除----->删除结束" );
+		String jsonStr=JSON.toJSONStringWithDateFormat(rw,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+		return jsonStr;
+	}
  	  
 		 
 				 

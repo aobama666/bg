@@ -45,22 +45,26 @@ function checkDate(stateDate,endDate){
         var loaclTmp=loaclDate.replace(" ",":").replace(/\:/g,"-").split("-");
         var ld=new Date(loaclTmp[0],loaclTmp[1],loaclTmp[2],loaclTmp[3],loaclTmp[4]);
         //参观开始时间和当前时间比较  
+        debugger;
         if(sd.getTime()<ld.getTime()){
+        	$("#stateDate").addClass("validRefuse");
             messager.tip("参观开始日期不能早于当前日期！",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
-			return;
-        }
-        //参观开始时间和参观结束时间的比较
-        if(sd.getTime()>ed.getTime()){
+			return  false;
+        }else if(sd.getTime()>ed.getTime()){
+        	$("#endDate").addClass("validRefuse");
             messager.tip("参观结束日期不能早于参观开始日期！",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
-			return;
-        }
-    return true;
+			return false;
+        }else{
+        	 $("#stateDate").removeClass("validRefuse");
+        	 $("#endDate").removeClass("validRefuse");
+        	 return true;
+        } 
 }
 /* 保存信息库信息 */
 roomDetailInfo.messageSave= function(){
-	   debugger;
+	   
 	   /* 主ID  */
 	    var id=$("#id").val();
 		/* 验证必填项   */
@@ -98,7 +102,10 @@ roomDetailInfo.messageSave= function(){
 		var stateDate =$("#stateDate").val();
 	    var endDate = $("#endDate").val() ; 
 	    //验证参观开始时间和参观结束时间的
-	    checkDate(stateDate,endDate);
+	    var checkDates =  checkDate(stateDate,endDate);
+	    if(!checkDates){
+	    	return;
+	    } 
 	   
 	    //参观人数
 	    var visitorNumber=$("#visitorNumber").val();
@@ -191,7 +198,7 @@ roomDetailInfo.messageSave= function(){
 }
 
 roomDetailInfo.initSelectForLeader = function(){
-	debugger;
+	 
 	var pcode='visitunit_levle';
 	/* start 查询数据字典集合  */
 	$.ajax({
@@ -350,7 +357,7 @@ function delLeader(obj){
 }
 /*参观领导删除逻辑*/
 function delLeaderInfo(obj){
-	debugger;
+	 
 	     $(obj).parents(".contentBox").find("input[class=visitid]:checked").each(function(){
          var  visitId= $(this).val();
          if(visitId==""){
@@ -409,7 +416,7 @@ function delUser(obj){
 }
 /*陪同人员信息删除逻辑*/
 function delUserInfo(obj){
-	debugger;
+	 
 	 $(obj).parents(".contentBox").find("input[type=checkbox]:checked").each(function(){
 		  var companyId=$(this).siblings(".companyId").val();
           if(companyId==""){
