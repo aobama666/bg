@@ -28,6 +28,7 @@ import com.sgcc.bg.yszx.bean.IdeaInfo;
 import com.sgcc.bg.yszx.bean.VisitInfo;
 import com.sgcc.bg.yszx.bean.CompanyUserInfo;
 import com.sgcc.bg.yszx.bean.CompanyLeaderInfo;
+import com.sgcc.bg.yszx.service.ApproveService;
 import com.sgcc.bg.yszx.service.IdeaInfoService;
 
 @Service
@@ -38,6 +39,9 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	private WebUtils webUtils;
 	@Autowired
 	UserUtils userUtils;
+	@Autowired
+	private ApproveService approveService;
+	
 	private static Logger bgServiceLog =  LoggerFactory.getLogger(IdeaInfoServiceImpl.class);
     
 	
@@ -50,12 +54,35 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	 * @param
 	 * @return
 	 */
-	public     String   applyId(String name){
-		name=Pinyin.getPinYin(name);
-		
-		String applyId="YSZX-"+name.toUpperCase()+"-"+DateUtil.getDays();
-	    String serrialNum="001";
-		return applyId+"-"+serrialNum;
+	public     Map<String,String>   applyId(String  ideaId){
+		Map<String,String>  userInfoMap=userInfo();
+		String name= userInfoMap.get("name");
+        name=Pinyin.getPinYin(name);
+		String apply="YSZX-"+name.toUpperCase()+"-"+DateUtil.getDays();
+		 
+		Integer year=Integer.valueOf(DateUtil.getYear()) ;
+		List<Map<String, Object>>   ideaMap = yszxMapper.selectForApplyId(year);
+		 int applyOrder=0;
+		if("null".equals(ideaMap)){
+			apply=apply+"-001" ;
+		}else{
+		   String    applySoid=   String.valueOf( ideaMap.get(0).get("applyOrder")) ;
+		    applyOrder=Integer.valueOf(applySoid);
+		    applyOrder++;
+		   if(0<applyOrder &&  applyOrder<10){
+			   apply=apply+"-00"+applyOrder;   
+		   }else if(9<applyOrder && applyOrder<100){
+			   apply=apply+"-0"+applyOrder;   
+		   }else if(99<applyOrder && applyOrder<1000){
+			   apply=apply+"-"+applyOrder;  
+		   }
+		}
+		Map<String,String>  map=new HashMap<String,String>();
+		map.put("applyNumber", apply);
+		map.put("applyOrder", String.valueOf(applyOrder));
+		map.put("applyYear",  String.valueOf(year));
+		return map;
+		 
 	}
 	/**
 	 * 演示中心--参观预定的添加--时间的验证  参观开始时间 参观结束时间
@@ -498,9 +525,14 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		ideaInfo.setVisitUnitName(visitUnitName);
 		ideaInfo.setVisitorNumber(Integer.parseInt(visitorNumber));
 		ideaInfo.setCompanyUserNumber(Integer.parseInt(companyUserNumber));
-		String name= userInfoMap.get("name");
-		String applyId=applyId(name);
-		ideaInfo.setApplyId(applyId);
+		Map<String,String >     applyIdMap=applyId(ideaId);
+		String applyNumber= applyIdMap.get("applyNumber");
+		int   applyOrder=Integer.valueOf(applyIdMap.get("applyOrder"));
+		int   applyYear=Integer.valueOf(applyIdMap.get("applyYear"));
+		ideaInfo.setApplyNumber(applyNumber);
+		ideaInfo.setApplyOrder(applyOrder);
+		ideaInfo.setApplyYear(applyYear);
+		  ideaInfo.setApplyId(applyNumber);
 		String   bigVisitLevel=checkVisitLevel(paramsMap);
 		ideaInfo.setVisitLevel(bigVisitLevel);
 		ideaInfo.setValId("1");
@@ -511,16 +543,19 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		ideaInfo.setUpdateTime(new Date());
 		try {
 		if("add".equals(type)){//添加
-		     Map<String, Object>    ideaMap = yszxMapper.selectForId(ideaId);
+		       Map<String, Object>    ideaMap = yszxMapper.selectForId(ideaId);
 			   if("null".equals(ideaMap)){
 				      rw = new ResultWarp(ResultWarp.FAILED ,"该数据存在");
-					  return JSON.toJSONString(rw);  
+					  return JSON.toJSONString(rw); 
+					  
 			   }
 			 if(visitLevel.equals("save")){//保存
 				   ideaInfo.setStatus("SAVE");
 				   yszxMapper.addIdeaInfo(ideaInfo);
 			   }else if(visitLevel.equals("submit")){//提交
-				   
+				   ideaInfo.setStatus("DEPT_HEAD_CHECK");
+				   approveService.startApprove("YSZX","DEPT_HEAD_CHECK",ideaId,"");
+				   yszxMapper.addIdeaInfo(ideaInfo);
 			   }
 		   }  
 		} catch (Exception e) {

@@ -1,26 +1,11 @@
-2019-04-28 10:03:05,784 [INFO ] com.alibaba.druid.pool.DruidDataSource  - {dataSource-1} inited
-2019-04-28 10:03:07,208 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20000} enter cache
-2019-04-28 10:03:17,493 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20001} enter cache
-2019-04-28 10:03:17,499 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20002} enter cache
-2019-04-28 10:03:17,503 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20003} enter cache
-2019-04-28 10:03:17,507 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20004} enter cache
-2019-04-28 10:03:22,880 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20005} enter cache
-2019-04-28 10:03:22,885 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20006} enter cache
-2019-04-28 10:04:25,226 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20007} enter cache
-2019-04-28 10:04:25,284 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20008} enter cache
-2019-04-28 10:04:27,672 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20009} enter cache
-2019-04-28 10:12:09,186 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20010} enter cache
-2019-04-28 10:12:09,190 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20011} enter cache
-2019-04-28 10:13:49,352 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode;empName=empName;winName=layui-layer-iframe1;iframe=self;ct=checkbox;root=41000001;popEvent=pop
-2019-04-28 10:13:49,506 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20012} enter cache
-2019-04-28 10:13:50,862 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [queryUserTreeByOrgan:in param]:organId=76D5CC7C8768F226E0536C3C550AAB94
-2019-04-28 10:13:50,872 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20013} enter cache
-2019-04-28 10:13:53,454 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20014} enter cache
-2019-04-28 10:50:04,490 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode;empName=empName;winName=layui-layer-iframe1;iframe=self;ct=checkbox;root=41000001;popEvent=pop
-2019-04-28 10:50:05,896 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [queryUserTreeByOrgan:in param]:organId=76D5CC7C8768F226E0536C3C550AAB94
-2019-04-28 10:56:13,006 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode;empName=empName;winName=layui-layer-iframe1;iframe=self;ct=checkbox;root=41000001;popEvent=pop
-2019-04-28 10:56:14,342 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [queryUserTreeByOrgan:in param]:organId=76D5CC7C8768F226E0536C3C550AAB94
-2019-04-28 11:09:06,172 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20015} enter cache
-2019-04-28 11:09:06,181 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20016} enter cache
-2019-04-28 11:09:06,185 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20017} enter cache
-2019-04-28 11:14:54,661 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20018} enter cache
+2019-04-28 16:14:21,440 [INFO ] com.alibaba.druid.pool.DruidDataSource  - {dataSource-1} inited
+2019-04-28 16:14:22,927 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20000} enter cache
+2019-04-28 16:14:57,607 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20001} enter cache
+2019-04-28 16:14:57,617 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20002} enter cache
+2019-04-28 16:15:10,064 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20003} enter cache
+2019-04-28 16:15:10,069 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20004} enter cache
+2019-04-28 16:15:10,075 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20005} enter cache
+2019-04-28 16:15:10,082 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20006} enter cache
+2019-04-28 16:15:15,433 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20007} enter cache
+2019-04-28 16:15:15,444 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20008} enter cache
+2019-04-28 16:15:15,977 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20009} enter cache

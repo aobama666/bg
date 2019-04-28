@@ -76,7 +76,7 @@ public interface YSZXMapper {
 	 * @param pro
 	 * @return
 	 */
-	public  List<Map<String, Object>>  selectForApplyId(@Param("applyId")String applyId);
+	public  List<Map<String, Object>>  selectForApplyId(@Param("applyYear")int applyYear);
 	/**
 	 * 查询演示主表数据
 	 * @param pro
