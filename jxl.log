@@ -1,36 +1,26 @@
-2019-04-19 16:30:42,243 [INFO ] com.alibaba.druid.pool.DruidDataSource  - {dataSource-1} inited
-2019-04-19 16:30:43,619 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20000} enter cache
-2019-04-19 16:32:50,974 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20001} enter cache
-2019-04-19 16:32:52,029 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20002} enter cache
-2019-04-19 16:32:52,092 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20003} enter cache
-2019-04-19 16:32:52,094 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10002, pstmt-20004} enter cache
-2019-04-19 16:33:33,391 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode2;empName=empName2;winName=;iframe=self;ct=checkbox;root=41000001;popEvent=pop
-2019-04-19 16:33:33,564 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10004, pstmt-20005} enter cache
-2019-04-19 16:36:37,044 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10004, pstmt-20006} enter cache
-2019-04-19 16:36:37,048 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10004, pstmt-20007} enter cache
-2019-04-19 16:36:44,670 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode2;empName=empName2;winName=;iframe=self;ct=checkbox;root=41000001;popEvent=pop
-2019-04-19 16:37:00,045 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10004, pstmt-20008} enter cache
-2019-04-19 17:31:23,158 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode2;empName=empName2;winName=;iframe=self;ct=checkbox;root=41000001;popEvent=pop
-2019-04-19 17:37:17,499 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10004, pstmt-20009} enter cache
-2019-04-19 17:37:17,825 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10006, pstmt-20010} enter cache
-2019-04-19 17:37:17,827 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10004, pstmt-20011} enter cache
-2019-04-19 17:37:18,454 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10007, pstmt-20012} enter cache
-2019-04-19 17:37:18,726 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10007, pstmt-20013} enter cache
-2019-04-19 17:37:18,732 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10006, pstmt-20014} enter cache
-2019-04-19 17:37:18,771 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10006, pstmt-20015} enter cache
-2019-04-19 17:37:19,003 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10007, pstmt-20016} enter cache
-2019-04-19 17:37:33,293 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode2;empName=empName2;winName=;iframe=self;ct=checkbox;root=41000001;popEvent=pop
-2019-04-19 17:37:33,472 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10007, pstmt-20017} enter cache
-2019-04-19 17:39:58,314 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10008, pstmt-20018} enter cache
-2019-04-19 17:39:58,546 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10008, pstmt-20019} enter cache
-2019-04-19 17:40:03,237 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode2;empName=empName2;winName=;iframe=self;ct=checkbox;root=41000001;popEvent=pop
-2019-04-19 17:40:31,834 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10008, pstmt-20020} enter cache
-2019-04-19 17:40:37,146 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode2;empName=empName2;winName=;iframe=self;ct=checkbox;root=41000001;popEvent=pop
-2019-04-19 17:40:37,291 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10008, pstmt-20021} enter cache
-2019-04-19 17:41:29,162 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode2;empName=empName2;winName=;iframe=self;ct=checkbox;root=41000001;popEvent=pop
-2019-04-19 17:41:29,323 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode2;empName=empName2;winName=;iframe=self;ct=checkbox;root=41000001;popEvent=pop
-2019-04-19 17:42:16,092 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode2;empName=empName2;winName=;iframe=self;ct=checkbox;root=41000001;popEvent=pop
-2019-04-19 17:43:51,498 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode2;empName=empName2;winName=;iframe=self;ct=checkbox;root=41000001;popEvent=pop
-2019-04-19 17:46:44,859 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10009, pstmt-20022} enter cache
-2019-04-19 17:46:45,979 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10009, pstmt-20023} enter cache
-2019-04-19 17:46:52,221 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode2;empName=empName2;winName=;iframe=self;ct=checkbox;root=41000001;popEvent=pop
+2019-04-28 10:03:05,784 [INFO ] com.alibaba.druid.pool.DruidDataSource  - {dataSource-1} inited
+2019-04-28 10:03:07,208 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20000} enter cache
+2019-04-28 10:03:17,493 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20001} enter cache
+2019-04-28 10:03:17,499 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20002} enter cache
+2019-04-28 10:03:17,503 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20003} enter cache
+2019-04-28 10:03:17,507 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20004} enter cache
+2019-04-28 10:03:22,880 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20005} enter cache
+2019-04-28 10:03:22,885 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20006} enter cache
+2019-04-28 10:04:25,226 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20007} enter cache
+2019-04-28 10:04:25,284 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20008} enter cache
+2019-04-28 10:04:27,672 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20009} enter cache
+2019-04-28 10:12:09,186 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20010} enter cache
+2019-04-28 10:12:09,190 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20011} enter cache
+2019-04-28 10:13:49,352 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode;empName=empName;winName=layui-layer-iframe1;iframe=self;ct=checkbox;root=41000001;popEvent=pop
+2019-04-28 10:13:49,506 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20012} enter cache
+2019-04-28 10:13:50,862 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [queryUserTreeByOrgan:in param]:organId=76D5CC7C8768F226E0536C3C550AAB94
+2019-04-28 10:13:50,872 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20013} enter cache
+2019-04-28 10:13:53,454 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20014} enter cache
+2019-04-28 10:50:04,490 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode;empName=empName;winName=layui-layer-iframe1;iframe=self;ct=checkbox;root=41000001;popEvent=pop
+2019-04-28 10:50:05,896 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [queryUserTreeByOrgan:in param]:organId=76D5CC7C8768F226E0536C3C550AAB94
+2019-04-28 10:56:13,006 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [initStuffTree:in param]£ºempCode=empCode;empName=empName;winName=layui-layer-iframe1;iframe=self;ct=checkbox;root=41000001;popEvent=pop
+2019-04-28 10:56:14,342 [INFO ] com.sgcc.bg.yszx.controller.newOrganStuffTreeController  - [queryUserTreeByOrgan:in param]:organId=76D5CC7C8768F226E0536C3C550AAB94
+2019-04-28 11:09:06,172 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20015} enter cache
+2019-04-28 11:09:06,181 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20016} enter cache
+2019-04-28 11:09:06,185 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20017} enter cache
+2019-04-28 11:14:54,661 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20018} enter cache
