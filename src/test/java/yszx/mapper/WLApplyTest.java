@@ -28,7 +28,7 @@ public class WLApplyTest {
 	
 	@Test
 	public void addApplyAndGetId() {
-		String apply_number = "apply_number_004";
+		String apply_number = "YSZX_TEST_20190428";
 		String apply_user = "wubin";
 		Date apply_time = new Date();
 		String function_type = "YSZX";
@@ -64,7 +64,7 @@ public class WLApplyTest {
 	public void startApprove(){
 		String functionType = "YSZX"; 
 		String nodeName = "SAVE"; 
-		String bussinessId = "7158A405AA984CB4B8D678928CB0771C"; 
+		String bussinessId = "3A51B99971FE422B8B15DAA6DAAEDC4E"; 
 		String applyUser = "epri_mengj"; 
 		
 		service.startApprove(functionType, nodeName, bussinessId, applyUser);

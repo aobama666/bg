@@ -15,6 +15,11 @@ public class WLApprove {
 	private Date approve_date;
 	private String create_user;
 	private String audit_flag;
+	
+	private String bussiness_id;
+	private String approve_node_code;	
+	private String visit_level;
+	private String function_type;
 
 	public String getId() {
 		return id;
@@ -110,6 +115,38 @@ public class WLApprove {
 
 	public void setCreate_user(String create_user) {
 		this.create_user = create_user;
+	}
+
+	public String getBussiness_id() {
+		return bussiness_id;
+	}
+
+	public void setBussiness_id(String bussiness_id) {
+		this.bussiness_id = bussiness_id;
+	}
+
+	public String getApprove_node_code() {
+		return approve_node_code;
+	}
+
+	public void setApprove_node_code(String approve_node_code) {
+		this.approve_node_code = approve_node_code;
+	}
+
+	public String getVisit_level() {
+		return visit_level;
+	}
+
+	public void setVisit_level(String visit_level) {
+		this.visit_level = visit_level;
+	}
+
+	public String getFunction_type() {
+		return function_type;
+	}
+
+	public void setFunction_type(String function_type) {
+		this.function_type = function_type;
 	}
 	
 }
