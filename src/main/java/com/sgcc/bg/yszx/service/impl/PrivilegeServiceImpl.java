@@ -10,7 +10,7 @@ import com.sgcc.bg.yszx.service.PrivilegeService;
 public class PrivilegeServiceImpl implements PrivilegeService{
 
 	@Override
-	public List<PrivilegeUserManager> getApproveUsersByRoleAndDept(String userName) {
+	public List<PrivilegeUserManager> getUserManagerPrivilegeByUserName(String userName) {
 		// TODO Auto-generated method stub
 		return null;
 	}

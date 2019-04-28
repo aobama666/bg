@@ -5,5 +5,10 @@ import java.util.List;
 import com.sgcc.bg.yszx.bean.PrivilegeUserManager;
 
 public interface PrivilegeService {
-	List<PrivilegeUserManager> getApproveUsersByRoleAndDept(String userName);
+	/**
+	 * 
+	 * @param userName
+	 * @return
+	 */
+	List<PrivilegeUserManager> getUserManagerPrivilegeByUserName(String userName);
 }
