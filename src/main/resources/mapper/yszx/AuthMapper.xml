@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+ -->
+<mapper namespace="com.sgcc.bg.yszx.mapper.AuthMapper">
+	<!--  根据当前节点获取审批规则-->
+    <select id="getApproveUsersByRoleAndDept" resultType="java.util.Map">
+		select U.USERID,U.USERNAME,U.USERALIAS,U.HRCODE
+		  from bg_sys_user u
+		 where u.valid = 1
+		   and u.state = 0
+		   and exists (select *
+		          from TB_PRIV_USER_R_ROLE r
+		         where r.valid = '1'
+		           and r.role_id = #{roleId}
+		           and r.user_id = u.userid)
+		   and exists (select *
+		          from tb_priv_appr_user_r_dept p
+		         where p.valid = '1'
+		           and p.dept_id = #{deptId}
+		           and p.user_id = u.userid)
+    </select>    
+</mapper>

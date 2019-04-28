@@ -32,7 +32,8 @@
 	<!-- AOP  -->
 	<bean id="DataSourceAspect" class="com.sgcc.bg.common.DataSourceAspect"/>
 	<aop:config>
-		<aop:advisor pointcut="execution(* com.sgcc.bg.mapper.*.*(..))" advice-ref="DataSourceAspect"/>
+		<!-- <aop:advisor pointcut="execution(* com.sgcc.bg.mapper.*.*(..))" advice-ref="DataSourceAspect"/> -->
+		<aop:advisor pointcut="execution(* com.sgcc.bg.**.*mapper.*(..))" advice-ref="DataSourceAspect"/>
 	</aop:config>
 	<!-- 导入Mybatis 配置 -->
 	<import resource="applicationContext-mybatis.xml" />
