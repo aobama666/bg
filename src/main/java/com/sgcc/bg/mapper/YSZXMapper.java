@@ -46,8 +46,6 @@ public interface YSZXMapper {
 	 * @return
 	 */
 	public int addCompanyLeaderInfo(CompanyLeaderInfo companyLeaderInfo);
-	
-	 
 	/**
 	 * 添加演示中心信息---陪同人信息的添加
 	 * @param pro
@@ -117,6 +115,12 @@ public interface YSZXMapper {
 	 */
 	public  Map<String, String>  selectForuserName(@Param("userId")String userId);
 	/**
+	 * 修改演示中心信息---主页信息
+	 * @param pro
+	 * @return
+	 */
+	public int deleteIdeaInfo(@Param("ideaId")String ideaId,@Param("valId")String valId,@Param("updateUser")String updateUser,@Param("updateTime")Date updateTime);
+	/**
 	 * 修改演示中心信息---参观人信息的删除
 	 * @param pro
 	 * @return
@@ -134,7 +138,11 @@ public interface YSZXMapper {
 	 * @return
 	 */
 	public int deleteCompanyUserInfo(@Param("companyId")String companyId,@Param("valId")String valId,@Param("updateUser")String updateUser,@Param("updateTime")Date updateTime);
-	
+	/**
+	 * 修改演示中心信息---查询数据字典信息
+	 * @param pro
+	 * @return
+	 */
 	
 	public List<Map<String, Object>> selectForDictionary(@Param("pcode")String pcode,@Param("codes")List<String> codes);
 
