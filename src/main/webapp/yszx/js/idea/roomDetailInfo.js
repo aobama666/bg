@@ -62,6 +62,9 @@ function checkDate(stateDate,endDate){
         	 return true;
         } 
 }
+//验证全部数据
+function checkAllDate(){}
+
 /* 保存信息库信息 */
 roomDetailInfo.messageSave= function(){
 	   
@@ -196,6 +199,38 @@ roomDetailInfo.messageSave= function(){
 			}
 		}); 
 }
+/* 提交信息库信息 */
+roomDetailInfo.messageSubmit= function(){
+	layer.confirm('<table class="visitUnitAccompany tableStyle thTableStyle">'+
+			'<tr>'+
+				'<th>选择</th>'+
+				'<th>审批人</th>'+
+				'<th>审批部门</th>'+
+			'</tr>'+
+			'<tr>'+
+				'<td>'+
+					'<input type="checkbox" style="width:16px;"/>'+
+				'</td>'+
+				'<td class="addInputStyle">'+
+					'王平'+
+				'</td>'+
+				'<td class="addInputStyle">'+
+					'信息中心'+
+				'</td>'+
+			'</tr>'+
+		
+		'</table>',{title:'请选择审批人', skin:'demo-class'},function(index){
+
+
+        })
+}
+
+ 
+
+
+
+
+
 
 roomDetailInfo.initSelectForLeader = function(){
 	 
@@ -233,10 +268,6 @@ roomDetailInfo.initSelectForLeader = function(){
 	/* start 查询数据字典集合  */
 }
 
-/* 提交信息库信息 */
-roomDetailInfo.messageSubmit= function(){
-	alert(stateDate); 
-}
 
 /*时间控件change事件*/
 function datePackerChange(dp, el) {
@@ -448,30 +479,7 @@ function delUserInfo(obj){
 	
 }
 
-function messageSubmit(){
-	layer.confirm('<table class="visitUnitAccompany tableStyle thTableStyle">'+
-			'<tr>'+
-				'<th>选择</th>'+
-				'<th>审批人</th>'+
-				'<th>审批部门</th>'+
-			'</tr>'+
-			'<tr>'+
-				'<td>'+
-					'<input type="checkbox" style="width:16px;"/>'+
-				'</td>'+
-				'<td class="addInputStyle">'+
-					'王平'+
-				'</td>'+
-				'<td class="addInputStyle">'+
-					'信息中心'+
-				'</td>'+
-			'</tr>'+
-		
-		'</table>',{title:'请选择审批人', skin:'demo-class'},function(index){
 
-
-        })
-}
 /* 各部门（单位）陪同人员信息 查询  */
 function popEvent(ids,codes,names,userId){
 	roomDetailInfo.SelectForUserId(userId);

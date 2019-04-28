@@ -24,7 +24,10 @@
 			CREATE_USER,	 	
 			CREATE_TIME,
 			UPDATE_USER,
-			UPDATE_TIME
+			UPDATE_TIME,
+			APPLY_NUMBER,
+			APPLY_ORDER,
+			APPLY_YEAR
 			)
 		VALUES(
 			#{id,jdbcType=VARCHAR}, 
@@ -45,7 +48,10 @@
 			#{createUser,jdbcType=VARCHAR},
 			#{createTime,jdbcType=TIMESTAMP},
 			#{updateUser,jdbcType=VARCHAR},
-			#{updateTime,jdbcType=TIMESTAMP}
+			#{updateTime,jdbcType=TIMESTAMP},
+			#{applyNumber,jdbcType=VARCHAR},
+			#{applyOrder,jdbcType=NUMERIC},
+			#{applyYear,jdbcType=NUMERIC}
 			)
 	</insert>
 	
@@ -205,12 +211,15 @@
 	
 	<select id="selectForApplyId" resultType="java.util.Map">
 		SELECT 
-		APPLY_ID
+			APPLY_NUMBER as "applyNumber",
+			APPLY_ORDER as  "applyOrder",
+			APPLY_YEAR as "applyYear"
 		  FROM TB_YSZX_IDEA
 		WHERE VALID =  '1'
-		<if test="applyId!=null and applyId!=''">
-			and APPLY_ID  like '%'||#{applyId}||'%'
+		<if test="applyYear!=null and applyYear=''">
+			and   APPLY_YEAR   like '%'||#{applyYear}||'%'
 		</if>
+		ORDER BY  APPLY_ORDER   DESC
 	</select>
 	
 	
@@ -315,7 +324,7 @@
 	<select id="selectForId" resultType="java.util.Map">
 	     SELECT 
 		      UUID   as  "id",	    
-		      APPLY_DEPT   as "applyDeptId",
+		      APPLY_DEPT  as "applyDeptId",
               (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = APPLY_DEPT)   as "applyDept",
               TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
               TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  

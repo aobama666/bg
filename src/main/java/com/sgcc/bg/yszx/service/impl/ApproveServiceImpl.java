@@ -268,11 +268,13 @@ public class ApproveServiceImpl implements ApproveService{
 		
 		return approveRule;
 	}
+ 
 	
 	private WLApprove getApproveInfoByApproveId(String approveId){
 		List<Map<String,Object>> list = approveMapper.getApproveInfoByApproveId(approveId);
 		if(list==null||list.size()==0||list.size()>1){
 			return null;
+ 
 		}
 		
 		Map<String,Object> map = list.get(0);
