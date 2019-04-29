@@ -45,7 +45,6 @@ function checkDate(stateDate,endDate){
         var loaclTmp=loaclDate.replace(" ",":").replace(/\:/g,"-").split("-");
         var ld=new Date(loaclTmp[0],loaclTmp[1],loaclTmp[2],loaclTmp[3],loaclTmp[4]);
         //参观开始时间和当前时间比较  
-        debugger;
         if(sd.getTime()<ld.getTime()){
         	$("#stateDate").addClass("validRefuse");
             messager.tip("参观开始日期不能早于当前日期！",2000);
@@ -62,12 +61,11 @@ function checkDate(stateDate,endDate){
         	 return true;
         } 
 }
-//验证全部数据
-function checkAllDate(){}
-
+ 
 /* 保存信息库信息 */
-roomDetailInfo.messageSave= function(){
-	   
+roomDetailInfo.messageSave= function(approvalUserd){
+	   debugger;
+	    alert(approvalUserd);
 	   /* 主ID  */
 	    var id=$("#id").val();
 		/* 验证必填项   */
@@ -166,7 +164,14 @@ roomDetailInfo.messageSave= function(){
 	  //备注
       var remark=$("#remark").val();
 	  var roomDetailFormData = roomAddInfoCommon.getFormDataInfo();
-	  roomDetailFormData.visitLevel="save";
+	  if(approvalUserd =='' || approvalUserd ==undefined){
+		  roomDetailFormData.visitLevel="save";  
+		  roomDetailFormData.approvalUserd="";
+	  }else{
+		  roomDetailFormData.visitLevel="submit";
+		  roomDetailFormData.approvalUserd=approvalUserd;
+	  }
+	  
 	  roomDetailFormData.visitinfo=visitinfo;
 	  roomDetailFormData.companyUserInfo=companyUserInfo ;
 	  roomDetailFormData.id=id;
@@ -201,34 +206,82 @@ roomDetailInfo.messageSave= function(){
 }
 /* 提交信息库信息 */
 roomDetailInfo.messageSubmit= function(){
-	layer.confirm('<table class="visitUnitAccompany tableStyle thTableStyle">'+
-			'<tr>'+
-				'<th>选择</th>'+
-				'<th>审批人</th>'+
-				'<th>审批部门</th>'+
-			'</tr>'+
-			'<tr>'+
-				'<td>'+
-					'<input type="checkbox" style="width:16px;"/>'+
-				'</td>'+
-				'<td class="addInputStyle">'+
-					'王平'+
-				'</td>'+
-				'<td class="addInputStyle">'+
-					'信息中心'+
-				'</td>'+
-			'</tr>'+
-		
-		'</table>',{title:'请选择审批人', skin:'demo-class'},function(index){
-
-
-        })
+	layer.confirm(
+			 messageSubmitHtml(),
+			 {title:'请选择审批人', skin:'demo-class'},
+			 function(){
+				 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
+				 if(checkedNumber == 0){
+					    messager.tip("参观结束日期不能早于参观开始日期！",2000);
+						roomDetailInfo.saveBtnClickFlag = 0;
+						return ;
+			     }else if(checkedNumber > 1 ){
+			        
+			     }else{
+			    	var userId =$("#userId").val();//审批人id
+			    	roomDetailInfo.messageSave(userId);
+			    	
+			    }
+				 
+				 
+				 
+				 
+				 
+				 
+             });
 }
 
- 
+/* 提交信息库信息---页面拼接 */
 
 
-
+function messageSubmitHtml(){
+	var userPrivilegehtml = '';
+	$.ajax({
+	    url: "/bg/Privilege/getApproveUserByUserName",//获取申报界面数据字典
+		type: "post",
+		dataType: "json",
+		async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
+		success: function (data) {
+			
+			if(data.success){
+				 
+		    	var userPrivilegelist = data.data.userPrivilege;
+				userPrivilegehtml += '<table class="userPrivilege tableStyle thTableStyle">';
+				userPrivilegehtml += '<tr>';
+				     userPrivilegehtml += '<th>选择</th>';
+				     userPrivilegehtml += '<th>审批人</th>';
+				     userPrivilegehtml += '<th>审批部门</th>';
+				userPrivilegehtml += '</tr>';
+					for (var i = 0; i < userPrivilegelist.length; i++) {
+						userPrivilegehtml += '<tr>';
+						     userPrivilegehtml += '<td>';
+						       userPrivilegehtml+='<input type="checkbox"   class="inputUserId"  />' 
+						       userPrivilegehtml+='<input type="hidden"    id="userId"  name = "userId"  class="userId"  value="' + userPrivilegelist[i].userId + '"  />' 
+						     userPrivilegehtml += '</td>';
+						     userPrivilegehtml += '<td class="addInputStyle">  ';
+						       userPrivilegehtml+='<input type="text" disabled  id="userAlias"  name = "userAlias"  class="userAlias inputChange"  value="' + userPrivilegelist[i].userAlias + '" title="审批人名称 " />' 
+						     userPrivilegehtml += '</td>';
+						     userPrivilegehtml += '<td class="addInputStyle">';
+						       userPrivilegehtml+='<input type="text" disabled   id="deptName"   name = "deptName"   class="deptName inputChange"  value="' + userPrivilegelist[i].deptName + '" title="审批人单位" />'
+						     userPrivilegehtml += '</td>';
+						 userPrivilegehtml += '</tr>';      
+						 
+					}
+				userPrivilegehtml += '</table>';
+				 
+			}else{
+				layer.open({
+	    	        title:'提示信息',
+	    	        content:data.msg,
+	    	        area:'300px',
+	    	        skin:'demo-class'
+	    	    }) 
+			}
+		 
+		}
+	});
+	 return userPrivilegehtml;
+}
 
 
 
