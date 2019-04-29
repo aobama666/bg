@@ -292,7 +292,16 @@ body div.btn_type_box .btn_type:ACTIVE {
 .combo-arrow{
 	    background:#fff!important;
 }
-
+.inputChange{
+	padding:0!important;
+	margin:0!important;
+	text-align:center!important;
+}
+.inputUserId{
+	 width: 50px!important;
+     margin-top: 10px!important;
+ 
+}
 /* cyj  验证字段为空   样式是修改 成红色*/
 table td .validRefuse{
 	border:solid 1px red;

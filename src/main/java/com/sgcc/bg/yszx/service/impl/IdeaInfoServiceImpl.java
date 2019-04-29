@@ -41,6 +41,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	UserUtils userUtils;
 	@Autowired
 	private ApproveService approveService;
+	 
 	
 	private static Logger bgServiceLog =  LoggerFactory.getLogger(IdeaInfoServiceImpl.class);
     
@@ -513,6 +514,8 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		 String visitUnitName = paramsMap.get("visitUnitName") == null ? "" : paramsMap.get("visitUnitName").toString(); //参观单位名称
 		 String visitorNumber = paramsMap.get("visitorNumber") == null ? "" : paramsMap.get("visitorNumber").toString(); //参观人数
 		 String companyUserNumber = paramsMap.get("companyUserNumber") == null ? "" : paramsMap.get("companyUserNumber").toString(); //陪同人数
+		 String approvalUserd = paramsMap.get("approvalUserd") == null ? "" : paramsMap.get("approvalUserd").toString();  //提交|保存
+		 
 		 String applyDept= userInfoMap.get("deptId");
 		ideaInfo.setId(ideaId);
 		ideaInfo.setApplyDept(applyDept);
@@ -554,7 +557,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				   yszxMapper.addIdeaInfo(ideaInfo);
 			   }else if(visitLevel.equals("submit")){//提交
 				   ideaInfo.setStatus("DEPT_HEAD_CHECK");
-				   approveService.startApprove("YSZX","DEPT_HEAD_CHECK",ideaId,"");
+				   approveService.startApprove("YSZX","DEPT_HEAD_CHECK",ideaId,approvalUserd);
 				   yszxMapper.addIdeaInfo(ideaInfo);
 			   }
 		   }  
@@ -574,7 +577,10 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				  ideaInfo.setStatus("SAVE");
 				  yszxMapper.updataIdeaInfo(ideaInfo);
 			   }else if(visitLevel.equals("submit")){//提交
-				    
+				  ideaInfo.setStatus("DEPT_HEAD_CHECK");
+				  yszxMapper.updataIdeaInfo(ideaInfo);
+				  approveService.startApprove("YSZX","DEPT_HEAD_CHECK",ideaId,approvalUserd);
+				  
 			   }
 			
 		}

@@ -248,7 +248,7 @@
 	</table>
 	
 	<div class="btnContent">
-		<button type="button" class="btn" onclick="roomDetailInfo.messageSubmit()" >提交</button>
+		<button type="button" class="btn" onclick="roomDetailInfo.messageSubmit('')" >提交</button>
 		<button type="button" class="btn" onclick="roomDetailInfo.messageSave()">保存</button>
 		<button type="button" class="btn" onclick="resignChange()">返回</button>
 	</div>
