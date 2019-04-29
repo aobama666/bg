@@ -108,6 +108,9 @@
 		 WHERE T.FUNCTION_TYPE = #{functionType}
 		   AND T.NODE = #{nodeName}
 		   AND T.status = #{status}
+		   <if test="condition!=null">
+		   		AND T.condition = #{condition}
+		   </if>
 		   AND T.VALID = '1'
     </select>    
     <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓审批表↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
@@ -180,7 +183,8 @@
 		       T.AUDIT_FLAG,
 		       WRULE.NODE,
 		       IDEA.VISIT_LEVEL,
-       		   APP.FUNCTION_TYPE
+       		   APP.FUNCTION_TYPE,
+		       T.CREATE_USER
 		  from tb_wl_approve t
 		  left join tb_wl_apply app
 		    on APP.ID = t.apply_id
@@ -197,6 +201,14 @@
 		 where t.id = #{approveId}
 		   and t.valid = '1'
 		
+    </select>
+    <!--  根据审批记录id获取提交记录-->
+    <select id="getFirstApproveByApplyId" resultType="java.util.Map">
+		select T.ID, T.APPLY_ID, T.CREATE_USER
+		  from tb_wl_approve t
+		 where T.APPLY_ID = #{apply_id}
+		   and t.valid = '1'
+		   AND T.APPROVE_STEP = '1'		
     </select>
 	<!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓待办用户表↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
 	<!-- 新增待办用户记录 -->

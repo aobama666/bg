@@ -64,7 +64,7 @@ public class WLApplyTest {
 	public void startApprove(){
 		String functionType = "YSZX"; 
 		String nodeName = "SAVE"; 
-		String bussinessId = "3A51B99971FE422B8B15DAA6DAAEDC4E"; 
+		String bussinessId = "01A548523E4F4F91B67AABB4F11EB8BD"; 
 		String applyUser = "epri_mengj"; 
 		
 		service.startApprove(functionType, nodeName, bussinessId, applyUser);
@@ -72,9 +72,9 @@ public class WLApplyTest {
 	
 	@Test
 	public void sendApprove(){
-		String approveId = "87939B5BA24F5059E0536C3C550A62E3";
-		String stauts = "0";
-		String appproveRemark = "不同意";
+		String approveId = "87A1BEEA495A6095E0536C3C550A3844";
+		String stauts = "1";
+		String appproveRemark = "同意-重提";
 		String userName = "epri_mengj"; 
 		
 		service.sendApprove(approveId, stauts, appproveRemark, userName);

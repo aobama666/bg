@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.sgcc.bg.common.ConfigUtils;
 import com.sgcc.bg.model.HRUser;
 import com.sgcc.bg.service.UserService;
 import com.sgcc.bg.yszx.bean.IdeaInfo;
@@ -47,6 +48,8 @@ public class ApproveServiceImpl implements ApproveService{
 			returnMessage.setMessage(message);
 			return returnMessage;
 		}
+		//获取业务主表
+		Map<String, Object> ideaInfoMap = ideaServcie.selectForId(bussinessId);
 		
 		//创建申请记录
 		WLApply apply = new WLApply();
@@ -67,7 +70,25 @@ public class ApproveServiceImpl implements ApproveService{
 				
 		//获取工作流   当前节点和下一个节点
 		String stauts = "1";//0 拒绝 1 同意
-		WLApproveRule approveRule = getApproveRuleByNodeName(functionType,nodeName,stauts);		
+		String condition = null;
+		if("YSZX".equals(functionType)&&"MANAGER_DEPT_DUTY_CHECK".equals(functionType)){
+			String visit_level = ConfigUtils.getConfig("YSZX_VISIT_LEADER_LEVEL");
+			if(visit_level==null||visit_level.length()==0){
+				message = "系统错误：没有配置参观领导级别！";
+				returnMessage.setResult(result);
+				returnMessage.setMessage(message);
+				return returnMessage;
+			}
+			String level = ideaInfoMap.get("visitLevel")==null?"":ideaInfoMap.get("visitLevel").toString();
+			if(visit_level.indexOf(level)!=-1){
+				condition = "1";//处级以上
+			}
+			else{
+				condition = "0";//处级以下
+			}
+		}
+		
+		WLApproveRule approveRule = getApproveRuleByNodeName(functionType,nodeName,stauts,condition);		
 		//创建审批记录
 		//当前节点-提交
 		WLApprove approve = new WLApprove();
@@ -107,7 +128,6 @@ public class ApproveServiceImpl implements ApproveService{
 		//更新业务记录		
 		approveMapper.updateBussinessById(bussinessId, apply.getId(), approveRule.getNextNode(), user.getUserId());
 		//发送待办	
-		Map<String, Object> ideaInfoMap = ideaServcie.selectForId(bussinessId);
 		String deptId = ideaInfoMap.get("applyDeptId")==null?"":ideaInfoMap.get("applyDeptId").toString();
 		List<Map<String,Object>> list = authMapper.getApproveUsersByRoleAndDept(approveRule.getApproveRoleId(),deptId);
 		if(list!=null&&list.size()>0){
@@ -162,12 +182,30 @@ public class ApproveServiceImpl implements ApproveService{
 				returnMessage.setMessage(message);
 				return returnMessage;
 			}
-			result = true;
-			
 			//获取审批记录      审批表、申请表、业务表 基本信息
 			WLApprove approveInfo = getApproveInfoByApproveId(approveId);
+			
+			Map<String, Object> ideaInfoMap = ideaServcie.selectForId(approveInfo.getBussiness_id());
+			
 			//获取审批规则
-			WLApproveRule approveRule = getApproveRuleByNodeName(approveInfo.getFunction_type(),approveInfo.getApprove_node_code(),stauts);			
+			String condition = null;
+			if("YSZX".equals(approveInfo.getFunction_type())&&"MANAGER_DEPT_DUTY_CHECK".equals(approveInfo.getApprove_node_code())){
+				String visit_level = ConfigUtils.getConfig("YSZX_VISIT_LEADER_LEVEL");
+				if(visit_level==null||visit_level.length()==0){
+					message = "系统错误：没有配置参观领导级别！";
+					returnMessage.setResult(result);
+					returnMessage.setMessage(message);
+					return returnMessage;
+				}
+				String level = ideaInfoMap.get("visitLevel")==null?"":ideaInfoMap.get("visitLevel").toString();
+				if(visit_level.indexOf(level)!=-1){
+					condition = "1";//处级以上
+				}
+				else{
+					condition = "0";//处级以下
+				}
+			}
+			WLApproveRule approveRule = getApproveRuleByNodeName(approveInfo.getFunction_type(),approveInfo.getApprove_node_code(),stauts,condition);			
 			//处理审批记录
 			//当前节点-更新
 			String id = approveInfo.getId();
@@ -185,11 +223,10 @@ public class ApproveServiceImpl implements ApproveService{
 			
 			//TODO  关闭门户待办
 			
-			//下一环节-新增
+			//下一环节-新增			
 			if(!"FINISH".equals(approveRule.getNextNode())){
-				
 				String audit_flag = "0";//是否是待办 0 不是 1 是
-				if(approveRule.getApproveRoleId()!=null){
+				if(approveRule.getApproveRoleId()!=null&&!"APPROVAL_SUBMIT".equals(approveRule.getApproveRole())){
 					audit_flag = "1";
 				}
 				WLApprove nextApprove = new WLApprove();
@@ -211,39 +248,48 @@ public class ApproveServiceImpl implements ApproveService{
 				//更新业务记录		
 				approveMapper.updateBussinessById(approveInfo.getBussiness_id(), approveInfo.getApply_id(), approveRule.getNextNode(), user.getUserId());
 				//发送待办	
-				Map<String, Object> ideaInfoMap = ideaServcie.selectForId(approveInfo.getBussiness_id());
 				String deptId = ideaInfoMap.get("applyDeptId")==null?"":ideaInfoMap.get("applyDeptId").toString();
-				List<Map<String,Object>> list = authMapper.getApproveUsersByRoleAndDept(approveRule.getApproveRoleId(),deptId);
-				if(list!=null&&list.size()>0){
-					for(Map<String,Object> map:list){
-						String userId = (String) map.get("USERID");
-						WLAuditUser auditUser = new WLAuditUser();
-						auditUser.setApprove_id(nextApprove.getId());
-						auditUser.setApprove_user(userId);
-						auditUser.setCreate_user(user.getUserId());
-						auditUser.setUpdate_user(user.getUserId());
-						
-						approveMapper.addAuditUser(auditUser);
-					}
-				}	
 				
+				if("APPROVAL_SUBMIT".equals(approveRule.getApproveRole())){//提交人
+					//不发待办
+				}
+				else{ 
+					List<Map<String,Object>> list = authMapper.getApproveUsersByRoleAndDept(approveRule.getApproveRoleId(),deptId);
+					if(list!=null&&list.size()>0){
+						for(Map<String,Object> map:list){
+							String userId = (String) map.get("USERID");
+							WLAuditUser auditUser = new WLAuditUser();
+							auditUser.setApprove_id(nextApprove.getId());
+							auditUser.setApprove_user(userId);
+							auditUser.setCreate_user(user.getUserId());
+							auditUser.setUpdate_user(user.getUserId());
+							
+							approveMapper.addAuditUser(auditUser);
+						}
+					}	
+				}
 				//TODO 向门户发送待办
 			}
+			else{
+				//更新申请记录
+				approveMapper.updateApplyById(approveInfo.getApply_id(), approveRule.getNextNode(), approveInfo.getId(), user.getUserId());
+				//更新业务记录		
+				approveMapper.updateBussinessById(approveInfo.getBussiness_id(), approveInfo.getApply_id(), approveRule.getNextNode(), user.getUserId());
+			}
 			
-			
+			result = true;
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
-		
 		returnMessage.setResult(result);
 		returnMessage.setMessage(message);
 		return returnMessage;
 	}
 	
 
-	private WLApproveRule getApproveRuleByNodeName(String functionType,String nodeName,String status){
-		List<Map<String,Object>> list = approveMapper.getApproveRuleByNodeName(functionType,nodeName,status);
+	private WLApproveRule getApproveRuleByNodeName(String functionType,String nodeName,String status,String condition){
+		List<Map<String,Object>> list = approveMapper.getApproveRuleByNodeName(functionType,nodeName,status,condition);
 		if(list==null||list.size()==0||list.size()>1){
 			return null;
 		}
