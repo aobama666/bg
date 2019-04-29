@@ -48,11 +48,13 @@ public interface ApproveMapper {
 	 * @param functionType
 	 * @param nodeName
 	 * @param status
+	 * @param condition
 	 * @return
 	 */
 	public List<Map<String,Object>> getApproveRuleByNodeName(@Param("functionType")String functionType,
 			                                                 @Param("nodeName")String nodeName,
-			                                                 @Param("status")String status);
+			                                                 @Param("status")String status,
+			                                                 @Param("condition")String condition);
 	/* ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓审批表↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓  */
 	/**
 	 * 新增审批记录
@@ -90,6 +92,13 @@ public interface ApproveMapper {
 	 * @return
 	 */
 	public List<Map<String,Object>> getApproveInfoByApproveId(@Param("approveId")String approveId);
+	
+	/**
+	 * 
+	 * @param apply_id
+	 * @return
+	 */
+	public List<Map<String,Object>> getFirstApproveByApplyId(@Param("apply_id")String apply_id);
 	
 	/* ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓业务表 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ */
 	/**
