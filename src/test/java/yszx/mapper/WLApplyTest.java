@@ -65,18 +65,33 @@ public class WLApplyTest {
 		String functionType = "YSZX"; 
 		String nodeName = "SAVE"; 
 		String bussinessId = "01A548523E4F4F91B67AABB4F11EB8BD"; 
-		String applyUser = "epri_mengj"; 
+		String applyUser = "7282B7DB48D4B0BCE0536D3C550A861B"; 
 		
-		service.startApprove(functionType, nodeName, bussinessId, applyUser);
+		service.startApprove(false,functionType, nodeName, bussinessId, applyUser,applyUser);
 	}
 	
 	@Test
 	public void sendApprove(){
-		String approveId = "87A1BEEA495A6095E0536C3C550A3844";
+		String approveId = "87A8745895B1E08EE0536C3C550A7C80";
 		String stauts = "1";
-		String appproveRemark = "同意-重提";
-		String userName = "epri_mengj"; 
+		String appproveRemark = "同意";
+		String userName = "7282B7DB48D4B0BCE0536D3C550A861B"; 
 		
-		service.sendApprove(approveId, stauts, appproveRemark, userName);
+		service.sendApprove(false, approveId, stauts, appproveRemark, userName, userName);
+	}
+	@Test
+	public void recallApprove(){
+		String approveId = "87A5C1A843F2AD13E0536C3C550A8AFF";
+		String userName = "7282B7DB48D4B0BCE0536D3C550A861B"; 
+		
+		service.recallApprove(false, approveId, userName);
+	}
+	
+	@Test
+	public void unDoApprove(){
+		String bussinessId = "01A548523E4F4F91B67AABB4F11EB8BD";
+		String userName = "7282B7DB48D4B0BCE0536D3C550A861B"; 
+		
+		service.unDoApprove(bussinessId, userName);
 	}
 }
