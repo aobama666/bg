@@ -62,13 +62,13 @@ roomList.initDataGrid = function(){
 			  return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.id)+'"/>';
 		 	}
 		  },
-		  {name: '申请单号',style:{width:"10%"}, data: 'applyId',forMat:function(row){
-			  return "<a title = '"+row.applyId+"' style='width:250px;" + 
+		  {name: '申请单号',style:{width:"10%"}, data: 'applyNumber',forMat:function(row){
+			  return "<a title = '"+row.applyNumber+"' style='width:250px;" + 
 				  		"text-align:left;display:block;" +
 				  		"white-space: nowrap;" +
 				  		"text-overflow: ellipsis;" +
 				  		"overflow: hidden;' id = '"+row.id+"'" +
-				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.id+"')>"+row.applyId+"</a>";
+				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.id+"')>"+row.applyNumber+"</a>";
 				  		 
 		  }},
 		  {name: '申请时间', style:{width:"8%"},data: 'createTime'},
@@ -149,8 +149,8 @@ roomList.initDataGrid = function(){
 			messager.tip("每次只能修改一条数据",2000);
 			return;
 		}
-		if(checkedItems[0].projectStatus=="3" || checkedItems[0].projectStatus=="4"){
-			messager.tip("该无法修改",2000);
+		if(checkedItems[0].approveState!="DEPT_HEAD_CHECK" && checkedItems[0].approveState!="SAVE"){
+			messager.tip("该无法修改,审批状态为：待提交,待部门领导审核才可以修改",2000);
 			return;
 		}
 		var id = dataGrid.getCheckedIds();

@@ -36,6 +36,7 @@
  </head>
 <body>
     <input type = "hidden" value = "${id}" id = "id" name="id">  
+    <input type = "hidden" value = "${approveState}" id = "approveState" name="approveState">  
 	<div class="main_div"></div>
 	<!-- start  头部 -->
 	<div class="sheach details">

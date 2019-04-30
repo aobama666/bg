@@ -535,7 +535,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		ideaInfo.setApplyNumber(applyNumber);
 		ideaInfo.setApplyOrder(applyOrder);
 		ideaInfo.setApplyYear(applyYear);
-		  ideaInfo.setApplyId(applyNumber);
+		ideaInfo.setApplyId("");
 		String   bigVisitLevel=checkVisitLevel(paramsMap);
 		ideaInfo.setVisitLevel(bigVisitLevel);
 		ideaInfo.setValId("1");
@@ -556,16 +556,15 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				   ideaInfo.setStatus("SAVE");
 				   yszxMapper.addIdeaInfo(ideaInfo);
 			   }else if(visitLevel.equals("submit")){//提交
-				   ideaInfo.setStatus("DEPT_HEAD_CHECK");
-				   approveService.startApprove("YSZX","DEPT_HEAD_CHECK",ideaId,approvalUserd);
+				   ideaInfo.setStatus("SAVE");
 				   yszxMapper.addIdeaInfo(ideaInfo);
+				   approveService.startApprove(false,"YSZX","SAVE",ideaId,approvalUserd,createUserId);
 			   }
 		   }  
 		} catch (Exception e) {
 			  rw = new ResultWarp(ResultWarp.FAILED ,"添加异常，请重新添加");
 			  return JSON.toJSONString(rw);  
 		}
-		
 		try {
 		if("updata".equals(type)){//修改
 			  Map<String, Object>    ideaMap = yszxMapper.selectForId(ideaId);
@@ -579,9 +578,9 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 			   }else if(visitLevel.equals("submit")){//提交
 				  ideaInfo.setStatus("DEPT_HEAD_CHECK");
 				  yszxMapper.updataIdeaInfo(ideaInfo);
-				  approveService.startApprove("YSZX","DEPT_HEAD_CHECK",ideaId,approvalUserd);
+				  approveService.startApprove(false,"YSZX","SAVE",ideaId,approvalUserd,createUserId);
 				  
-			   }
+        }
 			
 		}
 		} catch (Exception e) {

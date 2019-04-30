@@ -7,7 +7,14 @@
 <mapper namespace="com.sgcc.bg.yszx.mapper.AuthMapper">
 	<!--  根据当前节点获取审批规则-->
     <select id="getApproveUsersByRoleAndDept" resultType="java.util.Map">
-		select U.USERID,U.USERNAME,U.USERALIAS,U.HRCODE
+		select 
+		  U.USERID,
+		  U.USERNAME,
+		  U.USERALIAS,
+		  U.HRCODE,
+		  U.HRDEPTNAME,
+		  U.HRDEPTCODE,
+		  U.PHONE
 		  from bg_sys_user u
 		 where u.valid = 1
 		   and u.state = 0
