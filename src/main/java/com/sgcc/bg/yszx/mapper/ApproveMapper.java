@@ -55,6 +55,13 @@ public interface ApproveMapper {
 			                                                 @Param("nodeName")String nodeName,
 			                                                 @Param("status")String status,
 			                                                 @Param("condition")String condition);
+	
+	/**
+	 * 根据id获取审批规则  当前节点信息和下一节点信息
+	 * @param id
+	 * @return
+	 */
+	public List<Map<String,Object>> getApproveRuleById(@Param("id")String id);
 	/* ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓审批表↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓  */
 	/**
 	 * 新增审批记录
@@ -78,13 +85,16 @@ public interface ApproveMapper {
 	 * @param approve_date
 	 * @param approve_result
 	 * @param approve_remark
+	 * @param audit_flag
 	 * @return
 	 */
 	public Integer updateApproveById(@Param("id")String id,
 			                         @Param("approve_user")String approve_user,
 			                         @Param("approve_date")Date approve_date,
 			                         @Param("approve_result")String approve_result,
-			                         @Param("approve_remark")String approve_remark);
+			                         @Param("approve_remark")String approve_remark,
+			                         @Param("audit_flag")String audit_flag,
+			                         @Param("approve_node")String approve_node);
 	
 	/**
 	 * 
@@ -95,10 +105,24 @@ public interface ApproveMapper {
 	
 	/**
 	 * 
-	 * @param apply_id
+	 * @param bussiness_id
 	 * @return
 	 */
-	public List<Map<String,Object>> getFirstApproveByApplyId(@Param("apply_id")String apply_id);
+	public List<Map<String,Object>> getApproveInfoByBussinessId(@Param("bussiness_id")String bussiness_id);
+	
+	/**
+	 * 
+	 * @param approveId
+	 * @return
+	 */
+	public List<Map<String,Object>> getLastApproveByApproveId(@Param("approveId")String approveId);
+	
+	/**
+	 * 
+	 * @param approveId
+	 * @return
+	 */
+	public List<Map<String,Object>> getLastApproveUserByApproveId(@Param("approveId")String approveId);
 	
 	/* ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓业务表 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ */
 	/**

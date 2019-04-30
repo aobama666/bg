@@ -62,13 +62,13 @@ roomList.initDataGrid = function(){
 			  return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.id)+'"/>';
 		 	}
 		  },
-		  {name: '申请单号',style:{width:"10%"}, data: 'applyId',forMat:function(row){
-			  return "<a title = '"+row.applyId+"' style='width:250px;" + 
+		  {name: '申请单号',style:{width:"10%"}, data: 'applyNumber',forMat:function(row){
+			  return "<a title = '"+row.applyNumber+"' style='width:250px;" + 
 				  		"text-align:left;display:block;" +
 				  		"white-space: nowrap;" +
 				  		"text-overflow: ellipsis;" +
 				  		"overflow: hidden;' id = '"+row.id+"'" +
-				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.id+"')>"+row.applyId+"</a>";
+				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.id+"')>"+row.applyNumber+"</a>";
 				  		 
 		  }},
 		  {name: '申请时间', style:{width:"8%"},data: 'createTime'},

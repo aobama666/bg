@@ -205,6 +205,7 @@ roomDetailInfo.messageSave= function(approvalUserd){
 }
 /* 提交信息库信息 */
 roomDetailInfo.messageSubmit= function(){
+	debugger;
 	var html=messageSubmitHtml();
 	 
 	if(html =='' || html ==undefined){
@@ -220,14 +221,13 @@ roomDetailInfo.messageSubmit= function(){
 				 {title:'请选择审批人', area:'800px',skin:'demo-class'   },
 				 function(){
 					 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
+					 var userId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
 					 if(checkedNumber == 0){
-						    messager.tip("参观结束日期不能早于参观开始日期！",2000);
-							roomDetailInfo.saveBtnClickFlag = 0;
-							return ;
+						     
 				     }else if(checkedNumber > 1 ){
 				        
 				     }else{
-				    	var userId =$("#userId").val();//审批人id
+				    	 
 				    	roomDetailInfo.messageSave(userId);
 				    	 layer.close(layer.index);
 				    }

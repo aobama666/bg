@@ -113,6 +113,26 @@
 		   </if>
 		   AND T.VALID = '1'
     </select>    
+    <!--  根据ID获取审批规则-->
+    <select id="getApproveRuleById" resultType="java.util.Map">
+		SELECT T.ID,
+		       T.NODE,
+		       T2.ID          NEXT_NODE_ID,
+		       T2.NODE        NEXT_NODE,
+		       T.APPROVE_ROLE,
+		       R.ROLE_CODE,
+		       R.ROLE_TYPE,
+       		   T.FUNCTION_TYPE
+		  FROM TB_WL_RULE T
+		  LEFT JOIN TB_WL_RULE T2
+		    ON T.NEXT_NODE_ID = T2.ID
+		   AND T2.VALID = '1'
+		  LEFT JOIN TB_PRIV_ROLE R
+		    ON T.APPROVE_ROLE = R.ID
+		   AND R.VALID = '1'
+		 WHERE T.ID = #{id}
+		   AND T.VALID = '1'
+    </select>    
     <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓审批表↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
     <!-- 新增申请记录与业务数据关联记录 -->
     <insert id="addApproveAndGetId" parameterType="com.sgcc.bg.yszx.bean.WLApprove">
@@ -171,6 +191,12 @@
 		       t.approve_result = #{approve_result},
 		       t.approve_remark = #{approve_remark},
 		       t.approve_date   = #{approve_date}
+		       <if test="audit_flag!=null">
+		   		,t.audit_flag   = #{audit_flag}
+		       </if>
+		       <if test="approve_node!=null">
+		   		,t.approve_node   = #{approve_node}
+		       </if>
 		 where t.id = #{id}                     
 	</update>
 	<!--  根据审批记录id获取审批相关信息-->
@@ -199,16 +225,61 @@
 		    on idea.uuid = r.business_id
 		   and idea.valid = '1'
 		 where t.id = #{approveId}
-		   and t.valid = '1'
-		
+		   and t.valid = '1'		
     </select>
-    <!--  根据审批记录id获取提交记录-->
-    <select id="getFirstApproveByApplyId" resultType="java.util.Map">
-		select T.ID, T.APPLY_ID, T.CREATE_USER
+    <!--  根业务id获取审批相关信息-->
+    <select id="getApproveInfoByBussinessId" resultType="java.util.Map">
+		select T.ID             APPROVE_ID,
+		       APP.ID           APPLY_ID,
+		       R.BUSINESS_ID,
+		       WRULE.ID         RULE_ID,
+		       T.APPROVE_STATUS,
+		       T.AUDIT_FLAG,
+		       WRULE.NODE,
+		       IDEA.VISIT_LEVEL,
+       		   APP.FUNCTION_TYPE,
+		       T.CREATE_USER
 		  from tb_wl_approve t
-		 where T.APPLY_ID = #{apply_id}
+		  left join tb_wl_apply app
+		    on APP.ID = t.apply_id
+		   and app.valid = '1'
+		  left join tb_wl_business_r_apply r
+		    on r.apply_id = app.id
+		   and r.valid = '1'
+		  left join tb_wl_rule wrule
+		    on wrule.id = t.approve_node
+		   and wrule.valid = '1'
+		  left join tb_yszx_idea idea
+		    on idea.uuid = r.business_id
+		   and idea.valid = '1'
+		 where idea.uuid = #{bussiness_id}
+		   and t.valid = '1'			   
+           and app.approve_id = t.id	
+    </select>
+    <!--  撤回   根据审批记录id获取上一流程的提交记录  按角色-->
+    <select id="getLastApproveByApproveId" resultType="java.util.Map">
+		select last_2.ID APPROVE_ID, last_2.approve_node RULE_ID
+		  from tb_wl_approve t
+		  LEFT JOIN tb_wl_approve last_1
+		    on last_1.next_approve_id = t.id
+		   and last_1.valid = '1'
+		  LEFT JOIN tb_wl_approve last_2
+		    on last_2.next_approve_id = last_1.id
+		   and last_2.valid = '1'
+		 where 1 = 1
+		   and t.id = #{approveId}
 		   and t.valid = '1'
-		   AND T.APPROVE_STEP = '1'		
+    </select>
+    <!--  撤回   根据审批记录id获取上一流程的提交记录  按人-->
+    <select id="getLastApproveUserByApproveId" resultType="java.util.Map">
+		select last_1.ID APPROVE_ID, last_1.approve_node RULE_ID,last_1.approve_user APPROVE_USER
+		  from tb_wl_approve t
+		  LEFT JOIN tb_wl_approve last_1
+		    on last_1.next_approve_id = t.id
+		   and last_1.valid = '1' 
+		 where 1 = 1
+		   and t.id = #{approveId}
+		   and t.valid = '1'
     </select>
 	<!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓待办用户表↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
 	<!-- 新增待办用户记录 -->
@@ -243,4 +314,7 @@
 		 where t.approve_id = #{approve_id} 
 		   and t.approve_user != #{approve_user}                      
 	</update>
+	
+	
+	
 </mapper>
