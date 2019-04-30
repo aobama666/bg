@@ -32,6 +32,12 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<!-- 本页面所需的js -->
  	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomList.js"></script>
+ 	<style>
+ 		.paging_hint,.paging_vessel{margin-bottom:10px;}
+ 		#datagrid div{
+	 		height:450px!important;
+	 	}   
+ 	</style>
 </head>
 <body>
 	<div class="main_div"></div>
@@ -75,7 +81,7 @@
 	
 	<!-- start 列表展示 -->
 	<div class="tabbable" >
-		<div id="datagrid"></div>
+		<div id="datagrid" style="height:450px;margin-bottom: 10px;"></div>
 		<div class="tablepage"></div>
 	</div>
 	<!-- end 列表展示 -->
