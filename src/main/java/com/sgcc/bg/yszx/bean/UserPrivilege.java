@@ -7,6 +7,7 @@ public class UserPrivilege {
 	private String deptId;
 	private String deptName;
 	private String deptCode;
+	private String phone;
 	public String getUserId() {
 		return userId;
 	}
@@ -43,5 +44,12 @@ public class UserPrivilege {
 	public void setDeptCode(String deptCode) {
 		this.deptCode = deptCode;
 	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	
 	
 }

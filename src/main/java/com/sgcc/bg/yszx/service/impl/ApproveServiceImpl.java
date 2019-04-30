@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sgcc.bg.common.ConfigUtils;
+ 
 import com.sgcc.bg.yszx.bean.ReturnMessage;
 import com.sgcc.bg.yszx.bean.WLApply;
 import com.sgcc.bg.yszx.bean.WLApprove;
@@ -33,7 +34,6 @@ public class ApproveServiceImpl implements ApproveService{
 		boolean result = false;
 		//返回消息
 		String message = "";
-		
 		try{
 		//获取业务主表
 		Map<String, Object> ideaInfoMap = ideaServcie.selectForId(bussinessId);
