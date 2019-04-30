@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.sgcc.bg.common.ConfigUtils;
 import com.sgcc.bg.model.HRUser;
 import com.sgcc.bg.service.UserService;
-import com.sgcc.bg.yszx.bean.IdeaInfo;
 import com.sgcc.bg.yszx.bean.ReturnMessage;
 import com.sgcc.bg.yszx.bean.WLApply;
 import com.sgcc.bg.yszx.bean.WLApprove;
@@ -38,7 +37,6 @@ public class ApproveServiceImpl implements ApproveService{
 		boolean result = false;
 		//返回消息
 		String message = "";
-		
 		try{
 		//获取用户
 		HRUser user = userService.getUserByUserName(applyUser);

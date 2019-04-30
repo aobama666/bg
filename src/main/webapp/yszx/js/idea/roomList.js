@@ -149,8 +149,8 @@ roomList.initDataGrid = function(){
 			messager.tip("每次只能修改一条数据",2000);
 			return;
 		}
-		if(checkedItems[0].projectStatus=="3" || checkedItems[0].projectStatus=="4"){
-			messager.tip("该无法修改",2000);
+		if(checkedItems[0].approveState!="DEPT_HEAD_CHECK" && checkedItems[0].approveState!="SAVE"){
+			messager.tip("该无法修改,审批状态为：待提交,待部门领导审核才可以修改",2000);
 			return;
 		}
 		var id = dataGrid.getCheckedIds();

@@ -64,10 +64,10 @@ function checkDate(stateDate,endDate){
  
 /* 保存信息库信息 */
 roomDetailInfo.messageSave= function(approvalUserd){
-	   debugger;
-	    alert(approvalUserd);
+	   
 	   /* 主ID  */
 	    var id=$("#id").val();
+	    
 		/* 验证必填项   */
 		var validNull = dataForm.validNullable();
 		if(!validNull){
@@ -189,7 +189,6 @@ roomDetailInfo.messageSave= function(approvalUserd){
 				 
 				roomDetailInfo.saveBtnClickFlag = 0;//保存按钮点击事件
 				if(data.success=="ture"){
-					alert("保存成功");
 					roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
 					var closeIndex = parent.layer.getFrameIndex(window.name);
 					parent.layer.close(closeIndex);
@@ -206,51 +205,61 @@ roomDetailInfo.messageSave= function(approvalUserd){
 }
 /* 提交信息库信息 */
 roomDetailInfo.messageSubmit= function(){
-	layer.confirm(
-			 messageSubmitHtml(),
-			 {title:'请选择审批人', skin:'demo-class'},
-			 function(){
-				 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
-				 if(checkedNumber == 0){
-					    messager.tip("参观结束日期不能早于参观开始日期！",2000);
-						roomDetailInfo.saveBtnClickFlag = 0;
-						return ;
-			     }else if(checkedNumber > 1 ){
-			        
-			     }else{
-			    	var userId =$("#userId").val();//审批人id
-			    	roomDetailInfo.messageSave(userId);
-			    	
-			    }
-				 
-				 
-				 
-				 
-				 
-				 
-             });
+	var html=messageSubmitHtml();
+	 
+	if(html =='' || html ==undefined){
+		layer.open({
+	        title:'提示信息',
+	        content:'审批人查询失败',
+	        area:'300px',
+	        skin:'demo-class'
+	    }) 
+	}else{
+		layer.confirm(
+				 html,
+				 {title:'请选择审批人', area:'800px',skin:'demo-class'   },
+				 function(){
+					 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
+					 if(checkedNumber == 0){
+						    messager.tip("参观结束日期不能早于参观开始日期！",2000);
+							roomDetailInfo.saveBtnClickFlag = 0;
+							return ;
+				     }else if(checkedNumber > 1 ){
+				        
+				     }else{
+				    	var userId =$("#userId").val();//审批人id
+				    	roomDetailInfo.messageSave(userId);
+				    	 layer.close(layer.index);
+				    }
+	             });
+		        
+		
+		
+	}
+
 }
 
 /* 提交信息库信息---页面拼接 */
 
 
 function messageSubmitHtml(){
+	var approveState=$("#approveState").val();
 	var userPrivilegehtml = '';
 	$.ajax({
-	    url: "/bg/Privilege/getApproveUserByUserName",//获取申报界面数据字典
+	    url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState,//获取申报界面数据字典
 		type: "post",
 		dataType: "json",
 		async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
 		success: function (data) {
-			
-			if(data.success){
-				 
+			 
+			if(data.success =='true'){
 		    	var userPrivilegelist = data.data.userPrivilege;
 				userPrivilegehtml += '<table class="userPrivilege tableStyle thTableStyle">';
 				userPrivilegehtml += '<tr>';
 				     userPrivilegehtml += '<th>选择</th>';
 				     userPrivilegehtml += '<th>审批人</th>';
-				     userPrivilegehtml += '<th>审批部门</th>';
+				     userPrivilegehtml += '<th>部门</th>';
+				     
 				userPrivilegehtml += '</tr>';
 					for (var i = 0; i < userPrivilegelist.length; i++) {
 						userPrivilegehtml += '<tr>';
@@ -264,23 +273,20 @@ function messageSubmitHtml(){
 						     userPrivilegehtml += '<td class="addInputStyle">';
 						       userPrivilegehtml+='<input type="text" disabled   id="deptName"   name = "deptName"   class="deptName inputChange"  value="' + userPrivilegelist[i].deptName + '" title="审批人单位" />'
 						     userPrivilegehtml += '</td>';
+						       
 						 userPrivilegehtml += '</tr>';      
-						 
 					}
 				userPrivilegehtml += '</table>';
 				 
+				 
 			}else{
-				layer.open({
-	    	        title:'提示信息',
-	    	        content:data.msg,
-	    	        area:'300px',
-	    	        skin:'demo-class'
-	    	    }) 
+				
+				userPrivilegehtml ;
 			}
 		 
 		}
 	});
-	 return userPrivilegehtml;
+	return userPrivilegehtml;
 }
 
 
@@ -541,8 +547,9 @@ roomDetailInfo.SelectForUserId = function(userId){
 	$.ajax({
 	    url: "/bg/IdeaInfo/selectForuserName?userId="+userId,//获取申报界面数据字典
 		type: "post",
+		
 		success: function (data) {
-			if(data.success=="ture"){
+			if(data.success){
 				var userData = data.userInfo;
 				var userInfoData = '';
 				for (var i = 0; i < userData.length; i++) {
