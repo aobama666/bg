@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+ -->
+<mapper namespace="com.sgcc.bg.yszx.mapper.YszxQueryAllMapper">
+	<!--  根据用户ID,获取待办列表-->
+    <select id="queryAllList" resultType="java.util.Map">
+		SELECT T.UUID as "id",
+		       T.APPLY_NUMBER as "applyNumber",
+		       TO_CHAR(T.CREATE_TIME, 'YYYY-MM-DD') as "applyTime",
+		       D.DEPTID as "applyDeptId",
+		       D.DEPTNAME as "applyDept",
+		       TO_CHAR(T.START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+		       TO_CHAR(T.END_DATE, 'YYYY-MM-DD HH24:MI') as "endDate",
+		       T.CONTACT_USER as "contactUser",
+		       T.CONTACT_PHONE as "contactPhone",
+		       T.STATUS as "status",
+		       DIR.NAME as "statusName",
+		       T.APPLY_ID as "applyId",
+		       AY.APPROVE_ID as "approveId",
+		       TO_CHAR(AP.CREATE_TIME, 'YYYY-MM-DD HH24:MI:SS') as "submitDate"
+		  FROM (SELECT TB.*, ROWNUM AS ROWNO
+		          FROM (SELECT TA.*,AP1.ID
+		                  FROM TB_YSZX_IDEA TA
+		                  LEFT JOIN TB_WL_APPLY AY1
+		                    ON AY1.ID = TA.APPLY_ID
+		                   AND AY1.VALID = '1'                    
+		                  LEFT JOIN TB_WL_APPROVE AP1
+		                    ON AP1.ID = AY1.APPROVE_ID
+		                   AND AP1.VALID = '1'
+		                  LEFT JOIN TB_WL_AUDIT_USER AU
+		                    ON AU.APPROVE_ID = AP1.ID
+		                   AND AU.VALID = '1'
+		                   LEFT JOIN BG_SYS_DEPT D2
+		    				ON D2.DEPTID = TA.APPLY_DEPT
+		                 WHERE TA.VALID = '1'		                   	                   
+		                   <if test="applyNumber!=null and applyNumber.trim().length()>0">
+				           AND TA.APPLY_NUMBER like '%'||#{applyNumber}||'%'
+				           </if>
+				           <if test="applyDept!=null and applyDept.trim().length()>0">
+				           AND D2.DEPTNAME like '%'||#{applyDept}||'%'
+				           </if>
+				           <if test="contactUser!=null and contactUser.trim().length()>0">
+				           AND TA.CONTACT_USER like '%'||#{contactUser}||'%'
+				           </if>
+		                  ORDER BY TA.CREATE_TIME DESC) TB
+		         WHERE #{page_end} >= ROWNUM) T
+		  LEFT JOIN BG_SYS_DEPT D
+		    ON D.DEPTID = T.APPLY_DEPT
+		  LEFT JOIN BG_SYS_DATADICTIONARY DIR
+		    ON DIR.PCODE = 'YSZX_APPROVE_STATE'
+		   AND DIR.VAILD = 1
+		   AND DIR.CODE = T.STATUS
+		  LEFT JOIN TB_WL_APPLY AY
+		   ON AY.ID = T.APPLY_ID 
+		  LEFT JOIN TB_WL_APPROVE AP
+		    ON AP.ID = AY.APPROVE_ID
+		 WHERE T.ROWNO > #{page_start}
+		   AND T.VALID = '1'
+    </select>    
+    
+    	<!--  根据用户ID,获取已办列表-->
+    <select id="getDoneItemListByUserId" resultType="java.util.Map">
+		SELECT T.UUID as "id",
+		       T.APPLY_NUMBER as "applyNumber",
+		       TO_CHAR(T.CREATE_TIME, 'YYYY-MM-DD') as "applyTime",
+		       D.DEPTID as "applyDeptId",
+		       D.DEPTNAME as "applyDept",
+		       TO_CHAR(T.START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+		       TO_CHAR(T.END_DATE, 'YYYY-MM-DD HH24:MI') as "endDate",
+		       T.CONTACT_USER as "contactUser",
+		       T.CONTACT_PHONE as "contactPhone",
+		       T.STATUS as "status",
+		       DIR.NAME as "statusName",
+		       T.APPLY_ID as "applyId",
+		       AY.APPROVE_ID as "approveId",
+		       TO_CHAR(AP.APPROVE_DATE, 'YYYY-MM-DD HH24:MI:SS') as "approveDate"
+		  FROM (SELECT TB.*, ROWNUM AS ROWNO
+		          FROM (SELECT TA.*,AP1.ID
+		                  FROM TB_YSZX_IDEA TA
+		                  LEFT JOIN TB_WL_APPLY AY1
+		                    ON AY1.ID = TA.APPLY_ID
+		                   AND AY1.VALID = '1'                    
+		                  LEFT JOIN TB_WL_APPROVE AP1
+		                    ON AP1.ID = AY1.APPROVE_ID
+		                   AND AP1.VALID = '1'
+		                  LEFT JOIN TB_WL_AUDIT_USER AU
+		                    ON AU.APPROVE_ID = AP1.ID
+		                   AND AU.VALID = '1'
+		                   LEFT JOIN BG_SYS_DEPT D2
+		    				ON D2.DEPTID = TA.APPLY_DEPT
+		                 WHERE TA.VALID = '1'
+		                   AND AP1.ID IS NOT NULL
+		                   AND AP1.AUDIT_FLAG = '1'
+		                   AND AP1.APPROVE_STATUS = '1'
+		                   AND AU.APPROVE_USER = #{userId}
+		                   <if test="applyNumber!=null and applyNumber.trim().length()>0">
+				           AND TA.APPLY_NUMBER like '%'||#{applyNumber}||'%'
+				           </if>
+				           <if test="applyDept!=null and applyDept.trim().length()>0">
+				           AND D2.DEPTNAME like '%'||#{applyDept}||'%'
+				           </if>
+				           <if test="contactUser!=null and contactUser.trim().length()>0">
+				           AND TA.CONTACT_USER like '%'||#{contactUser}||'%'
+				           </if>
+		                  ORDER BY AP1.APPROVE_DATE DESC) TB
+		         WHERE #{page_end} >= ROWNUM) T
+		  LEFT JOIN BG_SYS_DEPT D
+		    ON D.DEPTID = T.APPLY_DEPT
+		  LEFT JOIN BG_SYS_DATADICTIONARY DIR
+		    ON DIR.PCODE = 'YSZX_APPROVE_STATE'
+		   AND DIR.VAILD = 1
+		   AND DIR.CODE = T.STATUS
+		  LEFT JOIN TB_WL_APPLY AY
+		   ON AY.ID = T.APPLY_ID 
+		  LEFT JOIN TB_WL_APPROVE AP
+		    ON AP.ID = AY.APPROVE_ID
+		 WHERE T.ROWNO > #{page_start}
+		   AND T.VALID = '1'
+    </select> 
+    
+    <!--  获取参观领导     格式化-->
+    <select id="getVisitLeaderListById" resultType="java.util.Map">
+	    SELECT T.IDEAID, TO_CHAR(wm_concat(T.USERNAME)) USERNAME
+		  FROM (SELECT V.IDEAID, V.USERNAME, V.SORT_ID
+		          FROM TB_YSZX_VISIT V
+		         WHERE V.VALID = '1'
+		           <if test="ids!=null and ids.trim().length()>0">
+		           AND V.IDEAID in (${ids})
+		           </if>
+		         ORDER BY V.IDEAID, V.SORT_ID) T
+		 GROUP BY T.IDEAID
+    </select>   
+    <!--  获取院内领导     格式化-->
+    <select id="getCompanyLeaderListById" resultType="java.util.Map">
+	    SELECT T.IDEAID, TO_CHAR(wm_concat(T.USERNAME)) USERNAME
+		  FROM (SELECT C.IDEAID, NVL(CU.USERALIAS, CL.USERALISA) USERNAME
+		          FROM TB_YSZX_COMPANY_LEADER C
+		          LEFT JOIN TB_YSZX_CONFIG_COMPANY_LEADER CL
+		            ON CL.ID = C.USERID
+		          LEFT JOIN BG_SYS_USER CU
+		            ON CU.USERID = CL.USERID
+		         WHERE C.VALID = '1'
+		         <if test="ids!=null and ids.trim().length()>0">
+		          AND C.IDEAID in (${ids})
+		          </if>
+		         ORDER BY C.IDEAID, CL.SORTID) T
+		 GROUP BY T.IDEAID
+    </select>   
+    
+    <!--  获取院内部门人员     格式化-->
+    <select id="getCompanyDeptUserListById" resultType="java.util.Map">
+    SELECT T.IDEAID, TO_CHAR(wm_concat(T.USERNAME)) USERNAME
+	  FROM (SELECT C.IDEAID, CU.USERALIAS USERNAME
+	          FROM TB_YSZX_COMPANY_USER C
+	          LEFT JOIN BG_SYS_USER CU
+	            ON CU.USERID = C.USERID
+	          LEFT JOIN BG_SYS_DEPT D
+   			    ON CU.HRDEPTCODE = D.DEPTCODE
+	         WHERE C.VALID = '1' 
+	          <if test = "ids!=null and ids.trim().length()>0" >
+	           AND C.IDEAID in (${ids})
+	            </if>
+	         ORDER BY D.SORT_ID,CU.SORT_ID,CU.HRCODE) T
+	 GROUP BY T.IDEAID
+    </select>   
+</mapper>
