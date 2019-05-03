@@ -1,39 +1,42 @@
 
 //定义一个
-var roomList = {};
+var doneItem = {};
 var dicts = {};
 var dataItems = new Array();
 var index = 0;
-roomList.btn_type_flag = 0;
+doneItem.btn_type_flag = 0;
 $(function(){
 	
 	 
-	roomList.initDataGrid();
+	doneItem.initDataGrid();
 	var classQuery = $(".changeQuery");
 	/* 输入框的change事件，在输入过程中自动查询  */
-	$(".changeQuery").change(function(e){
-		roomList.query();
-	});
-	$(".inputQuery").on("input",function(e){
-		var valLength = e.target.value.length;
-		if(valLength>3){
-			roomList.query();
-		}
+//	$(".changeQuery").change(function(e){
+//		doneItem.query();
+//	});
+//	$(".inputQuery").on("input",function(e){
+//		var valLength = e.target.value.length;
+//		if(valLength>3){
+//			doneItem.query();
+//		}
+//	});
+	
+	
+	$("#queryButton").on("click",function(e){
+		doneItem.query();
 	});
 	//回车键出发搜索按钮
 	$("body").keydown(function () {
 	    if (event.keyCode == "13") {
-	    	dataItems = new Array();
-			index = 0;
-	        $("#datagrid").datagrid("seach");
+	    	doneItem.query();
 	        return false;
 	    }
 	});
-	roomList.btn_type_flag = 0;
+//	doneItem.btn_type_flag = 0;
 });
 
 /*  start  列表查询  */
-roomList.query = function(){
+doneItem.query = function(){
 	dataItems = new Array();
 	index = 0;
 	$("#datagrid").datagrid("seach");
@@ -41,25 +44,24 @@ roomList.query = function(){
 /*  end  列表查询  */
 
 /* 演示中心管理-初始化列表界面  */
-roomList.initDataGrid = function(){
+doneItem.initDataGrid = function(){
 	    $("#datagrid").datagrid({
-		url: "/bg/IdeaInfo/selectIdeaInfo",
+		url: "/bg/yszx/audit/queryDoneItem?tm="+new Date().getTime(),
 		type: 'POST',
-		form:'#queryForm',
-		 
-		pageSize:50,
+		form:'#queryForm',		 
+		pageSize:10,
 		tablepage:$(".tablepage"),//分页组件
-		successFinal:function(){
-			roomList.resize();
+		successFinal:function(data){
+			doneItem.resize();
 		},
 		callBackFunc:function(){
-			roomList.initItems();
+			doneItem.initItems();
 		},
 		columns: [
 		/*  {name: '序号',style:{width:"2%"}, data: 'RN'},    */      
 		  {name: '',style:{width:"2%"}, data: 'id',checkbox:true, forMat:function(row){
 			  dataItems[index] = row;//将一行数据放在一个list中
-			  return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.id)+'"/>';
+			  return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.ID)+'"/>';
 		 	}
 		  },
 		  {name: '申请单号',style:{width:"10%"}, data: 'applyNumber',forMat:function(row){
@@ -68,10 +70,10 @@ roomList.initDataGrid = function(){
 				  		"white-space: nowrap;" +
 				  		"text-overflow: ellipsis;" +
 				  		"overflow: hidden;' id = '"+row.id+"'" +
-				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.id+"')>"+row.applyNumber+"</a>";
+				  		"href = 'javascript:void(0)' onclick = doneItem.forDetails('"+row.id+"')>"+row.applyNumber+"</a>";
 				  		 
 		  }},
-		  {name: '申请时间', style:{width:"8%"},data: 'createTime'},
+		  {name: '申请时间', style:{width:"8%"},data: 'applyTime'},
 		  {name: '申请部门（单位）',style:{width:"10%"}, data: 'applyDept',forMat:function(row){
 			  if(row.applyDept){
 				  	return "<span title='"+row.applyDept+"' style='width:150px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.applyDept+"</span>"
@@ -95,18 +97,19 @@ roomList.initDataGrid = function(){
 			     }
 		  }},
 		  
-		  {name: '院内陪同人员', style:{width:"10%"},data: 'userName',forMat:function(row){
+		  {name: '院内陪同人员', style:{width:"10%"},data: 'deptUserName',forMat:function(row){
 			  if(row.userName){
-				  	return "<span title='"+row.userName+"' style='width:150px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.userName+"</span>"
+				  	return "<span title='"+row.deptUserName+"' style='width:150px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.deptUserName+"</span>"
 				  }else{
 					  return "";
 			     }
 		  }},
 		  {name: '参观开始时间', style:{width:"8%"},data: 'stateDate'},
 		  {name: '参观结束时间', style:{width:"8%"},data: 'endDate'},
-		  {name: '审批状态',style:{width:"7%"},data: 'status'   },
+		  {name: '审批状态',style:{width:"7%"},data: 'statusName'   },
 		  {name: '联系人', style:{width:"6%"},data: 'contactUser'},
-		  {name: '联系方式', style:{width:"8%"},data: 'contactPhone'}
+		  {name: '联系方式', style:{width:"8%"},data: 'contactPhone'},
+		  {name: '审批时间', style:{width:"8%"},data: 'approveDate'}
 		  
 		]
 	});
@@ -114,7 +117,7 @@ roomList.initDataGrid = function(){
 }	
 	
 	/*演示中心管理-查看 */	
-	roomList.forDetails = function (id){
+	doneItem.forDetails = function (id){
 		var url = "/bg/yszx/details?id="+id;
 //基于上级窗口  弹层   不适用于统一平台集成
 //			parent.layer.open({
@@ -129,7 +132,9 @@ roomList.initDataGrid = function(){
 			});
 	}
 	/*演示中心管理-新增 */
-	roomList.addEvent = function (){
+	doneItem.passEvent = function (){
+		alert("待开发。。。");
+		return;
 		var url = "/bg/yszx/addPage"
 			//基于上级窗口  弹层   不适用于统一平台集成
 //			parent.layer.open({
@@ -145,8 +150,10 @@ roomList.initDataGrid = function(){
 	}
 		
 	/* 演示中心管理-修改*/
-	roomList.updateEvent = function(){
-		 
+	doneItem.backEvent = function(){
+		alert("待开发。。。");
+		return; 
+		
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
 			messager.tip("请选择要操作的数据",1000);
@@ -174,37 +181,6 @@ roomList.initDataGrid = function(){
 		});
 		 
 	}
-	/* 演示中心管理-删除方法*/
-	roomList.delEvent = function(){
-		var checkedIds = dataGrid.getCheckedIds();
-		if(checkedIds.length==0){
-			messager.tip("请选择要操作的数据",1000);
-			return;
-		}
-		$.messager.confirm( "删除提示", "确认删除选中数据吗",
-			function(r){
-				if(r){
-					$.ajax({
-					    url: "/bg/IdeaInfo/deleteIdeaInfo?ideaId="+checkedIds,//删除
-						type: "post",
-						dataType:"json",
-						contentType: 'application/json',
-						success: function (data) {
-							if(data.success == "true"){
-								messager.tip("删除成功",1000);
-								roomList.query();
-							}else{
-								messager.tip("删除失败",1000);
-								roomList.query();
-							}
-						}
-					});
-				}
-			}
-		);
-	}
-	
-	
 	
 	
 	
@@ -225,7 +201,7 @@ $(".check_").change(function(){
 /*  end 全选、取消全选 */
 
 /* 初始化dataItems */
-roomList.initItems = function(){
+doneItem.initItems = function(){
 	dataItems = new Array();
 	index = 0;
 }
@@ -236,16 +212,16 @@ roomList.initItems = function(){
 /* end 删除方法*/
 
 
-roomList.resize=function(){
+doneItem.resize=function(){
 	var height=$("body").height()-$(".sheach").height()-$("#funcBtn").height()-65;
 	$("#datagrid>div").css({"height":height});
 }
 $(window).resize(function(){
-	roomList.resize();
+	doneItem.resize();
 })
 
 
-roomList.openRoomDetail = function (id,type){
+doneItem.openRoomDetail = function (id,type){
 	var url = "/bg/nonProject2/pro_details?proId="+id;
 	if(parent.layer.open){
 		parent.layer.open({
