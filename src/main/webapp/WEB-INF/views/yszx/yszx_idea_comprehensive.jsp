@@ -9,7 +9,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
-	<title>演示中心管理列表页</title>
+	<title>演示中心综合查询表页</title>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 	<!-- newPage、item.css 页面css-->
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid/css/newPage.css" rel="stylesheet" type="text/css"/>
@@ -32,7 +32,7 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<!-- 本页面所需的js -->
- 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomList.js"></script>
+ 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomComprehensive.js"></script>
   
 </head>
 <body>
@@ -40,7 +40,7 @@
 	<input type = "hidden" value = ${filter} id = "filter" >  
 	<!-- start    查询条件 -->
 	<div class="sheach">
-		<div class='content_top'>参观设定</div>	 
+		<div class='content_top'>综合查询</div>	 
 		<form id="queryForm" style="margin-bottom: 10px;">
 			<label>申请单号：</label>
 			<input type = "text" id = "applyId" name = "applyId" style="width: 10%" class = "inputQuery changeQuery" >
@@ -65,6 +65,19 @@
 				<option value="11"   ${month == '11' ?"selected='selected'":''}>11月</option>
 				<option value="12"   ${month == '12' ?"selected='selected'":''}>12月</option>
 			</select>
+			<label  for="year" class="yearTitle">申请部门（单位）：</label>
+			<select id = "applyDept" name = "applyDept"   class = "changeQuery changeYear">
+				<option value = "${year}">  ${year}   </option>
+			</select>
+			<label>参观领导姓名：</label>
+			<input type = "text" id = "visitUserName" name = "visitUserName" style="width: 10%" class = "inputQuery changeQuery" >
+			<label>参观领导级别：</label>
+			<select id="userLevel"  name = "userLevel"  class = "changeQuery userlevel"  >
+						<option value=""  >请选择参观领导级别</option>
+						<c:forEach  var="visitUnitLevleInfo"  items="${visitUnitLevleInfo}">
+					        <option value ="${visitUnitLevleInfo.K}"        > ${visitUnitLevleInfo.V}</option>
+					     </c:forEach>
+			        	</select>
 			<!-- 查询按钮  -->
 			<div id = "queryButton" class = "btn query" onclick = "roomList.query()">搜索</div> <!-- 原来引用的函数onclick = "roomList.query()" -->
 		</form>
@@ -73,17 +86,14 @@
 	
 	<!-- start   新增  修改  删除按钮 -->
 	<div id="funcBtn" style="width:100%;height: 35px;margin-bottom:-35px;">
-		<div class='btn right deleteButton' onclick="roomList.delEvent()" >删除</div>
-		<div class='btn right repealButton' onclick="roomList.repealEvent()">撤销</div>
-		<div class='btn right submitButton' onclick="roomList.submitEvent()">提交</div>
-	   	<div class='btn right updateButton' onclick="roomList.updateEvent()">修改</div>
-	   	<div class='btn right addButton' onclick="roomList.addEvent()">新增</div> 
+		<div class='btn right deleteButton' onclick="roomList.delEvent()" >导出</div>
+		 
 	</div>
 	<!-- end   新增  修改  删除按钮 -->
 	
 	<!-- start 列表标题 -->
 	<div class="grid-title">
-		<h3>参观预定序列</h3>
+		<h3>综合查询列表</h3>
 	</div>
 	<!-- end 列表标题 -->
 	

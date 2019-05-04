@@ -228,7 +228,7 @@ roomDetailInfo.messageSubmit= function(){
 				        
 				     }else{
 				    	 
-				    	roomDetailInfo.messageSave(userId);
+				    	 roomDetailInfo.messageSave(userId);
 				    	 layer.close(layer.index);
 				    }
 	             });

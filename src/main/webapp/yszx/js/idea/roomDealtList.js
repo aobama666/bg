@@ -41,7 +41,7 @@ roomList.query = function(){
 /* 演示中心管理-初始化列表界面  */
 roomList.initDataGrid = function(){
 	    $("#datagrid").datagrid({
-		url: "/bg/IdeaInfo/selectIdeaInfo",
+		url: "/bg/IdeaInfo/selectForDealtInfo",
 		type: 'POST',
 		form:'#queryForm',
 		 
@@ -110,7 +110,6 @@ roomList.initDataGrid = function(){
 	});
 
 }	
-	
 	/*演示中心管理-查看 */	
 	roomList.forDetails = function (id,applyId){
 		var url = "/bg/yszx/details?id="+id+"&applyId="+applyId;
@@ -123,102 +122,24 @@ roomList.initDataGrid = function(){
 				content:url, 
 			});
 	}
-	/*演示中心管理-新增 */
-	roomList.addEvent = function (){
-		var url = "/bg/yszx/addPage"
-			parent.layer.open({
-				type:2,
-				title:'<h4 style="height:42px;line-height:25px;">参观中心-新增</h4>',
-				area:['100%','100%'],
-				fixed:false,//不固定
-				maxmin:true,
-				content:url, 
-			});
-	}
-		
-	/* 演示中心管理-修改*/
-	roomList.updateEvent = function(){
-		 
+	/* 演示中心待办管理-同意方法*/
+	roomList.agreeEvent = function(){
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
 			messager.tip("请选择要操作的数据",1000);
 			return;
 		}else if(checkedItems.length>1){
-			messager.tip("每次只能修改一条数据",2000);
-			return;
-		}
-		if(checkedItems[0].approveState!="DEPT_HEAD_CHECK" && checkedItems[0].approveState!="SAVE"){
-			messager.tip("该无法修改,审批状态为：待提交,待部门领导审核才可以修改",2000);
-			return;
-		}
-		var id = dataGrid.getCheckedIds();
-		var url = "/bg/yszx/updatePage?id="+id;
-		parent.layer.open({
-			type:2,
-			title:'<h4 style="height:42px;line-height:42px;">演示中心-修改 </h4>',
-			area:['100%','100%'],
-			fixed:false,//不固定
-			maxmin:true,
-			content:url, 
-		});
-		 
-	}
-	/* 演示中心管理-删除方法*/
-	roomList.delEvent = function(){
-		var checkedItems = dataGrid.getCheckedItems(dataItems);
-		if(checkedItems.length==0){
-			messager.tip("请选择要操作的数据",1000);
-			return;
-		}else if(checkedItems.length>1){
-			messager.tip("每次只能删除一条数据",2000);
+			messager.tip("每次只能选择一条数据",2000);
 			return;
 		}
 		var checkedIds = dataGrid.getCheckedIds();
-		$.messager.confirm( "删除提示", "确认删除选中数据吗",
-			function(r){
-				if(r){
-					$.ajax({
-					    url: "/bg/IdeaInfo/deleteIdeaInfo?ideaId="+checkedIds,//删除
-						type: "post",
-						dataType:"json",
-						contentType: 'application/json',
-						success: function (data) {
-							if(data.success == "true"){
-								messager.tip("删除成功",1000);
-								roomList.query();
-							}else{
-								messager.tip("删除失败",1000);
-								roomList.query();
-							}
-						}
-					});
-				}
-			}
-		);
-	}
 	
-	/* 演示中心管理-提交方法*/
-	roomList.submitEvent = function(){
-		 
-		var checkedItems = dataGrid.getCheckedItems(dataItems);
-		if(checkedItems.length==0){
-			messager.tip("请选择要操作的数据",1000);
-			return;
-		}else if(checkedItems.length>1){
-			messager.tip("每次只能提交一条数据",2000);
-			return;
-		}
-		
-		if(checkedItems[0].approveState!="DEPT_HEAD_CHECK" && checkedItems[0].approveState!="SAVE"){
-			messager.tip("该无法提交,审批状态为：待提交,待部门领导审核才可以提交",2000);
-			return;
-		}
-		var userPrivilegehtml = '';
-		var approveState=checkedItems[0].approveState;
-		messageSubmit();
+		messageSubmit("1");
 	}
+
+	
 	/* 提交信息库信息 */
-	messageSubmit= function(){
+	messageSubmit= function(stauts){
 		debugger;
 		var html=messageSubmitHtml();
 		if(html =='' || html ==undefined){
@@ -234,7 +155,7 @@ roomList.initDataGrid = function(){
 					 {title:'请选择审批人', area:'800px',skin:'demo-class'   },
 					 function(){
 						 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
-						 var approvalUserd=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
+						 var auditUserId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
 						 if(checkedNumber == 0){
 							     
 					     }else if(checkedNumber > 1 ){
@@ -244,9 +165,10 @@ roomList.initDataGrid = function(){
 					    	var checkedIds = dataGrid.getCheckedIds();
 					 		$.messager.confirm( "提交提示", "确认提交选中数据吗",
 					 			function(r){
-					 				if(r){
+					 			var checkedItems = dataGrid.getCheckedItems(dataItems);
+					 			var approveId= checkedItems[0].wlApproveId;
 					 					$.ajax({
-					 					    url: "/bg/IdeaInfo/submitForStatus?ideaId="+checkedIds+"&approvalUserd="+approvalUserd,//删除
+					 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId,//删除
 					 						type: "post",
 					 						dataType:"json",
 					 						contentType: 'application/json',
@@ -260,7 +182,7 @@ roomList.initDataGrid = function(){
 					 							}
 					 						}
 					 					});
-					 				}
+					 				 
 					 			}
 					 		);
 					    	 layer.close(layer.index);
@@ -272,7 +194,6 @@ roomList.initDataGrid = function(){
 		}
 
 	}
-
 	/* 提交信息库信息---页面拼接 */
 	messageSubmitHtml=  function (){
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
@@ -322,8 +243,13 @@ roomList.initDataGrid = function(){
 	
 	
 	
-	/* 演示中心管理-撤销方法*/
-	roomList.repealEvent = function(){
+	
+	
+	
+	
+	
+	/* 演示中心待办管理-退回方法*/
+	roomList.returnEvent = function(){
 		debugger;
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		
@@ -331,19 +257,17 @@ roomList.initDataGrid = function(){
 			messager.tip("请选择要操作的数据",1000);
 			return;
 		}else if(checkedItems.length>1){
-			messager.tip("每次只能提交一条数据",2000);
+			messager.tip("每次只能选择一条数据",2000);
 			return;
 		}
-		if(checkedItems[0].approveState =="CANCEL"  ){
-			messager.tip("该无法撤销,审批状态为：已撤销",2000);
-			return;
-		}
+	 
 		var checkedIds = dataGrid.getCheckedIds();
-		$.messager.confirm( "撤销提示", "确认撤销选中数据吗",
+		var stauts="0";
+		$.messager.confirm( "撤销提示", "确认退回选中数据吗",
 			function(r){
 				if(r){
 					$.ajax({
-					    url: "/bg/IdeaInfo/repealForStatus?ideaId="+checkedIds,//删除
+					    url: "/bg/Approve/sendApprove?ideaId="+checkedIds,//删除
 						type: "post",
 						dataType:"json",
 						contentType: 'application/json',
@@ -361,6 +285,18 @@ roomList.initDataGrid = function(){
 			}
 		);
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -390,8 +326,6 @@ roomList.initItems = function(){
 
 
 /* end 删除方法*/
-
-
 roomList.resize=function(){
 	var height=$("body").height()-$(".sheach").height()-$("#funcBtn").height()-65;
 	$("#datagrid>div").css({"height":height});
@@ -401,61 +335,4 @@ $(window).resize(function(){
 })
 
 
-roomList.openRoomDetail = function (id,type){
-	var url = "/bg/nonProject2/pro_details?proId="+id;
-	if(parent.layer.open){
-		parent.layer.open({
-			type:2,
-			title:'<h4 style="height:42px;line-height:42px;">实验室信息</h4>',
-			area:['90%','90%'],
-			fixed:false,//不固定
-			maxmin:true,
-			content:url,
-			cancel:function(index,layero){
-				if(type=="edit"){
-					var iframeWin = window[layero.find('iframe')[0]['name']];
-					var layerViewSaveFlag = iframeWin.roomDetailInfo.saveInfoFlag;
-					if(!layerViewSaveFlag){
-						if(confirm("数据改变还未保存，是否关闭弹框？")){
-							return true;
-						}else{
-							return false;
-						}
-					}
-				}
-			},
-			end:function(){
-				dataItems = new Array();
-				index = 0;
-				$("#datagrid").datagrid("refresh");
-			}
-		});
-	}else{
-		layer.open({
-			type:2,
-			title:'<h4 style="height:42px;line-height:42px;">实验室信息</h4>',
-			area:['90%','90%'],
-			fixed:false,//不固定
-			maxmin:true,
-			content:url,
-			cancel:function(index,layero){
-				if(type=="edit"){
-					var iframeWin = window[layero.find('iframe')[0]['name']];
-					var layerViewSaveFlag = iframeWin.roomDetailInfo.saveInfoFlag;
-					if(!layerViewSaveFlag){
-						if(confirm("数据改变还未保存，是否关闭弹框？")){
-							return true;
-						}else{
-							return false;
-						}
-					}
-				}
-			},
-			end:function(){
-				dataItems = new Array();
-				index = 0;
-				$("#datagrid").datagrid("refresh");
-			}
-		});
-	}
-}
+ 

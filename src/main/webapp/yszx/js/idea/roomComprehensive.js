@@ -77,14 +77,16 @@ roomList.initDataGrid = function(){
 					  return "";
 			 }
 		  }},
-		 
-		  {name: '主要参观领导', style:{width:"10%"},data: 'visitName',forMat:function(row){
+		  {name: '参观开始时间', style:{width:"8%"},data: 'stateDate'},
+		  {name: '参观结束时间', style:{width:"8%"},data: 'endDate'},
+		  {name: '主要参观领导职务和级别', style:{width:"10%"},data: 'visitName',forMat:function(row){
 			  if(row.visitName){
 				  	return "<span title='"+row.visitName+"' style='width:150px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.visitName+"</span>"
 				  }else{
 					  return "";
 			     }
 		  }},
+		  {name: '总参观人数',style:{width:"7%"},data: 'visitorNumber'   },
 		  {name: '院内陪同领导', style:{width:"10%"},data: 'leaderName',forMat:function(row){
 			  if(row.leaderName){
 				  	return "<span title='"+row.leaderName+"' style='width:150px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.leaderName+"</span>"
@@ -100,9 +102,8 @@ roomList.initDataGrid = function(){
 					  return "";
 			     }
 		  }},
-		  {name: '参观开始时间', style:{width:"8%"},data: 'stateDate'},
-		  {name: '参观结束时间', style:{width:"8%"},data: 'endDate'},
-		  {name: '审批状态',style:{width:"7%"},data: 'status'   },
+		 
+		  {name: '总陪同人数',style:{width:"7%"},data: 'companyUserNumber'   },
 		  {name: '联系人', style:{width:"6%"},data: 'contactUser'},
 		  {name: '联系方式', style:{width:"8%"},data: 'contactPhone'}
 		  

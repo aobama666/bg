@@ -850,7 +850,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	 */
 	@Override
 	public List<Map<String, Object>> selectForIdeaInfo(String  applyId,String createTime) {
-		  List<Map<String, Object>>  ideaInfo=yszxMapper.selectForIdeaInfo(applyId, createTime);
+		  List<Map<String, Object>>  ideaInfo=yszxMapper.selectForIdeaInfo(applyId, createTime,"");
 		  List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
 		  if(!ideaInfo.isEmpty()){
 			  for(Map<String, Object>  idea:ideaInfo){
@@ -877,8 +877,13 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		  if(!visitInfo.isEmpty()){
 			  for(Map<String, Object>  visit:visitInfo){
 				  String userName=Rtext.toStringTrim(visit.get("userName"), "");
+				  String position=Rtext.toStringTrim(visit.get("position"), "");
+				  String userLevel=Rtext.toStringTrim(visit.get("userLevel"), "");
+				  
+				  List<Map<String, Object>>  list=yszxMapper.selectForCode("visitunit_levle",userLevel);
+				  String  levelName=Rtext.toStringTrim(list.get(0).get("name"), "");;
 				  if(!"".equals(userName)){
-					  visitName +=userName+",";
+					  visitName +=userName+"("+position+"、"+levelName+")"+",";
 				  }
 				  
 			  }
@@ -924,13 +929,13 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				  if(!userInfo.isEmpty()){
 					  for(Map<String, Object>  visit:userInfo){
 						  String useralisa=Rtext.toStringTrim(visit.get("userAlisa"), "");
+						  String postName=Rtext.toStringTrim(visit.get("postName"), "");
 						  if(!"".equals(useralisa)){
-							  userName+=useralisa+",";
+							  userName+=useralisa+"("+postName+")"+",";
 						  }
 					  }
 					String  userNames =userName.trim();
 					userName=userNames.substring(0, userNames.length()-1);
-					System.out.print(userName);
 				  } 
 				return userName;
 				  
@@ -943,7 +948,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		@Override
 		public Map<String, Object> selectForId(String id) {
 			 Map<String, Object>   ideaInfo = 	yszxMapper.selectForId(id);
-			 if(!ideaInfo.isEmpty()){
+			 if(ideaInfo!=null){
 				String ideaId= Rtext.toStringTrim(ideaInfo.get("id"), "");
 				List<Map<String, Object>>  visitInfo = yszxMapper.selectForVisitInfo(ideaId);
 				if(!visitInfo.isEmpty()){
@@ -1044,6 +1049,99 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		String jsonStr=JSON.toJSONStringWithDateFormat(rw,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
 		return jsonStr;
 	}
+	@Override
+	public String submitForStatus(String ideaId ,String approvalUserd ) {
+		bgServiceLog.info("演示中心参观预定主页面删除----->提交开始" );
+		ResultWarp rw =  null;
+		try{
+			Map<String,String>  userInfoMap=userInfo();
+			String updateUser= userInfoMap.get("userId");
+			yszxMapper.submitForStatus(ideaId, "DEPT_HEAD_CHECK", updateUser, new Date());
+			approveService.startApprove(false,"YSZX","SAVE",ideaId,approvalUserd,updateUser);
+			rw = new ResultWarp(ResultWarp.SUCCESS ,"提交成功");  
+		}catch(Exception e){
+			rw = new ResultWarp(ResultWarp.FAILED ,"提交失败");  
+		}
+		bgServiceLog.info("演示中心参观预定主页面删除----->提交结束" );
+		String jsonStr=JSON.toJSONStringWithDateFormat(rw,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+		return jsonStr;
+	}
+	@Override
+	public String repealForStatus(String ideaId) {
+		bgServiceLog.info("演示中心参观预定主页面删除----->撤销开始" );
+		ResultWarp rw =  null;
+		try{
+			Map<String,String>  userInfoMap=userInfo();
+			String updateUser= userInfoMap.get("userId");
+			//yszxMapper.submitForStatus(ideaId, "CANCEL", updateUser, new Date());
+			approveService.unDoApprove(ideaId, updateUser);
+			rw = new ResultWarp(ResultWarp.SUCCESS ,"撤销成功");  
+		}catch(Exception e){
+			rw = new ResultWarp(ResultWarp.FAILED ,"撤销失败");  
+		}
+		bgServiceLog.info("演示中心参观预定主页面删除----->撤销结束" );
+		String jsonStr=JSON.toJSONStringWithDateFormat(rw,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+		return jsonStr;
+	}
+	@Override
+	public List<Map<String, Object>> selectForDealtInfo(String appltNumber, String applyDept, String contactUser) {
+		Map<String,String>  userInfoMap=userInfo();
+		String approveUserId= userInfoMap.get("userId");
+		List<Map<String, Object>> ideaInfo=yszxMapper.selectForDealtInfo(approveUserId,contactUser,appltNumber,applyDept);
+		 List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
+		  if(!ideaInfo.isEmpty()){
+			  for(Map<String, Object>  idea:ideaInfo){
+				  String  ideaId=Rtext.toStringTrim(idea.get("id"), "");
+				  String  visitName=selectForVisitInfo(ideaId);
+				  idea.put("visitName", visitName);
+				  String  leaderName=selectForCompanyLeaderInfo(ideaId);
+				  idea.put("leaderName", leaderName);
+				  String  userName=selectForCompanyUserInfo(ideaId);
+				  idea.put("userName", userName);
+				  list.add(idea);
+			  }
+		  } 
+		return list;
+	}
+	@Override
+	public List<Map<String, Object>> selectForAlreadytInfo(String appltNumber, String applyDept, String contactUser) {
+		Map<String,String>  userInfoMap=userInfo();
+		String approveUserId= userInfoMap.get("userId");
+		List<Map<String, Object>> ideaInfo=yszxMapper.selectForAlreadytInfo(approveUserId,contactUser,appltNumber,applyDept);
+		 List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
+		  if(!ideaInfo.isEmpty()){
+			  for(Map<String, Object>  idea:ideaInfo){
+				  String  ideaId=Rtext.toStringTrim(idea.get("id"), "");
+				  String  visitName=selectForVisitInfo(ideaId);
+				  idea.put("visitName", visitName);
+				  String  leaderName=selectForCompanyLeaderInfo(ideaId);
+				  idea.put("leaderName", leaderName);
+				  String  userName=selectForCompanyUserInfo(ideaId);
+				  idea.put("userName", userName);
+				  list.add(idea);
+			  }
+		  } 
+		return list;
+	}
+	@Override
+	public List<Map<String, Object>> selectComprehensiveInfo(String applyId, String createTime, String applyDept,String visitUserName, String userLevel) {
+		 List<Map<String, Object>>  ideaInfo=yszxMapper.selectForIdeaInfo(applyId, createTime,"");
+		  List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
+		  if(!ideaInfo.isEmpty()){
+			  for(Map<String, Object>  idea:ideaInfo){
+				  String  ideaId=Rtext.toStringTrim(idea.get("id"), "");
+				  String  visitName=selectForVisitInfo(ideaId);
+				  idea.put("visitName", visitName);
+				  String  leaderName=selectForCompanyLeaderInfo(ideaId);
+				  idea.put("leaderName", leaderName);
+				  String  userName=selectForCompanyUserInfo(ideaId);
+				  idea.put("userName", userName);
+				  list.add(idea);
+			  }
+		  } 
+		return list;
+	}
+	 
  	  
 		 
 				 
