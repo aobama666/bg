@@ -471,9 +471,9 @@
            D.ID  as "wlApproveId" ,
            E.APPROVE_USER  as "approveUserId"
          from    TB_YSZX_IDEA  G
-             LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'   AND D.APPROVE_STATUS='0'  AND  D.AUDIT_FLAG='1'
+             LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'  
              LEFT JOIN TB_WL_AUDIT_USER E ON D.ID=E.APPROVE_ID AND   E.VALID='1'
-          where   G.VALID='1'   and   G.APPLY_ID is not null
+          where   G.VALID='1'   and   G.APPLY_ID is not null     AND D.APPROVE_STATUS='0'  AND  D.AUDIT_FLAG='1'
             <if test="approveUserId!=null and approveUserId!=''">
 			      and E.APPROVE_USER  like '%'||#{approveUserId}||'%'
 		    </if>
@@ -513,9 +513,9 @@
            D.ID  as "wlApproveId" ,
            E.APPROVE_USER  as "approveUserId"
          from    TB_YSZX_IDEA  G
-             LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'   AND D.APPROVE_STATUS='1'  AND  D.AUDIT_FLAG='1'
+             LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'   
              LEFT JOIN TB_WL_AUDIT_USER E ON D.ID=E.APPROVE_ID AND   E.VALID='1'
-          where   G.VALID='1'   and   G.APPLY_ID is not null
+          where   G.VALID='1'   and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='1'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL
             <if test="approveUserId!=null and approveUserId!=''">
 			      and E.APPROVE_USER  like '%'||#{approveUserId}||'%'
 		    </if>
