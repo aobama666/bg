@@ -110,14 +110,14 @@ roomList.initDataGrid = function(){
 	});
 
 }	
-	
-	/*演示中心管理-查看 */	
+ 
 	roomList.forDetails = function (id,applyId){
 		var url = "/bg/yszx/details?id="+id+"&applyId="+applyId;
 			parent.layer.open({
+ 
 				type:2,
 				title:'<h4 style="height:42px;line-height:25px;">参观中心-查看</h4>',
-				area:['100%','100%'],
+				area:['800px','500px'],//area:['100%','100%'],
 				fixed:false,//不固定
 				maxmin:true,
 				content:url, 
@@ -126,10 +126,13 @@ roomList.initDataGrid = function(){
 	/*演示中心管理-新增 */
 	roomList.addEvent = function (){
 		var url = "/bg/yszx/addPage"
-			parent.layer.open({
+			//基于上级窗口  弹层   不适用于统一平台集成
+//			parent.layer.open({
+		 	//修正  基于当前窗口弹层
+			layer.open({
 				type:2,
 				title:'<h4 style="height:42px;line-height:25px;">参观中心-新增</h4>',
-				area:['100%','100%'],
+				area:['800px','500px'],//area:['100%','100%'],
 				fixed:false,//不固定
 				maxmin:true,
 				content:url, 
@@ -153,10 +156,13 @@ roomList.initDataGrid = function(){
 		}
 		var id = dataGrid.getCheckedIds();
 		var url = "/bg/yszx/updatePage?id="+id;
-		parent.layer.open({
+		//基于上级窗口  弹层   不适用于统一平台集成
+//		parent.layer.open({
+	 	//修正  基于当前窗口弹层
+		layer.open({
 			type:2,
 			title:'<h4 style="height:42px;line-height:42px;">演示中心-修改 </h4>',
-			area:['100%','100%'],
+			area:['800px','500px'],//area:['100%','100%'],
 			fixed:false,//不固定
 			maxmin:true,
 			content:url, 

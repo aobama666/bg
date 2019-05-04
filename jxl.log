@@ -1,8 +1,0 @@
-2019-05-04 18:57:54,389 [INFO ] com.alibaba.druid.pool.DruidDataSource  - {dataSource-1} inited
-2019-05-04 18:57:55,839 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20000} enter cache
-2019-05-04 18:58:04,858 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20001} enter cache
-2019-05-04 18:58:05,982 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20002} enter cache
-2019-05-04 18:58:05,987 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20003} enter cache
-2019-05-04 18:58:05,990 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20004} enter cache
-2019-05-04 18:58:05,996 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20005} enter cache
-2019-05-04 18:58:06,000 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20006} enter cache
