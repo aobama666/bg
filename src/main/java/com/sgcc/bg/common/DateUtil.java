@@ -7,6 +7,8 @@ import java.util.Date;
 
 public class DateUtil {
 	private final static SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
+	
+	private final static SimpleDateFormat sdfMonth = new SimpleDateFormat("MM");
 
 	private final static SimpleDateFormat sdfDay = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -20,6 +22,13 @@ public class DateUtil {
 	 */
 	public static String getYear() {
 		return sdfYear.format(new Date());
+	}
+	/**
+	 * 获取MM格式
+	 * @return
+	 */
+	public static String getMonth() {
+		return sdfMonth.format(new Date());
 	}
 
 	/**
