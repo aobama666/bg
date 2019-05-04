@@ -315,6 +315,30 @@
 		   and t.approve_user != #{approve_user}                      
 	</update>
 	
-	
+	<select  id="selectForApproveID"   resultType="java.util.Map">
+	    SELECT
+		  T.ID	 as "id",
+		  T.APPLY_ID  as "applyId",	
+		  T.APPROVE_STATUS	as "approveStatus" , 		
+		  T.APPROVE_USER  as "approveUserId" , 
+		  U.USERALIAS  as "approveUserAlias",	
+		  U.HRDEPTNAME  as "approveDeptName",
+		  T.APPROVE_RESULT	as "approveResult",			
+		  DECODE(T.APPROVE_RESULT, '0','拒绝', '1', '同意', '2','撤回','3','提交','4','撤销') as "approveResultName" ,	
+		  TO_CHAR(T.APPROVE_DATE,'YYYY-MM-DD HH24:MI:SS')   as "approveDate",
+		  T.NEXT_APPROVE_ID	 as "nextapproveId",		
+		  A.APPROVE_USER as  "nextapproveUserId",
+		  (SELECT   USERALIAS  from   BG_SYS_USER where  VALID='1' AND  STATE = 0 AND USERID=A.APPROVE_USER)  as "nextapproveUserAlias",
+		  (SELECT   PHONE  from   BG_SYS_USER where  VALID='1' AND  STATE = 0 AND USERID=A.APPROVE_USER)  as "nextapprovePhone",
+		  G.APPROVE_NODE as "node",
+		  T.APPROVE_REMARK		 
+		FROM
+			TB_WL_APPROVE   T
+		    LEFT JOIN BG_SYS_USER U   ON  U.USERID = T.APPROVE_USER  AND  T.VALID='1'  AND U.VALID='1' AND    U.STATE = 0
+		    LEFT JOIN TB_WL_AUDIT_USER A ON A.APPROVE_ID=T.NEXT_APPROVE_ID   
+		    LEFT JOIN TB_WL_APPROVE G ON T.NEXT_APPROVE_ID=G.ID
+		WHERE   T.APPROVE_STATUS='1'  and   T.APPLY_ID=#{approveId}
+		ORDER BY  T.APPROVE_STEP   
+	</select>
 	
 </mapper>

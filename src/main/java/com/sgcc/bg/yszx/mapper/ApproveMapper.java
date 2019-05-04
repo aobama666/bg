@@ -151,6 +151,12 @@ public interface ApproveMapper {
 	public Integer updateAuditByApproveId(@Param("approve_id")String approve_id,
 			  @Param("approve_user")String approve_user,
 		  	  @Param("update_user")String update_user);
+
+	/**
+	 * 返回审批流程表
+	 * @return
+	 */
+	public List<Map<String, String>> selectForApproveID(@Param("approveId")String approveId);
 	
 	
 }

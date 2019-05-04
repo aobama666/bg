@@ -9,7 +9,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
-	<title>演示中心管理列表页</title>
+	<title>演示中心已办表页</title>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 	<!-- newPage、item.css 页面css-->
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid/css/newPage.css" rel="stylesheet" type="text/css"/>
@@ -17,6 +17,7 @@
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid/css/datagrid.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 	
+ 
 	<!-- easyui用css -->
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet"/>
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.min.js"></script>
@@ -32,46 +33,23 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<!-- 本页面所需的js -->
- 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomList.js"></script>
- 
- 	<style>
- 		.paging_hint,.paging_vessel{margin-bottom:10px;}
- 		#datagrid div{
-	 		height:450px!important;
-	 	}   
- 	</style>
- 
+ 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomAlreadyList.js"></script>
 </head>
 <body>
 	<div class="main_div"></div>
 	<input type = "hidden" value = ${filter} id = "filter" >  
 	<!-- start    查询条件 -->
 	<div class="sheach">
-		<div class='content_top'>参观设定</div>	 
+		<div class='content_top'>已办事项</div>	 
 		<form id="queryForm" style="margin-bottom: 10px;">
 			<label>申请单号：</label>
-			<input type = "text" id = "applyId" name = "applyId" style="width: 10%" class = "inputQuery changeQuery" >
+			<input type = "text" id = "appltNumber" name = "appltNumber" style="width: 10%" class = "inputQuery changeQuery" >
 			
-			<label  for="year" class="yearTitle">年度：</label>
-			<select id = "year" name = "year"   class = "changeQuery changeYear">
-				<option value = "${year}">  ${year}   </option>
-			</select>
-			<label  for="month">月度：</label>
-			<select id = "month" name = "month"   class = "changeQuery changeMonth">
-				<option value="" >请选择月份</option>
-				<option value="01"   ${month == '01' ?"selected='selected'":''}>1月</option>
-				<option value="02"   ${month == '02' ?"selected='selected'":''}>2月</option>
-				<option value="03"   ${month == '03' ?"selected='selected'":''}>3月</option>
-				<option value="04"   ${month == '04' ?"selected='selected'":''}>4月</option>
-				<option value="05"   ${month == '05' ?"selected='selected'":''}>5月</option>
-				<option value="06"   ${month == '06' ?"selected='selected'":''}>6月</option>
-				<option value="07"   ${month == '07' ?"selected='selected'":''}>7月</option>
-				<option value="08"   ${month == '08' ?"selected='selected'":''}>8月</option>
-				<option value="09"   ${month == '09' ?"selected='selected'":''}>9月</option>
-				<option value="10"   ${month == '10' ?"selected='selected'":''}>10月</option>
-				<option value="11"   ${month == '11' ?"selected='selected'":''}>11月</option>
-				<option value="12"   ${month == '12' ?"selected='selected'":''}>12月</option>
-			</select>
+			<label  for="applyDept" class="yearTitle">审批部门：</label>
+			<input type = "text" id = "applyDept" name = "applyDept" style="width: 10%" class = "inputQuery changeQuery" >
+		 
+			<label  for="contactUser">联系人：</label>
+			 <input type = "text" id = "contactUser" name = "contactUser" style="width: 10%" class = "inputQuery changeQuery" >
 			<!-- 查询按钮  -->
 			<div id = "queryButton" class = "btn query" onclick = "roomList.query()">搜索</div> <!-- 原来引用的函数onclick = "roomList.query()" -->
 		</form>
@@ -80,23 +58,21 @@
 	
 	<!-- start   新增  修改  删除按钮 -->
 	<div id="funcBtn" style="width:100%;height: 35px;margin-bottom:-35px;">
-		<div class='btn right deleteButton' onclick="roomList.delEvent()" >删除</div>
-		<div class='btn right repealButton' onclick="roomList.repealEvent()">撤销</div>
-		<div class='btn right submitButton' onclick="roomList.submitEvent()">提交</div>
-	   	<div class='btn right updateButton' onclick="roomList.updateEvent()">修改</div>
-	   	<div class='btn right addButton' onclick="roomList.addEvent()">新增</div> 
+		<div class='btn right deleteButton' onclick="roomList.withdrawEvent()" >撤回</div>
+		 
+		 
 	</div>
 	<!-- end   新增  修改  删除按钮 -->
 	
 	<!-- start 列表标题 -->
 	<div class="grid-title">
-		<h3>参观预定序列</h3>
+		<h3>已办列表</h3>
 	</div>
 	<!-- end 列表标题 -->
 	
 	<!-- start 列表展示 -->
 	<div class="tabbable" >
-		<div id="datagrid" style="height:450px;margin-bottom: 10px;"></div>
+		<div id="datagrid"></div>
 		<div class="tablepage"></div>
 	</div>
 	<!-- end 列表展示 -->

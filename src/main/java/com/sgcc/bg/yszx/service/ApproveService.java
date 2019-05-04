@@ -1,5 +1,8 @@
 package com.sgcc.bg.yszx.service;
 
+import java.util.List;
+import java.util.Map;
+
 import com.sgcc.bg.yszx.bean.ReturnMessage;
 
 public interface ApproveService {
@@ -42,4 +45,12 @@ public interface ApproveService {
 	  * @return
 	  */
 	 public ReturnMessage unDoApprove(String bussinessId,String operatorId);
+	 /**
+	  * 审批记录的查询
+	  * @param bussinessId 业务数据ID
+	  * @param operatorId  操作人id
+	  * @return
+	  */
+	 public List<Map<String, String>>  selectForApproveID(String approveId);
+	 
 }

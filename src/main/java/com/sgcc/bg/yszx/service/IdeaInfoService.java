@@ -57,7 +57,35 @@ public interface IdeaInfoService {
 	 * @return
 	 */
 	public String deleteIdeaInfo(String ideaId);
-	
-	
+	/**
+	 * 修改演示中心信息---主页信息的提交
+	 * @param pro
+	 * @return
+	 */
+	public String submitForStatus(String ideaId ,String approvalUserd);
+	/**
+	 * 修改演示中心信息---主页信息的撤销
+	 * @param pro
+	 * @return
+	 */
+	public String repealForStatus(String ideaId);
+	/**
+	 * 修改演示中心信息---待办信息的查询
+	 * @param pro
+	 * @return
+	 */
+	public List<Map<String, Object>>  selectForDealtInfo(String  appltNumber,String applyDept,String contactUser);
+	/**
+	 * 修改演示中心信息---已办信息的查询
+	 * @param pro
+	 * @return
+	 */
+	public List<Map<String, Object>>  selectForAlreadytInfo(String  appltNumber,String applyDept,String contactUser);
+	/**
+	 * 查询演示中心信息----综合查询
+	 * @param pro
+	 * @return
+	 */
+	public List<Map<String, Object>>  selectComprehensiveInfo(String  applyId,String createTime,String applyDept,String visitUserName,String userLevel);
 	
 }

@@ -82,7 +82,7 @@ public interface YSZXMapper {
 	 * @param pro
 	 * @return
 	 */
-	public  List<Map<String, Object>>  selectForIdeaInfo(@Param("applyId")String applyId,@Param("createTime")String createTime);
+	public  List<Map<String, Object>>  selectForIdeaInfo(@Param("applyId")String applyId,@Param("createTime")String createTime,@Param("applyDept")String applyDept);
 	/**
 	 * 查询演示参观领导数据
 	 * @param pro
@@ -145,5 +145,33 @@ public interface YSZXMapper {
 	 */
 	
 	public List<Map<String, Object>> selectForDictionary(@Param("pcode")String pcode,@Param("codes")List<String> codes);
+	/**
+	 * 修改演示中心信息---查询数据字典信息
+	 * @param pro
+	 * @return
+	 */
+	
+	public List<Map<String, Object>> selectForCode(@Param("pcode")String pcode,@Param("code")String code);
+	/**
+	 * 修改演示中心信息---提交数据
+	 * @param pro
+	 * @return
+	 */
+	
+	public  int  submitForStatus(@Param("ideaId")String ideaId,@Param("status")String status,@Param("updateUser")String updateUser,@Param("updateTime")Date updateTime);
+	/**
+	 * 修改演示中心信息---待办查询
+	 * @param pro
+	 * @return
+	 */
+	
+	public  List<Map<String, Object>>  selectForDealtInfo(@Param("approveUserId")String approveUserId,@Param("contactUserName")String contactUserName,@Param("applyNumber")String applyNumber,@Param("applyDept")String applyDept);
+	/**
+	 * 修改演示中心信息---已办查询
+	 * @param pro
+	 * @return
+	 */
+	
+	public  List<Map<String, Object>>  selectForAlreadytInfo(@Param("approveUserId")String approveUserId,@Param("contactUserName")String contactUserName,@Param("applyNumber")String applyNumber,@Param("applyDept")String applyDept);
 
 }
