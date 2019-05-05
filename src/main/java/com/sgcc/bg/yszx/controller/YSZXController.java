@@ -1,15 +1,10 @@
 package com.sgcc.bg.yszx.controller;
 
- 
-
- 
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import com.sgcc.bg.common.CommonCurrentUser;
+import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.service.DataDictionaryService;
+import com.sgcc.bg.yszx.service.ApproveService;
 import com.sgcc.bg.yszx.service.IdeaInfoService;
  
  
@@ -39,13 +36,21 @@ public class YSZXController {
 	private IdeaInfoService ideaInfoService;
 	@Autowired
 	private DataDictionaryService dataDictionaryService;
+	@Autowired
+	private ApproveService approveService;
 	/**
 	 * 返回列表展示页面
 	 * @return
 	 */
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
-	public String initPage(HttpServletRequest request){
-		return "yszx/yszx_idea_info";
+	public ModelAndView initPage(HttpServletRequest request){
+		Map<String, Object> map = new HashMap<>();
+		String year=DateUtil.getYear();
+		String month=DateUtil.getMonth();
+		map.put("year", year);
+		map.put("month", month);
+		ModelAndView model = new ModelAndView("yszx/yszx_idea_info",map);
+		return model;
 	}
 	
 	
@@ -73,12 +78,14 @@ public class YSZXController {
 	 * @return
 	 */
 	@RequestMapping("/updatePage")
-	public ModelAndView projectUpdate(String id, HttpServletRequest request) {
+	public ModelAndView projectUpdate(String id,  HttpServletRequest request) {
 		Map<String, Object> proInfo = ideaInfoService.selectForId(id);
 		List<Map<String, String>>   dictData= dataDictionaryService.selectDictDataByPcode("visitunit_levle");
 		proInfo.put("visitUnitLevleInfo",dictData);
 		List<Map<String, String>>   visitUnitTypeList= dataDictionaryService.selectDictDataByPcode("visitunit_type");
 		proInfo.put("visitUnitTypeInfo", visitUnitTypeList);
+//		List<Map<String, String>>  approveList=approveService.selectForApproveID(approveId);
+		proInfo.put("approveInfo", "1");
 		ModelAndView model = new ModelAndView("yszx/yszx_idea_update", proInfo);
 		return model;
 	}
@@ -87,19 +94,24 @@ public class YSZXController {
 	 * @return
 	 */
 	@RequestMapping(value = "/details", method = RequestMethod.GET)
-	public ModelAndView detailsPage(String id, HttpServletRequest request){
+	public ModelAndView detailsPage(String id,String applyId, HttpServletRequest request){
 		Map<String, Object> proInfo = ideaInfoService.selectForId(id);
 		List<Map<String, String>>   dictData= dataDictionaryService.selectDictDataByPcode("visitunit_levle");
 		proInfo.put("visitUnitLevleInfo",dictData);
 		List<Map<String, String>>   visitUnitTypeList= dataDictionaryService.selectDictDataByPcode("visitunit_type");
 		proInfo.put("visitUnitTypeInfo", visitUnitTypeList);
+		List<Map<String, String>>  approveList=approveService.selectForApproveID(applyId);
+		if(approveList.isEmpty()){
+			proInfo.put("approveInfo", "");
+			proInfo.put("approvetype", 1);
+		}else{
+			proInfo.put("approveInfo", approveList);
+			proInfo.put("approvetype", 2);
+		}
+		
 		ModelAndView model = new ModelAndView("yszx/yszx_idea_details", proInfo);
 		return model;
 	}
-	
-	
-	
-	
 	/**
 	 * 返回预定状态页面
 	 * @return
@@ -108,5 +120,42 @@ public class YSZXController {
 	public String statePage(){
 		return "yszx/yszx_idea_state";
 	}
-
+	/**
+	 * 返回待办展示页面
+	 * @return
+	 */
+	@RequestMapping(value = "/dealt", method = RequestMethod.GET)
+	public ModelAndView dealt(HttpServletRequest request){
+		Map<String, Object> map = new HashMap<>();
+	 
+		ModelAndView model = new ModelAndView("yszx/yszx_idea_dealt",map);
+		return model;
+	}
+	/**
+	 * 返回已办展示页面
+	 * @return
+	 */
+	@RequestMapping(value = "/already", method = RequestMethod.GET)
+	public ModelAndView already(HttpServletRequest request){
+		Map<String, Object> map = new HashMap<>();
+	 
+		ModelAndView model = new ModelAndView("yszx/yszx_idea_already",map);
+		return model;
+	}
+	/**
+	 * 返回综合查询展示页面
+	 * @return
+	 */
+	@RequestMapping(value = "/comprehensive", method = RequestMethod.GET)
+	public ModelAndView comprehensive(HttpServletRequest request){
+		Map<String, Object> map = new HashMap<>();
+		String year=DateUtil.getYear();
+		String month=DateUtil.getMonth();
+		map.put("year", year);
+		map.put("month", month);
+		List<Map<String, String>>   dictData= dataDictionaryService.selectDictDataByPcode("visitunit_levle");
+		map.put("visitUnitLevleInfo",dictData);
+		ModelAndView model = new ModelAndView("yszx/yszx_idea_comprehensive",map);
+		return model;
+	}
 }

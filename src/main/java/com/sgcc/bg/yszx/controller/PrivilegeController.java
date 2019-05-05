@@ -39,7 +39,7 @@ public class PrivilegeController {
 		Privilegelog.info("getApproveUserByUserName审批人信息的查询---->"+approveState);
 		ResultWarp rw =  null;
 		String roleId="";
-		if(approveState.equals("DEPT_HEAD_CHECK")){
+		if(approveState.equals("DEPT_HEAD_CHECK")||approveState.equals("SAVE")){
 			roleId="866725924A9CBFB1E0536C3C550A0773";
 		}
 		

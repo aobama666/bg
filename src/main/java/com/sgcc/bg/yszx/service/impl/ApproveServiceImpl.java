@@ -27,7 +27,7 @@ public class ApproveServiceImpl implements ApproveService{
 	private AuthMapper authMapper;
 	@Autowired
 	private IdeaInfoService ideaServcie;
-	
+	//bussinessId 主ID   auditUserId 审批人    operatorId  当前提交人
 	public ReturnMessage startApprove(boolean isUseRole,String functionType, String nodeName, String bussinessId, String auditUserId,String operatorId) {
 		ReturnMessage returnMessage = new ReturnMessage();
 		//执行结果  success 成功  failure 失败
@@ -588,9 +588,7 @@ public class ApproveServiceImpl implements ApproveService{
 			return null;
  
 		}
-		
 		Map<String,Object> map = list.get(0);
-		
 		String id = map.get("APPROVE_ID")==null?"":map.get("APPROVE_ID").toString();
 		String apply_id = map.get("APPLY_ID")==null?"":map.get("APPLY_ID").toString();
 		String approve_node = map.get("RULE_ID")==null?"":map.get("RULE_ID").toString();
@@ -616,5 +614,11 @@ public class ApproveServiceImpl implements ApproveService{
 		approve.setApprove_user(approve_user);
 		
 		return approve;
+	}
+
+	@Override
+	public List<Map<String, String>> selectForApproveID(String approveId) {
+		List<Map<String, String>>  list=approveMapper.selectForApproveID(approveId);
+		return list;
 	}
 }

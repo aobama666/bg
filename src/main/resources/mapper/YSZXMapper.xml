@@ -76,7 +76,13 @@
 		 
 	</update>
 	
-	
+	<update id="submitForStatus"  >
+		UPDATE TB_YSZX_IDEA SET
+			STATUS =#{status,jdbcType=VARCHAR},	
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE UUID=#{ideaId}  and  VALID='1'
+	</update> 
 	
 	
 	<insert id="addVisitInfo"  parameterType="com.sgcc.bg.yszx.bean.VisitInfo">
@@ -246,10 +252,13 @@
 		  FROM TB_YSZX_IDEA	
 		  WHERE VALID =  '1' 
 		<if test="applyId!=null and applyId!=''">
-			and APPLY_ID  like '%'||#{applyId}||'%'
+			and APPLY_NUMBER  like '%'||#{applyId}||'%'
 		</if>
 		<if test="createTime!=null and createTime!=''">
-			and CREATE_TIME  like '%'||#{createTime}||'%'
+			and TO_CHAR(CREATE_TIME,'YYYY-MM')  like '%'||#{createTime}||'%'
+		</if>
+		<if test="applyDept!=null and applyDept!=''">
+			and APPLY_DEPT  like '%'||#{applyDept}||'%'
 		</if>
 			ORDER BY  CREATE_TIME     DESC
 	</select>
@@ -421,5 +430,107 @@
 		   ORDER BY  SORT_ID
 		   
 	</select>
+	<select id="selectForCode" resultType="java.util.Map"   >
+		 SELECT 
+		   CODE as "code",
+		   NAME as "name", 
+		   SORT_ID  as "sortId"
+		  FROM BG_SYS_DATADICTIONARY
+		  WHERE VAILD = '1'
+		   AND PCODE = #{pcode,jdbcType=VARCHAR}   
+		   <if test="code!=null and code!=''">
+			      and CODE  like '%'||#{code}||'%'
+		   </if>
+		   ORDER BY  SORT_ID
+	</select>
+	
+	
+	
+    <select id="selectForDealtInfo" resultType="java.util.Map">
+	     SELECT 
+            G.UUID   as  "id",	    
+            (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
+            TO_CHAR(  G.START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+            TO_CHAR(  G.END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+	        G.CONTACT_USER as "contactUser",
+		    G.CONTACT_PHONE as "contactPhone", 		
+		    G.VISIT_UNIT_TYPE as "visitUnitType",	 
+		    G.VISIT_UNIT_NAME as "visitUnitName",	
+		    G.VISITOR_NUMBER as "visitorNumber", 		
+		    G.COMPANY_USER_NUMBER as "companyUserNumber",	 
+		    G.REMARK as "remark",	
+           (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code= G.STATUS) as "status",
+           G.STATUS as  "approveState",
+		   G.APPLY_ID as "applyId",	
+		   G.APPLY_NUMBER as "applyNumber",	 	 		
+  	       G.VISIT_LEVEL as "visitLevel",	 	
+	       G.VALID as "valId", 	
+	       G.CREATE_USER as "createUser",
+	       TO_CHAR(  G.CREATE_TIME,'YYYY-MM-DD') as "createTime"	,
+           D.APPROVE_NODE as "approveNode",
+           D.ID  as "wlApproveId" ,
+           E.APPROVE_USER  as "approveUserId"
+         from    TB_YSZX_IDEA  G
+             LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'  
+             LEFT JOIN TB_WL_AUDIT_USER E ON D.ID=E.APPROVE_ID AND   E.VALID='1'
+          where   G.VALID='1'   and   G.APPLY_ID is not null     AND D.APPROVE_STATUS='0'  AND  D.AUDIT_FLAG='1'
+            <if test="approveUserId!=null and approveUserId!=''">
+			      and E.APPROVE_USER  like '%'||#{approveUserId}||'%'
+		    </if>
+		    <if test="contactUserName!=null and contactUserName!=''">
+			      and G.CONTACT_USER  like '%'||#{contactUserName}||'%'
+		    </if>
+		    <if test="applyNumber!=null and applyNumber!=''">
+			      and G.APPLY_NUMBER  like '%'||#{applyNumber}||'%'
+		    </if>
+		    <if test="applyDept!=null and applyDept!=''">
+			      and G.APPLY_DEPT  like '%'||#{applyDept}||'%'
+		    </if>
+            ORDER BY  G.CREATE_TIME     DESC
+	</select>
+	 <select id="selectForAlreadytInfo" resultType="java.util.Map">
+	     SELECT 
+            G.UUID   as  "id",	    
+            (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
+            TO_CHAR(  G.START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+            TO_CHAR(  G.END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+	        G.CONTACT_USER as "contactUser",
+		    G.CONTACT_PHONE as "contactPhone", 		
+		    G.VISIT_UNIT_TYPE as "visitUnitType",	 
+		    G.VISIT_UNIT_NAME as "visitUnitName",	
+		    G.VISITOR_NUMBER as "visitorNumber", 		
+		    G.COMPANY_USER_NUMBER as "companyUserNumber",	 
+		    G.REMARK as "remark",	
+           (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code= G.STATUS) as "status",
+           G.STATUS as  "approveState",
+		   G.APPLY_ID as "applyId",	
+		   G.APPLY_NUMBER as "applyNumber",	 	 		
+  	       G.VISIT_LEVEL as "visitLevel",	 	
+	       G.VALID as "valId", 	
+	       G.CREATE_USER as "createUser",
+	       TO_CHAR(  G.CREATE_TIME,'YYYY-MM-DD') as "createTime"	,
+           D.APPROVE_NODE as "approveNode",
+           D.ID  as "wlApproveId" ,
+           E.APPROVE_USER  as "approveUserId"
+         from    TB_YSZX_IDEA  G
+             LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'   
+             LEFT JOIN TB_WL_AUDIT_USER E ON D.ID=E.APPROVE_ID AND   E.VALID='1'
+          where   G.VALID='1'   and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='1'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL
+            <if test="approveUserId!=null and approveUserId!=''">
+			      and E.APPROVE_USER  like '%'||#{approveUserId}||'%'
+		    </if>
+		    <if test="contactUserName!=null and contactUserName!=''">
+			      and G.CONTACT_USER  like '%'||#{contactUserName}||'%'
+		    </if>
+		    <if test="applyNumber!=null and applyNumber!=''">
+			      and G.APPLY_NUMBER  like '%'||#{applyNumber}||'%'
+		    </if>
+		    <if test="applyDept!=null and applyDept!=''">
+			      and G.APPLY_DEPT  like '%'||#{applyDept}||'%'
+		    </if>
+            ORDER BY  G.CREATE_TIME     DESC
+	</select>
+	 
+	 
 	
 </mapper>

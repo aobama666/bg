@@ -229,15 +229,73 @@
 			<td class="width-two"> 备注</td>
 			<td colspan="3" class="addInputStyle">
 				<input type="text"  id="remark"   name="remark"   len="200"   value = "${remark}"  disabled/>
+				<input type = "hidden" value = "${approvetype}" id = "approvetype" name="approvetype">  
 			</td>
 		</tr>
 	</table>
 	
 	 
-	
+	<div class="contentBox" id="Approves">
+		<h4 class="tableTitle">
+			<span title = "审批记录">审批记录：</span>
+		</h4>
+		<div class="btnBox"   style="height:20px;"  >
+			 
+		</div>
+		<div class="maxBox">
+			<table class="ApproveInfo tableStyle thTableStyle">
+				<tr>
+					<th  title="审批人姓名" >审批人姓名</th>
+					<th   title="审批部门单位" >审批部门单位</th>
+					<th   title="审批意见" >审批意见</th>
+					<th   title="审批时间" >审批时间</th>
+					<th   title="下一环节审批人角色" >下一环节审批人角色</th>
+					<th   title="下一环节审批人姓名" >下一环节审批人姓名</th>
+					<th   title="下一环节审批人联系方式" >下一环节审批人联系方式</th>
+				</tr>
+				<c:forEach  var="approveInfo"  items="${approveInfo}">
+				<tr>
+					<td class="addInputStyle" >
+						<input type="text"  disabled    id="approveUserAlias" name="approveUserAlias"  class="approveUserAlias" value = "${approveInfo.approveUserAlias}"  title=""  />
+					</td>
+					<td class="addInputStyle">
+						<input type="text"  disabled    id="approveDeptName" name="approveDeptName" class="approveDeptName" value = "${approveInfo.approveDeptName}"  title=""   />
+					</td>
+					<td class="addInputStyle">
+						<input type="text"  disabled    id="approveResultName" name="approveResultName" class="approveResultName" value = "${approveInfo.approveResultName}"  title=""   />
+					</td>
+					<td class="addInputStyle">
+						<input type="text"  disabled    id="approveDate" name="approveDate" class="approveDate" value = "${approveInfo.approveDate}"  title=""   />
+					</td>
+					<td class="addInputStyle">
+						<input type="text"  disabled    id="approveDate" name="approveDate" class="approveDate" value = "${approveInfo.approveDate}"  title=""   />
+					</td>
+					<td class="addInputStyle">
+						<input type="text"  disabled    id="nextapproveUserAlias" name="nextapproveUserAlias" class="nextapproveUserAlias" value = "${approveInfo.nextapproveUserAlias}"  title=""   />
+					</td>
+					<td class="addInputStyle">
+						<input type="text"  disabled    id="nextapprovePhone" name="nextapprovePhone" class="nextapprovePhone" value = "${approveInfo.nextapprovePhone}"  title=""   />
+					</td>
+				</tr>
+			    </c:forEach>
+				
+			</table>
+		</div>
+	</div>
 	<!-- end参观详情信息-->
 	
 
 </body>
+ <script type="text/javascript">
+ $(function(){
 
+	 var approvetype=$("#approvetype").val();
+	 if(approvetype=="1"){
+		 $("#Approves").hide();//隐藏
+	 }else{
+		 $("#Approves").show();//显示
+	 }
+	
+ });
+ </script>
 </html>
