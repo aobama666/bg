@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.sgcc.bg.yszx.bean.ReturnMessage;
+import com.sgcc.bg.yszx.bean.WLApprove;
 
 public interface ApproveService {
 	/**
@@ -52,5 +53,7 @@ public interface ApproveService {
 	  * @return
 	  */
 	 public List<Map<String, String>>  selectForApproveID(String approveId);
+	 
+	 public WLApprove getApproveInfoByApproveId(String approveId);
 	 
 }

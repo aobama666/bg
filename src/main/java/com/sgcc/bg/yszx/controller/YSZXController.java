@@ -17,6 +17,7 @@ import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.service.DataDictionaryService;
+import com.sgcc.bg.yszx.bean.WLApprove;
 import com.sgcc.bg.yszx.service.ApproveService;
 import com.sgcc.bg.yszx.service.IdeaInfoService;
  
@@ -156,6 +157,45 @@ public class YSZXController {
 		List<Map<String, String>>   dictData= dataDictionaryService.selectDictDataByPcode("visitunit_levle");
 		map.put("visitUnitLevleInfo",dictData);
 		ModelAndView model = new ModelAndView("yszx/yszx_idea_comprehensive",map);
+		return model;
+	}
+	/**
+	 * 返回待办展示页面
+	 * @return
+	 */
+	@RequestMapping(value = "/audit", method = RequestMethod.GET)
+	public ModelAndView auditPage(HttpServletRequest request){
+		String approveId = request.getParameter("approveId")==null?null:request.getParameter("approveId").toString();
+		
+		if(approveId==null){
+			Map<String, Object> proInfo = new HashMap<String, Object>();
+			proInfo.put("approveInfo", "");
+			proInfo.put("approvetype", 1);
+			ModelAndView model = new ModelAndView("yszx/yszx_idea_audit", proInfo);
+			return model;
+		}
+		
+		WLApprove approve = approveService.getApproveInfoByApproveId(approveId);
+		String id = approve.getBussiness_id();
+		String applyId = approve.getApply_id();
+		
+		Map<String, Object> proInfo = ideaInfoService.selectForId(id);
+		List<Map<String, String>>   dictData= dataDictionaryService.selectDictDataByPcode("visitunit_levle");
+		proInfo.put("visitUnitLevleInfo",dictData);
+		List<Map<String, String>>   visitUnitTypeList= dataDictionaryService.selectDictDataByPcode("visitunit_type");
+		proInfo.put("visitUnitTypeInfo", visitUnitTypeList);
+		List<Map<String, String>>  approveList=approveService.selectForApproveID(applyId);
+		if(approveList.isEmpty()){
+			proInfo.put("approveInfo", "");
+			proInfo.put("approvetype", 1);
+		}else{
+			proInfo.put("approveInfo", approveList);
+			proInfo.put("approvetype", 2);
+		}
+		
+		proInfo.put("approveStatus", approve.getApprove_status());
+		
+		ModelAndView model = new ModelAndView("yszx/yszx_idea_audit", proInfo);
 		return model;
 	}
 }

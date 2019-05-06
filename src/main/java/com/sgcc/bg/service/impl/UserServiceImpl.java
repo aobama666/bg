@@ -47,4 +47,39 @@ public class UserServiceImpl implements UserService{
 		user.setDeptId(deptId);
 		return user;
 	}
+
+	@Override
+	public HRUser getUserByUserId(String userId) {
+		List<Map<String,Object>> list =  userMapper.getUserByUserId(userId);
+		if(list==null||list.size()==0||list.size()>1){
+			return null;
+		}
+		Map<String,Object> map = list.get(0);
+		String userName = map.get("USERNAME")==null?"":map.get("USERNAME").toString();
+		String hrCode = map.get("HRCODE")==null?"":map.get("HRCODE").toString();
+		String userAlias = map.get("USERALIAS")==null?"":map.get("USERALIAS").toString();
+		String userStatus = map.get("STATE")==null?"":map.get("STATE").toString();
+		String userSex = map.get("SEX")==null?"":map.get("SEX").toString();
+		String birthDate = map.get("BIRTHDAY")==null?"":map.get("BIRTHDAY").toString();
+		String userDeptCode = map.get("HRDEPTCODE")==null?"":map.get("HRDEPTCODE").toString();
+		String userCard = map.get("CARDID")==null?"":map.get("CARDID").toString();
+		String userPhone = map.get("MOBILE")==null?"":map.get("MOBILE").toString();
+		String userEmail = map.get("EMAIL")==null?"":map.get("EMAIL").toString();
+		String deptId = map.get("DEPTID")==null?"":map.get("DEPTID").toString();
+		
+		HRUser user = new HRUser();
+		user.setUserId(userId);
+		user.setUserName(userName);
+		user.setUserAlias(userAlias);
+		user.setHrCode(hrCode);
+		user.setUserEmail(userEmail);
+		user.setBirthDate(birthDate);
+		user.setUserDeptCode(userDeptCode);
+		user.setUserCard(userCard);
+		user.setUserPhone(userPhone);
+		user.setUserStatus(userStatus);
+		user.setUserSex(userSex);
+		user.setDeptId(deptId);
+		return user;
+	}
 }

@@ -351,7 +351,8 @@
 			  VISIT_LEVEL as "visitLevel",	 	
 			  VALID as "valId", 	
 			  CREATE_USER as "createUser",
-			  TO_CHAR( CREATE_TIME,'YYYY-MM-DD') as "createTime"	 	
+			  TO_CHAR( CREATE_TIME,'YYYY-MM-DD') as "createTime",
+			  APPLY_NUMBER 	 as "applyNumber"	
 		  FROM TB_YSZX_IDEA	
 		  WHERE VALID =  '1' 
 		<if test="id!=null and id!=''">

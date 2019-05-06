@@ -37,4 +37,11 @@ public interface UserInfoMapper {
 	 */
 	public List<Map<String, Object>> getUserByUserName(@Param("userName")String userName);
 	
+	/**
+	 * 根据用户ID获取用户
+	 * @param userName 登陆账号
+	 * @return
+	 */
+	public List<Map<String, Object>> getUserByUserId(@Param("userId")String userId);
+	
 }
