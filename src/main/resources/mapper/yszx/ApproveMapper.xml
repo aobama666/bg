@@ -341,4 +341,14 @@
 		ORDER BY  T.APPROVE_STEP   
 	</select>
 	
+	<select  id="selectForRuleID"   resultType="java.util.Map">
+	    SELECT    
+	            T.NODE as "nodeCode",
+	            G.NAME as "nodeName"
+	     from   TB_WL_RULE    T
+         LEFT JOIN    BG_SYS_DATADICTIONARY  G  ON    T.NODE=G.CODE  
+         where   T.VALID='1'  AND  G.VAILD='1'  AND  G.PCODE  ='YSZX_APPROVE_ROLE'  
+          AND  T.ID=#{ruleId}
+	</select>
+	
 </mapper>

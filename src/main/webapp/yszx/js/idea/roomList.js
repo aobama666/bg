@@ -137,6 +137,7 @@ roomList.initDataGrid = function(){
 				maxmin:true,
 				content:url, 
 			});
+		//window.location.href='/bg/yszx/addPage';
 	}
 		
 	/* 演示中心管理-修改*/
@@ -220,8 +221,9 @@ roomList.initDataGrid = function(){
 			return;
 		}
 		var userPrivilegehtml = '';
-		var approveState=checkedItems[0].approveState;
+		
 		messageSubmit();
+		
 	}
 	/* 提交信息库信息 */
 	messageSubmit= function(){
@@ -282,10 +284,10 @@ roomList.initDataGrid = function(){
 	/* 提交信息库信息---页面拼接 */
 	messageSubmitHtml=  function (){
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
-		var approveState= checkedItems[0].approveState;
+		var approveState= "SAVE";
 		var userPrivilegehtml = '';
 		$.ajax({
-		    url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState,//获取申报界面数据字典
+		    url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState+"&type="+"submit",//获取申报界面数据字典
 			type: "post",
 			dataType: "json",
 			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值

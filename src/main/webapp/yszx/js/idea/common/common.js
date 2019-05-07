@@ -161,7 +161,7 @@ var messager={
     	if($(".myTips").size()){
     		return false;
     	}
-        var html="<div class='myTips' style='border-radius:5px;opacity:0.8;color:#fff;font-size:14px;padding:8px 15px;background:#000;z-index:99999;display: inline-block;position: fixed;top:49%;left:47%;'>"+text+"</div>";
+        var html="<div class='myTips' style='border-radius:5px;opacity:0.8;color:#fff;font-size:14px;padding:8px 15px;background:#000;z-index:99999999;display: inline-block;position: fixed;top:49%;left:47%;'>"+text+"</div>";
         $("body").append(html);
         $('.myTips').css({"left":($(".myTips").parent().outerWidth(true)-$(".myTips").width())/2});
         var outTime = 1000;

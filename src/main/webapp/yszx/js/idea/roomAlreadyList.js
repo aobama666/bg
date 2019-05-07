@@ -135,22 +135,21 @@ roomList.initDataGrid = function(){
 			messager.tip("每次只能选择一条数据",2000);
 			return;
 		}
-		
-		var checkedIds = dataGrid.getCheckedIds();
-		$.messager.confirm( "提交提示", "确认同意选中数据吗",
+		var approveId= checkedItems[0].wlApproveId;
+		$.messager.confirm( "提交提示", "确认撤回选中数据吗",
 			function(r){
 				if(r){
 					$.ajax({
-					    url: "/bg/IdeaInfo/submitForStatus?ideaId="+checkedIds,//删除
+					    url: "/bg/Approve/recallApprove?approveId="+approveId,//删除
 						type: "post",
 						dataType:"json",
 						contentType: 'application/json',
 						success: function (data) {
 							if(data.success == "true"){
-								messager.tip("提交成功",1000);
+								messager.tip("撤回成功",1000);
 								roomList.query();
 							}else{
-								messager.tip("提交失败",1000);
+								messager.tip("撤回失败",1000);
 								roomList.query();
 							}
 						}

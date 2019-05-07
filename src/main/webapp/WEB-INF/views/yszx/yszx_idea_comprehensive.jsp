@@ -43,15 +43,16 @@
 		<div class='content_top'>综合查询</div>	 
 		<form id="queryForm" style="margin-bottom: 10px;">
 			<label>申请单号：</label>
-			<input type = "text" id = "applyId" name = "applyId" style="width: 10%" class = "inputQuery changeQuery" >
+			<input type = "text" id = "applyNumber" name = "applyNumber" style="width: 10%" class = "inputQuery changeQuery" >
 			
 			<label  for="year" class="yearTitle">年度：</label>
 			<select id = "year" name = "year"   class = "changeQuery changeYear">
-				<option value = "${year}">  ${year}   </option>
+				<option value = "">  </option>
+				<option value = "${year}" selected>  ${year}   </option>
 			</select>
 			<label  for="month">月度：</label>
 			<select id = "month" name = "month"   class = "changeQuery changeMonth">
-				<option value="" >请选择月份</option>
+				<option value="" > </option>
 				<option value="01"   ${month == '01' ?"selected='selected'":''}>1月</option>
 				<option value="02"   ${month == '02' ?"selected='selected'":''}>2月</option>
 				<option value="03"   ${month == '03' ?"selected='selected'":''}>3月</option>
@@ -66,16 +67,20 @@
 				<option value="12"   ${month == '12' ?"selected='selected'":''}>12月</option>
 			</select>
 			<label  for="year" class="yearTitle">申请部门（单位）：</label>
-			<select id = "applyDept" name = "applyDept"   class = "changeQuery changeYear">
-				<option value = "${year}">  ${year}   </option>
+			<select id = "applyDept" name = "applyDept"   class = "changeQuery userlevel">
+				<option value = "">   </option>
+				<c:forEach  var="deptInfo"  items="${deptInfo}">
+					        <option value ="${deptInfo.applyDeptID}"  > ${deptInfo.applyDeptName}</option>
+					     </c:forEach>
+			     </select>
 			</select>
 			<label>参观领导姓名：</label>
 			<input type = "text" id = "visitUserName" name = "visitUserName" style="width: 10%" class = "inputQuery changeQuery" >
 			<label>参观领导级别：</label>
-			<select id="userLevel"  name = "userLevel"  class = "changeQuery userlevel"  >
-						<option value=""  >请选择参观领导级别</option>
+			<select id="visitLevel"  name = "visitLevel"  class = "changeQuery userlevel"  >
+						<option value=""  ></option>
 						<c:forEach  var="visitUnitLevleInfo"  items="${visitUnitLevleInfo}">
-					        <option value ="${visitUnitLevleInfo.K}"        > ${visitUnitLevleInfo.V}</option>
+					        <option value ="${visitUnitLevleInfo.V}"        > ${visitUnitLevleInfo.V}</option>
 					     </c:forEach>
 			        	</select>
 			<!-- 查询按钮  -->
@@ -86,7 +91,7 @@
 	
 	<!-- start   新增  修改  删除按钮 -->
 	<div id="funcBtn" style="width:100%;height: 35px;margin-bottom:-35px;">
-		<div class='btn right deleteButton' onclick="roomList.delEvent()" >导出</div>
+		<div class='btn right deleteButton' onclick="roomList.expEvent()" >导出</div>
 		 
 	</div>
 	<!-- end   新增  修改  删除按钮 -->
