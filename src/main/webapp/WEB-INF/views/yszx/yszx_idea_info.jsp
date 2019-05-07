@@ -54,11 +54,12 @@
 			
 			<label  for="year" class="yearTitle">年度：</label>
 			<select id = "year" name = "year"   class = "changeQuery changeYear">
-				<option value = "${year}">  ${year}   </option>
+				<option value = ""></option>
+				<option value = "${year}"  selected>  ${year}   </option>
 			</select>
 			<label  for="month">月度：</label>
 			<select id = "month" name = "month"   class = "changeQuery changeMonth">
-				<option value="" >请选择月份</option>
+				<option value="" ></option>
 				<option value="01"   ${month == '01' ?"selected='selected'":''}>1月</option>
 				<option value="02"   ${month == '02' ?"selected='selected'":''}>2月</option>
 				<option value="03"   ${month == '03' ?"selected='selected'":''}>3月</option>

@@ -56,14 +56,42 @@ public class ApproveController {
 		 */
 	@ResponseBody
 	@RequestMapping(value = "/sendApprove", method = RequestMethod.POST)
-	public String sendApprove(String approveId,String stauts, String auditUserId){
+	public String sendApprove(String approveId,String stauts, String auditUserId, String approveRemark){
 		ResultWarp rw =  null;
 		approveId=Rtext.toStringTrim(approveId, "");
 		stauts=Rtext.toStringTrim(stauts, "");
 		auditUserId=Rtext.toStringTrim(auditUserId, "");
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String operatorId=currentUser.getUserId();
-		ReturnMessage  approve=approveService.sendApprove(false, approveId, stauts, "", auditUserId, operatorId);
+		if(stauts.equals("0")){
+			auditUserId=operatorId;
+		}
+		ReturnMessage  approve=approveService.sendApprove(false, approveId, stauts, approveRemark, auditUserId, operatorId);
+		if(!approve.isResult()){
+			rw = new ResultWarp(ResultWarp.FAILED ,approve.getMessage()); 
+		}else{
+			rw = new ResultWarp(ResultWarp.SUCCESS ,approve.getMessage()); 
+		}
+		rw = new ResultWarp(ResultWarp.SUCCESS ,"ddddd"); 
+		return JSON.toJSONString(rw); 
+	}
+	 /**
+	  * 撤回
+	  * @param isUseRole 是否按照角色发送待办   true 是  false 按照历史提交人
+	  * @param approveId 审批记录ID
+	  * @param operatorId 操作人id
+	  * @return
+	  */
+	@ResponseBody
+	@RequestMapping(value = "/recallApprove", method = RequestMethod.POST)
+	public String recallApprove(String approveId,String stauts, String auditUserId){
+		ResultWarp rw =  null;
+		approveId=Rtext.toStringTrim(approveId, "");
+		stauts=Rtext.toStringTrim(stauts, "");
+		auditUserId=Rtext.toStringTrim(auditUserId, "");
+		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername()); 
+		String operatorId=currentUser.getUserId();
+		ReturnMessage  approve=approveService.recallApprove(false, approveId, operatorId);
 		if(!approve.isResult()){
 			rw = new ResultWarp(ResultWarp.FAILED ,approve.getMessage()); 
 		}else{
@@ -71,7 +99,6 @@ public class ApproveController {
 		}
 		return JSON.toJSONString(rw); 
 	}
-	
 	
 	
 	

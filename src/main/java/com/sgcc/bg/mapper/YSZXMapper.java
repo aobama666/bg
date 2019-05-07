@@ -173,5 +173,33 @@ public interface YSZXMapper {
 	 */
 	
 	public  List<Map<String, Object>>  selectForAlreadytInfo(@Param("approveUserId")String approveUserId,@Param("contactUserName")String contactUserName,@Param("applyNumber")String applyNumber,@Param("applyDept")String applyDept);
+	/**
+	 * 修改演示中心信息---综合查询
+	 * @param pro
+	 * @return
+	 */
+	
+	public  List<Map<String, Object>>  selectComprehensiveInfo(@Param("applyNumber")String applyNumber,@Param("year")String year,
+			@Param("month")String month,@Param("applyDept")String applyDept,@Param("visitName")String visitName,@Param("visitLevel")String visitLevel,@Param("ids")List<String>  ids);
+	/**
+	 * 修改演示中心信息---部门信息
+	 * @param pro
+	 * @return
+	 */
+	public  List<Map<String, Object>>  selectIdeaDeptInfo();
+	/**
+	 * 修改演示中心信息---部门信息
+	 * @param pro
+	 * @return
+	 */
+	public  List<Map<String, Object>>  selectForApply(@Param("id")String id);
+	/**
+	 * 修改演示中心信息---查询角色信息
+	 * @param pro
+	 * @return
+	 */
+	public  List<Map<String, Object>>  selectForApplyStatus(@Param("applyStatus")String applyStatus);
+	
+	 
 
 }

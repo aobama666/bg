@@ -61,13 +61,16 @@ function checkDate(stateDate,endDate){
         	 return true;
         } 
 }
- 
+//返回
+roomDetailInfo.messageResign =function(){
+	roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
+	var closeIndex = parent.layer.getFrameIndex(window.name);
+	parent.layer.close(closeIndex);
+}
 /* 保存信息库信息 */
 roomDetailInfo.messageSave= function(approvalUserd){
-	   
 	   /* 主ID  */
 	    var id=$("#id").val();
-	    
 		/* 验证必填项   */
 		var validNull = dataForm.validNullable();
 		if(!validNull){
@@ -184,28 +187,42 @@ roomDetailInfo.messageSave= function(approvalUserd){
 			type: "post",
 			dataType:"json",
 			contentType: 'application/json',
+			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
 			data: JSON.stringify(roomDetailFormData),
 			success: function (data) {
+				if(data.success){
+					layer.confirm( "数据添加成功", 
+				 			function(r){
+						     roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
+						     var closeIndex = parent.layer.getFrameIndex(window.name);
+						     parent.layer.close(closeIndex);	 
+				 			}
+				 		);
+				     
 				 
-				roomDetailInfo.saveBtnClickFlag = 0;//保存按钮点击事件
-				if(data.success=="ture"){
-					roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
-					var closeIndex = parent.layer.getFrameIndex(window.name);
-					parent.layer.close(closeIndex);
+					  
 				}else{
-					 layer.open({
-			    	        title:'提示信息',
-			    	        content:data.msg,
-			    	        area:'300px',
-			    	        skin:'demo-class'
-			    	    })
+					messager.tip("添加失败",2000);
 				}
+				
+//				if(data.success=="ture"){
+//					//roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
+//					//var closeIndex = parent.layer.getFrameIndex(window.name);
+//					//parent.layer.close(closeIndex);
+//				}else{
+//					 layer.open({
+//			    	        title:'提示信息',
+//			    	        content:data.msg,
+//			    	        area:'300px',
+//			    	        skin:'demo-class'
+//			    	    })
+//				}
 			}
 		}); 
 }
 /* 提交信息库信息 */
 roomDetailInfo.messageSubmit= function(){
-	debugger;
+	 
 	var html=messageSubmitHtml();
 	 
 	if(html =='' || html ==undefined){
@@ -223,11 +240,12 @@ roomDetailInfo.messageSubmit= function(){
 					 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
 					 var userId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
 					 if(checkedNumber == 0){
-						     
+						 messager.tip("请选择要操作的数据",1000);
+							return;
 				     }else if(checkedNumber > 1 ){
-				        
+				    	  messager.tip("请选择要操作的数据",1000);
+							return;  
 				     }else{
-				    	 
 				    	 roomDetailInfo.messageSave(userId);
 				    	 layer.close(layer.index);
 				    }
@@ -243,10 +261,10 @@ roomDetailInfo.messageSubmit= function(){
 
 
 function messageSubmitHtml(){
-	var approveState=$("#approveState").val();
+	var approveState="SAVE"
 	var userPrivilegehtml = '';
 	$.ajax({
-	    url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState,//获取申报界面数据字典
+	    url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState+"&type="+"submit",//获取申报界面数据字典
 		type: "post",
 		dataType: "json",
 		async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值

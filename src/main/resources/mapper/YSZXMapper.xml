@@ -530,7 +530,118 @@
 		    </if>
             ORDER BY  G.CREATE_TIME     DESC
 	</select>
-	 
-	 
 	
+ 
+	   <select id="selectComprehensiveInfo" resultType="java.util.Map">
+	   SELECT  *　FROM (
+	   
+	    SELECT 
+		    G.UUID   as  "id",	 
+       (  SELECT    
+          wm_concat( D.USERALIAS)
+         from  TB_YSZX_COMPANY_LEADER  T   
+         LEFT JOIN BG_SYS_USER  D  ON T.USERID  =D.USERID
+         where T.VALID='1' AND  D.VALID='1'   
+         AND  T.IDEAID =G.UUID
+         GROUP BY T.IDEAID
+       )  AS  "leaderInfo",
+       (
+       SELECT      
+         wm_concat( D.USERALIAS||'('||D.POSTNAME ||')')
+         from  TB_YSZX_COMPANY_USER  T   
+         LEFT JOIN BG_SYS_USER  D  ON T.USERID  =D.USERID
+         where T.VALID='1' AND  D.VALID='1'   
+         AND  T.IDEAID =G.UUID
+         GROUP BY T.IDEAID
+        )  AS  "userInfo",
+        (
+         SELECT  
+          wm_concat(T.USERNAME||'('|| T.POSITION ||'、'||D.NAME||')')   
+          FROM  TB_YSZX_VISIT T
+          LEFT JOIN BG_SYS_DATADICTIONARY  D  ON T.USERLEVEL  =D.CODE 
+          where T.VALID='1' AND  D.VAILD='1' AND D.PCODE='visitunit_levle'
+          AND  T.IDEAID =G.UUID 
+          GROUP BY T.IDEAID
+         )  AS  "visitInfo",
+        (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
+        TO_CHAR( G.START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+        TO_CHAR( G.END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+			  G.CONTACT_USER as "contactUser",
+			  G.CONTACT_PHONE as "contactPhone", 		
+			  G.VISIT_UNIT_TYPE as "visitUnitType",	 
+			  G.VISIT_UNIT_NAME as "visitUnitName",	
+			  G.VISITOR_NUMBER as "visitorNumber", 		
+			  G.COMPANY_USER_NUMBER as "companyUserNumber",	 
+			  G.REMARK as "remark",	
+        (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=G.STATUS) as "status",
+        G.STATUS as  "approveState",
+			  G.APPLY_ID as "applyId",	
+			  G.APPLY_NUMBER as "applyNumber",	 	 		
+			  G.VISIT_LEVEL as "visitLevel",	 	
+			  G.VALID as "valId", 	
+			  G.CREATE_USER as "createUser",
+			  TO_CHAR( G.CREATE_TIME,'YYYY-MM-DD') as "createTime"
+		    FROM TB_YSZX_IDEA   G
+		    WHERE  G.VALID =  '1'
+	   ) where  1=1
+	   
+	    <if test="applyNumber!=null and applyNumber!=''">
+			and "applyNumber"  like '%'||#{applyNumber}||'%'
+		</if>
+		<if test="year!=null and year!=''">
+			and "createTime" like '%'||#{year}||'%'
+		</if>
+		<if test="month!=null and month!=''">
+			and  "createTime" like '%'||#{month}||'%'
+		</if>
+		<if test="applyDept!=null and applyDept!=''">
+			and "applyDept"  like '%'||#{applyDept}||'%'
+		</if>
+		
+		<if test="visitName!=null and visitName!=''">
+			and "visitInfo"  like '%'||#{visitName}||'%'
+		</if>
+		<if test="visitLevel!=null and visitLevel!=''">
+			and "visitInfo"  like '%'||#{visitLevel}||'%'
+		</if>
+		<if test="ids!=null and ids!=''">
+			and "id"  IN
+			<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+					${item}
+			</foreach>
+		</if>
+	    
+	 
+	   </select>
+	   
+	   <select id="selectIdeaDeptInfo" resultType="java.util.Map">
+	   SELECT  
+          DISTINCT( T.APPLY_DEPT)   as  "applyDeptID",
+          D.DEPTNAME   as  "applyDeptName",
+          D.PDEPTCODE  as  "pdeptCode",
+          D.PDEPTNAME  as  "pdeptName"
+          FROM   TB_YSZX_IDEA  T
+          LEFT JOIN BG_SYS_DEPT  D  ON T.APPLY_DEPT  =D.DEPTID 
+          WHERE    T.VALID='1' AND  D.VALID='1'
+	   </select>
+	   
+	   
+	    <select id="selectForApply" resultType="java.util.Map">
+	    SELECT  
+          APPLY_STATUS
+          FROM   TB_WL_APPLY   
+          WHERE    VALID='1'   and   ID=#{id}
+	   </select>
+	   
+	   <select id="selectForApplyStatus" resultType="java.util.Map">
+	    SELECT     
+	     T.NODE,
+	     G.ROLE_NAME,
+	     G.ROLE_CODE,
+	     G.ID 
+         FROM     TB_WL_RULE  T   
+         LEFT JOIN    TB_PRIV_ROLE  G ON  T.APPROVE_ROLE=G.ID 
+         where  G.VALID='1'  AND T.VALID ='1' AND     T.APPROVE_ROLE   IS not  NULL   
+           AND  T.NODE=#{applyStatus}
+	   </select>
 </mapper>
