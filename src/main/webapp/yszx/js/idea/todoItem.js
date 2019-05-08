@@ -11,15 +11,15 @@ $(function(){
 	todoItem.initDataGrid();
 	var classQuery = $(".changeQuery");
 	/* 输入框的change事件，在输入过程中自动查询  */
-//	$(".changeQuery").change(function(e){
-//		todoItem.query();
-//	});
-//	$(".inputQuery").on("input",function(e){
-//		var valLength = e.target.value.length;
-//		if(valLength>3){
-//			todoItem.query();
-//		}
-//	});
+	$(".changeQuery").change(function(e){
+		todoItem.query();
+	});
+	$(".inputQuery").on("input",function(e){
+		var valLength = e.target.value.length;
+		if(valLength>3){
+			todoItem.query();
+		}
+	});
 	
 	
 	$("#queryButton").on("click",function(e){
@@ -32,7 +32,7 @@ $(function(){
 	        return false;
 	    }
 	});
-//	todoItem.btn_type_flag = 0;
+	todoItem.btn_type_flag = 0;
 });
 
 /*  start  列表查询  */
@@ -50,15 +50,15 @@ todoItem.initDataGrid = function(){
 		type: 'POST',
 		form:'#queryForm',		 
 		pageSize:10,
-		tablepage:$(".tablepage"),//分页组件
-		successFinal:function(data){
-			todoItem.resize();
-		},
-		callBackFunc:function(){
-			todoItem.initItems();
-		},
+//		showIndex:true,
+//		successFinal:function(data){
+//			todoItem.resize();
+//		},
+//		callBackFunc:function(){
+//			todoItem.initItems();
+//		},
 		columns: [
-		/*  {name: '序号',style:{width:"2%"}, data: 'RN'},    */      
+		  {name: '序号',style:{width:"50px"}, data: 'RN'},          
 		  {name: '',style:{width:"2%"}, data: 'id',checkbox:true, forMat:function(row){
 			  dataItems[index] = row;//将一行数据放在一个list中
 			  return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.ID)+'"/>';
@@ -216,9 +216,9 @@ todoItem.resize=function(){
 	var height=$("body").height()-$(".sheach").height()-$("#funcBtn").height()-65;
 	$("#datagrid>div").css({"height":height});
 }
-$(window).resize(function(){
+/*$(window).resize(function(){
 	todoItem.resize();
-})
+})*/
 
 
 todoItem.openRoomDetail = function (id,type){

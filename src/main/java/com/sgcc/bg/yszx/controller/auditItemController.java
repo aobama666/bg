@@ -59,7 +59,14 @@ public class auditItemController {
 			list = new ArrayList<Map<String, Object>>();
 		}else{
 			try{
-				list = auditService.queryTodoItemList(user.getUserId(), start, end,applyNumber,applyDept,contactUser);
+				//list = auditService.queryTodoItemList(user.getUserId(), start, end,applyNumber,applyDept,contactUser);
+				list = new ArrayList<Map<String, Object>>();
+				for(int i=0;i<10;i++){
+					Map<String, Object> a = new HashMap<String, Object>();
+					a.put("applyNumber", i+1);
+					a.put("RN", i+1);
+					list.add(a);
+				}
 			}catch (Exception e) {
 				e.printStackTrace();
 				log.info("查询异常！"+e.getMessage());
@@ -69,9 +76,13 @@ public class auditItemController {
 				list = new ArrayList<Map<String, Object>>();
 			}
 		}
+		Map<String, Object> jsonMap1 = new HashMap<String, Object>();
+		jsonMap1.put("data", list);
+		jsonMap1.put("total", 35);
+		
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
-		jsonMap.put("data", list);
-		jsonMap.put("total", list.size());
+		jsonMap.put("data", jsonMap1);
+//		jsonMap.put("total", 35);
 		jsonMap.put("msg", "查询完成！");
 		jsonMap.put("success", "true");
 		String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
