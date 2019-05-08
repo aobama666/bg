@@ -561,6 +561,12 @@ public class ApproveServiceImpl implements ApproveService{
 		try{
 			//获取审批记录      审批表、申请表、业务表 基本信息
 			WLApprove approveInfo = getApproveInfoByBussinessId(bussinessId);
+			if(approveInfo==null){
+				message = "流程处理异常，请联系管理员！";
+				returnMessage.setResult(result);
+				returnMessage.setMessage(message);
+				return returnMessage;
+			}
 			if("1".equals(approveInfo.getApprove_status())){
 				message = "该待办已处理！";
 				returnMessage.setResult(result);
@@ -619,6 +625,7 @@ public class ApproveServiceImpl implements ApproveService{
 		if(list==null||list.size()==0||list.size()>1){
 			return null;
 		}
+	 
 		Map<String,Object> map = list.get(0);
 		String nodeId = map.get("ID")==null?"":map.get("ID").toString();
 		String node = map.get("NODE")==null?"":map.get("NODE").toString();
@@ -707,11 +714,13 @@ public class ApproveServiceImpl implements ApproveService{
 	
 	private WLApprove getApproveInfoByBussinessId(String bussinessId){
 		List<Map<String,Object>> list = approveMapper.getApproveInfoByBussinessId(bussinessId);
-		if(list==null||list.size()==0||list.size()>1){
+//		if(list==null||list.size()==0||list.size()>1){
+//			return null;
+// 
+//		}
+		if(list.isEmpty()){
 			return null;
- 
 		}
-		
 		Map<String,Object> map = list.get(0);
 		
 		String id = map.get("APPROVE_ID")==null?"":map.get("APPROVE_ID").toString();
@@ -785,13 +794,16 @@ public class ApproveServiceImpl implements ApproveService{
 		if(!list.isEmpty()){
 			for(Map<String, String> map:list){
 				String ruleId=map.get("node");
-				Map<String, String>  rulemap=approveMapper.selectForRuleID(ruleId);
-				if(rulemap!=null){
-					String nodeCode=rulemap.get("nodeCode");
-					String nodeName=rulemap.get("nodeName");
-					map.put("nodeCode", nodeCode);
-					map.put("nodeName", nodeName);
+				if(ruleId!=null){
+					Map<String, String>  rulemap=approveMapper.selectForRuleID(ruleId);
+					if(rulemap!=null){
+						String nodeCode=rulemap.get("nodeCode");
+						String nodeName=rulemap.get("nodeName");
+						map.put("nodeCode", nodeCode);
+						map.put("nodeName", nodeName);
+					}
 				}
+				
 				
 			}
 		}

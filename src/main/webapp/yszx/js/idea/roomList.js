@@ -28,10 +28,12 @@ $(function(){
 	    }
 	});
 	roomList.btn_type_flag = 0;
+ 
 });
 
 /*  start  列表查询  */
 roomList.query = function(){
+	 
 	dataItems = new Array();
 	index = 0;
 	$("#datagrid").datagrid("seach");
@@ -125,6 +127,7 @@ roomList.initDataGrid = function(){
 	}
 	/*演示中心管理-新增 */
 	roomList.addEvent = function (){
+		 
 		var url = "/bg/yszx/addPage"
 			//基于上级窗口  弹层   不适用于统一平台集成
 //			parent.layer.open({
@@ -151,7 +154,7 @@ roomList.initDataGrid = function(){
 			messager.tip("每次只能修改一条数据",2000);
 			return;
 		}
-		if(checkedItems[0].approveState!="DEPT_HEAD_CHECK" && checkedItems[0].approveState!="SAVE"){
+		if(checkedItems[0].approveState!="DEPT_HEAD_CHECK" && checkedItems[0].approveState!="SAVE"&& checkedItems[0].approveState!="RETURN"){
 			messager.tip("该无法修改,审批状态为：待提交,待部门领导审核才可以修改",2000);
 			return;
 		}
@@ -216,7 +219,7 @@ roomList.initDataGrid = function(){
 			return;
 		}
 		
-		if(checkedItems[0].approveState!="DEPT_HEAD_CHECK" && checkedItems[0].approveState!="SAVE"){
+		if(checkedItems[0].approveState!="DEPT_HEAD_CHECK" && checkedItems[0].approveState!="SAVE"&& checkedItems[0].approveState!="RETURN"){
 			messager.tip("该无法提交,审批状态为：待提交,待部门领导审核才可以提交",2000);
 			return;
 		}
@@ -229,6 +232,7 @@ roomList.initDataGrid = function(){
 	messageSubmit= function(){
 		debugger;
 		var html=messageSubmitHtml();
+		 
 		if(html =='' || html ==undefined){
 			layer.open({
 		        title:'提示信息',
@@ -244,33 +248,34 @@ roomList.initDataGrid = function(){
 						 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
 						 var approvalUserd=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
 						 if(checkedNumber == 0){
-							     
+							 messager.tip("请选择要操作的数据",1000);
+							 return;
 					     }else if(checkedNumber > 1 ){
-					        
+					   	     messager.tip("请选择要操作的数据",1000);
+							 return;  
 					     }else{
-					    	 alert(userId);
 					    	var checkedIds = dataGrid.getCheckedIds();
-					 		$.messager.confirm( "提交提示", "确认提交选中数据吗",
-					 			function(r){
-					 				if(r){
-					 					$.ajax({
-					 					    url: "/bg/IdeaInfo/submitForStatus?ideaId="+checkedIds+"&approvalUserd="+approvalUserd,//删除
-					 						type: "post",
-					 						dataType:"json",
-					 						contentType: 'application/json',
-					 						success: function (data) {
-					 							if(data.success == "true"){
-					 								messager.tip("提交成功",1000);
-					 								roomList.query();
-					 							}else{
-					 								messager.tip("提交失败",1000);
-					 								roomList.query();
-					 							}
-					 						}
-					 					});
-					 				}
-					 			}
-					 		);
+					    	$.messager.confirm("提交提示", "确认提交选中数据吗",
+						 			function(r){
+					    		 $.ajax({
+				 					    url: "/bg/IdeaInfo/submitForStatus?ideaId="+checkedIds+"&approvalUserd="+approvalUserd,//删除
+				 						type: "post",
+				 						dataType:"json",
+				 						contentType: 'application/json',
+				 						success: function (data) {
+				 							if(data.success == "true"){
+				 								messager.tip("提交成功",1000);
+												roomList.query();
+				 							 }else{
+				 								messager.tip("提交成功",1000);
+												roomList.query();
+				 							    
+				 							}
+				 						}
+				 					 });
+						 			});  
+					    	
+ 
 					    	 layer.close(layer.index);
 					    }
 		             });
@@ -343,7 +348,7 @@ roomList.initDataGrid = function(){
 			return;
 		}
 		if(checkedItems[0].approveState =="CANCEL"  ){
-			messager.tip("该无法撤销,审批状态为：已撤销",2000);
+			messager.tip("无法撤销,审批状态为：已撤销",2000);
 			return;
 		}
 		var checkedIds = dataGrid.getCheckedIds();

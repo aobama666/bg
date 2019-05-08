@@ -221,6 +221,10 @@
 					<th title="请点击添加按钮，添加用户">姓名</th>
 					<th title="请点击添加按钮，添加用户">职务</th>
 				</tr>
+				
+			 
+				
+				 
 				<c:forEach  var="userInfo"  items="${userInfo}">
 				<tr>
 					<td>
@@ -235,6 +239,7 @@
 					</td>
 				</tr>
 			    </c:forEach>
+			    
 				
 			</table>
 		</div>
@@ -263,7 +268,9 @@
  $(function(){
 
 	 var approveState=$("#approveState").val();
-	 if(approveState=="DEPT_HEAD_CHECK"){
+	 if(approveState=="DEPT_HEAD_CHECK" ){
+		 $("#messageSave").hide();//隐藏
+	 }else if( approveState=="RETURN"){
 		 $("#messageSave").hide();//隐藏
 	 }else{
 		 $("#messageSave").show();//显示

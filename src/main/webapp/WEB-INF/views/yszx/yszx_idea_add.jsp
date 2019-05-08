@@ -33,6 +33,7 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 	<!-- 本页面所需的js -->
  	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomDetailInfo.js"></script>
+    <script src="<%=request.getContextPath()%>/yszx/js/idea/roomList.js"></script>
  </head>
 <body>
     <input type = "hidden" value = "${id}" id = "id" name="id">  
@@ -143,7 +144,7 @@
 			<div class='btn right leaderMessageAdd' onclick="addLeader(this)">增加</div> 
 		</div>
 		<div class="maxBox">
-			<table class="visitLeader tableStyle thTableStyle">
+			<table  class="visitLeader tableStyle thTableStyle">
 				<tr>
 					<th class="width-three">选择</th>
 					<th>姓名<b class="mustWrite">*</b></th>
@@ -181,7 +182,7 @@
 		<tr>
 			<td class="width-two">院领导姓名<b class="mustWrite">*</b></td>
 			<td style="width:85%;" class="addInputStyle">
-				<input class="easyui-combotree tree-data  validNull"  id="companyLeaderName" name="companyLeaderName"  data-companyLeaderName=""  content="院领导姓名"   title="必填项  " />
+				<input class="easyui-combotree tree-data "  id="companyLeaderName" name="companyLeaderName"  data-companyLeaderName=""  content="院领导姓名"   title="必填项  " />
 			</td>	
 		</tr>
 		<tr>

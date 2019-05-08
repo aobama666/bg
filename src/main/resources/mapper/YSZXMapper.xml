@@ -207,7 +207,7 @@
 	
 	<select id="selectForLeader" resultType="java.util.Map">
 		SELECT 
-		 USERID,
+		 ID AS USERID,
 		 USERALISA
 		  FROM TB_YSZX_CONFIG_COMPANY_LEADER
 		WHERE VALID =  '1'
@@ -298,7 +298,7 @@
           U.SORTID as "sortId"
 		FROM TB_YSZX_COMPANY_LEADER  T
         LEFT JOIN TB_YSZX_CONFIG_COMPANY_LEADER  U
-		        ON T.USERID = U.USERID
+		        ON T.USERID = U.ID
 		  WHERE T.VALID =  '1'
 		  <if test="ideaId!=null and ideaId!=''">
 			and T.IDEAID  like '%'||#{ideaId}||'%'
@@ -400,7 +400,14 @@
 			VALID=#{valId,jdbcType=VARCHAR},
 			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
 			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
-		WHERE  USERID = #{userid,jdbcType=VARCHAR}   and   IDEAID = #{ideaId,jdbcType=VARCHAR}  
+		WHERE  VALID='1'
+		   <if test="userid!=null and userid!=''">
+			      and  USERID = #{userid,jdbcType=VARCHAR} 
+		   </if>
+		    <if test="ideaId!=null and ideaId!=''">
+			       and   IDEAID = #{ideaId,jdbcType=VARCHAR} 
+		   </if>
+		    
             	  
 	</update> 
 	
@@ -538,12 +545,12 @@
 	   
 	    SELECT 
 		    G.UUID   as  "id",	 
-       (  SELECT    
-          wm_concat( D.USERALIAS)
+       (   SELECT    
+          wm_concat( D.USERALISA)
          from  TB_YSZX_COMPANY_LEADER  T   
-         LEFT JOIN BG_SYS_USER  D  ON T.USERID  =D.USERID
+         LEFT JOIN TB_YSZX_CONFIG_COMPANY_LEADER  D  ON T.USERID  =D.ID
          where T.VALID='1' AND  D.VALID='1'   
-         AND  T.IDEAID =G.UUID
+        AND  T.IDEAID =G.UUID
          GROUP BY T.IDEAID
        )  AS  "leaderInfo",
        (
