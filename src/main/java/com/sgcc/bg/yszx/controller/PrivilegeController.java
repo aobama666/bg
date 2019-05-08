@@ -1,6 +1,7 @@
 package com.sgcc.bg.yszx.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.yszx.bean.UserPrivilege;
+import com.sgcc.bg.yszx.service.IdeaInfoService;
 import com.sgcc.bg.yszx.service.PrivilegeService;
 
 @Controller
@@ -26,6 +28,8 @@ public class PrivilegeController {
 	private UserUtils userUtils;
 	@Autowired
 	private WebUtils webUtils;
+	@Autowired
+	private IdeaInfoService ideaInfoService;
 	private static Logger Privilegelog =  LoggerFactory.getLogger(PrivilegeController.class);
 	/**
 	 *  演示中心---信息的预定
@@ -35,14 +39,21 @@ public class PrivilegeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getApproveUserByUserName", method = RequestMethod.POST)
-	public String getApproveUserByUserName(String approveState){
+	public String getApproveUserByUserName(String approveState,String type){
 		Privilegelog.info("getApproveUserByUserName审批人信息的查询---->"+approveState);
 		ResultWarp rw =  null;
 		String roleId="";
-		if(approveState.equals("DEPT_HEAD_CHECK")||approveState.equals("SAVE")){
+		List<Map<String, Object>>   applyInfo=ideaInfoService.selectForApplyStatus(approveState);
+		if("submit".equals(type)){
 			roleId="866725924A9CBFB1E0536C3C550A0773";
+		}else{
+			if(approveState.equals("DEPT_HEAD_CHECK")){
+				roleId="866725924A9DBFB1E0536C3C550A0773";
+			}else if(approveState.equals("MANAGER_DEPT_DUTY_CHECK")){
+				roleId="866725924A9EBFB1E0536C3C550A0773";
+			} 
+			 
 		}
-		
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String deptId=currentUser.getDeptId();
 		Privilegelog.info("roleId--->"+roleId+"---deptId--->"+deptId);

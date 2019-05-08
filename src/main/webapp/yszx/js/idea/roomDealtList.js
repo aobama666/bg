@@ -122,6 +122,68 @@ roomList.initDataGrid = function(){
 				content:url, 
 			});
 	}
+	
+	/* 演示中心待办管理-退回方法*/
+	roomList.returnEvent = function(){
+		
+		var checkedItems = dataGrid.getCheckedItems(dataItems);
+		
+		if(checkedItems.length==0){
+			messager.tip("请选择要操作的数据",1000);
+			return;
+		}else if(checkedItems.length>1){
+			messager.tip("每次只能选择一条数据",2000);
+			return;
+		}
+	 
+		var checkedIds = dataGrid.getCheckedIds();
+		messageReturn("0");
+	}
+	
+	messageReturn= function(stauts){
+	    var html=messagereturnHtml();
+		if(html =='' || html ==undefined){
+			layer.open({
+		        title:'提示信息',
+		        content:'审批人查询失败',
+		        area:'300px',
+		        skin:'demo-class'
+		    }) 
+		}else{
+			layer.confirm(
+					 html,
+					 {title:'请填写审批意见', area:'800px',skin:'demo-class'   },
+					 function(){
+						 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
+					 		$.messager.confirm( "提交提示", "确认提交选中数据吗",
+					 			function(r){
+					 			var checkedItems = dataGrid.getCheckedItems(dataItems);
+					 			var approveId= checkedItems[0].wlApproveId;
+					 			var auditUserId="";
+					 					$.ajax({
+					 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+					 						type: "post",
+					 						dataType:"json",
+					 						contentType: 'application/json',
+					 						success: function (data) {
+					 							if(data.success == "true"){
+					 								messager.tip("提交成功",1000);
+					 								roomList.query();
+					 							}else{
+					 								messager.tip("提交失败",1000);
+					 								roomList.query();
+					 							}
+					 						}
+					 					});
+					 				 
+					 			}
+					 		);
+					     
+					 		layer.close(layer.index);
+		             });
+		}
+		
+	}
 	/* 演示中心待办管理-同意方法*/
 	roomList.agreeEvent = function(){
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
@@ -133,15 +195,20 @@ roomList.initDataGrid = function(){
 			return;
 		}
 		var checkedIds = dataGrid.getCheckedIds();
-	
-		messageSubmit("1");
+		var approveState=checkedItems[0].approveState;
+		
+		
+		if(approveState=="MANAGER_DEPT_HEAD_CHECK"){
+			messageReturn("1");
+		}else{
+			messageAgree("1");
+		}
+		
 	}
-
 	
-	/* 提交信息库信息 */
-	messageSubmit= function(stauts){
-		debugger;
-		var html=messageSubmitHtml();
+	/* 同意信息库信息 */
+	messageAgree= function(stauts){
+	    var html=messageagreeHtml();
 		if(html =='' || html ==undefined){
 			layer.open({
 		        title:'提示信息',
@@ -156,19 +223,21 @@ roomList.initDataGrid = function(){
 					 function(){
 						 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
 						 var auditUserId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
+						 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
 						 if(checkedNumber == 0){
-							     
+							    messager.tip("请选择要操作的数据",1000);
+								return;
 					     }else if(checkedNumber > 1 ){
-					        
+					    	    messager.tip("请选择要操作的数据",1000);
+								return;  
 					     }else{
-					    	 alert(userId);
 					    	var checkedIds = dataGrid.getCheckedIds();
 					 		$.messager.confirm( "提交提示", "确认提交选中数据吗",
 					 			function(r){
 					 			var checkedItems = dataGrid.getCheckedItems(dataItems);
 					 			var approveId= checkedItems[0].wlApproveId;
 					 					$.ajax({
-					 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId,//删除
+					 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
 					 						type: "post",
 					 						dataType:"json",
 					 						contentType: 'application/json',
@@ -187,6 +256,12 @@ roomList.initDataGrid = function(){
 					 		);
 					    	 layer.close(layer.index);
 					    }
+						 
+						 
+						 
+						 
+						 
+						 
 		             });
 			        
 			
@@ -194,13 +269,13 @@ roomList.initDataGrid = function(){
 		}
 
 	}
-	/* 提交信息库信息---页面拼接 */
-	messageSubmitHtml=  function (){
+	/* 同意信息---页面拼接 */
+	messageagreeHtml=  function (){
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		var approveState= checkedItems[0].approveState;
 		var userPrivilegehtml = '';
 		$.ajax({
-		    url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState,//获取申报界面数据字典
+		    url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState+"&type="+"apply",//获取申报界面数据字典
 			type: "post",
 			dataType: "json",
 			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
@@ -228,9 +303,23 @@ roomList.initDataGrid = function(){
 							       userPrivilegehtml+='<input type="text" disabled   id="deptName"   name = "deptName"   class="deptName inputChange"  value="' + userPrivilegelist[i].deptName + '" title="审批人单位" />'
 							     userPrivilegehtml += '</td>';
 							       
-							 userPrivilegehtml += '</tr>';      
+							 userPrivilegehtml += '</tr>';   
+							 
+							
+							 
 						}
-					userPrivilegehtml += '</table>';
+						
+					 userPrivilegehtml += '</table>';
+					 userPrivilegehtml +='<div class="contentBox   Remark">';
+					 userPrivilegehtml +='<h4 class="tableTitle">';
+					 userPrivilegehtml +='<span title = "审批意见">审批意见：</span>';
+				     userPrivilegehtml +='</h4>';
+					 userPrivilegehtml +='<div class="btnBox"   style="height:20px;"  >';
+					 userPrivilegehtml +='</div>';
+					 userPrivilegehtml +='<div class="maxBox">';
+					 userPrivilegehtml +='<textarea   id="approveRemark"    name="approveRemark"  style="height:100px; width: 100%;background-color: #fff"> </textarea>';	    
+					 userPrivilegehtml +='</div>';
+					 userPrivilegehtml +='</div>';
 				}else{
 					userPrivilegehtml ;
 				}
@@ -239,52 +328,33 @@ roomList.initDataGrid = function(){
 		});
 		return userPrivilegehtml;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/* 演示中心待办管理-退回方法*/
-	roomList.returnEvent = function(){
-		debugger;
-		var checkedItems = dataGrid.getCheckedItems(dataItems);
-		
-		if(checkedItems.length==0){
-			messager.tip("请选择要操作的数据",1000);
-			return;
-		}else if(checkedItems.length>1){
-			messager.tip("每次只能选择一条数据",2000);
-			return;
-		}
+	/* 退回信息---页面拼接 */
+	messagereturnHtml=  function (){
 	 
-		var checkedIds = dataGrid.getCheckedIds();
-		var stauts="0";
-		$.messager.confirm( "撤销提示", "确认退回选中数据吗",
-			function(r){
-				if(r){
-					$.ajax({
-					    url: "/bg/Approve/sendApprove?ideaId="+checkedIds,//删除
-						type: "post",
-						dataType:"json",
-						contentType: 'application/json',
-						success: function (data) {
-							if(data.success == "true"){
-								messager.tip("撤销成功",1000);
-								roomList.query();
-							}else{
-								messager.tip("撤销失败",1000);
-								roomList.query();
-							}
-						}
-					});
-				}
-			}
-		);
+		 var userPrivilegehtml = '';
+		 userPrivilegehtml +='<div class="contentBox   Remark">';
+		 userPrivilegehtml +='<h4 class="tableTitle">';
+		 userPrivilegehtml +='<span title = "审批意见">审批意见：</span>';
+	     userPrivilegehtml +='</h4>';
+		 userPrivilegehtml +='<div class="btnBox"   style="height:20px;"  >';
+		 userPrivilegehtml +='</div>';
+		 userPrivilegehtml +='<div class="maxBox">';
+		 userPrivilegehtml +='<textarea   id="approveRemark"    name="approveRemark"  style="height:100px; width: 100%;background-color: #fff"> </textarea>';	    
+		 userPrivilegehtml +='</div>';
+		 userPrivilegehtml +='</div>';             
+
+		return userPrivilegehtml;
 	}
+
+ 
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

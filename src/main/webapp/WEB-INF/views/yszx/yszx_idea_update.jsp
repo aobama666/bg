@@ -39,6 +39,7 @@
 	<div class="main_div"></div>
 	<input type = "hidden" value = "${id}" id = "id" name="id">  
 	<input type = "hidden" value = "${approveState}" id = "approveState" name="approveState">  
+	<input type = "hidden" value = "${applyId}" id = "applyId" name="applyId">  
 	<!-- start  头部 -->
 	<div class="sheach details">
 		<div class='content_top'>参观设定详情</div>	 
@@ -220,6 +221,10 @@
 					<th title="请点击添加按钮，添加用户">姓名</th>
 					<th title="请点击添加按钮，添加用户">职务</th>
 				</tr>
+				
+			 
+				
+				 
 				<c:forEach  var="userInfo"  items="${userInfo}">
 				<tr>
 					<td>
@@ -234,6 +239,7 @@
 					</td>
 				</tr>
 			    </c:forEach>
+			    
 				
 			</table>
 		</div>
@@ -250,13 +256,26 @@
 	
 	<div class="btnContent">
 		<button type="button" class="btn" onclick="roomDetailInfo.messageSubmit('')" >提交</button>
-		<button type="button" class="btn" onclick="roomDetailInfo.messageSave()">保存</button>
-		<button type="button" class="btn" onclick="resignChange()">返回</button>
+		<button id="messageSave"  type="button" class="btn" onclick="roomDetailInfo.messageSave()">保存</button>
+		<button type="button" class="btn" onclick="roomDetailInfo.messageResign()">返回</button>
 	</div>
 	
 	<!-- end参观详情信息-->
 	
 
 </body>
+ <script type="text/javascript">
+ $(function(){
 
+	 var approveState=$("#approveState").val();
+	 if(approveState=="DEPT_HEAD_CHECK" ){
+		 $("#messageSave").hide();//隐藏
+	 }else if( approveState=="RETURN"){
+		 $("#messageSave").hide();//隐藏
+	 }else{
+		 $("#messageSave").show();//显示
+	 }
+	
+ });
+ </script>
 </html>

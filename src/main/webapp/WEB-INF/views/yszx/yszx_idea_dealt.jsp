@@ -57,8 +57,9 @@
 	
 	<!-- start   新增  修改  删除按钮 -->
 	<div id="funcBtn" style="width:100%;height: 35px;margin-bottom:-35px;">
+	    <div class='btn right repealButton' onclick="roomList.returnEvent()">退回</div>
 		<div class='btn right deleteButton' onclick="roomList.agreeEvent()" >同意</div>
-		<div class='btn right repealButton' onclick="roomList.returnEvent()">退回</div>
+		
 		 
 	</div>
 	<!-- end   新增  修改  删除按钮 -->

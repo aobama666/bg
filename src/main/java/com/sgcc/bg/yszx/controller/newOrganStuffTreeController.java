@@ -99,7 +99,8 @@ public class newOrganStuffTreeController {
     		logger.info("[queryUserTreeByOrgan:in param]:organId="+organId);
     		
     		//获取组织或组织人员数据列表
-    		List<Map<String, Object>> list = organStuffTreeService.queryUserTreeByOrgan(organId);
+    	//	List<Map<String, Object>> list = organStuffTreeService.queryUserTreeByOrgan(organId);
+    		List<Map<String, Object>> list = organStuffTreeService.getyszxForUserTreeByOrgan(organId);
     		 
     		//格式化数据
     		List<Map<String, Object>> treelist = formatUserTreeData(list);

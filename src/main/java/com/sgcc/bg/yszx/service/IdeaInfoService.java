@@ -86,6 +86,23 @@ public interface IdeaInfoService {
 	 * @param pro
 	 * @return
 	 */
-	public List<Map<String, Object>>  selectComprehensiveInfo(String  applyId,String createTime,String applyDept,String visitUserName,String userLevel);
-	
+	public List<Map<String, Object>>  selectComprehensiveInfo(String  applyId,String yser,String month,String applyDept,String visitUserName,String userLevel,List<String>  ids);
+	/**
+	 * 查询演示中心信息---部门信息的查询
+	 * @param pro
+	 * @return
+	 */
+	public List<Map<String, Object>>  selectIdeaDeptInfo();
+	/**
+	 * 查询演示中心信息---部门信息的查询
+	 * @param pro
+	 * @return
+	 */
+	public List<Map<String, Object>>  selectForApply(String id);
+	/**
+	 * 查询演示中心信息---查询角色信息
+	 * @param pro
+	 * @return
+	 */
+	public List<Map<String, Object>>  selectForApplyStatus(String applyStatus);
 }

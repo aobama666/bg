@@ -115,31 +115,6 @@ public class DateUtil {
 	}
      
 	/**
-	 * <li>功能描述：时间相减得到天数
-	 * @param beginDateStr
-	 * @param endDateStr
-	 * @return long
-	 * @author Administrator
-	 */
-	public static long getDaySub(String beginDateStr, String endDateStr) {
-		long day = 0;
-		java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd");
-		java.util.Date beginDate = null;
-		java.util.Date endDate = null;
-
-		try {
-			beginDate = format.parse(beginDateStr);
-			endDate = format.parse(endDateStr);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		day = (endDate.getTime() - beginDate.getTime()) / (24 * 60 * 60 * 1000);
-		// System.out.println("相隔的天数="+day);
-
-		return day;
-	}
-
-	/**
 	 * 得到n天之后的日期
 	 * @param days
 	 * @return
@@ -350,6 +325,12 @@ public class DateUtil {
 		}
 		
 	}
+ 
+	
+	
+	
+	
+	
 	/**
 	 * 判断两个日期的大小
 	 * @param date1 日期1
@@ -421,12 +402,71 @@ public class DateUtil {
 			}
 	        return res;
 	    }  
+	  /**
+		 * <li>功能描述：时间相减得到天数
+		 * @param beginDateStr
+		 * @param endDateStr
+		 * @return long
+		 * @author Administrator
+		 */
+		public static long getDaySub(String beginDateStr, String endDateStr) {
+			long day = 0;
+			java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd");
+			java.util.Date beginDate = null;
+			java.util.Date endDate = null;
+
+			try {
+				beginDate = format.parse(beginDateStr);
+				endDate = format.parse(endDateStr);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			day = (endDate.getTime() - beginDate.getTime()) / (24 * 60 * 60 * 1000);
+			// System.out.println("相隔的天数="+day);
+
+			return day;
+		}
+		 
+	  /**
+		 * <li>功能描述：时间相减得到分钟数
+		 * @param beginDateStr
+		 * @param endDateStr
+		 * @param time间隔 时间
+		 * @return long
+		 * @author Administrator
+		 */
+		public static boolean getMinuteSub(String beginDateStr, String endDateStr ,long  times) {
+			 
+			java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
+			java.util.Date beginDate = null;
+			java.util.Date endDate = null;
+
+			try {
+				beginDate = format.parse(beginDateStr);
+				endDate = format.parse(endDateStr);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			long    time=endDate.getTime() - beginDate.getTime();
+		   // long	day = time / (24 * 60 * 60  * 1000);
+		   // long	hour = time / (60 * 60  * 1000);
+			long    minute =time/(1000*60);
+			if(minute>times){
+				return true;
+			}else{
+				return false;
+			}
+			 
+		}
+	  
+	  
 	 public static void main(String[] args) {
 		   
-		    String time="2019-04-12 08:32:00";
-		   String ddd= minutes(time,30);
+		    String startTime="2019-04-12 08:32:00";
+		    String endTime="2019-04-12 09:50:00";
+		    boolean flag =getMinuteSub(startTime,endTime,30);
 		 
-	       	System.out.print(ddd);
+	       	System.out.print(flag);
 	   	}
    
 }

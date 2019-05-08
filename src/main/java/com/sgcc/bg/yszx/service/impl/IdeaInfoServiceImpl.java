@@ -64,8 +64,9 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		Integer year=Integer.valueOf(DateUtil.getYear()) ;
 		List<Map<String, Object>>   ideaMap = yszxMapper.selectForApplyId(year);
 		 int applyOrder=0;
-		if("null".equals(ideaMap)){
+		if(ideaMap.isEmpty()){
 			apply=apply+"-001" ;
+			applyOrder=1;
 		}else{
 		   String    applySoid=   String.valueOf( ideaMap.get(0).get("applyOrder")) ;
 		    applyOrder=Integer.valueOf(applySoid);
@@ -150,30 +151,30 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				  rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间不能大于参观结束时间");
 				  return JSON.toJSONString(rw);  
 			 } 	
-//			List<Map<String, Object>> list=yszxMapper.selectForIdeaDate();
-//			 if(list!=null){
-//				 for(Map<String, Object> map:list){
-//					String  startdate=String.valueOf(map.get("START_DATE"));
-//					String  newEndDate=DateUtil.minutes(endDate,30);
-//				 
-//					flags=DateUtil.compareTime(startdate,newEndDate);
-//					System.out.println(newEndDate+"<"+startdate);
-//					if(!flags){
-//						  rw = new ResultWarp(ResultWarp.FAILED ,"用户上一场结束时间和下一场申请开始时间间隔30分钟");
-//						  return JSON.toJSONString(rw);  
-//					 } 
-//				
-//					 
-//				 
-//				 
-//					
-//					 
-//					
-//				 }
-//				
-//				
-//				  
-//			 }
+			//系统已经预定的时间
+			List<Map<String, Object>> list=yszxMapper.selectForIdeaDate();
+			 if(list!=null){
+				 for(Map<String, Object> map:list){
+				 
+					String  oldenddate=String.valueOf(map.get("END_DATE"));//结束时间
+					
+					boolean flag1=DateUtil.getMinuteSub(oldenddate,stateDate,30);
+					if(!flag1){
+						 rw = new ResultWarp(ResultWarp.FAILED ,"上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
+						  return JSON.toJSONString(rw);  
+					}
+				 }
+				 for(Map<String, Object> map:list){
+						String  oldstartdate=String.valueOf(map.get("START_DATE"));//开始时间
+						boolean flag2=DateUtil.getMinuteSub(endDate,oldstartdate,30);
+						if(!flag2){
+							 rw = new ResultWarp(ResultWarp.FAILED ,"上一场结束时间和下一场申请开始时间间隔30分钟"); 
+							  return JSON.toJSONString(rw);  
+						}
+					 }
+				
+				  
+			 }
 			 
 		} catch (ParseException e) {
 			  rw = new ResultWarp(ResultWarp.FAILED ,"系统异常，请联系管理员"); 
@@ -653,64 +654,73 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
     	//删除领导人信息
     	String companyLeaderInfo = Rtext.toStringTrim(paramsMap.get("companyLeaderName"),"");
     	if(companyLeaderInfo==""){
-    		return   JSON.toJSONString(rw); 
+    	
+    		String   updateUser=userInfoMap.get("userId");
+    		yszxMapper.deleteLeaderInfo("", ideaId, "0", updateUser, new  Date());
+    		 
+    	}else{
+    		
+    		 String[] companyLeaderInfoArr = companyLeaderInfo.split(",");
+        	 List<Map<String, Object>>   leaderList=yszxMapper.selectForCompanyLeaderInfo(ideaId,"");
+    		 if(leaderList.isEmpty()){
+    			 for (String companyLeaderName : companyLeaderInfoArr) {
+    		    		CompanyLeaderInfo  companyInfo=new CompanyLeaderInfo();
+    					String companyLeadershipId=Rtext.getUUID();
+    					companyInfo.setId(companyLeadershipId);
+    					companyInfo.setIdeaId(ideaId);
+    					companyInfo.setRemark("");
+    					companyInfo.setValid("1");
+    					companyInfo.setUserId(companyLeaderName);
+    					String userId= userInfoMap.get("userId");
+    					companyInfo.setCreateUser(userId);
+    					companyInfo.setCreateTime(new Date());
+    					companyInfo.setUpdateUser(userId);
+    					companyInfo.setUpdateTime(new Date());
+    					try {
+    						yszxMapper.addCompanyLeaderInfo(companyInfo); 
+    					} catch (Exception e) {
+    						  rw = new ResultWarp(ResultWarp.FAILED ,"添加异常，请重新添加");
+    						  return JSON.toJSONString(rw);  
+    					}
+    		    	}
+    			 
+    			 
+    		 } else{
+    			   CompanyLeaderInfo  companyInfo=new CompanyLeaderInfo();
+    			   companyInfo.setIdeaId(ideaId);
+    			   companyInfo.setRemark("");
+    			   companyInfo.setValid("1");
+    			   String userId= userInfoMap.get("userId");
+    			   companyInfo.setCreateUser(userId);
+    			   companyInfo.setCreateTime(new Date());
+    			   companyInfo.setUpdateUser(userId);
+    			   companyInfo.setUpdateTime(new Date());
+    			    //前端的用户信息
+    			    List<String>  frontlist=new ArrayList<String>();
+    		    	for(String userid : companyLeaderInfoArr){
+    		    		frontlist.add(userid);
+    		    	}
+    		    	List<String>  afterlist=new ArrayList<String>();
+    		    	//后端的用户信息
+    		        for(Map<String, Object>     leaders: leaderList){
+    		        	String  userid= String.valueOf(leaders.get("userId")) ;
+    		        	afterlist.add(userid);
+    		    	}
+    		         String  frontRW    =  front(frontlist,afterlist,companyInfo);//添加
+    				  if(!frontRW.equals("null")){
+    						 return frontRW;
+    				  }  
+    				  String  after    =  after(frontlist,afterlist,ideaId, userId);//删除
+    		        if(!after.equals("null")){
+    					 return after;
+    			     }  
+    		        
+    		 }
+        	
+    		
+    		
+    		
     	}
-    	 String[] companyLeaderInfoArr = companyLeaderInfo.split(",");
-    	 List<Map<String, Object>>   leaderList=yszxMapper.selectForCompanyLeaderInfo(ideaId,"");
-		 if(leaderList.isEmpty()){
-			 for (String companyLeaderName : companyLeaderInfoArr) {
-		    		CompanyLeaderInfo  companyInfo=new CompanyLeaderInfo();
-					String companyLeadershipId=Rtext.getUUID();
-					companyInfo.setId(companyLeadershipId);
-					companyInfo.setIdeaId(ideaId);
-					companyInfo.setRemark("");
-					companyInfo.setValid("1");
-					companyInfo.setUserId(companyLeaderName);
-					String userId= userInfoMap.get("userId");
-					companyInfo.setCreateUser(userId);
-					companyInfo.setCreateTime(new Date());
-					companyInfo.setUpdateUser(userId);
-					companyInfo.setUpdateTime(new Date());
-					try {
-						yszxMapper.addCompanyLeaderInfo(companyInfo); 
-					} catch (Exception e) {
-						  rw = new ResultWarp(ResultWarp.FAILED ,"添加异常，请重新添加");
-						  return JSON.toJSONString(rw);  
-					}
-		    	}
-			 
-			 
-		 } else{
-			   CompanyLeaderInfo  companyInfo=new CompanyLeaderInfo();
-			   companyInfo.setIdeaId(ideaId);
-			   companyInfo.setRemark("");
-			   companyInfo.setValid("1");
-			   String userId= userInfoMap.get("userId");
-			   companyInfo.setCreateUser(userId);
-			   companyInfo.setCreateTime(new Date());
-			   companyInfo.setUpdateUser(userId);
-			   companyInfo.setUpdateTime(new Date());
-			    //前端的用户信息
-			    List<String>  frontlist=new ArrayList<String>();
-		    	for(String userid : companyLeaderInfoArr){
-		    		frontlist.add(userid);
-		    	}
-		    	List<String>  afterlist=new ArrayList<String>();
-		    	//后端的用户信息
-		        for(Map<String, Object>     leaders: leaderList){
-		        	String  userid= String.valueOf(leaders.get("userId")) ;
-		        	afterlist.add(userid);
-		    	}
-		         String  frontRW    =  front(frontlist,afterlist,companyInfo);//添加
-				  if(!frontRW.equals("null")){
-						 return frontRW;
-				  }  
-				  String  after    =  after(frontlist,afterlist,ideaId, userId);//删除
-		        if(!after.equals("null")){
-					 return after;
-			     }  
-		        
-		 }
     	
     	
     	
@@ -877,13 +887,8 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		  if(!visitInfo.isEmpty()){
 			  for(Map<String, Object>  visit:visitInfo){
 				  String userName=Rtext.toStringTrim(visit.get("userName"), "");
-				  String position=Rtext.toStringTrim(visit.get("position"), "");
-				  String userLevel=Rtext.toStringTrim(visit.get("userLevel"), "");
-				  
-				  List<Map<String, Object>>  list=yszxMapper.selectForCode("visitunit_levle",userLevel);
-				  String  levelName=Rtext.toStringTrim(list.get(0).get("name"), "");;
 				  if(!"".equals(userName)){
-					  visitName +=userName+"("+position+"、"+levelName+")"+",";
+					  visitName +=userName+",";
 				  }
 				  
 			  }
@@ -929,13 +934,17 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				  if(!userInfo.isEmpty()){
 					  for(Map<String, Object>  visit:userInfo){
 						  String useralisa=Rtext.toStringTrim(visit.get("userAlisa"), "");
-						  String postName=Rtext.toStringTrim(visit.get("postName"), "");
+						   
 						  if(!"".equals(useralisa)){
-							  userName+=useralisa+"("+postName+")"+",";
+							  userName+=useralisa+",";
 						  }
 					  }
-					String  userNames =userName.trim();
-					userName=userNames.substring(0, userNames.length()-1);
+					  String  userNames =userName.trim();
+					  if(userNames!=""){
+						    
+							userName=userNames.substring(0, userNames.length()-1);
+					  }
+					
 				  } 
 				return userName;
 				  
@@ -1124,22 +1133,39 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		return list;
 	}
 	@Override
-	public List<Map<String, Object>> selectComprehensiveInfo(String applyId, String createTime, String applyDept,String visitUserName, String userLevel) {
-		 List<Map<String, Object>>  ideaInfo=yszxMapper.selectForIdeaInfo(applyId, createTime,"");
-		  List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
-		  if(!ideaInfo.isEmpty()){
-			  for(Map<String, Object>  idea:ideaInfo){
-				  String  ideaId=Rtext.toStringTrim(idea.get("id"), "");
-				  String  visitName=selectForVisitInfo(ideaId);
-				  idea.put("visitName", visitName);
-				  String  leaderName=selectForCompanyLeaderInfo(ideaId);
-				  idea.put("leaderName", leaderName);
-				  String  userName=selectForCompanyUserInfo(ideaId);
-				  idea.put("userName", userName);
-				  list.add(idea);
-			  }
-		  } 
+	public List<Map<String, Object>> selectComprehensiveInfo(String applyNumber, String year,String month, String applyDept,String visitUserName, String visitLevel,List<String>  ids) {
+		// List<Map<String, Object>>  ideaInfo=yszxMapper.selectForIdeaInfo(applyId, createTime,"");
+		 
+		 List<Map<String, Object>>  ideaInfo=yszxMapper.selectComprehensiveInfo(applyNumber, year,month, applyDept, visitUserName, visitLevel,ids);
+//		  List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
+//		  if(!ideaInfo.isEmpty()){
+//			  for(Map<String, Object>  idea:ideaInfo){
+//				  String  ideaId=Rtext.toStringTrim(idea.get("id"), "");
+//				  String  visitName=selectForVisitInfo(ideaId);
+//				  idea.put("visitName", visitName);
+//				  String  leaderName=selectForCompanyLeaderInfo(ideaId);
+//				  idea.put("leaderName", leaderName);
+//				  String  userName=selectForCompanyUserInfo(ideaId);
+//				  idea.put("userName", userName);
+//				  list.add(idea);
+//			  }
+//		  } 
+		return ideaInfo;
+	}
+	@Override
+	public List<Map<String, Object>> selectIdeaDeptInfo() {
+		 List<Map<String, Object>>  list=yszxMapper.selectIdeaDeptInfo();
 		return list;
+	}
+	@Override
+	public List<Map<String, Object>> selectForApply(String id) {
+		// TODO Auto-generated method stub
+		return yszxMapper.selectForApply(id);
+	}
+	@Override
+	public List<Map<String, Object>> selectForApplyStatus(String applyStatus) {
+		 
+		return yszxMapper.selectForApplyStatus(applyStatus);
 	}
 	 
  	  
