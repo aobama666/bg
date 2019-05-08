@@ -17,6 +17,15 @@ public interface OrganStuffTreeService {
 	 */
 	public List<Map<String, Object>> queryUserTreeByOrgan(String organId);
 	/**
+	 * 演示中心专用根据组织ID（末节点），查询组织人员列表
+	 * @param organId 组织ID
+	 * @return
+	 */
+	public List<Map<String, Object>> getyszxForUserTreeByOrgan(String organId);
+	
+	
+	
+	/**
 	 * 根据组织ID,人员编号，人员姓名，模糊查询人员列表
 	 * @param rootId  组织ID
 	 * @param empCode 人员编号

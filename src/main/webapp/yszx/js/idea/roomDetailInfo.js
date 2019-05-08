@@ -30,7 +30,6 @@ function getNowFormatDate() {
     if (minutes >= 0 && minutes <= 9) {        
     	minutes = "0" + minutes;    
     } 
-    if(strDate >= 0 && strDate <= 9){}
     var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + " " + hours + seperator2 + minutes;    
     return currentdate;
 }
@@ -110,21 +109,20 @@ roomDetailInfo.messageSave= function(approvalUserd){
 	    if(!checkDates){
 	    	return;
 	    } 
-	   
-	    //参观人数
-	    var visitorNumber=$("#visitorNumber").val();
-	    //参观单位名称
-	    var visitUnitName=$("#visitUnitName").val();
 	    //验证主要参观领导
-	    //说明: 类，名的调用 用 . 
 	    var visitinfo=[];
 	    var  sortId=0;
+	    var visitleaderlen =$(".visitLeader tr").length;
+	    if(visitleaderlen==1){
+	    	 messager.tip("主要参观领导人信息不能为空",2000)
+			 roomDetailInfo.saveBtnClickFlag = 0;
+			 return;
+	    } 
 		 $(".visitLeader tr:gt(0)").each(function(){
 			 var visitId = $(this).find(".visitid").val()//姓名
 			  //验证名称，职务，级别是否为空
 			 var username = $(this).find(".visitUsername").val()//姓名
 			 var position = $(this).find(".visitposition").val()//职务
-			 //var userLevel = $(this).find(".userlevel").val()//级别
 			 var userLevel =$(this).find("#userLevel").val();//级别
 			 if(username == ''){
 				 messager.tip("参观领导名称不能为空",2000);
@@ -151,22 +149,36 @@ roomDetailInfo.messageSave= function(approvalUserd){
 			var visit={"visitId":visitId,"userLevel":userLevel,"visitUserName":username,"visitPosition":position,"sortId":sortId}
 		    visitinfo.push(visit);
 		 });
-		var companyUserInfo=[];
-		//部门id的获取
+	    // 院内陪同领导人员信息
+	    var companyLeaderName=$("#companyLeaderName").val();
+	    if(companyLeaderName==""){
+	    	 messager.tip("院领导姓名不能为空",2000)
+			 $("#companyLeaderName").addClass("validRefuses");
+			 roomDetailInfo.saveBtnClickFlag = 0;
+			 return;
+	    }else{
+	    	 $("#companyLeaderName").removeClass("validRefuses");
+	    }
+	    var companyUserInfo=[];
+		//陪同部门人员信息的获取
+	    var unitAccompanylen =$(".visitUnitAccompany tr").length;
+	    if(unitAccompanylen==1){
+	    	 messager.tip("陪同部门人员信息不能为空",2000)
+			 roomDetailInfo.saveBtnClickFlag = 0;
+			 return;
+	    } 
 		 $(".visitUnitAccompany tr:gt(0)").each(function(){
 			 var userId = $(this).find(".userId").val()//用户id
 			 var companyId = $(this).find(".companyId").val()//陪同主ID
 			 var userInfo={"userId":userId,"companyId":companyId}
 			 companyUserInfo.push(userInfo);
 		 });
-	    // 院内陪同人员信息
-	    //院领导姓名
-	    var companyLeaderName=$("#companyLeaderName").val();
-	    //陪同人数
-	    var companyUserNumber=$("#companyUserNumber").val();
-	  //备注
-      var remark=$("#remark").val();
-	  var roomDetailFormData = roomAddInfoCommon.getFormDataInfo();
+      var roomDetailFormData = roomAddInfoCommon.getFormDataInfo();
+	  roomDetailFormData.companyUserInfo=companyUserInfo ;
+	  roomDetailFormData.id=id;
+	 //验证参观单位性质
+	 var visitUnitType=$("#visitUnitType option:selected");
+	  roomDetailFormData.visitUnitType=visitUnitType.val();
 	  if(approvalUserd =='' || approvalUserd ==undefined){
 		  roomDetailFormData.visitLevel="save";  
 		  roomDetailFormData.approvalUserd="";
@@ -174,49 +186,29 @@ roomDetailInfo.messageSave= function(approvalUserd){
 		  roomDetailFormData.visitLevel="submit";
 		  roomDetailFormData.approvalUserd=approvalUserd;
 	  }
-	  
 	  roomDetailFormData.visitinfo=visitinfo;
-	  roomDetailFormData.companyUserInfo=companyUserInfo ;
-	  roomDetailFormData.id=id;
-	 //验证参观单位性质
-	 var visitUnitType=$("#visitUnitType option:selected");
-	 roomDetailFormData.visitUnitType=visitUnitType.val();
 	 /* 保存方法 */
 		$.ajax({
 		    url: "/bg/IdeaInfo/addIdeaInfo",
 			type: "post",
 			dataType:"json",
 			contentType: 'application/json',
-			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
 			data: JSON.stringify(roomDetailFormData),
 			success: function (data) {
-				if(data.success){
-					layer.confirm( "数据添加成功", 
+				roomDetailInfo.saveBtnClickFlag = 0;//保存按钮点击事件
+				if(data.success=="true"){
+					$.messager.confirm("提示信息",data.msg, 
 				 			function(r){
+						     parent.location.reload();
 						     roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
 						     var closeIndex = parent.layer.getFrameIndex(window.name);
-						     parent.layer.close(closeIndex);	 
+						     parent.layer.close(closeIndex);
 				 			}
-				 		);
-				     
-				 
-					  
+				 		);  
 				}else{
-					messager.tip("添加失败",2000);
+					 messager.tip(data.msg,2000)
 				}
 				
-//				if(data.success=="ture"){
-//					//roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
-//					//var closeIndex = parent.layer.getFrameIndex(window.name);
-//					//parent.layer.close(closeIndex);
-//				}else{
-//					 layer.open({
-//			    	        title:'提示信息',
-//			    	        content:data.msg,
-//			    	        area:'300px',
-//			    	        skin:'demo-class'
-//			    	    })
-//				}
 			}
 		}); 
 }
@@ -250,10 +242,7 @@ roomDetailInfo.messageSubmit= function(){
 				    	 layer.close(layer.index);
 				    }
 	             });
-		        
-		
-		
-	}
+	    }
 
 }
 
@@ -311,7 +300,6 @@ function messageSubmitHtml(){
 
 roomDetailInfo.initSelectForLeader = function(){
 	 
-	var pcode='visitunit_levle';
 	/* start 查询数据字典集合  */
 	$.ajax({
 	    url: "/bg/IdeaInfo/selectForLeader" ,//获取申报界面数据字典
@@ -441,6 +429,7 @@ function SelectForVisitunitLevel(){
 
 /*参观领导删除*/
 function delLeader(obj){
+	 
 	var checkedNumber = $(obj).parents(".contentBox").find("input[type=checkbox]:checked").length;
 	if(checkedNumber == 0){
     	 layer.open({
@@ -457,19 +446,20 @@ function delLeader(obj){
             btn:['确定','取消'],
             skin:'demo-class',
             yes:function(index,layero){
-                layer.close(index);
+            	layer.close(index);
             	delLeaderInfo(obj);  
+            	
             }
         });
     }
 }
 /*参观领导删除逻辑*/
 function delLeaderInfo(obj){
-	 
-	     $(obj).parents(".contentBox").find("input[class=visitid]:checked").each(function(){
+
+	     $(obj).parents(".contentBox").find("input[type=checkbox]:checked").each(function(){
          var  visitId= $(this).val();
          if(visitId==""){
-        	 $(obj).parents(".contentBox").find("input[class=visitid]:checked").parent().parent("tr").remove();
+        	 $(obj).parents(".contentBox").find("input[type=checkbox]:checked").parent().parent("tr").remove();
          }else{
         	 $.ajax({
         		    url: "/bg/IdeaInfo/deleteVisitInfo?visitId="+visitId,//获取申报界面数据字典
@@ -478,7 +468,7 @@ function delLeaderInfo(obj){
         			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
         			success: function (data) {
         				if(data.success=="true"){
-        					 $(obj).parents(".contentBox").find("input[class=visitid]:checked").parent().parent("tr").remove();
+        					 $(obj).parents(".contentBox").find("input[type=checkbox]:checked").parent().parent("tr").remove();
         				}else{
         					layer.open({
      			    	        title:'提示信息',

@@ -46,6 +46,16 @@ public class OrganStuffTreeServiceImpl implements OrganStuffTreeService{
 		List<Map<String, Object>> treeList = formatTreeData(list);
 		return treeList;
 	}
+    
+	public List<Map<String, Object>> getyszxForUserTreeByOrgan(String organId) {
+		List<Map<String, Object>> list = organStuffTreeMapper.getyszxForUserTreeByOrgan(organId);
+		List<Map<String, Object>> treeList = formatTreeData(list);
+		return treeList;
+	}
+	
+	
+	
+	
 	public List<Map<String, Object>> queryAllOrganTree(String rootId,String level,String limit) {
 		List<Map<String, Object>> list = organStuffTreeMapper.getAllOrganTree(rootId,level,limit);
 		

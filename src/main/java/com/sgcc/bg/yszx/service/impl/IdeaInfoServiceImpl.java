@@ -151,30 +151,30 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				  rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间不能大于参观结束时间");
 				  return JSON.toJSONString(rw);  
 			 } 	
-//			List<Map<String, Object>> list=yszxMapper.selectForIdeaDate();
-//			 if(list!=null){
-//				 for(Map<String, Object> map:list){
-//					String  startdate=String.valueOf(map.get("START_DATE"));
-//					String  newEndDate=DateUtil.minutes(endDate,30);
-//				 
-//					flags=DateUtil.compareTime(startdate,newEndDate);
-//					System.out.println(newEndDate+"<"+startdate);
-//					if(!flags){
-//						  rw = new ResultWarp(ResultWarp.FAILED ,"用户上一场结束时间和下一场申请开始时间间隔30分钟");
-//						  return JSON.toJSONString(rw);  
-//					 } 
-//				
-//					 
-//				 
-//				 
-//					
-//					 
-//					
-//				 }
-//				
-//				
-//				  
-//			 }
+			//系统已经预定的时间
+			List<Map<String, Object>> list=yszxMapper.selectForIdeaDate();
+			 if(list!=null){
+				 for(Map<String, Object> map:list){
+				 
+					String  oldenddate=String.valueOf(map.get("END_DATE"));//结束时间
+					
+					boolean flag1=DateUtil.getMinuteSub(oldenddate,stateDate,30);
+					if(!flag1){
+						 rw = new ResultWarp(ResultWarp.FAILED ,"上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
+						  return JSON.toJSONString(rw);  
+					}
+				 }
+				 for(Map<String, Object> map:list){
+						String  oldstartdate=String.valueOf(map.get("START_DATE"));//开始时间
+						boolean flag2=DateUtil.getMinuteSub(endDate,oldstartdate,30);
+						if(!flag2){
+							 rw = new ResultWarp(ResultWarp.FAILED ,"上一场结束时间和下一场申请开始时间间隔30分钟"); 
+							  return JSON.toJSONString(rw);  
+						}
+					 }
+				
+				  
+			 }
 			 
 		} catch (ParseException e) {
 			  rw = new ResultWarp(ResultWarp.FAILED ,"系统异常，请联系管理员"); 
@@ -654,64 +654,73 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
     	//删除领导人信息
     	String companyLeaderInfo = Rtext.toStringTrim(paramsMap.get("companyLeaderName"),"");
     	if(companyLeaderInfo==""){
-    		return   JSON.toJSONString(rw); 
+    	
+    		String   updateUser=userInfoMap.get("userId");
+    		yszxMapper.deleteLeaderInfo("", ideaId, "0", updateUser, new  Date());
+    		 
+    	}else{
+    		
+    		 String[] companyLeaderInfoArr = companyLeaderInfo.split(",");
+        	 List<Map<String, Object>>   leaderList=yszxMapper.selectForCompanyLeaderInfo(ideaId,"");
+    		 if(leaderList.isEmpty()){
+    			 for (String companyLeaderName : companyLeaderInfoArr) {
+    		    		CompanyLeaderInfo  companyInfo=new CompanyLeaderInfo();
+    					String companyLeadershipId=Rtext.getUUID();
+    					companyInfo.setId(companyLeadershipId);
+    					companyInfo.setIdeaId(ideaId);
+    					companyInfo.setRemark("");
+    					companyInfo.setValid("1");
+    					companyInfo.setUserId(companyLeaderName);
+    					String userId= userInfoMap.get("userId");
+    					companyInfo.setCreateUser(userId);
+    					companyInfo.setCreateTime(new Date());
+    					companyInfo.setUpdateUser(userId);
+    					companyInfo.setUpdateTime(new Date());
+    					try {
+    						yszxMapper.addCompanyLeaderInfo(companyInfo); 
+    					} catch (Exception e) {
+    						  rw = new ResultWarp(ResultWarp.FAILED ,"添加异常，请重新添加");
+    						  return JSON.toJSONString(rw);  
+    					}
+    		    	}
+    			 
+    			 
+    		 } else{
+    			   CompanyLeaderInfo  companyInfo=new CompanyLeaderInfo();
+    			   companyInfo.setIdeaId(ideaId);
+    			   companyInfo.setRemark("");
+    			   companyInfo.setValid("1");
+    			   String userId= userInfoMap.get("userId");
+    			   companyInfo.setCreateUser(userId);
+    			   companyInfo.setCreateTime(new Date());
+    			   companyInfo.setUpdateUser(userId);
+    			   companyInfo.setUpdateTime(new Date());
+    			    //前端的用户信息
+    			    List<String>  frontlist=new ArrayList<String>();
+    		    	for(String userid : companyLeaderInfoArr){
+    		    		frontlist.add(userid);
+    		    	}
+    		    	List<String>  afterlist=new ArrayList<String>();
+    		    	//后端的用户信息
+    		        for(Map<String, Object>     leaders: leaderList){
+    		        	String  userid= String.valueOf(leaders.get("userId")) ;
+    		        	afterlist.add(userid);
+    		    	}
+    		         String  frontRW    =  front(frontlist,afterlist,companyInfo);//添加
+    				  if(!frontRW.equals("null")){
+    						 return frontRW;
+    				  }  
+    				  String  after    =  after(frontlist,afterlist,ideaId, userId);//删除
+    		        if(!after.equals("null")){
+    					 return after;
+    			     }  
+    		        
+    		 }
+        	
+    		
+    		
+    		
     	}
-    	 String[] companyLeaderInfoArr = companyLeaderInfo.split(",");
-    	 List<Map<String, Object>>   leaderList=yszxMapper.selectForCompanyLeaderInfo(ideaId,"");
-		 if(leaderList.isEmpty()){
-			 for (String companyLeaderName : companyLeaderInfoArr) {
-		    		CompanyLeaderInfo  companyInfo=new CompanyLeaderInfo();
-					String companyLeadershipId=Rtext.getUUID();
-					companyInfo.setId(companyLeadershipId);
-					companyInfo.setIdeaId(ideaId);
-					companyInfo.setRemark("");
-					companyInfo.setValid("1");
-					companyInfo.setUserId(companyLeaderName);
-					String userId= userInfoMap.get("userId");
-					companyInfo.setCreateUser(userId);
-					companyInfo.setCreateTime(new Date());
-					companyInfo.setUpdateUser(userId);
-					companyInfo.setUpdateTime(new Date());
-					try {
-						yszxMapper.addCompanyLeaderInfo(companyInfo); 
-					} catch (Exception e) {
-						  rw = new ResultWarp(ResultWarp.FAILED ,"添加异常，请重新添加");
-						  return JSON.toJSONString(rw);  
-					}
-		    	}
-			 
-			 
-		 } else{
-			   CompanyLeaderInfo  companyInfo=new CompanyLeaderInfo();
-			   companyInfo.setIdeaId(ideaId);
-			   companyInfo.setRemark("");
-			   companyInfo.setValid("1");
-			   String userId= userInfoMap.get("userId");
-			   companyInfo.setCreateUser(userId);
-			   companyInfo.setCreateTime(new Date());
-			   companyInfo.setUpdateUser(userId);
-			   companyInfo.setUpdateTime(new Date());
-			    //前端的用户信息
-			    List<String>  frontlist=new ArrayList<String>();
-		    	for(String userid : companyLeaderInfoArr){
-		    		frontlist.add(userid);
-		    	}
-		    	List<String>  afterlist=new ArrayList<String>();
-		    	//后端的用户信息
-		        for(Map<String, Object>     leaders: leaderList){
-		        	String  userid= String.valueOf(leaders.get("userId")) ;
-		        	afterlist.add(userid);
-		    	}
-		         String  frontRW    =  front(frontlist,afterlist,companyInfo);//添加
-				  if(!frontRW.equals("null")){
-						 return frontRW;
-				  }  
-				  String  after    =  after(frontlist,afterlist,ideaId, userId);//删除
-		        if(!after.equals("null")){
-					 return after;
-			     }  
-		        
-		 }
     	
     	
     	
@@ -930,8 +939,12 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 							  userName+=useralisa+",";
 						  }
 					  }
-					String  userNames =userName.trim();
-					userName=userNames.substring(0, userNames.length()-1);
+					  String  userNames =userName.trim();
+					  if(userNames!=""){
+						    
+							userName=userNames.substring(0, userNames.length()-1);
+					  }
+					
 				  } 
 				return userName;
 				  
@@ -1069,7 +1082,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		try{
 			Map<String,String>  userInfoMap=userInfo();
 			String updateUser= userInfoMap.get("userId");
-			yszxMapper.submitForStatus(ideaId, "CANCEL", updateUser, new Date());
+			//yszxMapper.submitForStatus(ideaId, "CANCEL", updateUser, new Date());
 			approveService.unDoApprove(ideaId, updateUser);
 			rw = new ResultWarp(ResultWarp.SUCCESS ,"撤销成功");  
 		}catch(Exception e){

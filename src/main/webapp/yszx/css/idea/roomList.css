@@ -306,3 +306,6 @@ body div.btn_type_box .btn_type:ACTIVE {
 table td .validRefuse{
 	border:solid 1px red;
 }
+.validRefuses{
+	border:solid 1px red;
+}

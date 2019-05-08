@@ -180,6 +180,41 @@
 		   AND R.VALID = 1
 		 ORDER BY U.SORT_ID NULLS LAST
     </select>	
+    <!-- 演示中心获取人员树  局部加载   -->
+    <select id="getyszxForUserTreeByOrgan" resultType="java.util.Map">
+	SELECT  T.*  FROM (
+               SELECT U.USERID  USERID,
+		       U.USERNAME DEPTID,
+		       BD.DEPTID PDEPTID,
+		       'P'||U.HRCODE DEPTCODE,
+		       U.USERALIAS DEPTNAME,
+		       BD.PDEPTCODE PDEPTCODE,
+		       2 TYPE,
+		       'PERSION' DATATYPE,
+		       0 CHILD_NUM
+		  FROM BG_SYS_USER_DEPT_RELATION R
+		      INNER JOIN BG_SYS_USER U  ON U.USERID = R.USERID	 AND U.HRCODE IS NOT NULL	   AND U.VALID = 1 AND U.STATE = 0
+		      INNER JOIN BG_SYS_DEPT BD ON BD.DEPTID = R.DEPTID  AND BD.VALID = 1
+		 WHERE 1 = 1
+		   AND R.DEPTID = #{organId, jdbcType = VARCHAR}
+		   AND SYSDATE BETWEEN R.EXP_START_TIME AND R.EXP_END_TIME
+		   AND ((R.SRC = 0 AND NOT EXISTS
+		        (SELECT R1.USERID
+		            FROM BG_SYS_USER_DEPT_RELATION R1
+		           WHERE R1.USERID = R.USERID
+		             AND R1.SRC = 1
+		             AND SYSDATE BETWEEN R1.EXP_START_TIME AND R1.EXP_END_TIME
+		             AND R1.VALID = 1)) OR R.SRC IN (1, 2))
+		   AND R.VALID = 1
+		 ORDER BY U.SORT_ID NULLS LAST
+        ) T    where     NOT  EXISTS   (  SELECT  G.USERID   FROM  TB_YSZX_CONFIG_COMPANY_LEADER G  where  T.USERID=G.USERID   AND G.VALID = '1'   )
+    </select>	
+    
+    
+    
+    
+    
+    
     <!--  获取人员树  模糊查询 -->
     <select id="getUserTreeByUser" resultType="java.util.Map">
 		SELECT T.DEPTID,T.PDEPTID,T.DEPTCODE, T.DEPTNAME, T.PDEPTCODE, T.TYPE, T.DATATYPE, T.CHILD_NUM
