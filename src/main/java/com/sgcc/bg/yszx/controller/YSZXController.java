@@ -63,9 +63,17 @@ public class YSZXController {
 	public ModelAndView addPage(){
 		Map<String, Object> map = new HashMap<>();
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
-		map.put("hrcode", currentUser.getHrCode());
-		map.put("deptName", currentUser.getDeptName());
-		map.put("deptCode", currentUser.getDeptCode());
+		String type=currentUser.getType();
+		if("2".equals(type)){
+			map.put("deptId", currentUser.getpDeptId());
+			map.put("deptName", currentUser.getpDeptName());
+			map.put("deptCode", currentUser.getpDeptCode());
+		 
+		}else{
+			map.put("deptId", currentUser.getDeptId());
+			map.put("deptName", currentUser.getDeptName());
+			map.put("deptCode", currentUser.getDeptCode());
+		}
 		List<Map<String, String>>   visitUnitTypeList= dataDictionaryService.selectDictDataByPcode("visitunit_type");
 		map.put("visitUnitTypeInfo", visitUnitTypeList);
 		List<Map<String, String>>   visitUnitLevelList= dataDictionaryService.selectDictDataByPcode("visitunit_levle");
@@ -128,7 +136,8 @@ public class YSZXController {
 	@RequestMapping(value = "/dealt", method = RequestMethod.GET)
 	public ModelAndView dealt(HttpServletRequest request){
 		Map<String, Object> map = new HashMap<>();
-	 
+		List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
+	    map.put("deptInfo",list);//部门信息
 		ModelAndView model = new ModelAndView("yszx/yszx_idea_dealt",map);
 		return model;
 	}
@@ -139,7 +148,8 @@ public class YSZXController {
 	@RequestMapping(value = "/already", method = RequestMethod.GET)
 	public ModelAndView already(HttpServletRequest request){
 		Map<String, Object> map = new HashMap<>();
-	 
+		List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
+	    map.put("deptInfo",list);//部门信息
 		ModelAndView model = new ModelAndView("yszx/yszx_idea_already",map);
 		return model;
 	}
@@ -202,4 +212,14 @@ public class YSZXController {
 		ModelAndView model = new ModelAndView("yszx/yszx_idea_audit", proInfo);
 		return model;
 	}
+	
+	 
+		@RequestMapping(value = "/todo", method = RequestMethod.GET)
+		public ModelAndView todo(HttpServletRequest request){
+			Map<String, Object> map = new HashMap<>();
+			ModelAndView model = new ModelAndView("yszx/audit/todoItem", map);
+			return model;
+	    }
+	
+	
 }

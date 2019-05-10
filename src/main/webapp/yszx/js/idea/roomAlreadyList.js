@@ -14,7 +14,7 @@ $(function(){
 	});
 	$(".inputQuery").on("input",function(e){
 		var valLength = e.target.value.length;
-		if(valLength>3){
+		if(valLength>1){
 			roomList.query();
 		}
 	});
@@ -44,18 +44,17 @@ roomList.initDataGrid = function(){
 		url: "/bg/IdeaInfo/selectForAlreadytInfo",
 		type: 'POST',
 		form:'#queryForm',
-		 
-		pageSize:50,
+		pageSize:10,
 		tablepage:$(".tablepage"),//分页组件
-		successFinal:function(){
-			roomList.resize();
-		},
-		callBackFunc:function(){
-			roomList.initItems();
-		},
+//		successFinal:function(){
+//			roomList.resize();
+//		},
+//		callBackFunc:function(){
+//			roomList.initItems();
+//		},
 		columns: [
-		/*  {name: '序号',style:{width:"2%"}, data: 'RN'},    */      
-		  {name: '',style:{width:"2%"}, data: 'id',checkbox:true, forMat:function(row){
+		  {name: '序号',style:{width:"50px"}, data: 'ROWNO'},       
+		  {name: '',style:{width:"50px"}, data: 'id',checkbox:true, forMat:function(row){
 			  dataItems[index] = row;//将一行数据放在一个list中
 			  return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.id)+'"/>';
 		 	}
@@ -69,7 +68,7 @@ roomList.initDataGrid = function(){
 				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.id+"','"+row.applyId+"')>"+row.applyNumber+"</a>";
 				  		 
 		  }},
-		  {name: '申请时间', style:{width:"8%"},data: 'createTime'},
+		  {name: '申请时间', style:{width:"85px"},data: 'createTime'},
 		  {name: '申请部门（单位）',style:{width:"10%"}, data: 'applyDept',forMat:function(row){
 			  if(row.applyDept){
 				  	return "<span title='"+row.applyDept+"' style='width:150px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.applyDept+"</span>"
@@ -103,8 +102,8 @@ roomList.initDataGrid = function(){
 		  {name: '参观开始时间', style:{width:"8%"},data: 'stateDate'},
 		  {name: '参观结束时间', style:{width:"8%"},data: 'endDate'},
 		  {name: '审批状态',style:{width:"7%"},data: 'status'   },
-		  {name: '联系人', style:{width:"6%"},data: 'contactUser'},
-		  {name: '联系方式', style:{width:"8%"},data: 'contactPhone'}
+		  {name: '联系人', style:{width:"80px"},data: 'contactUser'},
+		  {name: '联系方式', style:{width:"100px"},data: 'contactPhone'}
 		  
 		]
 	});
