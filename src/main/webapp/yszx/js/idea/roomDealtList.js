@@ -44,17 +44,16 @@ roomList.initDataGrid = function(){
 		url: "/bg/IdeaInfo/selectForDealtInfo",
 		type: 'POST',
 		form:'#queryForm',
-		 
-		pageSize:50,
+		pageSize:10,
 		tablepage:$(".tablepage"),//分页组件
-		successFinal:function(){
-			roomList.resize();
-		},
-		callBackFunc:function(){
-			roomList.initItems();
-		},
+//		successFinal:function(){
+//			roomList.resize();
+//		},
+//		callBackFunc:function(){
+//			roomList.initItems();
+//		},
 		columns: [
-		/*  {name: '序号',style:{width:"2%"}, data: 'RN'},    */      
+		  {name: '序号',style:{width:"2%"}, data: 'ROWNO'},          
 		  {name: '',style:{width:"2%"}, data: 'id',checkbox:true, forMat:function(row){
 			  dataItems[index] = row;//将一行数据放在一个list中
 			  return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.id)+'"/>';
@@ -108,7 +107,6 @@ roomList.initDataGrid = function(){
 		  
 		]
 	});
-
 }	
 	/*演示中心管理-查看 */	
 	roomList.forDetails = function (id,applyId){
@@ -135,10 +133,9 @@ roomList.initDataGrid = function(){
 			messager.tip("每次只能选择一条数据",2000);
 			return;
 		}
-	 
 		var checkedIds = dataGrid.getCheckedIds();
 		messageReturn("0");
-	}
+	   }
 	
 	messageReturn= function(stauts){
 	    var html=messagereturnHtml();
@@ -155,179 +152,40 @@ roomList.initDataGrid = function(){
 					 {title:'请填写审批意见', area:'800px',skin:'demo-class'   },
 					 function(){
 						 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
-					 		$.messager.confirm( "提交提示", "确认提交选中数据吗",
-					 			function(r){
-					 			var checkedItems = dataGrid.getCheckedItems(dataItems);
-					 			var approveId= checkedItems[0].wlApproveId;
-					 			var auditUserId="";
-					 					$.ajax({
-					 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
-					 						type: "post",
-					 						dataType:"json",
-					 						contentType: 'application/json',
-					 						success: function (data) {
-					 							if(data.success == "true"){
-					 								messager.tip("提交成功",1000);
-					 								roomList.query();
-					 							}else{
-					 								messager.tip("提交失败",1000);
-					 								roomList.query();
-					 							}
-					 						}
-					 					});
-					 				 
-					 			}
-					 		);
-					     
-					 		layer.close(layer.index);
+						 selectForReturn(approveRemark);
+					 	 layer.close(layer.index);
 		             });
-		}
-		
-	}
-	/* 演示中心待办管理-同意方法*/
-	roomList.agreeEvent = function(){
-		var checkedItems = dataGrid.getCheckedItems(dataItems);
-		if(checkedItems.length==0){
-			messager.tip("请选择要操作的数据",1000);
-			return;
-		}else if(checkedItems.length>1){
-			messager.tip("每次只能选择一条数据",2000);
-			return;
-		}
-		var checkedIds = dataGrid.getCheckedIds();
-		var approveState=checkedItems[0].approveState;
-		
-		
-		if(approveState=="MANAGER_DEPT_HEAD_CHECK"){
-			messageReturn("1");
-		}else{
-			messageAgree("1");
 		}
 		
 	}
 	
-	/* 同意信息库信息 */
-	messageAgree= function(stauts){
-	    var html=messageagreeHtml();
-		if(html =='' || html ==undefined){
-			layer.open({
-		        title:'提示信息',
-		        content:'审批人查询失败',
-		        area:'300px',
-		        skin:'demo-class'
-		    }) 
-		}else{
-			layer.confirm(
-					 html,
-					 {title:'请选择审批人', area:'800px',skin:'demo-class'   },
-					 function(){
-						 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
-						 var auditUserId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
-						 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
-						 if(checkedNumber == 0){
-							    messager.tip("请选择要操作的数据",1000);
-								return;
-					     }else if(checkedNumber > 1 ){
-					    	    messager.tip("请选择要操作的数据",1000);
-								return;  
-					     }else{
-					    	var checkedIds = dataGrid.getCheckedIds();
-					 		$.messager.confirm( "提交提示", "确认提交选中数据吗",
-					 			function(r){
-					 			var checkedItems = dataGrid.getCheckedItems(dataItems);
-					 			var approveId= checkedItems[0].wlApproveId;
-					 					$.ajax({
-					 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
-					 						type: "post",
-					 						dataType:"json",
-					 						contentType: 'application/json',
-					 						success: function (data) {
-					 							if(data.success == "true"){
-					 								messager.tip("提交成功",1000);
-					 								roomList.query();
-					 							}else{
-					 								messager.tip("提交失败",1000);
-					 								roomList.query();
-					 							}
-					 						}
-					 					});
-					 				 
-					 			}
-					 		);
-					    	 layer.close(layer.index);
-					    }
-						 
-						 
-						 
-						 
-						 
-						 
-		             });
-			        
-			
-			
-		}
-
+	function selectForReturn(approveRemark){
+		$.messager.confirm( "退回提示", "确认提交选中数据吗",
+	 			function(r){
+	 			var checkedItems = dataGrid.getCheckedItems(dataItems);
+	 			var approveId= checkedItems[0].wlApproveId;
+	 			var auditUserId="";
+	 					$.ajax({
+	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 						type: "post",
+	 						dataType:"json",
+	 						contentType: 'application/json',
+	 						success: function (data) {
+	 							if(data.success == "true"){
+	 								messager.tip("审批成功",1000);
+	 								roomList.query();
+	 							}else{
+	 								messager.tip("审批失败",1000);
+	 								roomList.query();
+	 							}
+	 						}
+	 					});
+	 			}
+	 		);
+	     
 	}
-	/* 同意信息---页面拼接 */
-	messageagreeHtml=  function (){
-		var checkedItems = dataGrid.getCheckedItems(dataItems);
-		var approveState= checkedItems[0].approveState;
-		var userPrivilegehtml = '';
-		$.ajax({
-		    url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState+"&type="+"apply",//获取申报界面数据字典
-			type: "post",
-			dataType: "json",
-			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
-			success: function (data) {
-				 
-				if(data.success =='true'){
-			    	var userPrivilegelist = data.data.userPrivilege;
-					userPrivilegehtml += '<table class="userPrivilege tableStyle thTableStyle">';
-					userPrivilegehtml += '<tr>';
-					     userPrivilegehtml += '<th>选择</th>';
-					     userPrivilegehtml += '<th>审批人</th>';
-					     userPrivilegehtml += '<th>部门</th>';
-					     
-					userPrivilegehtml += '</tr>';
-						for (var i = 0; i < userPrivilegelist.length; i++) {
-							userPrivilegehtml += '<tr>';
-							     userPrivilegehtml += '<td>';
-							       userPrivilegehtml+='<input type="checkbox"   class="inputUserId"  />' 
-							       userPrivilegehtml+='<input type="hidden"    id="userId"  name = "userId"  class="userId"  value="' + userPrivilegelist[i].userId + '"  />' 
-							     userPrivilegehtml += '</td>';
-							     userPrivilegehtml += '<td class="addInputStyle">  ';
-							       userPrivilegehtml+='<input type="text" disabled  id="userAlias"  name = "userAlias"  class="userAlias inputChange"  value="' + userPrivilegelist[i].userAlias + '" title="审批人名称 " />' 
-							     userPrivilegehtml += '</td>';
-							     userPrivilegehtml += '<td class="addInputStyle">';
-							       userPrivilegehtml+='<input type="text" disabled   id="deptName"   name = "deptName"   class="deptName inputChange"  value="' + userPrivilegelist[i].deptName + '" title="审批人单位" />'
-							     userPrivilegehtml += '</td>';
-							       
-							 userPrivilegehtml += '</tr>';   
-							 
-							
-							 
-						}
-						
-					 userPrivilegehtml += '</table>';
-					 userPrivilegehtml +='<div class="contentBox   Remark">';
-					 userPrivilegehtml +='<h4 class="tableTitle">';
-					 userPrivilegehtml +='<span title = "审批意见">审批意见：</span>';
-				     userPrivilegehtml +='</h4>';
-					 userPrivilegehtml +='<div class="btnBox"   style="height:20px;"  >';
-					 userPrivilegehtml +='</div>';
-					 userPrivilegehtml +='<div class="maxBox">';
-					 userPrivilegehtml +='<textarea   id="approveRemark"    name="approveRemark"  style="height:100px; width: 100%;background-color: #fff"> </textarea>';	    
-					 userPrivilegehtml +='</div>';
-					 userPrivilegehtml +='</div>';
-				}else{
-					userPrivilegehtml ;
-				}
-			 
-			}
-		});
-		return userPrivilegehtml;
-	}
+	
+	
 	/* 退回信息---页面拼接 */
 	messagereturnHtml=  function (){
 	 
@@ -345,6 +203,177 @@ roomList.initDataGrid = function(){
 
 		return userPrivilegehtml;
 	}
+	
+
+	/* 演示中心待办管理-同意方法*/
+	roomList.agreeEvent = function(){
+		debugger;
+		var checkedItems = dataGrid.getCheckedItems(dataItems);
+		if(checkedItems.length==0){
+			messager.tip("请选择要操作的数据",1000);
+			return;
+		}else if(checkedItems.length>1){
+			messager.tip("每次只能选择一条数据",2000);
+			return;
+		}
+		var checkedIds = dataGrid.getCheckedIds();
+		var approveState=checkedItems[0].approveState;
+		if(approveState=="MANAGER_DEPT_HEAD_CHECK"){
+			messageReturn("1");
+		}else{
+			messageAgree("1");
+		}
+		
+	}
+	
+	
+	function approveUserID(){
+		var ApproveUserId = "";
+		var checkedItems = dataGrid.getCheckedItems(dataItems);
+		var approveState= checkedItems[0].approveState;
+		$.ajax({
+			 url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState+"&type="+"apply",//获取申报界面数据字典
+			type: "post",
+			dataType: "json",
+			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
+			success: function (data) { 
+				if(data.success =='true'){
+				  	var userPrivilegelist = data.data.userPrivilege;
+				  	var len=userPrivilegelist.length
+				  	if(len>1){
+				  		ApproveUserId="";
+				  	}else{
+				  		ApproveUserId=userPrivilegelist[0].userId;
+				  	}
+				} 
+			 }
+		  });
+		return ApproveUserId;
+		
+	}
+	
+	
+	
+	
+	
+	/* 同意信息库信息 */
+	messageAgree= function(stauts){
+	    var html=messageagreeHtml();
+		if(html =='' || html ==undefined){
+			layer.open({
+		        title:'提示信息',
+		        content:'审批人查询失败',
+		        area:'300px',
+		        skin:'demo-class'
+		    }) 
+		}else{
+			var auditUserId=approveUserID();
+			var approveRemark= "";
+			var checkedItems = dataGrid.getCheckedItems(dataItems);
+ 			var approveId= checkedItems[0].wlApproveId;
+			if(auditUserId!=""){
+				  selectForAgree(approveId,stauts,auditUserId,approveRemark);
+			      layer.close(layer.index);
+			 }else{
+				 layer.confirm(
+						 html,
+						 {title:'请选择审批人', area:'800px',skin:'demo-class'   },
+						 function(){
+							 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
+							 var auditUserId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
+							 
+							 if(checkedNumber == 0){
+								    messager.tip("请选择要操作的数据",1000);
+									return;
+						     }else if(checkedNumber > 1 ){
+						    	    messager.tip("请选择要操作的数据",1000);
+									return;  
+						     }else{
+						    	var checkedIds = dataGrid.getCheckedIds();
+						    	 selectForAgree(approveId,stauts,auditUserId,approveRemark);
+						    	 layer.close(layer.index);
+						    }
+							 
+							 
+							  
+			             });
+				  
+			 }
+		}
+
+	}
+	
+	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
+		$.messager.confirm( "同意提示", "确认提交选中数据吗",
+	 			function(r){
+	 			
+	 					$.ajax({
+	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 						type: "post",
+	 						dataType:"json",
+	 						contentType: 'application/json',
+	 						success: function (data) {
+	 							if(data.success == "true"){
+	 								messager.tip("审批成功",1000);
+	 								roomList.query();
+	 							}else{
+	 								messager.tip("审批失败失败",1000);
+	 								roomList.query();
+	 							}
+	 						}
+	 					});
+	 				 
+	 			}
+	 		);
+	}
+	
+	
+	
+	
+	/* 同意信息---页面拼接 */
+	messageagreeHtml=  function (){
+		var checkedItems = dataGrid.getCheckedItems(dataItems);
+		var approveState= checkedItems[0].approveState;
+		var userPrivilegehtml = '';
+		$.ajax({
+		    url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState+"&type="+"apply",//获取申报界面数据字典
+			type: "post",
+			dataType: "json",
+			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
+			success: function (data) {
+				if(data.success =='true'){
+			    	var userPrivilegelist = data.data.userPrivilege;
+					userPrivilegehtml += '<table class="userPrivilege tableStyle thTableStyle">';
+					userPrivilegehtml += '<tr>';
+					     userPrivilegehtml += '<th>选择</th>';
+					     userPrivilegehtml += '<th>审批人</th>';
+					     userPrivilegehtml += '<th>部门</th>';
+					userPrivilegehtml += '</tr>';
+						for (var i = 0; i < userPrivilegelist.length; i++) {
+							userPrivilegehtml += '<tr>';
+							     userPrivilegehtml += '<td>';
+							       userPrivilegehtml+='<input type="checkbox"   class="inputUserId"  />' 
+							       userPrivilegehtml+='<input type="hidden"    id="userId"  name = "userId"  class="userId"  value="' + userPrivilegelist[i].userId + '"  />' 
+							     userPrivilegehtml += '</td>';
+							     userPrivilegehtml += '<td class="addInputStyle">  ';
+							       userPrivilegehtml+='<input type="text" disabled  id="userAlias"  name = "userAlias"  class="userAlias inputChange"  value="' + userPrivilegelist[i].userAlias + '" title="审批人名称 " />' 
+							     userPrivilegehtml += '</td>';
+							     userPrivilegehtml += '<td class="addInputStyle">';
+							       userPrivilegehtml+='<input type="text" disabled   id="deptName"   name = "deptName"   class="deptName inputChange"  value="' + userPrivilegelist[i].deptName + '" title="审批人单位" />'
+							     userPrivilegehtml += '</td>';
+							       
+							 userPrivilegehtml += '</tr>';   	 
+						}
+					 userPrivilegehtml += '</table>';
+				}else{
+					userPrivilegehtml ;
+				}
+			 
+			}
+		});
+		return userPrivilegehtml;
+	}
+	
 
  
 	

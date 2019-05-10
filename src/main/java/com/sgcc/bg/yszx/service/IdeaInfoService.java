@@ -25,7 +25,7 @@ public interface IdeaInfoService {
 	 * @param pro
 	 * @return
 	 */
-	public List<Map<String, Object>>  selectForIdeaInfo(String  applyId,String createTime);
+	public List<Map<String, Object>>  selectForIdeaInfo(String  applyId,String createTime,int page_start,int page_end);
 	
 	/**
 	 * 查询演示中心信息--修改
@@ -74,13 +74,13 @@ public interface IdeaInfoService {
 	 * @param pro
 	 * @return
 	 */
-	public List<Map<String, Object>>  selectForDealtInfo(String  appltNumber,String applyDept,String contactUser);
+	public List<Map<String, Object>>  selectForDealtInfo(String  appltNumber,String applyDept,String contactUser,int page_start,int page_end);
 	/**
 	 * 修改演示中心信息---已办信息的查询
 	 * @param pro
 	 * @return
 	 */
-	public List<Map<String, Object>>  selectForAlreadytInfo(String  appltNumber,String applyDept,String contactUser);
+	public List<Map<String, Object>>  selectForAlreadytInfo(String  appltNumber,String applyDept,String contactUser,int page_start,int page_end);
 	/**
 	 * 查询演示中心信息----综合查询
 	 * @param pro

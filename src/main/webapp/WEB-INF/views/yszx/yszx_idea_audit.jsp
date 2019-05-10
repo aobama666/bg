@@ -9,7 +9,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
-	<title>演示中心管理待办</title>
+	<title>演示中心管理待办发送</title>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 	<!-- newPage、item.css 页面css-->
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid/css/newPage.css" rel="stylesheet" type="text/css"/>
@@ -283,8 +283,11 @@
 		</div>
 	</div>
 	<!-- end参观详情信息-->
-	
-
+		<div class="btnContent">
+ 	    <button type="button" class="btn" onclick="roomDetailInfo.withdrawEvent()">撤回</button>	 
+		<button type="button" class="btn" onclick="roomDetailInfo.returnEvent()">退回</button> 
+		<button type="button" class="btn" onclick="roomDetailInfo.agreeEvent()" >同意</button>
+	    </div>
 </body>
  <script type="text/javascript">
  $(function(){

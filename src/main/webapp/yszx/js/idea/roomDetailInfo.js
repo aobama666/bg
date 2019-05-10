@@ -7,7 +7,7 @@ $(function(){
 	//‘新增’页面，院领导姓名多选下拉框
 	roomDetailInfo.initSelectForLeader();
 	//初始化人员选择树
-	$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'self',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'}); 
+	$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'parent',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'}); 
 });
 //获取当前时间
 function getNowFormatDate() {    
@@ -68,6 +68,7 @@ roomDetailInfo.messageResign =function(){
 }
 /* 保存信息库信息 */
 roomDetailInfo.messageSave= function(approvalUserd){
+	debugger;
 	   /* 主ID  */
 	    var id=$("#id").val();
 		/* 验证必填项   */
@@ -179,44 +180,111 @@ roomDetailInfo.messageSave= function(approvalUserd){
 	 //验证参观单位性质
 	 var visitUnitType=$("#visitUnitType option:selected");
 	  roomDetailFormData.visitUnitType=visitUnitType.val();
+	  var msginfo="";
 	  if(approvalUserd =='' || approvalUserd ==undefined){
 		  roomDetailFormData.visitLevel="save";  
 		  roomDetailFormData.approvalUserd="";
+		  msginfo="save";
 	  }else{
 		  roomDetailFormData.visitLevel="submit";
 		  roomDetailFormData.approvalUserd=approvalUserd;
+		  msginfo="submit";
 	  }
+	  var remark= $('#remark').val();
+	  roomDetailFormData.remark=remark;
 	  roomDetailFormData.visitinfo=visitinfo;
 	 /* 保存方法 */
-		$.ajax({
-		    url: "/bg/IdeaInfo/addIdeaInfo",
-			type: "post",
-			dataType:"json",
-			contentType: 'application/json',
-			data: JSON.stringify(roomDetailFormData),
-			success: function (data) {
-				roomDetailInfo.saveBtnClickFlag = 0;//保存按钮点击事件
-				if(data.success=="true"){
-					$.messager.confirm("提示信息",data.msg, 
-				 			function(r){
-						     parent.location.reload();
-						     roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
-						     var closeIndex = parent.layer.getFrameIndex(window.name);
-						     parent.layer.close(closeIndex);
-				 			}
-				 		);  
-				}else{
-					 messager.tip(data.msg,2000)
+	  if(msginfo=="save"){
+		  $.messager.confirm( "保存提示", "确认保存该数据吗",
+					function(r){
+						if(r){
+							$.ajax({
+							    url: "/bg/IdeaInfo/addIdeaInfo",
+								type: "post",
+								dataType:"json",
+								contentType: 'application/json',
+								data: JSON.stringify(roomDetailFormData),
+								success: function (data) {
+									roomDetailInfo.saveBtnClickFlag = 0;//保存按钮点击事件
+									if(data.success=="true"){
+										 messager.tip("保存成功",1000);
+									 
+									}else{ 
+										messager.tip(data.msg,5000);
+										 
+									}
+									
+								}
+							}); 
+						}
+					}
+				);
+		  
+		  
+		  
+	  }else if(msginfo=="submit"){
+		  $.messager.confirm( "提交提示", "确认提交该数据吗",
+		  function(r){
+				if(r){
+					$.ajax({
+					    url: "/bg/IdeaInfo/addIdeaInfo",
+						type: "post",
+						dataType:"json",
+						contentType: 'application/json',
+						data: JSON.stringify(roomDetailFormData),
+						success: function (data) {
+							roomDetailInfo.saveBtnClickFlag = 0;//保存按钮点击事件
+							if(data.success=="true"){
+							    messager.tip("提交成功",1000);
+							    roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
+								var closeIndex = parent.layer.getFrameIndex(window.name);
+								parent.layer.close(closeIndex);
+							}else{ 
+								messager.tip(data.msg,5000);
+							}
+							
+						}
+					}); 
 				}
-				
 			}
-		}); 
+		);
+		  
+		  
+		  
+	  }
+	 
+	  
+	  
+	  
+	
+}
+function approveUserID(){
+	 
+	var ApproveUserId = "";
+	var approveState="SAVE"
+	$.ajax({
+	    url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState+"&type="+"submit",//获取申报界面数据字典
+		type: "post",
+		dataType: "json",
+		async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
+		success: function (data) { 
+			if(data.success =='true'){
+			  	var userPrivilegelist = data.data.userPrivilege;
+			  	var len=userPrivilegelist.length
+			  	if(len>1){
+			  		ApproveUserId="";
+			  	}else{
+			  		ApproveUserId=userPrivilegelist[0].userId;
+			  	}
+			} 
+		 }
+	  });
+	return ApproveUserId;
+	
 }
 /* 提交信息库信息 */
 roomDetailInfo.messageSubmit= function(){
-	 
 	var html=messageSubmitHtml();
-	 
 	if(html =='' || html ==undefined){
 		layer.open({
 	        title:'提示信息',
@@ -225,23 +293,31 @@ roomDetailInfo.messageSubmit= function(){
 	        skin:'demo-class'
 	    }) 
 	}else{
-		layer.confirm(
-				 html,
-				 {title:'请选择审批人', area:'800px',skin:'demo-class'   },
-				 function(){
-					 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
-					 var userId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
-					 if(checkedNumber == 0){
-						 messager.tip("请选择要操作的数据",1000);
-							return;
-				     }else if(checkedNumber > 1 ){
-				    	  messager.tip("请选择要操作的数据",1000);
+		var ApproveUserId=approveUserID();
+		if(ApproveUserId!=""){
+			  roomDetailInfo.messageSave(ApproveUserId);
+		      layer.close(layer.index);
+		  }else{
+		      layer.confirm(
+					html,
+					{title:'请选择审批人', area:'800px',skin:'demo-class'   },
+					function(){
+						var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
+						var userId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
+						if(checkedNumber == 0){
+						    messager.tip("请选择要操作的数据",1000);
+						    return;
+						}else if(checkedNumber > 1 ){
+							messager.tip("请选择要操作的数据",1000);
 							return;  
-				     }else{
-				    	 roomDetailInfo.messageSave(userId);
-				    	 layer.close(layer.index);
-				    }
-	             });
+						}else{
+							roomDetailInfo.messageSave(userId);
+							layer.close(layer.index);
+					    }
+				     }); 
+		    }
+		
+		
 	    }
 
 }
@@ -295,6 +371,9 @@ function messageSubmitHtml(){
 	});
 	return userPrivilegehtml;
 }
+
+
+
 
 
 

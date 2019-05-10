@@ -9,36 +9,22 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
-	<title>演示中心管理新增</title>
+	<title>演示中心管理详情</title>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 	<!-- newPage、item.css 页面css-->
-    <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid/css/newPage.css" rel="stylesheet" type="text/css"/>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid/css/item.css" rel="stylesheet" type="text/css"/>
-	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/newPage.css" rel="stylesheet" type="text/css"/>
+	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/datagrid.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css">   
 	<!-- easyui用css -->
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet"/>
-	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.min.js"></script>
-    <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/locale/easyui-lang-zh_CN.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>  <!-- IE支持 JSON格式   -->
-	<script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>    <!-- 弹框.js  -->
-	<script src="<%=request.getContextPath()%>/yszx/js/plugins/stuff-tree/stuff-tree.js"></script>
-    <script src="<%=request.getContextPath()%>/yszx/js/plugins/organ-tree/organ-tree.js"></script>
-	<!-- 引入日期选择框 -->
-	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
-	<!-- 验证校验公共方法，提示框公共方法 -->
-	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
-	<!-- 本页面所需的js -->
- 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomDetailInfo.js"></script>
+	<!-- 本页面所需css -->
+	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
  </head>
 <body>
 	<div class="main_div"></div> 
 	<!-- start  头部 -->
 	<div class="sheach details">
-		<div class='content_top'>参观设定详情</div>	 
+		<!--<div class='content_top'>参观设定详情 </div>	 -->
 	</div>
 	<!-- end  头部 -->
                        
@@ -223,17 +209,21 @@
 	</div>
 	
 	
-	<!-- 备注信息展示 -->
-	<table class="visitRemarks tableStyle" style="margin-top:10px;">
-		<tr>
-			<td class="width-two"> 备注</td>
-			<td colspan="3" class="addInputStyle">
-				<input type="text"  id="remark"   name="remark"   len="200"   value = "${remark}"  disabled/>
-				<input type = "hidden" value = "${approvetype}" id = "approvetype" name="approvetype">  
-			</td>
-		</tr>
-	</table>
-	
+	 <!-- 备注信息展示 -->
+	<div class="contentBox">
+		<h4 class="tableTitle">
+			<span title = "备注">备注：</span>
+		</h4>
+		<div class="btnBox" style="height:30px;" >
+			  
+		</div>
+		<div class="maxBox">
+			 <textarea   id="remark"      name="remark"  style="height:100px; width: 100%;background-color: #fff"  len="200"  title="非必填项"> ${remark}</textarea> 	    		
+		     <input type = "hidden" value = "${approvetype}" id = "approvetype" name="approvetype">  
+	 
+		</div>
+		
+	</div>
 	 
 	<div class="contentBox" id="Approves">
 		<h4 class="tableTitle">
@@ -283,6 +273,22 @@
 		</div>
 	</div>
 	<!-- end参观详情信息-->
+	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>  <!-- IE支持 JSON格式   -->
+	<script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
+	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>    <!-- 弹框.js  -->
+	<!-- 引入日期选择框 -->
+	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
+	<!-- 验证校验公共方法，提示框公共方法 -->
+	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
+	<!-- 本页面所需的js -->
+	<script src="<%=request.getContextPath()%>/yszx/js/plugins/organ-tree/organ-tree.js"></script>
+ 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/stuff-tree/stuff-tree.js"></script>
+ 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomDetailInfo.js"></script>
+ 	
 	
 
 </body>

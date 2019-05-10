@@ -98,7 +98,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	 * @param
 	 * @return
 	 */
-    public    String  checkData( String stateDate,String endDate) {
+    public    String  checkData( String stateDate,String endDate,String  id) {
      ResultWarp rw =  null;
      String	localTime=DateUtil.getTime();
    	 if(stateDate==""){
@@ -152,26 +152,36 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				  return JSON.toJSONString(rw);  
 			 } 	
 			//系统已经预定的时间
-			List<Map<String, Object>> list=yszxMapper.selectForIdeaDate();
+			List<Map<String, Object>> list=yszxMapper.selectForIdeaDate(id);
 			 if(list!=null){
 				 for(Map<String, Object> map:list){
-				 
+					String   applyNumber=String.valueOf(map.get("APPLY_NUMBER"));//申请单号
 					String  oldenddate=String.valueOf(map.get("END_DATE"));//结束时间
-					
-					boolean flag1=DateUtil.getMinuteSub(oldenddate,stateDate,30);
-					if(!flag1){
-						 rw = new ResultWarp(ResultWarp.FAILED ,"上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
-						  return JSON.toJSONString(rw);  
-					}
-				 }
-				 for(Map<String, Object> map:list){
-						String  oldstartdate=String.valueOf(map.get("START_DATE"));//开始时间
-						boolean flag2=DateUtil.getMinuteSub(endDate,oldstartdate,30);
-						if(!flag2){
-							 rw = new ResultWarp(ResultWarp.FAILED ,"上一场结束时间和下一场申请开始时间间隔30分钟"); 
-							  return JSON.toJSONString(rw);  
+					boolean flag1=DateUtil.compareTime(oldenddate,stateDate);
+					if(flag1){
+						boolean flag=DateUtil.getMinuteSub(oldenddate,stateDate,30);
+						if(!flag){
+							rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间和申请单号为："+applyNumber+"参观结束时间冲突,上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
+							return JSON.toJSONString(rw);  
 						}
-					 }
+					}else{
+						String  oldstartdate=String.valueOf(map.get("START_DATE"));//开始时间
+						boolean flag=DateUtil.compareTime(endDate,oldstartdate);
+						if(flag){
+							boolean flag2=DateUtil.getMinuteSub(endDate,oldstartdate,30);
+							if(!flag2){
+								rw = new ResultWarp(ResultWarp.FAILED ,"参观结束时间和申请单号为："+applyNumber+"参观是开始时间冲突,上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
+								return JSON.toJSONString(rw);  
+							}
+						}else{
+							rw = new ResultWarp(ResultWarp.FAILED ,"参观结束时间和申请单号为："+applyNumber+"参观是开始时间冲突,上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
+							return JSON.toJSONString(rw);  
+						}
+					}
+					 
+					
+				 }
+				 
 				
 				  
 			 }
@@ -211,7 +221,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	 * @param
 	 * @return
 	 */
-	public String  checkIdeaInfo(Map<String, Object> paramsMap){
+	public String  checkIdeaInfo(Map<String, Object> paramsMap ,String  idea){
 		 bgServiceLog.info("演示中心参观预定的添加----->IdeaInfo数据的验证开始" );
 		 String contactUser = paramsMap.get("contactUser") == null ? "" : paramsMap.get("contactUser").toString().trim(); //联系人名称
 		 String contactPhone = paramsMap.get("contactPhone") == null ? "" : paramsMap.get("contactPhone").toString().trim(); //联系人电话
@@ -250,7 +260,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 			
 		}
 		//参观开始时间和参观结束时间的验证
-		String  checkreturn=checkData(stateDate,endDate);
+		String  checkreturn=checkData(stateDate,endDate,idea);
 		if(checkreturn!=null){
 			return checkreturn;
 		}
@@ -426,7 +436,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	 */
 	 public   String    checkAllInfo(Map<String, Object> paramsMap ,String ideaId){
 		   //参观预定主页数据验证
-		   String  ideaforRW=checkIdeaInfo(paramsMap);
+		   String  ideaforRW=checkIdeaInfo(paramsMap, ideaId);
 		   if(!ideaforRW.equals("null")){
 			   return ideaforRW;
 		   } 
@@ -822,8 +832,15 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		map.put("userId", userid);
 		String userAlias=  currentUser.getUserAlias();
 		map.put("name", userAlias );
-		String deptId=currentUser.getDeptId();
-		map.put("deptId", deptId);
+		
+		String type=currentUser.getType();
+		if("2".equals(type)){
+			map.put("deptId", currentUser.getpDeptId());
+		}else{
+			map.put("deptId", currentUser.getDeptId());
+		}
+		
+	
 		return map;
 	}
 	@Override
@@ -859,8 +876,8 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	 * @return
 	 */
 	@Override
-	public List<Map<String, Object>> selectForIdeaInfo(String  applyId,String createTime) {
-		  List<Map<String, Object>>  ideaInfo=yszxMapper.selectForIdeaInfo(applyId, createTime,"");
+	public List<Map<String, Object>> selectForIdeaInfo(String  applyId,String createTime ,int page_start,int page_end) {
+		  List<Map<String, Object>>  ideaInfo=yszxMapper.selectForIdeaInfo(applyId, createTime,"",page_start,page_end);
 		  List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
 		  if(!ideaInfo.isEmpty()){
 			  for(Map<String, Object>  idea:ideaInfo){
@@ -1093,10 +1110,10 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		return jsonStr;
 	}
 	@Override
-	public List<Map<String, Object>> selectForDealtInfo(String appltNumber, String applyDept, String contactUser) {
+	public List<Map<String, Object>> selectForDealtInfo(String appltNumber, String applyDept, String contactUser,int page_start,int page_end) {
 		Map<String,String>  userInfoMap=userInfo();
 		String approveUserId= userInfoMap.get("userId");
-		List<Map<String, Object>> ideaInfo=yszxMapper.selectForDealtInfo(approveUserId,contactUser,appltNumber,applyDept);
+		List<Map<String, Object>> ideaInfo=yszxMapper.selectForDealtInfo(approveUserId,contactUser,appltNumber,applyDept,page_start,page_end);
 		 List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
 		  if(!ideaInfo.isEmpty()){
 			  for(Map<String, Object>  idea:ideaInfo){
@@ -1113,10 +1130,10 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		return list;
 	}
 	@Override
-	public List<Map<String, Object>> selectForAlreadytInfo(String appltNumber, String applyDept, String contactUser) {
+	public List<Map<String, Object>> selectForAlreadytInfo(String appltNumber, String applyDept, String contactUser,int page_start,int page_end) {
 		Map<String,String>  userInfoMap=userInfo();
 		String approveUserId= userInfoMap.get("userId");
-		List<Map<String, Object>> ideaInfo=yszxMapper.selectForAlreadytInfo(approveUserId,contactUser,appltNumber,applyDept);
+		List<Map<String, Object>> ideaInfo=yszxMapper.selectForAlreadytInfo(approveUserId,contactUser,appltNumber,applyDept,page_start,page_end);
 		 List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
 		  if(!ideaInfo.isEmpty()){
 			  for(Map<String, Object>  idea:ideaInfo){
