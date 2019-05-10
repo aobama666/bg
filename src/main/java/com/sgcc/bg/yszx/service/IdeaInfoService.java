@@ -86,7 +86,17 @@ public interface IdeaInfoService {
 	 * @param pro
 	 * @return
 	 */
-	public List<Map<String, Object>>  selectComprehensiveInfo(String  applyId,String yser,String month,String applyDept,String visitUserName,String userLevel,List<String>  ids);
+	public List<Map<String, Object>>  selectComprehensiveInfo(String  appltNumber,String year,String month,String applyDept,String visitUserName,String userLevel,List<String>  ids,int page_start,int page_end);
+ 
+	/**
+	 * 查询演示中心信息----综合导出查询
+	 * @param pro
+	 * @return
+	 */
+	public List<Map<String, Object>>  selectforEXLComprehensiveInfo(String  appltNumber,String year,String month,String applyDept,String visitUserName,String userLevel,List<String>  ids );
+ 
+	
+	
 	/**
 	 * 查询演示中心信息---部门信息的查询
 	 * @param pro
@@ -105,4 +115,31 @@ public interface IdeaInfoService {
 	 * @return
 	 */
 	public List<Map<String, Object>>  selectForApplyStatus(String applyStatus);
+	/**
+	 * 修改演示中心信息--查询主页总数
+	 * @param pro
+	 * @return
+	 */
+	public  int  selectForideaNum(String applyNumber ,String createTime);
+
+	/**
+	 * 修改演示中心信息--查询待办总数
+	 * @param pro
+	 * @return
+	 */
+	public  int  selectForDealtNum(String approveUserId,String contactUserName,String applyNumber,String applyDept);
+	/**
+	 * 修改演示中心信息--查询已办总数
+	 * @param pro
+	 * @return
+	 */
+	public  int  selectForAlreadytNum(String approveUserId,String contactUserName,String applyNumber,String applyDept);
+	/**
+	 * 修改演示中心信息--综合查询总数
+	 * @param pro
+	 * @return
+	 */
+	public  int  selectForComprehensiveNum(String  applyId,String year,String month,String applyDept,String visitUserName,String userLevel );
+
+
 }

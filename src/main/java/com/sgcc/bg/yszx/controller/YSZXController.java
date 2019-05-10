@@ -164,7 +164,7 @@ public class YSZXController {
 		String month=DateUtil.getMonth();
 		map.put("year", year);
 		map.put("month", month);
-		 List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
+		List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
 		map.put("deptInfo",list);//部门信息
 		
 		
