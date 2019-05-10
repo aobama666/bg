@@ -197,10 +197,14 @@
 	
 	<select id="selectForIdeaDate" resultType="java.util.Map">
 		SELECT 
+		  APPLY_NUMBER,
 		  TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI:SS') AS START_DATE,
 		  TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI:SS')  AS  END_DATE
 		  FROM TB_YSZX_IDEA
-		WHERE VALID =  '1'
+		WHERE VALID =  '1'  
+		<if test="idea!=null and idea=''">
+			and   UUID !=  #{idea} 
+		</if> 
 	</select>
 	
 	
@@ -229,38 +233,43 @@
 	
 	
 	<select id="selectForIdeaInfo" resultType="java.util.Map">
-	     SELECT 
-		      UUID   as  "id",	    
-              (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = APPLY_DEPT)   as "applyDept",
-              TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
-              TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
-			  CONTACT_USER as "contactUser",
-			  CONTACT_PHONE as "contactPhone", 		
-			  VISIT_UNIT_TYPE as "visitUnitType",	 
-			  VISIT_UNIT_NAME as "visitUnitName",	
-			  VISITOR_NUMBER as "visitorNumber", 		
-			  COMPANY_USER_NUMBER as "companyUserNumber",	 
-			  REMARK as "remark",	
-              (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=STATUS) as "status",
-              STATUS as  "approveState",
-			  APPLY_ID as "applyId",	
-			  APPLY_NUMBER as "applyNumber",	 	 		
-			  VISIT_LEVEL as "visitLevel",	 	
-			  VALID as "valId", 	
-			  CREATE_USER as "createUser",
-			  TO_CHAR( CREATE_TIME,'YYYY-MM-DD') as "createTime"	 	
-		  FROM TB_YSZX_IDEA	
-		  WHERE VALID =  '1' 
-		<if test="applyId!=null and applyId!=''">
-			and APPLY_NUMBER  like '%'||#{applyId}||'%'
-		</if>
-		<if test="createTime!=null and createTime!=''">
-			and TO_CHAR(CREATE_TIME,'YYYY-MM')  like '%'||#{createTime}||'%'
-		</if>
-		<if test="applyDept!=null and applyDept!=''">
-			and APPLY_DEPT  like '%'||#{applyDept}||'%'
-		</if>
-			ORDER BY  CREATE_TIME     DESC
+	
+	SELECT  T.*  from(
+	SELECT  TB.* , ROWNUM AS ROWNO  from(
+		SELECT 
+			      UUID   as  "id",	    
+	              (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = APPLY_DEPT)   as "applyDept",
+	              TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+	              TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+				  CONTACT_USER as "contactUser",
+				  CONTACT_PHONE as "contactPhone", 		
+				  VISIT_UNIT_TYPE as "visitUnitType",	 
+				  VISIT_UNIT_NAME as "visitUnitName",	
+				  VISITOR_NUMBER as "visitorNumber", 		
+				  COMPANY_USER_NUMBER as "companyUserNumber",	 
+				  REMARK as "remark",	
+	              (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=STATUS) as "status",
+	              STATUS as  "approveState",
+				  APPLY_ID as "applyId",	
+				  APPLY_NUMBER as "applyNumber",	 	 		
+				  VISIT_LEVEL as "visitLevel",	 	
+				  VALID as "valId", 	
+				  CREATE_USER as "createUser",
+				  TO_CHAR( CREATE_TIME,'YYYY-MM-DD') as "createTime"	 	
+			  FROM TB_YSZX_IDEA	
+			  WHERE VALID =  '1' 
+			<if test="applyId!=null and applyId!=''">
+				and APPLY_NUMBER  like '%'||#{applyId}||'%'
+			</if>
+			<if test="createTime!=null and createTime!=''">
+				and TO_CHAR(CREATE_TIME,'YYYY-MM')  like '%'||#{createTime}||'%'
+			</if>
+			<if test="applyDept!=null and applyDept!=''">
+				and APPLY_DEPT  like '%'||#{applyDept}||'%'
+			</if>
+				ORDER BY  CREATE_TIME     DESC
+	) TB  WHERE #{page_end} >= ROWNUM
+	) T   WHERE T.ROWNO > #{page_start}
 	</select>
 	
 	
@@ -455,6 +464,8 @@
 	
 	
     <select id="selectForDealtInfo" resultType="java.util.Map">
+    SELECT  T.*  from(
+	SELECT  TB.* , ROWNUM AS ROWNO  from(
 	     SELECT 
             G.UUID   as  "id",	    
             (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
@@ -495,8 +506,18 @@
 			      and G.APPLY_DEPT  like '%'||#{applyDept}||'%'
 		    </if>
             ORDER BY  G.CREATE_TIME     DESC
+            ) TB  WHERE #{page_end} >= ROWNUM
+	        ) T   WHERE T.ROWNO > #{page_start}
 	</select>
+	
+	
+	
+	
+	
+	
 	 <select id="selectForAlreadytInfo" resultType="java.util.Map">
+	 SELECT  T.*  from(
+	 SELECT  TB.* , ROWNUM AS ROWNO  from(
 	     SELECT 
             G.UUID   as  "id",	    
             (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
@@ -537,6 +558,8 @@
 			      and G.APPLY_DEPT  like '%'||#{applyDept}||'%'
 		    </if>
             ORDER BY  G.CREATE_TIME     DESC
+            ) TB  WHERE #{page_end} >= ROWNUM
+	        ) T   WHERE T.ROWNO > #{page_start}
 	</select>
 	
  
