@@ -10,29 +10,19 @@
 	<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
 	<title>演示中心综合查询表页</title>
-	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
 	<!-- newPage、item.css 页面css-->
-    <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid/css/newPage.css" rel="stylesheet" type="text/css"/>
-	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid/css/item.css" rel="stylesheet" type="text/css"/>
-	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid/css/datagrid.css" rel="stylesheet" type="text/css">
-    <link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/item.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
+    <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/newPage.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
+    <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/datagrid.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css">   
+	<!-- easyuicss -->
+	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
+	<!-- 本页面所需css -->
+	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 	
-	<!-- easyui用css -->
-	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet"/>
-	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.min.js"></script>
-    <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/locale/easyui-lang-zh_CN.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid/js/jquery-tool.datagrid.js"></script> 
-	<script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>  <!-- IE支持 JSON格式   -->
-	<script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>    <!-- 弹框.js  -->
-	<!-- 引入日期选择框 -->
-	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
-	<!-- 验证校验公共方法，提示框公共方法 -->
-	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
-	<!-- 本页面所需的js -->
- 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomComprehensive.js"></script>
+	
+ 
+	
   
 </head>
 <body>
@@ -90,24 +80,36 @@
 	<!-- end    查询条件 -->
 	
 	<!-- start   新增  修改  删除按钮 -->
-	<div id="funcBtn" style="width:100%;height: 35px;margin-bottom:-35px;">
+	<div id="funcBtn" style="width:100%;height: 35px;">
 		<div class='btn right deleteButton' onclick="roomList.expEvent()" >导出</div>
-		 
 	</div>
 	<!-- end   新增  修改  删除按钮 -->
-	
-	<!-- start 列表标题 -->
-	<div class="grid-title">
-		<h3>综合查询列表</h3>
-	</div>
-	<!-- end 列表标题 -->
-	
+
 	<!-- start 列表展示 -->
 	<div class="tabbable" >
-		<div id="datagrid"></div>
-		<div class="tablepage"></div>
-	</div>
+	    <div class="tab-content">
+	        <!-- 表格 -->
+	        <div class="tab-pane active" >
+	            <div id="datagrid"></div>
+	            <div class="tablepage"></div>
+	        </div>
+	    </div>
+    </div>
+	 
 	<!-- end 列表展示 -->
-
+    <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script> 
+    <script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
+	
+    <script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script> 
+     
+ 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>  	<!-- 弹框.js  --> 
+	<!-- 引入datagrid -->
+	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
+    <!-- 验证校验公共方法，提示框公共方法 -->
+	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
+	<!-- 本页面所需的js -->
+ 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomComprehensive.js"></script>
 </body>
 </html>

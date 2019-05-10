@@ -84,6 +84,7 @@ public interface YSZXMapper {
 	 */
 	public  List<Map<String, Object>>  selectForIdeaInfo(
 						  @Param("applyId")String applyId,
+						  @Param("userId")String userId,
 						  @Param("createTime")String createTime,
 						  @Param("applyDept")String applyDept,
 						  @Param("page_start")Integer page_start,
@@ -207,7 +208,9 @@ public interface YSZXMapper {
 									   @Param("applyDept")String applyDept,
 									   @Param("visitName")String visitName,
 									   @Param("visitLevel")String visitLevel,
-									   @Param("ids")List<String>  ids);
+									   @Param("ids")List<String>  ids,
+									   @Param("page_start")Integer page_start,
+									   @Param("page_end")Integer page_end);
 	/**
 	 * 修改演示中心信息---部门信息
 	 * @param pro
@@ -226,7 +229,65 @@ public interface YSZXMapper {
 	 * @return
 	 */
 	public  List<Map<String, Object>>  selectForApplyStatus(@Param("applyStatus")String applyStatus);
+	/**
+	 * 修改演示中心信息--查询总数
+	 * @param pro
+	 * @return
+	 */
+	public  Map<String, Object>  selectForideaNum(
+			  @Param("applyId")String applyId,
+			  @Param("userId")String userId,
+			  @Param("createTime")String createTime,
+			  @Param("applyDept")String applyDept);
+	/**
+	 * 修改演示中心信息--待办总数
+	 * @param pro
+	 * @return
+	 */
+	public  Map<String, Object> selectForDealtNum(
+			@Param("approveUserId")String approveUserId,
+			@Param("contactUserName")String contactUserName,
+			@Param("applyNumber")String applyNumber,
+			@Param("applyDept")String applyDept);
 	
-	 
+	/**
+	 * 修改演示中心信息--已办总数
+	 * @param pro
+	 * @return
+	 */
+	public  Map<String, Object>  selectForAlreadytNum(
+			@Param("approveUserId")String approveUserId,
+			@Param("contactUserName")String contactUserName,
+			@Param("applyNumber")String applyNumber,
+			@Param("applyDept")String applyDept);
+	
+	/**
+	 * 修改演示中心信息--综合查询
+	 * @param pro
+	 * @return
+	 */
+	public  Map<String, Object>  selectForComprehensiveNum(
+			@Param("applyNumber")String applyNumber,
+			   @Param("year")String year,
+			   @Param("month")String month,
+			   @Param("applyDept")String applyDept,
+			   @Param("visitName")String visitName,
+			   @Param("visitLevel")String visitLevel,
+			   @Param("ids")List<String>  ids);
+			 
+	/**
+	 * 修改演示中心信息---综合查询
+	 * @param pro
+	 * @return
+	 */
+	
+	public  List<Map<String, Object>>  selectforEXLComprehensiveInfo(
+									   @Param("applyNumber")String applyNumber,
+									   @Param("year")String year,
+									   @Param("month")String month,
+									   @Param("applyDept")String applyDept,
+									   @Param("visitName")String visitName,
+									   @Param("visitLevel")String visitLevel,
+									   @Param("ids")List<String>  ids);
 
 }
