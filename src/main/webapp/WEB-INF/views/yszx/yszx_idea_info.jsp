@@ -29,15 +29,15 @@
 		<div class='content_top'>参观设定</div>	 
 		<form id="queryForm" style="margin-bottom: 10px;">
 			<label>申请单号：</label>
-			<input type = "text" id = "applyId" name = "applyId" style="width: 10%" class = "inputQuery changeQuery" >
+			<input type = "text" id = "applyId" name = "applyId" style="width: 200px" class = "inputQuery changeQuery" >
 			
 			<label  for="year" class="yearTitle">年度：</label>
-			<select id = "year" name = "year"   class = "changeQuery changeYear">
+			<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 100px">
 				<option value = ""></option>
 				<option value = "${year}"  selected>  ${year}</option>
 			</select>
 			<label  for="month">月度：</label>
-			<select id = "month" name = "month"   class = "changeQuery changeMonth">
+			<select id = "month" name = "month"   class = "changeQuery changeMonth" style="width: 100px">
 				<option value="" ></option>
 				<option value="01"   ${month == '01' ?"selected='selected'":''}>1月</option>
 				<option value="02"   ${month == '02' ?"selected='selected'":''}>2月</option>
