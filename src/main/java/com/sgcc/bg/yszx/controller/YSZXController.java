@@ -136,7 +136,8 @@ public class YSZXController {
 	@RequestMapping(value = "/dealt", method = RequestMethod.GET)
 	public ModelAndView dealt(HttpServletRequest request){
 		Map<String, Object> map = new HashMap<>();
-	 
+		List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
+	    map.put("deptInfo",list);//部门信息
 		ModelAndView model = new ModelAndView("yszx/yszx_idea_dealt",map);
 		return model;
 	}
@@ -147,7 +148,8 @@ public class YSZXController {
 	@RequestMapping(value = "/already", method = RequestMethod.GET)
 	public ModelAndView already(HttpServletRequest request){
 		Map<String, Object> map = new HashMap<>();
-	 
+		List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
+	    map.put("deptInfo",list);//部门信息
 		ModelAndView model = new ModelAndView("yszx/yszx_idea_already",map);
 		return model;
 	}

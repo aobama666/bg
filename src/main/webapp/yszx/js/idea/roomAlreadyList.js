@@ -14,7 +14,7 @@ $(function(){
 	});
 	$(".inputQuery").on("input",function(e){
 		var valLength = e.target.value.length;
-		if(valLength>3){
+		if(valLength>1){
 			roomList.query();
 		}
 	});

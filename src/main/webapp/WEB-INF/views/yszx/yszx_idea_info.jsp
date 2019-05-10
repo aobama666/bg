@@ -52,10 +52,10 @@
 				<option value="11"   ${month == '11' ?"selected='selected'":''}>11月</option>
 				<option value="12"   ${month == '12' ?"selected='selected'":''}>12月</option>
 			</select>
-			<!-- 查询按钮  
-			<div id = "queryButton" class = "btn query" onclick = "roomList.query()">搜索</div> <!-- 原来引用的函数onclick = "roomList.query()" -->
-		   
-		    <div    class='btn query' style="">搜索</div>
+			<!-- 查询按钮  " -->
+			<div id = "queryButton" class = "btn query" onclick = "roomList.query()">搜索</div> 
+			 
+
 		</form>
 	</div>
 	<!-- end    查询条件 -->

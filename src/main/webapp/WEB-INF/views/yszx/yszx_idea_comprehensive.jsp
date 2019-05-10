@@ -73,7 +73,7 @@
 					        <option value ="${deptInfo.applyDeptID}"  > ${deptInfo.applyDeptName}</option>
 					     </c:forEach>
 			     </select>
-			</select>
+			 
 			<label>参观领导姓名：</label>
 			<input type = "text" id = "visitUserName" name = "visitUserName" style="width: 10%" class = "inputQuery changeQuery" >
 			<label>参观领导级别：</label>
