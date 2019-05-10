@@ -30,10 +30,14 @@
 			<label>申请单号：</label>
 			<input type = "text" id = "appltNumber" name = "appltNumber" style="width: 10%" class = "inputQuery changeQuery" >
 			
-			<label  for="applyDept" class="yearTitle">审批部门：</label>
-			<input type = "text" id = "applyDept" name = "applyDept" style="width: 10%" class = "inputQuery changeQuery" >
-		 
-			<label  for="contactUser">联系人：</label>
+			<label  for="applyDept" class="yearTitle">审请部门：</label>
+			<select id = "applyDept" name = "applyDept"   class = "changeQuery userlevel">
+				<option value = "">   </option>
+				<c:forEach  var="deptInfo"  items="${deptInfo}">
+					        <option value ="${deptInfo.applyDeptID}"  > ${deptInfo.applyDeptName}</option>
+			    </c:forEach>
+			</select>
+			 <label   >联系人：</label>
 			 <input type = "text" id = "contactUser" name = "contactUser" style="width: 10%" class = "inputQuery changeQuery" >
 			<!-- 查询按钮  -->
 			<div id = "queryButton" class = "btn query" onclick = "roomList.query()">搜索</div> <!-- 原来引用的函数onclick = "roomList.query()" -->
