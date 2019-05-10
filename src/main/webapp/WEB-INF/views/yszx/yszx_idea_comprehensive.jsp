@@ -32,16 +32,16 @@
 	<div class="sheach">
 		<div class='content_top'>综合查询</div>	 
 		<form id="queryForm" style="margin-bottom: 10px;">
-			<label>申请单号：</label>
-			<input type = "text" id = "applyNumber" name = "applyNumber" style="width: 10%" class = "inputQuery changeQuery" >
+			<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;申请单号：</label>
+			<input type = "text" id = "applyNumber" name = "applyNumber" style="width: 200px" class = "inputQuery changeQuery" >
 			
 			<label  for="year" class="yearTitle">年度：</label>
-			<select id = "year" name = "year"   class = "changeQuery changeYear">
+			<select id = "year" name = "year"   class = "changeQuery changeYear" style="width:100px">
 				<option value = "">  </option>
 				<option value = "${year}" selected>  ${year}   </option>
 			</select>
 			<label  for="month">月度：</label>
-			<select id = "month" name = "month"   class = "changeQuery changeMonth">
+			<select id = "month" name = "month"   class = "changeQuery changeMonth" style="width: 100px">
 				<option value="" > </option>
 				<option value="01"   ${month == '01' ?"selected='selected'":''}>1月</option>
 				<option value="02"   ${month == '02' ?"selected='selected'":''}>2月</option>
@@ -56,25 +56,28 @@
 				<option value="11"   ${month == '11' ?"selected='selected'":''}>11月</option>
 				<option value="12"   ${month == '12' ?"selected='selected'":''}>12月</option>
 			</select>
-			<label  for="year" class="yearTitle">申请部门（单位）：</label>
-			<select id = "applyDept" name = "applyDept"   class = "changeQuery userlevel">
+			 <label  for="year" class="yearTitle">申请部门（单位）：</label>
+			<select id = "applyDept" name = "applyDept"   class = "changeQuery userlevel" style="width: 240px">
 				<option value = "">   </option>
 				<c:forEach  var="deptInfo"  items="${deptInfo}">
 					        <option value ="${deptInfo.applyDeptID}"  > ${deptInfo.applyDeptName}</option>
 					     </c:forEach>
 			     </select>
-			 
-			<label>参观领导姓名：</label>
-			<input type = "text" id = "visitUserName" name = "visitUserName" style="width: 10%" class = "inputQuery changeQuery" >
+			
+			
+			</br>
 			<label>参观领导级别：</label>
-			<select id="visitLevel"  name = "visitLevel"  class = "changeQuery userlevel"  >
+			<select id="visitLevel"  name = "visitLevel"  class = "changeQuery userlevel" style="width: 200px" >
 						<option value=""  ></option>
 						<c:forEach  var="visitUnitLevleInfo"  items="${visitUnitLevleInfo}">
 					        <option value ="${visitUnitLevleInfo.V}"        > ${visitUnitLevleInfo.V}</option>
 					     </c:forEach>
 			        	</select>
+			<label style="margin-left:20px;">参观领导姓名：</label>
+			<input type = "text" id = "visitUserName" name = "visitUserName" style="width: 203px;" class = "inputQuery changeQuery" >
+			        	
 			<!-- 查询按钮  -->
-			<div id = "queryButton" class = "btn query" onclick = "roomList.query()">搜索</div> <!-- 原来引用的函数onclick = "roomList.query()" -->
+			<div id = "queryButton" class = "btn query" onclick = "roomList.query()" style="margin-left: 20px;">搜索</div> <!-- 原来引用的函数onclick = "roomList.query()" -->
 		</form>
 	</div>
 	<!-- end    查询条件 -->

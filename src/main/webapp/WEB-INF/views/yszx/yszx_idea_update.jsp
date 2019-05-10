@@ -37,7 +37,7 @@
 	<table class="visitOperate tableStyle">
 		<tr>
 			<td>
-				 <span title = "申请部门（单位）（当前登录人所属部门）">申请部门（单位）<b class="mustWrite">*</b></span>
+				 <span title = "申请部门（单位）（当前登录人所属部门）"><b class="mustWrite">*</b>申请部门（单位）</span>
 			</td>
 			<td colspan="3" class="addInputStyle">
 				<input id="deptname" name="deptname"  type="text" value="${applyDept}" disabled title = "申请部门（单位）（当前登录人所属部门）" />
@@ -45,7 +45,7 @@
 		</tr>
 		<tr>
 			<td class="width-one" >
-			    <span title = "参观开始时间（格式：yyyy-MM-dd HH:mm）">参观开始时间<b class="mustWrite">*</b></span>
+			    <span title = "参观开始时间（格式：yyyy-MM-dd HH:mm）"><b class="mustWrite">*</b>参观开始时间</span>
 			</td>
 			<td class="width-one addInputStyle"  >
                 <input id="stateDate" name="stateDate"    value = "${stateDate}"
@@ -57,7 +57,7 @@
                 />    
 			</td>
 			<td class="width-one">
-			   <span title = "参观结束时间（格式：yyyy-MM-dd HH:mm）">参观结束时间<b class="mustWrite">*</b></span>
+			   <span title = "参观结束时间（格式：yyyy-MM-dd HH:mm）"><b class="mustWrite">*</b>参观结束时间</span>
 			</td>
 			<td class="width-one addInputStyle"   >
 				<input id="endDate" name="endDate"   value = "${endDate}"
@@ -72,13 +72,13 @@
 		</tr>
 		<tr>
 			<td>
-			  <span title = "联系人">联系人<b class="mustWrite">*</b></span>
+			  <span title = "联系人"><b class="mustWrite">*</b>联系人</span>
 			</td>
 			<td class="addInputStyle">
 				  <input type="text"  id="contactUser"  name="contactUser"  class="validNull"  value = "${contactUser}"  content="联系人" title="必填项，中文或英文"/>
 			</td>
 			<td>
-			  <span title = "联系电话">联系电话<b class="mustWrite">*</b></span>
+			  <span title = "联系电话"><b class="mustWrite">*</b>联系电话</span>
 			</td>
 			<td class="addInputStyle">
 				<input type="text"  id="contactPhone" name="contactPhone"  class="validNull"  value = "${contactPhone}" content="联系电话"  title="必填项  "/>
@@ -89,12 +89,12 @@
 	<!-- 参观人员信息展示 -->
 	<h4 class="tableTitle">
 	 
-		<span title = "参观人员信息">参观人员信息： </span>
+		<span title = "参观人员信息"><b class="mustWrite">*</b>参观人员信息： </span>
 	</h4>
 	<table class="visitPerson tableStyle">
 		<tr>
 			<td>
-				<span title = "参观单位性质">参观单位性质<b class="mustWrite">*</b></span>
+				<span title = "参观单位性质"><b class="mustWrite">*</b>参观单位性质</span>
 			</td>
 			<td class="addInputStyle">
 				<select id="visitUnitType"  name = "visitUnitType"  class = "validNull select-person"   content="参观单位性质"  title="必填项  "    >
@@ -105,7 +105,7 @@
 				</select>
 			</td>
 			<td>
-				<span title = "参观人数">参观人数<b class="mustWrite">*</b></span>
+				<span title = "参观人数"><b class="mustWrite">*</b>参观人数</span>
 			</td>
 			<td class="addInputStyle">
             	<input type="text"  id="visitorNumber"  name = "visitUnitType"  class = "validNull validNum"  content="参观人数"  value = "${visitorNumber}" title="必填项  ，必须为正整数"/>
@@ -113,7 +113,7 @@
 		</tr>
 		<tr>
 			<td>
-				<span title = "参观单位名称">参观单位名称<b class="mustWrite">*</b></span>
+				<span title = "参观单位名称"><b class="mustWrite">*</b>参观单位名称</span>
 			</td>
 			<td colspan="3" class="addInputStyle">
 				<input  id="visitUnitName"   name="visitUnitName"  type="text"   class = "validNull"   len="150"    content="参观单位名称" value = "${visitUnitName}"  title="必填项  " />
@@ -124,19 +124,19 @@
 	<!-- 主要参观领导信息展示 -->
 	<div class="contentBox">
 		<h4 class="tableTitle">
-			<span title = "主要参观领导">主要参观领导：</span>
+			<span title = "主要参观领导"><b class="mustWrite">*</b>主要参观领导：</span>
 		</h4>
 		<div class="btnBox" >
-			<div  id="delLeader"  class='btn right leaderMessageDel' onclick="delLeader(this)">删除</div> 
+			<div  id="delLeader"  class='btn right leaderMessageDel' onclick="delLeader(this)" style="margin-bottom: 5px;">删除</div> 
 			<div class='btn right leaderMessageAdd' onclick="addLeader(this)">增加</div> 
 		</div>
-		<div class="maxBox">
+		<div class="maxBox maxLine">
 			<table class="visitLeader tableStyle thTableStyle">
 				<tr>
 					<th class="width-three">选择</th>
-					<th>姓名<b class="mustWrite">*</b></th>
-					<th>职务<b class="mustWrite">*</b></th>
-					<th>级别<b class="mustWrite">*</b></th>
+					<th>姓名</th>
+					<th>职务</th>
+					<th>级别</th>
 				</tr>
 				<c:forEach  var="visitInfo"  items="${visitInfo}">
 				<tr>
@@ -171,17 +171,17 @@
 	<!-- 院内陪同人员信息展示 -->
 	<h4 class="tableTitle">
 		 
-		<span title = "院内陪同人员信息">院内陪同人员信息： </span>
+		<span title = "院内陪同人员信息"><b class="mustWrite">*</b>院内陪同人员信息： </span>
 	</h4>
 	<table class="visitAccompany tableStyle">
 		<tr>
-			<td class="width-two">院领导姓名 <b class="mustWrite">*</b></td>
+			<td class="width-two"><b class="mustWrite">*</b>院领导姓名 </td>
 			<td style="width:85%;" class="addInputStyle">
 				<input class="easyui-combotree tree-data"  id="companyLeaderName" name="companyLeaderName"   data-companyLeaderName= "${leaderInfo}" content="院领导姓名"   title="必填项  "/>
 			</td>	
 		</tr>
 		<tr>
-		<td class="width-two">陪同人数<b class="mustWrite">*</b></td>
+		<td class="width-two"><b class="mustWrite">*</b>陪同人数</td>
 			<td colspan="3" class="addInputStyle">
 				<input type="text"  id="companyUserNumber" class = "validNull"  name="companyUserNumber"  value = "${companyUserNumber}" content="院内陪同人数"  title="必填项  ,必须为正整数"/>
 			</td>
@@ -191,17 +191,17 @@
 	<!-- 各部门（单位）陪同人员信息展示 -->
 	<div class="contentBox">
 		<h4 class="tableTitle">
-			<span title = "各部门（单位）陪同人员">各部门（单位）陪同人员： </span>
+			<span title = "各部门（单位）陪同人员"><b class="mustWrite">*</b>各部门（单位）陪同人员： </span>
 		</h4>
 		<div class="btnBox">
-			 <div id="delUser" class='btn right AccompanyMessageDel' onclick="delUser(this)">删除</div> 
+			 <div id="delUser" class='btn right AccompanyMessageDel' onclick="delUser(this)" style="margin-bottom: 5px;">删除</div> 
 			 <div id='stuffTree' class='btn right AccompanyMessageAdd empName2'   style="padding:0;"  >
 		    	<input type="button" id="popStuffTree"  value="增加" style="background: none;border: none;width:51px;height:30px;line-height:30px;"/>
 		    	<input name="empName" id="empName" type="hidden"/>
 		    	<input name="empCode" id="empCode" type="hidden"/>
 			</div> 
 		</div>
-		<div class="maxBox">
+		<div class="maxBox maxLine">
 			<table class="visitUnitAccompany tableStyle thTableStyle">
 				<tr>
 					<th class="width-three">选择</th>
@@ -241,7 +241,7 @@
 			  
 		</div>
 		<div class="maxBox">
-			 <textarea   id="remark"    name="remark"  style="height:100px; width: 100%;background-color: #fff"  len="200"  title="非必填项"   >${remark}</textarea> 	    		
+			 <textarea   id="remark"    name="remark"  style="height:100px; width: 100%;background-color: #fff;resize: none;padding:5px;"  len="200"  title="非必填项"   >${remark}</textarea> 	    		
 		</div>
 		
 	</div>

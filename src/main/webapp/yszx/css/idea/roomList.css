@@ -151,7 +151,7 @@ body div.btn_type_box .btn_type:ACTIVE {
 	width:15%;
 }
 .tableStyle .width-three{
-	width:5%;
+	width:6%;
 }
 .details{
 	margin-bottom: 30px;
@@ -186,10 +186,17 @@ body div.btn_type_box .btn_type:ACTIVE {
     background-color: #2D9592;
 }
 .maxBox{
-	height:121px;
+/* 	height:100px; */
 	overflow-y:auto;
 	width:94%;
 	margin:0 auto;
+}
+.maxLine{
+	border: 1px solid #ccc;
+	height:125px
+}
+.maxLine table{
+	margin-top:-1px;
 }
 .maxBox .tableStyle{
 	width:100%;
@@ -218,9 +225,9 @@ body div.btn_type_box .btn_type:ACTIVE {
 	margin-top: -30px;
     margin-right: 3%;
 }
-.contentBox .maxBox{
-	padding-top:5px;
-}
+/* .contentBox .maxBox{
+	margin-top:5px;
+} */
 .commonBtn{
 	height: 30px;
     /* width: 100px; */
@@ -309,3 +316,12 @@ table td .validRefuse{
 .validRefuses{
 	border:solid 1px red;
 }
+.tableStyle tr{
+	height:31px;
+}
+ .visitUnitAccompany input[type="text"]:disabled{
+ background:#fff;
+ }
+ .detailsLeft{
+ padding-left:5px;
+ }

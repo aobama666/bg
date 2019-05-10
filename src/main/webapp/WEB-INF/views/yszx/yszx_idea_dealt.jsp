@@ -28,10 +28,10 @@
 		<div class='content_top'>待办事项</div>	 
 		<form id="queryForm" style="margin-bottom: 10px;">
 			<label>申请单号：</label>
-			<input type = "text" id = "appltNumber" name = "appltNumber" style="width: 10%" class = "inputQuery changeQuery" >
+			<input type = "text" id = "appltNumber" name = "appltNumber" class = "inputQuery changeQuery" style="width: 200px;">
 			
 			<label  for="applyDept" class="yearTitle">审请部门：</label>
-		    <select id = "applyDept" name = "applyDept"   class = "changeQuery userlevel">
+		    <select id = "applyDept" name = "applyDept"   class = "changeQuery userlevel" style="width:240px;margin-right: 20px;">
 				<option value = "">   </option>
 				<c:forEach  var="deptInfo"  items="${deptInfo}">
 					        <option value ="${deptInfo.applyDeptID}"  > ${deptInfo.applyDeptName}</option>
@@ -39,7 +39,7 @@
 			</select>
 			
 			<label  for="contactUser">联系人：</label>
-			 <input type = "text" id = "contactUser" name = "contactUser" style="width: 10%" class = "inputQuery changeQuery" >
+			 <input type = "text" id = "contactUser" name = "contactUser"  class = "inputQuery changeQuery" style="width: 200px;">
 			<!-- 查询按钮  -->
 			<div id = "queryButton" class = "btn query" onclick = "roomList.query()">搜索</div> <!-- 原来引用的函数onclick = "roomList.query()" -->
 		</form>
