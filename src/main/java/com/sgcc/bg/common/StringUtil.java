@@ -95,14 +95,8 @@ public class StringUtil {
     
     
     public static void main(String[] args) {  
-        System.out.println(checkNumber(0));// true  
-       System.out.println(checkNumber(-0));// true  
-       System.out.println(checkNumber(23));// true  
-        System.out.println(checkNumber(-23));// true  
-        System.out.println(checkNumber(0.0));// true  
-        System.out.println(checkNumber(-0.0));// true  
-        System.out.println(checkNumber(-23.01));// true  
-        System.out.println(checkNumber("10.5"));// false  
-        System.out.println(checkNumber("02132132132132121110"));// false 
+        System.out.println(checkNumber("18334790408"));// true  
+      
+        
    }  
 }

@@ -55,7 +55,7 @@ public class WebUtils {
 	 * @return
 	 */
 	@SuppressWarnings("rawtypes")
-	private CommonUser getCurrentUserJson(){
+	public CommonUser getCurrentUserJson(){
 		String cookiename = "loginSessionId";
 		String cookievalue = "";
 		Cookie[] cookies = getHttpServletRequest().getCookies();
@@ -118,8 +118,9 @@ public class WebUtils {
 		String password = request.getParameter("password");//用户密码 
 		ValueOperations<String, String> value = stringRedisTemplate.opsForValue();
 		Des des = new Des();
-		String redisKey = des.strEnc("loginSessionId",username+password);//加密
-		String redisData = value.get(redisKey);
+		//String redisKey = des.strEnc("loginSessionId",username+password);//加密
+		String redisKey =username+password;
+		String redisData = value.get("epri_mengj000000");
 		RedisBeanWarp rbw = new RedisBeanWarp();
 		User user = null;
 		Map rbwMap = new HashMap<>();

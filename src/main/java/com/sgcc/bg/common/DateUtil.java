@@ -7,6 +7,8 @@ import java.util.Date;
 
 public class DateUtil {
 	private final static SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
+	
+	private final static SimpleDateFormat sdfMonth = new SimpleDateFormat("MM");
 
 	private final static SimpleDateFormat sdfDay = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -20,6 +22,13 @@ public class DateUtil {
 	 */
 	public static String getYear() {
 		return sdfYear.format(new Date());
+	}
+	/**
+	 * 获取MM格式
+	 * @return
+	 */
+	public static String getMonth() {
+		return sdfMonth.format(new Date());
 	}
 
 	/**
@@ -66,6 +75,21 @@ public class DateUtil {
 	 * 格式化日期
 	 * @return
 	 */
+	public static Date fomatTime(String date) {
+		DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+			return fmt.parse(date);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+
+	/**
+	 * 格式化日期
+	 * @return
+	 */
 	public static Date fomatDate(String date) {
 		DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
 		try {
@@ -90,31 +114,6 @@ public class DateUtil {
 		}
 	}
      
-	/**
-	 * <li>功能描述：时间相减得到天数
-	 * @param beginDateStr
-	 * @param endDateStr
-	 * @return long
-	 * @author Administrator
-	 */
-	public static long getDaySub(String beginDateStr, String endDateStr) {
-		long day = 0;
-		java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd");
-		java.util.Date beginDate = null;
-		java.util.Date endDate = null;
-
-		try {
-			beginDate = format.parse(beginDateStr);
-			endDate = format.parse(endDateStr);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		day = (endDate.getTime() - beginDate.getTime()) / (24 * 60 * 60 * 1000);
-		// System.out.println("相隔的天数="+day);
-
-		return day;
-	}
-
 	/**
 	 * 得到n天之后的日期
 	 * @param days
@@ -201,6 +200,64 @@ public class DateUtil {
     		return false;
     	}
     }
+    
+    /**
+	 * 校验时间合法
+	 * @param s
+	 * @param format
+	 * @return
+	 */
+    public static boolean isCheckTime(String time){
+    	try{
+    		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    		df.setLenient(false);
+    		Date date = df.parse(time);
+    		return true;
+    	}catch(Exception e){
+    		return false;
+    	}
+		
+    }
+  
+    
+    /**
+   	 * 校验时间合法
+   	 * @param s
+   	 * @param format
+   	 * @return
+   	 */
+       public static String isGetDate(String time){
+       	try{
+       		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    		df.setLenient(false);
+    		Date date = df.parse(time);
+       		SimpleDateFormat sf= new SimpleDateFormat("HH:mm:ss");
+       		return 	sf.format(date);
+       	}catch(Exception e){
+       		return "00:00:00";
+       	}
+   		
+       }
+       /**
+      	 * 校验时间合法
+      	 * @param s
+      	 * @param format
+      	 * @return
+      	 */
+          public static String isGetDay(String time){
+          	try{
+          		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+       		df.setLenient(false);
+       		Date date = df.parse(time);
+          		SimpleDateFormat sf= new SimpleDateFormat("yyyy-MM-dd");
+          		return 	sf.format(date);
+          	}catch(Exception e){
+          		return "0000-00-00";
+          	}
+      		
+          }
+         
+      
     /**
 	 * 校验时间合法
 	 * @param s
@@ -250,17 +307,166 @@ public class DateUtil {
 		}
 		
 	}
-    public static void main(String[] args) {
-    	String ksdata="2018-09-31";
-    	String jsdata="2018-09-28";
-    boolean	flag=isCheckDate(ksdata);
-    System.out.println(flag);	
-    try {
-    		System.out.println(judgeDate(ksdata,jsdata));
-			
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	/**
+	 * 判断两个日期的大小
+	 * @param date1 日期1
+	 * @param date2 日期2
+	 * @return 
+	 * @throws ParseException
+	 */
+	public static boolean compareTime(String beginData,String endData) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		Date beginDatas = sdf.parse(beginData);
+		Date endDatas = sdf.parse(endData);
+		if(beginDatas.getTime()<endDatas.getTime()){
+			return true;
+		}else{
+			return false;
 		}
+		
 	}
+ 
+	
+	
+	
+	
+	
+	/**
+	 * 判断两个日期的大小
+	 * @param date1 日期1
+	 * @param date2 日期2
+	 * @return 
+	 * @throws ParseException
+	 */
+	public static boolean compareHms(String beginData,String endData) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		Date beginDatas = sdf.parse(beginData);
+		Date endDatas = sdf.parse(endData);
+		if(beginDatas.getTime()<endDatas.getTime()){
+			return true;
+		}else{
+			return false;
+		}
+		
+	}
+	/**
+	 * 判断两个日期的大小
+	 * @param date1 日期1
+	 * @param date2 日期2
+	 * @return 
+	 * @throws ParseException
+	 */
+	public static boolean compareDay(String beginData,String endData) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date beginDatas = sdf.parse(beginData);
+		Date endDatas = sdf.parse(endData);
+		if(beginDatas.getTime()==endDatas.getTime()){
+			return true;
+		}else{
+			return false;
+		}
+		
+	}
+	/**
+	 * 判断一个日期是否在一个时间段内
+	 * @param date1 日期1
+	 * @param date2 日期2
+	 * @return 
+	 * @throws ParseException
+	 */
+	public static boolean compareDay(String beginData,String endData,String time) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date beginDatas = sdf.parse(beginData);
+		Date endDatas = sdf.parse(endData);
+		Date times = sdf.parse(time);
+		if(beginDatas.getTime()<=times.getTime()&&times.getTime()<=endDatas.getTime()){
+			return true;
+		}else{
+			return false;
+		}
+		
+	}
+	  public static String minutes (String s,int num){
+	    	SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	        String  res = null;
+	    	try {
+				Date date=f.parse(s);
+				Calendar c=Calendar.getInstance();
+				 c.setTime(date);
+		         c.add(Calendar.MINUTE , num);
+		       
+		        res = f.format(c.getTime());
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        return res;
+	    }  
+	  /**
+		 * <li>功能描述：时间相减得到天数
+		 * @param beginDateStr
+		 * @param endDateStr
+		 * @return long
+		 * @author Administrator
+		 */
+		public static long getDaySub(String beginDateStr, String endDateStr) {
+			long day = 0;
+			java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd");
+			java.util.Date beginDate = null;
+			java.util.Date endDate = null;
+
+			try {
+				beginDate = format.parse(beginDateStr);
+				endDate = format.parse(endDateStr);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			day = (endDate.getTime() - beginDate.getTime()) / (24 * 60 * 60 * 1000);
+			// System.out.println("相隔的天数="+day);
+
+			return day;
+		}
+		 
+	  /**
+		 * <li>功能描述：时间相减得到分钟数
+		 * @param beginDateStr
+		 * @param endDateStr
+		 * @param time间隔 时间
+		 * @return long
+		 * @author Administrator
+		 */
+		public static boolean getMinuteSub(String beginDateStr, String endDateStr ,long  times) {
+			 
+			java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
+			java.util.Date beginDate = null;
+			java.util.Date endDate = null;
+
+			try {
+				beginDate = format.parse(beginDateStr);
+				endDate = format.parse(endDateStr);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			long    time=endDate.getTime() - beginDate.getTime();
+		   // long	day = time / (24 * 60 * 60  * 1000);
+		   // long	hour = time / (60 * 60  * 1000);
+			long    minute =time/(1000*60);
+			if(minute>times){
+				return true;
+			}else{
+				return false;
+			}
+			 
+		}
+	  
+	  
+	 public static void main(String[] args) {
+		   
+		    String startTime="2019-04-12 08:32:00";
+		    String endTime="2019-04-12 09:50:00";
+		    boolean flag =getMinuteSub(startTime,endTime,30);
+		 
+	       	System.out.print(flag);
+	   	}
+   
 }

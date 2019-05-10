@@ -1,0 +1,678 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.mapper.YSZXMapper">
+
+
+	<insert id="addIdeaInfo"  parameterType="com.sgcc.bg.yszx.bean.IdeaInfo">
+		INSERT INTO TB_YSZX_IDEA ( 
+			UUID,	 
+            APPLY_DEPT, 
+            START_DATE,
+			END_DATE, 
+			CONTACT_USER,
+			CONTACT_PHONE, 		
+			VISIT_UNIT_TYPE,	 
+			VISIT_UNIT_NAME,	
+			VISITOR_NUMBER, 		
+			COMPANY_USER_NUMBER,	 
+			REMARK,	
+			STATUS,
+			APPLY_ID,	 		
+			VISIT_LEVEL,	 	
+			VALID, 	
+			CREATE_USER,	 	
+			CREATE_TIME,
+			UPDATE_USER,
+			UPDATE_TIME,
+			APPLY_NUMBER,
+			APPLY_ORDER,
+			APPLY_YEAR
+			)
+		VALUES(
+			#{id,jdbcType=VARCHAR}, 
+			#{applyDept,jdbcType=VARCHAR},
+			to_date(#{stateDate},'YYYY-MM-DD HH24:MI:SS'), 
+			to_date(#{endDate},'YYYY-MM-DD HH24:MI:SS'), 
+			#{contactUser,jdbcType=VARCHAR}, 
+			#{contactPhone,jdbcType=VARCHAR},
+			#{visitUnitType,jdbcType=VARCHAR},
+			#{visitUnitName,jdbcType=VARCHAR},
+			#{visitorNumber,jdbcType=NUMERIC},
+			#{companyUserNumber,jdbcType=NUMERIC},
+			#{remark,jdbcType=VARCHAR},
+			#{status,jdbcType=VARCHAR},
+			#{applyId,jdbcType=VARCHAR},
+			#{visitLevel,jdbcType=VARCHAR},
+			#{valId,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{updateUser,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=TIMESTAMP},
+			#{applyNumber,jdbcType=VARCHAR},
+			#{applyOrder,jdbcType=NUMERIC},
+			#{applyYear,jdbcType=NUMERIC}
+			)
+	</insert>
+	
+	
+	<update id="updataIdeaInfo"   parameterType="com.sgcc.bg.yszx.bean.IdeaInfo">
+		UPDATE TB_YSZX_IDEA SET
+            APPLY_DEPT =#{applyDept,jdbcType=VARCHAR},
+            START_DATE =to_date(#{stateDate},'YYYY-MM-DD HH24:MI:SS'), 
+			END_DATE =to_date(#{endDate},'YYYY-MM-DD HH24:MI:SS'),
+			CONTACT_USER =#{contactUser,jdbcType=VARCHAR},
+			CONTACT_PHONE =#{contactPhone,jdbcType=VARCHAR}, 		
+			VISIT_UNIT_TYPE =#{visitUnitType,jdbcType=VARCHAR},	 
+			VISIT_UNIT_NAME =#{visitUnitName,jdbcType=VARCHAR},	
+			VISITOR_NUMBER =#{visitorNumber,jdbcType=NUMERIC}, 		
+			COMPANY_USER_NUMBER=#{companyUserNumber,jdbcType=NUMERIC},	 
+			REMARK= #{remark,jdbcType=VARCHAR},	
+			STATUS =#{status,jdbcType=VARCHAR},	 		
+			VISIT_LEVEL =#{visitLevel,jdbcType=VARCHAR},	 	
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		 WHERE UUID=#{id,jdbcType=VARCHAR}   and  VALID='1'
+		 
+	</update>
+	
+	<update id="submitForStatus"  >
+		UPDATE TB_YSZX_IDEA SET
+			STATUS =#{status,jdbcType=VARCHAR},	
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE UUID=#{ideaId}  and  VALID='1'
+	</update> 
+	
+	
+	<insert id="addVisitInfo"  parameterType="com.sgcc.bg.yszx.bean.VisitInfo">
+		INSERT INTO TB_YSZX_VISIT ( 
+			UUID,	 		
+            IDEAID,	 
+            USERNAME,	 
+   			POSITION,	 	
+			USERLEVEL,	 	
+			SORT_ID,	 
+			REMARK,	 		
+			VALID,	 
+			CREATE_USER,
+			CREATE_TIME,
+			UPDATE_USER,
+			UPDATE_TIME 		
+			)
+		VALUES(
+			#{id,jdbcType=VARCHAR}, 
+			#{ideaId,jdbcType=VARCHAR},
+			#{userName,jdbcType=VARCHAR}, 
+			#{position,jdbcType=VARCHAR},
+			#{userLevel,jdbcType=VARCHAR},
+			#{sortId,jdbcType=NUMERIC},
+			#{remark,jdbcType=VARCHAR},
+			#{valId,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{updateUser,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=TIMESTAMP}
+			)
+	</insert>
+	
+	<update id="updataVisitInfo"   parameterType="com.sgcc.bg.yszx.bean.VisitInfo">
+		UPDATE TB_YSZX_VISIT SET	
+            USERNAME=#{userName,jdbcType=VARCHAR},	 
+   	        POSITION=#{position,jdbcType=VARCHAR},	
+			USERLEVEL=#{userLevel,jdbcType=VARCHAR},	 	
+			SORT_ID=#{sortId,jdbcType=NUMERIC},	 
+			REMARK=#{remark,jdbcType=VARCHAR},	 			 
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		 WHERE  UUID=#{id,jdbcType=VARCHAR}  and  IDEAID =#{ideaId,jdbcType=VARCHAR}   and  VALID='1'
+		 
+	</update>
+	
+	<insert id="addCompanyLeaderInfo"  parameterType="com.sgcc.bg.yszx.bean.CompanyLeaderInfo">
+		INSERT INTO TB_YSZX_COMPANY_LEADER ( 
+			UUID,	 		
+            IDEAID,	 
+            USERID,	 
+   			REMARK,	 	
+			VALID,
+			CREATE_USER,
+			CREATE_TIME,
+			UPDATE_USER,
+			UPDATE_TIME
+			)
+		VALUES(
+			#{id,jdbcType=VARCHAR}, 
+			#{ideaId,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR}, 
+			#{remark,jdbcType=VARCHAR}, 
+			#{valid,jdbcType=VARCHAR},
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{updateUser,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=TIMESTAMP}
+			)
+	</insert>
+	
+	
+	 
+	
+	
+	
+	
+	
+	
+	<insert id="addCompanyUserInfo"  parameterType="com.sgcc.bg.yszx.bean.CompanyUserInfo">
+		INSERT INTO TB_YSZX_COMPANY_USER ( 
+			UUID,	 		
+            IDEAID,	 
+            USERID,	 
+   			REMARK,	 	
+   			VALID,	 	
+			CREATE_USER,
+			CREATE_TIME,	 	 		
+			UPDATE_USER,
+			UPDATE_TIME 		
+			)
+		VALUES(
+			#{id,jdbcType=VARCHAR}, 
+			#{ideaId,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR}, 
+			#{remark,jdbcType=VARCHAR}, 
+			#{valid,jdbcType=VARCHAR}, 
+			#{createUser,jdbcType=VARCHAR},
+			#{createTime,jdbcType=TIMESTAMP},
+			#{updateUser,jdbcType=VARCHAR},
+			#{updateTime,jdbcType=TIMESTAMP} 
+			)
+	</insert>
+	
+	<select id="getUserId" resultType="java.util.Map">
+		SELECT 
+		USERNAME,USERALIAS,HRDEPTNAME,HRDEPTCODE,POSTCODE,POSTNAME
+		  FROM BG_SYS_USER
+		WHERE SRC = 0  AND STATE = 1
+		   AND USERID = #{userid,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="selectForIdeaDate" resultType="java.util.Map">
+		SELECT 
+		  APPLY_NUMBER,
+		  TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI:SS') AS START_DATE,
+		  TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI:SS')  AS  END_DATE
+		  FROM TB_YSZX_IDEA
+		WHERE VALID =  '1'  
+		<if test="idea!=null and idea=''">
+			and   UUID !=  #{idea} 
+		</if> 
+	</select>
+	
+	
+	
+	<select id="selectForLeader" resultType="java.util.Map">
+		SELECT 
+		 ID AS USERID,
+		 USERALISA
+		  FROM TB_YSZX_CONFIG_COMPANY_LEADER
+		WHERE VALID =  '1'
+	</select>
+	
+	
+	<select id="selectForApplyId" resultType="java.util.Map">
+		SELECT 
+			APPLY_NUMBER as "applyNumber",
+			APPLY_ORDER as  "applyOrder",
+			APPLY_YEAR as "applyYear"
+		  FROM TB_YSZX_IDEA
+		WHERE VALID =  '1'
+		<if test="applyYear!=null and applyYear=''">
+			and   APPLY_YEAR   like '%'||#{applyYear}||'%'
+		</if>
+		ORDER BY  APPLY_ORDER   DESC
+	</select>
+	
+	
+	<select id="selectForIdeaInfo" resultType="java.util.Map">
+	
+	SELECT  T.*  from(
+	SELECT  TB.* , ROWNUM AS ROWNO  from(
+		SELECT 
+			      UUID   as  "id",	    
+	              (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = APPLY_DEPT)   as "applyDept",
+	              TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+	              TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+				  CONTACT_USER as "contactUser",
+				  CONTACT_PHONE as "contactPhone", 		
+				  VISIT_UNIT_TYPE as "visitUnitType",	 
+				  VISIT_UNIT_NAME as "visitUnitName",	
+				  VISITOR_NUMBER as "visitorNumber", 		
+				  COMPANY_USER_NUMBER as "companyUserNumber",	 
+				  REMARK as "remark",	
+	              (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=STATUS) as "status",
+	              STATUS as  "approveState",
+				  APPLY_ID as "applyId",	
+				  APPLY_NUMBER as "applyNumber",	 	 		
+				  VISIT_LEVEL as "visitLevel",	 	
+				  VALID as "valId", 	
+				  CREATE_USER as "createUser",
+				  TO_CHAR( CREATE_TIME,'YYYY-MM-DD') as "createTime"	 	
+			  FROM TB_YSZX_IDEA	
+			  WHERE VALID =  '1' 
+			<if test="applyId!=null and applyId!=''">
+				and APPLY_NUMBER  like '%'||#{applyId}||'%'
+			</if>
+			<if test="createTime!=null and createTime!=''">
+				and TO_CHAR(CREATE_TIME,'YYYY-MM')  like '%'||#{createTime}||'%'
+			</if>
+			<if test="applyDept!=null and applyDept!=''">
+				and APPLY_DEPT  like '%'||#{applyDept}||'%'
+			</if>
+				ORDER BY  CREATE_TIME     DESC
+	) TB  WHERE #{page_end} >= ROWNUM
+	) T   WHERE T.ROWNO > #{page_start}
+	</select>
+	
+	
+	
+	
+	<select id="selectForVisitInfo" resultType="java.util.Map">
+	     SELECT 
+		    UUID  as  "visitId" ,    	 		
+            IDEAID  as  "ideaId",	 
+            USERNAME as  "userName",	 
+   			POSITION as  "position" ,	 	
+			USERLEVEL as  "userLevel",	 	
+			SORT_ID as "sortId" ,	 
+			REMARK as "remark",	 			 
+			CREATE_USER as "createUser",
+			TO_CHAR( CREATE_TIME,'YYYY-MM-DD HH24:MI:SS')  as  "createTime"   
+		  FROM TB_YSZX_VISIT
+		  WHERE VALID =  '1' 
+		<if test="ideaId!=null and ideaId!=''">
+			and IDEAID  like '%'||#{ideaId}||'%'
+		</if>
+		ORDER BY  SORT_ID
+	</select>
+	
+	<select id="selectForCompanyLeaderInfo" resultType="java.util.Map">
+	    SELECT 
+		  T.UUID as "leaderId",	 		
+          T.IDEAID as "ideaId",	 
+          T.USERID as "userId",	 
+   		  T.REMARK as "remark",	 	
+		  T.CREATE_USER as "createUser",
+		  TO_CHAR(T.CREATE_TIME,'YYYY-MM-DD HH24:MI:SS')   as "createTime",
+          U.USERALISA as "userAlisa",
+          U.DEPTNAME as "deptName",
+          U.SORTID as "sortId"
+		FROM TB_YSZX_COMPANY_LEADER  T
+        LEFT JOIN TB_YSZX_CONFIG_COMPANY_LEADER  U
+		        ON T.USERID = U.ID
+		  WHERE T.VALID =  '1'
+		  <if test="ideaId!=null and ideaId!=''">
+			and T.IDEAID  like '%'||#{ideaId}||'%'
+		  </if>
+		   <if test="userId!=null and userId!=''">
+			and T.USERID  like '%'||#{userId}||'%'
+		  </if>
+      ORDER BY  U.SORTID
+	</select>
+	
+	<select id="selectForCompanyUserInfo" resultType="java.util.Map">
+	    SELECT 
+		   	T.UUID as "companyId",	 		
+      		T.IDEAID as "ideaId",	 
+      		T.USERID as "userId",	 
+   			T.REMARK as "remark",	 	
+			T.CREATE_USER as "createUser",
+			TO_CHAR(T.CREATE_TIME,'YYYY-MM-DD HH24:MI:SS')   as "createTime",	 	 		
+      		U.USERALIAS as "userAlisa",
+      		U.POSTNAME as "postName"
+		FROM TB_YSZX_COMPANY_USER  T
+        LEFT JOIN BG_SYS_USER  U
+		        ON T.USERID = U.USERID
+		  WHERE T.VALID =  '1'
+		  <if test="ideaId!=null and ideaId!=''">
+			and T.IDEAID  like '%'||#{ideaId}||'%'
+		</if>
+		<if test="userId!=null and userId!=''">
+			and T.USERID  like '%'||#{userId}||'%'
+		</if>
+	</select>
+	
+	<select id="selectForId" resultType="java.util.Map">
+	     SELECT 
+		      UUID   as  "id",	    
+		      APPLY_DEPT  as "applyDeptId",
+              (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = APPLY_DEPT)   as "applyDept",
+              TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+              TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+			  CONTACT_USER as "contactUser",
+			  CONTACT_PHONE as "contactPhone", 		
+			  VISIT_UNIT_TYPE as "visitUnitType",	 
+			  VISIT_UNIT_NAME as "visitUnitName",	
+			  VISITOR_NUMBER as "visitorNumber", 		
+			  COMPANY_USER_NUMBER as "companyUserNumber",	 
+			  REMARK as "remark",	
+              (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=STATUS) as "status",
+              STATUS  as  "approveState",
+			  APPLY_ID as "applyId",	 		
+			  VISIT_LEVEL as "visitLevel",	 	
+			  VALID as "valId", 	
+			  CREATE_USER as "createUser",
+			  TO_CHAR( CREATE_TIME,'YYYY-MM-DD') as "createTime",
+			  APPLY_NUMBER 	 as "applyNumber"	
+		  FROM TB_YSZX_IDEA	
+		  WHERE VALID =  '1' 
+		<if test="id!=null and id!=''">
+			and UUID  like '%'||#{id}||'%'
+		</if>
+		 
+	</select>
+	<select id="selectForuserName" resultType="java.util.Map">
+		 SELECT 
+		   USERID  as "userId",  
+		   USERNAME as "userName",
+		   USERALIAS as "userAlias",
+		   HRDEPTNAME as "hrDeptName",
+		   HRDEPTCODE as "hrDeptCode",
+		   POSTCODE as "postCode", 
+		   POSTNAME  as "postName"
+		  FROM BG_SYS_USER
+		  WHERE SRC = 0  
+		   AND USERID = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+	
+	<update id="deleteIdeaInfo"  >
+		UPDATE TB_YSZX_IDEA SET
+			VALID=#{valId,jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE UUID=#{ideaId}  
+	</update> 
+	
+	
+	
+	
+	<update id="deleteVisitInfo"  >
+		UPDATE TB_YSZX_VISIT SET
+			VALID=#{valId,jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE UUID=#{visitId}  
+	</update> 
+	
+	 
+	<update id="deleteLeaderInfo"  >
+		UPDATE TB_YSZX_COMPANY_LEADER SET
+			VALID=#{valId,jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE  VALID='1'
+		   <if test="userid!=null and userid!=''">
+			      and  USERID = #{userid,jdbcType=VARCHAR} 
+		   </if>
+		    <if test="ideaId!=null and ideaId!=''">
+			       and   IDEAID = #{ideaId,jdbcType=VARCHAR} 
+		   </if>
+		    
+            	  
+	</update> 
+	
+	 
+	
+	
+	<update id="deleteCompanyUserInfo"  >
+		UPDATE TB_YSZX_COMPANY_USER SET
+			VALID=#{valId,jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE UUID=#{companyId}  
+	</update> 
+	
+	
+	<select id="selectForDictionary" resultType="java.util.Map"  parameterType="java.util.List">
+		 SELECT 
+		   CODE as "code",
+		   NAME as "name", 
+		   SORT_ID  as "sortId"
+		  FROM BG_SYS_DATADICTIONARY
+		  WHERE VAILD = '1'
+		   AND PCODE = #{pcode,jdbcType=VARCHAR}   
+		   AND CODE IN
+		    <foreach  collection="codes" item="code" open="("  separator="," close=")">
+		        #{code,jdbcType=VARCHAR} 
+		   </foreach> 
+		   ORDER BY  SORT_ID
+		   
+	</select>
+	<select id="selectForCode" resultType="java.util.Map"   >
+		 SELECT 
+		   CODE as "code",
+		   NAME as "name", 
+		   SORT_ID  as "sortId"
+		  FROM BG_SYS_DATADICTIONARY
+		  WHERE VAILD = '1'
+		   AND PCODE = #{pcode,jdbcType=VARCHAR}   
+		   <if test="code!=null and code!=''">
+			      and CODE  like '%'||#{code}||'%'
+		   </if>
+		   ORDER BY  SORT_ID
+	</select>
+	
+	
+	
+    <select id="selectForDealtInfo" resultType="java.util.Map">
+    SELECT  T.*  from(
+	SELECT  TB.* , ROWNUM AS ROWNO  from(
+	     SELECT 
+            G.UUID   as  "id",	    
+            (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
+            TO_CHAR(  G.START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+            TO_CHAR(  G.END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+	        G.CONTACT_USER as "contactUser",
+		    G.CONTACT_PHONE as "contactPhone", 		
+		    G.VISIT_UNIT_TYPE as "visitUnitType",	 
+		    G.VISIT_UNIT_NAME as "visitUnitName",	
+		    G.VISITOR_NUMBER as "visitorNumber", 		
+		    G.COMPANY_USER_NUMBER as "companyUserNumber",	 
+		    G.REMARK as "remark",	
+           (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code= G.STATUS) as "status",
+           G.STATUS as  "approveState",
+		   G.APPLY_ID as "applyId",	
+		   G.APPLY_NUMBER as "applyNumber",	 	 		
+  	       G.VISIT_LEVEL as "visitLevel",	 	
+	       G.VALID as "valId", 	
+	       G.CREATE_USER as "createUser",
+	       TO_CHAR(  G.CREATE_TIME,'YYYY-MM-DD') as "createTime"	,
+           D.APPROVE_NODE as "approveNode",
+           D.ID  as "wlApproveId" ,
+           E.APPROVE_USER  as "approveUserId"
+         from    TB_YSZX_IDEA  G
+             LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'  
+             LEFT JOIN TB_WL_AUDIT_USER E ON D.ID=E.APPROVE_ID AND   E.VALID='1'
+          where   G.VALID='1'   and   G.APPLY_ID is not null     AND D.APPROVE_STATUS='0'  AND  D.AUDIT_FLAG='1'
+            <if test="approveUserId!=null and approveUserId!=''">
+			      and E.APPROVE_USER  like '%'||#{approveUserId}||'%'
+		    </if>
+		    <if test="contactUserName!=null and contactUserName!=''">
+			      and G.CONTACT_USER  like '%'||#{contactUserName}||'%'
+		    </if>
+		    <if test="applyNumber!=null and applyNumber!=''">
+			      and G.APPLY_NUMBER  like '%'||#{applyNumber}||'%'
+		    </if>
+		    <if test="applyDept!=null and applyDept!=''">
+			      and G.APPLY_DEPT  like '%'||#{applyDept}||'%'
+		    </if>
+            ORDER BY  G.CREATE_TIME     DESC
+            ) TB  WHERE #{page_end} >= ROWNUM
+	        ) T   WHERE T.ROWNO > #{page_start}
+	</select>
+	
+	
+	
+	
+	
+	
+	 <select id="selectForAlreadytInfo" resultType="java.util.Map">
+	 SELECT  T.*  from(
+	 SELECT  TB.* , ROWNUM AS ROWNO  from(
+	     SELECT 
+            G.UUID   as  "id",	    
+            (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
+            TO_CHAR(  G.START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+            TO_CHAR(  G.END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+	        G.CONTACT_USER as "contactUser",
+		    G.CONTACT_PHONE as "contactPhone", 		
+		    G.VISIT_UNIT_TYPE as "visitUnitType",	 
+		    G.VISIT_UNIT_NAME as "visitUnitName",	
+		    G.VISITOR_NUMBER as "visitorNumber", 		
+		    G.COMPANY_USER_NUMBER as "companyUserNumber",	 
+		    G.REMARK as "remark",	
+           (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code= G.STATUS) as "status",
+           G.STATUS as  "approveState",
+		   G.APPLY_ID as "applyId",	
+		   G.APPLY_NUMBER as "applyNumber",	 	 		
+  	       G.VISIT_LEVEL as "visitLevel",	 	
+	       G.VALID as "valId", 	
+	       G.CREATE_USER as "createUser",
+	       TO_CHAR(  G.CREATE_TIME,'YYYY-MM-DD') as "createTime"	,
+           D.APPROVE_NODE as "approveNode",
+           D.ID  as "wlApproveId" ,
+           E.APPROVE_USER  as "approveUserId"
+         from    TB_YSZX_IDEA  G
+             LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'   
+             LEFT JOIN TB_WL_AUDIT_USER E ON D.ID=E.APPROVE_ID AND   E.VALID='1'
+          where   G.VALID='1'   and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='1'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL
+            <if test="approveUserId!=null and approveUserId!=''">
+			      and E.APPROVE_USER  like '%'||#{approveUserId}||'%'
+		    </if>
+		    <if test="contactUserName!=null and contactUserName!=''">
+			      and G.CONTACT_USER  like '%'||#{contactUserName}||'%'
+		    </if>
+		    <if test="applyNumber!=null and applyNumber!=''">
+			      and G.APPLY_NUMBER  like '%'||#{applyNumber}||'%'
+		    </if>
+		    <if test="applyDept!=null and applyDept!=''">
+			      and G.APPLY_DEPT  like '%'||#{applyDept}||'%'
+		    </if>
+            ORDER BY  G.CREATE_TIME     DESC
+            ) TB  WHERE #{page_end} >= ROWNUM
+	        ) T   WHERE T.ROWNO > #{page_start}
+	</select>
+	
+ 
+	   <select id="selectComprehensiveInfo" resultType="java.util.Map">
+	   SELECT  *　FROM (
+	   
+	    SELECT 
+		    G.UUID   as  "id",	 
+       (   SELECT    
+          wm_concat( D.USERALISA)
+         from  TB_YSZX_COMPANY_LEADER  T   
+         LEFT JOIN TB_YSZX_CONFIG_COMPANY_LEADER  D  ON T.USERID  =D.ID
+         where T.VALID='1' AND  D.VALID='1'   
+        AND  T.IDEAID =G.UUID
+         GROUP BY T.IDEAID
+       )  AS  "leaderInfo",
+       (
+       SELECT      
+         wm_concat( D.USERALIAS||'('||D.POSTNAME ||')')
+         from  TB_YSZX_COMPANY_USER  T   
+         LEFT JOIN BG_SYS_USER  D  ON T.USERID  =D.USERID
+         where T.VALID='1' AND  D.VALID='1'   
+         AND  T.IDEAID =G.UUID
+         GROUP BY T.IDEAID
+        )  AS  "userInfo",
+        (
+         SELECT  
+          wm_concat(T.USERNAME||'('|| T.POSITION ||'、'||D.NAME||')')   
+          FROM  TB_YSZX_VISIT T
+          LEFT JOIN BG_SYS_DATADICTIONARY  D  ON T.USERLEVEL  =D.CODE 
+          where T.VALID='1' AND  D.VAILD='1' AND D.PCODE='visitunit_levle'
+          AND  T.IDEAID =G.UUID 
+          GROUP BY T.IDEAID
+         )  AS  "visitInfo",
+        (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
+        TO_CHAR( G.START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+        TO_CHAR( G.END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+			  G.CONTACT_USER as "contactUser",
+			  G.CONTACT_PHONE as "contactPhone", 		
+			  G.VISIT_UNIT_TYPE as "visitUnitType",	 
+			  G.VISIT_UNIT_NAME as "visitUnitName",	
+			  G.VISITOR_NUMBER as "visitorNumber", 		
+			  G.COMPANY_USER_NUMBER as "companyUserNumber",	 
+			  G.REMARK as "remark",	
+        (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=G.STATUS) as "status",
+        G.STATUS as  "approveState",
+			  G.APPLY_ID as "applyId",	
+			  G.APPLY_NUMBER as "applyNumber",	 	 		
+			  G.VISIT_LEVEL as "visitLevel",	 	
+			  G.VALID as "valId", 	
+			  G.CREATE_USER as "createUser",
+			  TO_CHAR( G.CREATE_TIME,'YYYY-MM-DD') as "createTime"
+		    FROM TB_YSZX_IDEA   G
+		    WHERE  G.VALID =  '1'
+	   ) where  1=1
+	   
+	    <if test="applyNumber!=null and applyNumber!=''">
+			and "applyNumber"  like '%'||#{applyNumber}||'%'
+		</if>
+		<if test="year!=null and year!=''">
+			and "createTime" like '%'||#{year}||'%'
+		</if>
+		<if test="month!=null and month!=''">
+			and  "createTime" like '%'||#{month}||'%'
+		</if>
+		<if test="applyDept!=null and applyDept!=''">
+			and "applyDept"  like '%'||#{applyDept}||'%'
+		</if>
+		
+		<if test="visitName!=null and visitName!=''">
+			and "visitInfo"  like '%'||#{visitName}||'%'
+		</if>
+		<if test="visitLevel!=null and visitLevel!=''">
+			and "visitInfo"  like '%'||#{visitLevel}||'%'
+		</if>
+		<if test="ids!=null and ids!=''">
+			and "id"  IN
+			<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+					${item}
+			</foreach>
+		</if>
+	    
+	 
+	   </select>
+	   
+	   <select id="selectIdeaDeptInfo" resultType="java.util.Map">
+	   SELECT  
+          DISTINCT( T.APPLY_DEPT)   as  "applyDeptID",
+          D.DEPTNAME   as  "applyDeptName",
+          D.PDEPTCODE  as  "pdeptCode",
+          D.PDEPTNAME  as  "pdeptName"
+          FROM   TB_YSZX_IDEA  T
+          LEFT JOIN BG_SYS_DEPT  D  ON T.APPLY_DEPT  =D.DEPTID 
+          WHERE    T.VALID='1' AND  D.VALID='1'
+	   </select>
+	   
+	   
+	    <select id="selectForApply" resultType="java.util.Map">
+	    SELECT  
+          APPLY_STATUS
+          FROM   TB_WL_APPLY   
+          WHERE    VALID='1'   and   ID=#{id}
+	   </select>
+	   
+	   <select id="selectForApplyStatus" resultType="java.util.Map">
+	    SELECT     
+	     T.NODE,
+	     G.ROLE_NAME,
+	     G.ROLE_CODE,
+	     G.ID 
+         FROM     TB_WL_RULE  T   
+         LEFT JOIN    TB_PRIV_ROLE  G ON  T.APPROVE_ROLE=G.ID 
+         where  G.VALID='1'  AND T.VALID ='1' AND     T.APPROVE_ROLE   IS not  NULL   
+           AND  T.NODE=#{applyStatus}
+	   </select>
+</mapper>
