@@ -60,6 +60,74 @@ function checkDate(stateDate,endDate){
         	 return true;
         } 
 }
+//
+function checkLeaderInfo(){
+	var leaders="";
+	 $(".visitLeader tr:gt(0)").each(function(){
+		 var visitId = $(this).find(".visitid").val()//姓名
+		  //验证名称，职务，级别是否为空
+		 var username = $(this).find(".visitUsername").val()//姓名
+		 var position = $(this).find(".visitposition").val()//职务
+		 var userLevel =$(this).find("#userLevel").val();//级别
+		 if(username == ''){
+			 messager.tip("参观领导名称不能为空",2000);
+			 $(this).find(".visitUsername").addClass("validRefuse");
+			 roomDetailInfo.saveBtnClickFlag = 0;
+			 leaders= "0";
+			 return  leaders;
+		 }else if(position == ''){
+			 messager.tip("参观领导职务不能为空",2000);
+			 $(this).find(".visitposition").addClass("validRefuse");
+			 roomDetailInfo.saveBtnClickFlag = 0;
+			 leaders= "0";
+			 return  leaders;
+		 }else if(userLevel == ''){
+			 messager.tip("参观领导级别不能为空",2000)
+			 $(this).find(".userlevel").addClass("validRefuse");
+			 roomDetailInfo.saveBtnClickFlag = 0;
+			 leaders= "0";
+			 return  leaders;
+		 }else{
+			   $(this).find(".visitUsername").removeClass("validRefuse");
+			   $(this).find(".visitposition").removeClass("validRefuse");
+			   $(this).find(".userlevel").removeClass("validRefuse");
+			   leaders="1";
+			   return  leaders;
+		 }
+		
+	 })
+	 if(leaders =="0"){
+		 return false;
+		
+	 }else{
+		 return  true;
+	 }
+}
+function  accompanyUserInfo(){
+	var accompanyUser="";
+	$(".visitUnitAccompany tr:gt(0)").each(function(){
+		 var userId = $(this).find(".userId").val()//用户id
+		 if(userId=="on"){
+			 messager.tip("参观领导级别/职务不能为空",2000)
+			 $(this).find("#UserName").addClass("validRefuse");
+			 $(this).find("#Position").addClass("validRefuse");
+			 roomDetailInfo.saveBtnClickFlag = 0;
+			 accompanyUser="0"
+		 }else{
+			 $(this).find("#UserName").removeClass("validRefuse");
+			 $(this).find("#Position").removeClass("validRefuse");
+			 accompanyUser="1"
+		    
+		 }
+	 })
+	 if(accompanyUser =="0"){
+		 return false;
+		
+	 }else{
+		 return  true;
+	 }
+}
+
 //返回
 roomDetailInfo.messageResign =function(){
 	roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
@@ -68,7 +136,6 @@ roomDetailInfo.messageResign =function(){
 }
 /* 保存信息库信息 */
 roomDetailInfo.messageSave= function(approvalUserd){
-	debugger;
 	   /* 主ID  */
 	    var id=$("#id").val();
 		/* 验证必填项   */
@@ -118,38 +185,27 @@ roomDetailInfo.messageSave= function(approvalUserd){
 	    	 messager.tip("主要参观领导人信息不能为空",2000)
 			 roomDetailInfo.saveBtnClickFlag = 0;
 			 return;
+	    }else{
+	    	var  checkLeader=checkLeaderInfo();
+	 	    if(!checkLeader){
+	 	    	return;
+	 	    }else{
+	 	    	  $(".visitLeader tr:gt(0)").each(function(){
+	 				 var visitId = $(this).find(".visitid").val()//姓名
+	 				  //验证名称，职务，级别是否为空
+	 				 var username = $(this).find(".visitUsername").val()//姓名
+	 				 var position = $(this).find(".visitposition").val()//职务
+	 				 var userLevel =$(this).find("#userLevel").val();//级别
+	 				//序号
+	 				sortId++;
+	 				var visit={"visitId":visitId,"userLevel":userLevel,"visitUserName":username,"visitPosition":position,"sortId":sortId}
+	 			    visitinfo.push(visit);
+	 			 });
+	 	    }
+	 	  
 	    } 
-		 $(".visitLeader tr:gt(0)").each(function(){
-			 var visitId = $(this).find(".visitid").val()//姓名
-			  //验证名称，职务，级别是否为空
-			 var username = $(this).find(".visitUsername").val()//姓名
-			 var position = $(this).find(".visitposition").val()//职务
-			 var userLevel =$(this).find("#userLevel").val();//级别
-			 if(username == ''){
-				 messager.tip("参观领导名称不能为空",2000);
-				 $(this).find(".visitUsername").addClass("validRefuse");
-				 roomDetailInfo.saveBtnClickFlag = 0;
-				 return;
-			 }else if(position == ''){
-				 messager.tip("参观领导职务不能为空",2000);
-				 $(this).find(".visitposition").addClass("validRefuse");
-				 roomDetailInfo.saveBtnClickFlag = 0;
-				 return;
-			 }else if(userLevel == ''){
-				 messager.tip("参观领导级别不能为空",2000)
-				 $(this).find(".userlevel").addClass("validRefuse");
-				 roomDetailInfo.saveBtnClickFlag = 0;
-				 return;
-			 }else{
-				   $(this).find(".visitUsername").removeClass("validRefuse");
-				   $(this).find(".visitposition").removeClass("validRefuse");
-				   $(this).find(".userlevel").removeClass("validRefuse");
-			 }
-			//序号
-			sortId++;
-			var visit={"visitId":visitId,"userLevel":userLevel,"visitUserName":username,"visitPosition":position,"sortId":sortId}
-		    visitinfo.push(visit);
-		 });
+	   
+	    
 	    // 院内陪同领导人员信息
 	    var companyLeaderName=$("#companyLeaderName").val();
 	    if(companyLeaderName==""){
@@ -167,13 +223,22 @@ roomDetailInfo.messageSave= function(approvalUserd){
 	    	 messager.tip("陪同部门人员信息不能为空",2000)
 			 roomDetailInfo.saveBtnClickFlag = 0;
 			 return;
-	    } 
-		 $(".visitUnitAccompany tr:gt(0)").each(function(){
-			 var userId = $(this).find(".userId").val()//用户id
-			 var companyId = $(this).find(".companyId").val()//陪同主ID
-			 var userInfo={"userId":userId,"companyId":companyId}
-			 companyUserInfo.push(userInfo);
-		 });
+	    }else{
+	    	 var checkAccompanyUser=accompanyUserInfo();
+	    	 if(!checkAccompanyUser){
+	    		 return;
+	    	 }else{
+	    		 $(".visitUnitAccompany tr:gt(0)").each(function(){
+	    			 var userId = $(this).find(".userId").val()//用户id
+	    			 var companyId = $(this).find(".companyId").val()//陪同主ID
+	    			 var userInfo={"userId":userId,"companyId":companyId}
+	    			 companyUserInfo.push(userInfo);
+	    		 });
+	    	 }
+	    }
+	   
+	    
+	   
       var roomDetailFormData = roomAddInfoCommon.getFormDataInfo();
 	  roomDetailFormData.companyUserInfo=companyUserInfo ;
 	  roomDetailFormData.id=id;
@@ -208,10 +273,12 @@ roomDetailInfo.messageSave= function(approvalUserd){
 									roomDetailInfo.saveBtnClickFlag = 0;//保存按钮点击事件
 									if(data.success=="true"){
 										 messager.tip("保存成功",1000);
-									 
+										 roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
+										 var closeIndex = parent.layer.getFrameIndex(window.name);
+										 parent.layer.close(closeIndex);
 									}else{ 
-										messager.tip(data.msg,5000);
-										 
+										 messager.tip(data.msg,5000);
+										 return;  
 									}
 									
 								}
@@ -241,6 +308,7 @@ roomDetailInfo.messageSave= function(approvalUserd){
 								parent.layer.close(closeIndex);
 							}else{ 
 								messager.tip(data.msg,5000);
+								return;  
 							}
 							
 						}
@@ -286,12 +354,8 @@ function approveUserID(){
 roomDetailInfo.messageSubmit= function(){
 	var html=messageSubmitHtml();
 	if(html =='' || html ==undefined){
-		layer.open({
-	        title:'提示信息',
-	        content:'审批人查询失败',
-	        area:'300px',
-	        skin:'demo-class'
-	    }) 
+	    messager.tip("审批人查询失败",1000);
+	    return;
 	}else{
 		var ApproveUserId=approveUserID();
 		if(ApproveUserId!=""){
@@ -511,34 +575,29 @@ function delLeader(obj){
 	 
 	var checkedNumber = $(obj).parents(".contentBox").find("input[type=checkbox]:checked").length;
 	if(checkedNumber == 0){
-    	 layer.open({
-    	        title:'提示信息',
-    	        content:'请选中需要删除的数据',
-    	        area:'300px',
-    	        skin:'demo-class'
-    	    })
+		messager.tip("请选中需要删除的数据",2000);
+		return;
+    }else if(checkedNumber>1){
+    	messager.tip("每次只能删除一条数据",2000);
+    	return;
     }else if(checkedNumber > 0){
-    	layer.open({
-            title:'提示信息',
-            content:'确定要删除选中的行吗？',
-            area:'300px',
-            btn:['确定','取消'],
-            skin:'demo-class',
-            yes:function(index,layero){
-            	layer.close(index);
-            	delLeaderInfo(obj);  
-            	
-            }
-        });
+    	 $.messager.confirm( "删除提示", "确认删除选中数据吗",
+    	 function(r){
+    		if(r){
+    			delLeaderInfo(obj);  
+    			}
+    		    layer.close(index);
+			});
     }
 }
 /*参观领导删除逻辑*/
 function delLeaderInfo(obj){
-
 	     $(obj).parents(".contentBox").find("input[type=checkbox]:checked").each(function(){
          var  visitId= $(this).val();
          if(visitId==""){
         	 $(obj).parents(".contentBox").find("input[type=checkbox]:checked").parent().parent("tr").remove();
+        	 messager.tip("删除成功",1000);
+         	 return;
          }else{
         	 $.ajax({
         		    url: "/bg/IdeaInfo/deleteVisitInfo?visitId="+visitId,//获取申报界面数据字典
@@ -548,13 +607,11 @@ function delLeaderInfo(obj){
         			success: function (data) {
         				if(data.success=="true"){
         					 $(obj).parents(".contentBox").find("input[type=checkbox]:checked").parent().parent("tr").remove();
+        					 messager.tip("删除成功",1000);
+        		         	 return;
         				}else{
-        					layer.open({
-     			    	        title:'提示信息',
-     			    	        content:data.msg,
-     			    	        area:'300px',
-     			    	        skin:'demo-class'
-     			    	    }) 
+        					 messager.tip("删除失败",1000);
+        		         	 return;
         					
         				} 
         			}
@@ -569,26 +626,19 @@ function delLeaderInfo(obj){
 function delUser(obj){
 	var checkedNumber = $(obj).parents(".contentBox").find("input[type=checkbox]:checked").length;
 	if(checkedNumber == 0){
-    	 layer.open({
-    	        title:'提示信息',
-    	        content:'请选中需要删除的数据',
-    	        area:'300px',
-    	        skin:'demo-class'
-    	    })
+		messager.tip("请选中需要删除的数据",2000);
+		return;
+    }else if(checkedNumber>1){
+    	messager.tip("每次只能删除一条数据",2000);
+    	return;
     }else if(checkedNumber > 0){
-    	layer.open({
-            title:'提示信息',
-            content:'确定要删除选中的行吗？',
-            area:'300px',
-            btn:['确定','取消'],
-            skin:'demo-class',
-            yes:function(index,layero){
-                layer.close(index);
-                delUserInfo(obj);
-                
-                
-            }
-        });
+    	 $.messager.confirm( "删除提示", "确认删除选中数据吗",
+    	   function(r){
+    	     if(r){
+    	        delUserInfo(obj);  
+    	     }
+    	     layer.close(index);
+    	  });
     }
 }
 /*陪同人员信息删除逻辑*/
@@ -607,13 +657,11 @@ function delUserInfo(obj){
       			success: function (data) {
       				if(data.success=="true"){
       					 $(obj).parents(".contentBox").find("input[type=checkbox]:checked").parent().parent("tr").remove();
+      					 messager.tip("删除成功",1000);
+    		         	 return;
       				}else{
-      					layer.open({
-   			    	        title:'提示信息',
-   			    	        content:data.msg,
-   			    	        area:'300px',
-   			    	        skin:'demo-class'
-   			    	    }) 
+      					messager.tip("删除失败",1000);
+   		         	    return;
       					
       				} 
       			}
@@ -667,4 +715,260 @@ roomDetailInfo.SelectForUserId = function(userId){
 			 
 		}
 	});
+	
+	
+	/* 演示中心待办管理-撤回方法*/
+	roomDetailInfo.withdrawEvent = function(){
+		var approveId=$("#applyId").val();
+		$.messager.confirm( "提交提示", "确认撤回选中数据吗",
+			function(r){
+				if(r){
+					$.ajax({
+					    url: "/bg/Approve/recallApprove?approveId="+approveId,//删除
+						type: "post",
+						dataType:"json",
+						contentType: 'application/json',
+						success: function (data) {
+							if(data.success == "true"){
+								messager.tip("撤回成功",1000);
+								roomList.query();
+							}else{
+								messager.tip("撤回失败",1000);
+								roomList.query();
+							}
+						}
+					});
+				}
+			}
+		);
+	}
+	
+	/* 演示中心待办管理-退回方法*/
+	roomDetailInfo.returnEvent = function(){
+		debugger;
+		var checkedItems = dataGrid.getCheckedItems(dataItems);
+		
+		if(checkedItems.length==0){
+			messager.tip("请选择要操作的数据",1000);
+			return;
+		}else if(checkedItems.length>1){
+			messager.tip("每次只能选择一条数据",2000);
+			return;
+		}
+		var checkedIds = dataGrid.getCheckedIds();
+		messageReturn("0");
+	   }
+	messageReturn= function(stauts){
+	    var html=messagereturnHtml();
+		if(html =='' || html ==undefined){
+			messager.tip("审批意见页面错误",2000);
+			return;
+		}else{
+			layer.confirm(
+					 html,
+					 {title:'请填写审批意见', area:'800px',skin:'demo-class'   },
+					 function(){
+						 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
+						 selectForReturn(approveRemark,stauts);
+					 	 layer.close(layer.index);
+		             });
+		}
+		
+	}
+	function selectForReturn(approveRemark,stauts){
+		$.messager.confirm( "退回提示", "确认提交选中数据吗",
+	 			function(r){
+	 			var checkedItems = dataGrid.getCheckedItems(dataItems);
+	 			var approveId= checkedItems[0].wlApproveId;
+	 			var auditUserId="";
+	 					$.ajax({
+	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 						type: "post",
+	 						dataType:"json",
+	 						contentType: 'application/json',
+	 						success: function (data) {
+	 							if(data.success == "true"){
+	 								messager.tip("审批成功",1000);
+	 								roomList.query();
+	 							}else{
+	 								messager.tip("审批失败",1000);
+	 								roomList.query();
+	 							}
+	 						}
+	 					});
+	 			}
+	 		);
+	     
+	}
+	/* 退回信息---页面拼接 */
+	messagereturnHtml=  function (){
+	 
+		 var userPrivilegehtml = '';
+		 userPrivilegehtml +='<div class="contentBox   Remark">';
+		 userPrivilegehtml +='<h4 class="tableTitle">';
+		 userPrivilegehtml +='<span title = "审批意见">审批意见：</span>';
+	     userPrivilegehtml +='</h4>';
+		 userPrivilegehtml +='<div class="btnBox"   style="height:20px;"  >';
+		 userPrivilegehtml +='</div>';
+		 userPrivilegehtml +='<div class="maxBox">';
+		 userPrivilegehtml +='<textarea   id="approveRemark"    name="approveRemark"  style="height:100px; width: 100%;background-color: #fff"> </textarea>';	    
+		 userPrivilegehtml +='</div>';
+		 userPrivilegehtml +='</div>';             
+
+		return userPrivilegehtml;
+	}
+	
+	
+	
+	
+	/* 演示中心待办管理-同意方法*/
+	roomDetailInfo.agreeEvent = function(){
+		var approveState=$("#approveState").val();
+		if(approveState=="MANAGER_DEPT_HEAD_CHECK"){
+			messageReturn("1");
+		}else{
+			messageAgree("1");
+		}
+		
+	}
+	
+	/* 同意信息库信息 */
+	messageAgree= function(stauts){
+	    var html=messageagreeHtml();
+		if(html =='' || html ==undefined){
+			 messager.tip("审批页面错误",1000);
+			 return; 
+		}else{
+			var auditUserId=approveUserIDS();
+			var approveRemark= "";
+			var approveId=$("#applyId").val();
+			if(auditUserId!=""){
+				  selectForAgree(approveId,stauts,auditUserId,approveRemark);
+			      layer.close(layer.index);
+			 }else{
+				 layer.confirm(
+						 html,
+						 {title:'请选择审批人', area:'800px',skin:'demo-class'   },
+						 function(){
+							 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
+							 var auditUserId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
+							 
+							 if(checkedNumber == 0){
+								    messager.tip("请选择要操作的数据",1000);
+									return;
+						     }else if(checkedNumber > 1 ){
+						    	    messager.tip("请选择要操作的数据",1000);
+									return;  
+						     }else{
+						    	var checkedIds = dataGrid.getCheckedIds();
+						    	 selectForAgree(approveId,stauts,auditUserId,approveRemark);
+						    	 layer.close(layer.index);
+						    }
+							 
+							 
+							  
+			             });
+				  
+			 }
+		}
+
+	}
+
+	function approveUserIDS(){
+		var ApproveUserId = "";
+		var checkedItems = dataGrid.getCheckedItems(dataItems);
+		var approveState= checkedItems[0].approveState;
+		$.ajax({
+			 url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState+"&type="+"apply",//获取申报界面数据字典
+			type: "post",
+			dataType: "json",
+			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
+			success: function (data) { 
+				if(data.success =='true'){
+				  	var userPrivilegelist = data.data.userPrivilege;
+				  	var len=userPrivilegelist.length
+				  	if(len>1){
+				  		ApproveUserId="";
+				  	}else{
+				  		ApproveUserId=userPrivilegelist[0].userId;
+				  	}
+				} 
+			 }
+		  });
+		return ApproveUserId;
+		
+	}
+	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
+		$.messager.confirm( "同意提示", "确认提交选中数据吗",
+	 			function(r){
+	 			
+	 					$.ajax({
+	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 						type: "post",
+	 						dataType:"json",
+	 						contentType: 'application/json',
+	 						success: function (data) {
+	 							if(data.success == "true"){
+	 								messager.tip("审批成功",1000);
+	 								roomList.query();
+	 							}else{
+	 								messager.tip("审批失败失败",1000);
+	 								roomList.query();
+	 							}
+	 						}
+	 					});
+	 				 
+	 			}
+	 		);
+	}
+	
+	
+
+	/* 同意信息---页面拼接 */
+	messageagreeHtml=  function (){
+		var approveState=$("#approveState").val();
+		var userPrivilegehtml = '';
+		$.ajax({
+		    url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState+"&type="+"apply",//获取申报界面数据字典
+			type: "post",
+			dataType: "json",
+			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
+			success: function (data) {
+				if(data.success =='true'){
+			    	var userPrivilegelist = data.data.userPrivilege;
+					userPrivilegehtml += '<table class="userPrivilege tableStyle thTableStyle">';
+					userPrivilegehtml += '<tr>';
+					     userPrivilegehtml += '<th>选择</th>';
+					     userPrivilegehtml += '<th>审批人</th>';
+					     userPrivilegehtml += '<th>部门</th>';
+					userPrivilegehtml += '</tr>';
+						for (var i = 0; i < userPrivilegelist.length; i++) {
+							userPrivilegehtml += '<tr>';
+							     userPrivilegehtml += '<td>';
+							       userPrivilegehtml+='<input type="checkbox"   class="inputUserId"  />' 
+							       userPrivilegehtml+='<input type="hidden"    id="userId"  name = "userId"  class="userId"  value="' + userPrivilegelist[i].userId + '"  />' 
+							     userPrivilegehtml += '</td>';
+							     userPrivilegehtml += '<td class="addInputStyle">  ';
+							       userPrivilegehtml+='<input type="text" disabled  id="userAlias"  name = "userAlias"  class="userAlias inputChange"  value="' + userPrivilegelist[i].userAlias + '" title="审批人名称 " />' 
+							     userPrivilegehtml += '</td>';
+							     userPrivilegehtml += '<td class="addInputStyle">';
+							       userPrivilegehtml+='<input type="text" disabled   id="deptName"   name = "deptName"   class="deptName inputChange"  value="' + userPrivilegelist[i].deptName + '" title="审批人单位" />'
+							     userPrivilegehtml += '</td>';
+							       
+							 userPrivilegehtml += '</tr>';   	 
+						}
+					 userPrivilegehtml += '</table>';
+				}else{
+					userPrivilegehtml ;
+				}
+			 
+			}
+		});
+		return userPrivilegehtml;
+	}
+	
+	 
+	
+	
+	
 }

@@ -153,7 +153,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 			 } 	
 			//系统已经预定的时间
 			List<Map<String, Object>> list=yszxMapper.selectForIdeaDate(id);
-			 if(list!=null){
+			 if(!list.isEmpty()){
 				 for(Map<String, Object> map:list){
 					String   applyNumber=String.valueOf(map.get("APPLY_NUMBER"));//申请单号
 					String  oldenddate=String.valueOf(map.get("END_DATE"));//结束时间
@@ -985,16 +985,24 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				List<Map<String, Object>>  leaderInfo = yszxMapper.selectForCompanyLeaderInfo(ideaId,"");
 				if(!leaderInfo.isEmpty()){
 					String leaders="";
+					String userAlisas="";
 					for( Map<String, Object> leader:leaderInfo){
-					//	String userAlisa= Rtext.toStringTrim(leader.get("userAlisa"), "");
-						String userAlisa= Rtext.toStringTrim(leader.get("userId"), "");
+						
+						String userId= Rtext.toStringTrim(leader.get("userId"), "");
+						if(userId!=""){
+							leaders+=userId+",";
+						} 
+						String userAlisa= Rtext.toStringTrim(leader.get("userAlisa"), "");
 						if(userAlisa!=""){
-							leaders+=userAlisa+",";
+							userAlisas+=userAlisa+",";
 						} 
 					}
 					String  userNames =leaders.trim();
 					String userName=userNames.substring(0, userNames.length()-1);
 					ideaInfo.put("leaderInfo", userName);
+					String  Alisas =userAlisas.trim();
+					String  Alisa=Alisas.substring(0, Alisas.length()-1);
+					ideaInfo.put("Alisa",  Alisa);
 				}
 				List<Map<String, Object>>  userInfo = yszxMapper.selectForCompanyUserInfo(ideaId,"");
 				if(!userInfo.isEmpty()){
@@ -1002,7 +1010,11 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				}
 			 } 
 			return ideaInfo;
-		} 
+		}
+		 
+		
+		
+		
 	@Override
 	public String selectForuserName(String userId) {	
 	    	Map<String, Object>  map= new  HashMap<String, Object>();
