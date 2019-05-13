@@ -277,5 +277,17 @@
  	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomDetailInfo.js"></script>
 
 </body>
-  
+ <script type="text/javascript">
+ $(function(){
+	 var approveState=$("#approveState").val();
+	 if(approveState=="SAVE" ){
+		 $("#messageSave").hide();//隐藏 
+	 }else if(approveState=="RETURN"){
+		 $("#messageSave").hide();//隐藏 
+	 }else{
+		 $("#messageSave").show();//显示
+	 }
+	
+ });
+ </script>
 </html>

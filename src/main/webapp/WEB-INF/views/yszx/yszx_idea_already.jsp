@@ -53,10 +53,7 @@
 	</div>
 	<!-- end   新增  修改  删除按钮 -->
 	
-	<!-- start 列表标题 -->
-	<div class="grid-title">
-		<h3>已办列表</h3>
-	</div>
+ 
 	<!-- end 列表标题 -->
 	
 	<!-- start 列表展示 -->

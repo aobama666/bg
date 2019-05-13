@@ -202,7 +202,7 @@
 		  TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI:SS')  AS  END_DATE
 		  FROM TB_YSZX_IDEA
 		WHERE VALID =  '1'  
-		<if test="idea!=null and idea=''">
+		<if test="idea!=null and idea !=''">
 			and   UUID !=  #{idea} 
 		</if> 
 	</select>
@@ -225,7 +225,7 @@
 			APPLY_YEAR as "applyYear"
 		  FROM TB_YSZX_IDEA
 		WHERE VALID =  '1'
-		<if test="applyYear!=null and applyYear=''">
+		<if test="applyYear!=null and applyYear != ''">
 			and   APPLY_YEAR   like '%'||#{applyYear}||'%'
 		</if>
 		ORDER BY  APPLY_ORDER   DESC
@@ -284,14 +284,19 @@
 		    UUID  as  "visitId" ,    	 		
             IDEAID  as  "ideaId",	 
             USERNAME as  "userName",	 
-   			POSITION as  "position" ,	 	
+   			POSITION as  "position" ,	
+   			
+   		    (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='visitunit_levle' and vaild=1 and code=USERLEVEL) as "userLevelName",
+	             
 			USERLEVEL as  "userLevel",	 	
 			SORT_ID as "sortId" ,	 
 			REMARK as "remark",	 			 
 			CREATE_USER as "createUser",
 			TO_CHAR( CREATE_TIME,'YYYY-MM-DD HH24:MI:SS')  as  "createTime"   
-		  FROM TB_YSZX_VISIT
+		  FROM TB_YSZX_VISIT  
+		 
 		  WHERE VALID =  '1' 
+		  
 		<if test="ideaId!=null and ideaId!=''">
 			and IDEAID  like '%'||#{ideaId}||'%'
 		</if>
@@ -353,14 +358,18 @@
               TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
 			  CONTACT_USER as "contactUser",
 			  CONTACT_PHONE as "contactPhone", 		
-			  VISIT_UNIT_TYPE as "visitUnitType",	 
+			  VISIT_UNIT_TYPE as "visitUnitType",	
+			     (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='visitunit_type' and vaild=1 and code=VISIT_UNIT_TYPE) as "visitUnitTypeName",  
 			  VISIT_UNIT_NAME as "visitUnitName",	
 			  VISITOR_NUMBER as "visitorNumber", 		
 			  COMPANY_USER_NUMBER as "companyUserNumber",	 
 			  REMARK as "remark",	
               (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=STATUS) as "status",
               STATUS  as  "approveState",
-			  APPLY_ID as "applyId",	 		
+			  APPLY_ID as "applyId",
+			  
+			 
+              		
 			  VISIT_LEVEL as "visitLevel",	 	
 			  VALID as "valId", 	
 			  CREATE_USER as "createUser",

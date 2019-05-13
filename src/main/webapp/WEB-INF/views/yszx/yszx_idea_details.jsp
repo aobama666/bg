@@ -44,31 +44,14 @@
 			    <span title = "参观开始时间（格式：yyyy-MM-dd HH:mm）"><b class="mustWrite">*</b>参观开始时间</span>
 			</td>
 			<td class="width-one addInputStyle"  >
-               <%--  <input id="stateDate" name="stateDate"    value = "${stateDate}"
-                onclick=" WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',enableInputMask:false})" readonly="true" 
-                type="text" 
-                class="Wdate validNull  "
-                title="必填项,参观开始时间（格式：yyyy-MM-dd HH:mm）"
-                content="参观开始时间"
-                disabled 
-                style="background-color:#EBEBE4"
-                />     --%>
+                
                 <span class="detailsLeft"> ${stateDate}</span>
 			</td>
 			<td class="width-one">
 			   <span title = "参观结束时间（格式：yyyy-MM-dd HH:mm）"><b class="mustWrite">*</b>参观结束时间</span>
 			</td>
 			<td class="width-one addInputStyle"   >
-				<%-- <input id="endDate" name="endDate"   value = "${endDate}"   
-				onclick=" WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',enableInputMask:false})" readonly="true" 
-				type="text" 
-				class="Wdate validNull  "
-				title="必填项,参观结束时间（格式：yyyy-MM-dd HH:mm）"
-				content="参观结束时间"
-				disabled 
-				 style="background-color:#EBEBE4"
-				/> --%>
-				<span class="detailsLeft"> ${endDate}</span>
+			 				<span class="detailsLeft"> ${endDate}</span>
 			</td>
 		</tr>
 		<tr>
@@ -99,7 +82,7 @@
 				<span title = "参观单位性质"><b class="mustWrite">*</b>参观单位性质</span>
 			</td>
 			<td class="addInputStyle">
-				<span class="detailsLeft"> ${visitUnitType}</span>
+				<span class="detailsLeft"> ${visitUnitTypeName}</span>
 				<%-- <select id="visitUnitType"  name = "visitUnitType"  class = "validNull select-person"   content="参观单位性质"  title="必填项  "  disabled  style="background-color:#EBEBE4">
 					<option value=""   >请选择参观单位性质</option>
 					<c:forEach  var="visitUnitTypeInfo"  items="${visitUnitTypeInfo}">
@@ -152,7 +135,7 @@
 						<%-- <input type="text" disabled  id="visitPosition"  name = "visitPosition"   value = "${visitInfo.position}"  title="必填项,字段长度不能超过 150 " /> --%>
 					</td>
 					<td class="addInputStyle">
-						<span class="detailsLeft"> ${visitInfo.userLevel}</span>
+						<span class="detailsLeft"> ${visitInfo.userLevelName}</span>
 					<%-- <select id="userLevel"  name = "userLevel"  class = "changeQuery userLevel"  disabled style="background-color:#EBEBE4">
 						
 						<option value=""  >请选择参观领导级别</option>
@@ -179,7 +162,7 @@
 		<tr>
 			<td class="width-two"><b class="mustWrite">*</b>院领导姓名</td>
 			<td style="width:100%;" class="addInputStyle"      >
-				<span class="detailsLeft"> ${leaderInfo}</span>
+				<span class="detailsLeft"> ${Alisa}</span>
 				<%-- <input class="easyui-combotree tree-data" disabled  id="companyLeaderName" data-companyLeaderName= "${leaderInfo}"  content="院领导姓名"  title="必填项  "       /> --%>
 			</td>	
 		</tr>
@@ -236,7 +219,7 @@
 			${remark}
 			<%-- <p class="detailsLeft"> ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss</p>
 			 <textarea   id="remark"      name="remark"  style="height:100px; width: 100%;background-color: #fff"  len="200"  title="非必填项"> ${remark}</textarea> 	    		 --%>
-		    <%--  <input type = "hidden" value = "${approvetype}" id = "approvetype" name="approvetype">   --%>
+		      <input type = "hidden" value = "${approvetype}" id = "approvetype" name="approvetype">   
 	 
 		</div>
 		
@@ -309,9 +292,7 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 	<!-- 本页面所需的js -->
-	<script src="<%=request.getContextPath()%>/yszx/js/plugins/organ-tree/organ-tree.js"></script>
- 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/stuff-tree/stuff-tree.js"></script>
- 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomDetailInfo.js"></script>
+ 
  	
 	
 
