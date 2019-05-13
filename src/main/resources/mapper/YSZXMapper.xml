@@ -202,7 +202,7 @@
 		  TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI:SS')  AS  END_DATE
 		  FROM TB_YSZX_IDEA
 		WHERE VALID =  '1'  
-		<if test="idea!=null and idea=''">
+		<if test="idea!=null and idea !=''">
 			and   UUID !=  #{idea} 
 		</if> 
 	</select>
@@ -225,18 +225,13 @@
 			APPLY_YEAR as "applyYear"
 		  FROM TB_YSZX_IDEA
 		WHERE VALID =  '1'
-		<if test="applyYear!=null and applyYear=''">
+		<if test="applyYear!=null and applyYear != ''">
 			and   APPLY_YEAR   like '%'||#{applyYear}||'%'
 		</if>
 		ORDER BY  APPLY_ORDER   DESC
 	</select>
-	
-	
-	<select id="selectForIdeaInfo" resultType="java.util.Map">
-	
-	SELECT  T.*  from(
-	SELECT  TB.* , ROWNUM AS ROWNO  from(
-		SELECT 
+	<sql id="IdeaInfo">
+	     	SELECT 
 			      UUID   as  "id",	    
 	              (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = APPLY_DEPT)   as "applyDept",
 	              TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
@@ -261,6 +256,9 @@
 			<if test="applyId!=null and applyId!=''">
 				and APPLY_NUMBER  like '%'||#{applyId}||'%'
 			</if>
+			<if test="userId!=null and userId!=''">
+				and CREATE_USER  like '%'||#{userId}||'%'
+			</if>
 			<if test="createTime!=null and createTime!=''">
 				and TO_CHAR(CREATE_TIME,'YYYY-MM')  like '%'||#{createTime}||'%'
 			</if>
@@ -268,6 +266,12 @@
 				and APPLY_DEPT  like '%'||#{applyDept}||'%'
 			</if>
 				ORDER BY  CREATE_TIME     DESC
+    </sql>
+	<select id="selectForIdeaInfo" resultType="java.util.Map">
+	
+	SELECT  T.*  from(
+	SELECT  TB.* , ROWNUM AS ROWNO  from(
+      	<include refid="IdeaInfo"/>
 	) TB  WHERE #{page_end} >= ROWNUM
 	) T   WHERE T.ROWNO > #{page_start}
 	</select>
@@ -280,14 +284,19 @@
 		    UUID  as  "visitId" ,    	 		
             IDEAID  as  "ideaId",	 
             USERNAME as  "userName",	 
-   			POSITION as  "position" ,	 	
+   			POSITION as  "position" ,	
+   			
+   		    (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='visitunit_levle' and vaild=1 and code=USERLEVEL) as "userLevelName",
+	             
 			USERLEVEL as  "userLevel",	 	
 			SORT_ID as "sortId" ,	 
 			REMARK as "remark",	 			 
 			CREATE_USER as "createUser",
 			TO_CHAR( CREATE_TIME,'YYYY-MM-DD HH24:MI:SS')  as  "createTime"   
-		  FROM TB_YSZX_VISIT
+		  FROM TB_YSZX_VISIT  
+		 
 		  WHERE VALID =  '1' 
+		  
 		<if test="ideaId!=null and ideaId!=''">
 			and IDEAID  like '%'||#{ideaId}||'%'
 		</if>
@@ -349,14 +358,18 @@
               TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
 			  CONTACT_USER as "contactUser",
 			  CONTACT_PHONE as "contactPhone", 		
-			  VISIT_UNIT_TYPE as "visitUnitType",	 
+			  VISIT_UNIT_TYPE as "visitUnitType",	
+			     (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='visitunit_type' and vaild=1 and code=VISIT_UNIT_TYPE) as "visitUnitTypeName",  
 			  VISIT_UNIT_NAME as "visitUnitName",	
 			  VISITOR_NUMBER as "visitorNumber", 		
 			  COMPANY_USER_NUMBER as "companyUserNumber",	 
 			  REMARK as "remark",	
               (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=STATUS) as "status",
               STATUS  as  "approveState",
-			  APPLY_ID as "applyId",	 		
+			  APPLY_ID as "applyId",
+			  
+			 
+              		
 			  VISIT_LEVEL as "visitLevel",	 	
 			  VALID as "valId", 	
 			  CREATE_USER as "createUser",
@@ -461,11 +474,7 @@
 		   ORDER BY  SORT_ID
 	</select>
 	
-	
-	
-    <select id="selectForDealtInfo" resultType="java.util.Map">
-    SELECT  T.*  from(
-	SELECT  TB.* , ROWNUM AS ROWNO  from(
+	<sql id="DealtInfo">
 	     SELECT 
             G.UUID   as  "id",	    
             (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
@@ -505,20 +514,20 @@
 		    <if test="applyDept!=null and applyDept!=''">
 			      and G.APPLY_DEPT  like '%'||#{applyDept}||'%'
 		    </if>
-            ORDER BY  G.CREATE_TIME     DESC
+            ORDER BY  G.CREATE_TIME  DESC
+	</sql>
+	
+    <select id="selectForDealtInfo" resultType="java.util.Map">
+    SELECT  T.*  from(
+	SELECT  TB.* , ROWNUM AS ROWNO  from(
+	           <include refid="DealtInfo"/>
             ) TB  WHERE #{page_end} >= ROWNUM
 	        ) T   WHERE T.ROWNO > #{page_start}
 	</select>
 	
 	
-	
-	
-	
-	
-	 <select id="selectForAlreadytInfo" resultType="java.util.Map">
-	 SELECT  T.*  from(
-	 SELECT  TB.* , ROWNUM AS ROWNO  from(
-	     SELECT 
+	<sql id="AlreadytInfo">
+	SELECT 
             G.UUID   as  "id",	    
             (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
             TO_CHAR(  G.START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
@@ -558,15 +567,21 @@
 			      and G.APPLY_DEPT  like '%'||#{applyDept}||'%'
 		    </if>
             ORDER BY  G.CREATE_TIME     DESC
+	
+	</sql>
+	
+	
+	 <select id="selectForAlreadytInfo" resultType="java.util.Map">
+	 SELECT  T.*  from(
+	 SELECT  TB.* , ROWNUM AS ROWNO  from(
+	            <include refid="AlreadytInfo"/>
             ) TB  WHERE #{page_end} >= ROWNUM
 	        ) T   WHERE T.ROWNO > #{page_start}
 	</select>
-	
- 
-	   <select id="selectComprehensiveInfo" resultType="java.util.Map">
-	   SELECT  *　FROM (
-	   
+	<sql id="ComprehensiveInfo">
+	        	   SELECT  *　FROM (
 	    SELECT 
+	         rownum   as  "rn",
 		    G.UUID   as  "id",	 
        (   SELECT    
           wm_concat( D.USERALISA)
@@ -614,36 +629,57 @@
 			  TO_CHAR( G.CREATE_TIME,'YYYY-MM-DD') as "createTime"
 		    FROM TB_YSZX_IDEA   G
 		    WHERE  G.VALID =  '1'
+		    <if test="year!=null and year!=''">
+			and   TO_CHAR(G.CREATE_TIME,'YYYY')  like '%'||#{year}||'%'
+		    </if>
+		    <if test="month!=null and month!=''">
+			and   TO_CHAR(G.CREATE_TIME,'MM')  like '%'||#{month}||'%'
+		    </if>
+		    <if test="applyNumber!=null and applyNumber!=''">
+			and  G.APPLY_NUMBER  like '%'||#{applyNumber}||'%'
+		    </if>
+		    <if test="applyDept!=null and applyDept!=''">
+			and  G.APPLY_DEPT  like '%'||#{applyDept}||'%'
+		    </if>
 	   ) where  1=1
-	   
-	    <if test="applyNumber!=null and applyNumber!=''">
-			and "applyNumber"  like '%'||#{applyNumber}||'%'
-		</if>
-		<if test="year!=null and year!=''">
-			and "createTime" like '%'||#{year}||'%'
-		</if>
-		<if test="month!=null and month!=''">
-			and  "createTime" like '%'||#{month}||'%'
-		</if>
-		<if test="applyDept!=null and applyDept!=''">
-			and "applyDept"  like '%'||#{applyDept}||'%'
-		</if>
-		
 		<if test="visitName!=null and visitName!=''">
 			and "visitInfo"  like '%'||#{visitName}||'%'
 		</if>
 		<if test="visitLevel!=null and visitLevel!=''">
 			and "visitInfo"  like '%'||#{visitLevel}||'%'
 		</if>
-		<if test="ids!=null and ids!=''">
-			and "id"  IN
-			<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
-					${item}
-			</foreach>
+		 <if test="null != ids and ids.size > 0">
+			AND "id" IN
+			<foreach collection="ids" item="id123" open="(" separator="," close=")">
+            	#{id123,jdbcType=VARCHAR}
+        	</foreach>
 		</if>
-	    
+	</sql>
+ 
+	   <select id="selectComprehensiveInfo" resultType="java.util.Map">
+	   SELECT  T.*  from(
+	   SELECT  TB.* , ROWNUM AS ROWNO  from(
+                  <include refid="ComprehensiveInfo"/>
+	     ) TB  WHERE #{page_end} >= ROWNUM
+	        ) T   WHERE T.ROWNO > #{page_start}
 	 
 	   </select>
+	   
+	   <select id="selectforEXLComprehensiveInfo" resultType="java.util.Map">
+	        SELECT   *  from(
+               <include refid="ComprehensiveInfo"/>
+	        ) 
+	   </select>
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
+	   
 	   
 	   <select id="selectIdeaDeptInfo" resultType="java.util.Map">
 	   SELECT  
@@ -675,4 +711,31 @@
          where  G.VALID='1'  AND T.VALID ='1' AND     T.APPROVE_ROLE   IS not  NULL   
            AND  T.NODE=#{applyStatus}
 	   </select>
+	   
+	   
+	   <select id="selectForideaNum" resultType="java.util.Map">
+	      SELECT    COUNT(1)  AS "countNum"  from(
+	           <include refid="IdeaInfo"/>
+             ) 	  
+         </select>
+	    <select id="selectForDealtNum" resultType="java.util.Map">
+	        SELECT    COUNT(1)  AS "countNum"  from(
+	           <include refid="DealtInfo"/>
+             ) 
+	   </select>
+	   <select id="selectForAlreadytNum" resultType="java.util.Map">
+	        SELECT    COUNT(1)  AS "countNum"  from(
+	           <include refid="AlreadytInfo"/>
+             ) 
+	   </select>
+	     <select id="selectForComprehensiveNum" resultType="java.util.Map">
+	        SELECT    COUNT(1)  AS "countNum"  from(
+	             <include refid="ComprehensiveInfo"/>
+             ) 
+	   </select>
+	   
+	    
+	   
+	   
+	   
 </mapper>

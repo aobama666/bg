@@ -123,7 +123,7 @@ roomList.initDataGrid = function(){
 	
 	/* 演示中心待办管理-退回方法*/
 	roomList.returnEvent = function(){
-		
+		debugger;
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		
 		if(checkedItems.length==0){
@@ -140,26 +140,22 @@ roomList.initDataGrid = function(){
 	messageReturn= function(stauts){
 	    var html=messagereturnHtml();
 		if(html =='' || html ==undefined){
-			layer.open({
-		        title:'提示信息',
-		        content:'审批人查询失败',
-		        area:'300px',
-		        skin:'demo-class'
-		    }) 
+			messager.tip("审批意见页面错误",2000);
+			return;
 		}else{
 			layer.confirm(
 					 html,
 					 {title:'请填写审批意见', area:'800px',skin:'demo-class'   },
 					 function(){
 						 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
-						 selectForReturn(approveRemark);
+						 selectForReturn(approveRemark,stauts);
 					 	 layer.close(layer.index);
 		             });
 		}
 		
 	}
 	
-	function selectForReturn(approveRemark){
+	function selectForReturn(approveRemark,stauts){
 		$.messager.confirm( "退回提示", "确认提交选中数据吗",
 	 			function(r){
 	 			var checkedItems = dataGrid.getCheckedItems(dataItems);

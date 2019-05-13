@@ -250,7 +250,7 @@
 	
 	<div class="btnContent">
 		<button type="button" class="btn" onclick="roomDetailInfo.messageSubmit('')" >提交</button>
-		<!-- <button id="messageSave"  type="button" class="btn" onclick="roomDetailInfo.messageSave()">保存</button> -->
+		<button id="messageSave"  type="button" class="btn" onclick="roomDetailInfo.messageSave()">保存</button>  
 		<button type="button" class="btn" onclick="roomDetailInfo.messageResign()">返回</button>
 	</div>
 	
@@ -277,5 +277,17 @@
  	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomDetailInfo.js"></script>
 
 </body>
-  
+ <script type="text/javascript">
+ $(function(){
+	 var approveState=$("#approveState").val();
+	 if(approveState=="SAVE" ){
+		 $("#messageSave").hide();//隐藏 
+	 }else if(approveState=="RETURN"){
+		 $("#messageSave").hide();//隐藏 
+	 }else{
+		 $("#messageSave").show();//显示
+	 }
+	
+ });
+ </script>
 </html>

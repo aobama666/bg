@@ -14,7 +14,7 @@ $(function(){
 	});
 	$(".inputQuery").on("input",function(e){
 		var valLength = e.target.value.length;
-		if(valLength>3){
+		if(valLength>1){
 			roomList.query();
 		}
 	});
@@ -44,17 +44,16 @@ roomList.initDataGrid = function(){
 		url: "/bg/IdeaInfo/selectComprehensiveInfo",
 		type: 'POST',
 		form:'#queryForm',
-		 
-		pageSize:50,
+		pageSize:10,
 		tablepage:$(".tablepage"),//分页组件
-		successFinal:function(){
-			roomList.resize();
-		},
-		callBackFunc:function(){
-			roomList.initItems();
-		},
+//		successFinal:function(){
+//			roomList.resize();
+//		},
+//		callBackFunc:function(){
+//			roomList.initItems();
+//		},
 		columns: [
-		/*  {name: '序号',style:{width:"2%"}, data: 'RN'},    */      
+		  {name: '序号',style:{width:"2%"}, data: 'ROWNO'},         
 		  {name: '',style:{width:"2%"}, data: 'id',checkbox:true, forMat:function(row){
 			  dataItems[index] = row;//将一行数据放在一个list中
 			  return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.id)+'"/>';

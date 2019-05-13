@@ -36,6 +36,9 @@
  </head>
 <body>
 	<div class="main_div"></div> 
+	<input type = "hidden" value = "${id}" id = "id" name="id">  
+	<input type = "hidden" value = "${approveState}" id = "approveState" name="approveState">  
+	<input type = "hidden" value = "${applyId}" id = "applyId" name="applyId">  
 	<!-- start  头部 -->
 	<div class="sheach details">
 		<div class='content_top'>参观预定申请</div>	 
