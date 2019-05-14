@@ -40,6 +40,7 @@ public class PrivilegeController {
 	@ResponseBody
 	@RequestMapping(value = "/getApproveUserByUserName", method = RequestMethod.POST)
 	public String getApproveUserByUserName(String approveState,String type){
+		
 		Privilegelog.info("getApproveUserByUserName审批人信息的查询---->"+approveState);
 		ResultWarp rw =  null;
 		String roleId="";
@@ -55,7 +56,13 @@ public class PrivilegeController {
 			 
 		}
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
-		String deptId=currentUser.getDeptId();
+		String currenttype=currentUser.getType();
+		String deptId="";
+		if("2".equals(currenttype)){
+			deptId=currentUser.getpDeptId() ;
+		}else{
+			deptId=currentUser.getDeptId();
+		} 
 		Privilegelog.info("roleId--->"+roleId+"---deptId--->"+deptId);
 		List<UserPrivilege>  list=privilegeService.getApproveUserByUserName(roleId,deptId);
 		if(list.isEmpty()){

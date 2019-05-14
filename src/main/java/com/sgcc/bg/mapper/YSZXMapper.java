@@ -176,6 +176,7 @@ public interface YSZXMapper {
 	 */
 	
 	public  List<Map<String, Object>>  selectForDealtInfo(
+			                            @Param("pridept")String pridept,
 										@Param("approveUserId")String approveUserId,
 										@Param("contactUserName")String contactUserName,
 										@Param("applyNumber")String applyNumber,
@@ -189,6 +190,7 @@ public interface YSZXMapper {
 	 */
 	
 	public  List<Map<String, Object>>  selectForAlreadytInfo(
+			                           @Param("pridept")String pridept,
 									   @Param("approveUserId")String approveUserId,
 									   @Param("contactUserName")String contactUserName,
 									   @Param("applyNumber")String applyNumber,
@@ -202,6 +204,7 @@ public interface YSZXMapper {
 	 */
 	
 	public  List<Map<String, Object>>  selectComprehensiveInfo(
+			                           @Param("pridept")String pridept,
 									   @Param("applyNumber")String applyNumber,
 									   @Param("year")String year,
 									   @Param("month")String month,
@@ -245,6 +248,7 @@ public interface YSZXMapper {
 	 * @return
 	 */
 	public  Map<String, Object> selectForDealtNum(
+			@Param("pridept")String pridept,
 			@Param("approveUserId")String approveUserId,
 			@Param("contactUserName")String contactUserName,
 			@Param("applyNumber")String applyNumber,
@@ -256,6 +260,7 @@ public interface YSZXMapper {
 	 * @return
 	 */
 	public  Map<String, Object>  selectForAlreadytNum(
+			@Param("pridept")String pridept,
 			@Param("approveUserId")String approveUserId,
 			@Param("contactUserName")String contactUserName,
 			@Param("applyNumber")String applyNumber,
@@ -267,7 +272,8 @@ public interface YSZXMapper {
 	 * @return
 	 */
 	public  Map<String, Object>  selectForComprehensiveNum(
-			@Param("applyNumber")String applyNumber,
+			   @Param("pridept")String pridept,
+			   @Param("applyNumber")String applyNumber,
 			   @Param("year")String year,
 			   @Param("month")String month,
 			   @Param("applyDept")String applyDept,
@@ -282,6 +288,8 @@ public interface YSZXMapper {
 	 */
 	
 	public  List<Map<String, Object>>  selectforEXLComprehensiveInfo(
+			
+			
 									   @Param("applyNumber")String applyNumber,
 									   @Param("year")String year,
 									   @Param("month")String month,
@@ -289,5 +297,12 @@ public interface YSZXMapper {
 									   @Param("visitName")String visitName,
 									   @Param("visitLevel")String visitLevel,
 									   @Param("ids")List<String>  ids);
+	 
+	/**
+	* 修改演示中心信息---综合查询
+	* @param pro
+	* @return
+	*/
+	public  List<Map<String, Object>>  selectForPrivUserId(@Param("userId")String userId);
 
 }

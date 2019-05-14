@@ -31,6 +31,7 @@ $(function(){
 
 /*  start  列表查询   */
 roomList.query = function(){
+	 
 	dataItems = new Array();
 	index = 0;
 	$("#datagrid").datagrid("seach");
@@ -51,7 +52,7 @@ roomList.initDataGrid = function(){
 					 return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.id)+'"/>';
 				 	}
 				  },
-				  {name: '申请单号',style:{width:"10%"}, data: 'applyNumber',forMat:function(row){
+				  {name: '申请单号',style:{width:"180px"}, data: 'applyNumber',forMat:function(row){
 					  return "<a title = '"+row.applyNumber+"' style='width:250px;" + 
 						  		"text-align:left;display:block;" +
 						  		"white-space: nowrap;" +
@@ -106,7 +107,7 @@ roomList.initDataGrid = function(){
 		var url = "/bg/yszx/details?id="+id+"&applyId="+applyId;
 			layer.open({
 				type:2,
-				title:'<h4 style="height:42px;line-height:25px;">参观中心-查看</h4>',
+				title:'<h4 style="height:42px;line-height:25px;">参观预定详情</h4>',
 				area:['85%','85%'],
 				fixed:false,//不固定
 				maxmin:true,
@@ -118,7 +119,7 @@ roomList.initDataGrid = function(){
 		var url = "/bg/yszx/addPage"
 			layer.open({
 				type:2,
-				title:'<h4 style="height:42px;line-height:25px;">参观中心-新增</h4>',
+				title:'<h4 style="height:42px;line-height:25px;">参观预定申请</h4>',
 				area:['85%','85%'],
 				fixed:false,//不固定
 				maxmin:true,
@@ -144,7 +145,7 @@ roomList.initDataGrid = function(){
 		var url = "/bg/yszx/updatePage?id="+id;
 		layer.open({
 			type:2,
-			title:'<h4 style="height:42px;line-height:25px;">演示中心-修改 </h4>',
+			title:'<h4 style="height:42px;line-height:25px;">参观预定修改 </h4>',
 			area:['85%','85%'],
 			fixed:false,//不固定
 			maxmin:true,
@@ -191,6 +192,7 @@ roomList.initDataGrid = function(){
 	}
 	/* 演示中心管理-提交方法*/
 	roomList.submitEvent = function(){
+	 
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
 			messager.tip("请选择要操作的数据",1000);
@@ -232,7 +234,7 @@ roomList.initDataGrid = function(){
 	}	
 	/* 提交信息库信息 */
 	messageSubmit= function(){
-		debugger;
+	 
 		var html=messageSubmitHtml();
 		if(html =='' || html ==undefined){
 			layer.open({
@@ -269,8 +271,11 @@ roomList.initDataGrid = function(){
 		  }
 
 	}
-	function	messageForSubmit(checkedIds,approvalUserd){
-		  $.messager.confirm("提交提示", "确认提交选中数据吗",
+	
+	
+	
+	messageForSubmit  =function (checkedIds,approvalUserd){
+		 $.messager.confirm("提交提示", "确认提交选中数据吗",
 		  function(r){
 			  $.ajax({
 				    url: "/bg/IdeaInfo/submitForStatus?ideaId="+checkedIds+"&approvalUserd="+approvalUserd,//删除
@@ -341,7 +346,7 @@ roomList.initDataGrid = function(){
 	
 	/* 演示中心管理-撤销方法*/
 	roomList.repealEvent = function(){
-		debugger;
+		 
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		
 		if(checkedItems.length==0){

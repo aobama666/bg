@@ -35,6 +35,31 @@ function getNowFormatDate() {
 }
 //验证参观开始时间和参观结束时间
 function checkDate(stateDate,endDate){
+	  debugger;
+	   var  stateday=new Date(stateDate).getDay();
+	   if(stateday=="1"){
+		   $("#stateDate").addClass("validRefuse");
+		    messager.tip("检查参观开始时间,每周一常规检修,不接受预定！",2000);
+			roomDetailInfo.saveBtnClickFlag = 0;
+			return  false;
+	   }else{
+		   $("#stateDate").removeClass("validRefuse");
+		   return true;
+	   }
+	   var  endday=new Date(endDate).getDay();
+	   if(endday=="1"){
+		   $("##endDate").addClass("validRefuse");
+		    messager.tip("检查参观结束时间,每周一常规检修,不接受预定！",2000);
+			roomDetailInfo.saveBtnClickFlag = 0;
+			return  false;
+	   }else{
+		   $("#endDate").removeClass("validRefuse");
+		   return true;
+	   }
+	
+	
+	
+	
     	var startTmp=stateDate.replace(" ",":").replace(/\:/g,"-").split("-");
         var endTmp=endDate.replace(" ",":").replace(/\:/g,"-").split("-");
         var sd=new Date(startTmp[0],startTmp[1],startTmp[2],startTmp[3],startTmp[4]);
@@ -43,6 +68,12 @@ function checkDate(stateDate,endDate){
         var loaclDate=getNowFormatDate();
         var loaclTmp=loaclDate.replace(" ",":").replace(/\:/g,"-").split("-");
         var ld=new Date(loaclTmp[0],loaclTmp[1],loaclTmp[2],loaclTmp[3],loaclTmp[4]);
+        
+        
+        
+        
+        
+        
         //参观开始时间和当前时间比较  
         if(sd.getTime()<ld.getTime()){
         	$("#stateDate").addClass("validRefuse");
@@ -59,6 +90,11 @@ function checkDate(stateDate,endDate){
         	 $("#endDate").removeClass("validRefuse");
         	 return true;
         } 
+        
+        
+        
+        
+        
 }
 //
 function checkLeaderInfo(){
@@ -274,6 +310,7 @@ roomDetailInfo.messageSave= function(approvalUserd){
 									if(data.success=="true"){
 										 messager.tip("保存成功",1000);
 										 roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
+										 window.parent.location.reload();
 										 var closeIndex = parent.layer.getFrameIndex(window.name);
 										 parent.layer.close(closeIndex);
 									}else{ 
@@ -281,6 +318,7 @@ roomDetailInfo.messageSave= function(approvalUserd){
 										 return;  
 									}
 									
+									 
 								}
 							}); 
 						}
@@ -304,8 +342,10 @@ roomDetailInfo.messageSave= function(approvalUserd){
 							if(data.success=="true"){
 							    messager.tip("提交成功",1000);
 							    roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
+							    window.parent.location.reload();
 								var closeIndex = parent.layer.getFrameIndex(window.name);
 								parent.layer.close(closeIndex);
+								
 							}else{ 
 								messager.tip(data.msg,5000);
 								return;  
