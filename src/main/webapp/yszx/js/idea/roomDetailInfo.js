@@ -759,17 +759,6 @@ roomDetailInfo.SelectForUserId = function(userId){
 	
 	/* 演示中心待办管理-退回方法*/
 	roomDetailInfo.returnEvent = function(){
-		debugger;
-		var checkedItems = dataGrid.getCheckedItems(dataItems);
-		
-		if(checkedItems.length==0){
-			messager.tip("请选择要操作的数据",1000);
-			return;
-		}else if(checkedItems.length>1){
-			messager.tip("每次只能选择一条数据",2000);
-			return;
-		}
-		var checkedIds = dataGrid.getCheckedIds();
 		messageReturn("0");
 	   }
 	messageReturn= function(stauts){
@@ -793,8 +782,7 @@ roomDetailInfo.SelectForUserId = function(userId){
 		$.messager.confirm( "退回提示", "确认提交选中数据吗",
 	 			function(r){
 			      if(r){
-	 			var checkedItems = dataGrid.getCheckedItems(dataItems);
-	 			var approveId= checkedItems[0].wlApproveId;
+	 		    var approveId=$("#applyId").val();
 	 			var auditUserId="";
 	 					$.ajax({
 	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
@@ -861,7 +849,6 @@ roomDetailInfo.SelectForUserId = function(userId){
 			var approveId=$("#applyId").val();
 			if(auditUserId!=""){
 				  selectForAgree(approveId,stauts,auditUserId,approveRemark);
-			      layer.close(layer.index);
 			 }else{
 				 layer.confirm(
 						 html,

@@ -205,9 +205,14 @@ roomList.initDataGrid = function(){
 			messager.tip("选择的数据无法提交,审批状态为：待提交,被退回才可以提交",2000);
 			return;
 		}
-		var userPrivilegehtml = '';
-		messageSubmit();
-		roomList.query();
+		 var userPrivilegehtml = '';
+		 $.messager.confirm("提交提示", "确认提交选中数据吗",
+		 function(r){
+		       if(r){
+		     messageSubmit();
+			}
+		  });
+		
 		
 	}
     function approveUserID(){
@@ -234,15 +239,10 @@ roomList.initDataGrid = function(){
 	}	
 	/* 提交信息库信息 */
 	messageSubmit= function(){
-	 
 		var html=messageSubmitHtml();
 		if(html =='' || html ==undefined){
-			layer.open({
-		        title:'提示信息',
-		        content:'审批人查询失败',
-		        area:'300px',
-		        skin:'demo-class'
-		    }) 
+			messager.tip("审批人查询失败",2000);
+			return;
 		}else{
 			var checkedIds = dataGrid.getCheckedIds();
 			var ApproveUserId=approveUserID();
@@ -264,19 +264,13 @@ roomList.initDataGrid = function(){
 							        return;  
 					           }else{
 					    	        messageForSubmit(checkedIds,approvalUserd);
-					    	        layer.close(layer.index);
 					           }
 		             });
 			    }
 		  }
 
 	}
-	
-	
-	
 	messageForSubmit  =function (checkedIds,approvalUserd){
-		 $.messager.confirm("提交提示", "确认提交选中数据吗",
-		  function(r){
 			  $.ajax({
 				    url: "/bg/IdeaInfo/submitForStatus?ideaId="+checkedIds+"&approvalUserd="+approvalUserd,//删除
 					type: "post",
@@ -286,13 +280,14 @@ roomList.initDataGrid = function(){
 						if(data.success == "true"){
 							messager.tip("提交成功",1000);
 							roomList.query();
+							layer.close(layer.index);
 						 }else{
 							messager.tip("提交成功",1000);
 							roomList.query();  
 						  }
 					 }
 			   });
-		 	});  
+			   
 	  }
 
 	/* 提交信息库信息---页面拼接 */
