@@ -133,9 +133,13 @@ roomList.initDataGrid = function(){
 			messager.tip("每次只能选择一条数据",2000);
 			return;
 		}
-		var checkedIds = dataGrid.getCheckedIds();
-		messageReturn("0");
-		 
+		$.messager.confirm( "待办提示", "确认退回选中数据吗",
+	     function(r){
+		       if(r){
+	            	var checkedIds = dataGrid.getCheckedIds();
+		           messageReturn("0");
+			}
+	     });
 	   }
 	
 	messageReturn= function(stauts){
@@ -152,14 +156,12 @@ roomList.initDataGrid = function(){
 						 selectForReturn(approveRemark,stauts);
 						
 		             });
-		}
+		  }
 		
 	}
 	
 	function selectForReturn(approveRemark,stauts){
-		$.messager.confirm( "退回提示", "确认提交选中数据吗",
-	 			function(r){
-			           if(r){
+		 
 	 			var checkedItems = dataGrid.getCheckedItems(dataItems);
 	 			var approveId= checkedItems[0].wlApproveId;
 	 			var auditUserId="";
@@ -179,9 +181,7 @@ roomList.initDataGrid = function(){
 	 							}
 	 						}
 	 					});
-	 			}
-		     }
-	 		);
+	 		 
 	     
 	}
 	
@@ -206,7 +206,6 @@ roomList.initDataGrid = function(){
 
 	/* 演示中心待办管理-同意方法*/
 	roomList.agreeEvent = function(){
-		debugger;
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
 			messager.tip("请选择要操作的数据",1000);
@@ -215,14 +214,18 @@ roomList.initDataGrid = function(){
 			messager.tip("每次只能选择一条数据",2000);
 			return;
 		}
-		var checkedIds = dataGrid.getCheckedIds();
-		var approveState=checkedItems[0].approveState;
-		if(approveState=="MANAGER_DEPT_HEAD_CHECK"){
-			messageReturn("1");
-		}else{
-			messageAgree("1");
-		}
-		
+		$.messager.confirm( "待办提示", "确认同意选中数据吗",
+	     function(r){
+			    if(r){
+					var checkedIds = dataGrid.getCheckedIds();
+					var approveState=checkedItems[0].approveState;
+					if(approveState=="MANAGER_DEPT_HEAD_CHECK"){
+						messageReturn("1");
+					}else{
+						messageAgree("1");
+					}
+			 }
+		 });
 	}
 	
 	
@@ -295,10 +298,7 @@ roomList.initDataGrid = function(){
 	}
 	
 	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
-		debugger;
-		$.messager.confirm( "同意提示", "确认提交选中数据吗",
-	 			function(r){
-			         if(r){
+		
 	 					$.ajax({
 	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
 	 						type: "post",
@@ -316,9 +316,7 @@ roomList.initDataGrid = function(){
 	 							}
 	 						}
 	 					});
-			         }
-	 			}
-	 		);
+			 
 	}
 	
 	
