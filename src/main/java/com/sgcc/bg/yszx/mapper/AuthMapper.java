@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface AuthMapper {
 	
 	public List<Map<String,Object>> getApproveUsersByRoleAndDept(@Param("roleId")String roleId,@Param("deptId")String deptId);
+	public List<Map<String,Object>> getApproveUsersByRole(@Param("roleId")String roleId );
+
 }

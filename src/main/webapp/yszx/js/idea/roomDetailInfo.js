@@ -412,7 +412,7 @@ roomDetailInfo.messageSubmit= function(){
 						    messager.tip("请选择要操作的数据",1000);
 						    return;
 						}else if(checkedNumber > 1 ){
-							messager.tip("请选择要操作的数据",1000);
+							messager.tip("请选择一条数据",1000);
 							return;  
 						}else{
 							roomDetailInfo.messageSave(userId);
@@ -482,7 +482,6 @@ function messageSubmitHtml(){
 
 
 roomDetailInfo.initSelectForLeader = function(){
-	 
 	/* start 查询数据字典集合  */
 	$.ajax({
 	    url: "/bg/IdeaInfo/selectForLeader" ,//获取申报界面数据字典
@@ -756,32 +755,7 @@ roomDetailInfo.SelectForUserId = function(userId){
 		}
 	});
 	
-	
-	/* 演示中心待办管理-撤回方法*/
-	roomDetailInfo.withdrawEvent = function(){
-		var approveId=$("#applyId").val();
-		$.messager.confirm( "提交提示", "确认撤回选中数据吗",
-			function(r){
-				if(r){
-					$.ajax({
-					    url: "/bg/Approve/recallApprove?approveId="+approveId,//删除
-						type: "post",
-						dataType:"json",
-						contentType: 'application/json',
-						success: function (data) {
-							if(data.success == "true"){
-								messager.tip("撤回成功",1000);
-								roomList.query();
-							}else{
-								messager.tip("撤回失败",1000);
-								roomList.query();
-							}
-						}
-					});
-				}
-			}
-		);
-	}
+ 
 	
 	/* 演示中心待办管理-退回方法*/
 	roomDetailInfo.returnEvent = function(){
@@ -810,7 +784,7 @@ roomDetailInfo.SelectForUserId = function(userId){
 					 function(){
 						 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
 						 selectForReturn(approveRemark,stauts);
-					 	 layer.close(layer.index);
+					 	  
 		             });
 		}
 		
@@ -818,6 +792,7 @@ roomDetailInfo.SelectForUserId = function(userId){
 	function selectForReturn(approveRemark,stauts){
 		$.messager.confirm( "退回提示", "确认提交选中数据吗",
 	 			function(r){
+			      if(r){
 	 			var checkedItems = dataGrid.getCheckedItems(dataItems);
 	 			var approveId= checkedItems[0].wlApproveId;
 	 			var auditUserId="";
@@ -830,12 +805,14 @@ roomDetailInfo.SelectForUserId = function(userId){
 	 							if(data.success == "true"){
 	 								messager.tip("审批成功",1000);
 	 								roomList.query();
+	 								 layer.close(layer.index);
 	 							}else{
 	 								messager.tip("审批失败",1000);
 	 								roomList.query();
 	 							}
 	 						}
 	 					});
+			        }
 	 			}
 	 		);
 	     
@@ -902,7 +879,7 @@ roomDetailInfo.SelectForUserId = function(userId){
 						     }else{
 						    	var checkedIds = dataGrid.getCheckedIds();
 						    	 selectForAgree(approveId,stauts,auditUserId,approveRemark);
-						    	 layer.close(layer.index);
+						    	 
 						    }
 							 
 							 
@@ -941,7 +918,7 @@ roomDetailInfo.SelectForUserId = function(userId){
 	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
 		$.messager.confirm( "同意提示", "确认提交选中数据吗",
 	 			function(r){
-	 			
+			         if(r){
 	 					$.ajax({
 	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
 	 						type: "post",
@@ -951,13 +928,14 @@ roomDetailInfo.SelectForUserId = function(userId){
 	 							if(data.success == "true"){
 	 								messager.tip("审批成功",1000);
 	 								roomList.query();
+	 								layer.close(layer.index);
 	 							}else{
 	 								messager.tip("审批失败失败",1000);
 	 								roomList.query();
 	 							}
 	 						}
 	 					});
-	 				 
+			         }
 	 			}
 	 		);
 	}

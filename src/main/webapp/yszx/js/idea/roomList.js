@@ -52,7 +52,7 @@ roomList.initDataGrid = function(){
 					 return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.id)+'"/>';
 				 	}
 				  },
-				  {name: '申请单号',style:{width:"180px"}, data: 'applyNumber',forMat:function(row){
+				  {name: '申请单号',style:{width:"190px"}, data: 'applyNumber',forMat:function(row){
 					  return "<a title = '"+row.applyNumber+"' style='width:250px;" + 
 						  		"text-align:left;display:block;" +
 						  		"white-space: nowrap;" +
