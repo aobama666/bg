@@ -877,9 +877,27 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	 */
 	@Override
 	public List<Map<String, Object>> selectForIdeaInfo(String  applyId,String createTime ,int page_start,int page_end) {
-		  Map<String,String>  userInfoMap=userInfo();
-		  String userID= userInfoMap.get("userId");
-		  List<Map<String, Object>>  ideaInfo=yszxMapper.selectForIdeaInfo(applyId, userID, createTime,"",page_start,page_end);
+		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
+		String userid=  currentUser.getUserId();
+		List<Map<String, Object>>  privUserList=yszxMapper.selectForPrivUserId(userid);
+		List<Map<String, Object>>  ideaInfo = new ArrayList<Map<String, Object>>();
+		if(privUserList.isEmpty()){
+			return ideaInfo;
+		}else{
+			String   roleName=String.valueOf(privUserList.get(0).get("roleName"))  ;
+			if("部门管理专责".equals(roleName)){
+				  ideaInfo=yszxMapper.selectForIdeaInfo(applyId, userid, createTime,"",page_start,page_end);  
+			}else if("部门领导".equals(roleName)){
+				String type=currentUser.getType();
+				String applyDeptId="";
+				if("2".equals(type)){
+					 applyDeptId=currentUser.getpDeptId() ;
+				}else{
+					 applyDeptId=currentUser.getDeptId();
+				}
+				ideaInfo=yszxMapper.selectForIdeaInfo(applyId, "", createTime,applyDeptId,page_start,page_end);  
+			}
+		}
 		  List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
 		  if(!ideaInfo.isEmpty()){
 			  for(Map<String, Object>  idea:ideaInfo){
@@ -1124,12 +1142,10 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		return jsonStr;
 	}
 	@Override
-	public List<Map<String, Object>> selectForDealtInfo(String appltNumber, String applyDept, String contactUser,int page_start,int page_end) {
-		Map<String,String>  userInfoMap=userInfo();
-		String approveUserId= userInfoMap.get("userId");
-		List<Map<String, Object>> ideaInfo=yszxMapper.selectForDealtInfo(approveUserId,contactUser,appltNumber,applyDept,page_start,page_end);
+	public List<Map<String, Object>> selectForDealtInfo(String pridept, String  approveUserId, String appltNumber, String applyDept, String contactUser,int page_start,int page_end) {
+		 
+		List<Map<String, Object>> ideaInfo=yszxMapper.selectForDealtInfo(pridept,approveUserId,contactUser,appltNumber,applyDept,page_start,page_end);
 	
-		
 		List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
 		  if(!ideaInfo.isEmpty()){
 			  for(Map<String, Object>  idea:ideaInfo){
@@ -1146,10 +1162,9 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		return list;
 	}
 	@Override
-	public List<Map<String, Object>> selectForAlreadytInfo(String appltNumber, String applyDept, String contactUser,int page_start,int page_end) {
-		Map<String,String>  userInfoMap=userInfo();
-		String approveUserId= userInfoMap.get("userId");
-		List<Map<String, Object>> ideaInfo=yszxMapper.selectForAlreadytInfo(approveUserId,contactUser,appltNumber,applyDept,page_start,page_end);
+	public List<Map<String, Object>> selectForAlreadytInfo(String pridept,String approveUserId,String appltNumber, String applyDept, String contactUser,int page_start,int page_end) {
+		 
+		List<Map<String, Object>> ideaInfo=yszxMapper.selectForAlreadytInfo(pridept,approveUserId,contactUser,appltNumber,applyDept,page_start,page_end);
 		 List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
 		  if(!ideaInfo.isEmpty()){
 			  for(Map<String, Object>  idea:ideaInfo){
@@ -1166,10 +1181,10 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		return list;
 	}
 	@Override
-	public List<Map<String, Object>> selectComprehensiveInfo(String applyNumber, String year,String month, String applyDept,String visitUserName, String visitLevel,List<String>  ids,int page_start,int page_end) {
+	public List<Map<String, Object>> selectComprehensiveInfo(String pridept,String applyNumber, String year,String month, String applyDept,String visitUserName, String visitLevel,List<String>  ids,int page_start,int page_end) {
 	 
 		 
-		 List<Map<String, Object>>  ideaInfo=yszxMapper.selectComprehensiveInfo(applyNumber, year,month, applyDept, visitUserName, visitLevel,ids,page_start,page_end);
+		 List<Map<String, Object>>  ideaInfo=yszxMapper.selectComprehensiveInfo(pridept,applyNumber, year,month, applyDept, visitUserName, visitLevel,ids,page_start,page_end);
  
 		return ideaInfo;
 	}
@@ -1207,30 +1222,35 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		return countNums;
 	}
 	@Override
-	public int selectForDealtNum(String approveUserId, String contactUserName, String applyNumber, String applyDept) {
-		Map<String, Object>    map=yszxMapper.selectForDealtNum(approveUserId,contactUserName,applyNumber,applyDept);
+	public int selectForDealtNum(String  pridept,String approveUserId, String contactUserName, String applyNumber, String applyDept) {
+		Map<String, Object>    map=yszxMapper.selectForDealtNum(pridept,approveUserId,contactUserName,applyNumber,applyDept);
 		Object  num=map.get("countNum");
 		String countNum=num+"";
 		int countNums=Integer.valueOf(countNum);
 		return countNums;
 	}
 	@Override
-	public int selectForAlreadytNum(String approveUserId, String contactUserName, String applyNumber,String applyDept) {
-		Map<String, Object>    map=yszxMapper.selectForAlreadytNum(applyNumber,contactUserName,applyNumber,applyDept);
+	public int selectForAlreadytNum(String  pridept,String approveUserId, String contactUserName, String applyNumber,String applyDept) {
+		Map<String, Object>    map=yszxMapper.selectForAlreadytNum(pridept,applyNumber,contactUserName,applyNumber,applyDept);
 		Object  num=map.get("countNum");
 		String countNum=num+"";
 		int countNums=Integer.valueOf(countNum);
 		return countNums;
 	}
 	@Override
-	public int selectForComprehensiveNum(String applyNumber, String year, String month, String applyDept,
+	public int selectForComprehensiveNum(String pridept,String applyNumber, String year, String month, String applyDept,
 	    String visitUserName, String userLevel) {
-		Map<String, Object>    map=yszxMapper.selectForComprehensiveNum(applyNumber, year, month, applyDept, visitUserName, userLevel, null);
+		Map<String, Object>    map=yszxMapper.selectForComprehensiveNum(pridept,applyNumber, year, month, applyDept, visitUserName, userLevel, null);
 		Object  num=map.get("countNum");
 		String countNum=num+"";
 		int countNums=Integer.valueOf(countNum);
 		return countNums;
 		 
+	}
+	@Override
+	public List<Map<String, Object>> selectForPrivUserId(String userId) {
+		List<Map<String, Object>>  privUserList=yszxMapper.selectForPrivUserId(userId);
+		return privUserList;
 	}
 	
  	  

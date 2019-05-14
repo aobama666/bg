@@ -59,7 +59,7 @@ roomList.initDataGrid = function(){
 			  return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.id)+'"/>';
 		 	}
 		  },
-		  {name: '申请单号',style:{width:"10%"}, data: 'applyNumber',forMat:function(row){
+		  {name: '申请单号',style:{width:"240px"}, data: 'applyNumber',forMat:function(row){
 			  return "<a title = '"+row.applyNumber+"' style='width:250px;" + 
 				  		"text-align:left;display:block;" +
 				  		"white-space: nowrap;" +
@@ -114,10 +114,10 @@ roomList.initDataGrid = function(){
 	/*演示中心管理-查看 */	
 	roomList.forDetails = function (id,applyId){
 		var url = "/bg/yszx/details?id="+id+"&applyId="+applyId;
-			parent.layer.open({
+			layer.open({
 				type:2,
-				title:'<h4 style="height:42px;line-height:25px;">参观中心-查看</h4>',
-				area:['100%','100%'],
+				title:'<h4 style="height:42px;line-height:25px;">参观预定详情</h4>',
+				area:['85%','85%'],
 				fixed:false,//不固定
 				maxmin:true,
 				content:url, 
