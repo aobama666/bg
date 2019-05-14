@@ -475,6 +475,8 @@
 	</select>
 	
 	<sql id="DealtInfo">
+	
+	 
 	     SELECT 
             G.UUID   as  "id",	    
             (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
@@ -502,6 +504,9 @@
              LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'  
              LEFT JOIN TB_WL_AUDIT_USER E ON D.ID=E.APPROVE_ID AND   E.VALID='1'
           where   G.VALID='1'   and   G.APPLY_ID is not null     AND D.APPROVE_STATUS='0'  AND  D.AUDIT_FLAG='1'
+            <if test="pridept!=null and pridept!=''">
+			      and G.APPLY_DEPT  like '%'||#{pridept}||'%'
+		    </if>
             <if test="approveUserId!=null and approveUserId!=''">
 			      and E.APPROVE_USER  like '%'||#{approveUserId}||'%'
 		    </if>
@@ -554,6 +559,9 @@
              LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'   
              LEFT JOIN TB_WL_AUDIT_USER E ON D.ID=E.APPROVE_ID AND   E.VALID='1'
           where   G.VALID='1'   and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='1'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL
+            <if test="pridept!=null and pridept!=''">
+			      and G.APPLY_DEPT  like '%'||#{pridept}||'%'
+		    </if>
             <if test="approveUserId!=null and approveUserId!=''">
 			      and E.APPROVE_USER  like '%'||#{approveUserId}||'%'
 		    </if>
@@ -578,6 +586,9 @@
             ) TB  WHERE #{page_end} >= ROWNUM
 	        ) T   WHERE T.ROWNO > #{page_start}
 	</select>
+	
+	
+	
 	<sql id="ComprehensiveInfo">
 	        	   SELECT  *　FROM (
 	    SELECT 
@@ -629,6 +640,9 @@
 			  TO_CHAR( G.CREATE_TIME,'YYYY-MM-DD') as "createTime"
 		    FROM TB_YSZX_IDEA   G
 		    WHERE  G.VALID =  '1'
+		    <if test="pridept!=null and pridept!=''">
+			      and G.APPLY_DEPT  like '%'||#{pridept}||'%'
+		    </if>
 		    <if test="year!=null and year!=''">
 			and   TO_CHAR(G.CREATE_TIME,'YYYY')  like '%'||#{year}||'%'
 		    </if>
@@ -670,16 +684,6 @@
                <include refid="ComprehensiveInfo"/>
 	        ) 
 	   </select>
-	   
-	   
-	   
-	   
-	   
-	   
-	   
-	   
-	   
-	   
 	   
 	   <select id="selectIdeaDeptInfo" resultType="java.util.Map">
 	   SELECT  
@@ -733,9 +737,26 @@
 	             <include refid="ComprehensiveInfo"/>
              ) 
 	   </select>
-	   
-	    
-	   
+	  <select id="selectForPrivUserId" resultType="java.util.Map">
+				SELECT
+					T.ID  as "id",
+					T.USER_ID  as "userId",
+					U.USERNAME as  "userName",
+					U.USERALIAS as  "userAlias",
+					T.ROLE_ID  as "roleId",
+					R.ROLE_NAME  as  "roleName",
+					R.ROLE_CODE  as "roleCode",
+					R.ROLE_TYPE  as "roleType",
+					R.FUNCTION_TYPE  as "functionType"
+				FROM
+					TB_PRIV_USER_R_ROLE T
+				INNER JOIN TB_PRIV_ROLE R ON T .ROLE_ID = R. ID
+				INNER JOIN BG_SYS_USER U ON T .USER_ID = U .USERID 
+				WHERE
+					T .VALID = '1'
+				AND R.VALID = '1'
+				AND U .VALID = '1'  AND  T.USER_ID=#{userId}
+	  </select>  
 	   
 	   
 </mapper>

@@ -74,19 +74,19 @@ public interface IdeaInfoService {
 	 * @param pro
 	 * @return
 	 */
-	public List<Map<String, Object>>  selectForDealtInfo(String  appltNumber,String applyDept,String contactUser,int page_start,int page_end);
+	public List<Map<String, Object>>  selectForDealtInfo(String pridept,String  approveUserId,String  appltNumber,String applyDept,String contactUser,int page_start,int page_end);
 	/**
 	 * 修改演示中心信息---已办信息的查询
 	 * @param pro
 	 * @return
 	 */
-	public List<Map<String, Object>>  selectForAlreadytInfo(String  appltNumber,String applyDept,String contactUser,int page_start,int page_end);
+	public List<Map<String, Object>>  selectForAlreadytInfo(String pridept,String approveUserId,String  appltNumber,String applyDept,String contactUser,int page_start,int page_end);
 	/**
 	 * 查询演示中心信息----综合查询
 	 * @param pro
 	 * @return
 	 */
-	public List<Map<String, Object>>  selectComprehensiveInfo(String  appltNumber,String year,String month,String applyDept,String visitUserName,String userLevel,List<String>  ids,int page_start,int page_end);
+	public List<Map<String, Object>>  selectComprehensiveInfo(String pridept,String  appltNumber,String year,String month,String applyDept,String visitUserName,String userLevel,List<String>  ids,int page_start,int page_end);
  
 	/**
 	 * 查询演示中心信息----综合导出查询
@@ -127,19 +127,25 @@ public interface IdeaInfoService {
 	 * @param pro
 	 * @return
 	 */
-	public  int  selectForDealtNum(String approveUserId,String contactUserName,String applyNumber,String applyDept);
+	public  int  selectForDealtNum(String  pridept,String approveUserId,String contactUserName,String applyNumber,String applyDept);
 	/**
 	 * 修改演示中心信息--查询已办总数
 	 * @param pro
 	 * @return
 	 */
-	public  int  selectForAlreadytNum(String approveUserId,String contactUserName,String applyNumber,String applyDept);
+	public  int  selectForAlreadytNum(String  pridept,String approveUserId,String contactUserName,String applyNumber,String applyDept);
 	/**
 	 * 修改演示中心信息--综合查询总数
 	 * @param pro
 	 * @return
 	 */
-	public  int  selectForComprehensiveNum(String  applyId,String year,String month,String applyDept,String visitUserName,String userLevel );
+	public  int  selectForComprehensiveNum(String  pridept,String  applyId,String year,String month,String applyDept,String visitUserName,String userLevel );
+	/**
+	* 修改演示中心信息---综合查询
+	* @param pro
+	* @return
+	*/
+	public  List<Map<String, Object>>  selectForPrivUserId(@Param("userId")String userId);
 
 
 }

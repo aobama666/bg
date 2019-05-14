@@ -26,12 +26,12 @@
     <input type = "hidden" value = "${applyId}" id = "applyId" name="applyId">  
 	<div class="main_div"></div>
 	<!-- start  头部 -->
-	<div class="sheach details">
-		<!--<div class='content_top'>参观设定详情</div>	  -->
-	</div>
+	<!-- <div class="sheach details">
+		<div class='content_top'>参观预定审请</div>	  
+	</div> -->
 	  
 	<!-- end  头部 -->
-                       
+    <span  style="color:red;margin:5px 0;display: inline-block;"> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  注:每周一常规检修，不接受预定。如果重要接待或重大活动，请走线下审批流程      </span>                    
 	<!-- 参观申请单位信息展示 -->
 	<table class="visitOperate tableStyle">
 		<tr>
