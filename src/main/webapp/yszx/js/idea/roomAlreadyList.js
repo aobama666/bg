@@ -194,9 +194,7 @@ roomList.resize=function(){
 	var height=$("body").height()-$(".sheach").height()-$("#funcBtn").height()-65;
 	$("#datagrid>div").css({"height":height});
 }
-$(window).resize(function(){
-	roomList.resize();
-})
+ 
 
 
  

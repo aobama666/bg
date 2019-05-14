@@ -19,4 +19,11 @@ public interface PrivilegeService {
 	 * @return
 	 */
 	List<UserPrivilege> getApproveUserByUserName(String roleId,String deptId);
+	/**
+	 * 获取审批用户
+	 * @param roleId
+	 * @param deptId
+	 * @return
+	 */
+	List<UserPrivilege> getApproveUsersByRole(String roleId );
 }

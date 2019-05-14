@@ -133,8 +133,13 @@ roomList.initDataGrid = function(){
 			messager.tip("每次只能选择一条数据",2000);
 			return;
 		}
-		var checkedIds = dataGrid.getCheckedIds();
-		messageReturn("0");
+		$.messager.confirm( "待办提示", "确认退回选中数据吗",
+	     function(r){
+		       if(r){
+	            	var checkedIds = dataGrid.getCheckedIds();
+		           messageReturn("0");
+			}
+	     });
 	   }
 	
 	messageReturn= function(stauts){
@@ -149,15 +154,14 @@ roomList.initDataGrid = function(){
 					 function(){
 						 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
 						 selectForReturn(approveRemark,stauts);
-					 	 layer.close(layer.index);
+						
 		             });
-		}
+		  }
 		
 	}
 	
 	function selectForReturn(approveRemark,stauts){
-		$.messager.confirm( "退回提示", "确认提交选中数据吗",
-	 			function(r){
+		 
 	 			var checkedItems = dataGrid.getCheckedItems(dataItems);
 	 			var approveId= checkedItems[0].wlApproveId;
 	 			var auditUserId="";
@@ -170,14 +174,14 @@ roomList.initDataGrid = function(){
 	 							if(data.success == "true"){
 	 								messager.tip("审批成功",1000);
 	 								roomList.query();
+	 								 layer.close(layer.index);
 	 							}else{
 	 								messager.tip("审批失败",1000);
 	 								roomList.query();
 	 							}
 	 						}
 	 					});
-	 			}
-	 		);
+	 		 
 	     
 	}
 	
@@ -190,20 +194,18 @@ roomList.initDataGrid = function(){
 		 userPrivilegehtml +='<h4 class="tableTitle">';
 		 userPrivilegehtml +='<span title = "审批意见">审批意见：</span>';
 	     userPrivilegehtml +='</h4>';
-		 userPrivilegehtml +='<div class="btnBox"   style="height:20px;"  >';
+		 userPrivilegehtml +='<div class="btnBox"      >';
 		 userPrivilegehtml +='</div>';
 		 userPrivilegehtml +='<div class="maxBox">';
-		 userPrivilegehtml +='<textarea   id="approveRemark"    name="approveRemark"  style="height:100px; width: 100%;background-color: #fff"> </textarea>';	    
+		 userPrivilegehtml +='<textarea   id="approveRemark"    name="approveRemark"  style="height:100px; width: 100%;background-color: #fff;resize: none"> </textarea>';	    
 		 userPrivilegehtml +='</div>';
 		 userPrivilegehtml +='</div>';             
-
 		return userPrivilegehtml;
 	}
 	
 
 	/* 演示中心待办管理-同意方法*/
 	roomList.agreeEvent = function(){
-		debugger;
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
 			messager.tip("请选择要操作的数据",1000);
@@ -212,14 +214,18 @@ roomList.initDataGrid = function(){
 			messager.tip("每次只能选择一条数据",2000);
 			return;
 		}
-		var checkedIds = dataGrid.getCheckedIds();
-		var approveState=checkedItems[0].approveState;
-		if(approveState=="MANAGER_DEPT_HEAD_CHECK"){
-			messageReturn("1");
-		}else{
-			messageAgree("1");
-		}
-		
+		$.messager.confirm( "待办提示", "确认同意选中数据吗",
+	     function(r){
+			    if(r){
+					var checkedIds = dataGrid.getCheckedIds();
+					var approveState=checkedItems[0].approveState;
+					if(approveState=="MANAGER_DEPT_HEAD_CHECK"){
+						messageReturn("1");
+					}else{
+						messageAgree("1");
+					}
+			 }
+		 });
 	}
 	
 	
@@ -247,21 +253,13 @@ roomList.initDataGrid = function(){
 		return ApproveUserId;
 		
 	}
-	
-	
-	
-	
-	
+
 	/* 同意信息库信息 */
 	messageAgree= function(stauts){
 	    var html=messageagreeHtml();
 		if(html =='' || html ==undefined){
-			layer.open({
-		        title:'提示信息',
-		        content:'审批人查询失败',
-		        area:'300px',
-		        skin:'demo-class'
-		    }) 
+			messager.tip("审批人查询失败",1000);
+			return;
 		}else{
 			var auditUserId=approveUserID();
 			var approveRemark= "";
@@ -282,12 +280,12 @@ roomList.initDataGrid = function(){
 								    messager.tip("请选择要操作的数据",1000);
 									return;
 						     }else if(checkedNumber > 1 ){
-						    	    messager.tip("请选择要操作的数据",1000);
+						    	    messager.tip("请选择一条数据",1000);
 									return;  
 						     }else{
 						    	var checkedIds = dataGrid.getCheckedIds();
 						    	 selectForAgree(approveId,stauts,auditUserId,approveRemark);
-						    	 layer.close(layer.index);
+						    	
 						    }
 							 
 							 
@@ -300,27 +298,25 @@ roomList.initDataGrid = function(){
 	}
 	
 	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
-		$.messager.confirm( "同意提示", "确认提交选中数据吗",
-	 			function(r){
-	 			
+		
 	 					$.ajax({
 	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
 	 						type: "post",
 	 						dataType:"json",
 	 						contentType: 'application/json',
+	 						async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
 	 						success: function (data) {
 	 							if(data.success == "true"){
 	 								messager.tip("审批成功",1000);
 	 								roomList.query();
+	 								layer.close(layer.index);
 	 							}else{
 	 								messager.tip("审批失败失败",1000);
 	 								roomList.query();
 	 							}
 	 						}
 	 					});
-	 				 
-	 			}
-	 		);
+			 
 	}
 	
 	
@@ -425,9 +421,7 @@ roomList.resize=function(){
 	var height=$("body").height()-$(".sheach").height()-$("#funcBtn").height()-65;
 	$("#datagrid>div").css({"height":height});
 }
-$(window).resize(function(){
-	roomList.resize();
-})
+ 
 
 
  

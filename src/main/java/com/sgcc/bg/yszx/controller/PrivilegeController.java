@@ -1,5 +1,6 @@
 package com.sgcc.bg.yszx.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -45,16 +46,6 @@ public class PrivilegeController {
 		ResultWarp rw =  null;
 		String roleId="";
 		List<Map<String, Object>>   applyInfo=ideaInfoService.selectForApplyStatus(approveState);
-		if("submit".equals(type)){
-			roleId="866725924A9CBFB1E0536C3C550A0773";
-		}else{
-			if(approveState.equals("DEPT_HEAD_CHECK")){
-				roleId="866725924A9DBFB1E0536C3C550A0773";
-			}else if(approveState.equals("MANAGER_DEPT_DUTY_CHECK")){
-				roleId="866725924A9EBFB1E0536C3C550A0773";
-			} 
-			 
-		}
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String currenttype=currentUser.getType();
 		String deptId="";
@@ -63,8 +54,39 @@ public class PrivilegeController {
 		}else{
 			deptId=currentUser.getDeptId();
 		} 
+		List<UserPrivilege>  list = new ArrayList<UserPrivilege>();
+		if("submit".equals(type)){
+			roleId="866725924A9CBFB1E0536C3C550A0773";
+			 list=privilegeService.getApproveUserByUserName(roleId,deptId);
+		}else{
+			if(approveState.equals("DEPT_HEAD_CHECK")){
+				roleId="866725924A9DBFB1E0536C3C550A0773";
+				   list=privilegeService.getApproveUsersByRole(roleId );
+			}else if(approveState.equals("MANAGER_DEPT_DUTY_CHECK")){
+				roleId="866725924A9EBFB1E0536C3C550A0773";
+				  list=privilegeService.getApproveUsersByRole(roleId );
+			} 
+			 
+		}
 		Privilegelog.info("roleId--->"+roleId+"---deptId--->"+deptId);
-		List<UserPrivilege>  list=privilegeService.getApproveUserByUserName(roleId,deptId);
+//		String approveUserId=  currentUser.getUserId();
+//		List<Map<String, Object>> 	privUserList=ideaInfoService.selectForPrivUserId(approveUserId);
+//		if(!privUserList.isEmpty()){
+//			String   roleName=String.valueOf(privUserList.get(0).get("roleName"))  ;
+//			if("部门管理专责".equals(roleName)){
+//				 
+//			}else  if("部门领导".equals(roleName)){
+//				 
+//		    }else  if("归口部门管理专责".equals(roleName)){
+//				   
+//			}else  if("归口部门领导".equals(roleName)){
+//				   
+//			}  
+//		} 
+		
+		
+		
+
 		if(list.isEmpty()){
 			  rw = new ResultWarp(ResultWarp.FAILED ,"查询失败"); 
 		}else{

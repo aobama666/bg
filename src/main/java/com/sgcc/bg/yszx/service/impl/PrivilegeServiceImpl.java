@@ -43,4 +43,28 @@ public class PrivilegeServiceImpl implements PrivilegeService{
 	    return list;
 	}
 
+	@Override
+	public List<UserPrivilege> getApproveUsersByRole(String roleId) {
+		List<Map<String, Object>>   ApproveUserslist=authMapper.getApproveUsersByRole(roleId );
+		 
+		List<UserPrivilege>  list=new ArrayList<UserPrivilege>();
+		for(Map<String, Object>  map:ApproveUserslist){
+			String  userId=String.valueOf(map.get("USERID"));
+			String  userName=String.valueOf(map.get("USERNAME"));
+			String  userAlias=String.valueOf(map.get("USERALIAS"));
+			String  deptName=String.valueOf(map.get("HRDEPTNAME"));
+			String  deptCode=String.valueOf(map.get("HRDEPTCODE"));
+			String  phone=String.valueOf(map.get("PHONE"));
+			UserPrivilege  userPrivilege=new UserPrivilege();
+			userPrivilege.setUserId(userId);
+			userPrivilege.setUserName(userName);
+			userPrivilege.setUserAlias(userAlias);
+			userPrivilege.setDeptCode(deptCode);
+			userPrivilege.setDeptName(deptName);
+			userPrivilege.setPhone(phone);
+			list.add(userPrivilege);
+		}
+	    return list;
+	}
+
 }

@@ -53,8 +53,8 @@ roomList.initDataGrid = function(){
 //			roomList.initItems();
 //		},
 		columns: [
-		  {name: '序号',style:{width:"2%"}, data: 'ROWNO'},         
-		  {name: '',style:{width:"2%"}, data: 'id',checkbox:true, forMat:function(row){
+		  {name: '序号',style:{width:"50px"}, data: 'ROWNO'},         
+		  {name: '',style:{width:"50px"}, data: 'id',checkbox:true, forMat:function(row){
 			  dataItems[index] = row;//将一行数据放在一个list中
 			  return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.id)+'"/>';
 		 	}
@@ -179,9 +179,7 @@ roomList.resize=function(){
 	var height=$("body").height()-$(".sheach").height()-$("#funcBtn").height()-65;
 	$("#datagrid>div").css({"height":height});
 }
-$(window).resize(function(){
-	roomList.resize();
-})
+ 
 
 
  
