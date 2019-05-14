@@ -28,5 +28,24 @@
 		         where p.valid = '1'
 		           and p.dept_id = #{deptId}
 		           and p.user_id = u.userid)
-    </select>    
+    </select>  
+        <select id="getApproveUsersByRole" resultType="java.util.Map">
+		select 
+		  U.USERID,
+		  U.USERNAME,
+		  U.USERALIAS,
+		  U.HRCODE,
+		  U.HRDEPTNAME,
+		  U.HRDEPTCODE,
+		  U.PHONE
+		  from bg_sys_user u
+		 where u.valid = 1
+		   and u.state = 0
+		   and exists (select *
+		          from TB_PRIV_USER_R_ROLE r
+		         where r.valid = '1'
+		           and r.role_id = #{roleId}
+		           and r.user_id = u.userid)
+    </select>   
+     
 </mapper>

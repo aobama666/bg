@@ -19,6 +19,10 @@
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet"/>
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+	<style>
+		.window-mask,.window-shadow{z-index: 99999999!important;}
+		.messager-window{z-index: 999999999!important;}
+	</style>
 	
 </head>
 <body>

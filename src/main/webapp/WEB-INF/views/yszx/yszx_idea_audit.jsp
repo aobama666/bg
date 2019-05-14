@@ -280,9 +280,9 @@
 		</div>
 	</div>
 	<div class="btnContent">
- 	    <button type="button" class="btn" onclick="roomDetailInfo.messageResign()">返回</button>	 
-		<button type="button" class="btn" onclick="roomDetailInfo.returnEvent()">退回</button> 
-		<button type="button" class="btn" onclick="roomDetailInfo.agreeEvent()" >同意</button>
+ 	    <button type="button" class="btn" onclick="roomDetailInfo.agreeEvent()" >同意</button>
+		<button type="button" class="btn" onclick="roomDetailInfo.returnEvent()">退回</button>
+		<button type="button" class="btn" onclick="roomDetailInfo.messageResign()">返回</button>	 
 	</div>
 	
 	
@@ -299,7 +299,7 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 	<!-- 本页面所需的js -->
- 
+ 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomDetailInfo.js"></script>
  	
 	
 
