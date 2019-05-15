@@ -350,38 +350,48 @@
 	</select>
 	
 	<select id="selectForId" resultType="java.util.Map">
-	     SELECT 
-		      UUID   as  "id",	    
-		      APPLY_DEPT  as "applyDeptId",
-              (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = APPLY_DEPT)   as "applyDept",
-              TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
-              TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
-			  CONTACT_USER as "contactUser",
-			  CONTACT_PHONE as "contactPhone", 		
-			  VISIT_UNIT_TYPE as "visitUnitType",	
-			     (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='visitunit_type' and vaild=1 and code=VISIT_UNIT_TYPE) as "visitUnitTypeName",  
-			  VISIT_UNIT_NAME as "visitUnitName",	
-			  VISITOR_NUMBER as "visitorNumber", 		
-			  COMPANY_USER_NUMBER as "companyUserNumber",	 
-			  REMARK as "remark",	
+          SELECT 
+ 		      UUID   as  "id",	    
+ 		      APPLY_DEPT  as "applyDeptId",
+               (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = APPLY_DEPT)   as "applyDept",
+               TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+               TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+ 			  CONTACT_USER as "contactUser",
+ 			  CONTACT_PHONE as "contactPhone", 		
+ 			  VISIT_UNIT_TYPE as "visitUnitType",	
+ 			  (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='visitunit_type' and vaild=1 and code=VISIT_UNIT_TYPE) as "visitUnitTypeName",  
+ 			  VISIT_UNIT_NAME as "visitUnitName",	
+ 			  VISITOR_NUMBER as "visitorNumber", 		
+ 			  COMPANY_USER_NUMBER as "companyUserNumber",	 
+ 			  REMARK as "remark",	
               (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=STATUS) as "status",
               STATUS  as  "approveState",
 			  APPLY_ID as "applyId",
-			  
-			 
-              		
-			  VISIT_LEVEL as "visitLevel",	 	
-			  VALID as "valId", 	
-			  CREATE_USER as "createUser",
-			  TO_CHAR( CREATE_TIME,'YYYY-MM-DD') as "createTime",
-			  APPLY_NUMBER 	 as "applyNumber"	
-		  FROM TB_YSZX_IDEA	
-		  WHERE VALID =  '1' 
+			       
+ 			  VISIT_LEVEL as "visitLevel",	 	
+ 			  VALID as "valId", 	
+ 			  CREATE_USER as "createUser",
+ 			  TO_CHAR( CREATE_TIME,'YYYY-MM-DD') as "createTime",
+ 			  APPLY_NUMBER 	 as "applyNumber"	
+		  FROM TB_YSZX_IDEA	  where  VALID =  '1'
 		<if test="id!=null and id!=''">
 			and UUID  like '%'||#{id}||'%'
 		</if>
 		 
 	</select>
+	
+	
+	<select id="selectForwlApplyId" resultType="java.util.Map">
+	    select  A.ID   as  "wlApproveId"
+	      from  TB_WL_APPROVE A   
+	      where   A.VALID='1' 
+	       AND   A.APPROVE_STATUS='0' 
+	       AND  A.AUDIT_FLAG='1'  
+	       AND  A.APPLY_ID= #{applyId,jdbcType=VARCHAR}    
+	      ORDER BY   CREATE_TIME  DESC
+	</select>
+	
+	
 	<select id="selectForuserName" resultType="java.util.Map">
 		 SELECT 
 		   USERID  as "userId",  
@@ -522,6 +532,14 @@
             ORDER BY  G.CREATE_TIME  DESC
 	</sql>
 	
+	
+	
+	
+	
+	
+	
+	
+	
     <select id="selectForDealtInfo" resultType="java.util.Map">
     SELECT  T.*  from(
 	SELECT  TB.* , ROWNUM AS ROWNO  from(
@@ -558,7 +576,7 @@
          from    TB_YSZX_IDEA  G
              LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'   
              LEFT JOIN TB_WL_AUDIT_USER E ON D.ID=E.APPROVE_ID AND   E.VALID='1'
-          where   G.VALID='1'   and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='1'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL
+          where   G.VALID='1'     and   G.STATUS!='RETURN'        and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='1'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL
             <if test="pridept!=null and pridept!=''">
 			      and G.APPLY_DEPT  like '%'||#{pridept}||'%'
 		    </if>
@@ -743,7 +761,7 @@
 					T.USER_ID  as "userId",
 					U.USERNAME as  "userName",
 					U.USERALIAS as  "userAlias",
-					T.ROLE_ID  as "roleId",
+					T.ROLE_ID   as "roleId",
 					R.ROLE_NAME  as  "roleName",
 					R.ROLE_CODE  as "roleCode",
 					R.ROLE_TYPE  as "roleType",
@@ -755,7 +773,10 @@
 				WHERE
 					T .VALID = '1'
 				AND R.VALID = '1'
-				AND U .VALID = '1'  AND  T.USER_ID=#{userId}
+				AND U .VALID = '1' 
+		    	 
+				AND  T.USER_ID=#{userId}  
+				AND R.FUNCTION_TYPE =#{type}
 	  </select>  
 	   
 	   

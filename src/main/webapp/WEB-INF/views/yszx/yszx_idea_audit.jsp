@@ -22,9 +22,13 @@
  </head>
 <body>
 	<div class="main_div"></div> 
+	<input type = "hidden" value = "${id}" id = "id" name="id">  
+	<input type = "hidden" value = "${approveState}" id = "approveState" name="approveState">  
+	 
+	<input type = "hidden" value = "${wlApplyId}" id = "applyId" name="applyId"> 
 	<!-- start  头部 -->
 	<div class="sheach details">
-		<!--<div class='content_top'>参观设定详情 </div>	 -->
+		<div class='content_top'>参观设定详情 </div>
 	</div>
 	<!-- end  头部 -->
                        
@@ -225,65 +229,14 @@
 		
 	</div>
 	 
-	<div class="contentBox" id="Approves">
-		<h4 class="tableTitle">
-			<span title = "审批记录">审批记录：</span>
-		</h4>
-		<div class="btnBox"   style="height:20px;"  >
-			 
-		</div>
-		<div class="maxBox">
-			<table class="ApproveInfo tableStyle thTableStyle" style="margin:10px 0 20px;">
-				<tr>
-					<th  title="审批人姓名" >审批人姓名</th>
-					<th   title="审批部门单位" >审批部门单位</th>
-					<th   title="审批意见" >审批意见</th>
-					<th   title="审批时间" >审批时间</th>
-					<th   title="下一环节审批人角色" >下一环节审批人角色</th>
-					<th   title="下一环节审批人姓名" >下一环节审批人姓名</th>
-					<th   title="下一环节审批人联系方式" >下一环节审批人联系方式</th>
-				</tr>
-				<c:forEach  var="approveInfo"  items="${approveInfo}">
-				<tr>
-					<td class="addInputStyle" >
-						<span class="detailsLeft"> ${approveInfo.approveUserAlias}</span>
-						<%-- <input type="text"  disabled    id="approveUserAlias" name="approveUserAlias"  class="approveUserAlias" value = "${approveInfo.approveUserAlias}"  title=""  /> --%>
-					</td>
-					<td class="addInputStyle">
-						<span class="detailsLeft"> ${approveInfo.approveDeptName}</span>
-						<%-- <input type="text"  disabled    id="approveDeptName" name="approveDeptName" class="approveDeptName" value = "${approveInfo.approveDeptName}"  title=""   /> --%>
-					</td>
-					<td class="addInputStyle">
-						<span class="detailsLeft"> ${approveInfo.approveResultName}</span>
-						<%-- <input type="text"  disabled    id="approveResultName" name="approveResultName" class="approveResultName" value = "${approveInfo.approveResultName}"  title=""   /> --%>
-					</td>
-					<td class="addInputStyle">
-						<span class="detailsLeft"> ${approveInfo.approveDate}</span>
-						<%-- <input type="text"  disabled    id="approveDate" name="approveDate" class="approveDate" value = "${approveInfo.approveDate}"  title=""   /> --%>
-					</td>
-					<td class="addInputStyle">
-						<span class="detailsLeft"> ${approveInfo.nodeName}</span>
-					<%-- 	<input type="text"  disabled    id="approveDate" name="approveDate" class="approveDate" value = "${approveInfo.nodeName}"  title=""   /> --%>
-					</td>
-					<td class="addInputStyle">
-						<span class="detailsLeft"> ${approveInfo.nextapproveUserAlias}</span>
-						<%-- <input type="text"  disabled    id="nextapproveUserAlias" name="nextapproveUserAlias" class="nextapproveUserAlias" value = "${approveInfo.nextapproveUserAlias}"  title=""   /> --%>
-					</td>
-					<td class="addInputStyle">
-						<span class="detailsLeft"> ${approveInfo.nextapprovePhone}</span>
-						<%-- <input type="text"  disabled    id="nextapprovePhone" name="nextapprovePhone" class="nextapprovePhone" value = "${approveInfo.nextapprovePhone}"  title=""   /> --%>
-					</td>
-				</tr>
-			    </c:forEach>
-				
-			</table>
-		</div>
-	</div>
+	 
 	<div class="btnContent">
- 	    <button type="button" class="btn" onclick="roomDetailInfo.agreeEvent()" >同意</button>
-		<button type="button" class="btn" onclick="roomDetailInfo.returnEvent()">退回</button>
-		<button type="button" class="btn" onclick="roomDetailInfo.messageResign()">返回</button>	 
+ 	    <button type="button" class="btn" onclick="agreeEvent()" >同意</button>
+		<button type="button" class="btn" onclick="returnEvent()">退回</button>
+		<button type="button" class="btn" onclick="messageResign()">返回</button>	 
+		 
 	</div>
+	
 	
 	
 	<!-- end参观详情信息-->
@@ -299,21 +252,225 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 	<!-- 本页面所需的js -->
- 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomDetailInfo.js"></script>
  	
 	
 
 </body>
  <script type="text/javascript">
- $(function(){
+ 
+ 
+ /* 演示中心待办管理-返回方法*/
+    messageResign =function(){
+    	 /*window.opener=window;
+    	var win=window.open("","_self");
+    	win.close();
+    	top.close();*/
+   
+    		 window.location.href = "/TYGLPT/index/waittodo/index.jsp?tm="+new Date().getTime();
+    	 
 
-	 var approvetype=$("#approvetype").val();
-	 if(approvetype=="1"){
-		 $("#Approves").hide();//隐藏
-	 }else{
-		 $("#Approves").show();//显示
-	 }
+	}
+    /* 演示中心待办管理-退回方法*/
+	returnEvent = function(){
+		messageReturn("0");
+	   }
+	messageReturn= function(stauts){
+	    var html=messagereturnHtml();
+		if(html =='' || html ==undefined){
+			messager.tip("审批意见页面错误",2000);
+			return;
+		}else{
+			layer.confirm(
+					 html,
+					 {title:'请填写审批意见', area:'800px',skin:'demo-class'   },
+					 function(){
+						 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
+						 selectForReturn(approveRemark,stauts);
+					 	  
+		             });
+		}
+		
+	}
+	function selectForReturn(approveRemark,stauts){
+		 
+	 		    var approveId=$("#applyId").val();
+	 			var auditUserId="";
+	 					$.ajax({
+	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 						type: "post",
+	 						dataType:"json",
+	 						contentType: 'application/json',
+	 						success: function (data) {
+	 							if(data.success == "true"){
+	 								messager.tip("审批成功",1000);
+	 								messageResign();
+	 							}else{
+	 								messager.tip("审批失败",1000);
+	 								 
+	 							}
+	 						}
+	 					});
+			 
+	     
+	}
+	/* 退回信息---页面拼接 */
+	messagereturnHtml=  function (){
+		 var userPrivilegehtml = '';
+		 userPrivilegehtml +='<div class="contentBox   Remark">';
+		 userPrivilegehtml +='<div class="btnBox"    >';
+		 userPrivilegehtml +='<h4 class="tableTitle">';
+		 userPrivilegehtml +='<span title = "审批意见">审批意见：</span>';
+	     userPrivilegehtml +='</h4>';
+		 userPrivilegehtml +='</div>';
+		 userPrivilegehtml +='<div class="maxBox">';
+		 userPrivilegehtml +='<textarea   id="approveRemark"    name="approveRemark"  style="height:100px; width: 100%;background-color: #fff;resize: none"> </textarea>';	    
+		 userPrivilegehtml +='</div>';
+		 userPrivilegehtml +='</div>';             
+
+		return userPrivilegehtml;
+	}
+ 
+	/* 演示中心待办管理-同意方法*/
+	agreeEvent = function(){
+		var approveState=$("#approveState").val();
+		if(approveState=="MANAGER_DEPT_HEAD_CHECK"){
+			messageReturn("1");
+		}else{
+			messageAgree("1");
+		}
+		
+	}
 	
- });
+	/* 同意信息库信息 */
+	messageAgree= function(stauts){
+	    var html=messageagreeHtml();
+		if(html =='' || html ==undefined){
+			 messager.tip("审批页面错误",1000);
+			 return; 
+		}else{
+			var auditUserId=approveUserIDS();
+			var approveRemark= "";
+			var approveId=$("#applyId").val();
+			if(auditUserId!=""){
+				  selectForAgree(approveId,stauts,auditUserId,approveRemark);
+			 }else{
+				 layer.confirm(
+						 html,
+						 {title:'请选择审批人', area:'800px',skin:'demo-class'   },
+						 function(){
+							 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
+							 var auditUserId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
+							 
+							 if(checkedNumber == 0){
+								    messager.tip("请选择要操作的数据",1000);
+									return;
+						     }else if(checkedNumber > 1 ){
+						    	    messager.tip("请选择要操作的数据",1000);
+									return;  
+						     }else{
+						    	var checkedIds = dataGrid.getCheckedIds();
+						    	 selectForAgree(approveId,stauts,auditUserId,approveRemark);
+						    	 
+						    }
+							 
+							 
+							  
+			             });
+				  
+			 }
+		}
+
+	}
+
+	function approveUserIDS(){
+		var ApproveUserId = "";
+		var approveState=$("#approveState").val();
+		$.ajax({
+			 url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState+"&type="+"apply",//获取申报界面数据字典
+			type: "post",
+			dataType: "json",
+			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
+			success: function (data) { 
+				if(data.success =='true'){
+				  	var userPrivilegelist = data.data.userPrivilege;
+				  	var len=userPrivilegelist.length
+				  	if(len>1){
+				  		ApproveUserId="";
+				  	}else{
+				  		ApproveUserId=userPrivilegelist[0].userId;
+				  	}
+				} 
+			 }
+		  });
+		return ApproveUserId;
+		
+	}
+	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
+	 
+	 					$.ajax({
+	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 						type: "post",
+	 						dataType:"json",
+	 						contentType: 'application/json',
+	 						success: function (data) {
+	 							if(data.success == "true"){
+	 								messager.tip("审批成功",1000);
+	 								 
+	 								messageResign();
+	 							}else{
+	 								messager.tip("审批失败失败",1000);
+	 								 
+	 							}
+	 						}
+	 					});
+			   
+	}
+	
+	
+
+	/* 同意信息---页面拼接 */
+	messageagreeHtml=  function (){
+		var approveState=$("#approveState").val();
+		var userPrivilegehtml = '';
+		$.ajax({
+		    url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState+"&type="+"apply",//获取申报界面数据字典
+			type: "post",
+			dataType: "json",
+			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
+			success: function (data) {
+				if(data.success =='true'){
+			    	var userPrivilegelist = data.data.userPrivilege;
+					userPrivilegehtml += '<table class="userPrivilege tableStyle thTableStyle">';
+					userPrivilegehtml += '<tr>';
+					     userPrivilegehtml += '<th>选择</th>';
+					     userPrivilegehtml += '<th>审批人</th>';
+					     userPrivilegehtml += '<th>部门</th>';
+					userPrivilegehtml += '</tr>';
+						for (var i = 0; i < userPrivilegelist.length; i++) {
+							userPrivilegehtml += '<tr>';
+							     userPrivilegehtml += '<td>';
+							       userPrivilegehtml+='<input type="checkbox"   class="inputUserId"  />' 
+							       userPrivilegehtml+='<input type="hidden"    id="userId"  name = "userId"  class="userId"  value="' + userPrivilegelist[i].userId + '"  />' 
+							     userPrivilegehtml += '</td>';
+							     userPrivilegehtml += '<td class="addInputStyle">  ';
+							       userPrivilegehtml+='<input type="text" disabled  id="userAlias"  name = "userAlias"  class="userAlias inputChange"  value="' + userPrivilegelist[i].userAlias + '" title="审批人名称 " />' 
+							     userPrivilegehtml += '</td>';
+							     userPrivilegehtml += '<td class="addInputStyle">';
+							       userPrivilegehtml+='<input type="text" disabled   id="deptName"   name = "deptName"   class="deptName inputChange"  value="' + userPrivilegelist[i].deptName + '" title="审批人单位" />'
+							     userPrivilegehtml += '</td>';
+							       
+							 userPrivilegehtml += '</tr>';   	 
+						}
+					 userPrivilegehtml += '</table>';
+				}else{
+					userPrivilegehtml ;
+				}
+			 
+			}
+		});
+		return userPrivilegehtml;
+	}
+ 
+ 
  </script>
 </html>

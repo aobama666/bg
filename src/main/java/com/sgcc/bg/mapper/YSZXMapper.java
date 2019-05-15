@@ -289,7 +289,7 @@ public interface YSZXMapper {
 	
 	public  List<Map<String, Object>>  selectforEXLComprehensiveInfo(
 			
-			
+			                           @Param("pridept")String pridept,
 									   @Param("applyNumber")String applyNumber,
 									   @Param("year")String year,
 									   @Param("month")String month,
@@ -303,6 +303,9 @@ public interface YSZXMapper {
 	* @param pro
 	* @return
 	*/
-	public  List<Map<String, Object>>  selectForPrivUserId(@Param("userId")String userId);
+	public  List<Map<String, Object>>  selectForPrivUserId(@Param("userId")String userId,@Param("type")String type);
+	
+	
+	public  List<Map<String, Object>>  selectForwlApplyId(@Param("applyId")String applyId );
 
 }
