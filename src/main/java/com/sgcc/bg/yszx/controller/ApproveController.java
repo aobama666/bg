@@ -2,6 +2,9 @@ package com.sgcc.bg.yszx.controller;
 
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +28,8 @@ public class ApproveController {
 	private UserUtils userUtils;
 	@Autowired
 	private WebUtils webUtils;
+	
+	private static Logger log =  LoggerFactory.getLogger(ApproveController.class);
 	/**
 	 * 演示中心---审批流程记录
 	 * @param
@@ -63,9 +68,11 @@ public class ApproveController {
 		auditUserId=Rtext.toStringTrim(auditUserId, "");
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String operatorId=currentUser.getUserId();
+		log.info("---operatorId:"+operatorId);
 		if(stauts.equals("0")){
 			auditUserId=operatorId;
 		}
+	    log.info("-----approveId:"+approveId+"--stauts:"+stauts+"--approveRemark:"+approveRemark+"--auditUserId:"+auditUserId+"--operatorId:"+operatorId);
 		ReturnMessage  approve=approveService.sendApprove(false, approveId, stauts, approveRemark, auditUserId, operatorId);
 		if(!approve.isResult()){
 			rw = new ResultWarp(ResultWarp.FAILED ,approve.getMessage()); 

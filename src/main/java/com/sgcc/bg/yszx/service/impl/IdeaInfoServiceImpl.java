@@ -879,7 +879,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	public List<Map<String, Object>> selectForIdeaInfo(String  applyId,String createTime ,int page_start,int page_end) {
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String userid=  currentUser.getUserId();
-		List<Map<String, Object>>  privUserList=yszxMapper.selectForPrivUserId(userid);
+		List<Map<String, Object>>  privUserList=yszxMapper.selectForPrivUserId(userid,"YSZX");
 		List<Map<String, Object>>  ideaInfo = new ArrayList<Map<String, Object>>();
 		if(privUserList.isEmpty()){
 			return ideaInfo;
@@ -1000,6 +1000,22 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				if(!visitInfo.isEmpty()){
 					ideaInfo.put("visitInfo", visitInfo);
 				}
+				
+				String  applyId=String.valueOf(ideaInfo.get("applyId")) ;
+				applyId=Rtext.toStringTrim(applyId, "");
+				if("".equals(applyId)){
+					ideaInfo.put("wlApplyId", "");
+				}else{
+					List<Map<String, Object>>    wlApplyIdlist=yszxMapper.selectForwlApplyId(applyId);
+					if(wlApplyIdlist.isEmpty()){
+						ideaInfo.put("wlApplyId", "");
+					}else{
+						String  wlApproveId=Rtext.toStringTrim(wlApplyIdlist.get(0).get("wlApproveId"), "");
+						ideaInfo.put("wlApplyId", wlApproveId);
+					}
+				}
+				
+				
 				List<Map<String, Object>>  leaderInfo = yszxMapper.selectForCompanyLeaderInfo(ideaId,"");
 				if(!leaderInfo.isEmpty()){
 					String leaders="";
@@ -1189,9 +1205,9 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		return ideaInfo;
 	}
 	@Override
-	public List<Map<String, Object>> selectforEXLComprehensiveInfo(String applyNumber, String year, String month,
+	public List<Map<String, Object>> selectforEXLComprehensiveInfo(String pridept,  String applyNumber, String year, String month,
 			String applyDept, String visitUserName, String userLevel, List<String> ids) {
-		 List<Map<String, Object>>  ideaInfo=yszxMapper.selectforEXLComprehensiveInfo(applyNumber, year,month, applyDept, visitUserName, userLevel,ids);
+		 List<Map<String, Object>>  ideaInfo=yszxMapper.selectforEXLComprehensiveInfo(pridept,applyNumber, year,month, applyDept, visitUserName, userLevel,ids);
 		 
 		return ideaInfo;
 	}
@@ -1248,8 +1264,8 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		 
 	}
 	@Override
-	public List<Map<String, Object>> selectForPrivUserId(String userId) {
-		List<Map<String, Object>>  privUserList=yszxMapper.selectForPrivUserId(userId);
+	public List<Map<String, Object>> selectForPrivUserId(String userId,String type) {
+		List<Map<String, Object>>  privUserList=yszxMapper.selectForPrivUserId(userId,type);
 		return privUserList;
 	}
 	

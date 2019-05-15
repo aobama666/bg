@@ -46,9 +46,9 @@ roomList.initDataGrid = function(){
 		form:'#queryForm',
 		pageSize:10,
 		tablepage:$(".tablepage"),//分页组件
-//		successFinal:function(){
-//			roomList.resize();
-//		},
+		successFinal:function(data){
+			$("#datagrid").find("input[type=checkbox]").eq(0).attr("style","display:none");
+        },
 //		callBackFunc:function(){
 //			roomList.initItems();
 //		},
@@ -59,8 +59,8 @@ roomList.initDataGrid = function(){
 			  return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.id)+'"/>';
 		 	}
 		  },
-		  {name: '申请单号',style:{width:"240px"}, data: 'applyNumber',forMat:function(row){
-			  return "<a title = '"+row.applyNumber+"' style='width:250px;" + 
+		  {name: '申请单号',style:{width:"260px"}, data: 'applyNumber',forMat:function(row){
+			  return "<a title = '"+row.applyNumber+"' style='width:260px;" + 
 				  		"text-align:left;display:block;" +
 				  		"white-space: nowrap;" +
 				  		"text-overflow: ellipsis;" +
@@ -68,25 +68,25 @@ roomList.initDataGrid = function(){
 				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.id+"','"+row.applyId+"')>"+row.applyNumber+"</a>";
 				  		 
 		  }},
-		  {name: '申请时间', style:{width:"8%"},data: 'createTime'},
-		  {name: '申请部门（单位）',style:{width:"10%"}, data: 'applyDept',forMat:function(row){
+		  {name: '申请时间', style:{width:"120px"},data: 'createTime'},
+		  {name: '申请部门（单位）',style:{width:"150px"}, data: 'applyDept',forMat:function(row){
 			  if(row.applyDept){
 				  	return "<span title='"+row.applyDept+"' style='width:150px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.applyDept+"</span>"
 				  }else{
 					  return "";
 			 }
 		  }},
-		  {name: '参观开始时间', style:{width:"8%"},data: 'stateDate'},
-		  {name: '参观结束时间', style:{width:"8%"},data: 'endDate'},
-		  {name: '主要参观领导职务和级别', style:{width:"10%"},data: 'visitInfo',forMat:function(row){
+		  {name: '参观开始时间', style:{width:"150px"},data: 'stateDate'},
+		  {name: '参观结束时间', style:{width:"150px"},data: 'endDate'},
+		  {name: '主要参观领导职务和级别', style:{width:"200px"},data: 'visitInfo',forMat:function(row){
 			  if(row.visitInfo){
 				  	return "<span title='"+row.visitInfo+"' style='width:150px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.visitInfo+"</span>"
 				  }else{
 					  return "";
 			     }
 		  }},
-		  {name: '总参观人数',style:{width:"7%"},data: 'visitorNumber'   },
-		  {name: '院内陪同领导', style:{width:"10%"},data: 'leaderInfo',forMat:function(row){
+		  {name: '总参观人数',style:{width:"100px"},data: 'visitorNumber'   },
+		  {name: '院内陪同领导', style:{width:"200px"},data: 'leaderInfo',forMat:function(row){
 			  if(row.leaderInfo){
 				  	return "<span title='"+row.leaderInfo+"' style='width:150px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.leaderInfo+"</span>"
 				  }else{
@@ -94,7 +94,7 @@ roomList.initDataGrid = function(){
 			     }
 		  }},
 		  
-		  {name: '院内陪同人员', style:{width:"10%"},data: 'userInfo',forMat:function(row){
+		  {name: '院内陪同人员', style:{width:"200px"},data: 'userInfo',forMat:function(row){
 			  if(row.userInfo){
 				  	return "<span title='"+row.userInfo+"' style='width:150px;text-align:left;display:block;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;'>"+row.userInfo+"</span>"
 				  }else{
@@ -102,9 +102,9 @@ roomList.initDataGrid = function(){
 			     }
 		  }},
 		 
-		  {name: '总陪同人数',style:{width:"7%"},data: 'companyUserNumber'   },
-		  {name: '联系人', style:{width:"6%"},data: 'contactUser'},
-		  {name: '联系方式', style:{width:"8%"},data: 'contactPhone'}
+		  {name: '总陪同人数',style:{width:"100px"},data: 'companyUserNumber'   },
+		  {name: '联系人', style:{width:"150px"},data: 'contactUser'},
+		  {name: '联系方式', style:{width:"120px"},data: 'contactPhone'}
 		  
 		]
 	});
