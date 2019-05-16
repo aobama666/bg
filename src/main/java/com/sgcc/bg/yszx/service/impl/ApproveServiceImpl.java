@@ -642,7 +642,7 @@ public class ApproveServiceImpl implements ApproveService{
 	}
 		
 
-	private WLApproveRule getApproveRuleByNodeName(String functionType,String nodeName,String status,String condition){
+	public WLApproveRule getApproveRuleByNodeName(String functionType,String nodeName,String status,String condition){
 		List<Map<String,Object>> list = approveMapper.getApproveRuleByNodeName(functionType,nodeName,status,condition);
 		if(list==null||list.size()==0||list.size()>1){
 			return null;

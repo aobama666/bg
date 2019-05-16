@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.sgcc.bg.yszx.bean.ReturnMessage;
 import com.sgcc.bg.yszx.bean.WLApprove;
+import com.sgcc.bg.yszx.bean.WLApproveRule;
 
 public interface ApproveService {
 	/**
@@ -55,5 +56,14 @@ public interface ApproveService {
 	 public List<Map<String, String>>  selectForApproveID(String approveId);
 	 
 	 public WLApprove getApproveInfoByApproveId(String approveId);
+	 /**
+	  * 获取审批规则
+	  * @param functionType 功能类型
+	  * @param nodeName 节点编码
+	  * @param status  操作  1 统一  2 拒绝
+	  * @param condition 演示中心  1  处级以上
+	  * @return
+	  */
+	 public WLApproveRule getApproveRuleByNodeName(String functionType,String nodeName,String status,String condition);
 	 
 }
