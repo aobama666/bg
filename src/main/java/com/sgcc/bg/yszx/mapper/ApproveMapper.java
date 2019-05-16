@@ -95,6 +95,27 @@ public interface ApproveMapper {
 			                         @Param("approve_remark")String approve_remark,
 			                         @Param("audit_flag")String audit_flag,
 			                         @Param("approve_node")String approve_node);
+	/**
+	 * 删除当前节点
+	 * @param id
+	 * @param approve_user
+	 * @param approve_date
+	 * @return
+	 */
+	public Integer updateApproveByIdForDelete(@Param("id")String id,
+			                         @Param("approve_user")String approve_user,
+			                         @Param("approve_date")Date approve_date);
+	
+	/**
+	 * 修改当前节点  待办标识
+	 * @param id
+	 * @param approve_user
+	 * @param approve_date
+	 * @return
+	 */
+	public Integer updateApproveByIdForAuditFlag(@Param("id")String id,
+			                         @Param("audit_flag")String audit_flag);
+	
 	
 	/**
 	 * 

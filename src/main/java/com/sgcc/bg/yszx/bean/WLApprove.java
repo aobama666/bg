@@ -20,7 +20,7 @@ public class WLApprove {
 	private String approve_node_code;	
 	private String visit_level;
 	private String function_type;
-
+	private String next_approve_status;
 	public String getId() {
 		return id;
 	}
@@ -147,6 +147,14 @@ public class WLApprove {
 
 	public void setFunction_type(String function_type) {
 		this.function_type = function_type;
+	}
+
+	public String getNext_approve_status() {
+		return next_approve_status;
+	}
+
+	public void setNext_approve_status(String next_approve_status) {
+		this.next_approve_status = next_approve_status;
 	}
 	
 }
