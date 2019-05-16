@@ -199,6 +199,20 @@
 		       </if>
 		 where t.id = #{id}                     
 	</update>
+	<!-- 更新当前节点  删除-->
+    <update id="updateApproveByIdForDelete">
+		update tb_wl_approve t
+		   set t.valid = '0',
+		   	   t.approve_user   = #{approve_user},
+		       t.approve_date   = #{approve_date}
+		 where t.id = #{id}                     
+	</update>
+	<!-- 更新当前节点  修改待办标志-->
+    <update id="updateApproveByIdForAuditFlag">
+		update tb_wl_approve t
+		   set t.audit_flag = #{audit_flag}
+		 where t.id = #{id}                     
+	</update>
 	<!--  根据审批记录id获取审批相关信息-->
     <select id="getApproveInfoByApproveId" resultType="java.util.Map">
 		select T.ID             APPROVE_ID,
@@ -210,7 +224,9 @@
 		       WRULE.NODE,
 		       IDEA.VISIT_LEVEL,
        		   APP.FUNCTION_TYPE,
-		       T.CREATE_USER
+		       T.CREATE_USER,
+       		   next_app.APPROVE_STATUS NEXT_PPROVE_STATUS,
+       		   T.NEXT_APPROVE_ID
 		  from tb_wl_approve t
 		  left join tb_wl_apply app
 		    on APP.ID = t.apply_id
@@ -224,6 +240,10 @@
 		  left join tb_yszx_idea idea
 		    on idea.uuid = r.business_id
 		   and idea.valid = '1'
+		  left join tb_wl_approve next_app
+		    on next_app.id = t.next_approve_id
+		   and next_app.audit_flag = '1'
+		   and next_app.valid = '1'  
 		 where t.id = #{approveId}
 		   and t.valid = '1'		
     </select>
@@ -272,11 +292,8 @@
     </select>
     <!--  撤回   根据审批记录id获取上一流程的提交记录  按人-->
     <select id="getLastApproveUserByApproveId" resultType="java.util.Map">
-		select last_1.ID APPROVE_ID, last_1.approve_node RULE_ID,last_1.approve_user APPROVE_USER
-		  from tb_wl_approve t
-		  LEFT JOIN tb_wl_approve last_1
-		    on last_1.next_approve_id = t.id
-		   and last_1.valid = '1' 
+		select t.ID APPROVE_ID, t.approve_node RULE_ID,t.approve_user APPROVE_USER
+		  from tb_wl_approve t		
 		 where 1 = 1
 		   and t.id = #{approveId}
 		   and t.valid = '1'
@@ -314,6 +331,7 @@
 		 where t.approve_id = #{approve_id} 
 		   and t.approve_user != #{approve_user}                      
 	</update>
+	
 	
 	<select  id="selectForApproveID"   resultType="java.util.Map">
 	    SELECT

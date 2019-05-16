@@ -413,38 +413,60 @@ public class ApproveServiceImpl implements ApproveService{
 				returnMessage.setMessage(message);
 				return returnMessage;
 			}
+			if("1".equals(approveInfo.getApprove_status())&&approveInfo.getNext_approve_status().length()==0){
+				message = "无下一级信息，该待办不支持撤回！";
+				returnMessage.setResult(result);
+				returnMessage.setMessage(message);
+				return returnMessage;
+			}
+			if("1".equals(approveInfo.getApprove_status())&&approveInfo.getNext_approve_status().equals("1")){
+				message = "下一级已审批，该待办不支持撤回！";
+				returnMessage.setResult(result);
+				returnMessage.setMessage(message);
+				return returnMessage;
+			}
 			//获取业务信息
 			Map<String, Object> ideaInfoMap = ideaServcie.selectForId(approveInfo.getBussiness_id());
 			//获取上一节点信息
-			WLApprove lastApprove = getLastApproveByApproveId(approveId,isUseRole);
-			
+			WLApprove lastApprove = getLastApproveByApproveId(approveId,isUseRole);			
 			WLApproveRule approveRule = getApproveRuleById(lastApprove.getApprove_node());
 			//更新当前节点   撤回
 			WLApprove lastApproveUser = getLastApproveByApproveId(approveId,false);
 			//当前节点-更新
 			String id = approveInfo.getId();
 			String approve_user   = operatorId;
-			String approve_result = "2";
-			String approve_remark = "";
 			String recall_audit_flag = null;
 			Date approve_date   = new Date();
 			//处理当前节点-待办
 			if("1".equals(approveInfo.getAudit_flag())){
 				recall_audit_flag = "0";
 			}	
-			String approve_node_current = lastApproveUser.getApprove_node();
-			approveMapper.updateApproveById(id, approve_user, approve_date, approve_result, approve_remark,recall_audit_flag,approve_node_current);			
-			//处理当前节点-待办
+			//修改当前节点待办状态为  非待办即流程记录
+			approveMapper.updateApproveByIdForAuditFlag(id, recall_audit_flag);	
+			//新增撤回记录
+			WLApprove appNew = new WLApprove();
+			appNew.setApply_id(approveInfo.getApply_id());
+			appNew.setApprove_node("");
+			appNew.setApprove_user(operatorId);
+			appNew.setApprove_status("1");//审批状态 0 待审批 1 已审批
+			appNew.setApprove_result("2");//审批结果 0 拒绝 1 同意 2 撤回 3 提交
+			appNew.setApprove_remark("");
+			appNew.setApprove_date(new Date());
+			appNew.setCreate_user(operatorId);
+			appNew.setAudit_flag("0");//是否是待办 0 不是 1 是
+			
+			approveMapper.addApproveAndGetId(appNew);			
+			//处理当前节点-待办  即下一节点
 			if("1".equals(approveInfo.getAudit_flag())){
-				approveMapper.updateAuditByApproveId(approveInfo.getId(), "none_user", operatorId);
-				
+				approveMapper.updateAuditByApproveId(approveInfo.getNext_approve_id(), "none_user", operatorId);
+				approveMapper.updateApproveByIdForDelete(approveInfo.getNext_approve_id(), approve_user, approve_date);	
 				//撤销待办
 				HRUser user = userService.getUserByUserId(operatorId);
 				if(user!=null){
 					String mq_routingKey = "QUEUE_TYGLPT_APP";
 					String mq_bussinessId = approveInfo.getBussiness_id();
 					String mq_applyId = approveInfo.getApply_id();
-					String mq_approveId = approveInfo.getId();
+					String mq_approveId = approveInfo.getNext_approve_id();
 					String mq_sendMessage = getRabbitMqSendMessageForRollbackTask(mq_bussinessId, mq_applyId,mq_approveId);
 					rabbitTemplate.convertAndSend(mq_routingKey, mq_sendMessage);//发送待办至tygl
 				}
@@ -468,7 +490,7 @@ public class ApproveServiceImpl implements ApproveService{
 				
 				approveMapper.addApproveAndGetId(nextApprove);
 				//声明当前的下一节点
-				approveMapper.updateNextApproveIdById(approveInfo.getId(), nextApprove.getId());
+				approveMapper.updateNextApproveIdById(appNew.getId(), nextApprove.getId());
 				//更新申请记录
 				approveMapper.updateApplyById(approveInfo.getApply_id(), approveRule.getNextNode(), nextApprove.getId(), operatorId);
 				//更新业务记录		
@@ -680,9 +702,9 @@ public class ApproveServiceImpl implements ApproveService{
 	
 	public WLApprove getApproveInfoByApproveId(String approveId){
 		List<Map<String,Object>> list = approveMapper.getApproveInfoByApproveId(approveId);
-		log.info("---getApproveInfoByApproveId---"+list.size());
-		if(list.isEmpty()){
+		if(list==null||list.size()==0||list.size()>1){
 			return null;
+ 
 		}
 		
 		Map<String,Object> map = list.get(0);
@@ -696,6 +718,8 @@ public class ApproveServiceImpl implements ApproveService{
 		String approve_node_code = map.get("NODE")==null?"":map.get("NODE").toString();	
 		String visit_level = map.get("VISIT_LEVEL")==null?"":map.get("VISIT_LEVEL").toString();
 		String function_type = map.get("FUNCTION_TYPE")==null?"":map.get("FUNCTION_TYPE").toString();
+		String next_approve_status = map.get("NEXT_PPROVE_STATUS")==null?"":map.get("NEXT_PPROVE_STATUS").toString();
+		String next_approve_id = map.get("NEXT_APPROVE_ID")==null?"":map.get("NEXT_APPROVE_ID").toString();
 		
 		WLApprove approve = new WLApprove();
 		
@@ -708,6 +732,8 @@ public class ApproveServiceImpl implements ApproveService{
 		approve.setVisit_level(visit_level);
 		approve.setBussiness_id(bussiness_id);
 		approve.setFunction_type(function_type);
+		approve.setNext_approve_status(next_approve_status);
+		approve.setNext_approve_id(next_approve_id);
 		
 		return approve;
 	}
