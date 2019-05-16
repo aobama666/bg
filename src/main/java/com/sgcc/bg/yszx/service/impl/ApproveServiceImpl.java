@@ -39,7 +39,7 @@ public class ApproveServiceImpl implements ApproveService{
     private RabbitTemplate rabbitTemplate;//发送待办
 	@Autowired
     private UserService userService;
-	
+	 
 	//bussinessId 主ID   auditUserId 审批人    operatorId  当前提交人
 	public ReturnMessage startApprove(boolean isUseRole,String functionType, String nodeName, String bussinessId, String auditUserId,String operatorId) {
 		ReturnMessage returnMessage = new ReturnMessage();
@@ -218,7 +218,7 @@ public class ApproveServiceImpl implements ApproveService{
 		try{
 			//获取审批记录      审批表、申请表、业务表 基本信息
 			WLApprove approveInfo = getApproveInfoByApproveId(approveId);
-			
+			log.info("---approveInfo---"+approveInfo.getApprove_status());
 			if("1".equals(approveInfo.getApprove_status())){
 				message = "该待办已处理！";
 				returnMessage.setResult(result);
@@ -407,8 +407,8 @@ public class ApproveServiceImpl implements ApproveService{
 		try{
 			//获取审批记录      审批表、申请表、业务表 基本信息
 			WLApprove approveInfo = getApproveInfoByApproveId(approveId);
-			if("1".equals(approveInfo.getApprove_status())){
-				message = "该待办已处理！";
+			if("0".equals(approveInfo.getApprove_status())){
+				message = "该待办未处理！";
 				returnMessage.setResult(result);
 				returnMessage.setMessage(message);
 				return returnMessage;
@@ -680,9 +680,9 @@ public class ApproveServiceImpl implements ApproveService{
 	
 	public WLApprove getApproveInfoByApproveId(String approveId){
 		List<Map<String,Object>> list = approveMapper.getApproveInfoByApproveId(approveId);
-		if(list==null||list.size()==0||list.size()>1){
+		log.info("---getApproveInfoByApproveId---"+list.size());
+		if(list.isEmpty()){
 			return null;
- 
 		}
 		
 		Map<String,Object> map = list.get(0);

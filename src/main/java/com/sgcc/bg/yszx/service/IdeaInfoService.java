@@ -93,7 +93,7 @@ public interface IdeaInfoService {
 	 * @param pro
 	 * @return
 	 */
-	public List<Map<String, Object>>  selectforEXLComprehensiveInfo(String  appltNumber,String year,String month,String applyDept,String visitUserName,String userLevel,List<String>  ids );
+	public List<Map<String, Object>>  selectforEXLComprehensiveInfo(String pridept,String  appltNumber,String year,String month,String applyDept,String visitUserName,String userLevel,List<String>  ids );
  
 	
 	
@@ -145,7 +145,7 @@ public interface IdeaInfoService {
 	* @param pro
 	* @return
 	*/
-	public  List<Map<String, Object>>  selectForPrivUserId(@Param("userId")String userId);
+	public  List<Map<String, Object>>  selectForPrivUserId(String userId,String type);
 
 
 }
