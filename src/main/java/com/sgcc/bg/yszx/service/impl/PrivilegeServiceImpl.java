@@ -67,4 +67,10 @@ public class PrivilegeServiceImpl implements PrivilegeService{
 	    return list;
 	}
 
+	@Override
+	public Map<String,Object> getApproveUsersByDept(String deptId, String userId, String type) {
+		Map<String, Object>   map=authMapper.getApproveUsersByDept(deptId, userId, type);
+		return map;
+	}
+
 }

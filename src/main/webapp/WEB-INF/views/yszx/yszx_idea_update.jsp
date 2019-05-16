@@ -27,6 +27,7 @@
 	<input type = "hidden" value = "${id}" id = "id" name="id">  
 	<input type = "hidden" value = "${approveState}" id = "approveState" name="approveState">  
 	<input type = "hidden" value = "${applyId}" id = "applyId" name="applyId">  
+	<input type = "hidden" value = "${wlApproveId}" id = "wlApproveId" name="wlApproveId">  
 	<!-- start  头部 -->
 	<!-- <div class="sheach details">
 	<div class='content_top'>参观设定详情</div>	 
@@ -277,13 +278,11 @@
  	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomDetailInfo.js"></script>
  
 </body>
-<!--
+ 
  <script type="text/javascript">
  $(function(){
 	 var approveState=$("#approveState").val();
-	 if(approveState=="SAVE" ){
-		 $("#messageSave").hide();//隐藏 
-	 }else if(approveState=="RETURN"){
+	  if(approveState=="RETURN"){
 		 $("#messageSave").hide();//隐藏 
 	 }else{
 		 $("#messageSave").show();//显示
@@ -291,5 +290,5 @@
 	
  });
  </script>
- -->
+ 
 </html>
