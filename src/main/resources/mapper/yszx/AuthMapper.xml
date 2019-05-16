@@ -59,5 +59,19 @@
 		           and USER_ID = #{userId} 
 		           and FUNCTION_TYPE = #{type} 
     </select>   
+    
+    
+    <select id="getRuleByNode" resultType="java.util.Map">
+	      select 
+	           APPROVE_ROLE
+		          from TB_WL_RULE 
+		         where VALID= '1' 
+		          and  STATUS='1'
+		          and  FUNCTION_TYPE=#{type}
+		          and NODE = #{node} 
+      </select>   
+    
+    
+    
      
 </mapper>

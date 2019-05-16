@@ -140,7 +140,7 @@ public interface IdeaInfoService {
 	 * @param pro
 	 * @return
 	 */
-	public  int  selectForideaNum(String applyNumber ,String createTime);
+	public  int  selectForideaNum(String applyNumber ,String createTime,String deptId);
 	
 
 	/**

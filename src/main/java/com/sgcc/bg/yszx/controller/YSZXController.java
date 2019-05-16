@@ -74,6 +74,12 @@ public class YSZXController {
 			map.put("deptName", currentUser.getDeptName());
 			map.put("deptCode", currentUser.getDeptCode());
 		}
+		
+		
+		
+		
+		
+		
 		List<Map<String, String>>   visitUnitTypeList= dataDictionaryService.selectDictDataByPcode("visitunit_type");
 		map.put("visitUnitTypeInfo", visitUnitTypeList);
 		List<Map<String, String>>   visitUnitLevelList= dataDictionaryService.selectDictDataByPcode("visitunit_levle");
