@@ -397,57 +397,6 @@ public class ApproveServiceImpl implements ApproveService{
 		returnMessage.setMessage(message);
 		return returnMessage;
 	}
-	/**
-	 * 撤销已办的数据到待办页面
-	 * 参数：
-	 * isUseRole：是否按照角色发送待办 true 是 false 按照历史提交
-	 * approveId：待办查询数据审批ID
-	 * operatorId 当前登录人信息
-	 * */
-	
-	public ReturnMessage newRecallApprove(boolean isUseRole,String approveId,String operatorId) {
-		ReturnMessage returnMessage = new ReturnMessage();
-		//执行结果  success 成功  failure 失败
-		boolean result = false;
-		//返回消息
-		String message = "";
-		try{
-			//获取审批记录      审批表、申请表、业务表 基本信息
-			//说明:判断当前查询的是否额外已办数据
-			WLApprove approveInfo = getApproveInfoByApproveId(approveId);
-			if("0".equals(approveInfo.getApprove_status())){
-				message = "该待办未处理！";
-				returnMessage.setResult(result);
-				returnMessage.setMessage(message);
-				return returnMessage;
-			}
-			//获取业务信息
-			//说明： 主页信息IDEA
-			Map<String, Object> ideaInfoMap = ideaServcie.selectForId(approveInfo.getBussiness_id());
-			//获取上一节点信息
-			//说明：根据isUseRole判断    撤回   根据审批记录id获取上一流程的提交记录  按人
-			WLApprove lastApprove = getLastApproveByApproveId(approveId,isUseRole);
-			//
-			//
-			WLApproveRule approveRule = getApproveRuleById(lastApprove.getApprove_node());
-			
-			
-			
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	public ReturnMessage recallApprove(boolean isUseRole,String approveId,String operatorId) {
 		ReturnMessage returnMessage = new ReturnMessage();
@@ -464,41 +413,60 @@ public class ApproveServiceImpl implements ApproveService{
 				returnMessage.setMessage(message);
 				return returnMessage;
 			}
+			if("1".equals(approveInfo.getApprove_status())&&approveInfo.getNext_approve_status().length()==0){
+				message = "无下一级信息，该待办不支持撤回！";
+				returnMessage.setResult(result);
+				returnMessage.setMessage(message);
+				return returnMessage;
+			}
+			if("1".equals(approveInfo.getApprove_status())&&approveInfo.getNext_approve_status().equals("1")){
+				message = "下一级已审批，该待办不支持撤回！";
+				returnMessage.setResult(result);
+				returnMessage.setMessage(message);
+				return returnMessage;
+			}
 			//获取业务信息
 			Map<String, Object> ideaInfoMap = ideaServcie.selectForId(approveInfo.getBussiness_id());
 			//获取上一节点信息
-			WLApprove lastApprove = getLastApproveByApproveId(approveId,isUseRole);
-			
+			WLApprove lastApprove = getLastApproveByApproveId(approveId,isUseRole);			
 			WLApproveRule approveRule = getApproveRuleById(lastApprove.getApprove_node());
 			//更新当前节点   撤回
 			WLApprove lastApproveUser = getLastApproveByApproveId(approveId,false);
 			//当前节点-更新
 			String id = approveInfo.getId();
 			String approve_user   = operatorId;
-			String approve_result = "2";
-			String approve_remark = "";
 			String recall_audit_flag = null;
 			Date approve_date   = new Date();
 			//处理当前节点-待办
 			if("1".equals(approveInfo.getAudit_flag())){
 				recall_audit_flag = "0";
 			}	
-			String approve_node_current = lastApproveUser.getApprove_node();
-			//更新当前节点
-			approveMapper.updateApproveById(id, approve_user, approve_date, approve_result, approve_remark,recall_audit_flag,approve_node_current);			
+			//修改当前节点待办状态为  非待办即流程记录
+			approveMapper.updateApproveByIdForAuditFlag(id, recall_audit_flag);	
+			//新增撤回记录
+			WLApprove appNew = new WLApprove();
+			appNew.setApply_id(approveInfo.getApply_id());
+			appNew.setApprove_node("");
+			appNew.setApprove_user(operatorId);
+			appNew.setApprove_status("1");//审批状态 0 待审批 1 已审批
+			appNew.setApprove_result("2");//审批结果 0 拒绝 1 同意 2 撤回 3 提交
+			appNew.setApprove_remark("");
+			appNew.setApprove_date(new Date());
+			appNew.setCreate_user(operatorId);
+			appNew.setAudit_flag("0");//是否是待办 0 不是 1 是
 			
-			//处理当前节点-待办
+			approveMapper.addApproveAndGetId(appNew);			
+			//处理当前节点-待办  即下一节点
 			if("1".equals(approveInfo.getAudit_flag())){
-				//声明当前的下一节点
-				approveMapper.updateAuditByApproveId(approveInfo.getId(), "none_user", operatorId);
-				
+				approveMapper.updateAuditByApproveId(approveInfo.getNext_approve_id(), "none_user", operatorId);
+				approveMapper.updateApproveByIdForDelete(approveInfo.getNext_approve_id(), approve_user, approve_date);	
 				//撤销待办
 				HRUser user = userService.getUserByUserId(operatorId);
 				if(user!=null){
 					String mq_routingKey = "QUEUE_TYGLPT_APP";
 					String mq_bussinessId = approveInfo.getBussiness_id();
 					String mq_applyId = approveInfo.getApply_id();
-					String mq_approveId = approveInfo.getId();
+					String mq_approveId = approveInfo.getNext_approve_id();
 					String mq_sendMessage = getRabbitMqSendMessageForRollbackTask(mq_bussinessId, mq_applyId,mq_approveId);
 					rabbitTemplate.convertAndSend(mq_routingKey, mq_sendMessage);//发送待办至tygl
 				}
@@ -522,7 +490,7 @@ public class ApproveServiceImpl implements ApproveService{
 				
 				approveMapper.addApproveAndGetId(nextApprove);
 				//声明当前的下一节点
-				approveMapper.updateNextApproveIdById(approveInfo.getId(), nextApprove.getId());
+				approveMapper.updateNextApproveIdById(appNew.getId(), nextApprove.getId());
 				//更新申请记录
 				approveMapper.updateApplyById(approveInfo.getApply_id(), approveRule.getNextNode(), nextApprove.getId(), operatorId);
 				//更新业务记录		
@@ -532,11 +500,11 @@ public class ApproveServiceImpl implements ApproveService{
 				
 				if("APPROVAL_SUBMIT".equals(approveRule.getApproveRole())){//提交人
 					//不发待办
-				}else{ 
+				}
+				else{ 
 					String functionType = approveInfo.getFunction_type();
 					String bussinessId = approveInfo.getBussiness_id();
 					String applyId = approveInfo.getApply_id();
-					//是否按照角色发送待办 true 是 false 按照历史提交人
 					if(isUseRole){
 						List<Map<String,Object>> list = authMapper.getApproveUsersByRoleAndDept(approveRule.getApproveRoleId(),deptId);
 						if(list!=null&&list.size()>0){
@@ -551,7 +519,6 @@ public class ApproveServiceImpl implements ApproveService{
 									WLAuditUser auditUser = new WLAuditUser();
 									auditUser.setApprove_id(nextApprove.getId());
 									auditUser.setApprove_user(userId);
-									auditUser.setApprove_user(operatorId);
 									auditUser.setCreate_user(operatorId);
 									auditUser.setUpdate_user(operatorId);
 									
@@ -576,8 +543,7 @@ public class ApproveServiceImpl implements ApproveService{
 						if(lastApproveUser!=null){
 							WLAuditUser auditUser = new WLAuditUser();
 							auditUser.setApprove_id(nextApprove.getId());
-							//auditUser.setApprove_user(lastApproveUser.getApprove_user());
-							auditUser.setApprove_user(operatorId);
+							auditUser.setApprove_user(lastApproveUser.getApprove_user());
 							auditUser.setCreate_user(operatorId);
 							auditUser.setUpdate_user(operatorId);
 							
@@ -736,9 +702,9 @@ public class ApproveServiceImpl implements ApproveService{
 	
 	public WLApprove getApproveInfoByApproveId(String approveId){
 		List<Map<String,Object>> list = approveMapper.getApproveInfoByApproveId(approveId);
-		log.info("---getApproveInfoByApproveId---"+list.size());
-		if(list.isEmpty()){
+		if(list==null||list.size()==0||list.size()>1){
 			return null;
+ 
 		}
 		
 		Map<String,Object> map = list.get(0);
@@ -752,6 +718,8 @@ public class ApproveServiceImpl implements ApproveService{
 		String approve_node_code = map.get("NODE")==null?"":map.get("NODE").toString();	
 		String visit_level = map.get("VISIT_LEVEL")==null?"":map.get("VISIT_LEVEL").toString();
 		String function_type = map.get("FUNCTION_TYPE")==null?"":map.get("FUNCTION_TYPE").toString();
+		String next_approve_status = map.get("NEXT_PPROVE_STATUS")==null?"":map.get("NEXT_PPROVE_STATUS").toString();
+		String next_approve_id = map.get("NEXT_APPROVE_ID")==null?"":map.get("NEXT_APPROVE_ID").toString();
 		
 		WLApprove approve = new WLApprove();
 		
@@ -764,6 +732,8 @@ public class ApproveServiceImpl implements ApproveService{
 		approve.setVisit_level(visit_level);
 		approve.setBussiness_id(bussiness_id);
 		approve.setFunction_type(function_type);
+		approve.setNext_approve_status(next_approve_status);
+		approve.setNext_approve_id(next_approve_id);
 		
 		return approve;
 	}
@@ -807,10 +777,8 @@ public class ApproveServiceImpl implements ApproveService{
 	private WLApprove getLastApproveByApproveId(String approveId,boolean isUseRole){
 		List<Map<String,Object>> list = null;
 		if(isUseRole){
-			//撤回   根据审批记录id获取上一流程的提交记录  按角色
 			list = approveMapper.getLastApproveByApproveId(approveId);
 		}else{
-			//撤回   根据审批记录id获取上一流程的提交记录  按人
 			list = approveMapper.getLastApproveUserByApproveId(approveId);
 		}
 		
