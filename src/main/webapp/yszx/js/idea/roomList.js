@@ -146,7 +146,8 @@ roomList.initDataGrid = function(){
 			return;
 		}
 		var id = dataGrid.getCheckedIds();
-		var url = "/bg/yszx/updatePage?id="+id;
+		var status=checkedItems[0].approveState;
+		var url = "/bg/yszx/updatePage?id="+id+"&status="+status;
 		layer.open({
 			type:2,
 			title:'<h4 style="height:42px;line-height:25px;">参观预定修改 </h4>',
@@ -275,8 +276,12 @@ roomList.initDataGrid = function(){
 
 	}
 	messageForSubmit  =function (checkedIds,approvalUserd){
+		debugger;
+		var checkedItems = dataGrid.getCheckedItems(dataItems);
+		var   status=checkedItems[0].approveState;
+		var   approveId=checkedItems[0].approveId;
 			  $.ajax({
-				    url: "/bg/IdeaInfo/submitForStatus?ideaId="+checkedIds+"&approvalUserd="+approvalUserd,//删除
+				    url: "/bg/IdeaInfo/submitForStatus?ideaId="+checkedIds+"&approvalUserd="+approvalUserd+"&status="+status+"&approveId="+approveId,//删除
 					type: "post",
 					dataType:"json",
 					contentType: 'application/json',

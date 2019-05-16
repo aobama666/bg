@@ -25,6 +25,7 @@ import com.sgcc.bg.mapper.YSZXMapper;
 import com.sgcc.bg.yszx.Utils.NumberValidationUtil;
 import com.sgcc.bg.yszx.Utils.Pinyin;
 import com.sgcc.bg.yszx.bean.IdeaInfo;
+import com.sgcc.bg.yszx.bean.ReturnMessage;
 import com.sgcc.bg.yszx.bean.VisitInfo;
 import com.sgcc.bg.yszx.bean.CompanyUserInfo;
 import com.sgcc.bg.yszx.bean.CompanyLeaderInfo;
@@ -526,6 +527,13 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		 String visitorNumber = paramsMap.get("visitorNumber") == null ? "" : paramsMap.get("visitorNumber").toString(); //参观人数
 		 String companyUserNumber = paramsMap.get("companyUserNumber") == null ? "" : paramsMap.get("companyUserNumber").toString(); //陪同人数
 		 String approvalUserd = paramsMap.get("approvalUserd") == null ? "" : paramsMap.get("approvalUserd").toString();  //提交|保存
+		 String approveState = paramsMap.get("approveState") == null ? "" : paramsMap.get("approveState").toString();  //提交|保存
+		 String approveId = paramsMap.get("approveId") == null ? "" : paramsMap.get("approveId").toString();  //提交|保存
+		 
+			
+			
+		
+		 
 		 
 		 String applyDept= userInfoMap.get("deptId");
 		ideaInfo.setId(ideaId);
@@ -587,11 +595,15 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				  ideaInfo.setStatus("SAVE");
 				  yszxMapper.updataIdeaInfo(ideaInfo);
 			   }else if(visitLevel.equals("submit")){//提交
-				  ideaInfo.setStatus("DEPT_HEAD_CHECK");
-				  yszxMapper.updataIdeaInfo(ideaInfo);
-				  approveService.startApprove(false,"YSZX","SAVE",ideaId,approvalUserd,createUserId);
-				  
-        }
+				   ideaInfo.setStatus("DEPT_HEAD_CHECK");
+					  yszxMapper.updataIdeaInfo(ideaInfo);
+				  if(approveState.equals("RETURN")){
+					  approveService.sendApprove(false, approveId, "1", "", approvalUserd, createUserId);
+				  }else{
+					  approveService.startApprove(false,"YSZX","SAVE",ideaId,approvalUserd,createUserId);
+				  } 
+				 
+                }
 			
 		}
 		} catch (Exception e) {
@@ -876,28 +888,29 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	 * @return
 	 */
 	@Override
-	public List<Map<String, Object>> selectForIdeaInfo(String  applyId,String createTime ,int page_start,int page_end) {
-		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
-		String userid=  currentUser.getUserId();
-		List<Map<String, Object>>  privUserList=yszxMapper.selectForPrivUserId(userid,"YSZX");
-		List<Map<String, Object>>  ideaInfo = new ArrayList<Map<String, Object>>();
-		if(privUserList.isEmpty()){
-			return ideaInfo;
-		}else{
-			String   roleName=String.valueOf(privUserList.get(0).get("roleName"))  ;
-			if("部门管理专责".equals(roleName)){
-				  ideaInfo=yszxMapper.selectForIdeaInfo(applyId, userid, createTime,"",page_start,page_end);  
-			}else if("部门领导".equals(roleName)){
-				String type=currentUser.getType();
-				String applyDeptId="";
-				if("2".equals(type)){
-					 applyDeptId=currentUser.getpDeptId() ;
-				}else{
-					 applyDeptId=currentUser.getDeptId();
-				}
-				ideaInfo=yszxMapper.selectForIdeaInfo(applyId, "", createTime,applyDeptId,page_start,page_end);  
-			}
-		}
+	public List<Map<String, Object>> selectForIdeaInfo(String  applyId,String createTime,String deptId,int page_start,int page_end) {
+//		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
+//		String userid=  currentUser.getUserId();
+//		List<Map<String, Object>>  privUserList=yszxMapper.selectForPrivUserId(userid,"YSZX");
+//		List<Map<String, Object>>  ideaInfo = new ArrayList<Map<String, Object>>();
+//		if(privUserList.isEmpty()){
+//			return ideaInfo;
+//		}else{
+//			String   roleName=String.valueOf(privUserList.get(0).get("roleName"))  ;
+//			if("部门管理专责".equals(roleName)){
+//				
+//			}else if("部门领导".equals(roleName)){
+//				String type=currentUser.getType();
+//				String applyDeptId="";
+//				if("2".equals(type)){
+//					 applyDeptId=currentUser.getpDeptId() ;
+//				}else{
+//					 applyDeptId=currentUser.getDeptId();
+//				}
+//				ideaInfo=yszxMapper.selectForIdeaInfo(applyId, "", createTime,applyDeptId,page_start,page_end);  
+//			}
+//		}
+		List<Map<String, Object>>  ideaInfo=yszxMapper.selectForIdeaInfo(applyId,"",createTime,deptId,page_start,page_end);  
 		  List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
 		  if(!ideaInfo.isEmpty()){
 			  for(Map<String, Object>  idea:ideaInfo){
@@ -993,7 +1006,8 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 	    */								  
 		@Override
 		public Map<String, Object> selectForId(String id) {
-			 Map<String, Object>   ideaInfo = 	yszxMapper.selectForId(id);
+			   Map<String, Object>   ideaInfo = 	yszxMapper.selectForId(id);
+			  
 			 if(ideaInfo!=null){
 				String ideaId= Rtext.toStringTrim(ideaInfo.get("id"), "");
 				List<Map<String, Object>>  visitInfo = yszxMapper.selectForVisitInfo(ideaId);
@@ -1045,7 +1059,61 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 			 } 
 			return ideaInfo;
 		}
-		 
+		@Override
+		public Map<String, Object> selectForReturn(String id) {
+			 
+			   Map<String, Object>   ideaInfo = 	yszxMapper.selectForReturn(id);
+			 if(ideaInfo!=null){
+				String ideaId= Rtext.toStringTrim(ideaInfo.get("id"), "");
+				List<Map<String, Object>>  visitInfo = yszxMapper.selectForVisitInfo(ideaId);
+				if(!visitInfo.isEmpty()){
+					ideaInfo.put("visitInfo", visitInfo);
+				}
+				
+				String  applyId=String.valueOf(ideaInfo.get("applyId")) ;
+				applyId=Rtext.toStringTrim(applyId, "");
+				if("".equals(applyId)){
+					ideaInfo.put("wlApplyId", "");
+				}else{
+					List<Map<String, Object>>    wlApplyIdlist=yszxMapper.selectForwlApplyId(applyId);
+					if(wlApplyIdlist.isEmpty()){
+						ideaInfo.put("wlApplyId", "");
+					}else{
+						String  wlApproveId=Rtext.toStringTrim(wlApplyIdlist.get(0).get("wlApproveId"), "");
+						ideaInfo.put("wlApplyId", wlApproveId);
+					}
+				}
+				
+				
+				List<Map<String, Object>>  leaderInfo = yszxMapper.selectForCompanyLeaderInfo(ideaId,"");
+				if(!leaderInfo.isEmpty()){
+					String leaders="";
+					String userAlisas="";
+					for( Map<String, Object> leader:leaderInfo){
+						
+						String userId= Rtext.toStringTrim(leader.get("userId"), "");
+						if(userId!=""){
+							leaders+=userId+",";
+						} 
+						String userAlisa= Rtext.toStringTrim(leader.get("userAlisa"), "");
+						if(userAlisa!=""){
+							userAlisas+=userAlisa+",";
+						} 
+					}
+					String  userNames =leaders.trim();
+					String userName=userNames.substring(0, userNames.length()-1);
+					ideaInfo.put("leaderInfo", userName);
+					String  Alisas =userAlisas.trim();
+					String  Alisa=Alisas.substring(0, Alisas.length()-1);
+					ideaInfo.put("Alisa",  Alisa);
+				}
+				List<Map<String, Object>>  userInfo = yszxMapper.selectForCompanyUserInfo(ideaId,"");
+				if(!userInfo.isEmpty()){
+					ideaInfo.put("userInfo", userInfo);
+				}
+			 } 
+			return ideaInfo;
+		}
 		
 		
 		
@@ -1124,14 +1192,19 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		return jsonStr;
 	}
 	@Override
-	public String submitForStatus(String ideaId ,String approvalUserd ) {
+	public String submitForStatus(String ideaId ,String approvalUserd ,String status,String approveId) {
 		bgServiceLog.info("演示中心参观预定主页面删除----->提交开始" );
 		ResultWarp rw =  null;
 		try{
 			Map<String,String>  userInfoMap=userInfo();
 			String updateUser= userInfoMap.get("userId");
 			yszxMapper.submitForStatus(ideaId, "DEPT_HEAD_CHECK", updateUser, new Date());
-			approveService.startApprove(false,"YSZX","SAVE",ideaId,approvalUserd,updateUser);
+			if("SAVE".equals(status)){
+				approveService.startApprove(false,"YSZX","SAVE",ideaId,approvalUserd,updateUser);
+			}
+			else{
+				approveService.sendApprove(false, approveId, "1", "", approvalUserd, updateUser);
+			}
 			rw = new ResultWarp(ResultWarp.SUCCESS ,"提交成功");  
 		}catch(Exception e){
 			rw = new ResultWarp(ResultWarp.FAILED ,"提交失败");  
@@ -1268,6 +1341,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		List<Map<String, Object>>  privUserList=yszxMapper.selectForPrivUserId(userId,type);
 		return privUserList;
 	}
+	
 	
  	  
 		 

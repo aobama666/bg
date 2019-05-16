@@ -245,6 +245,7 @@
 				  REMARK as "remark",	
 	              (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=STATUS) as "status",
 	              STATUS as  "approveState",
+				  (SELECT  APPROVE_ID FROM TB_WL_APPLY  WHERE    ID=APPLY_ID) as "approveId",
 				  APPLY_ID as "applyId",	
 				  APPLY_NUMBER as "applyNumber",	 	 		
 				  VISIT_LEVEL as "visitLevel",	 	
@@ -366,8 +367,8 @@
  			  REMARK as "remark",	
               (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=STATUS) as "status",
               STATUS  as  "approveState",
+               (SELECT  APPROVE_ID FROM TB_WL_APPLY  WHERE    ID=APPLY_ID) as "approveId",
 			  APPLY_ID as "applyId",
-			       
  			  VISIT_LEVEL as "visitLevel",	 	
  			  VALID as "valId", 	
  			  CREATE_USER as "createUser",
@@ -379,6 +380,41 @@
 		</if>
 		 
 	</select>
+	
+	
+	
+	<select id="selectForReturn" resultType="java.util.Map">
+	 SELECT 
+ 		      UUID   as  "id",	    
+ 		      APPLY_DEPT  as "applyDeptId",
+               (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = APPLY_DEPT)   as "applyDept",
+               TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+               TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+ 			  CONTACT_USER as "contactUser",
+ 			  CONTACT_PHONE as "contactPhone", 		
+ 			  VISIT_UNIT_TYPE as "visitUnitType",	
+ 			  (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='visitunit_type' and vaild=1 and code=VISIT_UNIT_TYPE) as "visitUnitTypeName",  
+ 			  VISIT_UNIT_NAME as "visitUnitName",	
+ 			  VISITOR_NUMBER as "visitorNumber", 		
+ 			  COMPANY_USER_NUMBER as "companyUserNumber",	 
+ 			  REMARK as "remark",	
+              (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=STATUS) as "status",
+              STATUS  as  "approveState",
+               (SELECT  APPROVE_ID FROM TB_WL_APPLY  WHERE    ID=APPLY_ID) as "approveId",
+			  APPLY_ID as "applyId",
+ 			  VISIT_LEVEL as "visitLevel",	 	
+ 			  VALID as "valId", 	
+ 			  CREATE_USER as "createUser",
+ 			  TO_CHAR( CREATE_TIME,'YYYY-MM-DD') as "createTime",
+ 			  APPLY_NUMBER 	 as "applyNumber"	
+		  FROM TB_YSZX_IDEA	  where  VALID =  '1'
+		<if test="id!=null and id!=''">
+			and UUID  like '%'||#{id}||'%'
+		</if>
+		 
+	</select>
+	
+	
 	
 	
 	<select id="selectForwlApplyId" resultType="java.util.Map">
@@ -486,34 +522,34 @@
 	
 	<sql id="DealtInfo">
 	
-	 
-	     SELECT 
-            G.UUID   as  "id",	    
-            (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
-            TO_CHAR(  G.START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
-            TO_CHAR(  G.END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
-	        G.CONTACT_USER as "contactUser",
-		    G.CONTACT_PHONE as "contactPhone", 		
-		    G.VISIT_UNIT_TYPE as "visitUnitType",	 
-		    G.VISIT_UNIT_NAME as "visitUnitName",	
-		    G.VISITOR_NUMBER as "visitorNumber", 		
-		    G.COMPANY_USER_NUMBER as "companyUserNumber",	 
-		    G.REMARK as "remark",	
-           (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code= G.STATUS) as "status",
-           G.STATUS as  "approveState",
-		   G.APPLY_ID as "applyId",	
-		   G.APPLY_NUMBER as "applyNumber",	 	 		
-  	       G.VISIT_LEVEL as "visitLevel",	 	
-	       G.VALID as "valId", 	
-	       G.CREATE_USER as "createUser",
-	       TO_CHAR(  G.CREATE_TIME,'YYYY-MM-DD') as "createTime"	,
-           D.APPROVE_NODE as "approveNode",
-           D.ID  as "wlApproveId" ,
-           E.APPROVE_USER  as "approveUserId"
-         from    TB_YSZX_IDEA  G
-             LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'  
-             LEFT JOIN TB_WL_AUDIT_USER E ON D.ID=E.APPROVE_ID AND   E.VALID='1'
-          where   G.VALID='1'   and   G.APPLY_ID is not null     AND D.APPROVE_STATUS='0'  AND  D.AUDIT_FLAG='1'
+		   SELECT 
+		            G.UUID   as  "id",	    
+		            (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
+		            TO_CHAR(  G.START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+		            TO_CHAR(  G.END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+			        G.CONTACT_USER as "contactUser",
+				    G.CONTACT_PHONE as "contactPhone", 		
+				    G.VISIT_UNIT_TYPE as "visitUnitType",	 
+				    G.VISIT_UNIT_NAME as "visitUnitName",	
+				    G.VISITOR_NUMBER as "visitorNumber", 		
+				    G.COMPANY_USER_NUMBER as "companyUserNumber",	 
+				    G.REMARK as "remark",	
+		           (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code= G.STATUS) as "status",
+		           G.STATUS as  "approveState",
+				   G.APPLY_ID as "applyId",	
+				   G.APPLY_NUMBER as "applyNumber",	 	 		
+		  	       G.VISIT_LEVEL as "visitLevel",	 	
+			       G.VALID as "valId", 	
+			       G.CREATE_USER as "createUser",
+			       TO_CHAR(  G.CREATE_TIME,'YYYY-MM-DD') as "createTime"	,
+		           D.APPROVE_NODE as "approveNode",
+		           D.ID  as "wlApproveId" ,
+		           E.APPROVE_USER  as "approveUserId"
+		         from    TB_YSZX_IDEA G
+				                  LEFT JOIN TB_WL_APPLY AY1  ON AY1.ID = G.APPLY_ID AND AY1.VALID = '1'                    
+				                  LEFT JOIN TB_WL_APPROVE D ON D.ID = AY1.APPROVE_ID AND D.VALID = '1'
+				                  LEFT JOIN TB_WL_AUDIT_USER E ON E.APPROVE_ID = D.ID AND E.VALID = '1'
+		                      and   G.APPLY_ID is not null     AND D.APPROVE_STATUS='0'  AND  D.AUDIT_FLAG='1'
             <if test="pridept!=null and pridept!=''">
 			      and G.APPLY_DEPT  like '%'||#{pridept}||'%'
 		    </if>
@@ -563,6 +599,7 @@
 		    G.COMPANY_USER_NUMBER as "companyUserNumber",	 
 		    G.REMARK as "remark",	
            (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code= G.STATUS) as "status",
+           (SELECT SORT_ID FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code= G.STATUS) as "sortId",
            G.STATUS as  "approveState",
 		   G.APPLY_ID as "applyId",	
 		   G.APPLY_NUMBER as "applyNumber",	 	 		
@@ -572,10 +609,14 @@
 	       TO_CHAR(  G.CREATE_TIME,'YYYY-MM-DD') as "createTime"	,
            D.APPROVE_NODE as "approveNode",
            D.ID  as "wlApproveId" ,
+           D.NEXT_APPROVE_ID  as "nextwlApproveId" ,
+           D.APPROVE_STEP   as "approveStep",
            E.APPROVE_USER  as "approveUserId"
          from    TB_YSZX_IDEA  G
+             LEFT JOIN TB_WL_APPLY C  ON C.ID = G.APPLY_ID AND C.VALID = '1'   
              LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'   
              LEFT JOIN TB_WL_AUDIT_USER E ON D.ID=E.APPROVE_ID AND   E.VALID='1'
+             
           where   G.VALID='1'     and   G.STATUS!='RETURN'        and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='1'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL
             <if test="pridept!=null and pridept!=''">
 			      and G.APPLY_DEPT  like '%'||#{pridept}||'%'
