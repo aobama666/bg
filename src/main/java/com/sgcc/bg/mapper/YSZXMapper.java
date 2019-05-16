@@ -115,6 +115,12 @@ public interface YSZXMapper {
 	 */
 	public  Map<String, Object>  selectForId(@Param("id")String id);
 	/**
+	 * 查询退回数据数据查询
+	 * @param pro
+	 * @return
+	 */
+	public  Map<String, Object>  selectForReturn(@Param("id")String id);
+	/**
 	 * 根据用户id查询用户信息
 	 * @param pro
 	 * @return

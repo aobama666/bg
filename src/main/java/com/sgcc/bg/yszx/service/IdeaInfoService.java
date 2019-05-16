@@ -25,7 +25,7 @@ public interface IdeaInfoService {
 	 * @param pro
 	 * @return
 	 */
-	public List<Map<String, Object>>  selectForIdeaInfo(String  applyId,String createTime,int page_start,int page_end);
+	public List<Map<String, Object>>  selectForIdeaInfo(String  applyId,String createTime,String deptId,int page_start,int page_end);
 	
 	/**
 	 * 查询演示中心信息--修改
@@ -33,6 +33,26 @@ public interface IdeaInfoService {
 	 * @return
 	 */
 	public Map<String, Object> selectForId(String  id);
+	/**
+	 * 查询演示中心信息--返回信息的修改
+	 * @param pro
+	 * @return
+	 */
+	public Map<String, Object> selectForReturn(String  id);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * 根据用户id查询用户信息
 	 * @param pro
@@ -62,7 +82,7 @@ public interface IdeaInfoService {
 	 * @param pro
 	 * @return
 	 */
-	public String submitForStatus(String ideaId ,String approvalUserd);
+	public String submitForStatus(String ideaId ,String approvalUserd,String status,String approveId);
 	/**
 	 * 修改演示中心信息---主页信息的撤销
 	 * @param pro
@@ -121,6 +141,7 @@ public interface IdeaInfoService {
 	 * @return
 	 */
 	public  int  selectForideaNum(String applyNumber ,String createTime);
+	
 
 	/**
 	 * 修改演示中心信息--查询待办总数
