@@ -87,13 +87,18 @@ public class YSZXController {
 	 * @return
 	 */
 	@RequestMapping("/updatePage")
-	public ModelAndView projectUpdate(String id,  HttpServletRequest request) {
-		Map<String, Object> proInfo = ideaInfoService.selectForId(id);
+	public ModelAndView projectUpdate(String id,String status ,HttpServletRequest request) {
+		Map<String, Object> proInfo;
+		if("SAVE".equals(status)){
+			 proInfo = ideaInfoService.selectForId(id);
+		}else{
+			 proInfo = ideaInfoService.selectForReturn(id);
+		}
 		List<Map<String, String>>   dictData= dataDictionaryService.selectDictDataByPcode("visitunit_levle");
 		proInfo.put("visitUnitLevleInfo",dictData);
 		List<Map<String, String>>   visitUnitTypeList= dataDictionaryService.selectDictDataByPcode("visitunit_type");
 		proInfo.put("visitUnitTypeInfo", visitUnitTypeList);
-//		List<Map<String, String>>  approveList=approveService.selectForApproveID(approveId);
+
 		proInfo.put("approveInfo", "1");
 		ModelAndView model = new ModelAndView("yszx/yszx_idea_update", proInfo);
 		return model;

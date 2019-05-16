@@ -47,5 +47,17 @@
 		           and r.role_id = #{roleId}
 		           and r.user_id = u.userid)
     </select>   
+    <select id="getApproveUsersByDept" resultType="java.util.Map">
+	      select 
+	             ID,
+	             USER_ID,
+	             DEPT_ID,
+	             FUNCTION_TYPE
+		          from TB_PRIV_MGR_USER_R_DEPT 
+		         where VALID= '1'
+		           and DEPT_ID = #{deptId}
+		           and USER_ID = #{userId} 
+		           and FUNCTION_TYPE = #{type} 
+    </select>   
      
 </mapper>

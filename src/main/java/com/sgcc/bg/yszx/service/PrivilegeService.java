@@ -1,6 +1,7 @@
 package com.sgcc.bg.yszx.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.sgcc.bg.yszx.bean.UserPrivilege;
 
@@ -26,4 +27,11 @@ public interface PrivilegeService {
 	 * @return
 	 */
 	List<UserPrivilege> getApproveUsersByRole(String roleId );
+	/**
+	 * 获取负责部门信息
+	 * @param roleId
+	 * @param deptId
+	 * @return
+	 */
+	 Map<String,Object> getApproveUsersByDept(String deptId,String userId,String type );
 }

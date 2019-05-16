@@ -174,6 +174,9 @@ roomDetailInfo.messageResign =function(){
 roomDetailInfo.messageSave= function(approvalUserd){
 	   /* 主ID  */
 	    var id=$("#id").val();
+	    var approveId=$("#wlApproveId").val();
+	    var approveState=$("#approveState").val();
+	    approveState
 		/* 验证必填项   */
 		var validNull = dataForm.validNullable();
 		if(!validNull){
@@ -273,8 +276,6 @@ roomDetailInfo.messageSave= function(approvalUserd){
 	    	 }
 	    }
 	   
-	    
-	   
       var roomDetailFormData = roomAddInfoCommon.getFormDataInfo();
 	  roomDetailFormData.companyUserInfo=companyUserInfo ;
 	  roomDetailFormData.id=id;
@@ -293,6 +294,8 @@ roomDetailInfo.messageSave= function(approvalUserd){
 	  }
 	  var remark= $('#remark').val();
 	  roomDetailFormData.remark=remark;
+	  roomDetailFormData.approveId=approveId;
+	  roomDetailFormData.approveState= approveState;
 	  roomDetailFormData.visitinfo=visitinfo;
 	 /* 保存方法 */
 	  if(msginfo=="save"){

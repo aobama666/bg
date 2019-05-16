@@ -24,6 +24,7 @@
     <input type = "hidden" value = "${id}" id = "id" name="id">  
     <input type = "hidden" value = "${approveState}" id = "approveState" name="approveState">  
     <input type = "hidden" value = "${applyId}" id = "applyId" name="applyId">  
+    <input type = "hidden" value = "${wlApproveId}" id = "wlApproveId" name="wlApproveId">  
 	<div class="main_div"></div>
 	<!-- start  头部 -->
 	<!-- <div class="sheach details">
@@ -155,45 +156,7 @@
 					        </c:forEach>
 			        	</select>
 					</td>
-				</tr>
-				<tr >
-					<td>
-						<input type="checkbox"   id="visitId"  name = "visitId"  class="visitid"  value = "" />
-					</td>
-					<td class="addInputStyle"    >
-						<input type="text"    id="visitUserName"  name = "visitUserName"  class="visitUsername"  title="必填项 ,中文或英文 "/>
-					</td>
-					<td class="addInputStyle"   >
-						<input type="text" id="visitPosition"  name = "visitPosition"  class="visitposition"  title="必填项,字段长度不能超过 150 "/>
-					</td>
-					<td class="addInputStyle">
-						<select name = "userLevel" id="userLevel"  class = "changeQuery userlevel"  title="必填项  "  >
-					        <option value=""  >请选择参观领导级别</option>
-						    <c:forEach  var="visitUnitLevleInfo"  items="${visitUnitLevleInfo}">
-					              <option value ="${visitUnitLevleInfo.K}"   > ${visitUnitLevleInfo.V}</option>
-					        </c:forEach>
-			        	</select>
-					</td>
-				</tr>		 
-				<tr >
-					<td>
-						<input type="checkbox"   id="visitId"  name = "visitId"  class="visitid"  value = "" />
-					</td>
-					<td class="addInputStyle"    >
-						<input type="text"    id="visitUserName"  name = "visitUserName"  class="visitUsername"  title="必填项 ,中文或英文 "/>
-					</td>
-					<td class="addInputStyle"   >
-						<input type="text" id="visitPosition"  name = "visitPosition"  class="visitposition"  title="必填项,字段长度不能超过 150 "/>
-					</td>
-					<td class="addInputStyle">
-						<select name = "userLevel" id="userLevel"  class = "changeQuery userlevel"  title="必填项  "  >
-					        <option value=""  >请选择参观领导级别</option>
-						    <c:forEach  var="visitUnitLevleInfo"  items="${visitUnitLevleInfo}">
-					              <option value ="${visitUnitLevleInfo.K}"   > ${visitUnitLevleInfo.V}</option>
-					        </c:forEach>
-			        	</select>
-					</td>
-				</tr>		 		 
+				</tr>	 		 
 			</table>
 		</div>
 	</div>
@@ -237,39 +200,8 @@
 					<th title="请点击添加按钮，添加用户" >姓名</th>
 					<th  title="请点击添加按钮，添加用户">职务</th>
 				</tr>
-			     <tr class="model_tr_userInfo">
-					<td>
-						<input type="checkbox"   id = "userId"  name="userId" class="userId" > 
-					</td>
-					<td class="addInputStyle"    >
-						<input type="text"    id="UserName" name="UserName"   disabled    title="请点击添加按钮，添加用户" />
-					</td>
-					<td class="addInputStyle"   >
-						<input type="text" id="Position" name="Position"    disabled   title="请点击添加按钮，添加用户"/>
-					</td>
-				</tr>  	
-				<tr class="model_tr_userInfo">
-					<td>
-						<input type="checkbox"   id = "userId"  name="userId" class="userId" > 
-					</td>
-					<td class="addInputStyle"    >
-						<input type="text"    id="UserName" name="UserName"   disabled    title="请点击添加按钮，添加用户" />
-					</td>
-					<td class="addInputStyle"   >
-						<input type="text" id="Position" name="Position"    disabled   title="请点击添加按钮，添加用户"/>
-					</td>
-				</tr>  	
-				<tr class="model_tr_userInfo">
-					<td>
-						<input type="checkbox"   id = "userId"  name="userId" class="userId" > 
-					</td>
-					<td class="addInputStyle"    >
-						<input type="text"    id="UserName" name="UserName"   disabled    title="请点击添加按钮，添加用户" />
-					</td>
-					<td class="addInputStyle"   >
-						<input type="text" id="Position" name="Position"    disabled   title="请点击添加按钮，添加用户"/>
-					</td>
-				</tr>  	
+			   
+				 
 			</table>
 		</div>
 	</div>

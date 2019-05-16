@@ -397,6 +397,57 @@ public class ApproveServiceImpl implements ApproveService{
 		returnMessage.setMessage(message);
 		return returnMessage;
 	}
+	/**
+	 * 撤销已办的数据到待办页面
+	 * 参数：
+	 * isUseRole：是否按照角色发送待办 true 是 false 按照历史提交
+	 * approveId：待办查询数据审批ID
+	 * operatorId 当前登录人信息
+	 * */
+	
+	public ReturnMessage newRecallApprove(boolean isUseRole,String approveId,String operatorId) {
+		ReturnMessage returnMessage = new ReturnMessage();
+		//执行结果  success 成功  failure 失败
+		boolean result = false;
+		//返回消息
+		String message = "";
+		try{
+			//获取审批记录      审批表、申请表、业务表 基本信息
+			//说明:判断当前查询的是否额外已办数据
+			WLApprove approveInfo = getApproveInfoByApproveId(approveId);
+			if("0".equals(approveInfo.getApprove_status())){
+				message = "该待办未处理！";
+				returnMessage.setResult(result);
+				returnMessage.setMessage(message);
+				return returnMessage;
+			}
+			//获取业务信息
+			//说明： 主页信息IDEA
+			Map<String, Object> ideaInfoMap = ideaServcie.selectForId(approveInfo.getBussiness_id());
+			//获取上一节点信息
+			//说明：根据isUseRole判断    撤回   根据审批记录id获取上一流程的提交记录  按人
+			WLApprove lastApprove = getLastApproveByApproveId(approveId,isUseRole);
+			//
+			//
+			WLApproveRule approveRule = getApproveRuleById(lastApprove.getApprove_node());
+			
+			
+			
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public ReturnMessage recallApprove(boolean isUseRole,String approveId,String operatorId) {
 		ReturnMessage returnMessage = new ReturnMessage();
@@ -433,9 +484,12 @@ public class ApproveServiceImpl implements ApproveService{
 				recall_audit_flag = "0";
 			}	
 			String approve_node_current = lastApproveUser.getApprove_node();
+			//更新当前节点
 			approveMapper.updateApproveById(id, approve_user, approve_date, approve_result, approve_remark,recall_audit_flag,approve_node_current);			
+			
 			//处理当前节点-待办
 			if("1".equals(approveInfo.getAudit_flag())){
+				//声明当前的下一节点
 				approveMapper.updateAuditByApproveId(approveInfo.getId(), "none_user", operatorId);
 				
 				//撤销待办
@@ -478,11 +532,11 @@ public class ApproveServiceImpl implements ApproveService{
 				
 				if("APPROVAL_SUBMIT".equals(approveRule.getApproveRole())){//提交人
 					//不发待办
-				}
-				else{ 
+				}else{ 
 					String functionType = approveInfo.getFunction_type();
 					String bussinessId = approveInfo.getBussiness_id();
 					String applyId = approveInfo.getApply_id();
+					//是否按照角色发送待办 true 是 false 按照历史提交人
 					if(isUseRole){
 						List<Map<String,Object>> list = authMapper.getApproveUsersByRoleAndDept(approveRule.getApproveRoleId(),deptId);
 						if(list!=null&&list.size()>0){
@@ -497,6 +551,7 @@ public class ApproveServiceImpl implements ApproveService{
 									WLAuditUser auditUser = new WLAuditUser();
 									auditUser.setApprove_id(nextApprove.getId());
 									auditUser.setApprove_user(userId);
+									auditUser.setApprove_user(operatorId);
 									auditUser.setCreate_user(operatorId);
 									auditUser.setUpdate_user(operatorId);
 									
@@ -521,7 +576,8 @@ public class ApproveServiceImpl implements ApproveService{
 						if(lastApproveUser!=null){
 							WLAuditUser auditUser = new WLAuditUser();
 							auditUser.setApprove_id(nextApprove.getId());
-							auditUser.setApprove_user(lastApproveUser.getApprove_user());
+							//auditUser.setApprove_user(lastApproveUser.getApprove_user());
+							auditUser.setApprove_user(operatorId);
 							auditUser.setCreate_user(operatorId);
 							auditUser.setUpdate_user(operatorId);
 							
@@ -751,8 +807,10 @@ public class ApproveServiceImpl implements ApproveService{
 	private WLApprove getLastApproveByApproveId(String approveId,boolean isUseRole){
 		List<Map<String,Object>> list = null;
 		if(isUseRole){
+			//撤回   根据审批记录id获取上一流程的提交记录  按角色
 			list = approveMapper.getLastApproveByApproveId(approveId);
 		}else{
+			//撤回   根据审批记录id获取上一流程的提交记录  按人
 			list = approveMapper.getLastApproveUserByApproveId(approveId);
 		}
 		
