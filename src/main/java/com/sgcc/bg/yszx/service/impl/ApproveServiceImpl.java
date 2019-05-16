@@ -428,7 +428,7 @@ public class ApproveServiceImpl implements ApproveService{
 			//获取业务信息
 			Map<String, Object> ideaInfoMap = ideaServcie.selectForId(approveInfo.getBussiness_id());
 			//获取上一节点信息
-			WLApprove lastApprove = getLastApproveByApproveId(approveId,isUseRole);			
+			WLApprove lastApprove = getLastApproveByApproveId(approveInfo.getNext_approve_id(),true);			
 			WLApproveRule approveRule = getApproveRuleById(lastApprove.getApprove_node());
 			//更新当前节点   撤回
 			WLApprove lastApproveUser = getLastApproveByApproveId(approveId,false);
@@ -642,7 +642,7 @@ public class ApproveServiceImpl implements ApproveService{
 	}
 		
 
-	private WLApproveRule getApproveRuleByNodeName(String functionType,String nodeName,String status,String condition){
+	public WLApproveRule getApproveRuleByNodeName(String functionType,String nodeName,String status,String condition){
 		List<Map<String,Object>> list = approveMapper.getApproveRuleByNodeName(functionType,nodeName,status,condition);
 		if(list==null||list.size()==0||list.size()>1){
 			return null;
