@@ -109,7 +109,6 @@ border-color:#00828a;
 	<div class="button-box">
 		<button type="button" class="btn btn-success btn-xs" onclick="reLoadTree()"> 查询</button>
 		<button type="button" class="btn btn-primary btn-xs" onclick="selected()"> 确认</button>
-		<button type="button" class="btn btn-warning btn-xs" onclick="clearChecked()"> 清空</button>
 	</div>
 </div>
 <hr>

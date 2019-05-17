@@ -1301,10 +1301,8 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		return yszxMapper.selectForApplyStatus(applyStatus);
 	}
 	@Override
-	public int  selectForideaNum(String applyNumber, String createTime) {
-		Map<String,String>  userInfoMap=userInfo();
-		String userId= userInfoMap.get("userId");
-		Map<String, Object>    map=yszxMapper.selectForideaNum(applyNumber,userId,createTime,"");
+	public int  selectForideaNum(String applyNumber, String createTime,String deptId) {
+		Map<String, Object>    map=yszxMapper.selectForideaNum(applyNumber,"",createTime,deptId);
 		Object  num=map.get("countNum");
 		String countNum=num+"";
 		int countNums=Integer.valueOf(countNum);

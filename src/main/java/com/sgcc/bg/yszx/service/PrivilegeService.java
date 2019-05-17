@@ -3,6 +3,8 @@ package com.sgcc.bg.yszx.service;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.sgcc.bg.yszx.bean.UserPrivilege;
 
 public interface PrivilegeService {
@@ -34,4 +36,11 @@ public interface PrivilegeService {
 	 * @return
 	 */
 	 Map<String,Object> getApproveUsersByDept(String deptId,String userId,String type );
+		/**
+		 * 获取用户所属的角色
+		 * @param roleId
+		 * @param deptId
+		 * @return
+		 */
+	 public List<Map<String,Object>> getRuleByNode( String type , String node );
 }

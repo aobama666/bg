@@ -13,5 +13,5 @@ public interface AuthMapper {
 	public List<Map<String,Object>> getApproveUsersByRoleAndDept(@Param("roleId")String roleId,@Param("deptId")String deptId);
 	public List<Map<String,Object>> getApproveUsersByRole(@Param("roleId")String roleId );
 	public Map<String,Object> getApproveUsersByDept( @Param("deptId")String deptId ,@Param("userId")String userId   ,@Param("type")String type  );
-
+	public List<Map<String,Object>> getRuleByNode(@Param("type")String type ,@Param("node")String node );
 }

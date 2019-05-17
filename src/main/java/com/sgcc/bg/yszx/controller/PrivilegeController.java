@@ -2,7 +2,7 @@ package com.sgcc.bg.yszx.controller;
 
 import java.util.ArrayList;
 import java.util.List;
- 
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.sgcc.bg.common.CommonCurrentUser;
+import com.sgcc.bg.common.ConfigUtils;
 import com.sgcc.bg.common.ResultWarp;
+import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.yszx.bean.UserPrivilege;
- 
+import com.sgcc.bg.yszx.bean.WLApproveRule;
 import com.sgcc.bg.yszx.service.PrivilegeService;
 
 @Controller
@@ -39,13 +41,12 @@ public class PrivilegeController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getApproveUserByUserName", method = RequestMethod.POST)
-	public String getApproveUserByUserName(String approveState,String type){
+	public String getApproveUserByUserName(String approveState,String type ){
 		
 		Privilegelog.info("getApproveUserByUserName审批人信息的查询---->"+approveState);
 		ResultWarp rw =  null;
-		String roleId="";
-		 
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
+		String userId=  currentUser.getUserId();
 		String currenttype=currentUser.getType();
 		String deptId="";
 		if("2".equals(currenttype)){
@@ -55,25 +56,32 @@ public class PrivilegeController {
 		} 
 		List<UserPrivilege>  list = new ArrayList<UserPrivilege>();
 		if("submit".equals(type)){
-			roleId="866725924A9CBFB1E0536C3C550A0773";
+			 List<Map<String, Object>>	ruleList=privilegeService.getRuleByNode("YSZX", "SAVE");
+			 String roleId=Rtext.toStringTrim(ruleList.get(0).get("APPROVE_ROLE"), "");
+			// roleId="866725924A9CBFB1E0536C3C550A0773";
 			 list=privilegeService.getApproveUserByUserName(roleId,deptId);
 		}else{
 			if(approveState.equals("DEPT_HEAD_CHECK")){
-				   roleId="866725924A9DBFB1E0536C3C550A0773";
+				   List<Map<String, Object>>	ruleList=privilegeService.getRuleByNode("YSZX", approveState);
+				   String roleId=Rtext.toStringTrim(ruleList.get(0).get("APPROVE_ROLE"), "");
+				  // roleId="866725924A9DBFB1E0536C3C550A0773";
 				   list=privilegeService.getApproveUsersByRole(roleId );
 			}else if(approveState.equals("MANAGER_DEPT_DUTY_CHECK")){
-				  roleId="866725924A9EBFB1E0536C3C550A0773";
+				   List<Map<String, Object>>	ruleList=privilegeService.getRuleByNode("YSZX", approveState);
+				   String roleId=Rtext.toStringTrim(ruleList.get(0).get("APPROVE_ROLE"), "");
+				 // roleId="866725924A9EBFB1E0536C3C550A0773";
 				  list=privilegeService.getApproveUsersByRole(roleId );
 			} 
 			 
 		}
-		Privilegelog.info("roleId--->"+roleId+"---deptId--->"+deptId);
+		 
  
+			 
 		
 		
-
+	
 		if(list.isEmpty()){
-			  rw = new ResultWarp(ResultWarp.FAILED ,"查询失败"); 
+			
 		}else{
 			  rw = new ResultWarp(ResultWarp.SUCCESS ,"查询成功");
 			  rw.addData("userPrivilege", list);
