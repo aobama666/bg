@@ -1130,7 +1130,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		    	List<Map<String, String>> UserInfoList=new ArrayList<Map<String, String>>();
 				String[] userIdArr = userId.split(",");
 				for (String userid : userIdArr) {
-							Map<String, String> userInfo=yszxMapper.selectForuserName(userid);
+							Map<String, String> userInfo=yszxMapper.getUserId(userid);
 							UserInfoList.add(userInfo);
 				}
 

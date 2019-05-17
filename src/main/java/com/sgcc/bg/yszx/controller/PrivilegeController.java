@@ -58,19 +58,16 @@ public class PrivilegeController {
 		if("submit".equals(type)){
 			 List<Map<String, Object>>	ruleList=privilegeService.getRuleByNode("YSZX", "SAVE");
 			 String roleId=Rtext.toStringTrim(ruleList.get(0).get("APPROVE_ROLE"), "");
-			// roleId="866725924A9CBFB1E0536C3C550A0773";
 			 list=privilegeService.getApproveUserByUserName(roleId,deptId);
 		}else{
 			if(approveState.equals("DEPT_HEAD_CHECK")){
 				   List<Map<String, Object>>	ruleList=privilegeService.getRuleByNode("YSZX", approveState);
 				   String roleId=Rtext.toStringTrim(ruleList.get(0).get("APPROVE_ROLE"), "");
-				  // roleId="866725924A9DBFB1E0536C3C550A0773";
-				   list=privilegeService.getApproveUsersByRole(roleId );
+				   list=privilegeService.getApproveUsersByRole(roleId);
 			}else if(approveState.equals("MANAGER_DEPT_DUTY_CHECK")){
 				   List<Map<String, Object>>	ruleList=privilegeService.getRuleByNode("YSZX", approveState);
 				   String roleId=Rtext.toStringTrim(ruleList.get(0).get("APPROVE_ROLE"), "");
-				 // roleId="866725924A9EBFB1E0536C3C550A0773";
-				  list=privilegeService.getApproveUsersByRole(roleId );
+				   list=privilegeService.getApproveUsersByRole(roleId);
 			} 
 			 
 		}
@@ -81,7 +78,7 @@ public class PrivilegeController {
 		
 	
 		if(list.isEmpty()){
-			
+			  rw = new ResultWarp(ResultWarp.FAILED ,"查询失败");
 		}else{
 			  rw = new ResultWarp(ResultWarp.SUCCESS ,"查询成功");
 			  rw.addData("userPrivilege", list);
