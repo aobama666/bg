@@ -220,24 +220,7 @@ public class DateUtil {
     }
   
     
-    /**
-   	 * 校验时间合法
-   	 * @param s
-   	 * @param format
-   	 * @return
-   	 */
-       public static String isGetDate(String time){
-       	try{
-       		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    		df.setLenient(false);
-    		Date date = df.parse(time);
-       		SimpleDateFormat sf= new SimpleDateFormat("HH:mm:ss");
-       		return 	sf.format(date);
-       	}catch(Exception e){
-       		return "00:00:00";
-       	}
-   		
-       }
+ 
        /**
       	 * 校验时间合法
       	 * @param s
@@ -349,6 +332,62 @@ public class DateUtil {
 		}
 		
 	}
+	 /**
+   	 * 校验时间合法
+   	 * @param s
+   	 * @param format
+   	 * @return
+   	 */
+       public static String isGetDate(String time){
+       	try{
+       		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    		df.setLenient(false);
+    		Date date = df.parse(time);
+       		SimpleDateFormat sf= new SimpleDateFormat("HH:mm:ss");
+       		return 	sf.format(date);
+       	}catch(Exception e){
+       		return "00:00:00";
+       	}
+   		
+       }
+	/**
+	 * 判断一个时间是否在一个时间段中
+	 * @param date1 日期1
+	 * @param date2 日期2
+	 * @return 
+	 * @throws ParseException
+	 */
+	public static boolean toHms(String newtime,String beginTime,String endTime) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		Date beginDatas = sdf.parse(beginTime);
+		Date endDatas = sdf.parse(endTime);
+		String	newData=isGetDate(newtime);
+		Date newDatas = sdf.parse(newData);
+		if(beginDatas.getTime()<newDatas.getTime()&&newDatas.getTime()<endDatas.getTime()){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	 public static void main(String[] args) {
+		    String startTime="08:30:00";
+		    String endTime="11:30:00";
+		    String newTime="2018-08-09 11:20";
+		    boolean flag = false;
+			try {
+				flag = toHms(newTime,startTime,endTime);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block	 
+			}
+		 
+	       	System.out.print(flag);
+	   	}
+	
+	
+	
+	
+	
 	/**
 	 * 判断两个日期的大小
 	 * @param date1 日期1
@@ -460,13 +499,6 @@ public class DateUtil {
 		}
 	  
 	  
-	 public static void main(String[] args) {
-		   
-		    String startTime="2019-04-12 08:32:00";
-		    String endTime="2019-04-12 09:50:00";
-		    boolean flag =getMinuteSub(startTime,endTime,30);
-		 
-	       	System.out.print(flag);
-	   	}
+
    
 }

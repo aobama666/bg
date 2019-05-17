@@ -228,13 +228,75 @@
 		</div>
 		
 	</div>
+	<div class="contentBox" id="Approves">
+		<h4 class="tableTitle">
+			<span title = "审批记录">审批记录：</span>
+		</h4>
+		<div class="btnBox"   style="height:20px;"  >
+			 
+		</div>
+		<div class="maxBox">
+			<table class="ApproveInfo tableStyle thTableStyle" style="margin:10px 0 20px;">
+				<tr>
+					<th  title="审批人姓名" >审批人姓名</th>
+					<th   title="审批部门单位" >审批部门单位</th>
+					<th   title="审批意见" >审批意见</th>
+					<th   title="审批时间" >审批时间</th>
+					<th   title="下一环节审批人角色" >下一环节审批人角色</th>
+					<th   title="下一环节审批人姓名" >下一环节审批人姓名</th>
+					<th   title="下一环节审批人联系方式" >下一环节审批人联系方式</th>
+				</tr>
+				<c:forEach  var="approveInfo"  items="${approveInfo}">
+				<tr>
+					<td class="addInputStyle" >
+						<span class="detailsLeft"> ${approveInfo.approveUserAlias}</span>
+						<%-- <input type="text"  disabled    id="approveUserAlias" name="approveUserAlias"  class="approveUserAlias" value = "${approveInfo.approveUserAlias}"  title=""  /> --%>
+					</td>
+					<td class="addInputStyle">
+						<span class="detailsLeft"> ${approveInfo.approveDeptName}</span>
+						<%-- <input type="text"  disabled    id="approveDeptName" name="approveDeptName" class="approveDeptName" value = "${approveInfo.approveDeptName}"  title=""   /> --%>
+					</td>
+					<td class="addInputStyle">
+						<span class="detailsLeft"> ${approveInfo.approveResultName}</span>
+						<%-- <input type="text"  disabled    id="approveResultName" name="approveResultName" class="approveResultName" value = "${approveInfo.approveResultName}"  title=""   /> --%>
+					</td>
+					<td class="addInputStyle">
+						<span class="detailsLeft"> ${approveInfo.approveDate}</span>
+						<%-- <input type="text"  disabled    id="approveDate" name="approveDate" class="approveDate" value = "${approveInfo.approveDate}"  title=""   /> --%>
+					</td>
+					<td class="addInputStyle">
+						<span class="detailsLeft"> ${approveInfo.nodeName}</span>
+					<%-- 	<input type="text"  disabled    id="approveDate" name="approveDate" class="approveDate" value = "${approveInfo.nodeName}"  title=""   /> --%>
+					</td>
+					<td class="addInputStyle">
+						<span class="detailsLeft"> ${approveInfo.nextapproveUserAlias}</span>
+						<%-- <input type="text"  disabled    id="nextapproveUserAlias" name="nextapproveUserAlias" class="nextapproveUserAlias" value = "${approveInfo.nextapproveUserAlias}"  title=""   /> --%>
+					</td>
+					<td class="addInputStyle">
+						<span class="detailsLeft"> ${approveInfo.nextapprovePhone}</span>
+						<%-- <input type="text"  disabled    id="nextapprovePhone" name="nextapprovePhone" class="nextapprovePhone" value = "${approveInfo.nextapprovePhone}"  title=""   /> --%>
+					</td>
+				</tr>
+			    </c:forEach>
+				
+			</table>
+		</div>
+	</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	 
 	 
 	<div class="btnContent">
  	    <button type="button" class="btn" onclick="agreeEvent()" >同意</button>
 		<button type="button" class="btn" onclick="returnEvent()">退回</button>
 		<button type="button" class="btn" onclick="messageResign()">返回</button>	 
-		 
 	</div>
 	
 	
@@ -415,7 +477,6 @@
 	 						success: function (data) {
 	 							if(data.success == "true"){
 	 								messager.tip("审批成功",1000);
-	 								 
 	 								messageResign();
 	 							}else{
 	 								messager.tip("审批失败失败",1000);

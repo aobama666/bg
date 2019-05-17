@@ -13,11 +13,7 @@ import com.sgcc.bg.yszx.service.PrivilegeService;
 public class PrivilegeServiceImpl implements PrivilegeService{
 	@Autowired
 	private AuthMapper authMapper;
-	@Override
-	public List<UserPrivilege> getUserManagerPrivilegeByUserName(String userName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+ 
 
 	@Override
 	public List<UserPrivilege> getApproveUserByUserName(String roleId, String deptId) {
@@ -66,6 +62,16 @@ public class PrivilegeServiceImpl implements PrivilegeService{
 		}
 	    return list;
 	}
+	
+	
+	@Override
+	public List<Map<String, Object>> getPrivMgrByUserId(String userId, String type) {
+		List<Map<String,Object>>   list=authMapper.getPrivMgrByUserId(userId, type);
+		return list;
+	}
+	
+	
+	
 	@Override
 	public Map<String,Object> getApproveUsersByDept(String deptId, String userId, String type) {
 		Map<String, Object>   map=authMapper.getApproveUsersByDept(deptId, userId, type);
@@ -76,5 +82,7 @@ public class PrivilegeServiceImpl implements PrivilegeService{
 		List<Map<String,Object>>   list=authMapper.getRuleByNode(type, node);
 		return list;
 	}
+
+	
 
 }

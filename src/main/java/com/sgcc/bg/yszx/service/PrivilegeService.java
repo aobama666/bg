@@ -9,26 +9,26 @@ import com.sgcc.bg.yszx.bean.UserPrivilege;
 
 public interface PrivilegeService {
 	/**
-	 * 获取用户管理部门
-	 * @param userName
-	 * @return
-	 */
-	List<UserPrivilege> getUserManagerPrivilegeByUserName(String userName);
-	
-	/**
-	 * 获取审批用户
+	 * 审批用户的查询部门领导查询查询
 	 * @param roleId
 	 * @param deptId
 	 * @return
 	 */
 	List<UserPrivilege> getApproveUserByUserName(String roleId,String deptId);
 	/**
-	 * 获取审批用户
+	 * 审批用户的查询归口部门专责和归口部门领导专责的查询
 	 * @param roleId
 	 * @param deptId
 	 * @return
 	 */
 	List<UserPrivilege> getApproveUsersByRole(String roleId );
+	/**
+	 * 管理用户查询对应的部门信息
+	 * @param roleId
+	 * @param deptId
+	 * @return
+	 */
+	 List<Map<String,Object>>  getPrivMgrByUserId(String userId,String type);
 	/**
 	 * 获取负责部门信息
 	 * @param roleId

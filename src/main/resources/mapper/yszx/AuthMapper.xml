@@ -5,7 +5,8 @@
 	id:必须与对应接口的某个对应的方法名一致
  -->
 <mapper namespace="com.sgcc.bg.yszx.mapper.AuthMapper">
-	<!--  根据当前节点获取审批规则-->
+
+	<!--  审批用户的查询部门领导查询查询-->
     <select id="getApproveUsersByRoleAndDept" resultType="java.util.Map">
 		select 
 		  U.USERID,
@@ -29,7 +30,9 @@
 		           and p.dept_id = #{deptId}
 		           and p.user_id = u.userid)
     </select>  
-        <select id="getApproveUsersByRole" resultType="java.util.Map">
+    
+    <!-- 审批用户的查询归口部门专责和归口部门领导专责的查询-->
+    <select id="getApproveUsersByRole" resultType="java.util.Map">
 		select 
 		  U.USERID,
 		  U.USERNAME,
@@ -47,7 +50,26 @@
 		           and r.role_id = #{roleId}
 		           and r.user_id = u.userid)
     </select>   
-    <select id="getApproveUsersByDept" resultType="java.util.Map">
+    
+     <!-- 管理用户查询对应的部门信息 -->
+     <select id="getPrivMgrByUserId" resultType="java.util.Map">
+	        select 
+	              T.ID,
+	              T.USER_ID,
+	              T.DEPT_ID,
+                  D.DEPTNAME,
+                  D.TYPE,
+	              T.FUNCTION_TYPE
+		    from  TB_PRIV_MGR_USER_R_DEPT T
+		    INNER JOIN   BG_SYS_DEPT D ON  T.DEPT_ID=D.DEPTID 
+		    where T.VALID= '1' AND  D.VALID= '1'
+		          and USER_ID = #{userId} 
+		          and FUNCTION_TYPE = #{type} 
+      </select>   
+    
+    
+    
+      <select id="getApproveUsersByDept" resultType="java.util.Map">
 	      select 
 	             ID,
 	             USER_ID,
