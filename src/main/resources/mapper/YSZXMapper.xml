@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sgcc.bg.mapper.YSZXMapper">
-    <!---------------------------TB_YSZX_IDEA操作--------------------------------------------->
+   
     <!--预定申请的添加TB_YSZX_IDEA-->
 	<insert id="addIdeaInfo"  parameterType="com.sgcc.bg.yszx.bean.IdeaInfo">
 		INSERT INTO TB_YSZX_IDEA ( 
@@ -118,9 +118,18 @@
 			<if test="createTime!=null and createTime!=''">
 				and TO_CHAR(CREATE_TIME,'YYYY-MM')  like '%'||#{createTime}||'%'
 			</if>
+			<!--
 			<if test="applyDept!=null and applyDept!=''">
 				and APPLY_DEPT  like '%'||#{applyDept}||'%'
 			</if>
+			-->
+			<if test="null != applyDepts and applyDepts.size > 0">
+			   AND  APPLY_DEPT IN
+			<foreach collection="applyDepts" item="deptId" open="(" separator="," close=")">
+            	#{deptId,jdbcType=VARCHAR}
+        	</foreach>
+		    </if>
+			
 				ORDER BY  CREATE_TIME     DESC
     </sql>
     
@@ -247,7 +256,7 @@
 	
 	
 	
-	<!---------------------------TB_YSZX_VISITA操作--------------------------------------------->
+ 
 	
 	
 	<!--预定审批参观领导的添加-->
@@ -326,7 +335,7 @@
 	
 	
 	
-	<!---------------------------TB_YSZX_COMPANY_LEADER操作--------------------------------------------->
+ 
 	
 
 	<!--预定审批陪同领导的添加-->
@@ -400,9 +409,7 @@
 		  </if>
       ORDER BY  U.SORTID
 	</select>	
-	
-	<!---------------------------TB_YSZX_COMPANY_USER操作--------------------------------------------->
-	
+ 
 	
 
 	<!--预定审批陪同部门人员信息的添加-->
@@ -463,8 +470,7 @@
 	</select>	
 	
 	
-	<!---------------------------待办操作--------------------------------------------->
-	
+ 	
 	
 	<!--待办查询公共sql-->
 	<sql id="DealtInfo">
@@ -529,9 +535,6 @@
 	</select>	
 	
 	
-	
-	
-	<!---------------------------已办操作--------------------------------------------->
 	
     <!--已办查询公共sql-->
     <sql id="AlreadytInfo">
@@ -598,11 +601,9 @@
 	<!--已办分页查询数量-->
 	<select id="selectForAlreadytNum" resultType="java.util.Map">
            SELECT    COUNT(1)  AS "countNum"  from(<include refid="AlreadytInfo"/>) 
+	</select>	
 	
-	
-	<!---------------------------综合操作--------------------------------------------->
-	
-	<!--综合查询公共sql-->
+ 	<!--综合查询公共sql-->
 	<sql id="ComprehensiveInfo">
 	    SELECT  *　FROM (
 	    SELECT 
@@ -654,8 +655,11 @@
 			  TO_CHAR( G.CREATE_TIME,'YYYY-MM-DD') as "createTime"
 		    FROM TB_YSZX_IDEA   G
 		    WHERE  G.VALID =  '1'
-		    <if test="pridept!=null and pridept!=''">
-			      and G.APPLY_DEPT  like '%'||#{pridept}||'%'
+		   <if test="null != applyDepts and applyDepts.size > 0">
+			   AND  G.APPLY_DEPT  IN
+				<foreach collection="applyDepts" item="deptId" open="(" separator="," close=")">
+	            	#{deptId,jdbcType=VARCHAR}
+	        	</foreach>
 		    </if>
 		    <if test="year!=null and year!=''">
 			and   TO_CHAR(G.CREATE_TIME,'YYYY')  like '%'||#{year}||'%'
@@ -705,8 +709,7 @@
 	
 	
 	
-   <!---------------------------BG_SYS_USER操作--------------------------------------------->
-	 <!--根据用户id查询用户信息表-->
+  	 <!--根据用户id查询用户信息表-->
 	<select id="getUserId" resultType="java.util.Map">
 		 SELECT 
 		   USERID  as "userId",  
@@ -721,9 +724,7 @@
 		   AND USERID = #{userId,jdbcType=VARCHAR}
 	</select>
 	
-	<!--------------------------BG_SYS_DATADICTIONARY操作--------------------------------------------->
-	
-	<!--查询数据字典-->
+ 	<!--查询数据字典-->
 	<select id="selectForDictionary" resultType="java.util.Map"  parameterType="java.util.List">
 		 SELECT 
 		   CODE as "code",
@@ -754,8 +755,7 @@
 		   ORDER BY  SORT_ID
 	</select>
 	
-    <!--------------------------审批操作--------------------------------------------->
-
+   
      <!--查询申请表信息-->   
 	 <select id="selectForApply" resultType="java.util.Map">
 	    SELECT  
@@ -763,6 +763,8 @@
           FROM   TB_WL_APPLY   
           WHERE    VALID='1'   and   ID=#{id}
 	 </select>
+	 
+	 
     <!--查询审批表信息-->
 	<select id="selectForwlApplyId" resultType="java.util.Map">
 	    select  A.ID   as  "wlApproveId"
@@ -786,6 +788,8 @@
          where  G.VALID='1'  AND T.VALID ='1' AND     T.APPROVE_ROLE   IS not  NULL   
            AND  T.NODE=#{applyStatus}
 	 </select>
+	 
+	 
 	  <!--查询审批规则信息--> 
 	 <select id="selectForPrivUserId" resultType="java.util.Map">
 				SELECT
@@ -805,9 +809,12 @@
 				WHERE T .VALID = '1'
 				AND R.VALID = '1'
 				AND U .VALID = '1' 
-		    	 
 				AND  T.USER_ID=#{userId}  
 				AND  R.FUNCTION_TYPE =#{type}
+				 <if test="roleCode!=null and roleCode!=''">
+			     AND  R.ROLE_CODE=#{roleCode}  
+		        </if>
+				
 	  </select>  
 	   
 	   

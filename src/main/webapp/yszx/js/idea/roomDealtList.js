@@ -219,7 +219,8 @@ roomList.initDataGrid = function(){
 					var checkedIds = dataGrid.getCheckedIds();
 					var approveState=checkedItems[0].approveState;
 					if(approveState=="MANAGER_DEPT_HEAD_CHECK"){
-						messageReturn("1");
+						//messageReturn("1");
+						selectForReturn("","1");
 					}else{
 						messageAgree("1");
 					}

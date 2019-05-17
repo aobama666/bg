@@ -297,7 +297,6 @@
  	    <button type="button" class="btn" onclick="agreeEvent()" >同意</button>
 		<button type="button" class="btn" onclick="returnEvent()">退回</button>
 		<button type="button" class="btn" onclick="messageResign()">返回</button>	 
-		 
 	</div>
 	
 	
@@ -478,7 +477,6 @@
 	 						success: function (data) {
 	 							if(data.success == "true"){
 	 								messager.tip("审批成功",1000);
-	 								 
 	 								messageResign();
 	 							}else{
 	 								messager.tip("审批失败失败",1000);

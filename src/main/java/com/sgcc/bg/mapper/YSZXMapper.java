@@ -49,7 +49,8 @@ public interface YSZXMapper {
 								  @Param("applyId")String applyId,
 								  @Param("userId")String userId,
 								  @Param("createTime")String createTime,
-								  @Param("applyDept")String applyDept,
+								 // @Param("applyDept")String applyDept,
+								  @Param("applyDepts")List<String> applyDepts,
 								  @Param("page_start")Integer page_start,
 								  @Param("page_end")Integer page_end);
 	/**
@@ -61,7 +62,8 @@ public interface YSZXMapper {
 								  @Param("applyId")String applyId,
 								  @Param("userId")String userId,
 								  @Param("createTime")String createTime,
-								  @Param("applyDept")String applyDept);
+								  //@Param("applyDept")String applyDept,
+								  @Param("applyDepts")List<String> applyDepts);
 	/**
 	  * 添加演示中心参观开始时间和参观结束时间
 	  * @param pro
@@ -277,7 +279,7 @@ public interface YSZXMapper {
 	 * @return
 	 */
 	public  List<Map<String, Object>>  selectComprehensiveInfo(
-			                           @Param("pridept")String pridept,
+			                           @Param("applyDepts")List<String>  applyDepts,
 									   @Param("applyNumber")String applyNumber,
 									   @Param("year")String year,
 									   @Param("month")String month,
@@ -293,7 +295,7 @@ public interface YSZXMapper {
 	 * @return
 	 */
 	public  List<Map<String, Object>>  selectforEXLComprehensiveInfo(
-			                           @Param("pridept")String pridept,
+			                           @Param("applyDepts")List<String>  applyDepts,
 									   @Param("applyNumber")String applyNumber,
 									   @Param("year")String year,
 									   @Param("month")String month,
@@ -307,7 +309,7 @@ public interface YSZXMapper {
 	 * @return
 	 */
 	public  Map<String, Object>  selectForComprehensiveNum(
-									   @Param("pridept")String pridept,
+			                           @Param("applyDepts")List<String>  applyDepts,
 									   @Param("applyNumber")String applyNumber,
 									   @Param("year")String year,
 									   @Param("month")String month,
@@ -377,7 +379,8 @@ public interface YSZXMapper {
 	*/
 	public  List<Map<String, Object>>  selectForPrivUserId(
 								@Param("userId")String userId,
-								@Param("type")String type);
+								@Param("type")String type,
+								@Param("roleCode")String roleCode);
 	
 	
 

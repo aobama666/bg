@@ -21,11 +21,21 @@ public interface IdeaInfoService {
 	 */
 	public String selectForLeader(HttpServletRequest request);
 	/**
-	 * 查询演示中心信息
+	 * 查询演示主表列表数据
 	 * @param pro
 	 * @return
 	 */
-	public List<Map<String, Object>>  selectForIdeaInfo(String  applyId,String createTime,String deptId,int page_start,int page_end);
+	public List<Map<String, Object>>  selectForIdeaInfo(String  applyNumber,String createTime,List<String> deptIds,int page_start,int page_end);
+	/**
+	 * 修改演示中心信息--查询总数
+	 * @param pro
+	 * @return
+	 */
+	public  int  selectForideaNum(String applyNumber ,String createTime,List<String> deptIds);
+	
+	
+	
+	
 	
 	/**
 	 * 查询演示中心信息--修改
@@ -106,14 +116,14 @@ public interface IdeaInfoService {
 	 * @param pro
 	 * @return
 	 */
-	public List<Map<String, Object>>  selectComprehensiveInfo(String pridept,String  appltNumber,String year,String month,String applyDept,String visitUserName,String userLevel,List<String>  ids,int page_start,int page_end);
+	public List<Map<String, Object>>  selectComprehensiveInfo(List<String> applyDepts,String  appltNumber,String year,String month,String applyDept,String visitUserName,String userLevel,List<String>  ids,int page_start,int page_end);
  
 	/**
 	 * 查询演示中心信息----综合导出查询
 	 * @param pro
 	 * @return
 	 */
-	public List<Map<String, Object>>  selectforEXLComprehensiveInfo(String pridept,String  appltNumber,String year,String month,String applyDept,String visitUserName,String userLevel,List<String>  ids );
+	public List<Map<String, Object>>  selectforEXLComprehensiveInfo(List<String> applyDepts,String  appltNumber,String year,String month,String applyDept,String visitUserName,String userLevel,List<String>  ids );
  
 	
 	
@@ -135,12 +145,7 @@ public interface IdeaInfoService {
 	 * @return
 	 */
 	public List<Map<String, Object>>  selectForApplyStatus(String applyStatus);
-	/**
-	 * 修改演示中心信息--查询主页总数
-	 * @param pro
-	 * @return
-	 */
-	public  int  selectForideaNum(String applyNumber ,String createTime,String deptId);
+
 	
 
 	/**
@@ -160,13 +165,13 @@ public interface IdeaInfoService {
 	 * @param pro
 	 * @return
 	 */
-	public  int  selectForComprehensiveNum(String  pridept,String  applyId,String year,String month,String applyDept,String visitUserName,String userLevel );
+	public  int  selectForComprehensiveNum(List<String> applyDepts,String  applyId,String year,String month,String applyDept,String visitUserName,String userLevel );
 	/**
 	* 修改演示中心信息---综合查询
 	* @param pro
 	* @return
 	*/
-	public  List<Map<String, Object>>  selectForPrivUserId(String userId,String type);
+	public  List<Map<String, Object>>  selectForPrivUserId(String userId,String type,String roleCode);
 
 
 }
