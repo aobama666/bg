@@ -209,6 +209,7 @@ public class ApproveServiceImpl implements ApproveService{
 	}
 	
 	public ReturnMessage sendApprove(boolean isUseRole,String approveId,String status,String appproveRemark,String auditUserId,String operatorId) {
+		 log.info( "--approveRemark:"+appproveRemark );
 		ReturnMessage returnMessage = new ReturnMessage();
 		//执行结果  success 成功  failure 失败
 		boolean result = false;

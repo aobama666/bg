@@ -258,7 +258,7 @@
 						<%-- <input type="text"  disabled    id="approveDeptName" name="approveDeptName" class="approveDeptName" value = "${approveInfo.approveDeptName}"  title=""   /> --%>
 					</td>
 					<td class="addInputStyle">
-						<span class="detailsLeft"> ${approveInfo.approveResultName}</span>
+						<span class="detailsLeft"> ${approveInfo.approveRemark}</span>
 						<%-- <input type="text"  disabled    id="approveResultName" name="approveResultName" class="approveResultName" value = "${approveInfo.approveResultName}"  title=""   /> --%>
 					</td>
 					<td class="addInputStyle">

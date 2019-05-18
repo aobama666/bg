@@ -1,6 +1,7 @@
 package com.sgcc.bg.yszx.controller;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import com.sgcc.bg.common.CommonCurrentUser;
 import com.sgcc.bg.common.DateUtil;
+import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.yszx.bean.WLApprove;
 import com.sgcc.bg.yszx.service.ApproveService;
 import com.sgcc.bg.yszx.service.IdeaInfoService;
+import com.sgcc.bg.yszx.service.PrivilegeService;
  
  
 
@@ -39,6 +42,8 @@ public class YSZXController {
 	private DataDictionaryService dataDictionaryService;
 	@Autowired
 	private ApproveService approveService;
+	@Autowired
+	private PrivilegeService privilegeService;
 	/**
 	 * 杩斿洖鍒楄〃灞曠ず椤甸潰
 	 * @return
@@ -63,23 +68,35 @@ public class YSZXController {
 	public ModelAndView addPage(){
 		Map<String, Object> map = new HashMap<>();
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
-		String type=currentUser.getType();
-		if("2".equals(type)){
-			map.put("deptId", currentUser.getpDeptId());
-			map.put("deptName", currentUser.getpDeptName());
-			map.put("deptCode", currentUser.getpDeptCode());
-		 
+//		String type=currentUser.getType();
+//		if("2".equals(type)){
+//			map.put("deptId", currentUser.getpDeptId());
+//			map.put("deptName", currentUser.getpDeptName());
+//			map.put("deptCode", currentUser.getpDeptCode());
+//		 
+//		}else{
+//			map.put("deptId", currentUser.getDeptId());
+//			map.put("deptName", currentUser.getDeptName());
+//			map.put("deptCode", currentUser.getDeptCode());
+//		}
+		
+		String UserId=  currentUser.getUserId();
+		List<Map<String, Object>> 	deptList = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> 	privUserList=ideaInfoService.selectForPrivUserId(UserId,"YSZX","MANAGER_APPLY_DEPT_MGR");
+		if(privUserList.isEmpty()){
+			deptList=new ArrayList<Map<String, Object>>();
 		}else{
-			map.put("deptId", currentUser.getDeptId());
-			map.put("deptName", currentUser.getDeptName());
-			map.put("deptCode", currentUser.getDeptCode());
+			String  roleType=String.valueOf(privUserList.get(0).get("roleType"));
+			 if("0".equals(roleType)){
+			  	deptList=privilegeService.getPrivMgrByUserId(UserId,"YSZX");
+			}else if("1".equals(roleType)){
+				deptList=new ArrayList<Map<String, Object>>();
+			}else{
+				deptList=new ArrayList<Map<String, Object>>();
+			}
 		}
-		
-		
-		
-		
-		
-		
+			map.put("deptList", deptList);
+			map.put("deptListNum", deptList.size());
 		List<Map<String, String>>   visitUnitTypeList= dataDictionaryService.selectDictDataByPcode("visitunit_type");
 		map.put("visitUnitTypeInfo", visitUnitTypeList);
 		List<Map<String, String>>   visitUnitLevelList= dataDictionaryService.selectDictDataByPcode("visitunit_levle");
@@ -192,8 +209,6 @@ public class YSZXController {
 	public ModelAndView auditPage(HttpServletRequest request){
 		String approveId = request.getParameter("approveId")==null?null:request.getParameter("approveId").toString();
 		String type = request.getParameter("type")==null?null:request.getParameter("type").toString();
-		
-		
 		if(approveId==null){
 			Map<String, Object> proInfo = new HashMap<String, Object>();
 			proInfo.put("approveInfo", "");
