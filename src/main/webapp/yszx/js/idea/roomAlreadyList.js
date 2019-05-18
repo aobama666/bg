@@ -135,6 +135,11 @@ roomList.initDataGrid = function(){
 			messager.tip("每次只能选择一条数据",2000);
 			return;
 		}
+		var approveState=checkedItems[0].approveState;
+		if(approveState=="FINISH"){
+			messager.tip("该数据审核通过，不能执行撤回",2000);
+			return;
+		}
 		var approveId= checkedItems[0].wlApproveId;
 		$.messager.confirm( "撤回提示", "确认撤回选中数据吗",
 			function(r){

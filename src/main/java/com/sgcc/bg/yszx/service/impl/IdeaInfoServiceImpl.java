@@ -170,25 +170,26 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 			 if(!list.isEmpty()){
 				 for(Map<String, Object> map:list){
 					String   applyNumber=String.valueOf(map.get("APPLY_NUMBER"));//申请单号
+					String  oldstartdate=String.valueOf(map.get("START_DATE"));//开始时间
 					String  oldenddate=String.valueOf(map.get("END_DATE"));//结束时间
 					boolean flag1=DateUtil.compareTime(oldenddate,stateDate);
 					if(flag1){
 						boolean flag=DateUtil.getMinuteSub(oldenddate,stateDate,30);
 						if(!flag){
-							rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间和申请单号为："+applyNumber+"参观结束时间冲突,上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
+							rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间和申请单号为："+applyNumber+"参观结束时间冲突("+oldstartdate+"~"+oldenddate+"),上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
 							return JSON.toJSONString(rw);  
 						}
 					}else{
-						String  oldstartdate=String.valueOf(map.get("START_DATE"));//开始时间
+					
 						boolean flag=DateUtil.compareTime(endDate,oldstartdate);
 						if(flag){
 							boolean flag2=DateUtil.getMinuteSub(endDate,oldstartdate,30);
 							if(!flag2){
-								rw = new ResultWarp(ResultWarp.FAILED ,"参观结束时间和申请单号为："+applyNumber+"参观是开始时间冲突,上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
+								rw = new ResultWarp(ResultWarp.FAILED ,"参观结束时间和申请单号为："+applyNumber+"参观是开始时间冲突("+oldstartdate+"~"+oldenddate+"),上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
 								return JSON.toJSONString(rw);  
 							}
 						}else{
-							rw = new ResultWarp(ResultWarp.FAILED ,"参观结束时间和申请单号为："+applyNumber+"参观是开始时间冲突,上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
+							rw = new ResultWarp(ResultWarp.FAILED ,"参观结束时间和申请单号为："+applyNumber+"参观是开始时间冲突("+oldstartdate+"~"+oldenddate+"),上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
 							return JSON.toJSONString(rw);  
 						}
 					}
@@ -1213,11 +1214,10 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		try{
 			Map<String,String>  userInfoMap=userInfo();
 			String updateUser= userInfoMap.get("userId");
-			yszxMapper.submitForStatus(ideaId, "DEPT_HEAD_CHECK", updateUser, new Date());
+			//yszxMapper.submitForStatus(ideaId, "DEPT_HEAD_CHECK", updateUser, new Date());
 			if("SAVE".equals(status)){
 				approveService.startApprove(false,"YSZX","SAVE",ideaId,approvalUserd,updateUser);
-			}
-			else{
+			}else{
 				approveService.sendApprove(false, approveId, "1", "", approvalUserd, updateUser);
 			}
 			rw = new ResultWarp(ResultWarp.SUCCESS ,"提交成功");  

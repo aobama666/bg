@@ -36,26 +36,7 @@ function getNowFormatDate() {
 //验证参观开始时间和参观结束时间
 function checkDate(stateDate,endDate){
 	  debugger;
-	   var  stateday=new Date(stateDate).getDay();
-	   if(stateday=="1"){
-		   $("#stateDate").addClass("validRefuse");
-		    messager.tip("检查参观开始时间,每周一常规检修,不接受预定！",2000);
-			roomDetailInfo.saveBtnClickFlag = 0;
-			return  false;
-	   }else{
-		   $("#stateDate").removeClass("validRefuse");
-		   return true;
-	   }
-	   var  endday=new Date(endDate).getDay();
-	   if(endday=="1"){
-		   $("##endDate").addClass("validRefuse");
-		    messager.tip("检查参观结束时间,每周一常规检修,不接受预定！",2000);
-			roomDetailInfo.saveBtnClickFlag = 0;
-			return  false;
-	   }else{
-		   $("#endDate").removeClass("validRefuse");
-		   return true;
-	   }
+	   
 	
 	
 	
@@ -73,7 +54,8 @@ function checkDate(stateDate,endDate){
         
         
         
-        
+        var  stateday=new Date(stateDate).getDay();
+        var  endday=new Date(endDate).getDay();
         //参观开始时间和当前时间比较  
         if(sd.getTime()<ld.getTime()){
         	$("#stateDate").addClass("validRefuse");
@@ -85,11 +67,37 @@ function checkDate(stateDate,endDate){
             messager.tip("参观结束日期不能早于参观开始日期！",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return false;
-        }else{
+        }else if(stateday=="1"){
+  		   $("#stateDate").addClass("validRefuse");
+		    messager.tip("检查参观开始时间,每周一常规检修,不接受预定！",2000);
+			roomDetailInfo.saveBtnClickFlag = 0;
+			return  false;
+	    }else if(endday=="1"){
+ 		   $("##endDate").addClass("validRefuse");
+		    messager.tip("检查参观结束时间,每周一常规检修,不接受预定！",2000);
+			roomDetailInfo.saveBtnClickFlag = 0;
+			return  false;
+	   }else{
         	 $("#stateDate").removeClass("validRefuse");
         	 $("#endDate").removeClass("validRefuse");
         	 return true;
         } 
+        
+        
+       
+     
+ 	   var  endday=new Date(endDate).getDay();
+ 	   if(endday=="1"){
+ 		   $("##endDate").addClass("validRefuse");
+ 		    messager.tip("检查参观结束时间,每周一常规检修,不接受预定！",2000);
+ 			roomDetailInfo.saveBtnClickFlag = 0;
+ 			return  false;
+ 	   }else{
+ 		   $("#endDate").removeClass("validRefuse");
+ 		    
+ 	   }
+        
+        
         
         
         
@@ -172,6 +180,7 @@ roomDetailInfo.messageResign =function(){
 }
 /* 保存信息库信息 */
 roomDetailInfo.messageSave= function(approvalUserd){
+	debugger;
 	   /* 主ID  */
 	    var id=$("#id").val();
 	    var approveId=$("#wlApproveId").val();
