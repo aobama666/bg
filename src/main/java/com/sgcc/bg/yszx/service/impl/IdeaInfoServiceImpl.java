@@ -152,6 +152,19 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				  rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间不能大于参观结束时间");
 				  return JSON.toJSONString(rw);  
 			 } 	
+			 
+	        boolean beginFlagone=DateUtil.toHms(stateDate,"08:30:00","11:30:00");
+	        boolean beginFlagtwo=DateUtil.toHms(stateDate,"13:30:00","16:30:00");
+	        if(beginFlagone&&beginFlagtwo){
+	        	  rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间错误,上午可预定时间为8:30-11:30,下午可预定时间为13:30-16:30。"); 
+				  return JSON.toJSONString(rw);  
+	        }
+	        boolean endFlagone=DateUtil.toHms(endDate,"08:30:00","11:30:00");
+	        boolean endFlagtwo=DateUtil.toHms(endDate,"13:30:00","16:30:00");
+	        if(endFlagone&&endFlagtwo){
+	        	  rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间错误,上午可预定时间为8:30-11:30,下午可预定时间为13:30-16:30。"); 
+				  return JSON.toJSONString(rw);  
+	        }
 			//系统已经预定的时间
 			List<Map<String, Object>> list=yszxMapper.selectForIdeaDate(id);
 			 if(!list.isEmpty()){
@@ -882,35 +895,17 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 			return jsonStr;
 		 
 	}
+	
+	
 	/**
-	 * 查询演示中心信息
+	 * 查询演示主表列表数据
 	 * @param pro
 	 * @return
 	 */
 	@Override
-	public List<Map<String, Object>> selectForIdeaInfo(String  applyId,String createTime,String deptId,int page_start,int page_end) {
-//		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
-//		String userid=  currentUser.getUserId();
-//		List<Map<String, Object>>  privUserList=yszxMapper.selectForPrivUserId(userid,"YSZX");
-//		List<Map<String, Object>>  ideaInfo = new ArrayList<Map<String, Object>>();
-//		if(privUserList.isEmpty()){
-//			return ideaInfo;
-//		}else{
-//			String   roleName=String.valueOf(privUserList.get(0).get("roleName"))  ;
-//			if("部门管理专责".equals(roleName)){
-//				
-//			}else if("部门领导".equals(roleName)){
-//				String type=currentUser.getType();
-//				String applyDeptId="";
-//				if("2".equals(type)){
-//					 applyDeptId=currentUser.getpDeptId() ;
-//				}else{
-//					 applyDeptId=currentUser.getDeptId();
-//				}
-//				ideaInfo=yszxMapper.selectForIdeaInfo(applyId, "", createTime,applyDeptId,page_start,page_end);  
-//			}
-//		}
-		List<Map<String, Object>>  ideaInfo=yszxMapper.selectForIdeaInfo(applyId,"",createTime,deptId,page_start,page_end);  
+	public List<Map<String, Object>> selectForIdeaInfo(String  applyId,String createTime,List<String> deptIds,int page_start,int page_end) {
+		String userId="";
+		List<Map<String, Object>>  ideaInfo=yszxMapper.selectForIdeaInfo(applyId,userId,createTime,deptIds,page_start,page_end);  
 		  List<Map<String, Object>>  list=new  ArrayList<Map<String, Object>>();
 		  if(!ideaInfo.isEmpty()){
 			  for(Map<String, Object>  idea:ideaInfo){
@@ -926,6 +921,26 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		  } 
 		return list;
 	}
+	/**
+	 * 修改演示中心信息--查询总数
+	 * @param pro
+	 * @return
+	 */
+	@Override
+	public int  selectForideaNum(String applyNumber, String createTime,List<String> deptIds) {
+		String userId="";
+		Map<String, Object>    map=yszxMapper.selectForideaNum(applyNumber,userId,createTime,deptIds);
+		Object  num=map.get("countNum");
+		String countNum=num+"";
+		int countNums=Integer.valueOf(countNum);
+		return countNums;
+	}
+	
+	
+	
+	
+	
+	
 	/**
 	 * 查询演示---参观领导的查询根据ideaId
 	 * @param pro
@@ -1130,7 +1145,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		    	List<Map<String, String>> UserInfoList=new ArrayList<Map<String, String>>();
 				String[] userIdArr = userId.split(",");
 				for (String userid : userIdArr) {
-							Map<String, String> userInfo=yszxMapper.selectForuserName(userid);
+							Map<String, String> userInfo=yszxMapper.getUserId(userid);
 							UserInfoList.add(userInfo);
 				}
 
@@ -1270,21 +1285,27 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		return list;
 	}
 	@Override
-	public List<Map<String, Object>> selectComprehensiveInfo(String pridept,String applyNumber, String year,String month, String applyDept,String visitUserName, String visitLevel,List<String>  ids,int page_start,int page_end) {
-	 
-		 
-		 List<Map<String, Object>>  ideaInfo=yszxMapper.selectComprehensiveInfo(pridept,applyNumber, year,month, applyDept, visitUserName, visitLevel,ids,page_start,page_end);
- 
+	public List<Map<String, Object>> selectComprehensiveInfo(List<String> applyDepts,String applyNumber, String year,String month, String applyDept,String visitUserName, String visitLevel,List<String>  ids,int page_start,int page_end) {
+		 List<Map<String, Object>>  ideaInfo=yszxMapper.selectComprehensiveInfo(applyDepts,applyNumber, year,month, applyDept, visitUserName, visitLevel,ids,page_start,page_end);
 		return ideaInfo;
 	}
 	@Override
-	public List<Map<String, Object>> selectforEXLComprehensiveInfo(String pridept,  String applyNumber, String year, String month,
+	public List<Map<String, Object>> selectforEXLComprehensiveInfo(List<String> applyDepts,  String applyNumber, String year, String month,
 			String applyDept, String visitUserName, String userLevel, List<String> ids) {
-		 List<Map<String, Object>>  ideaInfo=yszxMapper.selectforEXLComprehensiveInfo(pridept,applyNumber, year,month, applyDept, visitUserName, userLevel,ids);
+		 List<Map<String, Object>>  ideaInfo=yszxMapper.selectforEXLComprehensiveInfo(applyDepts,applyNumber, year,month, applyDept, visitUserName, userLevel,ids);
 		 
 		return ideaInfo;
 	}
-	 
+	@Override
+	public int selectForComprehensiveNum(List<String> applyDepts,String applyNumber, String year, String month, String applyDept,
+	    String visitUserName, String userLevel) {
+		Map<String, Object>    map=yszxMapper.selectForComprehensiveNum(applyDepts,applyNumber, year, month, applyDept, visitUserName, userLevel, null);
+		Object  num=map.get("countNum");
+		String countNum=num+"";
+		int countNums=Integer.valueOf(countNum);
+		return countNums;
+		 
+	}
 	@Override
 	public List<Map<String, Object>> selectIdeaDeptInfo() {
 		 List<Map<String, Object>>  list=yszxMapper.selectIdeaDeptInfo();
@@ -1300,14 +1321,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		 
 		return yszxMapper.selectForApplyStatus(applyStatus);
 	}
-	@Override
-	public int  selectForideaNum(String applyNumber, String createTime,String deptId) {
-		Map<String, Object>    map=yszxMapper.selectForideaNum(applyNumber,"",createTime,deptId);
-		Object  num=map.get("countNum");
-		String countNum=num+"";
-		int countNums=Integer.valueOf(countNum);
-		return countNums;
-	}
+
 	@Override
 	public int selectForDealtNum(String  pridept,String approveUserId, String contactUserName, String applyNumber, String applyDept) {
 		Map<String, Object>    map=yszxMapper.selectForDealtNum(pridept,approveUserId,contactUserName,applyNumber,applyDept);
@@ -1324,19 +1338,10 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		int countNums=Integer.valueOf(countNum);
 		return countNums;
 	}
+
 	@Override
-	public int selectForComprehensiveNum(String pridept,String applyNumber, String year, String month, String applyDept,
-	    String visitUserName, String userLevel) {
-		Map<String, Object>    map=yszxMapper.selectForComprehensiveNum(pridept,applyNumber, year, month, applyDept, visitUserName, userLevel, null);
-		Object  num=map.get("countNum");
-		String countNum=num+"";
-		int countNums=Integer.valueOf(countNum);
-		return countNums;
-		 
-	}
-	@Override
-	public List<Map<String, Object>> selectForPrivUserId(String userId,String type) {
-		List<Map<String, Object>>  privUserList=yszxMapper.selectForPrivUserId(userId,type);
+	public List<Map<String, Object>> selectForPrivUserId(String userId,String type,String roleCode) {
+		List<Map<String, Object>>  privUserList=yszxMapper.selectForPrivUserId(userId,type,roleCode);
 		return privUserList;
 	}
 	
