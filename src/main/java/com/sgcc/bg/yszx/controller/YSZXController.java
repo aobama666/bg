@@ -95,11 +95,11 @@ public class YSZXController {
 	@RequestMapping("/updatePage")
 	public ModelAndView projectUpdate(String id,String status ,HttpServletRequest request) {
 		Map<String, Object> proInfo;
-		if("SAVE".equals(status)){
+//		if("SAVE".equals(status)){
 			 proInfo = ideaInfoService.selectForId(id);
-		}else{
-			 proInfo = ideaInfoService.selectForReturn(id);
-		}
+//		}else{
+//			 proInfo = ideaInfoService.selectForReturn(id);
+//		}
 		List<Map<String, String>>   dictData= dataDictionaryService.selectDictDataByPcode("visitunit_levle");
 		proInfo.put("visitUnitLevleInfo",dictData);
 		List<Map<String, String>>   visitUnitTypeList= dataDictionaryService.selectDictDataByPcode("visitunit_type");

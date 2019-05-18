@@ -79,7 +79,6 @@ public class ApproveController {
 		}else{
 			rw = new ResultWarp(ResultWarp.SUCCESS ,approve.getMessage()); 
 		}
-		rw = new ResultWarp(ResultWarp.SUCCESS ,"ddddd"); 
 		return JSON.toJSONString(rw); 
 	}
 	 /**

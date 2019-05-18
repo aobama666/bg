@@ -29,7 +29,7 @@
 	<!-- end  头部 -->
                        
 	<!-- 参观申请单位信息展示 -->
-	<table class="visitOperate tableStyle">
+	<table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td>
 				 <span title = "申请部门（单位）（当前登录人所属部门）"><b class="mustWrite">*</b>申请部门（单位）</span>
@@ -76,7 +76,7 @@
 	<h4 class="tableTitle">
 		<span title = "参观人员信息"><b class="mustWrite">*</b>参观人员信息：</span>
 	</h4>
-	<table class="visitPerson tableStyle">
+	<table class="visitPerson tableStyle specialTable">
 		<tr>
 			<td>
 				<span title = "参观单位性质"><b class="mustWrite">*</b>参观单位性质</span>
@@ -158,7 +158,7 @@
 	<h4 class="tableTitle">
 		<span title = "院内陪同人员信息"><b class="mustWrite">*</b>院内陪同人员信息：</span>
 	</h4>
-	<table class="visitAccompany tableStyle">
+	<table class="visitAccompany tableStyle specialTable">
 		<tr>
 			<td class="width-two"><b class="mustWrite">*</b>院领导姓名</td>
 			<td style="width:100%;" class="addInputStyle"      >
@@ -254,7 +254,8 @@
 						<%-- <input type="text"  disabled    id="approveDeptName" name="approveDeptName" class="approveDeptName" value = "${approveInfo.approveDeptName}"  title=""   /> --%>
 					</td>
 					<td class="addInputStyle">
-						<span class="detailsLeft"> ${approveInfo.approveResultName}</span>
+					    <span class="detailsLeft"> ${approveInfo.approveRemark}</span> 
+					 	<%-- <span class="detailsLeft"> ${approveInfo.approveResultName}</span> --%>
 						<%-- <input type="text"  disabled    id="approveResultName" name="approveResultName" class="approveResultName" value = "${approveInfo.approveResultName}"  title=""   /> --%>
 					</td>
 					<td class="addInputStyle">

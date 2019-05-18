@@ -262,7 +262,7 @@ roomList.initDataGrid = function(){
 			return;
 		}else{
 			var auditUserId=approveUserID();
-			var approveRemark= "";
+			var approveRemark= "同意";
 			var checkedItems = dataGrid.getCheckedItems(dataItems);
  			var approveId= checkedItems[0].wlApproveId;
 			if(auditUserId!=""){
@@ -348,10 +348,12 @@ roomList.initDataGrid = function(){
 							       userPrivilegehtml+='<input type="hidden"    id="userId"  name = "userId"  class="userId"  value="' + userPrivilegelist[i].userId + '"  />' 
 							     userPrivilegehtml += '</td>';
 							     userPrivilegehtml += '<td class="addInputStyle">  ';
-							       userPrivilegehtml+='<input type="text" disabled  id="userAlias"  name = "userAlias"  class="userAlias inputChange"  value="' + userPrivilegelist[i].userAlias + '" title="审批人名称 " />' 
+							         userPrivilegehtml+='<span class="detailsLeft">'+userPrivilegelist[i].userAlias+'</span>';
+							      // userPrivilegehtml+='<input type="text" disabled  id="userAlias"  name = "userAlias"  class="userAlias inputChange"  value="' + userPrivilegelist[i].userAlias + '" title="审批人名称 " />' 
 							     userPrivilegehtml += '</td>';
 							     userPrivilegehtml += '<td class="addInputStyle">';
-							       userPrivilegehtml+='<input type="text" disabled   id="deptName"   name = "deptName"   class="deptName inputChange"  value="' + userPrivilegelist[i].deptName + '" title="审批人单位" />'
+							         userPrivilegehtml+='<span class="detailsLeft">'+userPrivilegelist[i].deptName+'</span>';
+							       //userPrivilegehtml+='<input type="text" disabled   id="deptName"   name = "deptName"   class="deptName inputChange"  value="' + userPrivilegelist[i].deptName + '" title="审批人单位" />'
 							     userPrivilegehtml += '</td>';
 							       
 							 userPrivilegehtml += '</tr>';   	 
