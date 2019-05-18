@@ -962,7 +962,7 @@ public class ApproveServiceImpl implements ApproveService{
     		//获取业务主表
     		Map<String, Object> ideaInfoMap = ideaServcie.selectForId(bussinessId);
     		
-    		auditTitle = ideaInfoMap.get("applyNumber")==null?"":ideaInfoMap.get("applyNumber").toString();
+    		auditTitle = ideaInfoMap.get("applyNumber")==null?"":"【演示中心参观预定申请】"+ideaInfoMap.get("applyNumber").toString();
         }        
         return auditTitle;
     }
