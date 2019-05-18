@@ -8,15 +8,26 @@
 
 	<!--  审批用户的查询部门领导查询查询-->
     <select id="getApproveUsersByRoleAndDept" resultType="java.util.Map">
-		select 
+	select 
 		  U.USERID,
 		  U.USERNAME,
 		  U.USERALIAS,
 		  U.HRCODE,
 		  U.HRDEPTNAME,
 		  U.HRDEPTCODE,
-		  U.PHONE
-		  from bg_sys_user u
+		  U.PHONE,
+          D.DEPTID,
+          D.DEPTNAME,
+          D.DEPTCODE,
+          D.TYPE ,
+          D.PDEPTID ,
+          D2.DEPTID  as PDEPTID,
+          D2.DEPTNAME as PDEPTNAME,
+          D2.DEPTCODE as PDEPTCODE,
+          D2.TYPE as  PTYPE
+		  from bg_sys_user u  
+      LEFT JOIN    BG_SYS_DEPT  D ON   U.HRDEPTCODE=D.DEPTCODE   
+      LEFT JOIN    BG_SYS_DEPT  D2 ON   D2.DEPTID=D.PDEPTID   
 		 where u.valid = 1
 		   and u.state = 0
 		   and exists (select *
@@ -33,15 +44,26 @@
     
     <!-- 审批用户的查询归口部门专责和归口部门领导专责的查询-->
     <select id="getApproveUsersByRole" resultType="java.util.Map">
-		select 
+	select 
 		  U.USERID,
 		  U.USERNAME,
 		  U.USERALIAS,
 		  U.HRCODE,
 		  U.HRDEPTNAME,
 		  U.HRDEPTCODE,
-		  U.PHONE
-		  from bg_sys_user u
+		  U.PHONE,
+          D.DEPTID,
+          D.DEPTNAME,
+          D.DEPTCODE,
+          D.TYPE ,
+          D.PDEPTID ,
+          D2.DEPTID  as PDEPTID,
+          D2.DEPTNAME as PDEPTNAME,
+          D2.DEPTCODE as PDEPTCODE,
+          D2.TYPE as  PTYPE
+		  from bg_sys_user u  
+      LEFT JOIN    BG_SYS_DEPT  D ON   U.HRDEPTCODE=D.DEPTCODE   
+      LEFT JOIN    BG_SYS_DEPT  D2 ON   D2.DEPTID=D.PDEPTID   
 		 where u.valid = 1
 		   and u.state = 0
 		   and exists (select *

@@ -3,6 +3,7 @@
     pageEncoding="UTF-8"%>
 <%@page import="java.util.Map"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -40,7 +41,18 @@
 				 <span title = "申请部门（单位）（当前登录人所属部门）"><b class="mustWrite">*</b>申请部门（单位）</span>
 			</td>
 			<td colspan="3" class="addInputStyle">
-				<input id="deptname" name="deptname"  type="text" value="${deptName}" disabled   title = "申请部门（单位）（当前登录人所属部门）" />   
+			<c:if test="${deptListNum >1}">
+			  <select id = "deptname" name = "deptname"   class = "changeQuery userlevel" style="width: 1122px;margin-right:20px;">
+				<c:forEach  var="deptInfo"  items="${deptList}">
+					        <option value ="${deptInfo.DEPT_ID}"  > ${deptInfo.DEPTNAME}</option>
+			    </c:forEach>
+			 </select>
+			</c:if>
+            <c:if test="${deptListNum ==1 }">
+              <input id="deptname" name="deptname"  type="text" value="${deptList[0].DEPTNAME}" disabled   title = "申请部门（单位）（当前登录人所属部门）" />   
+		   </c:if>		
+ 
+			  
             </td>
 		</tr>
 		<tr>

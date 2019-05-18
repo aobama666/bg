@@ -46,7 +46,6 @@ public class PrivilegeController {
 		Privilegelog.info("getApproveUserByUserName审批人信息的查询---->"+approveState);
 		ResultWarp rw =  null;
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
-		String userId=  currentUser.getUserId();
 		String currenttype=currentUser.getType();
 		String deptId="";
 		if("2".equals(currenttype)){
@@ -71,12 +70,6 @@ public class PrivilegeController {
 			} 
 			 
 		}
-		 
- 
-			 
-		
-		
-	
 		if(list.isEmpty()){
 			  rw = new ResultWarp(ResultWarp.FAILED ,"查询失败");
 		}else{
