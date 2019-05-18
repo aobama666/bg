@@ -69,7 +69,7 @@ public class ApproveServiceImpl implements ApproveService{
 			approveMapper.addApplyBussinessRelationAndGetId(bussinessAndApplyRelation);
 					
 			//获取工作流   当前节点和下一个节点
-			String stauts = "1";//0 拒绝 1 同意
+			String status = "1";//0 拒绝 1 同意
 			String condition = null;
 			if("YSZX".equals(functionType)&&"MANAGER_DEPT_DUTY_CHECK".equals(functionType)){
 				String visit_level = ConfigUtils.getConfig("YSZX_VISIT_LEADER_LEVEL");
@@ -88,7 +88,7 @@ public class ApproveServiceImpl implements ApproveService{
 				}
 			}
 			
-			WLApproveRule approveRule = getApproveRuleByNodeName(functionType,nodeName,stauts,condition);		
+			WLApproveRule approveRule = getApproveRuleByNodeName(functionType,nodeName,status,condition);		
 			//创建审批记录
 			//当前节点-提交
 			WLApprove approve = new WLApprove();
@@ -97,7 +97,7 @@ public class ApproveServiceImpl implements ApproveService{
 			approve.setApprove_user(operatorId);
 			approve.setApprove_status("1");//审批状态 0 待审批 1 已审批
 			approve.setApprove_result("3");//审批结果 0 拒绝 1 同意 2 撤回 3 提交
-			approve.setApprove_remark("");
+			approve.setApprove_remark("提交");
 			approve.setApprove_date(new Date());
 			approve.setCreate_user(operatorId);
 			approve.setAudit_flag("0");//是否是待办 0 不是 1 是
@@ -208,7 +208,7 @@ public class ApproveServiceImpl implements ApproveService{
 		return returnMessage;
 	}
 	
-	public ReturnMessage sendApprove(boolean isUseRole,String approveId,String stauts,String appproveRemark,String auditUserId,String operatorId) {
+	public ReturnMessage sendApprove(boolean isUseRole,String approveId,String status,String appproveRemark,String auditUserId,String operatorId) {
 		ReturnMessage returnMessage = new ReturnMessage();
 		//执行结果  success 成功  failure 失败
 		boolean result = false;
@@ -246,16 +246,29 @@ public class ApproveServiceImpl implements ApproveService{
 					condition = "0";//处级以下
 				}
 			}
-			WLApproveRule approveRule = getApproveRuleByNodeName(approveInfo.getFunction_type(),approveInfo.getApprove_node_code(),stauts,condition);			
+			WLApproveRule approveRule = getApproveRuleByNodeName(approveInfo.getFunction_type(),approveInfo.getApprove_node_code(),status,condition);			
 			//处理审批记录
 			//当前节点-更新
 			String id = approveInfo.getId();
 			String approve_user   = operatorId;
-			String approve_result = stauts;
+			String approve_result = status;
 			String approve_remark = appproveRemark;
 			Date approve_date   = new Date();
 			String audit_flag_current = null;
 			String approve_node_current = null;
+			
+			//演示中心：同意时，默认意见为  同意
+			if(status!=null&&status.equals("1")
+					&&(approve_remark==null||approve_remark.length()==0)
+					&&"YSZX".equals(approveInfo.getFunction_type())
+					&&"RETURN".equals(approveInfo.getApprove_node_code())){
+				approve_remark = "提交";
+			}
+			else if(status!=null&&status.equals("1")&&(approve_remark==null||approve_remark.length()==0)&&"YSZX".equals(approveInfo.getFunction_type())){
+				approve_remark = "同意";
+			}else if(status!=null&&status.equals("0")&&(approve_remark==null||approve_remark.length()==0)&&"YSZX".equals(approveInfo.getFunction_type())){
+				approve_remark = "退回";
+			}
 			
 			approveMapper.updateApproveById(id, approve_user, approve_date, approve_result, approve_remark,audit_flag_current,approve_node_current);
 			
@@ -300,10 +313,9 @@ public class ApproveServiceImpl implements ApproveService{
 				approveMapper.updateApplyById(approveInfo.getApply_id(), approveRule.getNextNode(), nextApprove.getId(), operatorId);
 				//更新业务记录		
 				approveMapper.updateBussinessById(approveInfo.getBussiness_id(), approveInfo.getApply_id(), approveRule.getNextNode(), operatorId);
-				//发送待办	
-				String deptId = ideaInfoMap.get("applyDeptId")==null?"":ideaInfoMap.get("applyDeptId").toString();
 				
-				if("YSZX".equals(approveInfo.getFunction_type())&&"0".equals(stauts)){//演示中心  退回  不发待办
+				
+				if("YSZX".equals(approveInfo.getFunction_type())&&"0".equals(status)){//演示中心  退回  不发待办
 					//不发待办
 				}
 				else{ 
@@ -311,6 +323,8 @@ public class ApproveServiceImpl implements ApproveService{
 					String bussinessId = approveInfo.getBussiness_id();
 					String applyId = approveInfo.getApply_id();
 					if(isUseRole){
+						//发送待办	
+						String deptId = ideaInfoMap.get("applyDeptId")==null?"":ideaInfoMap.get("applyDeptId").toString();
 						List<Map<String,Object>> list = authMapper.getApproveUsersByRoleAndDept(approveRule.getApproveRoleId(),deptId);
 						if(list!=null&&list.size()>0){
 							StringBuffer userList = new StringBuffer();
@@ -446,11 +460,11 @@ public class ApproveServiceImpl implements ApproveService{
 			//新增撤回记录
 			WLApprove appNew = new WLApprove();
 			appNew.setApply_id(approveInfo.getApply_id());
-			appNew.setApprove_node("");
+			appNew.setApprove_node(lastApprove.getApprove_node());
 			appNew.setApprove_user(operatorId);
 			appNew.setApprove_status("1");//审批状态 0 待审批 1 已审批
 			appNew.setApprove_result("2");//审批结果 0 拒绝 1 同意 2 撤回 3 提交
-			appNew.setApprove_remark("");
+			appNew.setApprove_remark("撤回");
 			appNew.setApprove_date(new Date());
 			appNew.setCreate_user(operatorId);
 			appNew.setAudit_flag("0");//是否是待办 0 不是 1 是
@@ -589,19 +603,14 @@ public class ApproveServiceImpl implements ApproveService{
 				returnMessage.setMessage(message);
 				return returnMessage;
 			}
-			if("1".equals(approveInfo.getApprove_status())){
-				message = "该待办已处理！";
-				returnMessage.setResult(result);
-				returnMessage.setMessage(message);
-				return returnMessage;
-			}
+			
 			//更新当前节点   撤销
 			if("0".equals(approveInfo.getApprove_status())){
 				//当前节点-更新
 				String id = approveInfo.getId();
 				String approve_user   = operatorId;
 				String approve_result = "4";
-				String approve_remark = "";
+				String approve_remark = "撤销";
 				String recall_audit_flag = null;
 				Date approve_date   = new Date();
 				//处理当前节点-待办
@@ -953,7 +962,7 @@ public class ApproveServiceImpl implements ApproveService{
     		//获取业务主表
     		Map<String, Object> ideaInfoMap = ideaServcie.selectForId(bussinessId);
     		
-    		auditTitle = ideaInfoMap.get("applyNumber")==null?"":ideaInfoMap.get("applyNumber").toString();
+    		auditTitle = ideaInfoMap.get("applyNumber")==null?"":"【演示中心参观预定申请】"+ideaInfoMap.get("applyNumber").toString();
         }        
         return auditTitle;
     }
