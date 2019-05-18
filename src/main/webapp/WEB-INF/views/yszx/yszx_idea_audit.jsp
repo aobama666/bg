@@ -24,8 +24,9 @@
 	<div class="main_div"></div> 
 	<input type = "hidden" value = "${id}" id = "id" name="id">  
 	<input type = "hidden" value = "${approveState}" id = "approveState" name="approveState">  
-	 
 	<input type = "hidden" value = "${wlApplyId}" id = "applyId" name="applyId"> 
+	<input type = "hidden" value = "${approveStatus}" id = "approveStatus" name="approveStatus">  
+	<input type = "hidden" value = "${auditType}" id = "auditType" name="auditType">  
 	<!-- start  头部 -->
 	<div class="sheach details">
 		<div class='content_top'>参观设定详情 </div>
@@ -294,9 +295,9 @@
 	 
 	 
 	<div class="btnContent">
- 	    <button type="button" class="btn" onclick="agreeEvent()" >同意</button>
-		<button type="button" class="btn" onclick="returnEvent()">退回</button>
-		<button type="button" class="btn" onclick="messageResign()">返回</button>	 
+ 	         <button type="button" class="btn" onclick="agreeEvent()" id="agreemessage" >同意</button> 
+			  <button type="button" class="btn" onclick="returnEvent()" id="returnmessage">退回</button>
+			   <button type="button" class="btn" onclick="messageResign()" >返回</button>	 
 	</div>
 	
 	
@@ -320,16 +321,37 @@
 </body>
  <script type="text/javascript">
  
- 
+ $(function(obj){
+	  var approveStatus=$("#approveStatus").val();
+	  if(approveStatus=="0" ){
+		    $("#agreemessage").show();
+		    $("#returnmessage").show();
+	  }else{
+		    $("#agreemessage").hide();
+		    $("#returnmessage").hide();
+	  }
+	  
+	  
+ }); 
  /* 演示中心待办管理-返回方法*/
     messageResign =function(){
     	 /*window.opener=window;
     	var win=window.open("","_self");
     	win.close();
     	top.close();*/
-   
-    		 window.location.href = "/TYGLPT/index/waittodo/index.jsp?tm="+new Date().getTime();
-    	 
+    	//type=finish
+      var auditType=$("#auditType").val();   	
+    	if(auditType=="finish"){
+    		window.location.href = "/TYGLPT/index/waithaddo/index.jsp??tm="+new Date().getTime();
+    		
+    	}else{
+    	    window.location.href = "/TYGLPT/index/waittodo/index.jsp?tm="+new Date().getTime();
+    	}
+    	
+    		
+    		 
+    	     
+
 
 	}
     /* 演示中心待办管理-退回方法*/

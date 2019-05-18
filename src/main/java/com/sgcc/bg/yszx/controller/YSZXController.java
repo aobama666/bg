@@ -40,7 +40,7 @@ public class YSZXController {
 	@Autowired
 	private ApproveService approveService;
 	/**
-	 * 返回列表展示页面
+	 * 杩斿洖鍒楄〃灞曠ず椤甸潰
 	 * @return
 	 */
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
@@ -56,7 +56,7 @@ public class YSZXController {
 	
 	
 	/**
-	 * 返回新增页面
+	 * 杩斿洖鏂板椤甸潰
 	 * @return
 	 */
 	@RequestMapping(value = "/addPage", method = RequestMethod.GET)
@@ -89,7 +89,7 @@ public class YSZXController {
 		 
 	}
 	/**
-	 * 返回修改页面
+	 * 杩斿洖淇敼椤甸潰
 	 * @return
 	 */
 	@RequestMapping("/updatePage")
@@ -110,7 +110,7 @@ public class YSZXController {
 		return model;
 	}
 	/**
-	 * 返回详情展示页面
+	 * 杩斿洖璇︽儏灞曠ず椤甸潰
 	 * @return
 	 */
 	@RequestMapping(value = "/details", method = RequestMethod.GET)
@@ -133,7 +133,7 @@ public class YSZXController {
 		return model;
 	}
 	/**
-	 * 返回预定状态页面
+	 * 杩斿洖棰勫畾鐘舵�侀〉闈�
 	 * @return
 	 */
 	@RequestMapping(value = "/statePage", method = RequestMethod.GET)
@@ -141,31 +141,31 @@ public class YSZXController {
 		return "yszx/yszx_idea_state";
 	}
 	/**
-	 * 返回待办展示页面
+	 * 杩斿洖寰呭姙灞曠ず椤甸潰
 	 * @return
 	 */
 	@RequestMapping(value = "/dealt", method = RequestMethod.GET)
 	public ModelAndView dealt(HttpServletRequest request){
 		Map<String, Object> map = new HashMap<>();
 		List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-	    map.put("deptInfo",list);//部门信息
+	    map.put("deptInfo",list);//閮ㄩ棬淇℃伅
 		ModelAndView model = new ModelAndView("yszx/yszx_idea_dealt",map);
 		return model;
 	}
 	/**
-	 * 返回已办展示页面
+	 * 杩斿洖宸插姙灞曠ず椤甸潰
 	 * @return
 	 */
 	@RequestMapping(value = "/already", method = RequestMethod.GET)
 	public ModelAndView already(HttpServletRequest request){
 		Map<String, Object> map = new HashMap<>();
 		List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-	    map.put("deptInfo",list);//部门信息
+	    map.put("deptInfo",list);//閮ㄩ棬淇℃伅
 		ModelAndView model = new ModelAndView("yszx/yszx_idea_already",map);
 		return model;
 	}
 	/**
-	 * 返回综合查询展示页面
+	 * 杩斿洖缁煎悎鏌ヨ灞曠ず椤甸潰
 	 * @return
 	 */
 	@RequestMapping(value = "/comprehensive", method = RequestMethod.GET)
@@ -176,7 +176,7 @@ public class YSZXController {
 		map.put("year", year);
 		map.put("month", month);
 		List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-		map.put("deptInfo",list);//部门信息
+		map.put("deptInfo",list);//閮ㄩ棬淇℃伅
 		
 		
 		List<Map<String, String>>   dictData= dataDictionaryService.selectDictDataByPcode("visitunit_levle");
@@ -185,12 +185,14 @@ public class YSZXController {
 		return model;
 	}
 	/**
-	 * 返回待办展示页面
+	 * 杩斿洖寰呭姙灞曠ず椤甸潰
 	 * @return
 	 */
 	@RequestMapping(value = "/audit", method = RequestMethod.GET)
 	public ModelAndView auditPage(HttpServletRequest request){
 		String approveId = request.getParameter("approveId")==null?null:request.getParameter("approveId").toString();
+		String type = request.getParameter("type")==null?null:request.getParameter("type").toString();
+		
 		
 		if(approveId==null){
 			Map<String, Object> proInfo = new HashMap<String, Object>();
@@ -199,10 +201,11 @@ public class YSZXController {
 			ModelAndView model = new ModelAndView("yszx/yszx_idea_audit", proInfo);
 			return model;
 		}
-		
 		WLApprove approve = approveService.getApproveInfoByApproveId(approveId);
 		String id = approve.getBussiness_id();
 		String applyId = approve.getApply_id();
+		
+		
 		
 		Map<String, Object> proInfo = ideaInfoService.selectForId(id);
 		List<Map<String, String>>   dictData= dataDictionaryService.selectDictDataByPcode("visitunit_levle");
@@ -218,8 +221,13 @@ public class YSZXController {
 			proInfo.put("approvetype", 2);
 		}
 		
-		proInfo.put("approveStatus", approve.getApprove_status());
 		
+		
+		
+		
+		proInfo.put("approveStatus", approve.getApprove_status());
+		proInfo.put("auditType",  type);
+	
 		ModelAndView model = new ModelAndView("yszx/yszx_idea_audit", proInfo);
 		return model;
 	}
