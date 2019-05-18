@@ -24,7 +24,7 @@
     <input type = "hidden" value = "${id}" id = "id" name="id">  
     <input type = "hidden" value = "${approveState}" id = "approveState" name="approveState">  
     <input type = "hidden" value = "${applyId}" id = "applyId" name="applyId">  
-    <input type = "hidden" value = "${wlApproveId}" id = "wlApproveId" name="wlApproveId">  
+    <input type = "hidden" value = "${approveId}" id = "wlApproveId" name="wlApproveId">  
 	<div class="main_div"></div>
 	<!-- start  头部 -->
 	<!-- <div class="sheach details">
@@ -34,7 +34,7 @@
 	<!-- end  头部 -->
     <span  style="color:red;margin:5px 0;display: inline-block;"> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  注:每周一常规检修，不接受预定。如果重要接待或重大活动，请走线下审批流程      </span>                    
 	<!-- 参观申请单位信息展示 -->
-	<table class="visitOperate tableStyle">
+	<table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td>
 				 <span title = "申请部门（单位）（当前登录人所属部门）"><b class="mustWrite">*</b>申请部门（单位）</span>
@@ -90,7 +90,7 @@
 	<h4 class="tableTitle">
 		<span title = "参观人员信息"><b class="mustWrite">*</b>参观人员信息：</span>
 	</h4>
-	<table class="visitPerson tableStyle">
+	<table class="visitPerson tableStyle specialTable">
 		<tr>
 			<td>
 				<span title = "参观单位性质"><b class="mustWrite">*</b>参观单位性质</span>
@@ -165,7 +165,7 @@
 		<span title = "院内陪同人员信息"><b class="mustWrite">*</b>院内陪同人员信息：</span>
 		
 	</h4>
-	<table class="visitAccompany tableStyle">
+	<table class="visitAccompany tableStyle specialTable">
 		<tr>
 			<td class="width-two">院领导姓名</td>
 			<td style="width:85%;" class="addInputStyle">
@@ -214,7 +214,7 @@
 			  
 		</div>
 		<div class="maxBox">
-			 <textarea   id="remark"    name="remark"  style="height:100px; width: 100%;background-color: #fff;resize: none;padding:5px;"  len="200"  title="非必填项"> </textarea> 	    		
+			 <textarea   id="remark"    name="remark"  style="height:100px; width: 100%;border:1px solid #ccc;background-color: #fff;resize: none;padding:5px;"  len="200"  title="非必填项"> </textarea> 	    		
 		</div>
 		
 	</div>

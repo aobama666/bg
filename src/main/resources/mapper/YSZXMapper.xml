@@ -501,7 +501,8 @@
 				                  LEFT JOIN TB_WL_APPLY AY1  ON AY1.ID = G.APPLY_ID AND AY1.VALID = '1'                    
 				                  LEFT JOIN TB_WL_APPROVE D ON D.ID = AY1.APPROVE_ID AND D.VALID = '1'
 				                  LEFT JOIN TB_WL_AUDIT_USER E ON E.APPROVE_ID = D.ID AND E.VALID = '1'
-		                     where       G.VALID='1'      and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='0'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL
+				             
+		                     where       G.VALID='1'      and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='0'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL  
             <if test="pridept!=null and pridept!=''">
 			      and G.APPLY_DEPT  like '%'||#{pridept}||'%'
 		    </if>
@@ -568,8 +569,8 @@
              LEFT JOIN TB_WL_APPLY C  ON C.ID = G.APPLY_ID AND C.VALID = '1'   
              LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'   
              LEFT JOIN TB_WL_AUDIT_USER E ON D.ID=E.APPROVE_ID AND   E.VALID='1'
-             
-          where   G.VALID='1'     and   G.STATUS!='RETURN'        and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='1'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL
+             LEFT JOIN TB_WL_APPROVE F ON F.ID=D.NEXT_APPROVE_ID AND   F.VALID='1'
+          where   G.VALID='1'     and   G.STATUS!='RETURN'        and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='1'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL AND  F.NEXT_APPROVE_ID is   null 
             <if test="pridept!=null and pridept!=''">
 			      and G.APPLY_DEPT  like '%'||#{pridept}||'%'
 		    </if>
@@ -641,6 +642,7 @@
 			  G.CONTACT_USER as "contactUser",
 			  G.CONTACT_PHONE as "contactPhone", 		
 			  G.VISIT_UNIT_TYPE as "visitUnitType",	 
+			  (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='visitunit_type' and vaild=1 and code= G.VISIT_UNIT_TYPE) as "visitUnitTypeName",  
 			  G.VISIT_UNIT_NAME as "visitUnitName",	
 			  G.VISITOR_NUMBER as "visitorNumber", 		
 			  G.COMPANY_USER_NUMBER as "companyUserNumber",	 

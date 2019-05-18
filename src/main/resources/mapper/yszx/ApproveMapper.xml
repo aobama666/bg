@@ -342,14 +342,15 @@
 		  U.USERALIAS  as "approveUserAlias",	
 		  U.HRDEPTNAME  as "approveDeptName",
 		  T.APPROVE_RESULT	as "approveResult",			
-		  DECODE(T.APPROVE_RESULT, '0','拒绝', '1', '同意', '2','撤回','3','提交','4','撤销') as "approveResultName" ,	
+		  DECODE(T.APPROVE_RESULT, '0','退回', '1', '同意', '2','撤回','3','提交','4','撤销') as "approveResultName" ,	
 		  TO_CHAR(T.APPROVE_DATE,'YYYY-MM-DD HH24:MI:SS')   as "approveDate",
 		  T.NEXT_APPROVE_ID	 as "nextapproveId",		
 		  A.APPROVE_USER as  "nextapproveUserId",
 		  (SELECT   USERALIAS  from   BG_SYS_USER where  VALID='1' AND  STATE = 0 AND USERID=A.APPROVE_USER)  as "nextapproveUserAlias",
 		  (SELECT   PHONE  from   BG_SYS_USER where  VALID='1' AND  STATE = 0 AND USERID=A.APPROVE_USER)  as "nextapprovePhone",
 		  G.APPROVE_NODE as "node",
-		  T.APPROVE_REMARK		 
+		  T.APPROVE_REMARK	as  "approveRemark"
+		     
 		FROM
 			TB_WL_APPROVE   T
 		    LEFT JOIN BG_SYS_USER U   ON  U.USERID = T.APPROVE_USER  AND  T.VALID='1'  AND U.VALID='1' AND    U.STATE = 0
