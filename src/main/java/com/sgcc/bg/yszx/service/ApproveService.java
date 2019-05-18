@@ -24,13 +24,13 @@ public interface ApproveService {
 	 * 发送
 	 * @param isUseRole 是否按照角色发送待办   true 是  false 按照指定待办人
 	 * @param approveId 审批记录ID
-	 * @param stauts  审批结果  0 拒绝  1 同意 3 提交
+	 * @param status  审批结果  0 拒绝  1 同意 3 提交
 	 * @param appproveRemark 审批意见
 	 * @param auditUserId 待办人ID   id1,id2,id3
 	 * @param operatorId 操作人id
 	 * @return
 	 */
-	 public ReturnMessage sendApprove(boolean isUseRole,String approveId,String stauts,String appproveRemark,String auditUserId,String operatorId) ;
+	 public ReturnMessage sendApprove(boolean isUseRole,String approveId,String status,String appproveRemark,String auditUserId,String operatorId) ;
 	 
 	 /**
 	  * 撤回
