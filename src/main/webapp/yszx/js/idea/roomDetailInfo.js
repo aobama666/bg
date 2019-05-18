@@ -720,6 +720,7 @@ function popEvent(ids,codes,names,userId){
 	roomDetailInfo.SelectForUserId(userId);
 }
 roomDetailInfo.SelectForUserId = function(userId){
+	debugger;
 	$.ajax({
 	    url: "/bg/IdeaInfo/selectForuserName?userId="+userId,//获取申报界面数据字典
 		type: "post",
