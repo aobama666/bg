@@ -125,12 +125,16 @@
 		<div class="maxBox">
 			<table class="visitLeader tableStyle thTableStyle">
 				<tr>
+					<th   style="width:80px">序号</th>
 					<th>姓名</th>
 					<th>职务</th>
 					<th>级别</th>
 				</tr>
-				<c:forEach  var="visitInfo"  items="${visitInfo}">
+				<c:forEach  var="visitInfo"  items="${visitInfo}" varStatus="xh">
 				<tr> 
+					<td class="addInputStyle" >
+						<span class="detailsLeft"> ${xh.count}</span>						
+					</td>
 					<td class="addInputStyle"    >
 						<span class="detailsLeft"> ${visitInfo.userName}</span>
 						<%-- <input type="text"  disabled   id="visitUserName"  name = "visitUserName"    value = "${visitInfo.userName}"  title="必填项 ,中文或英文 " /> --%>
@@ -191,11 +195,15 @@
 		<div class="maxBox">
 			<table class="visitUnitAccompany tableStyle thTableStyle">
 				<tr>
-					<th  title="请点击添加按钮，添加用户" >姓名</th>
-					<th   title="请点击添加按钮，添加用户" >职务</th>
+					<th   style="width:80px">序号</th>
+					<th>姓名</th>
+					<th>职务</th>
 				</tr>
-				<c:forEach  var="userInfo"  items="${userInfo}">
-				<tr>
+				<c:forEach  var="userInfo"  items="${userInfo}" varStatus="xh">
+				<tr> 
+					<td class="addInputStyle" >
+						<span class="detailsLeft"> ${xh.count}</span>						
+					</td>
 					<td class="addInputStyle" >
 						<span class="detailsLeft"> ${userInfo.userAlisa}</span>
 						<%-- <input type="text"  disabled    id="UserName" name="UserName"  class="UserName" value = "${userInfo.userAlisa}"  title="请点击添加按钮，添加用户"  /> --%>

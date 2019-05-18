@@ -219,11 +219,17 @@
 					   <input  type="checkbox"   id = "userId"  name="userId" class="userId" value = "${userInfo.userId}" />
 					   <input  type = "hidden"   id = "companyId"  name="companyId" class="companyId" value = "${userInfo.companyId}">  
 					</td>
-					<td class="addInputStyle" >
+					<%-- <td class="addInputStyle" >
 						<input type="text"  disabled    id="UserName" name="UserName"  class="UserName" value = "${userInfo.userAlisa}" title="请点击添加按钮，添加用户"/>
 					</td>
 					<td class="addInputStyle">
 						<input type="text"  disabled    id="Position" name="Position" class="Position" value = "${userInfo.postName}" title="请点击添加按钮，添加用户"/>
+					</td> --%>
+					<td class="addInputStyle" >
+						${userInfo.userAlisa}
+					</td>
+					<td class="addInputStyle">
+						${userInfo.postName}
 					</td>
 				</tr>
 			    </c:forEach>
