@@ -720,8 +720,8 @@
 		   POSTCODE as "postCode", 
 		   POSTNAME  as "postName"
 		  FROM BG_SYS_USER
-		  WHERE SRC = 0  AND STATE = 1
-		   AND USERID = #{userId,jdbcType=VARCHAR}
+		  WHERE 
+		     USERID = #{userId,jdbcType=VARCHAR}
 	</select>
 	
  	<!--查询数据字典-->

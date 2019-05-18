@@ -356,7 +356,7 @@
 		    LEFT JOIN TB_WL_AUDIT_USER A ON A.APPROVE_ID=T.NEXT_APPROVE_ID   
 		    LEFT JOIN TB_WL_APPROVE G ON T.NEXT_APPROVE_ID=G.ID
 		WHERE   T.APPROVE_STATUS='1'  and   T.APPLY_ID=#{approveId}
-		ORDER BY  T.APPROVE_STEP   
+		ORDER BY  to_number(T.APPROVE_STEP)   
 	</select>
 	
 	<select  id="selectForRuleID"   resultType="java.util.Map">
