@@ -120,7 +120,7 @@ roomList.initDataGrid = function(){
 	
 	/* 演示中心待办管理-退回方法*/
 	roomList.returnEvent = function(){
-		debugger;
+	 
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		
 		if(checkedItems.length==0){
