@@ -495,6 +495,8 @@
 			       G.CREATE_USER as "createUser",
 			       TO_CHAR(  G.CREATE_TIME,'YYYY-MM-DD') as "createTime"	,
 		           D.APPROVE_NODE as "approveNode",
+		           TO_CHAR(  D.APPROVE_DATE,'YYYY-MM-DD HH24:MI')  AS  "approveDate", 
+		           TO_CHAR(  D.CREATE_TIME,'YYYY-MM-DD HH24:MI')  AS  "approveCreateDate", 
 		           D.ID  as "wlApproveId" ,
 		           E.APPROVE_USER  as "approveUserId"
 		         from    TB_YSZX_IDEA G
@@ -564,13 +566,15 @@
            D.ID  as "wlApproveId" ,
            D.NEXT_APPROVE_ID  as "nextwlApproveId" ,
            D.APPROVE_STEP   as "approveStep",
+           TO_CHAR(  D.APPROVE_DATE,'YYYY-MM-DD HH24:MI')  AS  "approveDate", 
+           TO_CHAR(  D.CREATE_TIME,'YYYY-MM-DD HH24:MI')  AS  "approveCreateDate", 
            E.APPROVE_USER  as "approveUserId"
          from    TB_YSZX_IDEA  G
              LEFT JOIN TB_WL_APPLY C  ON C.ID = G.APPLY_ID AND C.VALID = '1'   
              LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'   
              LEFT JOIN TB_WL_AUDIT_USER E ON D.ID=E.APPROVE_ID AND   E.VALID='1'
-             LEFT JOIN TB_WL_APPROVE F ON F.ID=D.NEXT_APPROVE_ID AND   F.VALID='1'
-          where   G.VALID='1'     and   G.STATUS!='RETURN'        and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='1'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL AND  F.NEXT_APPROVE_ID is   null 
+             
+          where   G.VALID='1'     and   G.STATUS!='RETURN'        and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='1'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL   
             <if test="pridept!=null and pridept!=''">
 			      and G.APPLY_DEPT  like '%'||#{pridept}||'%'
 		    </if>

@@ -197,7 +197,7 @@ roomList.initDataGrid = function(){
 	}
 	/* 演示中心管理-提交方法*/
 	roomList.submitEvent = function(){
-	 debugger;
+	 
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
 			messager.tip("请选择要操作的数据",1000);
@@ -276,7 +276,7 @@ roomList.initDataGrid = function(){
 
 	}
 	messageForSubmit  =function (checkedIds,approvalUserd){
-		debugger;
+		 
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		var   status=checkedItems[0].approveState;
 		var   approveId=checkedItems[0].approveId;

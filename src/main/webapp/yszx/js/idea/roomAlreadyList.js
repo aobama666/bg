@@ -103,7 +103,8 @@ roomList.initDataGrid = function(){
 		  {name: '参观结束时间', style:{width:"150px"},data: 'endDate'},
 		  {name: '审批状态',style:{width:"150px"},data: 'status'   },
 		  {name: '联系人', style:{width:"150px"},data: 'contactUser'},
-		  {name: '联系方式', style:{width:"120px"},data: 'contactPhone'}
+		  {name: '联系方式', style:{width:"120px"},data: 'contactPhone'},
+		  {name: '审批时间', style:{width:"160px"},data: 'approveDate'}
 		  
 		]
 	});
@@ -126,7 +127,7 @@ roomList.initDataGrid = function(){
  
 	/* 演示中心待办管理-撤回方法*/
 	roomList.withdrawEvent = function(){
-		debugger;
+	 
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
 			messager.tip("请选择要操作的数据",1000);
