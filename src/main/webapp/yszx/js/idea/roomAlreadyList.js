@@ -103,7 +103,8 @@ roomList.initDataGrid = function(){
 		  {name: '参观结束时间', style:{width:"150px"},data: 'endDate'},
 		  {name: '审批状态',style:{width:"150px"},data: 'status'   },
 		  {name: '联系人', style:{width:"150px"},data: 'contactUser'},
-		  {name: '联系方式', style:{width:"120px"},data: 'contactPhone'}
+		  {name: '联系方式', style:{width:"120px"},data: 'contactPhone'},
+		  {name: '审批时间', style:{width:"160px"},data: 'approveDate'}
 		  
 		]
 	});
