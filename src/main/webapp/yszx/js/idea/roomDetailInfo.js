@@ -35,7 +35,7 @@ function getNowFormatDate() {
 }
 //验证参观开始时间和参观结束时间
 function checkDate(stateDate,endDate){
-	  debugger;
+	 
 	   
 	
 	
@@ -180,7 +180,7 @@ roomDetailInfo.messageResign =function(){
 }
 /* 保存信息库信息 */
 roomDetailInfo.messageSave= function(approvalUserd){
-	debugger;
+	 
 	   /* 主ID  */
 	    var id=$("#id").val();
 	    var approveId=$("#wlApproveId").val();
@@ -729,7 +729,7 @@ function popEvent(ids,codes,names,userId){
 	roomDetailInfo.SelectForUserId(userId);
 }
 roomDetailInfo.SelectForUserId = function(userId){
-	debugger;
+	 
 	$.ajax({
 	    url: "/bg/IdeaInfo/selectForuserName?userId="+userId,//获取申报界面数据字典
 		type: "post",

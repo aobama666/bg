@@ -127,7 +127,7 @@ roomList.initDataGrid = function(){
  
 	/* 演示中心待办管理-撤回方法*/
 	roomList.withdrawEvent = function(){
-		debugger;
+	 
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
 			messager.tip("请选择要操作的数据",1000);
