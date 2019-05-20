@@ -3,13 +3,13 @@ html,body{width:100%;height:100%;}
 ul{list-style: none;}
 table a{color:blue;text-decoration: underline;}
 table a:HOVER{color:red;}
-/* start 鎼滅储妗嗛紶鏍囨斁涓婂幓浜嬩欢 */
+/* start 閹兼粎鍌ㄥ鍡涚炊閺嶅洦鏂佹稉濠傚箵娴滃娆� */
 .changeQuery:HOVER{
 	border-color:#A2C1F5 ;
 }
-/* end 鎼滅储妗嗛紶鏍囨斁涓婂幓浜嬩欢 */
+/* end 閹兼粎鍌ㄥ鍡涚炊閺嶅洦鏂佹稉濠傚箵娴滃娆� */
 
-/* start 鐐瑰嚮鏂板寮瑰嚭閫夋嫨绉戞妧濂栧姳绫诲瀷閫夋嫨妗� */
+/* start 閻愮懓鍤弬鏉款杻瀵懓鍤柅澶嬪缁夋垶濡ф總鏍уС缁鐎烽柅澶嬪濡楋拷 */
 body{
 	padding:0 5px;
 }
@@ -35,9 +35,9 @@ body #hiddenDiv{
 	left:0;
 	display: none;
 }
-/* end  鐐瑰嚮鏂板寮瑰嚭閫夋嫨绉戞妧濂栧姳绫诲瀷閫夋嫨妗� */
+/* end  閻愮懓鍤弬鏉款杻瀵懓鍤柅澶嬪缁夋垶濡ф總鏍уС缁鐎烽柅澶嬪濡楋拷 */
 
-/* start 濂栧姳绫诲瀷閫夋嫨  */
+/* start 婵傛牕濮崇猾璇茬�烽柅澶嬪  */
 body div.btn_type_box{
 	background-color:#fff;
 	position: absolute;
@@ -50,9 +50,9 @@ body div.btn_type_box{
 	margin:auto;
 	display: none;
 }
-/* end  濂栧姳绫诲瀷閫夋嫨  */
+/* end  婵傛牕濮崇猾璇茬�烽柅澶嬪  */
 
-/* start 寮瑰嚭妗嗗叧闂寜閽� */
+/* start 瀵懓鍤鍡楀彠闂傤厽瀵滈柦锟� */
 body div.btn_type_box img{
 	height:15px;
 	width:15px;
@@ -65,9 +65,9 @@ body div.btn_type_box img:HOVER{
 	width:17px;
 	cursor: pointer;
 }
-/* end 寮瑰嚭妗嗗叧闂寜閽�  */
+/* end 瀵懓鍤鍡楀彠闂傤厽瀵滈柦锟�  */
 
-/* start 鍏釜濂栭」鐨勬寜閽�  */
+/* start 閸忣厺閲滄總鏍�嶉惃鍕瘻闁斤拷  */
 body div.btn_type_box .btn_type{
 	width:60%;
 	height:40px;
@@ -97,9 +97,9 @@ body div.btn_type_box .btn_type:HOVER {
 body div.btn_type_box .btn_type:ACTIVE {
 	background-color: #F7F7F7;
 }
-/* end 鍏釜濂栭」鐨勬寜閽�  */
+/* end 閸忣厺閲滄總鏍�嶉惃鍕瘻闁斤拷  */
 
-/* 2019.04.11演示中心页面新增样式 */
+/* 2019.04.11婕旂ず涓績椤甸潰鏂板鏍峰紡 */
 .sheach .changeYear, .sheach .changeMonth{
 	width:6%;
 }
@@ -134,6 +134,13 @@ body div.btn_type_box .btn_type:ACTIVE {
     margin: 0 auto;
  
 }
+.specialTable td:first-child{
+background-color:#D5E7E7;
+}
+.specialTable td:first-child+td+td{
+background-color:#D5E7E7;
+}
+
 .tableStyle td,.tableStyle th{
 	border: 1px solid #ccc;
     text-align: center;
@@ -141,7 +148,7 @@ body div.btn_type_box .btn_type:ACTIVE {
     text-align:left;
     padding-left: 20px;
 }
-.tableStyle td:nth-child(2n+1) {
+.specialTable td:nth-child(2n+1) {
    background-color:#D5E7E7;
 }
 .width-one{
@@ -151,7 +158,7 @@ body div.btn_type_box .btn_type:ACTIVE {
 	width:15%;
 }
 .tableStyle .width-three{
-	width:5%;
+	width:6%;
 }
 .details{
 	margin-bottom: 30px;
@@ -186,16 +193,24 @@ body div.btn_type_box .btn_type:ACTIVE {
     background-color: #2D9592;
 }
 .maxBox{
-	height:121px;
+/* 	height:100px; */
 	overflow-y:auto;
 	width:94%;
 	margin:0 auto;
+}
+.maxLine{
+	border: 1px solid #ccc;
+	height:125px
+}
+.maxLine table{
+	margin-top:-1px;
 }
 .maxBox .tableStyle{
 	width:100%;
 }
 .tableStyle input[disabled] {
     cursor: not-allowed;
+    background-color:#ebebe4;
 }
  .tableStyle .addInputStyle{
 	padding:0;
@@ -218,9 +233,9 @@ body div.btn_type_box .btn_type:ACTIVE {
 	margin-top: -30px;
     margin-right: 3%;
 }
-.contentBox .maxBox{
-	padding-top:5px;
-}
+/* .contentBox .maxBox{
+	margin-top:5px;
+} */
 .commonBtn{
 	height: 30px;
     /* width: 100px; */
@@ -292,8 +307,32 @@ body div.btn_type_box .btn_type:ACTIVE {
 .combo-arrow{
 	    background:#fff!important;
 }
-
-/* cyj  验证字段为空   样式是修改 成红色*/
+.inputChange{
+	padding:0!important;
+	margin:0!important;
+	text-align:center!important;
+}
+.inputUserId{
+	 width: 50px!important;
+     margin-top: 10px!important;
+ 
+}
+/* cyj  楠岃瘉瀛楁涓虹┖   鏍峰紡鏄慨鏀� 鎴愮孩鑹�*/
 table td .validRefuse{
 	border:solid 1px red;
 }
+.validRefuses{
+	border:solid 1px red;
+}
+.tableStyle tr{
+	height:31px;
+}
+ .visitUnitAccompany input[type="text"]:disabled{
+ background:#fff;
+ }
+ .detailsLeft{
+ padding-left:5px;
+ }
+ textarea{
+ border:1px solid #ccc;
+ }

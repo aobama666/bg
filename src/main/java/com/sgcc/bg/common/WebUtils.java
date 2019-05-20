@@ -119,6 +119,7 @@ public class WebUtils {
 		ValueOperations<String, String> value = stringRedisTemplate.opsForValue();
 		Des des = new Des();
 		String redisKey = des.strEnc("loginSessionId",username+password);//加密
+	 
 		String redisData = value.get(redisKey);
 		RedisBeanWarp rbw = new RedisBeanWarp();
 		User user = null;

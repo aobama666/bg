@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+ -->
+<mapper namespace="com.sgcc.bg.yszx.mapper.ApproveMapper">
+	<!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓业务表 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓-->
+	<update id="updateBussinessById">
+		update tb_yszx_idea t 
+		   set t.apply_id = #{apply_id}, 
+		       t.status = #{status},
+		       t.update_user  = #{update_user},
+		       t.update_time  = sysdate
+		 where t.uuid = #{id}                        
+	</update>
+	<!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓申请表↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
+	<!-- 新增申请记录 -->
+    <insert id="addApplyAndGetId" parameterType="com.sgcc.bg.yszx.bean.WLApply">
+    	<selectKey resultType="String" order="BEFORE" keyProperty="id">
+    		select sys_guid() id from dual
+    	</selectKey>    
+		insert into tb_wl_apply
+		  (id,
+		   <!-- apply_number,
+		   apply_order, 
+		   apply_user,
+		   apply_time,-->
+		   function_type,
+		   apply_status,
+   		   approve_id,
+		   remark,
+		   valid,
+		   create_user,
+		   create_time,
+		   update_user,
+		   update_time)
+		values
+		  (#{id},
+		  <!--  #{apply_number},
+		   (select nvl(max(nvl(p.apply_order,0)),0)+1 from tb_wl_apply p where to_char(p.apply_time,'yyyy') = to_char(sysdate,'yyyy')), 
+		   #{apply_user},
+		   #{apply_time},-->
+		   #{function_type},
+		   #{apply_status},
+		   null,
+		   null,
+		   '1',
+		   #{create_user},
+		   sysdate,
+		   #{update_user},
+		   sysdate)
+    </insert>
+    <!-- 修改状态 -->
+    <update id="updateApplyById" parameterType="com.sgcc.bg.yszx.bean.WLApply">
+		update tb_wl_apply t
+		   set t.apply_status = #{apply_status},
+		       t.approve_id   = #{approve_id},
+		       t.update_user  = #{update_user},
+		       t.update_time  = sysdate
+		 where t.id = #{id}                        
+	</update>
+	<!-- 新增申请记录与业务数据关联记录 -->
+    <insert id="addApplyBussinessRelationAndGetId" parameterType="com.sgcc.bg.yszx.bean.WLBussinessAndApplyRelation">
+    	<selectKey resultType="String" order="BEFORE" keyProperty="id">
+    		select sys_guid() id from dual
+    	</selectKey>    
+		insert into tb_wl_business_r_apply
+		  (id,
+		   business_id,
+		   apply_id,
+		   remark,
+		   valid,
+		   create_user,
+		   create_time,
+		   update_user,
+		   update_time)
+		values
+		  (#{id},
+		   #{business_id},
+		   #{apply_id},
+		   null,
+		   '1',
+		   #{create_user},
+		   sysdate,
+		   #{update_user},
+		   sysdate)
+
+    </insert>
+    <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓规则表↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
+	<!--  根据当前节点获取审批规则-->
+    <select id="getApproveRuleByNodeName" resultType="java.util.Map">
+		SELECT T.ID,
+		       T.NODE,
+		       T2.ID          NEXT_NODE_ID,
+		       T2.NODE        NEXT_NODE,
+		       T.APPROVE_ROLE,
+		       R.ROLE_CODE,
+		       R.ROLE_TYPE,
+       		   T.FUNCTION_TYPE
+		  FROM TB_WL_RULE T
+		  LEFT JOIN TB_WL_RULE T2
+		    ON T.NEXT_NODE_ID = T2.ID
+		   AND T2.VALID = '1'
+		  LEFT JOIN TB_PRIV_ROLE R
+		    ON T.APPROVE_ROLE = R.ID
+		   AND R.VALID = '1'
+		 WHERE T.FUNCTION_TYPE = #{functionType}
+		   AND T.NODE = #{nodeName}
+		   AND T.status = #{status}
+		   <if test="condition!=null">
+		   		AND T.condition = #{condition}
+		   </if>
+		   AND T.VALID = '1'
+    </select>    
+    <!--  根据ID获取审批规则-->
+    <select id="getApproveRuleById" resultType="java.util.Map">
+		SELECT T.ID,
+		       T.NODE,
+		       T2.ID          NEXT_NODE_ID,
+		       T2.NODE        NEXT_NODE,
+		       T.APPROVE_ROLE,
+		       R.ROLE_CODE,
+		       R.ROLE_TYPE,
+       		   T.FUNCTION_TYPE
+		  FROM TB_WL_RULE T
+		  LEFT JOIN TB_WL_RULE T2
+		    ON T.NEXT_NODE_ID = T2.ID
+		   AND T2.VALID = '1'
+		  LEFT JOIN TB_PRIV_ROLE R
+		    ON T.APPROVE_ROLE = R.ID
+		   AND R.VALID = '1'
+		 WHERE T.ID = #{id}
+		   AND T.VALID = '1'
+    </select>    
+    <!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓审批表↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
+    <!-- 新增申请记录与业务数据关联记录 -->
+    <insert id="addApproveAndGetId" parameterType="com.sgcc.bg.yszx.bean.WLApprove">
+    	<selectKey resultType="String" order="BEFORE" keyProperty="id">
+    		select sys_guid() id from dual
+    	</selectKey>    
+		insert into tb_wl_approve
+		  (id,
+		   apply_id,
+		   next_approve_id,
+		   approve_node,
+		   approve_user,
+		   approve_status,
+		   approve_result,
+		   approve_remark,
+		   approve_step,
+		   approve_date,
+		   audit_flag,
+		   create_time,
+		   create_user,
+		   valid)
+		values
+		  (#{id},
+		   #{apply_id},
+		   null,
+		   #{approve_node},
+		   #{approve_user},
+		   #{approve_status},
+		   #{approve_result},
+		   #{approve_remark},
+		   (select nvl(max(to_number(nvl(p.approve_step, '0'))), 0) + 1 from tb_wl_approve p  where p.apply_id = #{apply_id}),
+		   <choose>
+				<when test="approve_date!=null">
+				    #{approve_date},
+				</when>					
+				<otherwise>
+				   null,
+				</otherwise>
+		   </choose>
+		   #{audit_flag},
+		   sysdate,
+		   #{create_user},
+		   '1')
+    </insert>    
+    <!-- 声明当前的下一节点-->
+    <update id="updateNextApproveIdById">
+		update tb_wl_approve t
+		   set t.next_approve_id = #{next_approve_id}
+		 where t.id = #{id}                        
+	</update>
+	 <!-- 更新当前节点-->
+    <update id="updateApproveById">
+		update tb_wl_approve t
+		   set t.approve_user   = #{approve_user},
+		       t.approve_status = '1',
+		       t.approve_result = #{approve_result},
+		       t.approve_remark = #{approve_remark},
+		       t.approve_date   = #{approve_date}
+		       <if test="audit_flag!=null">
+		   		,t.audit_flag   = #{audit_flag}
+		       </if>
+		       <if test="approve_node!=null">
+		   		,t.approve_node   = #{approve_node}
+		       </if>
+		 where t.id = #{id}                     
+	</update>
+	<!-- 更新当前节点  删除-->
+    <update id="updateApproveByIdForDelete">
+		update tb_wl_approve t
+		   set t.valid = '0',
+		   	   t.approve_user   = #{approve_user},
+		       t.approve_date   = #{approve_date}
+		 where t.id = #{id}                     
+	</update>
+	<!-- 更新当前节点  修改待办标志-->
+    <update id="updateApproveByIdForAuditFlag">
+		update tb_wl_approve t
+		   set t.audit_flag = #{audit_flag}
+		 where t.id = #{id}                     
+	</update>
+	<!--  根据审批记录id获取审批相关信息-->
+    <select id="getApproveInfoByApproveId" resultType="java.util.Map">
+		select T.ID             APPROVE_ID,
+		       APP.ID           APPLY_ID,
+		       R.BUSINESS_ID,
+		       WRULE.ID         RULE_ID,
+		       T.APPROVE_STATUS,
+		       T.AUDIT_FLAG,
+		       WRULE.NODE,
+		       IDEA.VISIT_LEVEL,
+       		   APP.FUNCTION_TYPE,
+		       T.CREATE_USER,
+       		   next_app.APPROVE_STATUS NEXT_PPROVE_STATUS,
+       		   T.NEXT_APPROVE_ID
+		  from tb_wl_approve t
+		  left join tb_wl_apply app
+		    on APP.ID = t.apply_id
+		   and app.valid = '1'
+		  left join tb_wl_business_r_apply r
+		    on r.apply_id = app.id
+		   and r.valid = '1'
+		  left join tb_wl_rule wrule
+		    on wrule.id = t.approve_node
+		   and wrule.valid = '1'
+		  left join tb_yszx_idea idea
+		    on idea.uuid = r.business_id
+		   and idea.valid = '1'
+		  left join tb_wl_approve next_app
+		    on next_app.id = t.next_approve_id
+		   and next_app.audit_flag = '1'
+		   and next_app.valid = '1'  
+		 where t.id = #{approveId}
+		   and t.valid = '1'		
+    </select>
+    <!--  根业务id获取审批相关信息-->
+    <select id="getApproveInfoByBussinessId" resultType="java.util.Map">
+		select T.ID             APPROVE_ID,
+		       APP.ID           APPLY_ID,
+		       R.BUSINESS_ID,
+		       WRULE.ID         RULE_ID,
+		       T.APPROVE_STATUS,
+		       T.AUDIT_FLAG,
+		       WRULE.NODE,
+		       IDEA.VISIT_LEVEL,
+       		   APP.FUNCTION_TYPE,
+		       T.CREATE_USER
+		  from tb_wl_approve t
+		  left join tb_wl_apply app
+		    on APP.ID = t.apply_id
+		   and app.valid = '1'
+		  left join tb_wl_business_r_apply r
+		    on r.apply_id = app.id
+		   and r.valid = '1'
+		  left join tb_wl_rule wrule
+		    on wrule.id = t.approve_node
+		   and wrule.valid = '1'
+		  left join tb_yszx_idea idea
+		    on idea.uuid = r.business_id
+		   and idea.valid = '1'
+		 where idea.uuid = #{bussiness_id}
+		   and t.valid = '1'			   
+           and app.approve_id = t.id	
+    </select>
+    <!--  撤回   根据审批记录id获取上一流程的提交记录  按角色-->
+    <select id="getLastApproveByApproveId" resultType="java.util.Map">
+		select last_2.ID APPROVE_ID, last_2.approve_node RULE_ID
+		  from tb_wl_approve t
+		  LEFT JOIN tb_wl_approve last_1
+		    on last_1.next_approve_id = t.id
+		   and last_1.valid = '1'
+		  LEFT JOIN tb_wl_approve last_2
+		    on last_2.next_approve_id = last_1.id
+		   and last_2.valid = '1'
+		 where 1 = 1
+		   and t.id = #{approveId}
+		   and t.valid = '1'
+    </select>
+    <!--  撤回   根据审批记录id获取上一流程的提交记录  按人-->
+    <select id="getLastApproveUserByApproveId" resultType="java.util.Map">
+		select t.ID APPROVE_ID, t.approve_node RULE_ID,t.approve_user APPROVE_USER
+		  from tb_wl_approve t		
+		 where 1 = 1
+		   and t.id = #{approveId}
+		   and t.valid = '1'
+    </select>
+	<!-- ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓待办用户表↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ -->
+	<!-- 新增待办用户记录 -->
+    <insert id="addAuditUser" parameterType="com.sgcc.bg.yszx.bean.WLAuditUser">
+    	insert into tb_wl_audit_user
+		  (id,
+		   approve_id,
+		   approve_user,
+		   remark,
+		   valid,
+		   create_user,
+		   create_time,
+		   update_user,
+		   update_time)
+		values
+		  (sys_guid(),
+		   #{approve_id},
+		   #{approve_user},
+		   null,
+		   '1',
+		   #{create_user},
+		   sysdate,
+		   #{update_user},
+		   sysdate)
+    </insert>
+    <!-- 声明当前的下一节点-->
+    <update id="updateAuditByApproveId">
+		update tb_wl_audit_user t
+		   set t.valid = '0',
+		       t.update_user  = #{update_user},
+		       t.update_time  = sysdate
+		 where t.approve_id = #{approve_id} 
+		   and t.approve_user != #{approve_user}                      
+	</update>
+	
+	
+	<select  id="selectForApproveID"   resultType="java.util.Map">
+	    SELECT
+		  T.ID	 as "id",
+		  T.APPLY_ID  as "applyId",	
+		  T.APPROVE_STATUS	as "approveStatus" , 		
+		  T.APPROVE_USER  as "approveUserId" , 
+		  U.USERALIAS  as "approveUserAlias",	
+		  U.HRDEPTNAME  as "approveDeptName",
+		  T.APPROVE_RESULT	as "approveResult",			
+		  DECODE(T.APPROVE_RESULT, '0','退回', '1', '同意', '2','撤回','3','提交','4','撤销') as "approveResultName" ,	
+		  TO_CHAR(T.APPROVE_DATE,'YYYY-MM-DD HH24:MI:SS')   as "approveDate",
+		  T.NEXT_APPROVE_ID	 as "nextapproveId",		
+		  A.APPROVE_USER as  "nextapproveUserId",
+		  (SELECT   USERALIAS  from   BG_SYS_USER where  VALID='1' AND  STATE = 0 AND USERID=A.APPROVE_USER)  as "nextapproveUserAlias",
+		  (SELECT   PHONE  from   BG_SYS_USER where  VALID='1' AND  STATE = 0 AND USERID=A.APPROVE_USER)  as "nextapprovePhone",
+		  G.APPROVE_NODE as "node",
+		  T.APPROVE_REMARK	as  "approveRemark"
+		     
+		FROM
+			TB_WL_APPROVE   T
+		    LEFT JOIN BG_SYS_USER U   ON  U.USERID = T.APPROVE_USER  AND  T.VALID='1'  AND U.VALID='1' AND    U.STATE = 0
+		    LEFT JOIN TB_WL_AUDIT_USER A ON A.APPROVE_ID=T.NEXT_APPROVE_ID   
+		    LEFT JOIN TB_WL_APPROVE G ON T.NEXT_APPROVE_ID=G.ID
+		WHERE   T.APPROVE_STATUS='1'  and   T.APPLY_ID=#{approveId}
+		ORDER BY  to_number(T.APPROVE_STEP)   
+	</select>
+	
+	<select  id="selectForRuleID"   resultType="java.util.Map">
+	    SELECT    
+	            T.NODE as "nodeCode",
+	            G.NAME as "nodeName"
+	     from   TB_WL_RULE    T
+         LEFT JOIN    BG_SYS_DATADICTIONARY  G  ON    T.NODE=G.CODE  
+         where   T.VALID='1'  AND  G.VAILD='1'  AND  G.PCODE  ='YSZX_APPROVE_ROLE'  
+          AND  T.ID=#{ruleId}
+	</select>
+	
+</mapper>

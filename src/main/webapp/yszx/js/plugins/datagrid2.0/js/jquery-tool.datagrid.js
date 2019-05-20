@@ -510,7 +510,7 @@
         	 }
     	 	 var localObj=window.location;
  			 var contextPath=localObj.pathname.split("/")[1];
- 			 var basePath=localObj.protocol+"//"+localObj.host+"/"+contextPath;
+ 			 var basePath=localObj.protocol+"//"+localObj.host+"/"+contextPath+"/yszx";
         	 //var left=$("<div class='paging_item item_icon  title='上一页'> <b> 〈 </b> </div><div class='firstpage'>《</div>");
         	 var left=$("<div class='paging_item item_icon  title='上一页'><b class='left_img'><img src='"+basePath+"/js/plugins/datagrid2.0/img/svg_icon/left.png' ></b> </div><div class='firstpage paging_item'><b class='shang_img'><img src='"+basePath+"/js/plugins/datagrid/img/svg_icon/shang.png'></b></div>");
 			 if(opts.pageNum>1){

@@ -8,6 +8,31 @@ var IsRight={
      trim:function(ele){
 		        return ele.replace(/(^\s*)|(\s*$)/g,"");
 		    },
+		    
+		    
+    //不能为空
+   checkLength:function(ele,len){
+	  
+		var val = IsRight.trim($(ele).val());
+		if (len>val.length) {
+			 $(ele).removeClass("validRefuse");
+	         return true;
+		 } else {
+			 $(ele).addClass("validRefuse");
+	         return false;
+		 }
+	},  
+	//不能为空
+	notNull:function(ele){
+		var val = IsRight.trim($(ele).val());
+		if (!val=="") {
+			 $(ele).removeClass("validRefuse");
+	         return true;
+		 } else {
+			 $(ele).addClass("validRefuse");
+	         return false;
+		 }
+	},  
     //电话验证
     telePhone:function(ele){
     	 
@@ -117,15 +142,7 @@ var IsRight={
             $(ele).next("span").html("*必须是3位数字");
         }
     },
-    //不能为空
-    notNull:function(ele){
-        var val = IsRight.trim($(ele).val());
-        if (!val=="") {
-            $(ele).removeClass("redColor");
-        } else {
-            $(ele).addClass("redColor");
-        }
-    },
+  
     notSpecial:function(ele){
         var val = IsRight.trim($(ele).val());
         var exp1 = /^[\u4e00-\u9fa50-9a-zA-Z_]+$/;
@@ -144,7 +161,7 @@ var messager={
     	if($(".myTips").size()){
     		return false;
     	}
-        var html="<div class='myTips' style='border-radius:5px;opacity:0.8;color:#fff;font-size:14px;padding:8px 15px;background:#000;z-index:99999;display: inline-block;position: fixed;top:49%;left:47%;'>"+text+"</div>";
+        var html="<div class='myTips' style='border-radius:5px;opacity:0.8;color:#fff;font-size:14px;padding:8px 15px;background:#000;z-index:99999999;display: inline-block;position: fixed;top:49%;left:47%;'>"+text+"</div>";
         $("body").append(html);
         $('.myTips').css({"left":($(".myTips").parent().outerWidth(true)-$(".myTips").width())/2});
         var outTime = 1000;

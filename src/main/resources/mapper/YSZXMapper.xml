@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sgcc.bg.mapper.YSZXMapper">
-
-
+   
+    <!--预定申请的添加TB_YSZX_IDEA-->
 	<insert id="addIdeaInfo"  parameterType="com.sgcc.bg.yszx.bean.IdeaInfo">
 		INSERT INTO TB_YSZX_IDEA ( 
 			UUID,	 
@@ -24,7 +24,10 @@
 			CREATE_USER,	 	
 			CREATE_TIME,
 			UPDATE_USER,
-			UPDATE_TIME
+			UPDATE_TIME,
+			APPLY_NUMBER,
+			APPLY_ORDER,
+			APPLY_YEAR
 			)
 		VALUES(
 			#{id,jdbcType=VARCHAR}, 
@@ -45,13 +48,218 @@
 			#{createUser,jdbcType=VARCHAR},
 			#{createTime,jdbcType=TIMESTAMP},
 			#{updateUser,jdbcType=VARCHAR},
-			#{updateTime,jdbcType=TIMESTAMP}
+			#{updateTime,jdbcType=TIMESTAMP},
+			#{applyNumber,jdbcType=VARCHAR},
+			#{applyOrder,jdbcType=NUMERIC},
+			#{applyYear,jdbcType=NUMERIC}
 			)
 	</insert>
 	
+	<!--预定申请的修改TB_YSZX_IDEA-->
+	<update id="updataIdeaInfo"   parameterType="com.sgcc.bg.yszx.bean.IdeaInfo">
+		UPDATE TB_YSZX_IDEA SET
+            APPLY_DEPT =#{applyDept,jdbcType=VARCHAR},
+            START_DATE =to_date(#{stateDate},'YYYY-MM-DD HH24:MI:SS'), 
+			END_DATE =to_date(#{endDate},'YYYY-MM-DD HH24:MI:SS'),
+			CONTACT_USER =#{contactUser,jdbcType=VARCHAR},
+			CONTACT_PHONE =#{contactPhone,jdbcType=VARCHAR}, 		
+			VISIT_UNIT_TYPE =#{visitUnitType,jdbcType=VARCHAR},	 
+			VISIT_UNIT_NAME =#{visitUnitName,jdbcType=VARCHAR},	
+			VISITOR_NUMBER =#{visitorNumber,jdbcType=NUMERIC}, 		
+			COMPANY_USER_NUMBER=#{companyUserNumber,jdbcType=NUMERIC},	 
+			REMARK= #{remark,jdbcType=VARCHAR},	
+			STATUS =#{status,jdbcType=VARCHAR},	 		
+			VISIT_LEVEL =#{visitLevel,jdbcType=VARCHAR},	 	
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		 WHERE UUID=#{id,jdbcType=VARCHAR}   and  VALID='1'
+	</update>
+	
+	<!--预定申请的修改TB_YSZX_IDEA的状态-->
+	<update id="submitForStatus"  >
+		UPDATE TB_YSZX_IDEA SET
+			STATUS =#{status,jdbcType=VARCHAR},	
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE UUID=#{ideaId}  and  VALID='1'
+	</update> 
+	
+	<!--参观预定查询公共sql-->
+	<sql id="IdeaInfo">
+	     	SELECT 
+			      UUID   as  "id",	    
+	              (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = APPLY_DEPT)   as "applyDept",
+	              TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+	              TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+				  CONTACT_USER as "contactUser",
+				  CONTACT_PHONE as "contactPhone", 		
+				  VISIT_UNIT_TYPE as "visitUnitType",	 
+				  VISIT_UNIT_NAME as "visitUnitName",	
+				  VISITOR_NUMBER as "visitorNumber", 		
+				  COMPANY_USER_NUMBER as "companyUserNumber",	 
+				  REMARK as "remark",	
+	              (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=STATUS) as "status",
+	              STATUS as  "approveState",
+				  (SELECT  APPROVE_ID FROM TB_WL_APPLY  WHERE    ID=APPLY_ID) as "approveId",
+				  APPLY_ID as "applyId",	
+				  APPLY_NUMBER as "applyNumber",	 	 		
+				  VISIT_LEVEL as "visitLevel",	 	
+				  VALID as "valId", 	
+				  CREATE_USER as "createUser",
+				  TO_CHAR( CREATE_TIME,'YYYY-MM-DD') as "createTime"	 	
+			  FROM TB_YSZX_IDEA	
+			  WHERE VALID =  '1' 
+			<if test="applyId!=null and applyId!=''">
+				and APPLY_NUMBER  like '%'||#{applyId}||'%'
+			</if>
+			<if test="userId!=null and userId!=''">
+				and CREATE_USER  like '%'||#{userId}||'%'
+			</if>
+			<if test="createTime!=null and createTime!=''">
+				and TO_CHAR(CREATE_TIME,'YYYY-MM')  like '%'||#{createTime}||'%'
+			</if>
+			<!--
+			<if test="applyDept!=null and applyDept!=''">
+				and APPLY_DEPT  like '%'||#{applyDept}||'%'
+			</if>
+			-->
+			<if test="null != applyDepts and applyDepts.size > 0">
+			   AND  APPLY_DEPT IN
+			<foreach collection="applyDepts" item="deptId" open="(" separator="," close=")">
+            	#{deptId,jdbcType=VARCHAR}
+        	</foreach>
+		    </if>
+			
+				ORDER BY  CREATE_TIME     DESC
+    </sql>
+    
+    <!--参观预定查询的分页查询  -->
+	<select id="selectForIdeaInfo" resultType="java.util.Map">
+	SELECT  T.*  from(
+	SELECT  TB.* , ROWNUM AS ROWNO  from(
+      	<include refid="IdeaInfo"/>
+	) TB  WHERE #{page_end} >= ROWNUM
+	) T   WHERE T.ROWNO > #{page_start}
+	</select>
+	
+	<!--参观预定查询的分页查询获取总数  -->
+	<select id="selectForideaNum" resultType="java.util.Map">
+	      SELECT    COUNT(1)  AS "countNum"  from(<include refid="IdeaInfo"/>) 	  
+    </select>
+    
+	<!--预定审批查询填报的预定开始和结束时间-->
+	<select id="selectForIdeaDate" resultType="java.util.Map">
+		SELECT 
+		  APPLY_NUMBER,
+		  TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI:SS') AS START_DATE,
+		  TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI:SS')  AS  END_DATE
+		  FROM TB_YSZX_IDEA
+		WHERE VALID =  '1'  
+		<if test="idea!=null and idea !=''">
+			and   UUID !=  #{idea} 
+		</if> 
+	</select>
+	
+	<!--预定审批查询审批状态为退回的查询-->
+	<select id="selectForReturn" resultType="java.util.Map">
+	 SELECT 
+ 		      UUID   as  "id",	    
+ 		      APPLY_DEPT  as "applyDeptId",
+               (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = APPLY_DEPT)   as "applyDept",
+               TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+               TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+ 			  CONTACT_USER as "contactUser",
+ 			  CONTACT_PHONE as "contactPhone", 		
+ 			  VISIT_UNIT_TYPE as "visitUnitType",	
+ 			  (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='visitunit_type' and vaild=1 and code=VISIT_UNIT_TYPE) as "visitUnitTypeName",  
+ 			  VISIT_UNIT_NAME as "visitUnitName",	
+ 			  VISITOR_NUMBER as "visitorNumber", 		
+ 			  COMPANY_USER_NUMBER as "companyUserNumber",	 
+ 			  REMARK as "remark",	
+              (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=STATUS) as "status",
+              STATUS  as  "approveState",
+               (SELECT  APPROVE_ID FROM TB_WL_APPLY  WHERE    ID=APPLY_ID) as "approveId",
+			  APPLY_ID as "applyId",
+ 			  VISIT_LEVEL as "visitLevel",	 	
+ 			  VALID as "valId", 	
+ 			  CREATE_USER as "createUser",
+ 			  TO_CHAR( CREATE_TIME,'YYYY-MM-DD') as "createTime",
+ 			  APPLY_NUMBER 	 as "applyNumber"	
+		  FROM TB_YSZX_IDEA	  where  VALID =  '1'
+		<if test="id!=null and id!=''">
+			and UUID  like '%'||#{id}||'%'
+		</if>
+	</select>
+	<!--预定审批查询审批状态的查询-->
+	<select id="selectForId" resultType="java.util.Map">
+          SELECT 
+ 		      UUID   as  "id",	    
+ 		      APPLY_DEPT  as "applyDeptId",
+               (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = APPLY_DEPT)   as "applyDept",
+               TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+               TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+ 			  CONTACT_USER as "contactUser",
+ 			  CONTACT_PHONE as "contactPhone", 		
+ 			  VISIT_UNIT_TYPE as "visitUnitType",	
+ 			  (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='visitunit_type' and vaild=1 and code=VISIT_UNIT_TYPE) as "visitUnitTypeName",  
+ 			  VISIT_UNIT_NAME as "visitUnitName",	
+ 			  VISITOR_NUMBER as "visitorNumber", 		
+ 			  COMPANY_USER_NUMBER as "companyUserNumber",	 
+ 			  REMARK as "remark",	
+              (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=STATUS) as "status",
+              STATUS  as  "approveState",
+               (SELECT  APPROVE_ID FROM TB_WL_APPLY  WHERE    ID=APPLY_ID) as "approveId",
+			  APPLY_ID as "applyId",
+ 			  VISIT_LEVEL as "visitLevel",	 	
+ 			  VALID as "valId", 	
+ 			  CREATE_USER as "createUser",
+ 			  TO_CHAR( CREATE_TIME,'YYYY-MM-DD') as "createTime",
+ 			  APPLY_NUMBER 	 as "applyNumber"	
+		  FROM TB_YSZX_IDEA	  where  VALID =  '1'
+		<if test="id!=null and id!=''">
+			and UUID  like '%'||#{id}||'%'
+		</if>
+		 
+	</select>
+	
+	<!--根据年份查询信息-->
+	<select id="selectForApplyId" resultType="java.util.Map">
+		SELECT 
+			APPLY_NUMBER as "applyNumber",
+			APPLY_ORDER as  "applyOrder",
+			APPLY_YEAR as "applyYear"
+		  FROM TB_YSZX_IDEA
+		WHERE VALID =  '1'
+		<if test="applyYear!=null and applyYear != ''">
+			and   APPLY_YEAR   like '%'||#{applyYear}||'%'
+		</if>
+		ORDER BY  APPLY_ORDER   DESC
+	</select>
+    <select id="selectIdeaDeptInfo" resultType="java.util.Map">
+	   SELECT  
+          DISTINCT( T.APPLY_DEPT)   as  "applyDeptID",
+          D.DEPTNAME   as  "applyDeptName",
+          D.PDEPTCODE  as  "pdeptCode",
+          D.PDEPTNAME  as  "pdeptName"
+          FROM   TB_YSZX_IDEA  T
+          LEFT JOIN BG_SYS_DEPT  D  ON T.APPLY_DEPT  =D.DEPTID 
+          WHERE    T.VALID='1' AND  D.VALID='1'
+	</select>
+	<!--预定审批的删除-->
+	<update id="deleteIdeaInfo"  >
+		UPDATE TB_YSZX_IDEA SET
+			VALID=#{valId,jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE UUID=#{ideaId}  
+	</update> 
 	
 	
 	
+ 
+	
+	
+	<!--预定审批参观领导的添加-->
 	<insert id="addVisitInfo"  parameterType="com.sgcc.bg.yszx.bean.VisitInfo">
 		INSERT INTO TB_YSZX_VISIT ( 
 			UUID,	 		
@@ -82,7 +290,55 @@
 			#{updateTime,jdbcType=TIMESTAMP}
 			)
 	</insert>
+	<!--预定审批参观领导的修改-->
+	<update id="updataVisitInfo"   parameterType="com.sgcc.bg.yszx.bean.VisitInfo">
+		UPDATE TB_YSZX_VISIT SET	
+            USERNAME=#{userName,jdbcType=VARCHAR},	 
+   	        POSITION=#{position,jdbcType=VARCHAR},	
+			USERLEVEL=#{userLevel,jdbcType=VARCHAR},	 	
+			SORT_ID=#{sortId,jdbcType=NUMERIC},	 
+			REMARK=#{remark,jdbcType=VARCHAR},	 			 
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		 WHERE  VALID='1'
+		  and   UUID=#{id,jdbcType=VARCHAR}  
+		  and  IDEAID =#{ideaId,jdbcType=VARCHAR}    
+	</update>
+	<!--预定审批参观领导的删除-->
+	<update id="deleteVisitInfo"  >
+		UPDATE TB_YSZX_VISIT SET
+			VALID=#{valId,jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE UUID=#{visitId}  
+	</update> 
+	<!--预定审批参观领导的查询-->
+	<select id="selectForVisitInfo" resultType="java.util.Map">
+	     SELECT 
+		    UUID  as  "visitId" ,    	 		
+            IDEAID  as  "ideaId",	 
+            USERNAME as  "userName",	 
+   			POSITION as  "position" ,	
+   		    (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='visitunit_levle' and vaild=1 and code=USERLEVEL) as "userLevelName", 
+			USERLEVEL as  "userLevel",	 	
+			SORT_ID as "sortId" ,	 
+			REMARK as "remark",	 			 
+			CREATE_USER as "createUser",
+			TO_CHAR( CREATE_TIME,'YYYY-MM-DD HH24:MI:SS')  as  "createTime"   
+		  FROM TB_YSZX_VISIT  
+		  WHERE VALID =  '1' 
+		<if test="ideaId!=null and ideaId!=''">
+			and IDEAID  like '%'||#{ideaId}||'%'
+		</if>
+		ORDER BY  SORT_ID
+	</select>	
 	
+	
+	
+ 
+	
+
+	<!--预定审批陪同领导的添加-->
 	<insert id="addCompanyLeaderInfo"  parameterType="com.sgcc.bg.yszx.bean.CompanyLeaderInfo">
 		INSERT INTO TB_YSZX_COMPANY_LEADER ( 
 			UUID,	 		
@@ -107,7 +363,56 @@
 			#{updateTime,jdbcType=TIMESTAMP}
 			)
 	</insert>
+	<!--预定审批陪同领导的删除-->
+	<update id="deleteLeaderInfo"  >
+		UPDATE TB_YSZX_COMPANY_LEADER SET
+			VALID=#{valId,jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE  VALID='1'
+		   <if test="userid!=null and userid!=''">
+			      and  USERID = #{userid,jdbcType=VARCHAR} 
+		   </if>
+		    <if test="ideaId!=null and ideaId!=''">
+			       and   IDEAID = #{ideaId,jdbcType=VARCHAR} 
+		   </if>	  
+	</update> 
+	<!--审批陪同领导的查询-->
+	<select id="selectForLeader" resultType="java.util.Map">
+		SELECT 
+		 ID AS USERID,
+		 USERALISA
+		  FROM TB_YSZX_CONFIG_COMPANY_LEADER
+		WHERE VALID =  '1'
+	</select>
+	<!--审批陪同领导的查询-->
+	<select id="selectForCompanyLeaderInfo" resultType="java.util.Map">
+	    SELECT 
+		  T.UUID as "leaderId",	 		
+          T.IDEAID as "ideaId",	 
+          T.USERID as "userId",	 
+   		  T.REMARK as "remark",	 	
+		  T.CREATE_USER as "createUser",
+		  TO_CHAR(T.CREATE_TIME,'YYYY-MM-DD HH24:MI:SS')   as "createTime",
+          U.USERALISA as "userAlisa",
+          U.DEPTNAME as "deptName",
+          U.SORTID as "sortId"
+		FROM TB_YSZX_COMPANY_LEADER  T
+        LEFT JOIN TB_YSZX_CONFIG_COMPANY_LEADER  U
+		        ON T.USERID = U.ID
+		  WHERE T.VALID =  '1'
+		  <if test="ideaId!=null and ideaId!=''">
+			and T.IDEAID  like '%'||#{ideaId}||'%'
+		  </if>
+		   <if test="userId!=null and userId!=''">
+			and T.USERID  like '%'||#{userId}||'%'
+		  </if>
+      ORDER BY  U.SORTID
+	</select>	
+ 
 	
+
+	<!--预定审批陪同部门人员信息的添加-->
 	<insert id="addCompanyUserInfo"  parameterType="com.sgcc.bg.yszx.bean.CompanyUserInfo">
 		INSERT INTO TB_YSZX_COMPANY_USER ( 
 			UUID,	 		
@@ -132,47 +437,391 @@
 			#{updateTime,jdbcType=TIMESTAMP} 
 			)
 	</insert>
+	<!--预定审批陪同部门人员信息的删除-->
+    <update id="deleteCompanyUserInfo"  >
+		UPDATE TB_YSZX_COMPANY_USER SET
+			VALID=#{valId,jdbcType=VARCHAR},
+			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
+			UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP}
+		WHERE UUID=#{companyId}  
+	</update> 
 	
-	
-	
-	<select id="getUserId" resultType="java.util.Map">
-		SELECT 
-		USERNAME,USERALIAS,HRDEPTNAME,HRDEPTCODE,POSTCODE,POSTNAME
-		  FROM BG_SYS_USER
-		WHERE SRC = 0  AND STATE = 1
-		   AND USERID = #{userid,jdbcType=VARCHAR}
-	</select>
-	
-	<select id="selectForIdeaDate" resultType="java.util.Map">
-		SELECT 
-		  TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI:SS') AS START_DATE,
-		  TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI:SS')  AS  END_DATE
-		  FROM TB_YSZX_IDEA
-		WHERE VALID =  '1'
-	</select>
-	
-	
-	
-	<select id="selectForLeader" resultType="java.util.Map">
-		SELECT 
-		 USERID,
-		 USERALISA
-		  FROM TB_YSZX_CONFIG_COMPANY_LEADER
-		WHERE VALID =  '1'
-	</select>
-	
-	
-	<select id="selectForApplyId" resultType="java.util.Map">
-		SELECT 
-		APPLY_ID
-		  FROM TB_YSZX_IDEA
-		WHERE VALID =  '1'
-		<if test="applyId!=null and applyId!=''">
-			and APPLY_ID  like '%'||#{applyId}||'%'
+	<!--预定审批陪同部门人员信息的查询-->
+	<select id="selectForCompanyUserInfo" resultType="java.util.Map">
+	    SELECT 
+		   	T.UUID as "companyId",	 		
+      		T.IDEAID as "ideaId",	 
+      		T.USERID as "userId",	 
+   			T.REMARK as "remark",	 	
+			T.CREATE_USER as "createUser",
+			TO_CHAR(T.CREATE_TIME,'YYYY-MM-DD HH24:MI:SS')   as "createTime",	 	 		
+      		U.USERALIAS as "userAlisa",
+      		U.POSTNAME as "postName"
+		FROM TB_YSZX_COMPANY_USER  T
+        LEFT JOIN BG_SYS_USER  U
+		        ON T.USERID = U.USERID
+		  WHERE T.VALID =  '1'
+		  <if test="ideaId!=null and ideaId!=''">
+			and T.IDEAID  like '%'||#{ideaId}||'%'
 		</if>
+		<if test="userId!=null and userId!=''">
+			and T.USERID  like '%'||#{userId}||'%'
+		</if>
+	</select>	
+	
+	
+ 	
+	
+	<!--待办查询公共sql-->
+	<sql id="DealtInfo">
+		   SELECT 
+		            G.UUID   as  "id",	    
+		            (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
+		            TO_CHAR(  G.START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+		            TO_CHAR(  G.END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+			        G.CONTACT_USER as "contactUser",
+				    G.CONTACT_PHONE as "contactPhone", 		
+				    G.VISIT_UNIT_TYPE as "visitUnitType",	 
+				    G.VISIT_UNIT_NAME as "visitUnitName",	
+				    G.VISITOR_NUMBER as "visitorNumber", 		
+				    G.COMPANY_USER_NUMBER as "companyUserNumber",	 
+				    G.REMARK as "remark",	
+		           (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code= G.STATUS) as "status",
+		           G.STATUS as  "approveState",
+				   G.APPLY_ID as "applyId",	
+				   G.APPLY_NUMBER as "applyNumber",	 	 		
+		  	       G.VISIT_LEVEL as "visitLevel",	 	
+			       G.VALID as "valId", 	
+			       G.CREATE_USER as "createUser",
+			       TO_CHAR(  G.CREATE_TIME,'YYYY-MM-DD') as "createTime"	,
+		           D.APPROVE_NODE as "approveNode",
+		           TO_CHAR(  D.APPROVE_DATE,'YYYY-MM-DD HH24:MI')  AS  "approveDate", 
+		           TO_CHAR(  D.CREATE_TIME,'YYYY-MM-DD HH24:MI')  AS  "approveCreateDate", 
+		           D.ID  as "wlApproveId" ,
+		           E.APPROVE_USER  as "approveUserId"
+		         from    TB_YSZX_IDEA G
+				                  LEFT JOIN TB_WL_APPLY AY1  ON AY1.ID = G.APPLY_ID AND AY1.VALID = '1'                    
+				                  LEFT JOIN TB_WL_APPROVE D ON D.ID = AY1.APPROVE_ID AND D.VALID = '1'
+				                  LEFT JOIN TB_WL_AUDIT_USER E ON E.APPROVE_ID = D.ID AND E.VALID = '1'
+				             
+		                     where       G.VALID='1'      and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='0'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL  
+            <if test="pridept!=null and pridept!=''">
+			      and G.APPLY_DEPT  like '%'||#{pridept}||'%'
+		    </if>
+            <if test="approveUserId!=null and approveUserId!=''">
+			      and E.APPROVE_USER  like '%'||#{approveUserId}||'%'
+		    </if>
+		    <if test="contactUserName!=null and contactUserName!=''">
+			      and G.CONTACT_USER  like '%'||#{contactUserName}||'%'
+		    </if>
+		    <if test="applyNumber!=null and applyNumber!=''">
+			      and G.APPLY_NUMBER  like '%'||#{applyNumber}||'%'
+		    </if>
+		    <if test="applyDept!=null and applyDept!=''">
+			      and G.APPLY_DEPT  like '%'||#{applyDept}||'%'
+		    </if>
+            ORDER BY  G.CREATE_TIME  DESC
+	</sql>
+	
+    <!--待办分页查询-->
+    <select id="selectForDealtInfo" resultType="java.util.Map">
+	    SELECT  T.*  from(
+		SELECT  TB.* , ROWNUM AS ROWNO  from(
+		           <include refid="DealtInfo"/>
+	            ) TB  WHERE #{page_end} >= ROWNUM
+		        ) T   WHERE T.ROWNO > #{page_start}
+	</select>
+		
+	<!--待办分页查询总数-->
+    <select id="selectForDealtNum" resultType="java.util.Map">
+	    SELECT    COUNT(1)  AS "countNum"  from(<include refid="DealtInfo"/>) 
+	</select>	
+	
+	
+	
+    <!--已办查询公共sql-->
+    <sql id="AlreadytInfo">
+	   SELECT 
+            G.UUID   as  "id",	    
+            (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
+            TO_CHAR(  G.START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+            TO_CHAR(  G.END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+	        G.CONTACT_USER as "contactUser",
+		    G.CONTACT_PHONE as "contactPhone", 		
+		    G.VISIT_UNIT_TYPE as "visitUnitType",	 
+		    G.VISIT_UNIT_NAME as "visitUnitName",	
+		    G.VISITOR_NUMBER as "visitorNumber", 		
+		    G.COMPANY_USER_NUMBER as "companyUserNumber",	 
+		    G.REMARK as "remark",	
+           (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code= G.STATUS) as "status",
+           (SELECT SORT_ID FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code= G.STATUS) as "sortId",
+           G.STATUS as  "approveState",
+		   G.APPLY_ID as "applyId",	
+		   G.APPLY_NUMBER as "applyNumber",	 	 		
+  	       G.VISIT_LEVEL as "visitLevel",	 	
+	       G.VALID as "valId", 	
+	       G.CREATE_USER as "createUser",
+	       TO_CHAR(  G.CREATE_TIME,'YYYY-MM-DD') as "createTime"	,
+           D.APPROVE_NODE as "approveNode",
+           D.ID  as "wlApproveId" ,
+           D.NEXT_APPROVE_ID  as "nextwlApproveId" ,
+           D.APPROVE_STEP   as "approveStep",
+           TO_CHAR(  D.APPROVE_DATE,'YYYY-MM-DD HH24:MI')  AS  "approveDate", 
+           TO_CHAR(  D.CREATE_TIME,'YYYY-MM-DD HH24:MI')  AS  "approveCreateDate", 
+           E.APPROVE_USER  as "approveUserId"
+         from    TB_YSZX_IDEA  G
+             LEFT JOIN TB_WL_APPLY C  ON C.ID = G.APPLY_ID AND C.VALID = '1'   
+             LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'   
+             LEFT JOIN TB_WL_AUDIT_USER E ON D.ID=E.APPROVE_ID AND   E.VALID='1'
+             
+          where   G.VALID='1'     and   G.STATUS!='RETURN'        and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='1'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL   
+            <if test="pridept!=null and pridept!=''">
+			      and G.APPLY_DEPT  like '%'||#{pridept}||'%'
+		    </if>
+            <if test="approveUserId!=null and approveUserId!=''">
+			      and E.APPROVE_USER  like '%'||#{approveUserId}||'%'
+		    </if>
+		    <if test="contactUserName!=null and contactUserName!=''">
+			      and G.CONTACT_USER  like '%'||#{contactUserName}||'%'
+		    </if>
+		    <if test="applyNumber!=null and applyNumber!=''">
+			      and G.APPLY_NUMBER  like '%'||#{applyNumber}||'%'
+		    </if>
+		    <if test="applyDept!=null and applyDept!=''">
+			      and G.APPLY_DEPT  like '%'||#{applyDept}||'%'
+		    </if>
+            ORDER BY  G.CREATE_TIME     DESC
+	
+	</sql>
+	
+	<!--已办分页查询-->
+	<select id="selectForAlreadytInfo" resultType="java.util.Map">
+		 SELECT  T.*  from(
+		 SELECT  TB.* , ROWNUM AS ROWNO  from(
+	            <include refid="AlreadytInfo"/>
+            ) TB  WHERE #{page_end} >= ROWNUM
+	        ) T   WHERE T.ROWNO > #{page_start}
+	</select>	
+	
+	<!--已办分页查询数量-->
+	<select id="selectForAlreadytNum" resultType="java.util.Map">
+           SELECT    COUNT(1)  AS "countNum"  from(<include refid="AlreadytInfo"/>) 
+	</select>	
+	
+ 	<!--综合查询公共sql-->
+	<sql id="ComprehensiveInfo">
+	    SELECT  *　FROM (
+	    SELECT 
+	         rownum   as  "rn",
+		    G.UUID   as  "id",	 
+       (   SELECT    
+          wm_concat( D.USERALISA)
+         from  TB_YSZX_COMPANY_LEADER  T   
+         LEFT JOIN TB_YSZX_CONFIG_COMPANY_LEADER  D  ON T.USERID  =D.ID
+         where T.VALID='1' AND  D.VALID='1'   
+        AND  T.IDEAID =G.UUID
+         GROUP BY T.IDEAID
+       )  AS  "leaderInfo",
+       (
+       SELECT      
+         wm_concat( D.USERALIAS||'('||D.POSTNAME ||')')
+         from  TB_YSZX_COMPANY_USER  T   
+         LEFT JOIN BG_SYS_USER  D  ON T.USERID  =D.USERID
+         where T.VALID='1' AND  D.VALID='1'   
+         AND  T.IDEAID =G.UUID
+         GROUP BY T.IDEAID
+        )  AS  "userInfo",
+        (
+         SELECT  
+          wm_concat(T.USERNAME||'('|| T.POSITION ||'、'||D.NAME||')')   
+          FROM  TB_YSZX_VISIT T
+          LEFT JOIN BG_SYS_DATADICTIONARY  D  ON T.USERLEVEL  =D.CODE 
+          where T.VALID='1' AND  D.VAILD='1' AND D.PCODE='visitunit_levle'
+          AND  T.IDEAID =G.UUID 
+          GROUP BY T.IDEAID
+         )  AS  "visitInfo",
+        (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = G.APPLY_DEPT)   as "applyDept",
+        TO_CHAR( G.START_DATE, 'YYYY-MM-DD HH24:MI') as "stateDate",
+        TO_CHAR( G.END_DATE,'YYYY-MM-DD HH24:MI')  AS  "endDate",  
+			  G.CONTACT_USER as "contactUser",
+			  G.CONTACT_PHONE as "contactPhone", 		
+			  G.VISIT_UNIT_TYPE as "visitUnitType",	 
+			  (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='visitunit_type' and vaild=1 and code= G.VISIT_UNIT_TYPE) as "visitUnitTypeName",  
+			  G.VISIT_UNIT_NAME as "visitUnitName",	
+			  G.VISITOR_NUMBER as "visitorNumber", 		
+			  G.COMPANY_USER_NUMBER as "companyUserNumber",	 
+			  G.REMARK as "remark",	
+        (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='YSZX_APPROVE_STATE' and vaild=1 and code=G.STATUS) as "status",
+        G.STATUS as  "approveState",
+			  G.APPLY_ID as "applyId",	
+			  G.APPLY_NUMBER as "applyNumber",	 	 		
+			  G.VISIT_LEVEL as "visitLevel",	 	
+			  G.VALID as "valId", 	
+			  G.CREATE_USER as "createUser",
+			  TO_CHAR( G.CREATE_TIME,'YYYY-MM-DD') as "createTime"
+		    FROM TB_YSZX_IDEA   G
+		    WHERE  G.VALID =  '1'
+		   <if test="null != applyDepts and applyDepts.size > 0">
+			   AND  G.APPLY_DEPT  IN
+				<foreach collection="applyDepts" item="deptId" open="(" separator="," close=")">
+	            	#{deptId,jdbcType=VARCHAR}
+	        	</foreach>
+		    </if>
+		    <if test="year!=null and year!=''">
+			and   TO_CHAR(G.CREATE_TIME,'YYYY')  like '%'||#{year}||'%'
+		    </if>
+		    <if test="month!=null and month!=''">
+			and   TO_CHAR(G.CREATE_TIME,'MM')  like '%'||#{month}||'%'
+		    </if>
+		    <if test="applyNumber!=null and applyNumber!=''">
+			and  G.APPLY_NUMBER  like '%'||#{applyNumber}||'%'
+		    </if>
+		    <if test="applyDept!=null and applyDept!=''">
+			and  G.APPLY_DEPT  like '%'||#{applyDept}||'%'
+		    </if>
+	   ) where  1=1
+		<if test="visitName!=null and visitName!=''">
+			and "visitInfo"  like '%'||#{visitName}||'%'
+		</if>
+		<if test="visitLevel!=null and visitLevel!=''">
+			and "visitInfo"  like '%'||#{visitLevel}||'%'
+		</if>
+		 <if test="null != ids and ids.size > 0">
+			AND "id" IN
+			<foreach collection="ids" item="id123" open="(" separator="," close=")">
+            	#{id123,jdbcType=VARCHAR}
+        	</foreach>
+		</if>
+	</sql>
+	
+   <!--综合分页查询-->
+   <select id="selectComprehensiveInfo" resultType="java.util.Map">
+	   SELECT  T.*  from(
+	   SELECT  TB.* , ROWNUM AS ROWNO  from(
+                  <include refid="ComprehensiveInfo"/>
+	     ) TB  WHERE #{page_end} >= ROWNUM
+	        ) T   WHERE T.ROWNO > #{page_start}
+	</select>	
+	
+	<!--综合导出查询EXL-->
+	<select id="selectforEXLComprehensiveInfo" resultType="java.util.Map">
+	     SELECT   *  from(<include refid="ComprehensiveInfo"/>) 
 	</select>
 	
+    <!--综合查总数-->
+   <select id="selectForComprehensiveNum" resultType="java.util.Map">
+	     SELECT    COUNT(1)  AS "countNum"  from(<include refid="ComprehensiveInfo"/>) 
+   </select>	
 	
 	
 	
+  	 <!--根据用户id查询用户信息表-->
+	<select id="getUserId" resultType="java.util.Map">
+		 SELECT 
+		   USERID  as "userId",  
+		   USERNAME as "userName",
+		   USERALIAS as "userAlias",
+		   HRDEPTNAME as "hrDeptName",
+		   HRDEPTCODE as "hrDeptCode",
+		   POSTCODE as "postCode", 
+		   POSTNAME  as "postName"
+		  FROM BG_SYS_USER
+		  WHERE 
+		     USERID = #{userId,jdbcType=VARCHAR}
+	</select>
+	
+ 	<!--查询数据字典-->
+	<select id="selectForDictionary" resultType="java.util.Map"  parameterType="java.util.List">
+		 SELECT 
+		   CODE as "code",
+		   NAME as "name", 
+		   SORT_ID  as "sortId"
+		  FROM BG_SYS_DATADICTIONARY
+		  WHERE VAILD = '1'
+		   AND PCODE = #{pcode,jdbcType=VARCHAR}   
+		   AND CODE IN
+		    <foreach  collection="codes" item="code" open="("  separator="," close=")">
+		        #{code,jdbcType=VARCHAR} 
+		   </foreach> 
+		   ORDER BY  SORT_ID
+		   
+	</select>
+	<!--查询数据字典-->
+	<select id="selectForCode" resultType="java.util.Map"   >
+		 SELECT 
+		   CODE as "code",
+		   NAME as "name", 
+		   SORT_ID  as "sortId"
+		  FROM BG_SYS_DATADICTIONARY
+		  WHERE VAILD = '1'
+		   AND PCODE = #{pcode,jdbcType=VARCHAR}   
+		   <if test="code!=null and code!=''">
+			      and CODE  like '%'||#{code}||'%'
+		   </if>
+		   ORDER BY  SORT_ID
+	</select>
+	
+   
+     <!--查询申请表信息-->   
+	 <select id="selectForApply" resultType="java.util.Map">
+	    SELECT  
+          APPLY_STATUS
+          FROM   TB_WL_APPLY   
+          WHERE    VALID='1'   and   ID=#{id}
+	 </select>
+	 
+	 
+    <!--查询审批表信息-->
+	<select id="selectForwlApplyId" resultType="java.util.Map">
+	    select  A.ID   as  "wlApproveId"
+	      from  TB_WL_APPROVE A   
+	      where   A.VALID='1' 
+	       AND   A.APPROVE_STATUS='0' 
+	       AND  A.AUDIT_FLAG='1'  
+	       AND  A.APPLY_ID= #{applyId,jdbcType=VARCHAR}    
+	      ORDER BY   CREATE_TIME  DESC
+	 </select>
+	 
+	 <!--查询审批规则信息--> 
+	 <select id="selectForApplyStatus" resultType="java.util.Map">
+	    SELECT     
+	     T.NODE,
+	     G.ROLE_NAME,
+	     G.ROLE_CODE,
+	     G.ID 
+         FROM   TB_WL_RULE  T   
+         LEFT JOIN    TB_PRIV_ROLE  G ON  T.APPROVE_ROLE=G.ID 
+         where  G.VALID='1'  AND T.VALID ='1' AND     T.APPROVE_ROLE   IS not  NULL   
+           AND  T.NODE=#{applyStatus}
+	 </select>
+	 
+	 
+	  <!--查询审批规则信息--> 
+	 <select id="selectForPrivUserId" resultType="java.util.Map">
+				SELECT
+					T.ID  as "id",
+					T.USER_ID  as "userId",
+					U.USERNAME as  "userName",
+					U.USERALIAS as  "userAlias",
+					T.ROLE_ID   as "roleId",
+					R.ROLE_NAME  as  "roleName",
+					R.ROLE_CODE  as "roleCode",
+					R.ROLE_TYPE  as "roleType",
+					R.FUNCTION_TYPE  as "functionType"
+				FROM
+					TB_PRIV_USER_R_ROLE T
+				INNER JOIN TB_PRIV_ROLE R ON T .ROLE_ID = R. ID
+				INNER JOIN BG_SYS_USER U ON T .USER_ID = U .USERID 
+				WHERE T .VALID = '1'
+				AND R.VALID = '1'
+				AND U .VALID = '1' 
+				AND  T.USER_ID=#{userId}  
+				AND  R.FUNCTION_TYPE =#{type}
+				 <if test="roleCode!=null and roleCode!=''">
+			     AND  R.ROLE_CODE=#{roleCode}  
+		        </if>
+				
+	  </select>  
+	   
+	   
 </mapper>
