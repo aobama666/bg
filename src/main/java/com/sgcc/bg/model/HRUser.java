@@ -1,6 +1,7 @@
 package com.sgcc.bg.model;
 
 public class HRUser {
+	private String userId;
 	/**
 	 * 人资编号
 	 */
@@ -109,6 +110,24 @@ public class HRUser {
 	 * 员工编码 （一卡通编码）
 	 */
 	private String employeeNumber;
+	
+	private String deptId;
+	
+	public String getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(String deptId) {
+		this.deptId = deptId;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 
 	/**
 	 * @return the hrCode

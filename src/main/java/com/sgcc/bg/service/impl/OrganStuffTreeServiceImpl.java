@@ -46,6 +46,16 @@ public class OrganStuffTreeServiceImpl implements OrganStuffTreeService{
 		List<Map<String, Object>> treeList = formatTreeData(list);
 		return treeList;
 	}
+    
+	public List<Map<String, Object>> getyszxForUserTreeByOrgan(String organId) {
+		List<Map<String, Object>> list = organStuffTreeMapper.getyszxForUserTreeByOrgan(organId);
+		List<Map<String, Object>> treeList = formatTreeData(list);
+		return treeList;
+	}
+	
+	
+	
+	
 	public List<Map<String, Object>> queryAllOrganTree(String rootId,String level,String limit) {
 		List<Map<String, Object>> list = organStuffTreeMapper.getAllOrganTree(rootId,level,limit);
 		
@@ -57,6 +67,7 @@ public class OrganStuffTreeServiceImpl implements OrganStuffTreeService{
 		List<Map<String, Object>> treeList = new ArrayList<Map<String, Object>>();
 		for(int i=0;i<list.size();i++){
 			Map<String, Object> obj = list.get(i);
+			String userId = obj.get("USERID")==null?"":obj.get("USERID").toString();
 			String deptId = obj.get("DEPTID")==null?"":obj.get("DEPTID").toString();
 			String pdeptId = obj.get("PDEPTID")==null?"":obj.get("PDEPTID").toString();
 			String organId = obj.get("DEPTCODE")==null?"":obj.get("DEPTCODE").toString();
@@ -66,8 +77,9 @@ public class OrganStuffTreeServiceImpl implements OrganStuffTreeService{
 			String childNum = obj.get("CHILD_NUM")==null?"":obj.get("CHILD_NUM").toString();
 			String dataType = obj.get("DATATYPE")==null?"":obj.get("DATATYPE").toString();
 			String parentName = obj.get("PDEPTNAME")==null?"":obj.get("PDEPTNAME").toString();
-			
+			System.out.println(userId);
 			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("userId", userId);
 			map.put("deptId", deptId);
 			map.put("pdeptId", pdeptId);
 			map.put("id", organId);

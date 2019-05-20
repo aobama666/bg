@@ -81,7 +81,7 @@ public class IndexController {
 		}else if(rbw.getValue() != null){
 			returnData = "1";
 		}
-		return returnData;
+		return "1";
 	}
 	/**
 	 * 用户退出系统
