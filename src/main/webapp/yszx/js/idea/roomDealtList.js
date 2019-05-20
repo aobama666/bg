@@ -134,7 +134,7 @@ roomList.initDataGrid = function(){
 	     function(r){
 		       if(r){
 	            	var checkedIds = dataGrid.getCheckedIds();
-		           messageReturn("0");
+		            messageReturn("0");
 			}
 	     });
 	   }
@@ -288,27 +288,7 @@ roomList.initDataGrid = function(){
 										return;  
 							     }else{
 							    	 var checkedIds = dataGrid.getCheckedIds();
-							
-							    		$.ajax({
-					 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
-					 						type: "post",
-					 						dataType:"json",
-					 						contentType: 'application/json',
-					 						async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
-					 						success: function (data) {
-					 							if(data.success == "true"){
-					 							 
-					 								messager.tip("审批成功",1000);
-					 								roomList.query();
-					 								layer.close(layer.index);
-					 							}else{
-					 								 
-					 								messager.tip("审批失败",1000);
-					 								roomList.query();
-					 							}
-					 						}
-					 					});
-							    	// selectForAgree(approveId,stauts,auditUserId,approveRemark);
+							    	 selectForAgree(approveId,stauts,auditUserId,approveRemark);
 							    	
 							    }
 								 
@@ -323,7 +303,7 @@ roomList.initDataGrid = function(){
 	
 	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
 		    debugger;
-		    alert("approveId"+approveId+"----auditUserId"+auditUserId+"----stauts"+stauts+"-----approveRemark"+approveRemark);
+		  
 	 					$.ajax({
 	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
 	 						type: "post",
@@ -335,7 +315,7 @@ roomList.initDataGrid = function(){
 	 								alert("审批成功 ");
 	 								messager.tip("审批成功",1000);
 	 								roomList.query();
-	 								//layer.close(layer.index);
+	 								layer.close(layer.index);
 	 							}else{
 	 								alert("审批失败 ");
 	 								messager.tip("审批失败",1000);

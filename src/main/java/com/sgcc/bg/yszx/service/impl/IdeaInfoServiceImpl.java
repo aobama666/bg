@@ -155,16 +155,27 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 			 
 	        boolean beginFlagone=DateUtil.toHms(stateDate,"08:30:00","11:30:00");
 	        boolean beginFlagtwo=DateUtil.toHms(stateDate,"13:30:00","16:30:00");
-	        if(beginFlagone&&beginFlagtwo){
-	        	  rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间错误,上午可预定时间为8:30-11:30,下午可预定时间为13:30-16:30。"); 
-				  return JSON.toJSONString(rw);  
-	        }
+	        
+	        if(!beginFlagone){
+	     		if(!beginFlagtwo){
+	     			rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间错误,上午可预定时间为8:30-11:30,下午可预定时间为13:30-16:30。"); 
+					return JSON.toJSONString(rw);  
+	     		
+	     		} 
+	     	} 
+	        
+	        
 	        boolean endFlagone=DateUtil.toHms(endDate,"08:30:00","11:30:00");
 	        boolean endFlagtwo=DateUtil.toHms(endDate,"13:30:00","16:30:00");
-	        if(endFlagone&&endFlagtwo){
-	        	  rw = new ResultWarp(ResultWarp.FAILED ,"参观结束时间错误,上午可预定时间为8:30-11:30,下午可预定时间为13:30-16:30。"); 
-				  return JSON.toJSONString(rw);  
-	        }
+	         
+	        if(!endFlagone){
+	     		if(!endFlagtwo){
+	     			rw = new ResultWarp(ResultWarp.FAILED ,"参观结束时间错误,上午可预定时间为8:30-11:30,下午可预定时间为13:30-16:30。"); 
+					return JSON.toJSONString(rw);  
+	     		
+	     		} 
+	     	} 
+	        
 			//系统已经预定的时间
 			List<Map<String, Object>> list=yszxMapper.selectForIdeaDate(id);
 			 if(!list.isEmpty()){
