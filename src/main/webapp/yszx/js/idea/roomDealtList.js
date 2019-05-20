@@ -148,9 +148,12 @@ roomList.initDataGrid = function(){
 			layer.confirm(
 					 html,
 					 {title:'请填写审批意见', area:'800px',skin:'demo-class'   },
-					 function(){
-						 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
-						 selectForReturn(approveRemark,stauts);
+					 function(r){
+						 if(r){
+							 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
+							 selectForReturn(approveRemark,stauts);
+						 }
+						
 						
 		             });
 		  }
@@ -256,13 +259,14 @@ roomList.initDataGrid = function(){
 
 	/* 同意信息库信息 */
 	messageAgree= function(stauts){
+		  debugger;
 	    var html=messageagreeHtml();
 		if(html =='' || html ==undefined){
 			messager.tip("审批人查询失败",1000);
 			return;
 		}else{
 			var auditUserId=approveUserID();
-			var approveRemark= "同意";
+			var approveRemark= "";
 			var checkedItems = dataGrid.getCheckedItems(dataItems);
  			var approveId= checkedItems[0].wlApproveId;
 			if(auditUserId!=""){
@@ -272,25 +276,45 @@ roomList.initDataGrid = function(){
 				 layer.confirm(
 						 html,
 						 {title:'请选择审批人', area:'800px',skin:'demo-class'   },
-						 function(){
-							 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
-							 var auditUserId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
-							 
-							 if(checkedNumber == 0){
-								    messager.tip("请选择要操作的数据",1000);
-									return;
-						     }else if(checkedNumber > 1 ){
-						    	    messager.tip("请选择一条数据",1000);
-									return;  
-						     }else{
-						    	var checkedIds = dataGrid.getCheckedIds();
-						    	 selectForAgree(approveId,stauts,auditUserId,approveRemark);
-						    	
-						    }
-							 
-							 
-							  
-			             });
+						 function(r){
+							 if(r){
+								 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
+								 var auditUserId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
+								 if(checkedNumber == 0){
+									    messager.tip("请选择要操作的数据",1000);
+										return;
+							     }else if(checkedNumber > 1 ){
+							    	    messager.tip("请选择一条数据",1000);
+										return;  
+							     }else{
+							    	 var checkedIds = dataGrid.getCheckedIds();
+							
+							    		$.ajax({
+					 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+					 						type: "post",
+					 						dataType:"json",
+					 						contentType: 'application/json',
+					 						async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
+					 						success: function (data) {
+					 							if(data.success == "true"){
+					 							 
+					 								messager.tip("审批成功",1000);
+					 								roomList.query();
+					 								layer.close(layer.index);
+					 							}else{
+					 								 
+					 								messager.tip("审批失败",1000);
+					 								roomList.query();
+					 							}
+					 						}
+					 					});
+							    	// selectForAgree(approveId,stauts,auditUserId,approveRemark);
+							    	
+							    }
+								 
+							 }
+			             }
+						 );
 				  
 			 }
 		}
@@ -298,7 +322,8 @@ roomList.initDataGrid = function(){
 	}
 	
 	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
-		
+		    debugger;
+		    alert("approveId"+approveId+"----auditUserId"+auditUserId+"----stauts"+stauts+"-----approveRemark"+approveRemark);
 	 					$.ajax({
 	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
 	 						type: "post",
@@ -307,11 +332,13 @@ roomList.initDataGrid = function(){
 	 						async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
 	 						success: function (data) {
 	 							if(data.success == "true"){
+	 								alert("审批成功 ");
 	 								messager.tip("审批成功",1000);
 	 								roomList.query();
-	 								layer.close(layer.index);
+	 								//layer.close(layer.index);
 	 							}else{
-	 								messager.tip("审批失败失败",1000);
+	 								alert("审批失败 ");
+	 								messager.tip("审批失败",1000);
 	 								roomList.query();
 	 							}
 	 						}

@@ -276,7 +276,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		}
 		//参观开始时间和参观结束时间的验证
 		String  checkreturn=checkData(stateDate,endDate,idea);
-		if(checkreturn!=null){
+		if(!checkreturn.equals("null")){
 			return checkreturn;
 		}
 		//备注

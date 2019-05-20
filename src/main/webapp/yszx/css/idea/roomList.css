@@ -319,10 +319,10 @@ background-color:#D5E7E7;
 }
 /* cyj  楠岃瘉瀛楁涓虹┖   鏍峰紡鏄慨鏀� 鎴愮孩鑹�*/
 table td .validRefuse{
-	border:solid 1px red;
+	border:solid 1px red!important;
 }
 .validRefuses{
-	border:solid 1px red;
+	border:solid 1px red!important;
 }
 .tableStyle tr{
 	height:31px;

@@ -35,12 +35,6 @@ function getNowFormatDate() {
 }
 //验证参观开始时间和参观结束时间
 function checkDate(stateDate,endDate){
-	 
-	   
-	
-	
-	
-	
     	var startTmp=stateDate.replace(" ",":").replace(/\:/g,"-").split("-");
         var endTmp=endDate.replace(" ",":").replace(/\:/g,"-").split("-");
         var sd=new Date(startTmp[0],startTmp[1],startTmp[2],startTmp[3],startTmp[4]);
@@ -49,10 +43,6 @@ function checkDate(stateDate,endDate){
         var loaclDate=getNowFormatDate();
         var loaclTmp=loaclDate.replace(" ",":").replace(/\:/g,"-").split("-");
         var ld=new Date(loaclTmp[0],loaclTmp[1],loaclTmp[2],loaclTmp[3],loaclTmp[4]);
-        
-        
-        
-        
         
         var  stateday=new Date(stateDate).getDay();
         var  endday=new Date(endDate).getDay();
@@ -73,39 +63,20 @@ function checkDate(stateDate,endDate){
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return  false;
 	    }else if(endday=="1"){
- 		   $("##endDate").addClass("validRefuse");
+ 		   $("#endDate").addClass("validRefuse");
 		    messager.tip("检查参观结束时间,每周一常规检修,不接受预定！",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return  false;
-	   }else{
+	    }else{
         	 $("#stateDate").removeClass("validRefuse");
         	 $("#endDate").removeClass("validRefuse");
         	 return true;
         } 
-        
-        
-       
-     
- 	   var  endday=new Date(endDate).getDay();
- 	   if(endday=="1"){
- 		   $("##endDate").addClass("validRefuse");
- 		    messager.tip("检查参观结束时间,每周一常规检修,不接受预定！",2000);
- 			roomDetailInfo.saveBtnClickFlag = 0;
- 			return  false;
- 	   }else{
- 		   $("#endDate").removeClass("validRefuse");
- 		    
- 	   }
-        
-        
-        
-        
-        
-        
-        
+           
 }
 //
 function checkLeaderInfo(){
+	debugger;
 	var leaders="";
 	 $(".visitLeader tr:gt(0)").each(function(){
 		 var visitId = $(this).find(".visitid").val()//姓名
@@ -132,9 +103,6 @@ function checkLeaderInfo(){
 			 leaders= "0";
 			 return  leaders;
 		 }else{
-			   $(this).find(".visitUsername").removeClass("validRefuse");
-			   $(this).find(".visitposition").removeClass("validRefuse");
-			   $(this).find(".userlevel").removeClass("validRefuse");
 			   leaders="1";
 			   return  leaders;
 		 }
@@ -142,8 +110,10 @@ function checkLeaderInfo(){
 	 })
 	 if(leaders =="0"){
 		 return false;
-		
 	 }else{
+		   $(this).find(".visitUsername").removeClass("validRefuse");
+		   $(this).find(".visitposition").removeClass("validRefuse");
+		   $(this).find(".userlevel").removeClass("validRefuse");
 		 return  true;
 	 }
 }
@@ -180,7 +150,7 @@ roomDetailInfo.messageResign =function(){
 }
 /* 保存信息库信息 */
 roomDetailInfo.messageSave= function(approvalUserd){
-	 
+	   debugger;
 	   /* 主ID  */
 	    var id=$("#id").val();
 	    var approveId=$("#wlApproveId").val();
@@ -257,13 +227,16 @@ roomDetailInfo.messageSave= function(approvalUserd){
 	    // 院内陪同领导人员信息
 	    var companyLeaderName=$("#companyLeaderName").val();
 	    if(companyLeaderName==""){
-	    	 messager.tip("院领导姓名不能为空",2000)
-			 $("#companyLeaderName").addClass("validRefuses");
+	    	 messager.tip("院内陪同领导姓名不能为空",2000)
+	    	 $(".textbox").addClass("validRefuse");
 			 roomDetailInfo.saveBtnClickFlag = 0;
 			 return;
 	    }else{
-	    	 $("#companyLeaderName").removeClass("validRefuses");
+	    	 $(".textbox").removeClass("validRefuses");
 	    }
+	    
+	    
+	    
 	    var companyUserInfo=[];
 		//陪同部门人员信息的获取
 	    var unitAccompanylen =$(".visitUnitAccompany tr").length;
@@ -417,18 +390,23 @@ roomDetailInfo.messageSubmit= function(){
 		      layer.confirm(
 					html,
 					{title:'请选择审批人', area:'800px',skin:'demo-class'   },
-					function(){
-						var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
-						var userId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
-						if(checkedNumber == 0){
-						    messager.tip("请选择要操作的数据",1000);
-						    return;
-						}else if(checkedNumber > 1 ){
-							messager.tip("请选择一条数据",1000);
-							return;  
-						}else{
-							roomDetailInfo.messageSave(userId);
-					    }
+					function(r){
+						if(r){
+							
+							var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
+							var userId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
+							if(checkedNumber == 0){
+							    messager.tip("请选择要操作的数据",1000);
+							    return;
+							}else if(checkedNumber > 1 ){
+								messager.tip("请选择一条数据",1000);
+								return;  
+							}else{
+								roomDetailInfo.messageSave(userId);
+						    }
+							
+						}
+						
 				     }); 
 		    }
 		
@@ -622,15 +600,17 @@ function SelectForVisitunitLevel(){
 
 /*参观领导删除*/
 function delLeader(obj){
-	 
+	debugger;
 	var checkedNumber = $(obj).parents(".contentBox").find("input[type=checkbox]:checked").length;
 	if(checkedNumber == 0){
 		messager.tip("请选中需要删除的数据",2000);
 		return;
-    }else if(checkedNumber>1){
+    }
+	else if(checkedNumber>1){
     	messager.tip("每次只能删除一条数据",2000);
     	return;
-    }else if(checkedNumber > 0){
+    }
+	else if(checkedNumber > 0){
     	 $.messager.confirm( "删除提示", "确认删除选中数据吗",
     	 function(r){
     		if(r){
@@ -642,6 +622,7 @@ function delLeader(obj){
 }
 /*参观领导删除逻辑*/
 function delLeaderInfo(obj){
+	debugger;
 	     $(obj).parents(".contentBox").find("input[type=checkbox]:checked").each(function(){
          var  visitId= $(this).val();
          if(visitId==""){
@@ -739,30 +720,21 @@ roomDetailInfo.SelectForUserId = function(userId){
 				var userData = data.userInfo;
 				var userInfoData = '';
 				for (var i = 0; i < userData.length; i++) {
-//					userInfoData+='<tr >' 
-//				    userInfoData+='<td>' 
-//				    	 userInfoData+='<input type="checkbox"   id = "userId"  name="userId" class="userId"   value="' + userData[i].userId + '" />' 
-//				    	 userInfoData+='<input type="hidden"   id = "companyId"  name="companyId" class="companyId" value=""/>' 
-//				    	 userInfoData+='</td>'
-//				    userInfoData+='<td  class="addInputStyle">' 
-//						  userInfoData+='<input type="text" disabled    id="UserName" name="UserName"  class="UserName"  value="' + userData[i].userAlias + '" />' 
-//				    userInfoData+='</td>'
-//				    userInfoData+='<td class="addInputStyle">' 
-//						  userInfoData+='<input type="text" disabled    id="Position" name="Position" class="Position"   value="' + userData[i].postName + '" />'
-//					 userInfoData+='</td>'
-//				    userInfoData+='</tr>' 	
 					userInfoData+='<tr >' 
 					    userInfoData+='<td>' 
 					    	 userInfoData+='<input type="checkbox"   id = "userId"  name="userId" class="userId"   value="' + userData[i].userId + '" />' 
 					    	 userInfoData+='<input type="hidden"   id = "companyId"  name="companyId" class="companyId" value=""/>' 
 					    	 userInfoData+='</td>'
 					    userInfoData+='<td  class="addInputStyle">' 
-							  userInfoData+= userData[i].userAlias 
+							   //userInfoData+='<input type="text" disabled    id="UserName" name="UserName"  class="UserName"  value="' + userData[i].userAlias + '" />' 
+							   userInfoData+='<span class="detailsLeft">'+userData[i].userAlias+'</span>';
 					    userInfoData+='</td>'
 					    userInfoData+='<td class="addInputStyle">' 
-							  userInfoData+= userData[i].postName
+							  //userInfoData+='<input type="text" disabled    id="Position" name="Position" class="Position"   value="' + userData[i].postName + '" />'
+					    	  userInfoData+='<span class="detailsLeft">'+userData[i].postName+'</span>';
 						 userInfoData+='</td>'
-					userInfoData+='</tr>' 	
+					    userInfoData+='</tr>' 	
+ 
 				}
 				$(".model_tr_userInfo").remove();
 				$(".visitUnitAccompany tr:last-child").after(userInfoData);
