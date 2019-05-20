@@ -49,12 +49,12 @@ function checkDate(stateDate,endDate){
         //参观开始时间和当前时间比较  
         if(sd.getTime()<ld.getTime()){
         	$("#stateDate").addClass("validRefuse");
-            messager.tip("参观开始日期不能早于当前日期！",2000);
+            messager.tip("参观开始日期不能晚于当前日期！",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return  false;
         }else if(sd.getTime()>ed.getTime()){
         	$("#endDate").addClass("validRefuse");
-            messager.tip("参观结束日期不能早于参观开始日期！",2000);
+            messager.tip("参观结束日期不能晚于参观开始日期！",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return false;
         }else if(stateday=="1"){
@@ -184,7 +184,7 @@ roomDetailInfo.messageSave= function(approvalUserd){
 		/* 验证联系人电话格式 手机号或者xxx-xxxxxxxx或者xxxx-xxxxxxx */
 		var  checktelePhone=IsRight.telePhone("#contactPhone");
 		if(!checktelePhone){
-			messager.tip("联系人电话格式：手机号或者xxx-xxxxxxxx或者xxxx-xxxxxxx",2000);
+			messager.tip("联系人电话提示有误,格式：手机号或者xxx-xxxxxxxx或者xxxx-xxxxxxx",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return;
 		}  
@@ -275,6 +275,17 @@ roomDetailInfo.messageSave= function(approvalUserd){
 		  msginfo="submit";
 	  }
 	  var remark= $('#remark').val();
+	  if(remark!=""){
+		  if(remark>200){
+			  $("#remark").addClass("validRefuse");
+			  messager.tip("备注",2000)
+			  roomDetailInfo.saveBtnClickFlag = 0;
+			  return;
+		  }else{
+			  $("#remark").removeClass("validRefuses");
+		  }
+		
+	  } 
 	  roomDetailFormData.remark=remark;
 	  roomDetailFormData.approveId=approveId;
 	  roomDetailFormData.approveState= approveState;
@@ -600,7 +611,7 @@ function SelectForVisitunitLevel(){
 
 /*参观领导删除*/
 function delLeader(obj){
-	debugger;
+	 
 	var checkedNumber = $(obj).parents(".contentBox").find("input[type=checkbox]:checked").length;
 	if(checkedNumber == 0){
 		messager.tip("请选中需要删除的数据",2000);
@@ -622,7 +633,7 @@ function delLeader(obj){
 }
 /*参观领导删除逻辑*/
 function delLeaderInfo(obj){
-	debugger;
+	 
 	     $(obj).parents(".contentBox").find("input[type=checkbox]:checked").each(function(){
          var  visitId= $(this).val();
          if(visitId==""){
@@ -707,12 +718,14 @@ function delUserInfo(obj){
 
 /* 各部门（单位）陪同人员信息 查询  */
 function popEvent(ids,codes,names,userId){
-	roomDetailInfo.SelectForUserId(userId);
+	//roomDetailInfo.SelectForUserId(userId);
+	roomDetailInfo.SelectForUserId(codes);
 }
-roomDetailInfo.SelectForUserId = function(userId){
+roomDetailInfo.SelectForUserId = function(codes){
 	 
 	$.ajax({
-	    url: "/bg/IdeaInfo/selectForuserName?userId="+userId,//获取申报界面数据字典
+	   // url: "/bg/IdeaInfo/selectForuserName?userId="+userId,//获取申报界面数据字典
+		url: "/bg/IdeaInfo/getUserCode?codes="+codes,//获取申报界面数据字典
 		type: "post",
 		
 		success: function (data) {

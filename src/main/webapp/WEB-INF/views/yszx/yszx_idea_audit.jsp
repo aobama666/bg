@@ -464,7 +464,7 @@
 									    messager.tip("请选择要操作的数据",1000);
 										return;
 							     }else if(checkedNumber > 1 ){
-							    	    messager.tip("请选择要操作的数据",1000);
+							    	    messager.tip("请选择一条数据",1000);
 										return;  
 							     }else{
 							    	var checkedIds = dataGrid.getCheckedIds();

@@ -128,7 +128,7 @@
 				<span title = "参观单位名称"><b class="mustWrite">*</b>参观单位名称</span>
 			</td>
 			<td colspan="3" class="addInputStyle">
-				<input  id="visitUnitName"   name="visitUnitName"  type="text"   class = "validNull"   len="150"    content="参观单位名称"  title="必填项  " />
+				<input  id="visitUnitName"   name="visitUnitName"  type="text"   class = "validNull"   len="50"    content="参观单位名称"  title="必填项  " />
 			</td>
 		</tr>
 	</table>
