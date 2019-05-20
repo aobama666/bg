@@ -184,7 +184,7 @@
 		<tr>
 		<td class="width-two"><b class="mustWrite">*</b>陪同人数</td>
 			<td colspan="3" class="addInputStyle">
-				<input type="text"  id="companyUserNumber" class = "validNull"  name="companyUserNumber"  value = "${companyUserNumber}" content="院内陪同人数"  title="必填项  ,必须为正整数"/>
+				<input type="text"  id="companyUserNumber" class = "validNull validNum"  name="companyUserNumber"  value = "${companyUserNumber}" content="院内陪同人数"  title="必填项  ,必须为正整数"/>
 			</td>
 		</tr>
 	</table>
@@ -220,10 +220,12 @@
 					   <input  type = "hidden"   id = "companyId"  name="companyId" class="companyId" value = "${userInfo.companyId}">  
 					</td>
 					<td class="addInputStyle" >
-						<input type="text"  disabled    id="UserName" name="UserName"  class="UserName" value = "${userInfo.userAlisa}" title="请点击添加按钮，添加用户"/>
+					     <span class="detailsLeft">${userInfo.userAlisa}</span>
+						<!--<input type="text"  disabled    id="UserName" name="UserName"  class="UserName" value = "${userInfo.userAlisa}" title="请点击添加按钮，添加用户"/>-->
 					</td>
 					<td class="addInputStyle">
-						<input type="text"  disabled    id="Position" name="Position" class="Position" value = "${userInfo.postName}" title="请点击添加按钮，添加用户"/>
+					    <span class="detailsLeft">${userInfo.postName}</span>
+						<!--<input type="text"  disabled    id="Position" name="Position" class="Position" value = "${userInfo.postName}" title="请点击添加按钮，添加用户"/>-->
 					</td>
 				</tr>
 			    </c:forEach>

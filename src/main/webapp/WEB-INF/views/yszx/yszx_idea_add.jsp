@@ -187,7 +187,7 @@
 		<tr>
 		<td class="width-two">陪同人数</td>
 			<td colspan="3" class="addInputStyle">
-				<input type="text"  id="companyUserNumber" class = "validNull"  name="companyUserNumber"  content="院内陪同人数"  title="必填项  ,必须为正整数" />
+				<input type="text"  id="companyUserNumber" class = "validNull validNum"  name="companyUserNumber"  content="院内陪同人数"  title="必填项  ,必须为正整数" />
 			</td>
 		</tr>
 	</table>
