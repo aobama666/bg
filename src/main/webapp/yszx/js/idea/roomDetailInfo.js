@@ -184,7 +184,7 @@ roomDetailInfo.messageSave= function(approvalUserd){
 		/* 验证联系人电话格式 手机号或者xxx-xxxxxxxx或者xxxx-xxxxxxx */
 		var  checktelePhone=IsRight.telePhone("#contactPhone");
 		if(!checktelePhone){
-			messager.tip("联系人电话提示有误,格式：手机号或者xxx-xxxxxxxx或者xxxx-xxxxxxx",2000);
+			messager.tip("联系人电话格式：手机号或者xxx-xxxxxxxx或者xxxx-xxxxxxx",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return;
 		}  
@@ -275,11 +275,11 @@ roomDetailInfo.messageSave= function(approvalUserd){
 		  msginfo="submit";
 	  }
 	  var remark= $('#remark').val();
-	  alert("remark-----"+remark);
+	  
 	  if(remark!=""){
-		  if(remark>200){
+		  if(remark.length>200){
 			  $("#remark").addClass("validRefuse");
-			  messager.tip("备注",2000)
+			  messager.tip("备注不超过200个字",2000)
 			  roomDetailInfo.saveBtnClickFlag = 0;
 			  return;
 		  }else{
