@@ -275,6 +275,7 @@ roomDetailInfo.messageSave= function(approvalUserd){
 		  msginfo="submit";
 	  }
 	  var remark= $('#remark').val();
+	  alert("remark-----"+remark);
 	  if(remark!=""){
 		  if(remark>200){
 			  $("#remark").addClass("validRefuse");
