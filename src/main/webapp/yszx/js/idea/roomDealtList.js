@@ -318,12 +318,12 @@ roomList.initDataGrid = function(){
 	 						async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
 	 						success: function (data) {
 	 							if(data.success == "true"){
-	 								alert("审批成功 ");
+	 							 
 	 								messager.tip("审批成功",1000);
 	 								roomList.query();
 	 								layer.close(layer.index);
 	 							}else{
-	 								alert("审批失败 ");
+	 								 
 	 								messager.tip("审批失败",1000);
 	 								roomList.query();
 	 							}
