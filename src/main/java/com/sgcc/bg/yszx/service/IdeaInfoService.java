@@ -70,6 +70,17 @@ public interface IdeaInfoService {
 	 */
 	public String selectForuserName(String  userId);
 	/**
+	 * 根据用户id查询用户信息
+	 * @param pro
+	 * @return
+	 */
+	public String getUserCode(String  code);
+	
+	
+	
+	
+	
+	/**
 	 * 修改演示中心信息---参观人信息的删除
 	 * @param pro
 	 * @return

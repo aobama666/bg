@@ -360,7 +360,7 @@ roomList.initDataGrid = function(){
 			messager.tip("请选择要操作的数据",1000);
 			return;
 		}else if(checkedItems.length>1){
-			messager.tip("每次只能提交一条数据",2000);
+			messager.tip("每次只能撤销一条数据",2000);
 			return;
 		}
 		if(checkedItems[0].approveState =="SAVE"  ){

@@ -729,6 +729,19 @@
 		  WHERE 
 		     USERID = #{userId,jdbcType=VARCHAR}
 	</select>
+   <select id="getUserCode" resultType="java.util.Map">
+		 SELECT 
+		   USERID  as "userId",  
+		   USERNAME as "userName",
+		   USERALIAS as "userAlias",
+		   HRDEPTNAME as "hrDeptName",
+		   HRDEPTCODE as "hrDeptCode",
+		   POSTCODE as "postCode", 
+		   POSTNAME  as "postName"
+		  FROM BG_SYS_USER
+		  WHERE 
+		     HRCODE = #{code,jdbcType=VARCHAR}
+	</select>
 	
  	<!--查询数据字典-->
 	<select id="selectForDictionary" resultType="java.util.Map"  parameterType="java.util.List">
