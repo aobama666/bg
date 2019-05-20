@@ -258,18 +258,21 @@ roomList.initDataGrid = function(){
 			      layer.confirm(
 					       html,
 					       {title:'请选择审批人', area:'800px',skin:'demo-class'   },
-					       function(){
-						       var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
-						       var approvalUserd=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
-						       if(checkedNumber == 0){
-							        messager.tip("请选择要操作的数据",1000);
-							        return;
-					           }else if(checkedNumber > 1 ){
-					   	            messager.tip("请选择要操作的数据",1000);
-							        return;  
-					           }else{
-					    	        messageForSubmit(checkedIds,approvalUserd);
-					           }
+					       function(r){
+					    	   if(r){
+					    		   var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
+							       var approvalUserd=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
+							       if(checkedNumber == 0){
+								        messager.tip("请选择要操作的数据",1000);
+								        return;
+						           }else if(checkedNumber > 1 ){
+						   	            messager.tip("请选择要操作的数据",1000);
+								        return;  
+						           }else{
+						    	        messageForSubmit(checkedIds,approvalUserd);
+						           }
+					    	   }
+						     
 		             });
 			    }
 		  }

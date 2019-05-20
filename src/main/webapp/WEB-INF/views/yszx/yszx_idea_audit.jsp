@@ -375,9 +375,12 @@
 			layer.confirm(
 					 html,
 					 {title:'请填写审批意见', area:'800px',skin:'demo-class'   },
-					 function(){
-						 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
-						 selectForReturn(approveRemark,stauts);
+					 function(r){
+						 if(r){
+							 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
+							 selectForReturn(approveRemark,stauts);
+						 }
+						 
 					 	  
 		             });
 		}
@@ -450,21 +453,24 @@
 				 layer.confirm(
 						 html,
 						 {title:'请选择审批人', area:'800px',skin:'demo-class'   },
-						 function(){
-							 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
-							 var auditUserId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
-							 
-							 if(checkedNumber == 0){
-								    messager.tip("请选择要操作的数据",1000);
-									return;
-						     }else if(checkedNumber > 1 ){
-						    	    messager.tip("请选择要操作的数据",1000);
-									return;  
-						     }else{
-						    	var checkedIds = dataGrid.getCheckedIds();
-						    	 selectForAgree(approveId,stauts,auditUserId,approveRemark);
-						    	 
-						    }
+						 function(r){
+							 if(r){
+								 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
+								 var auditUserId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
+								 
+								 if(checkedNumber == 0){
+									    messager.tip("请选择要操作的数据",1000);
+										return;
+							     }else if(checkedNumber > 1 ){
+							    	    messager.tip("请选择要操作的数据",1000);
+										return;  
+							     }else{
+							    	var checkedIds = dataGrid.getCheckedIds();
+							    	 selectForAgree(approveId,stauts,auditUserId,approveRemark);
+							    	 
+							    }
+								 
+							 }
 							 
 							 
 							  
@@ -545,10 +551,12 @@
 							       userPrivilegehtml+='<input type="hidden"    id="userId"  name = "userId"  class="userId"  value="' + userPrivilegelist[i].userId + '"  />' 
 							     userPrivilegehtml += '</td>';
 							     userPrivilegehtml += '<td class="addInputStyle">  ';
-							       userPrivilegehtml+='<input type="text" disabled  id="userAlias"  name = "userAlias"  class="userAlias inputChange"  value="' + userPrivilegelist[i].userAlias + '" title="审批人名称 " />' 
+							       userPrivilegehtml+='<span class="detailsLeft">'+userPrivilegelist[i].userAlias+'</span>';
+							     //  userPrivilegehtml+='<input type="text" disabled  id="userAlias"  name = "userAlias"  class="userAlias inputChange"  value="' + userPrivilegelist[i].userAlias + '" title="审批人名称 " />' 
 							     userPrivilegehtml += '</td>';
 							     userPrivilegehtml += '<td class="addInputStyle">';
-							       userPrivilegehtml+='<input type="text" disabled   id="deptName"   name = "deptName"   class="deptName inputChange"  value="' + userPrivilegelist[i].deptName + '" title="审批人单位" />'
+							        userPrivilegehtml+='<span class="detailsLeft">'+userPrivilegelist[i].deptName+'</span>';
+							      // userPrivilegehtml+='<input type="text" disabled   id="deptName"   name = "deptName"   class="deptName inputChange"  value="' + userPrivilegelist[i].deptName + '" title="审批人单位" />'
 							     userPrivilegehtml += '</td>';
 							       
 							 userPrivilegehtml += '</tr>';   	 
