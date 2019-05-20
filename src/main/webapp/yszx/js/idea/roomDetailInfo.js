@@ -721,19 +721,20 @@ roomDetailInfo.SelectForUserId = function(userId){
 				var userInfoData = '';
 				for (var i = 0; i < userData.length; i++) {
 					userInfoData+='<tr >' 
-				    userInfoData+='<td>' 
-				    	 userInfoData+='<input type="checkbox"   id = "userId"  name="userId" class="userId"   value="' + userData[i].userId + '" />' 
-				    	 userInfoData+='<input type="hidden"   id = "companyId"  name="companyId" class="companyId" value=""/>' 
-				    	 userInfoData+='</td>'
-				    userInfoData+='<td  class="addInputStyle">' 
-						   //userInfoData+='<input type="text" disabled    id="UserName" name="UserName"  class="UserName"  value="' + userData[i].userAlias + '" />' 
-						   userInfoData+='<span class="detailsLeft">'+userData[i].userAlias+'</span>';
-				    userInfoData+='</td>'
-				    userInfoData+='<td class="addInputStyle">' 
-						  //userInfoData+='<input type="text" disabled    id="Position" name="Position" class="Position"   value="' + userData[i].postName + '" />'
-				    	  userInfoData+='<span class="detailsLeft">'+userData[i].postName+'</span>';
-					 userInfoData+='</td>'
-				    userInfoData+='</tr>' 	
+					    userInfoData+='<td>' 
+					    	 userInfoData+='<input type="checkbox"   id = "userId"  name="userId" class="userId"   value="' + userData[i].userId + '" />' 
+					    	 userInfoData+='<input type="hidden"   id = "companyId"  name="companyId" class="companyId" value=""/>' 
+					    	 userInfoData+='</td>'
+					    userInfoData+='<td  class="addInputStyle">' 
+							   //userInfoData+='<input type="text" disabled    id="UserName" name="UserName"  class="UserName"  value="' + userData[i].userAlias + '" />' 
+							   userInfoData+='<span class="detailsLeft">'+userData[i].userAlias+'</span>';
+					    userInfoData+='</td>'
+					    userInfoData+='<td class="addInputStyle">' 
+							  //userInfoData+='<input type="text" disabled    id="Position" name="Position" class="Position"   value="' + userData[i].postName + '" />'
+					    	  userInfoData+='<span class="detailsLeft">'+userData[i].postName+'</span>';
+						 userInfoData+='</td>'
+					    userInfoData+='</tr>' 	
+ 
 				}
 				$(".model_tr_userInfo").remove();
 				$(".visitUnitAccompany tr:last-child").after(userInfoData);
