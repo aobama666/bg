@@ -49,12 +49,12 @@ function checkDate(stateDate,endDate){
         //参观开始时间和当前时间比较  
         if(sd.getTime()<ld.getTime()){
         	$("#stateDate").addClass("validRefuse");
-            messager.tip("参观开始日期不能晚于当前日期！",2000);
+            messager.tip("参观开始时间不能早于当前时间！",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return  false;
         }else if(sd.getTime()>ed.getTime()){
         	$("#endDate").addClass("validRefuse");
-            messager.tip("参观结束日期不能晚于参观开始日期！",2000);
+            messager.tip("参观结束时间不能早于参观开始时间！",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return false;
         }else if(stateday=="1"){
@@ -77,45 +77,74 @@ function checkDate(stateDate,endDate){
 //
 function checkLeaderInfo(){
 	debugger;
-	var leaders="";
+	var flag=false;
+	 
 	 $(".visitLeader tr:gt(0)").each(function(){
 		 var visitId = $(this).find(".visitid").val()//姓名
 		  //验证名称，职务，级别是否为空
 		 var username = $(this).find(".visitUsername").val()//姓名
 		 var position = $(this).find(".visitposition").val()//职务
 		 var userLevel =$(this).find("#userLevel").val();//级别
+		 
 		 if(username == ''){
 			 messager.tip("参观领导名称不能为空",2000);
 			 $(this).find(".visitUsername").addClass("validRefuse");
 			 roomDetailInfo.saveBtnClickFlag = 0;
-			 leaders= "0";
-			 return  leaders;
-		 }else if(position == ''){
+			 flag=false;
+			 return  false;
+		 }else{
+			 var  checkVisitUser=IsRight.onlyTwo("#visitUserName");
+		     if(!checkVisitUser){
+				 messager.tip("参观领导名称只能含有中文或者英文",2000);
+				 $(this).find(".visitUsername").addClass("validRefuse");
+				 roomDetailInfo.saveBtnClickFlag = 0;
+				 flag=false;
+				 return false;	 
+		     }else{
+		    	 $(this).find(".visitUsername").removeClass("validRefuse");
+		     }
+			 if(username.length>20){
+				 messager.tip("参观领导名称不超过20个字",2000);
+				 $(this).find(".visitUsername").addClass("validRefuse");
+				 roomDetailInfo.saveBtnClickFlag = 0;
+				 flag=false;
+				 return  false;
+			 }else{
+				 $(this).find(".visitUsername").removeClass("validRefuse");
+			 }
+		 }
+	
+		 if(position == ''){
 			 messager.tip("参观领导职务不能为空",2000);
 			 $(this).find(".visitposition").addClass("validRefuse");
 			 roomDetailInfo.saveBtnClickFlag = 0;
-			 leaders= "0";
-			 return  leaders;
-		 }else if(userLevel == ''){
+			 flag=false;
+			 return  false;
+		 }else{
+			 if(position.length>50){
+				 messager.tip("参观领导职务不超过50个字",2000);
+				 $(this).find(".visitposition").addClass("validRefuse");
+				 roomDetailInfo.saveBtnClickFlag = 0;
+				 flag=false;
+				 return  false;
+			 }else{
+				 $(this).find(".visitposition").removeClass("validRefuse");
+			 }
+		 }	 
+		 
+	     if(userLevel == ''){
 			 messager.tip("参观领导级别不能为空",2000)
 			 $(this).find(".userlevel").addClass("validRefuse");
 			 roomDetailInfo.saveBtnClickFlag = 0;
-			 leaders= "0";
-			 return  leaders;
+			 flag=false;
+			 return  false;
 		 }else{
-			   leaders="1";
-			   return  leaders;
-		 }
-		
+			 $(this).find(".userlevel").removeClass("validRefuse");
+		 } 
+	     flag=true;
+	     return flag;
 	 })
-	 if(leaders =="0"){
-		 return false;
-	 }else{
-		   $(this).find(".visitUsername").removeClass("validRefuse");
-		   $(this).find(".visitposition").removeClass("validRefuse");
-		   $(this).find(".userlevel").removeClass("validRefuse");
-		 return  true;
-	 }
+	 return  flag;
 }
 function  accompanyUserInfo(){
 	var accompanyUser="";
@@ -184,7 +213,7 @@ roomDetailInfo.messageSave= function(approvalUserd){
 		/* 验证联系人电话格式 手机号或者xxx-xxxxxxxx或者xxxx-xxxxxxx */
 		var  checktelePhone=IsRight.telePhone("#contactPhone");
 		if(!checktelePhone){
-			messager.tip("联系人电话提示有误,格式：手机号或者xxx-xxxxxxxx或者xxxx-xxxxxxx",2000);
+			messager.tip("11位数字手机号码或固定电话，固定电话格式为：xxx-xxxxxxxx或xxxx-xxxxxxx",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return;
 		}  
@@ -204,7 +233,7 @@ roomDetailInfo.messageSave= function(approvalUserd){
 			 roomDetailInfo.saveBtnClickFlag = 0;
 			 return;
 	    }else{
-	    	var  checkLeader=checkLeaderInfo();
+	    	var checkLeader=checkLeaderInfo();
 	 	    if(!checkLeader){
 	 	    	return;
 	 	    }else{
@@ -275,11 +304,11 @@ roomDetailInfo.messageSave= function(approvalUserd){
 		  msginfo="submit";
 	  }
 	  var remark= $('#remark').val();
-	  alert("remark-----"+remark);
+	  
 	  if(remark!=""){
-		  if(remark>200){
+		  if(remark.length>200){
 			  $("#remark").addClass("validRefuse");
-			  messager.tip("备注",2000)
+			  messager.tip("备注不超过200个字",2000)
 			  roomDetailInfo.saveBtnClickFlag = 0;
 			  return;
 		  }else{
@@ -558,14 +587,14 @@ function addLeader(obj){
 	    visitInfoData+='</td>'
 	    	
 	    visitInfoData+='<td  class="addInputStyle">' 
-	    		visitInfoData+='<input type="text"    id="visitUserName"  name = "visitUserName"  class="visitUsername"  title="必填项 ,中文或英文 " />' 
+	    		visitInfoData+='<input type="text"    id="visitUserName"  name = "visitUserName"  class="visitUsername"  title="必填项 ,中文或英文 ,字段长度不能超过 20个字" />' 
 	    visitInfoData+='</td>'
 	    	
 	    visitInfoData+='<td class="addInputStyle">' 
-	    		visitInfoData+='<input type="text" id="visitPosition"  name = "visitPosition"  class="visitposition"  title="必填项,字段长度不能超过 150" />'
+	    		visitInfoData+='<input type="text" id="visitPosition"  name = "visitPosition"  class="visitposition"  title="必填项,字段长度不能超过 50个字" />'
 	    visitInfoData+='</td>'
 	    visitInfoData+='<td class="addInputStyle">' 
-	    	   visitInfoData+='<select name = "userLevel" id="userLevel"  class = "changeQuery userLevel"  title="必填项  "  >'
+	    	   visitInfoData+='<select name = "userLevel" id="userLevel"  class = "changeQuery userlevel"  title="必填项  "  >'
 	    	   visitInfoData+=SelectForVisitunitLevel();
 	    	   visitInfoData+='</select>'
 	    visitInfoData+='</td>'	 	
