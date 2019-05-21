@@ -378,6 +378,10 @@
 					 function(r){
 						 if(r){
 							 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
+							 if(approveRemark.length>100){
+									messager.tip("审批意见不超过100个字",2000);
+									return;
+							 }
 							 selectForReturn(approveRemark,stauts);
 						 }
 						 
