@@ -32,6 +32,7 @@
 	<div class="sheach">
 		<div class='content_top'>综合查询</div>	 
 		<form id="queryForm" style="margin-bottom: 10px;">
+	    	 <input type = "hidden"   id = "ids" name="ids">  
 			<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;申请单号：</label>
 			<input type = "text" id = "applyNumber" name = "applyNumber" style="width: 200px" class = "inputQuery changeQuery" >
 			

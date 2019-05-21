@@ -84,7 +84,7 @@
 	              T.FUNCTION_TYPE
 		    from  TB_PRIV_MGR_USER_R_DEPT T
 		    INNER JOIN   BG_SYS_DEPT D ON  T.DEPT_ID=D.DEPTID 
-		    where T.VALID= '1' AND  D.VALID= '1'
+		    where T.VALID= '1'  
 		          and USER_ID = #{userId} 
 		          and FUNCTION_TYPE = #{type} 
       </select>   
