@@ -391,10 +391,12 @@
 	 		    var approveId=$("#applyId").val();
 	 			var auditUserId="";
 	 					$.ajax({
-	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
-	 						type: "post",
+	 					 //   url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 						url: "/bg/Approve/sendApprove",//删除
+	 					    type: "post",
 	 						dataType:"json",
 	 						contentType: 'application/json',
+	 						data: JSON.stringify({"approveId":approveId,"stauts":stauts,"auditUserId":auditUserId,"approveRemark":approveRemark}),
 	 						success: function (data) {
 	 							if(data.success == "true"){
 	 								messager.tip("审批成功",1000);
@@ -462,7 +464,7 @@
 									    messager.tip("请选择要操作的数据",1000);
 										return;
 							     }else if(checkedNumber > 1 ){
-							    	    messager.tip("请选择要操作的数据",1000);
+							    	    messager.tip("请选择一条数据",1000);
 										return;  
 							     }else{
 							    	var checkedIds = dataGrid.getCheckedIds();
@@ -507,10 +509,13 @@
 	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
 	 
 	 					$.ajax({
-	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 					  //  url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 							  url: "/bg/Approve/sendApprove",//删除
 	 						type: "post",
 	 						dataType:"json",
 	 						contentType: 'application/json',
+	 						data: JSON.stringify({"approveId":approveId,"stauts":stauts,"auditUserId":auditUserId,"approveRemark":approveRemark}),
+	 						
 	 						success: function (data) {
 	 							if(data.success == "true"){
 	 								messager.tip("审批成功",1000);
