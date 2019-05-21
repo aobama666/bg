@@ -87,7 +87,7 @@
 			  <span title = "联系人"><b class="mustWrite">*</b>联系人</span>
 			</td>
 			<td class="addInputStyle">
-				  <input type="text"  id="contactUser"  name="contactUser"  class="validNull"   content="联系人" title="必填项，中文或英文"/>
+				  <input type="text"  id="contactUser"  name="contactUser"  class="validNull"  len="20"   content="联系人" title="必填项，中文或英文"/>
 			</td>
 			<td>
 			  <span title = "联系电话"><b class="mustWrite">*</b>联系电话</span>
@@ -128,7 +128,7 @@
 				<span title = "参观单位名称"><b class="mustWrite">*</b>参观单位名称</span>
 			</td>
 			<td colspan="3" class="addInputStyle">
-				<input  id="visitUnitName"   name="visitUnitName"  type="text"   class = "validNull"   len="50"    content="参观单位名称"  title="必填项  " />
+				<input  id="visitUnitName"   name="visitUnitName"  type="text"   class = "validNull"   len="50"    content="参观单位名称"   title="必填项 ,字段长度不能超过 50" />
 			</td>
 		</tr>
 	</table>
@@ -155,10 +155,10 @@
 						<input type="checkbox"   id="visitId"  name = "visitId"  class="visitid"  value = "" />
 					</td>
 					<td class="addInputStyle"    >
-						<input type="text"    id="visitUserName"  name = "visitUserName"  class="visitUsername"  title="必填项 ,中文或英文 "/>
+						<input type="text"    id="visitUserName"  name = "visitUserName"  class="visitUsername"  title="必填项 ,中文或英文  ,字段长度不能超过 20个字"/>
 					</td>
 					<td class="addInputStyle"   >
-						<input type="text" id="visitPosition"  name = "visitPosition"  class="visitposition"  title="必填项,字段长度不能超过 150 "/>
+						<input type="text" id="visitPosition"  name = "visitPosition"  class="visitposition"  title="必填项,字段长度不能超过 50个字 "/>
 					</td>
 					<td class="addInputStyle">
 						<select name = "userLevel" id="userLevel"  class = "changeQuery userlevel"  title="必填项  "  >
