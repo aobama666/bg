@@ -44,8 +44,9 @@ function checkDate(stateDate,endDate){
         var loaclTmp=loaclDate.replace(" ",":").replace(/\:/g,"-").split("-");
         var ld=new Date(loaclTmp[0],loaclTmp[1],loaclTmp[2],loaclTmp[3],loaclTmp[4]);
         
-        var  stateday=new Date(stateDate).getDay();
-        var  endday=new Date(endDate).getDay();
+        var  stateday=new Date(stateDate.replace("-","/")).getDay() ;
+        var  endday=new Date(endDate.replace("-","/")).getDay();
+        
         //参观开始时间和当前时间比较  
         if(sd.getTime()<ld.getTime()){
         	$("#stateDate").addClass("validRefuse");
@@ -76,7 +77,6 @@ function checkDate(stateDate,endDate){
 }
 //
 function checkLeaderInfo(){
-	debugger;
 	var flag=false;
 	 
 	 $(".visitLeader tr:gt(0)").each(function(){
@@ -270,7 +270,7 @@ roomDetailInfo.messageSave= function(approvalUserd){
 		//陪同部门人员信息的获取
 	    var unitAccompanylen =$(".visitUnitAccompany tr").length;
 	    if(unitAccompanylen==1){
-	    	 messager.tip("陪同部门人员信息不能为空",2000)
+	    	 messager.tip("各部门（单位）陪同人员不能为空",2000)
 			 roomDetailInfo.saveBtnClickFlag = 0;
 			 return;
 	    }else{

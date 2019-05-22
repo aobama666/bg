@@ -294,14 +294,6 @@
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	 
-	 
 	<div class="btnContent">
  	         <button type="button" class="btn" onclick="agreeEvent()" id="agreemessage" >同意</button> 
 			  <button type="button" class="btn" onclick="returnEvent()" id="returnmessage">退回</button>

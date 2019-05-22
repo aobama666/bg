@@ -243,8 +243,7 @@
           D.PDEPTNAME  as  "pdeptName"
           FROM   TB_YSZX_IDEA  T
           LEFT JOIN BG_SYS_DEPT  D  ON T.APPLY_DEPT  =D.DEPTID 
-          WHERE    T.VALID='1'  
-          
+          WHERE    T.VALID='1' 
 	</select>
 	<!--预定审批的删除-->
 	<update id="deleteIdeaInfo"  >

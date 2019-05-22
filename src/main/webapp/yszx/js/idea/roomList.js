@@ -13,10 +13,16 @@ $(function(){
 	});
 	$(".inputQuery").on("input",function(e){
 		var valLength = e.target.value.length;
-		if(valLength>1){
+		if(valLength>0){
 			roomList.query();
 		}
 	});
+//	$(document).on("keyup",".inputQuery",function(e){
+//		var valLength =$(this).val().length;
+//		if(valLength>1){
+//			roomList.query();
+//		}
+//	});
 	//回车键出发搜索按钮
 	$("body").keydown(function () {
 	    if (event.keyCode == "13") {

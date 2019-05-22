@@ -88,6 +88,27 @@
 		          and USER_ID = #{userId} 
 		          and FUNCTION_TYPE = #{type} 
       </select>   
+       
+      <select id="getPrivApprByUserId" resultType="java.util.Map">
+	      select 
+	              T.ID,
+	              T.USER_ID,
+	              T.DEPT_ID,
+                  D.DEPTNAME,
+                  D.TYPE,
+	              T.FUNCTION_TYPE
+		    from  TB_PRIV_APPR_USER_R_DEPT  T
+		    INNER JOIN   BG_SYS_DEPT D ON   T.DEPT_ID=D.DEPTID 
+		    where T.VALID= '1'  
+		          and USER_ID = #{userId} 
+		          and FUNCTION_TYPE = #{type} 
+      </select>   
+    
+    
+    
+    
+    
+    
     
     
     
@@ -113,6 +134,20 @@
 		          and  STATUS='1'
 		          and  FUNCTION_TYPE=#{type}
 		          and NODE = #{node} 
+      </select>   
+      
+       <select id="getAllDept" resultType="java.util.Map">
+	        select 
+	            DEPTID,
+				DEPTNAME,
+				DEPTCODE,
+				PDEPTID,
+				PDEPTNAME,
+				PDEPTCODE,
+				TYPE,
+				SORT_ID
+	         from BG_SYS_DEPT 
+	          where VALID= '1' and  TYPE='1' and  PDEPTCODE='41000001'
       </select>   
     
     
