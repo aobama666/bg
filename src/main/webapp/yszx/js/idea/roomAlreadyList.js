@@ -126,7 +126,11 @@ roomList.initDataGrid = function(){
 			});
 	}
 	 
- 
+
+	
+	
+	
+	
 	/* 演示中心待办管理-撤回方法*/
 	roomList.withdrawEvent = function(){
 	 
@@ -144,7 +148,7 @@ roomList.initDataGrid = function(){
 			return;
 		}
 		if(approveState=="RETURN"){
-			messager.tip("该数据审核通过，不能执行撤回",2000);
+			messager.tip("该数据被退回，不能执行撤回",2000);
 			return;
 		}
 		var approveId= checkedItems[0].wlApproveId;

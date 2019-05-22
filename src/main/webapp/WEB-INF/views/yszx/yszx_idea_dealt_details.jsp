@@ -353,7 +353,6 @@
 	 		    var approveId=$("#wlapproveId").val();
 	 			var auditUserId="";
 	 					$.ajax({
-	 					 //   url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
 	 						url: "/bg/Approve/sendApprove",//删除
 	 					    type: "post",
 	 						dataType:"json",
@@ -362,7 +361,9 @@
 	 						success: function (data) {
 	 							if(data.success == "true"){
 	 								messager.tip("审批成功",1000);
-	 								messageResign();
+	 								 window.parent.location.reload();
+									 var closeIndex = parent.layer.getFrameIndex(window.name);
+									 parent.layer.close(closeIndex);
 	 							}else{
 	 								messager.tip("审批失败",1000);
 	 								 
@@ -469,22 +470,20 @@
 		
 	}
 	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
-	 
 	 					$.ajax({
-	 					  //  url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
-	 							  url: "/bg/Approve/sendApprove",//删除
+	 						url: "/bg/Approve/sendApprove",//删除
 	 						type: "post",
 	 						dataType:"json",
 	 						contentType: 'application/json',
 	 						data: JSON.stringify({"approveId":approveId,"stauts":stauts,"auditUserId":auditUserId,"approveRemark":approveRemark}),
-	 						
 	 						success: function (data) {
 	 							if(data.success == "true"){
 	 								messager.tip("审批成功",1000);
-	 								messageResign();
+	 								 window.parent.location.reload();
+									 var closeIndex = parent.layer.getFrameIndex(window.name);
+									 parent.layer.close(closeIndex);
 	 							}else{
-	 								messager.tip("审批失败失败",1000);
-	 								 
+	 								messager.tip("审批失败",1000); 
 	 							}
 	 						}
 	 					});
