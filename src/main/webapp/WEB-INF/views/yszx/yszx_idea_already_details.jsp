@@ -292,24 +292,26 @@
 	</div>
 	
 	
-<div class="btnContent">
- 	           <button type="button" class="btn" onclick="agreeEvent()"   >撤回</button> 
-			   <button type="button" class="btn" onclick="withdrawEvent()" >返回</button>	 
+   <div class="btnContent">
+ 	           <button type="button" class="btn" onclick="withdrawEvent()"   >撤回</button> 
+			   <button type="button" class="btn" onclick="messageResign()" >返回</button>	 
 	</div>
 	<!-- end参观详情信息-->
-	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>  <!-- IE支持 JSON格式   -->
-	<script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script> 
+    <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/locale/easyui-lang-zh_CN.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>  
+ 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>  	<!-- 弹框.js  --> 
+	<!-- 引入datagrid -->
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
-	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>    <!-- 弹框.js  -->
-	<!-- 引入日期选择框 -->
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
-	<!-- 验证校验公共方法，提示框公共方法 -->
+    <!-- 验证校验公共方法，提示框公共方法 -->
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 	<!-- 本页面所需的js -->
- 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomDealtList.js"></script>
+ 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomAlreadyList.js"></script>
+	
 </body>
   <script type="text/javascript">
      /* 演示中心待办管理-返回方法*/
@@ -318,41 +320,41 @@
 		parent.layer.close(closeIndex);
 	}
     
+    
 	 withdrawEvent = function(){
-		
-	 
-		var approveState=$("#approveState").val();
-		if(approveState=="FINISH"){
-			messager.tip("该数据审核通过，不能执行撤回",2000);
-			return;
-		}
-		if(approveState=="RETURN"){
-			messager.tip("该数据审核通过，不能执行撤回",2000);
-			return;
-		}
-		var approveId=$("#wlApproveId").val();
-		$.messager.confirm( "撤回提示", "确认撤回选中数据吗",
-			function(r){
-				if(r){
-					$.ajax({
-					    url: "/bg/Approve/recallApprove?approveId="+approveId,//删除
-						type: "post",
-						dataType:"json",
-						contentType: 'application/json',
-						success: function (data) {
-							if(data.success == "true"){
-								messager.tip("撤回成功",1000);
-								roomList.query();
-							}else{
-								messager.tip("撤回失败",1000);
-								roomList.query();
-							}
-						}
-					});
-				}
+		 debugger;
+			var approveState=$("#approveState").val();
+			if(approveState=="FINISH"){
+				messager.tip("该数据审核通过，不能执行撤回",2000);
+				return;
 			}
-		);
-	}
+			if(approveState=="RETURN"){
+				messager.tip("该数据被退回，不能执行撤回",2000);
+				return;
+			}
+			var approveId=$("#wlApproveId").val();
+			$.messager.confirm( "撤回提示", "确认撤回选中数据吗",
+				function(r){
+					if(r){
+						$.ajax({
+						    url: "/bg/Approve/recallApprove?approveId="+approveId,//删除
+							type: "post",
+							dataType:"json",
+							contentType: 'application/json',
+							success: function (data) {
+								if(data.success == "true"){
+									messager.tip("撤回成功",1000);
+									roomList.query();
+								}else{
+									messager.tip("撤回失败",1000);
+									roomList.query();
+								}
+							}
+						});
+					}
+				}
+			);
+		}	
  
  </script>
 </html>
