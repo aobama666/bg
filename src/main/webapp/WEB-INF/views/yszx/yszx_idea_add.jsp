@@ -226,7 +226,7 @@
 			  
 		</div>
 		<div class="maxBox">
-			 <textarea   id="remark"    name="remark"  style="height:100px; width: 100%;border:1px solid #ccc;background-color: #fff;resize: none;padding:5px;"  len="200"  title="非必填项"> </textarea> 	    		
+			 <textarea   id="remark"    name="remark"  style="height:100px; width: 100%;border:1px solid #ccc;background-color: #fff;resize: none;padding:5px;"  len="200"  title="非必填项，字数不超过200个"> </textarea> 	    		
 		</div>
 		
 	</div>
