@@ -29,6 +29,13 @@ public interface PrivilegeService {
 	 * @return
 	 */
 	 List<Map<String,Object>>  getPrivMgrByUserId(String userId,String type);
+	 /**
+		 * 审批用户查询对应的部门信息
+		 * @param roleId
+		 * @param deptId
+		 * @return
+		 */
+    List<Map<String,Object>>  getPrivApprByUserId(String userId,String type);
 	/**
 	 * 获取负责部门信息
 	 * @param roleId
@@ -43,4 +50,11 @@ public interface PrivilegeService {
 		 * @return
 		 */
 	 public List<Map<String,Object>> getRuleByNode( String type , String node );
+		/**
+		 * 获取全部部门
+		 * @param roleId
+		 * @param deptId
+		 * @return
+		 */
+	 List<Map<String,Object>> getAllDept();
 }

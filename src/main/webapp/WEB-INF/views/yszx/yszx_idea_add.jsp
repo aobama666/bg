@@ -87,7 +87,7 @@
 			  <span title = "联系人"><b class="mustWrite">*</b>联系人</span>
 			</td>
 			<td class="addInputStyle">
-				  <input type="text"  id="contactUser"  name="contactUser"  class="validNull"  len="20"   content="联系人" title="必填项，中文或英文"/>
+				  <input type="text"  id="contactUser"  name="contactUser"  class="validNull"  len="20"   content="联系人" title="必填项，中文或英文,字段长度不能超过 20"/>
 			</td>
 			<td>
 			  <span title = "联系电话"><b class="mustWrite">*</b>联系电话</span>

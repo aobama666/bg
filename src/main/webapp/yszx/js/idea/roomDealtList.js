@@ -61,8 +61,8 @@ roomList.initDataGrid = function(){
 				  		"text-align:left;display:block;" +
 				  		"white-space: nowrap;" +
 				  		"text-overflow: ellipsis;" +
-				  		"overflow: hidden;' id = '"+row.id+"'  ,applyId ='"+row.applyId+"' " +
-				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.id+"','"+row.applyId+"')>"+row.applyNumber+"</a>";
+				  		"overflow: hidden;   ' id = '"+row.id+"',applyId ='"+row.applyId+"',wlApproveId = '"+row.wlApproveId+"'"+
+				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.id+"','"+row.applyId+"','"+row.wlApproveId+"')>"+row.applyNumber+"</a>";
 				  		 
 		  }},
 		  {name: '申请时间', style:{width:"120px"},data: 'createTime'},
@@ -106,8 +106,9 @@ roomList.initDataGrid = function(){
 	});
 }	
 	/*演示中心管理-查看 */	
-	roomList.forDetails = function (id,applyId){
-		var url = "/bg/yszx/details?id="+id+"&applyId="+applyId;
+	roomList.forDetails = function (id,applyId,wlApproveId){
+		  
+		var url = "/bg/yszx/dealtBydetails?id="+id+"&applyId="+applyId+"&approveId="+wlApproveId;
 			layer.open({
 				type:2,
 				title:'<h4 style="height:42px;line-height:25px;">参观预定详情</h4>',
@@ -117,7 +118,7 @@ roomList.initDataGrid = function(){
 				content:url, 
 			});
 	}
-	
+	 
 	/* 演示中心待办管理-退回方法*/
 	roomList.returnEvent = function(){
 	 

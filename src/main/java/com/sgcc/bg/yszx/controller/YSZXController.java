@@ -68,18 +68,6 @@ public class YSZXController {
 	public ModelAndView addPage(){
 		Map<String, Object> map = new HashMap<>();
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
-//		String type=currentUser.getType();
-//		if("2".equals(type)){
-//			map.put("deptId", currentUser.getpDeptId());
-//			map.put("deptName", currentUser.getpDeptName());
-//			map.put("deptCode", currentUser.getpDeptCode());
-//		 
-//		}else{
-//			map.put("deptId", currentUser.getDeptId());
-//			map.put("deptName", currentUser.getDeptName());
-//			map.put("deptCode", currentUser.getDeptCode());
-//		}
-		
 		String UserId=  currentUser.getUserId();
 		List<Map<String, Object>> 	deptList = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> 	privUserList=ideaInfoService.selectForPrivUserId(UserId,"YSZX","MANAGER_APPLY_DEPT_MGR");
@@ -158,7 +146,39 @@ public class YSZXController {
 		return "yszx/yszx_idea_state";
 	}
 	/**
-	 * 杩斿洖寰呭姙灞曠ず椤甸潰
+	 * 待办查询详情页面
+	 * @return
+	 */
+	@RequestMapping(value = "/dealtBydetails", method = RequestMethod.GET)
+	public ModelAndView dealtBydetailsPage(String id,String applyId,String approveId, HttpServletRequest request){
+		Map<String, Object> proInfo = ideaInfoService.selectForId(id);
+		List<Map<String, String>>   dictData= dataDictionaryService.selectDictDataByPcode("visitunit_levle");
+		proInfo.put("visitUnitLevleInfo",dictData);
+		List<Map<String, String>>   visitUnitTypeList= dataDictionaryService.selectDictDataByPcode("visitunit_type");
+		proInfo.put("visitUnitTypeInfo", visitUnitTypeList);
+		List<Map<String, String>>  approveList=approveService.selectForApproveID(applyId);
+		if(approveList.isEmpty()){
+			proInfo.put("approveInfo", "");
+			proInfo.put("approvetype", 1);
+		}else{
+			proInfo.put("approveInfo", approveList);
+			proInfo.put("approvetype", 2);
+		}
+		proInfo.put("wlapproveId", approveId);
+		ModelAndView model = new ModelAndView("yszx/yszx_idea_dealt_details", proInfo);
+		return model;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * 待办查询
 	 * @return
 	 */
 	@RequestMapping(value = "/dealt", method = RequestMethod.GET)
@@ -167,40 +187,18 @@ public class YSZXController {
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String UserId=  currentUser.getUserId();
 		List<Map<String, Object>> 	privUserList=ideaInfoService.selectForPrivUserId(UserId,"YSZX","");
-	    if(privUserList.isEmpty()){
+	    if(privUserList.isEmpty()){//该用户无权限
 	    	List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
 	    	map.put("deptInfo",list);
 	    }else{
 	    	String   roleCode=String.valueOf(privUserList.get(0).get("roleCode"))  ;
-			if(roleCode.equals("MANAGER_APPLY_DEPT_MGR")){
+			if(roleCode.equals("MANAGER_APPLY_DEPT_MGR")){//说明：部门管理专责没有个权限
 				List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
 		    	map.put("deptInfo",list);
-//				String   roleType=String.valueOf(privUserList.get(0).get("roleType"))  ;
-//				if("0".equals(roleType)){
-//					List<Map<String, Object>> 	deptList=privilegeService.getPrivMgrByUserId(UserId,"YSZX");
-//					if(deptList.isEmpty()){
-//						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
-//				    	map.put("deptInfo",list);
-//					}else{
-//						List<Map<String, Object>> list =new  ArrayList<Map<String, Object>>();
-//					    for(Map<String, Object> deptmap  :deptList){
-//					    String 	    applyDeptID=Rtext.toStringTrim( deptmap.get("DEPT_ID"), "");
-//					    String  	applyDeptName=Rtext.toStringTrim(deptmap.get("DEPTNAME"), "");
-//					    Map<String, Object> maps =new HashMap<String, Object>();
-//					    maps.put("applyDeptID", applyDeptID);
-//					    maps.put("applyDeptName", applyDeptName);
-//					    list.add(maps);
-//					    }
-//						map.put("deptInfo",list);
-//					}
-//				}else{
-//					List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-//					map.put("deptInfo",list);
-//				}
-			}else if(roleCode.equals("APPROVAL_APPLY_DEPT_HEAD")){
+			}else if(roleCode.equals("APPROVAL_APPLY_DEPT_HEAD")){//说明：部门领导专责审 
 				String   roleType=String.valueOf(privUserList.get(0).get("roleType"))  ;
-				if("0".equals(roleType)){
-					List<Map<String, Object>> 	deptList=privilegeService.getPrivMgrByUserId(UserId,"YSZX");
+				if("0".equals(roleType)){//部门级别 
+					List<Map<String, Object>> 	deptList=privilegeService.getPrivApprByUserId(UserId,"YSZX");
 					if(deptList.isEmpty()){
 						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
 				    	map.put("deptInfo",list);
@@ -216,14 +214,32 @@ public class YSZXController {
 					    }
 						map.put("deptInfo",list);
 					}
-				}else{
-					List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-					map.put("deptInfo",list);
+					
+					
+				
+				}else{//院级别
+					List<Map<String, Object>>  deptlist =privilegeService.getAllDept();
+					if(deptlist.isEmpty()){
+						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
+				    	map.put("deptInfo",list);
+					}else{
+						List<Map<String, Object>> list =new  ArrayList<Map<String, Object>>();
+					    for(Map<String, Object> deptmap  :deptlist){
+					    String 	    applyDeptID=Rtext.toStringTrim(deptmap.get("DEPTID"), "");
+					    String  	applyDeptName=Rtext.toStringTrim(deptmap.get("DEPTNAME"), "");
+					    Map<String, Object> maps =new HashMap<String, Object>();
+					    maps.put("applyDeptID", applyDeptID);
+					    maps.put("applyDeptName", applyDeptName);
+					    list.add(maps);
+					    }
+						map.put("deptInfo",list);
+						
+					}
 				}
-			}else if(roleCode.equals("MANAGER_DUTY_DEPT_MGR")){
+			}else if(roleCode.equals("MANAGER_DUTY_DEPT_MGR")){//说明：归口部门管理专责
 				String   roleType=String.valueOf(privUserList.get(0).get("roleType"))  ;
-                if("0".equals(roleType)){
-                	List<Map<String, Object>> 	deptList=privilegeService.getPrivMgrByUserId(UserId,"YSZX");
+                if("0".equals(roleType)){//部门级别
+                	List<Map<String, Object>> 	deptList=privilegeService.getPrivApprByUserId(UserId,"YSZX");
 					if(deptList.isEmpty()){
 						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
 				    	map.put("deptInfo",list);
@@ -239,14 +255,29 @@ public class YSZXController {
 					    }
 						map.put("deptInfo",list);
 					}
-				}else{
-					List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-					map.put("deptInfo",list);
+				}else{//院级别
+					List<Map<String, Object>>  deptlist =privilegeService.getAllDept();
+					if(deptlist.isEmpty()){
+						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
+				    	map.put("deptInfo",list);
+					}else{
+						List<Map<String, Object>> list =new  ArrayList<Map<String, Object>>();
+					    for(Map<String, Object> deptmap  :deptlist){
+					    String 	    applyDeptID=Rtext.toStringTrim(deptmap.get("DEPTID"), "");
+					    String  	applyDeptName=Rtext.toStringTrim(deptmap.get("DEPTNAME"), "");
+					    Map<String, Object> maps =new HashMap<String, Object>();
+					    maps.put("applyDeptID", applyDeptID);
+					    maps.put("applyDeptName", applyDeptName);
+					    list.add(maps);
+					    }
+						map.put("deptInfo",list);
+						
+					}
 				}
-			}else if(roleCode.equals("MANAGER_DUTY_DEPT_HEAD")){
+			}else if(roleCode.equals("MANAGER_DUTY_DEPT_HEAD")){//说明：归口部门领导专责
 				String   roleType=String.valueOf(privUserList.get(0).get("roleType"))  ;
-                if("0".equals(roleType)){
-                	List<Map<String, Object>> 	deptList=privilegeService.getPrivMgrByUserId(UserId,"YSZX");
+                if("0".equals(roleType)){//部门级别
+                	List<Map<String, Object>> 	deptList=privilegeService.getPrivApprByUserId(UserId,"YSZX");
 					if(deptList.isEmpty()){
 						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
 				    	map.put("deptInfo",list);
@@ -262,22 +293,59 @@ public class YSZXController {
 					    }
 						map.put("deptInfo",list);
 					}
-				}else{
-					List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-					map.put("deptInfo",list);
+				}else{//院级别
+					List<Map<String, Object>>  deptlist =privilegeService.getAllDept();
+					if(deptlist.isEmpty()){
+						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
+				    	map.put("deptInfo",list);
+					}else{
+						List<Map<String, Object>> list =new  ArrayList<Map<String, Object>>();
+					    for(Map<String, Object> deptmap  :deptlist){
+					    String 	    applyDeptID=Rtext.toStringTrim(deptmap.get("DEPTID"), "");
+					    String  	applyDeptName=Rtext.toStringTrim(deptmap.get("DEPTNAME"), "");
+					    Map<String, Object> maps =new HashMap<String, Object>();
+					    maps.put("applyDeptID", applyDeptID);
+					    maps.put("applyDeptName", applyDeptName);
+					    list.add(maps);
+					    }
+						map.put("deptInfo",list);
+						
+					}
 				}
 			}
 	    }
-		
-		
-		
-		//List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-	   // map.put("deptInfo",list);//閮ㄩ棬淇℃伅
 		ModelAndView model = new ModelAndView("yszx/yszx_idea_dealt",map);
 		return model;
 	}
+	
 	/**
-	 * 杩斿洖宸插姙灞曠ず椤甸潰
+	 * 已办查询详情页面
+	 * @return
+	 */
+	@RequestMapping(value = "/alreadyBydetails", method = RequestMethod.GET)
+	public ModelAndView alreadyBydetails(String id,String applyId,String approveId, HttpServletRequest request){
+		Map<String, Object> proInfo = ideaInfoService.selectForId(id);
+		List<Map<String, String>>   dictData= dataDictionaryService.selectDictDataByPcode("visitunit_levle");
+		proInfo.put("visitUnitLevleInfo",dictData);
+		List<Map<String, String>>   visitUnitTypeList= dataDictionaryService.selectDictDataByPcode("visitunit_type");
+		proInfo.put("visitUnitTypeInfo", visitUnitTypeList);
+		List<Map<String, String>>  approveList=approveService.selectForApproveID(applyId);
+		if(approveList.isEmpty()){
+			proInfo.put("approveInfo", "");
+			proInfo.put("approvetype", 1);
+		}else{
+			proInfo.put("approveInfo", approveList);
+			proInfo.put("approvetype", 2);
+		}
+		proInfo.put("wlApproveId",approveId);
+		ModelAndView model = new ModelAndView("yszx/yszx_idea_already_details", proInfo);
+		return model;
+	}
+	
+	
+	
+	/**
+	 * 已办查询
 	 * @return
 	 */
 	@RequestMapping(value = "/already", method = RequestMethod.GET)
@@ -286,40 +354,18 @@ public class YSZXController {
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String UserId=  currentUser.getUserId();
 		List<Map<String, Object>> 	privUserList=ideaInfoService.selectForPrivUserId(UserId,"YSZX","");
-	    if(privUserList.isEmpty()){
+	    if(privUserList.isEmpty()){//该用户无权限
 	    	List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
 	    	map.put("deptInfo",list);
 	    }else{
 	    	String   roleCode=String.valueOf(privUserList.get(0).get("roleCode"))  ;
-			if(roleCode.equals("MANAGER_APPLY_DEPT_MGR")){
+			if(roleCode.equals("MANAGER_APPLY_DEPT_MGR")){//说明：部门管理专责没有个权限
 				List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
-		    	map.put("deptInfo",list);				
-//				String   roleType=String.valueOf(privUserList.get(0).get("roleType"))  ;
-//				if("0".equals(roleType)){
-//					List<Map<String, Object>> 	deptList=privilegeService.getPrivMgrByUserId(UserId,"YSZX");
-//					if(deptList.isEmpty()){
-//						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
-//				    	map.put("deptInfo",list);
-//					}else{
-//						List<Map<String, Object>> list =new  ArrayList<Map<String, Object>>();
-//					    for(Map<String, Object> deptmap  :deptList){
-//					    String 	    applyDeptID=Rtext.toStringTrim( deptmap.get("DEPT_ID"), "");
-//					    String  	applyDeptName=Rtext.toStringTrim(deptmap.get("DEPTNAME"), "");
-//					    Map<String, Object> maps =new HashMap<String, Object>();
-//					    maps.put("applyDeptID", applyDeptID);
-//					    maps.put("applyDeptName", applyDeptName);
-//					    list.add(maps);
-//					    }
-//						map.put("deptInfo",list);
-//					}
-//				}else{
-//					List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-//					map.put("deptInfo",list);
-//				}
-			}else if(roleCode.equals("APPROVAL_APPLY_DEPT_HEAD")){
+		    	map.put("deptInfo",list);
+			}else if(roleCode.equals("APPROVAL_APPLY_DEPT_HEAD")){//说明：部门领导专责审 
 				String   roleType=String.valueOf(privUserList.get(0).get("roleType"))  ;
-				if("0".equals(roleType)){
-					List<Map<String, Object>> 	deptList=privilegeService.getPrivMgrByUserId(UserId,"YSZX");
+				if("0".equals(roleType)){//部门级别 
+					List<Map<String, Object>> 	deptList=privilegeService.getPrivApprByUserId(UserId,"YSZX");
 					if(deptList.isEmpty()){
 						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
 				    	map.put("deptInfo",list);
@@ -335,14 +381,32 @@ public class YSZXController {
 					    }
 						map.put("deptInfo",list);
 					}
-				}else{
-					List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-					map.put("deptInfo",list);
+					
+					
+				
+				}else{//院级别
+					List<Map<String, Object>>  deptlist =privilegeService.getAllDept();
+					if(deptlist.isEmpty()){
+						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
+				    	map.put("deptInfo",list);
+					}else{
+						List<Map<String, Object>> list =new  ArrayList<Map<String, Object>>();
+					    for(Map<String, Object> deptmap  :deptlist){
+					    String 	    applyDeptID=Rtext.toStringTrim(deptmap.get("DEPTID"), "");
+					    String  	applyDeptName=Rtext.toStringTrim(deptmap.get("DEPTNAME"), "");
+					    Map<String, Object> maps =new HashMap<String, Object>();
+					    maps.put("applyDeptID", applyDeptID);
+					    maps.put("applyDeptName", applyDeptName);
+					    list.add(maps);
+					    }
+						map.put("deptInfo",list);
+						
+					}
 				}
-			}else if(roleCode.equals("MANAGER_DUTY_DEPT_MGR")){
+			}else if(roleCode.equals("MANAGER_DUTY_DEPT_MGR")){//说明：归口部门管理专责
 				String   roleType=String.valueOf(privUserList.get(0).get("roleType"))  ;
-                if("0".equals(roleType)){
-                	List<Map<String, Object>> 	deptList=privilegeService.getPrivMgrByUserId(UserId,"YSZX");
+                if("0".equals(roleType)){//部门级别
+                	List<Map<String, Object>> 	deptList=privilegeService.getPrivApprByUserId(UserId,"YSZX");
 					if(deptList.isEmpty()){
 						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
 				    	map.put("deptInfo",list);
@@ -358,14 +422,29 @@ public class YSZXController {
 					    }
 						map.put("deptInfo",list);
 					}
-				}else{
-					List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-					map.put("deptInfo",list);
+				}else{//院级别
+					List<Map<String, Object>>  deptlist =privilegeService.getAllDept();
+					if(deptlist.isEmpty()){
+						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
+				    	map.put("deptInfo",list);
+					}else{
+						List<Map<String, Object>> list =new  ArrayList<Map<String, Object>>();
+					    for(Map<String, Object> deptmap  :deptlist){
+					    String 	    applyDeptID=Rtext.toStringTrim(deptmap.get("DEPTID"), "");
+					    String  	applyDeptName=Rtext.toStringTrim(deptmap.get("DEPTNAME"), "");
+					    Map<String, Object> maps =new HashMap<String, Object>();
+					    maps.put("applyDeptID", applyDeptID);
+					    maps.put("applyDeptName", applyDeptName);
+					    list.add(maps);
+					    }
+						map.put("deptInfo",list);
+						
+					}
 				}
-			}else if(roleCode.equals("MANAGER_DUTY_DEPT_HEAD")){
+			}else if(roleCode.equals("MANAGER_DUTY_DEPT_HEAD")){//说明：归口部门领导专责
 				String   roleType=String.valueOf(privUserList.get(0).get("roleType"))  ;
-                if("0".equals(roleType)){
-                	List<Map<String, Object>> 	deptList=privilegeService.getPrivMgrByUserId(UserId,"YSZX");
+                if("0".equals(roleType)){//部门级别
+                	List<Map<String, Object>> 	deptList=privilegeService.getPrivApprByUserId(UserId,"YSZX");
 					if(deptList.isEmpty()){
 						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
 				    	map.put("deptInfo",list);
@@ -381,19 +460,32 @@ public class YSZXController {
 					    }
 						map.put("deptInfo",list);
 					}
-				}else{
-					List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-					map.put("deptInfo",list);
+				}else{//院级别
+					List<Map<String, Object>>  deptlist =privilegeService.getAllDept();
+					if(deptlist.isEmpty()){
+						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
+				    	map.put("deptInfo",list);
+					}else{
+						List<Map<String, Object>> list =new  ArrayList<Map<String, Object>>();
+					    for(Map<String, Object> deptmap  :deptlist){
+					    String 	    applyDeptID=Rtext.toStringTrim(deptmap.get("DEPTID"), "");
+					    String  	applyDeptName=Rtext.toStringTrim(deptmap.get("DEPTNAME"), "");
+					    Map<String, Object> maps =new HashMap<String, Object>();
+					    maps.put("applyDeptID", applyDeptID);
+					    maps.put("applyDeptName", applyDeptName);
+					    list.add(maps);
+					    }
+						map.put("deptInfo",list);
+						
+					}
 				}
 			}
 	    }
-//		List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-//	    map.put("deptInfo",list);
 		ModelAndView model = new ModelAndView("yszx/yszx_idea_already",map);
 		return model;
 	}
 	/**
-	 * 杩斿洖缁煎悎鏌ヨ灞曠ず椤甸潰
+	 * 综合查询
 	 * @return
 	 */
 	@RequestMapping(value = "/comprehensive", method = RequestMethod.GET)
@@ -403,18 +495,17 @@ public class YSZXController {
 		String month=DateUtil.getMonth();
 		map.put("year", year);
 		map.put("month", month);
-	
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String UserId=  currentUser.getUserId();
 		List<Map<String, Object>> 	privUserList=ideaInfoService.selectForPrivUserId(UserId,"YSZX","");
-	    if(privUserList.isEmpty()){
+	    if(privUserList.isEmpty()){//说明：该用户无权限配置
 	    	List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
 	    	map.put("deptInfo",list);
 	    }else{
 	    	String   roleCode=String.valueOf(privUserList.get(0).get("roleCode"))  ;
-			if(roleCode.equals("MANAGER_APPLY_DEPT_MGR")){
+			if(roleCode.equals("MANAGER_APPLY_DEPT_MGR")){//说明：部门管理专责
 				String   roleType=String.valueOf(privUserList.get(0).get("roleType"))  ;
-				if("0".equals(roleType)){
+				if("0".equals(roleType)){//部门级别
 					List<Map<String, Object>> 	deptList=privilegeService.getPrivMgrByUserId(UserId,"YSZX");
 					if(deptList.isEmpty()){
 						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
@@ -431,21 +522,15 @@ public class YSZXController {
 					    }
 						map.put("deptInfo",list);
 					}
-				}else{
-					List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-					map.put("deptInfo",list);
-				}
-			}else if(roleCode.equals("APPROVAL_APPLY_DEPT_HEAD")){
-				String   roleType=String.valueOf(privUserList.get(0).get("roleType"))  ;
-				if("0".equals(roleType)){
-					List<Map<String, Object>> 	deptList=privilegeService.getPrivMgrByUserId(UserId,"YSZX");
-					if(deptList.isEmpty()){
+				}else{//院级别
+					List<Map<String, Object>>  deptlist =privilegeService.getAllDept();
+					if(deptlist.isEmpty()){
 						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
 				    	map.put("deptInfo",list);
 					}else{
 						List<Map<String, Object>> list =new  ArrayList<Map<String, Object>>();
-					    for(Map<String, Object> deptmap  :deptList){
-					    String 	    applyDeptID=Rtext.toStringTrim( deptmap.get("DEPT_ID"), "");
+					    for(Map<String, Object> deptmap  :deptlist){
+					    String 	    applyDeptID=Rtext.toStringTrim(deptmap.get("DEPTID"), "");
 					    String  	applyDeptName=Rtext.toStringTrim(deptmap.get("DEPTNAME"), "");
 					    Map<String, Object> maps =new HashMap<String, Object>();
 					    maps.put("applyDeptID", applyDeptID);
@@ -454,13 +539,15 @@ public class YSZXController {
 					    }
 						map.put("deptInfo",list);
 					}
-				}else{
-					List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-					map.put("deptInfo",list);
+					
+					
 				}
-			}else if(roleCode.equals("MANAGER_DUTY_DEPT_MGR")){
+			}else if(roleCode.equals("APPROVAL_APPLY_DEPT_HEAD")){//部门领导专责,无权限
+				List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
+		    	map.put("deptInfo",list);				
+			}else if(roleCode.equals("MANAGER_DUTY_DEPT_MGR")){//归口部门专责
 				String   roleType=String.valueOf(privUserList.get(0).get("roleType"))  ;
-                if("0".equals(roleType)){
+                if("0".equals(roleType)){//部门级别
                 	List<Map<String, Object>> 	deptList=privilegeService.getPrivMgrByUserId(UserId,"YSZX");
 					if(deptList.isEmpty()){
 						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
@@ -477,13 +564,28 @@ public class YSZXController {
 					    }
 						map.put("deptInfo",list);
 					}
-				}else{
-					List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-					map.put("deptInfo",list);
+				}else{//院级别
+					List<Map<String, Object>>  deptlist =privilegeService.getAllDept();
+					if(deptlist.isEmpty()){
+						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
+				    	map.put("deptInfo",list);
+					}else{
+						List<Map<String, Object>> list =new  ArrayList<Map<String, Object>>();
+					    for(Map<String, Object> deptmap  :deptlist){
+					    String 	    applyDeptID=Rtext.toStringTrim(deptmap.get("DEPTID"), "");
+					    String  	applyDeptName=Rtext.toStringTrim(deptmap.get("DEPTNAME"), "");
+					    Map<String, Object> maps =new HashMap<String, Object>();
+					    maps.put("applyDeptID", applyDeptID);
+					    maps.put("applyDeptName", applyDeptName);
+					    list.add(maps);
+					    }
+						map.put("deptInfo",list);
+						
+					}
 				}
-			}else if(roleCode.equals("MANAGER_DUTY_DEPT_HEAD")){
+			}else if(roleCode.equals("MANAGER_DUTY_DEPT_HEAD")){//归口领导专责
 				String   roleType=String.valueOf(privUserList.get(0).get("roleType"))  ;
-                if("0".equals(roleType)){
+                if("0".equals(roleType)){//部门级别
                 	List<Map<String, Object>> 	deptList=privilegeService.getPrivMgrByUserId(UserId,"YSZX");
 					if(deptList.isEmpty()){
 						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
@@ -500,9 +602,23 @@ public class YSZXController {
 					    }
 						map.put("deptInfo",list);
 					}
-				}else{
-					List<Map<String, Object>> list	=ideaInfoService.selectIdeaDeptInfo();
-					map.put("deptInfo",list);
+				}else{//院级别
+					List<Map<String, Object>>  deptlist =privilegeService.getAllDept();
+					if(deptlist.isEmpty()){
+						List<Map<String, Object>>  list=new ArrayList<Map<String, Object>>();
+				    	map.put("deptInfo",list);
+					}else{
+						List<Map<String, Object>> list =new  ArrayList<Map<String, Object>>();
+					    for(Map<String, Object> deptmap  :deptlist){
+					    String 	    applyDeptID=Rtext.toStringTrim(deptmap.get("DEPTID"), "");
+					    String  	applyDeptName=Rtext.toStringTrim(deptmap.get("DEPTNAME"), "");
+					    Map<String, Object> maps =new HashMap<String, Object>();
+					    maps.put("applyDeptID", applyDeptID);
+					    maps.put("applyDeptName", applyDeptName);
+					    list.add(maps);
+					    }
+						map.put("deptInfo",list);
+					}
 				}
 			}
 	    }
