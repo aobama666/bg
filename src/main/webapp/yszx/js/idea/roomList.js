@@ -13,10 +13,16 @@ $(function(){
 	});
 	$(".inputQuery").on("input",function(e){
 		var valLength = e.target.value.length;
-		if(valLength>1){
+		if(valLength>0){
 			roomList.query();
 		}
 	});
+//	$(document).on("keyup",".inputQuery",function(e){
+//		var valLength =$(this).val().length;
+//		if(valLength>1){
+//			roomList.query();
+//		}
+//	});
 	//回车键出发搜索按钮
 	$("body").keydown(function () {
 	    if (event.keyCode == "13") {
@@ -258,18 +264,21 @@ roomList.initDataGrid = function(){
 			      layer.confirm(
 					       html,
 					       {title:'请选择审批人', area:'800px',skin:'demo-class'   },
-					       function(){
-						       var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
-						       var approvalUserd=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
-						       if(checkedNumber == 0){
-							        messager.tip("请选择要操作的数据",1000);
-							        return;
-					           }else if(checkedNumber > 1 ){
-					   	            messager.tip("请选择要操作的数据",1000);
-							        return;  
-					           }else{
-					    	        messageForSubmit(checkedIds,approvalUserd);
-					           }
+					       function(r){
+					    	   if(r){
+					    		   var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
+							       var approvalUserd=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
+							       if(checkedNumber == 0){
+								        messager.tip("请选择要操作的数据",1000);
+								        return;
+						           }else if(checkedNumber > 1 ){
+						   	            messager.tip("请选择要操作的数据",1000);
+								        return;  
+						           }else{
+						    	        messageForSubmit(checkedIds,approvalUserd);
+						           }
+					    	   }
+						     
 		             });
 			    }
 		  }
@@ -357,7 +366,7 @@ roomList.initDataGrid = function(){
 			messager.tip("请选择要操作的数据",1000);
 			return;
 		}else if(checkedItems.length>1){
-			messager.tip("每次只能提交一条数据",2000);
+			messager.tip("每次只能撤销一条数据",2000);
 			return;
 		}
 		if(checkedItems[0].approveState =="SAVE"  ){

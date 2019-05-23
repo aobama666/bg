@@ -32,9 +32,27 @@ public interface AuthMapper {
 	public List<Map<String,Object>> getPrivMgrByUserId(
 			                                @Param("userId")String userId,
 											@Param("type")String type );
+	/**
+	 * 管理用户查询对应的部门信息
+	 * @param pro
+	 * @return
+	 */
+	public List<Map<String,Object>> getPrivApprByUserId(
+			                                @Param("userId")String userId,
+											@Param("type")String type );
 	
 	
 	
 	public Map<String,Object> getApproveUsersByDept( @Param("deptId")String deptId ,@Param("userId")String userId   ,@Param("type")String type  );
+	
+	
+	
 	public List<Map<String,Object>> getRuleByNode(@Param("type")String type ,@Param("node")String node );
+
+	/**
+	 * 查询全部部门
+	 * @param pro
+	 * @return
+	 */
+	public List<Map<String,Object>> getAllDept();
 }

@@ -154,7 +154,7 @@
 		  TO_CHAR( START_DATE, 'YYYY-MM-DD HH24:MI:SS') AS START_DATE,
 		  TO_CHAR( END_DATE,'YYYY-MM-DD HH24:MI:SS')  AS  END_DATE
 		  FROM TB_YSZX_IDEA
-		WHERE VALID =  '1'  
+		WHERE VALID =  '1'  and  STATUS !='SAVE'  and  STATUS !='CANCEL'
 		<if test="idea!=null and idea !=''">
 			and   UUID !=  #{idea} 
 		</if> 
@@ -243,7 +243,7 @@
           D.PDEPTNAME  as  "pdeptName"
           FROM   TB_YSZX_IDEA  T
           LEFT JOIN BG_SYS_DEPT  D  ON T.APPLY_DEPT  =D.DEPTID 
-          WHERE    T.VALID='1' AND  D.VALID='1'
+          WHERE    T.VALID='1' 
 	</select>
 	<!--预定审批的删除-->
 	<update id="deleteIdeaInfo"  >
@@ -504,7 +504,7 @@
 				                  LEFT JOIN TB_WL_APPROVE D ON D.ID = AY1.APPROVE_ID AND D.VALID = '1'
 				                  LEFT JOIN TB_WL_AUDIT_USER E ON E.APPROVE_ID = D.ID AND E.VALID = '1'
 				             
-		                     where       G.VALID='1'      and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='0'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL  
+		                     where       G.VALID='1'  and   G.STATUS!='CANCEL'    and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='0'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL  
             <if test="pridept!=null and pridept!=''">
 			      and G.APPLY_DEPT  like '%'||#{pridept}||'%'
 		    </if>
@@ -573,8 +573,7 @@
              LEFT JOIN TB_WL_APPLY C  ON C.ID = G.APPLY_ID AND C.VALID = '1'   
              LEFT JOIN TB_WL_APPROVE D ON G.APPLY_ID=D.APPLY_ID  AND  D.VALID='1'   
              LEFT JOIN TB_WL_AUDIT_USER E ON D.ID=E.APPROVE_ID AND   E.VALID='1'
-             
-          where   G.VALID='1'     and   G.STATUS!='RETURN'        and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='1'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL   
+          where   G.VALID='1'      and   G.STATUS!='CANCEL'    and   G.APPLY_ID  is not null   AND D.APPROVE_STATUS='1'  AND  D.AUDIT_FLAG='1'  AND D.ID IS NOT NULL   
             <if test="pridept!=null and pridept!=''">
 			      and G.APPLY_DEPT  like '%'||#{pridept}||'%'
 		    </if>
@@ -728,6 +727,19 @@
 		  FROM BG_SYS_USER
 		  WHERE 
 		     USERID = #{userId,jdbcType=VARCHAR}
+	</select>
+   <select id="getUserCode" resultType="java.util.Map">
+		 SELECT 
+		   USERID  as "userId",  
+		   USERNAME as "userName",
+		   USERALIAS as "userAlias",
+		   HRDEPTNAME as "hrDeptName",
+		   HRDEPTCODE as "hrDeptCode",
+		   POSTCODE as "postCode", 
+		   POSTNAME  as "postName"
+		  FROM BG_SYS_USER
+		  WHERE 
+		     HRCODE = #{code,jdbcType=VARCHAR}
 	</select>
 	
  	<!--查询数据字典-->

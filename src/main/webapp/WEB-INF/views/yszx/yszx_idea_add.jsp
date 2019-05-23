@@ -33,7 +33,7 @@
 	</div> -->
 	  
 	<!-- end  头部 -->
-    <span  style="color:red;margin:5px 0;display: inline-block;"> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  注:每周一常规检修，不接受预定。如果重要接待或重大活动，请走线下审批流程      </span>                    
+    <span  style="color:red;margin:5px 0;display: inline-block;"> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  注:&nbsp&nbsp每周一常规检修，不接受预定。如有重要接待或重大活动，请走线下审批流程。      </span>                    
 	<!-- 参观申请单位信息展示 -->
 	<table class="visitOperate tableStyle specialTable">
 		<tr>
@@ -87,7 +87,7 @@
 			  <span title = "联系人"><b class="mustWrite">*</b>联系人</span>
 			</td>
 			<td class="addInputStyle">
-				  <input type="text"  id="contactUser"  name="contactUser"  class="validNull"   content="联系人" title="必填项，中文或英文"/>
+				  <input type="text"  id="contactUser"  name="contactUser"  class="validNull"  len="20"   content="联系人" title="必填项，中文或英文,字段长度不能超过 20"/>
 			</td>
 			<td>
 			  <span title = "联系电话"><b class="mustWrite">*</b>联系电话</span>
@@ -128,7 +128,7 @@
 				<span title = "参观单位名称"><b class="mustWrite">*</b>参观单位名称</span>
 			</td>
 			<td colspan="3" class="addInputStyle">
-				<input  id="visitUnitName"   name="visitUnitName"  type="text"   class = "validNull"   len="150"    content="参观单位名称"  title="必填项  " />
+				<input  id="visitUnitName"   name="visitUnitName"  type="text"   class = "validNull"   len="50"    content="参观单位名称"   title="必填项 ,字段长度不能超过 50" />
 			</td>
 		</tr>
 	</table>
@@ -155,10 +155,10 @@
 						<input type="checkbox"   id="visitId"  name = "visitId"  class="visitid"  value = "" />
 					</td>
 					<td class="addInputStyle"    >
-						<input type="text"    id="visitUserName"  name = "visitUserName"  class="visitUsername"  title="必填项 ,中文或英文 "/>
+						<input type="text"    id="visitUserName"  name = "visitUserName"  class="visitUsername"  title="必填项 ,中文或英文  ,字段长度不能超过 20个字"/>
 					</td>
 					<td class="addInputStyle"   >
-						<input type="text" id="visitPosition"  name = "visitPosition"  class="visitposition"  title="必填项,字段长度不能超过 150 "/>
+						<input type="text" id="visitPosition"  name = "visitPosition"  class="visitposition"  title="必填项,字段长度不能超过 50个字 "/>
 					</td>
 					<td class="addInputStyle">
 						<select name = "userLevel" id="userLevel"  class = "changeQuery userlevel"  title="必填项  "  >
@@ -187,7 +187,7 @@
 		<tr>
 		<td class="width-two">陪同人数</td>
 			<td colspan="3" class="addInputStyle">
-				<input type="text"  id="companyUserNumber" class = "validNull"  name="companyUserNumber"  content="院内陪同人数"  title="必填项  ,必须为正整数" />
+				<input type="text"  id="companyUserNumber" class = "validNull validNum"  name="companyUserNumber"  content="院内陪同人数"  title="必填项  ,必须为正整数" />
 			</td>
 		</tr>
 	</table>
@@ -226,7 +226,7 @@
 			  
 		</div>
 		<div class="maxBox">
-			 <textarea   id="remark"    name="remark"  style="height:100px; width: 100%;border:1px solid #ccc;background-color: #fff;resize: none;padding:5px;"  len="200"  title="非必填项"> </textarea> 	    		
+			 <textarea   id="remark"    name="remark"  style="height:100px; width: 100%;border:1px solid #ccc;background-color: #fff;resize: none;padding:5px;"  len="200"  title="非必填项，字数不超过200个"> </textarea> 	    		
 		</div>
 		
 	</div>

@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -61,12 +62,17 @@ public class ApproveController {
 		 */
 	@ResponseBody
 	@RequestMapping(value = "/sendApprove", method = RequestMethod.POST)
-	public String sendApprove(String approveId,String stauts, String auditUserId, String approveRemark){
+	//public String sendApprove(String approveId,String stauts, String auditUserId, String approveRemark){
+    public String sendApprove(@RequestBody Map<String, Object> paramsMap){
 		ResultWarp rw =  null;
-		approveId=Rtext.toStringTrim(approveId, "");
-		stauts=Rtext.toStringTrim(stauts, "");
-		auditUserId=Rtext.toStringTrim(auditUserId, "");
+		String approveId = paramsMap.get("approveId") == null ? "" : paramsMap.get("approveId").toString();  
+		//approveId=Rtext.toStringTrim(approveId, "");
+		String stauts = paramsMap.get("stauts") == null ? "" : paramsMap.get("stauts").toString();  
+		//stauts=Rtext.toStringTrim(stauts, "");
+		String auditUserId = paramsMap.get("auditUserId") == null ? "" : paramsMap.get("auditUserId").toString();  
+		//auditUserId=Rtext.toStringTrim(auditUserId, "");
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
+		String approveRemark = paramsMap.get("approveRemark") == null ? "" : paramsMap.get("approveRemark").toString();  
 		String operatorId=currentUser.getUserId();
 		log.info("---operatorId:"+operatorId);
 		if(stauts.equals("0")){

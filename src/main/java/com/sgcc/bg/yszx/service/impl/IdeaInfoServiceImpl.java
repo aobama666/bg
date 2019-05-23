@@ -155,16 +155,27 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 			 
 	        boolean beginFlagone=DateUtil.toHms(stateDate,"08:30:00","11:30:00");
 	        boolean beginFlagtwo=DateUtil.toHms(stateDate,"13:30:00","16:30:00");
-	        if(beginFlagone&&beginFlagtwo){
-	        	  rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间错误,上午可预定时间为8:30-11:30,下午可预定时间为13:30-16:30。"); 
-				  return JSON.toJSONString(rw);  
-	        }
+	        
+	        if(!beginFlagone){
+	     		if(!beginFlagtwo){
+	     			rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间错误,上午可预定时间为8:30-11:30,下午可预定时间为13:30-16:30。"); 
+					return JSON.toJSONString(rw);  
+	     		
+	     		} 
+	     	} 
+	        
+	        
 	        boolean endFlagone=DateUtil.toHms(endDate,"08:30:00","11:30:00");
 	        boolean endFlagtwo=DateUtil.toHms(endDate,"13:30:00","16:30:00");
-	        if(endFlagone&&endFlagtwo){
-	        	  rw = new ResultWarp(ResultWarp.FAILED ,"参观结束时间错误,上午可预定时间为8:30-11:30,下午可预定时间为13:30-16:30。"); 
-				  return JSON.toJSONString(rw);  
-	        }
+	         
+	        if(!endFlagone){
+	     		if(!endFlagtwo){
+	     			rw = new ResultWarp(ResultWarp.FAILED ,"参观结束时间错误,上午可预定时间为8:30-11:30,下午可预定时间为13:30-16:30。"); 
+					return JSON.toJSONString(rw);  
+	     		
+	     		} 
+	     	} 
+	        
 			//系统已经预定的时间
 			List<Map<String, Object>> list=yszxMapper.selectForIdeaDate(id);
 			 if(!list.isEmpty()){
@@ -276,7 +287,7 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		}
 		//参观开始时间和参观结束时间的验证
 		String  checkreturn=checkData(stateDate,endDate,idea);
-		if(checkreturn!=null){
+		if(!checkreturn.equals("null")){
 			return checkreturn;
 		}
 		//备注
@@ -1147,6 +1158,41 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				String[] userIdArr = userId.split(",");
 				for (String userid : userIdArr) {
 							Map<String, String> userInfo=yszxMapper.getUserId(userid);
+							String postName=userInfo.get("postName");
+							postName = Rtext.toStringTrim(postName,"");
+							userInfo.put("postName", postName);
+							UserInfoList.add(userInfo);
+				}
+
+				map.put("userInfo",  UserInfoList);
+		 	    map.put("success", "ture");
+		 	    map.put("msg", "查询成功");
+		    }catch(Exception e){
+		    	map.put("data", "");
+		 	    map.put("success", "false");
+		 	    map.put("msg", "查询失败");
+		    	
+		    }
+		    String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+			return jsonStr;
+	  }
+	@Override
+	public String getUserCode(String codes) {	
+	    	Map<String, Object>  map= new  HashMap<String, Object>();
+	    	codes = Rtext.toStringTrim(codes,"");
+		    if(codes==""){
+		    	map.put("data", "");
+		 	    map.put("success", "false");
+		 	    map.put("msg", "查询失败");
+		    }
+		    try{
+		    	List<Map<String, String>> UserInfoList=new ArrayList<Map<String, String>>();
+				String[] codeArr = codes.split(",");
+				for (String code : codeArr) {
+							Map<String, String> userInfo=yszxMapper.getUserCode(code);
+							String postName=userInfo.get("postName");
+							postName = Rtext.toStringTrim(postName,"");
+							userInfo.put("postName", postName);
 							UserInfoList.add(userInfo);
 				}
 

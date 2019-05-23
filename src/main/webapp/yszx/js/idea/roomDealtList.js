@@ -61,8 +61,8 @@ roomList.initDataGrid = function(){
 				  		"text-align:left;display:block;" +
 				  		"white-space: nowrap;" +
 				  		"text-overflow: ellipsis;" +
-				  		"overflow: hidden;' id = '"+row.id+"'  ,applyId ='"+row.applyId+"' " +
-				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.id+"','"+row.applyId+"')>"+row.applyNumber+"</a>";
+				  		"overflow: hidden;   ' id = '"+row.id+"',applyId ='"+row.applyId+"',wlApproveId = '"+row.wlApproveId+"'"+
+				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.id+"','"+row.applyId+"','"+row.wlApproveId+"')>"+row.applyNumber+"</a>";
 				  		 
 		  }},
 		  {name: '申请时间', style:{width:"120px"},data: 'createTime'},
@@ -106,8 +106,9 @@ roomList.initDataGrid = function(){
 	});
 }	
 	/*演示中心管理-查看 */	
-	roomList.forDetails = function (id,applyId){
-		var url = "/bg/yszx/details?id="+id+"&applyId="+applyId;
+	roomList.forDetails = function (id,applyId,wlApproveId){
+		  
+		var url = "/bg/yszx/dealtBydetails?id="+id+"&applyId="+applyId+"&approveId="+wlApproveId;
 			layer.open({
 				type:2,
 				title:'<h4 style="height:42px;line-height:25px;">参观预定详情</h4>',
@@ -117,7 +118,7 @@ roomList.initDataGrid = function(){
 				content:url, 
 			});
 	}
-	
+	 
 	/* 演示中心待办管理-退回方法*/
 	roomList.returnEvent = function(){
 	 
@@ -134,7 +135,7 @@ roomList.initDataGrid = function(){
 	     function(r){
 		       if(r){
 	            	var checkedIds = dataGrid.getCheckedIds();
-		           messageReturn("0");
+		            messageReturn("0");
 			}
 	     });
 	   }
@@ -148,9 +149,16 @@ roomList.initDataGrid = function(){
 			layer.confirm(
 					 html,
 					 {title:'请填写审批意见', area:'800px',skin:'demo-class'   },
-					 function(){
-						 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
-						 selectForReturn(approveRemark,stauts);
+					 function(r){
+						 if(r){
+							 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
+							 if(approveRemark.length>100){
+									messager.tip("审批意见不超过100个字",2000);
+									return;
+							 }
+							 selectForReturn(approveRemark,stauts);
+						 }
+						
 						
 		             });
 		  }
@@ -161,12 +169,16 @@ roomList.initDataGrid = function(){
 		 
 	 			var checkedItems = dataGrid.getCheckedItems(dataItems);
 	 			var approveId= checkedItems[0].wlApproveId;
+	 		 
 	 			var auditUserId="";
 	 					$.ajax({
-	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 					 //   url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 						url: "/bg/Approve/sendApprove" ,//删除
+		 					
 	 						type: "post",
 	 						dataType:"json",
 	 						contentType: 'application/json',
+	 						data: JSON.stringify({"approveId":approveId,"stauts":stauts,"auditUserId":auditUserId,"approveRemark":approveRemark}),
 	 						success: function (data) {
 	 							if(data.success == "true"){
 	 								messager.tip("审批成功",1000);
@@ -256,13 +268,14 @@ roomList.initDataGrid = function(){
 
 	/* 同意信息库信息 */
 	messageAgree= function(stauts){
+		  debugger;
 	    var html=messageagreeHtml();
 		if(html =='' || html ==undefined){
 			messager.tip("审批人查询失败",1000);
 			return;
 		}else{
 			var auditUserId=approveUserID();
-			var approveRemark= "同意";
+			var approveRemark= "";
 			var checkedItems = dataGrid.getCheckedItems(dataItems);
  			var approveId= checkedItems[0].wlApproveId;
 			if(auditUserId!=""){
@@ -272,25 +285,25 @@ roomList.initDataGrid = function(){
 				 layer.confirm(
 						 html,
 						 {title:'请选择审批人', area:'800px',skin:'demo-class'   },
-						 function(){
-							 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
-							 var auditUserId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
-							 
-							 if(checkedNumber == 0){
-								    messager.tip("请选择要操作的数据",1000);
-									return;
-						     }else if(checkedNumber > 1 ){
-						    	    messager.tip("请选择一条数据",1000);
-									return;  
-						     }else{
-						    	var checkedIds = dataGrid.getCheckedIds();
-						    	 selectForAgree(approveId,stauts,auditUserId,approveRemark);
-						    	
-						    }
-							 
-							 
-							  
-			             });
+						 function(r){
+							 if(r){
+								 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
+								 var auditUserId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
+								 if(checkedNumber == 0){
+									    messager.tip("请选择要操作的数据",1000);
+										return;
+							     }else if(checkedNumber > 1 ){
+							    	    messager.tip("请选择一条数据",1000);
+										return;  
+							     }else{
+							    	 var checkedIds = dataGrid.getCheckedIds();
+							    	 selectForAgree(approveId,stauts,auditUserId,approveRemark);
+							    	
+							    }
+								 
+							 }
+			             }
+						 );
 				  
 			 }
 		}
@@ -298,20 +311,25 @@ roomList.initDataGrid = function(){
 	}
 	
 	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
-		
+		    debugger;
+		  
 	 					$.ajax({
-	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 					   // url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 						url: "/bg/Approve/sendApprove",//删除
 	 						type: "post",
 	 						dataType:"json",
 	 						contentType: 'application/json',
+	 						data: JSON.stringify({"approveId":approveId,"stauts":stauts,"auditUserId":auditUserId,"approveRemark":approveRemark}),
 	 						async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
 	 						success: function (data) {
 	 							if(data.success == "true"){
+	 							 
 	 								messager.tip("审批成功",1000);
 	 								roomList.query();
 	 								layer.close(layer.index);
 	 							}else{
-	 								messager.tip("审批失败失败",1000);
+	 								 
+	 								messager.tip("审批失败",1000);
 	 								roomList.query();
 	 							}
 	 						}

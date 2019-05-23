@@ -34,7 +34,7 @@
 			<label>申请单号：</label>
 			<input type = "text" id = "appltNumber" name = "appltNumber" class = "inputQuery changeQuery" style="width: 200px;">
 			
-			<label  for="applyDept" class="yearTitle">审请部门：</label>
+			<label  for="applyDept" class="yearTitle">申请部门：</label>
 		    <select id = "applyDept" name = "applyDept"   class = "changeQuery userlevel" style="width:240px;margin-right: 20px;">
 				<option value = "">   </option>
 				<c:forEach  var="deptInfo"  items="${deptInfo}">
@@ -78,6 +78,7 @@
 	<!-- end 列表展示 -->
 	
     <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script> 
+     
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/locale/easyui-lang-zh_CN.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>  

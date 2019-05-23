@@ -128,7 +128,7 @@ roomList.initDataGrid = function(){
 	/* 演示中心管理-导出功能*/
  
 	roomList.expEvent = function(){
-		 
+		 debugger;
 		var $tr = $("#datagrid tr");
 		if($tr.length == 1){
 			alert("没有要导出的数据！");
@@ -139,8 +139,21 @@ roomList.initDataGrid = function(){
 			var applyDept = $("#queryForm #applyDept").val();
 			var visitUserName = $("#queryForm #visitUserName").val();
 			var visitLevel = $("#queryForm #visitLevel").val();
-			var checkedIds = dataGrid.getCheckedIds();
-			window.location.href = "/bg/IdeaInfo/export?ids="+checkedIds+"&applyNumber="+applyNumber+"&year="+year+"&month="+month+"&applyDept="+applyDept+"&visitUserName="+visitUserName+"&visitLevel="+visitLevel;
+			var ids = dataGrid.getCheckedIds();
+			 
+			
+			$("input[name=ids]").val(ids);
+			var ran = Math.random()*1000;
+			document.forms[0].action ="/bg/IdeaInfo/export?ran="+ran;
+			document.forms[0].submit();
+	 
+			
+			
+			
+			
+			
+		    	//window.location.href = "/bg/IdeaInfo/export?ids="+checkedIds+"&applyNumber="+applyNumber+"&year="+year+"&month="+month+"&applyDept="+applyDept+"&visitUserName="+visitUserName+"&visitLevel="+visitLevel;
+	 
 		}
 	}
 	 

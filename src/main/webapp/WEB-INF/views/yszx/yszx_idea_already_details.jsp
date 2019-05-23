@@ -9,7 +9,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
-	<title>演示中心管理我的事项</title>
+	<title>演示中心管理详情待办</title>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 	<!-- newPage、item.css 页面css-->
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid/css/item.css" rel="stylesheet" type="text/css"/>
@@ -23,13 +23,12 @@
 <body>
 	<div class="main_div"></div> 
 	<input type = "hidden" value = "${id}" id = "id" name="id">  
-	<input type = "hidden" value = "${approveState}" id = "approveState" name="approveState">  
-	<input type = "hidden" value = "${wlApplyId}" id = "applyId" name="applyId"> 
-	<input type = "hidden" value = "${approveStatus}" id = "approveStatus" name="approveStatus">  
-	<input type = "hidden" value = "${auditType}" id = "auditType" name="auditType">  
+	<input type = "hidden" value = "${approveState}" id = "approveState" name="approveState"> 
+	<input type = "hidden" value = "${wlApproveId}" id = "wlApproveId" name="wlApproveId"> 
+	
 	<!-- start  头部 -->
 	<div class="sheach details">
-		<div class='content_top'>参观设定详情 </div>
+		<!--<div class='content_top'>参观设定详情 </div>	 -->
 	</div>
 	<!-- end  头部 -->
                        
@@ -293,285 +292,71 @@
 	</div>
 	
 	
-	
-	<div class="btnContent">
- 	         <button type="button" class="btn" onclick="agreeEvent()" id="agreemessage" >同意</button> 
-			  <button type="button" class="btn" onclick="returnEvent()" id="returnmessage">退回</button>
+   <div class="btnContent">
+ 	           <button type="button" class="btn" onclick="withdrawEvent()"   >撤回</button> 
 			   <button type="button" class="btn" onclick="messageResign()" >返回</button>	 
 	</div>
-	
-	
-	
 	<!-- end参观详情信息-->
-	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>  <!-- IE支持 JSON格式   -->
-	<script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script> 
+    <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/locale/easyui-lang-zh_CN.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>  
+ 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>  	<!-- 弹框.js  --> 
+	<!-- 引入datagrid -->
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
-	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>    <!-- 弹框.js  -->
-	<!-- 引入日期选择框 -->
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
-	<!-- 验证校验公共方法，提示框公共方法 -->
+    <!-- 验证校验公共方法，提示框公共方法 -->
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 	<!-- 本页面所需的js -->
- 	
+ 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomAlreadyList.js"></script>
 	
-
 </body>
- <script type="text/javascript">
- 
- $(function(obj){
-	  var approveStatus=$("#approveStatus").val();
-	  if(approveStatus=="0" ){
-		    $("#agreemessage").show();
-		    $("#returnmessage").show();
-	  }else{
-		    $("#agreemessage").hide();
-		    $("#returnmessage").hide();
-	  }
-	  
-	  
- }); 
- /* 演示中心待办管理-返回方法*/
+  <script type="text/javascript">
+     /* 演示中心待办管理-返回方法*/
     messageResign =function(){
-    	 /*window.opener=window;
-    	var win=window.open("","_self");
-    	win.close();
-    	top.close();*/
-    	//type=finish
-      var auditType=$("#auditType").val();   	
-    	if(auditType=="finish"){
-    		window.location.href = "/TYGLPT/index/waithaddo/index.jsp??tm="+new Date().getTime();
-    		
-    	}else{
-    	    window.location.href = "/TYGLPT/index/waittodo/index.jsp?tm="+new Date().getTime();
-    	}
-    	
-    		
-    		 
-    	     
-
-
+		var closeIndex = parent.layer.getFrameIndex(window.name);
+		parent.layer.close(closeIndex);
 	}
-    /* 演示中心待办管理-退回方法*/
-	returnEvent = function(){
-		messageReturn("0");
-	   }
-	messageReturn= function(stauts){
-	    var html=messagereturnHtml();
-		if(html =='' || html ==undefined){
-			messager.tip("审批意见页面错误",2000);
-			return;
-		}else{
-			layer.confirm(
-					 html,
-					 {title:'请填写审批意见', area:'800px',skin:'demo-class'   },
-					 function(r){
-						 if(r){
-							 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
-							 if(approveRemark.length>100){
-									messager.tip("审批意见不超过100个字",2000);
-									return;
-							 }
-							 selectForReturn(approveRemark,stauts);
-						 }
-						 
-					 	  
-		             });
-		}
-		
-	}
-	function selectForReturn(approveRemark,stauts){
-		 
-	 		    var approveId=$("#applyId").val();
-	 			var auditUserId="";
-	 					$.ajax({
-	 					 //   url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
-	 						url: "/bg/Approve/sendApprove",//删除
-	 					    type: "post",
-	 						dataType:"json",
-	 						contentType: 'application/json',
-	 						data: JSON.stringify({"approveId":approveId,"stauts":stauts,"auditUserId":auditUserId,"approveRemark":approveRemark}),
-	 						success: function (data) {
-	 							if(data.success == "true"){
-	 								messager.tip("审批成功",1000);
-	 								messageResign();
-	 							}else{
-	 								messager.tip("审批失败",1000);
-	 								 
-	 							}
-	 						}
-	 					});
-			 
-	     
-	}
-	/* 退回信息---页面拼接 */
-	messagereturnHtml=  function (){
-		 var userPrivilegehtml = '';
-		 userPrivilegehtml +='<div class="contentBox   Remark">';
-		 userPrivilegehtml +='<div class="btnBox"    >';
-		 userPrivilegehtml +='<h4 class="tableTitle">';
-		 userPrivilegehtml +='<span title = "审批意见">审批意见：</span>';
-	     userPrivilegehtml +='</h4>';
-		 userPrivilegehtml +='</div>';
-		 userPrivilegehtml +='<div class="maxBox">';
-		 userPrivilegehtml +='<textarea   id="approveRemark"    name="approveRemark"  style="height:100px; width: 100%;background-color: #fff;resize: none"> </textarea>';	    
-		 userPrivilegehtml +='</div>';
-		 userPrivilegehtml +='</div>';             
-
-		return userPrivilegehtml;
-	}
- 
-	/* 演示中心待办管理-同意方法*/
-	agreeEvent = function(){
-		var approveState=$("#approveState").val();
-		if(approveState=="MANAGER_DEPT_HEAD_CHECK"){
-			//messageReturn("1");
-			selectForReturn("","1");
-		}else{
-			messageAgree("1");
-		}
-		
-	}
-	
-	/* 同意信息库信息 */
-	messageAgree= function(stauts){
-	    var html=messageagreeHtml();
-		if(html =='' || html ==undefined){
-			 messager.tip("审批页面错误",1000);
-			 return; 
-		}else{
-			var auditUserId=approveUserIDS();
-			var approveRemark= "";
-			var approveId=$("#applyId").val();
-			if(auditUserId!=""){
-				  selectForAgree(approveId,stauts,auditUserId,approveRemark);
-			 }else{
-				 layer.confirm(
-						 html,
-						 {title:'请选择审批人', area:'800px',skin:'demo-class'   },
-						 function(r){
-							 if(r){
-								 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
-								 var auditUserId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
-								 
-								 if(checkedNumber == 0){
-									    messager.tip("请选择要操作的数据",1000);
-										return;
-							     }else if(checkedNumber > 1 ){
-							    	    messager.tip("请选择一条数据",1000);
-										return;  
-							     }else{
-							    	var checkedIds = dataGrid.getCheckedIds();
-							    	 selectForAgree(approveId,stauts,auditUserId,approveRemark);
-							    	 
-							    }
-								 
-							 }
-							 
-							 
-							  
-			             });
-				  
-			 }
-		}
-
-	}
-
-	function approveUserIDS(){
-		var ApproveUserId = "";
-		var approveState=$("#approveState").val();
-		$.ajax({
-			 url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState+"&type="+"apply",//获取申报界面数据字典
-			type: "post",
-			dataType: "json",
-			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
-			success: function (data) { 
-				if(data.success =='true'){
-				  	var userPrivilegelist = data.data.userPrivilege;
-				  	var len=userPrivilegelist.length
-				  	if(len>1){
-				  		ApproveUserId="";
-				  	}else{
-				  		ApproveUserId=userPrivilegelist[0].userId;
-				  	}
-				} 
-			 }
-		  });
-		return ApproveUserId;
-		
-	}
-	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
-	 
-	 					$.ajax({
-	 					  //  url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
-	 							  url: "/bg/Approve/sendApprove",//删除
-	 						type: "post",
-	 						dataType:"json",
-	 						contentType: 'application/json',
-	 						data: JSON.stringify({"approveId":approveId,"stauts":stauts,"auditUserId":auditUserId,"approveRemark":approveRemark}),
-	 						
-	 						success: function (data) {
-	 							if(data.success == "true"){
-	 								messager.tip("审批成功",1000);
-	 								messageResign();
-	 							}else{
-	 								messager.tip("审批失败失败",1000);
-	 								 
-	 							}
-	 						}
-	 					});
-			   
-	}
-	
-	
-
-	/* 同意信息---页面拼接 */
-	messageagreeHtml=  function (){
-		var approveState=$("#approveState").val();
-		var userPrivilegehtml = '';
-		$.ajax({
-		    url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState+"&type="+"apply",//获取申报界面数据字典
-			type: "post",
-			dataType: "json",
-			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
-			success: function (data) {
-				if(data.success =='true'){
-			    	var userPrivilegelist = data.data.userPrivilege;
-					userPrivilegehtml += '<table class="userPrivilege tableStyle thTableStyle">';
-					userPrivilegehtml += '<tr>';
-					     userPrivilegehtml += '<th>选择</th>';
-					     userPrivilegehtml += '<th>审批人</th>';
-					     userPrivilegehtml += '<th>部门</th>';
-					userPrivilegehtml += '</tr>';
-						for (var i = 0; i < userPrivilegelist.length; i++) {
-							userPrivilegehtml += '<tr>';
-							     userPrivilegehtml += '<td>';
-							       userPrivilegehtml+='<input type="checkbox"   class="inputUserId"  />' 
-							       userPrivilegehtml+='<input type="hidden"    id="userId"  name = "userId"  class="userId"  value="' + userPrivilegelist[i].userId + '"  />' 
-							     userPrivilegehtml += '</td>';
-							     userPrivilegehtml += '<td class="addInputStyle">  ';
-							       userPrivilegehtml+='<span class="detailsLeft">'+userPrivilegelist[i].userAlias+'</span>';
-							     //  userPrivilegehtml+='<input type="text" disabled  id="userAlias"  name = "userAlias"  class="userAlias inputChange"  value="' + userPrivilegelist[i].userAlias + '" title="审批人名称 " />' 
-							     userPrivilegehtml += '</td>';
-							     userPrivilegehtml += '<td class="addInputStyle">';
-							        userPrivilegehtml+='<span class="detailsLeft">'+userPrivilegelist[i].deptName+'</span>';
-							      // userPrivilegehtml+='<input type="text" disabled   id="deptName"   name = "deptName"   class="deptName inputChange"  value="' + userPrivilegelist[i].deptName + '" title="审批人单位" />'
-							     userPrivilegehtml += '</td>';
-							       
-							 userPrivilegehtml += '</tr>';   	 
-						}
-					 userPrivilegehtml += '</table>';
-				}else{
-					userPrivilegehtml ;
-				}
-			 
+    
+    
+	 withdrawEvent = function(){
+		 debugger;
+			var approveState=$("#approveState").val();
+			if(approveState=="FINISH"){
+				messager.tip("该数据审核通过，不能执行撤回",2000);
+				return;
 			}
-		});
-		return userPrivilegehtml;
-	}
- 
+			if(approveState=="RETURN"){
+				messager.tip("该数据被退回，不能执行撤回",2000);
+				return;
+			}
+			var approveId=$("#wlApproveId").val();
+			$.messager.confirm( "撤回提示", "确认撤回选中数据吗",
+				function(r){
+					if(r){
+						$.ajax({
+						    url: "/bg/Approve/recallApprove?approveId="+approveId,//删除
+							type: "post",
+							dataType:"json",
+							contentType: 'application/json',
+							success: function (data) {
+								if(data.success == "true"){
+									messager.tip("撤回成功",1000);
+									 window.parent.location.reload();
+									 var closeIndex = parent.layer.getFrameIndex(window.name);
+									 parent.layer.close(closeIndex);
+								}else{
+									messager.tip("撤回失败",1000);
+									roomList.query();
+								}
+							}
+						});
+					}
+				}
+			);
+		}	
  
  </script>
 </html>

@@ -331,6 +331,12 @@ public interface YSZXMapper {
 	 * @return
 	 */
 	public  Map<String, String>  getUserId(@Param("userId")String userId);
+	/**
+	 * 根据用户id查询用户信息
+	 * @param pro
+	 * @return
+	 */
+	public  Map<String, String>  getUserCode(@Param("code")String code);
 
 	//-------------------------------------------用户查询-----------结束---------------------------------------------------- 
 	
