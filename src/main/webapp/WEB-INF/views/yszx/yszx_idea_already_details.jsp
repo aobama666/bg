@@ -344,7 +344,9 @@
 							success: function (data) {
 								if(data.success == "true"){
 									messager.tip("撤回成功",1000);
-									roomList.query();
+									 window.parent.location.reload();
+									 var closeIndex = parent.layer.getFrameIndex(window.name);
+									 parent.layer.close(closeIndex);
 								}else{
 									messager.tip("撤回失败",1000);
 									roomList.query();
