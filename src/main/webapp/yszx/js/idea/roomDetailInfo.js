@@ -103,6 +103,7 @@ function checkLeaderInfo(){
 		     }else{
 		    	 $(this).find(".visitUsername").removeClass("validRefuse");
 		     }
+		     
 			 if(username.length>20){
 				 messager.tip("参观领导名称不超过20个字",2000);
 				 $(this).find(".visitUsername").addClass("validRefuse");
@@ -304,11 +305,11 @@ roomDetailInfo.messageSave= function(approvalUserd){
 		  msginfo="submit";
 	  }
 	  var remark= $('#remark').val();
-	  
+	 
 	  if(remark!=""){
 		  if(remark.length>200){
 			  $("#remark").addClass("validRefuse");
-			  messager.tip("备注不超过200个字",2000)
+			  messager.tip("备注不超过200个字,现在字数"+remark.length,2000)
 			  roomDetailInfo.saveBtnClickFlag = 0;
 			  return;
 		  }else{
