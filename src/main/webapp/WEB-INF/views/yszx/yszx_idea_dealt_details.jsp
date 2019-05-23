@@ -9,7 +9,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
-	<title>演示中心管理我的事项</title>
+	<title>演示中心管理详情待办</title>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 	<!-- newPage、item.css 页面css-->
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid/css/item.css" rel="stylesheet" type="text/css"/>
@@ -25,11 +25,12 @@
 	<input type = "hidden" value = "${id}" id = "id" name="id">  
 	<input type = "hidden" value = "${approveState}" id = "approveState" name="approveState">  
 	<input type = "hidden" value = "${wlApplyId}" id = "applyId" name="applyId"> 
-	<input type = "hidden" value = "${approveStatus}" id = "approveStatus" name="approveStatus">  
-	<input type = "hidden" value = "${auditType}" id = "auditType" name="auditType">  
+	<input type = "hidden" value = "${wlapproveId}" id = "wlapproveId" name="wlapproveId"> 
+	 
+	 
 	<!-- start  头部 -->
 	<div class="sheach details">
-		<div class='content_top'>参观设定详情 </div>
+		<!--<div class='content_top'>参观设定详情 </div>	 -->
 	</div>
 	<!-- end  头部 -->
                        
@@ -293,15 +294,11 @@
 	</div>
 	
 	
-	
-	<div class="btnContent">
- 	         <button type="button" class="btn" onclick="agreeEvent()" id="agreemessage" >同意</button> 
-			  <button type="button" class="btn" onclick="returnEvent()" id="returnmessage">退回</button>
+<div class="btnContent">
+ 	         <button type="button" class="btn" onclick="agreeEvent()"   >同意</button> 
+			  <button type="button" class="btn" onclick="returnEvent()"  >退回</button>
 			   <button type="button" class="btn" onclick="messageResign()" >返回</button>	 
 	</div>
-	
-	
-	
 	<!-- end参观详情信息-->
 	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>  <!-- IE支持 JSON格式   -->
@@ -315,44 +312,13 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 	<!-- 本页面所需的js -->
- 	
-	
-
+ 	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomDealtList.js"></script>
 </body>
- <script type="text/javascript">
- 
- $(function(obj){
-	  var approveStatus=$("#approveStatus").val();
-	  if(approveStatus=="0" ){
-		    $("#agreemessage").show();
-		    $("#returnmessage").show();
-	  }else{
-		    $("#agreemessage").hide();
-		    $("#returnmessage").hide();
-	  }
-	  
-	  
- }); 
+  <script type="text/javascript">
  /* 演示中心待办管理-返回方法*/
     messageResign =function(){
-    	 /*window.opener=window;
-    	var win=window.open("","_self");
-    	win.close();
-    	top.close();*/
-    	//type=finish
-      var auditType=$("#auditType").val();   	
-    	if(auditType=="finish"){
-    		window.location.href = "/TYGLPT/index/waithaddo/index.jsp??tm="+new Date().getTime();
-    		
-    	}else{
-    	    window.location.href = "/TYGLPT/index/waittodo/index.jsp?tm="+new Date().getTime();
-    	}
-    	
-    		
-    		 
-    	     
-
-
+		var closeIndex = parent.layer.getFrameIndex(window.name);
+		parent.layer.close(closeIndex);
 	}
     /* 演示中心待办管理-退回方法*/
 	returnEvent = function(){
@@ -384,10 +350,9 @@
 	}
 	function selectForReturn(approveRemark,stauts){
 		 
-	 		    var approveId=$("#applyId").val();
+	 		    var approveId=$("#wlapproveId").val();
 	 			var auditUserId="";
 	 					$.ajax({
-	 					 //   url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
 	 						url: "/bg/Approve/sendApprove",//删除
 	 					    type: "post",
 	 						dataType:"json",
@@ -396,7 +361,9 @@
 	 						success: function (data) {
 	 							if(data.success == "true"){
 	 								messager.tip("审批成功",1000);
-	 								messageResign();
+	 								 window.parent.location.reload();
+									 var closeIndex = parent.layer.getFrameIndex(window.name);
+									 parent.layer.close(closeIndex);
 	 							}else{
 	 								messager.tip("审批失败",1000);
 	 								 
@@ -444,7 +411,7 @@
 		}else{
 			var auditUserId=approveUserIDS();
 			var approveRemark= "";
-			var approveId=$("#applyId").val();
+			var approveId=$("#wlapproveId").val();
 			if(auditUserId!=""){
 				  selectForAgree(approveId,stauts,auditUserId,approveRemark);
 			 }else{
@@ -503,22 +470,20 @@
 		
 	}
 	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
-	 
 	 					$.ajax({
-	 					  //  url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
-	 							  url: "/bg/Approve/sendApprove",//删除
+	 						url: "/bg/Approve/sendApprove",//删除
 	 						type: "post",
 	 						dataType:"json",
 	 						contentType: 'application/json',
 	 						data: JSON.stringify({"approveId":approveId,"stauts":stauts,"auditUserId":auditUserId,"approveRemark":approveRemark}),
-	 						
 	 						success: function (data) {
 	 							if(data.success == "true"){
 	 								messager.tip("审批成功",1000);
-	 								messageResign();
+	 								 window.parent.location.reload();
+									 var closeIndex = parent.layer.getFrameIndex(window.name);
+									 parent.layer.close(closeIndex);
 	 							}else{
-	 								messager.tip("审批失败失败",1000);
-	 								 
+	 								messager.tip("审批失败",1000); 
 	 							}
 	 						}
 	 					});

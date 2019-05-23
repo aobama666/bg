@@ -61,8 +61,8 @@ roomList.initDataGrid = function(){
 				  		"text-align:left;display:block;" +
 				  		"white-space: nowrap;" +
 				  		"text-overflow: ellipsis;" +
-				  		"overflow: hidden;' id = '"+row.id+"'  ,applyId ='"+row.applyId+"' " +
-				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.id+"','"+row.applyId+"')>"+row.applyNumber+"</a>";
+				  		"overflow: hidden;   ' id = '"+row.id+"',applyId ='"+row.applyId+"',wlApproveId = '"+row.wlApproveId+"'"+
+				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.id+"','"+row.applyId+"','"+row.wlApproveId+"')>"+row.applyNumber+"</a>";
 				  		 
 		  }},
 		  {name: '申请时间', style:{width:"120px"},data: 'createTime'},
@@ -106,8 +106,9 @@ roomList.initDataGrid = function(){
 	});
 }	
 	/*演示中心管理-查看 */	
-	roomList.forDetails = function (id,applyId){
-		var url = "/bg/yszx/details?id="+id+"&applyId="+applyId;
+	roomList.forDetails = function (id,applyId,wlApproveId){
+		  
+		var url = "/bg/yszx/dealtBydetails?id="+id+"&applyId="+applyId+"&approveId="+wlApproveId;
 			layer.open({
 				type:2,
 				title:'<h4 style="height:42px;line-height:25px;">参观预定详情</h4>',
@@ -117,7 +118,7 @@ roomList.initDataGrid = function(){
 				content:url, 
 			});
 	}
-	
+	 
 	/* 演示中心待办管理-退回方法*/
 	roomList.returnEvent = function(){
 	 
@@ -134,7 +135,7 @@ roomList.initDataGrid = function(){
 	     function(r){
 		       if(r){
 	            	var checkedIds = dataGrid.getCheckedIds();
-		           messageReturn("0");
+		            messageReturn("0");
 			}
 	     });
 	   }
@@ -151,6 +152,10 @@ roomList.initDataGrid = function(){
 					 function(r){
 						 if(r){
 							 var approveRemark=$(".Remark").find("textarea[name=approveRemark]").val();
+							 if(approveRemark.length>100){
+									messager.tip("审批意见不超过100个字",2000);
+									return;
+							 }
 							 selectForReturn(approveRemark,stauts);
 						 }
 						
@@ -164,12 +169,16 @@ roomList.initDataGrid = function(){
 		 
 	 			var checkedItems = dataGrid.getCheckedItems(dataItems);
 	 			var approveId= checkedItems[0].wlApproveId;
+	 		 
 	 			var auditUserId="";
 	 					$.ajax({
-	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 					 //   url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 						url: "/bg/Approve/sendApprove" ,//删除
+		 					
 	 						type: "post",
 	 						dataType:"json",
 	 						contentType: 'application/json',
+	 						data: JSON.stringify({"approveId":approveId,"stauts":stauts,"auditUserId":auditUserId,"approveRemark":approveRemark}),
 	 						success: function (data) {
 	 							if(data.success == "true"){
 	 								messager.tip("审批成功",1000);
@@ -288,27 +297,7 @@ roomList.initDataGrid = function(){
 										return;  
 							     }else{
 							    	 var checkedIds = dataGrid.getCheckedIds();
-							
-							    		$.ajax({
-					 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
-					 						type: "post",
-					 						dataType:"json",
-					 						contentType: 'application/json',
-					 						async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
-					 						success: function (data) {
-					 							if(data.success == "true"){
-					 							 
-					 								messager.tip("审批成功",1000);
-					 								roomList.query();
-					 								layer.close(layer.index);
-					 							}else{
-					 								 
-					 								messager.tip("审批失败",1000);
-					 								roomList.query();
-					 							}
-					 						}
-					 					});
-							    	// selectForAgree(approveId,stauts,auditUserId,approveRemark);
+							    	 selectForAgree(approveId,stauts,auditUserId,approveRemark);
 							    	
 							    }
 								 
@@ -323,21 +312,23 @@ roomList.initDataGrid = function(){
 	
 	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
 		    debugger;
-		    alert("approveId"+approveId+"----auditUserId"+auditUserId+"----stauts"+stauts+"-----approveRemark"+approveRemark);
+		  
 	 					$.ajax({
-	 					    url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 					   // url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除
+	 						url: "/bg/Approve/sendApprove",//删除
 	 						type: "post",
 	 						dataType:"json",
 	 						contentType: 'application/json',
+	 						data: JSON.stringify({"approveId":approveId,"stauts":stauts,"auditUserId":auditUserId,"approveRemark":approveRemark}),
 	 						async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
 	 						success: function (data) {
 	 							if(data.success == "true"){
-	 								alert("审批成功 ");
+	 							 
 	 								messager.tip("审批成功",1000);
 	 								roomList.query();
-	 								//layer.close(layer.index);
+	 								layer.close(layer.index);
 	 							}else{
-	 								alert("审批失败 ");
+	 								 
 	 								messager.tip("审批失败",1000);
 	 								roomList.query();
 	 							}

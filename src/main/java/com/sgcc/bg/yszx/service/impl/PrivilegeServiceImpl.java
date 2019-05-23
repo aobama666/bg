@@ -117,18 +117,35 @@ public class PrivilegeServiceImpl implements PrivilegeService{
 		return list;
 	}
 	
-	
+	@Override
+	public List<Map<String, Object>> getPrivApprByUserId(String userId, String type) {
+		List<Map<String,Object>>   list=authMapper.getPrivApprByUserId(userId, type);
+		return list;
+	}
 	
 	@Override
 	public Map<String,Object> getApproveUsersByDept(String deptId, String userId, String type) {
 		Map<String, Object>   map=authMapper.getApproveUsersByDept(deptId, userId, type);
 		return map;
 	}
+	
+	
+	
+	
 	@Override
 	public List<Map<String, Object>> getRuleByNode( String type , String node ) {
 		List<Map<String,Object>>   list=authMapper.getRuleByNode(type, node);
 		return list;
 	}
+	
+	
+	@Override
+	public List<Map<String, Object>> getAllDept() {
+		List<Map<String,Object>>   list=authMapper.getAllDept();
+		return list;
+	}
+
+	
 
 	
 

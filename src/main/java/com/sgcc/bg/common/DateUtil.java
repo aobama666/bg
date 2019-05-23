@@ -373,15 +373,33 @@ public class DateUtil {
 	 public static void main(String[] args) {
 		    String startTime="08:30:00";
 		    String endTime="11:30:00";
-		    String newTime="2018-08-09 11:20";
+		 
+		    
+		    String startTime1="13:30:00";
+		    String endTime1="16:30:00";
+		   
+		    
+		    
+		    String newTime="2018-08-09 19:20";
+		    
 		    boolean flag = false;
+		    boolean flag1 = false;
 			try {
 				flag = toHms(newTime,startTime,endTime);
+				flag1 = toHms(newTime,startTime1,endTime1);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block	 
 			}
-		 
+		    
 	       	System.out.print(flag);
+	     	System.out.print(flag1);
+	     	if(!flag){
+	     		if(!flag1){
+	     			System.out.println("错");
+	     		
+	     		} 
+	     	} 
+	     	
 	   	}
 	
 	

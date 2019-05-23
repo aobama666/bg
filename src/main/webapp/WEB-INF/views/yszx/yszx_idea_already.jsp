@@ -30,7 +30,7 @@
 			<label>申请单号：</label>
 			<input type = "text" id = "appltNumber" name = "appltNumber" style="width: 200px;" class = "inputQuery changeQuery" >
 			
-			<label  for="applyDept" class="yearTitle">审请部门：</label>
+			<label  for="applyDept" class="yearTitle">申请部门：</label>
 			<select id = "applyDept" name = "applyDept"   class = "changeQuery userlevel" style="width: 240px;margin-right:20px;">
 				<option value = "">   </option>
 				<c:forEach  var="deptInfo"  items="${deptInfo}">
