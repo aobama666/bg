@@ -454,19 +454,30 @@
 						 function(r){
 							 if(r){
 								 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
-								 var auditUserId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
 								 
+								 var auditUserIds="";
 								 if(checkedNumber == 0){
 									    messager.tip("请选择要操作的数据",1000);
 										return;
+							     }else if (checkedNumber == 1){
+							    	    auditUserIds=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
 							     }else if(checkedNumber > 1 ){
-							    	    messager.tip("请选择一条数据",1000);
-										return;  
+							    	 $(".userPrivilege").find("input[type=checkbox]:checked").each(function(){
+										 var auditUserId=$(this).siblings(".userId").val();
+										 auditUserIds += auditUserId+","
+								    });
+									if(auditUserIds.length>0){
+										 auditUserIds = auditUserIds.substr(0,auditUserIds.length-1);
+									} 
 							     }else{
-							    	var checkedIds = dataGrid.getCheckedIds();
-							    	 selectForAgree(approveId,stauts,auditUserId,approveRemark);
-							    	 
-							    }
+							    	 messager.tip("选择审批人异常",1000);
+									 return;
+							     }
+								 selectForAgree(approveId,stauts,auditUserIds,approveRemark);
+								 
+								 
+								 
+								 
 								 
 							 }
 							 
