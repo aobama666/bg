@@ -201,10 +201,13 @@ roomList.initDataGrid = function(){
 			}
 		);
 	}
+	
+	 
+	
 	/* 演示中心管理-提交方法*/
 	roomList.submitEvent = function(){
-	 
-		var checkedItems = dataGrid.getCheckedItems(dataItems);
+	   debugger;
+	 	var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
 			messager.tip("请选择要操作的数据",1000);
 			return;
@@ -267,16 +270,26 @@ roomList.initDataGrid = function(){
 					       function(r){
 					    	   if(r){
 					    		   var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
-							       var approvalUserd=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
-							       if(checkedNumber == 0){
-								        messager.tip("请选择要操作的数据",1000);
-								        return;
-						           }else if(checkedNumber > 1 ){
-						   	            messager.tip("请选择要操作的数据",1000);
-								        return;  
-						           }else{
-						    	        messageForSubmit(checkedIds,approvalUserd);
-						           }
+							     
+					    		   var auditUserIds="";
+									 if(checkedNumber == 0){
+										    messager.tip("请选择要操作的数据",1000);
+											return;
+								     }else if (checkedNumber == 1){
+								    	  auditUserIds=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
+								     }else if(checkedNumber > 1 ){
+								    	 $(".userPrivilege").find("input[type=checkbox]:checked").each(function(){
+											 var auditUserId=$(this).siblings(".userId").val();
+											 auditUserIds += auditUserId+","
+									    });
+										if(auditUserIds.length>0){
+											 auditUserIds = auditUserIds.substr(0,auditUserIds.length-1);
+										} 
+								     }else{
+								    	 messager.tip("选择审批人异常",1000);
+										 return;
+								     }
+									 messageForSubmit(checkedIds,auditUserIds);
 					    	   }
 						     
 		             });
@@ -284,13 +297,17 @@ roomList.initDataGrid = function(){
 		  }
 
 	}
+
+	
 	messageForSubmit  =function (checkedIds,approvalUserd){
-		 
-		var checkedItems = dataGrid.getCheckedItems(dataItems);
+		 debugger;
+		var   checkedItems = dataGrid.getCheckedItems(dataItems);
 		var   status=checkedItems[0].approveState;
 		var   approveId=checkedItems[0].approveId;
+		var   stateDate=checkedItems[0].stateDate;
+		var   endDate=checkedItems[0].endDate;
 			  $.ajax({
-				    url: "/bg/IdeaInfo/submitForStatus?ideaId="+checkedIds+"&approvalUserd="+approvalUserd+"&status="+status+"&approveId="+approveId,//删除
+				    url: "/bg/IdeaInfo/submitForStatus?ideaId="+checkedIds+"&approvalUserd="+approvalUserd+"&status="+status+"&approveId="+approveId+"&stateDate="+stateDate+"&endDate="+endDate, 
 					type: "post",
 					dataType:"json",
 					contentType: 'application/json',
@@ -300,7 +317,7 @@ roomList.initDataGrid = function(){
 							roomList.query();
 							layer.close(layer.index);
 						 }else{
-							messager.tip("提交成功",1000);
+							messager.tip(data.msg,1000);
 							roomList.query();  
 						  }
 					 }
@@ -319,7 +336,6 @@ roomList.initDataGrid = function(){
 			dataType: "json",
 			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
 			success: function (data) {
-				 
 				if(data.success =='true'){
 			    	var userPrivilegelist = data.data.userPrivilege;
 					userPrivilegehtml += '<table class="userPrivilege tableStyle thTableStyle">';
@@ -327,7 +343,6 @@ roomList.initDataGrid = function(){
 					     userPrivilegehtml += '<th>选择</th>';
 					     userPrivilegehtml += '<th>审批人</th>';
 					     userPrivilegehtml += '<th>部门</th>';
-					     
 					userPrivilegehtml += '</tr>';
 						for (var i = 0; i < userPrivilegelist.length; i++) {
 							userPrivilegehtml += '<tr>';
