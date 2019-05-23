@@ -32,6 +32,7 @@
 	<div class="sheach">
 		<div class='content_top'>综合查询</div>	 
 		<form id="queryForm" style="margin-bottom: 10px;">
+	    	 <input type = "hidden"   id = "ids" name="ids">  
 			<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;申请单号：</label>
 			<input type = "text" id = "applyNumber" name = "applyNumber" style="width: 200px" class = "inputQuery changeQuery" >
 			
@@ -43,18 +44,18 @@
 			<label  for="month">月度：</label>
 			<select id = "month" name = "month"   class = "changeQuery changeMonth" style="width: 100px">
 				<option value="" > </option>
-				<option value="01"   ${month == '01' ?"selected='selected'":''}>1月</option>
-				<option value="02"   ${month == '02' ?"selected='selected'":''}>2月</option>
-				<option value="03"   ${month == '03' ?"selected='selected'":''}>3月</option>
-				<option value="04"   ${month == '04' ?"selected='selected'":''}>4月</option>
-				<option value="05"   ${month == '05' ?"selected='selected'":''}>5月</option>
-				<option value="06"   ${month == '06' ?"selected='selected'":''}>6月</option>
-				<option value="07"   ${month == '07' ?"selected='selected'":''}>7月</option>
-				<option value="08"   ${month == '08' ?"selected='selected'":''}>8月</option>
-				<option value="09"   ${month == '09' ?"selected='selected'":''}>9月</option>
-				<option value="10"   ${month == '10' ?"selected='selected'":''}>10月</option>
-				<option value="11"   ${month == '11' ?"selected='selected'":''}>11月</option>
-				<option value="12"   ${month == '12' ?"selected='selected'":''}>12月</option>
+				<option value="01"   ${month == '01' ?"selected='selected'":''}>01</option>
+				<option value="02"   ${month == '02' ?"selected='selected'":''}>02</option>
+				<option value="03"   ${month == '03' ?"selected='selected'":''}>03</option>
+				<option value="04"   ${month == '04' ?"selected='selected'":''}>04</option>
+				<option value="05"   ${month == '05' ?"selected='selected'":''}>05</option>
+				<option value="06"   ${month == '06' ?"selected='selected'":''}>06</option>
+				<option value="07"   ${month == '07' ?"selected='selected'":''}>07</option>
+				<option value="08"   ${month == '08' ?"selected='selected'":''}>08</option>
+				<option value="09"   ${month == '09' ?"selected='selected'":''}>09</option>
+				<option value="10"   ${month == '10' ?"selected='selected'":''}>10</option>
+				<option value="11"   ${month == '11' ?"selected='selected'":''}>11</option>
+				<option value="12"   ${month == '12' ?"selected='selected'":''}>12</option>
 			</select>
 			 <label  for="year" class="yearTitle">申请部门（单位）：</label>
 			<select id = "applyDept" name = "applyDept"   class = "changeQuery userlevel" style="width: 240px">

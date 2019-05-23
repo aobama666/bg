@@ -33,7 +33,7 @@
 	<div class='content_top'>参观设定详情</div>	 
 	</div> -->
 	<!-- end  头部 -->
-    <span  style="color:red;margin:5px 0;display: inline-block;"> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  注:每周一常规检修，不接受预定。如果重要接待或重大活动，请走线下审批流程      </span>                       
+    <span  style="color:red;margin:5px 0;display: inline-block;"> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  注:&nbsp&nbsp每周一常规检修，不接受预定。如有重要接待或重大活动，请走线下审批流程。      </span>                       
 	<!-- 参观申请单位信息展示 -->
 	<table class="visitOperate tableStyle specialTable">
 		<tr>
@@ -76,7 +76,7 @@
 			  <span title = "联系人"><b class="mustWrite">*</b>联系人</span>
 			</td>
 			<td class="addInputStyle">
-				  <input type="text"  id="contactUser"  name="contactUser"  class="validNull"  value = "${contactUser}"  content="联系人" title="必填项，中文或英文"/>
+				  <input type="text"  id="contactUser"  name="contactUser"  class="validNull"  value = "${contactUser}"  content="联系人" len="20"  title="必填项，中文或英文,字段长度不能超过 20"/>
 			</td>
 			<td>
 			  <span title = "联系电话"><b class="mustWrite">*</b>联系电话</span>
@@ -145,13 +145,13 @@
 						<input type="checkbox"  id="visitId"  name = "visitId"  class="visitid"  value = "${visitInfo.visitId}"  />
 					</td>
 					<td class="addInputStyle"    >
-						<input type="text"    id="visitUserName"  name = "visitUserName"  class="visitUsername"  value = "${visitInfo.userName}"  />
+						<input type="text"    id="visitUserName"  name = "visitUserName"  class="visitUsername"  value = "${visitInfo.userName}"  title="必填项 ,中文或英文  ,字段长度不能超过 20个字" />
 					</td>
 					<td class="addInputStyle"   >
-						<input type="text" id="visitPosition"  name = "visitPosition"  class="visitposition"  value = "${visitInfo.position}"  />
+						<input type="text" id="visitPosition"  name = "visitPosition"  class="visitposition"  value = "${visitInfo.position}" title="必填项,字段长度不能超过 50个字" />
 					</td>
 					<td class="addInputStyle">
-						<select id="userLevel"  name = "userLevel"  class = "changeQuery userlevel"  >
+						<select id="userLevel"  name = "userLevel"  class = "changeQuery userlevel" title="必填项  "   >
 						<option value=""  >请选择参观领导级别</option>
 						<c:forEach  var="visitUnitLevleInfo"  items="${visitUnitLevleInfo}">
 					        <option value ="${visitUnitLevleInfo.K}"   ${visitUnitLevleInfo.K == visitInfo.userLevel ?"selected='selected'":''}     > ${visitUnitLevleInfo.V}</option>
@@ -244,7 +244,7 @@
 			  
 		</div>
 		<div class="maxBox">
-			 <textarea   id="remark"    name="remark"  style="height:100px; width: 100%;background-color: #fff;resize: none;padding:5px;"  len="200"  title="非必填项"   >${remark}</textarea> 	    		
+			 <textarea   id="remark"    name="remark"  style="height:100px; width: 100%;background-color: #fff;resize: none;padding:5px;"  len="200"  title="非必填项，字数不超过200个"   >${remark}</textarea> 	    		
 		</div>
 		
 	</div>
