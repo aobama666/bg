@@ -317,8 +317,8 @@ roomList.initDataGrid = function(){
 							roomList.query();
 							layer.close(layer.index);
 						 }else{
-							messager.tip(data.msg,1000);
-							roomList.query();  
+							messager.tip(data.msg,2000);
+							 
 						  }
 					 }
 			   });
@@ -392,6 +392,7 @@ roomList.initDataGrid = function(){
 			messager.tip("无法撤销,审批状态为：已撤销",2000);
 			return;
 		}
+		
 		var checkedIds = dataGrid.getCheckedIds();
 		$.messager.confirm( "撤销提示", "确认撤销选中数据吗",
 			function(r){
