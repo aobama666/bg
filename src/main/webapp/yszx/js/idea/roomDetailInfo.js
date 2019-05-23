@@ -60,12 +60,12 @@ function checkDate(stateDate,endDate){
 			return false;
         }else if(stateday=="1"){
   		   $("#stateDate").addClass("validRefuse");
-		    messager.tip("检查参观开始时间,每周一常规检修,不接受预定！",2000);
+		    messager.tip("参观开始时间有误,每周一常规检修,不接受预定！",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return  false;
 	    }else if(endday=="1"){
  		   $("#endDate").addClass("validRefuse");
-		    messager.tip("检查参观结束时间,每周一常规检修,不接受预定！",2000);
+		    messager.tip("参观结束时间有误,每周一常规检修,不接受预定！",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return  false;
 	    }else{
