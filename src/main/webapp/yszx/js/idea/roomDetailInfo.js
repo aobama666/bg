@@ -204,6 +204,25 @@ roomDetailInfo.messageSave= function(approvalUserd){
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return;
 		} 
+		var visitorNumber=$("#visitorNumber").val();
+		if(visitorNumber>1000){
+			 messager.tip("参观人数不超过1000人",2000)
+			 $("#visitorNumber").addClass("validRefuse");
+			 roomDetailInfo.saveBtnClickFlag = 0;
+			 return;
+		}else{
+			 $("#visitorNumber").removeClass("validRefuses");
+		}
+		var companyUserNumber=$("#companyUserNumber").val();
+		if(companyUserNumber>1000){
+			 messager.tip("陪同人数不超过1000人",2000)
+			 $("#companyUserNumber").addClass("validRefuse");
+			 roomDetailInfo.saveBtnClickFlag = 0;
+			 return;
+		}else{
+			 $("#companyUserNumber").removeClass("validRefuses");
+		}
+		
 		/* 验证联系人只能含有中文或者英文  */
 		var  checkteleUser=IsRight.onlyTwo("#contactUser");
 		if(!checkteleUser){
@@ -211,6 +230,7 @@ roomDetailInfo.messageSave= function(approvalUserd){
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return;
 		} 
+		
 		/* 验证联系人电话格式 手机号或者xxx-xxxxxxxx或者xxxx-xxxxxxx */
 		var  checktelePhone=IsRight.telePhone("#contactPhone");
 		if(!checktelePhone){

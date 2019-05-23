@@ -120,7 +120,7 @@
 				<span title = "参观人数"><b class="mustWrite">*</b>参观人数</span>
 			</td>
 			<td class="addInputStyle">
-            	<input type="text"  id="visitorNumber"  name = "visitUnitType"  class = "validNull validNum"  content="参观人数"   title="必填项  ，必须为正整数" />
+            	<input type="text"  id="visitorNumber"  name = "visitorNumber"  class = "validNull validNum"  content="参观人数"   title="必填项  ，必须为正整数" />
             </td>
 		</tr>
 		<tr>
