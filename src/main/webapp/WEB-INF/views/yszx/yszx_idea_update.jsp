@@ -33,7 +33,7 @@
 	<div class='content_top'>参观设定详情</div>	 
 	</div> -->
 	<!-- end  头部 -->
-    <span  style="color:red;margin:5px 0;display: inline-block;"> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  注:每周一常规检修，不接受预定。如果重要接待或重大活动，请走线下审批流程      </span>                       
+    <span  style="color:red;margin:5px 0;display: inline-block;"> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  注:&nbsp&nbsp每周一常规检修，不接受预定。如有重要接待或重大活动，请走线下审批流程。      </span>                       
 	<!-- 参观申请单位信息展示 -->
 	<table class="visitOperate tableStyle specialTable">
 		<tr>
@@ -256,7 +256,6 @@
 		<button id="messageSave"  type="button" class="btn" onclick="roomDetailInfo.messageSave()">保存</button>  
 		<button type="button" class="btn" onclick="roomDetailInfo.messageResign()">返回</button>
 	</div>
-	
 	<!-- end参观详情信息-->
 	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script> 
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
@@ -280,7 +279,7 @@
  	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomDetailInfo.js"></script>
  
 </body>
- 
+ <!--
  <script type="text/javascript">
  $(function(){
 	 var approveState=$("#approveState").val();
@@ -292,5 +291,5 @@
 	
  });
  </script>
- 
+  -->
 </html>

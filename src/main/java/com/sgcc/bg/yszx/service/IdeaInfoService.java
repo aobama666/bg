@@ -103,7 +103,7 @@ public interface IdeaInfoService {
 	 * @param pro
 	 * @return
 	 */
-	public String submitForStatus(String ideaId ,String approvalUserd,String status,String approveId);
+	public String submitForStatus(String ideaId ,String approvalUserd,String status,String approveId,String stateDate,String endDate);
 	/**
 	 * 修改演示中心信息---主页信息的撤销
 	 * @param pro

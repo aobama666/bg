@@ -153,24 +153,24 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 				  return JSON.toJSONString(rw);  
 			 } 	
 			 
-	        boolean beginFlagone=DateUtil.toHms(stateDate,"08:30:00","11:30:00");
-	        boolean beginFlagtwo=DateUtil.toHms(stateDate,"13:30:00","16:30:00");
+	        boolean beginFlagone=DateUtil.toHms(stateDate,"08:29:00","11:31:00");
+	        boolean beginFlagtwo=DateUtil.toHms(stateDate,"13:29:00","16:31:00");
 	        
 	        if(!beginFlagone){
 	     		if(!beginFlagtwo){
-	     			rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间错误,上午可预定时间为8:30-11:30,下午可预定时间为13:30-16:30。"); 
+	     			rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间有误,可预定时间为8:30-11:30 和 13:30-16:30时间段。"); 
 					return JSON.toJSONString(rw);  
 	     		
 	     		} 
 	     	} 
 	        
 	        
-	        boolean endFlagone=DateUtil.toHms(endDate,"08:30:00","11:30:00");
-	        boolean endFlagtwo=DateUtil.toHms(endDate,"13:30:00","16:30:00");
+	        boolean endFlagone=DateUtil.toHms(endDate,"08:29:00","11:31:00");
+	        boolean endFlagtwo=DateUtil.toHms(endDate,"13:29:00","16:31:00");
 	         
 	        if(!endFlagone){
 	     		if(!endFlagtwo){
-	     			rw = new ResultWarp(ResultWarp.FAILED ,"参观结束时间错误,上午可预定时间为8:30-11:30,下午可预定时间为13:30-16:30。"); 
+	     			rw = new ResultWarp(ResultWarp.FAILED ,"参观结束时间有误,预定时间为8:30-11:30和13:30-16:30时间段。"); 
 					return JSON.toJSONString(rw);  
 	     		
 	     		} 
@@ -185,22 +185,22 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 					String  oldenddate=String.valueOf(map.get("END_DATE"));//结束时间
 					boolean flag1=DateUtil.compareTime(oldenddate,stateDate);
 					if(flag1){
-						boolean flag=DateUtil.getMinuteSub(oldenddate,stateDate,30);
+						boolean flag=DateUtil.getMinuteSub(oldenddate,stateDate,31);
 						if(!flag){
-							rw = new ResultWarp(ResultWarp.FAILED ,"参观开始时间和申请单号为："+applyNumber+"参观结束时间冲突("+oldstartdate+"~"+oldenddate+"),上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
+							rw = new ResultWarp(ResultWarp.FAILED ,"参观预定时间有误,上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
 							return JSON.toJSONString(rw);  
 						}
 					}else{
 					
 						boolean flag=DateUtil.compareTime(endDate,oldstartdate);
 						if(flag){
-							boolean flag2=DateUtil.getMinuteSub(endDate,oldstartdate,30);
+							boolean flag2=DateUtil.getMinuteSub(endDate,oldstartdate,31);
 							if(!flag2){
-								rw = new ResultWarp(ResultWarp.FAILED ,"参观结束时间和申请单号为："+applyNumber+"参观是开始时间冲突("+oldstartdate+"~"+oldenddate+"),上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
+								rw = new ResultWarp(ResultWarp.FAILED ,"参观预定时间有误 ,上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
 								return JSON.toJSONString(rw);  
 							}
 						}else{
-							rw = new ResultWarp(ResultWarp.FAILED ,"参观结束时间和申请单号为："+applyNumber+"参观是开始时间冲突("+oldstartdate+"~"+oldenddate+"),上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
+							rw = new ResultWarp(ResultWarp.FAILED ,"参观预定时间有误 ,上一场结束时间和下一场申请开始时间间隔30分钟"  ); 
 							return JSON.toJSONString(rw);  
 						}
 					}
@@ -617,18 +617,25 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 					  return JSON.toJSONString(rw);  
 			   }
 			if(visitLevel.equals("save")){//保存
-				  ideaInfo.setStatus("SAVE");
-				  yszxMapper.updataIdeaInfo(ideaInfo);
-			   }else if(visitLevel.equals("submit")){//提交
-				   ideaInfo.setStatus("DEPT_HEAD_CHECK");
-					  yszxMapper.updataIdeaInfo(ideaInfo);
 				  if(approveState.equals("RETURN")){
+					  ideaInfo.setStatus("RETURN");
+					  yszxMapper.updataIdeaInfo(ideaInfo);
+				  }else{
+					  ideaInfo.setStatus("SAVE");
+					  yszxMapper.updataIdeaInfo(ideaInfo);
+				  }
+			}else if(visitLevel.equals("submit")){//提交
+				  if(approveState.equals("RETURN")){
+					  ideaInfo.setStatus("DEPT_HEAD_CHECK");
+					  yszxMapper.updataIdeaInfo(ideaInfo);
 					  approveService.sendApprove(false, approveId, "1", "", approvalUserd, createUserId);
 				  }else{
+					  ideaInfo.setStatus("DEPT_HEAD_CHECK");
+					  yszxMapper.updataIdeaInfo(ideaInfo);
 					  approveService.startApprove(false,"YSZX","SAVE",ideaId,approvalUserd,createUserId);
 				  } 
 				 
-                }
+             }
 			
 		}
 		} catch (Exception e) {
@@ -1254,25 +1261,31 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 		return jsonStr;
 	}
 	@Override
-	public String submitForStatus(String ideaId ,String approvalUserd ,String status,String approveId) {
+	public String submitForStatus(String ideaId ,String approvalUserd ,String status,String approveId,String stateDate,String endDate) {
 		bgServiceLog.info("演示中心参观预定主页面删除----->提交开始" );
 		ResultWarp rw =  null;
-		try{
-			Map<String,String>  userInfoMap=userInfo();
-			String updateUser= userInfoMap.get("userId");
-			//yszxMapper.submitForStatus(ideaId, "DEPT_HEAD_CHECK", updateUser, new Date());
-			if("SAVE".equals(status)){
-				approveService.startApprove(false,"YSZX","SAVE",ideaId,approvalUserd,updateUser);
-			}else{
-				approveService.sendApprove(false, approveId, "1", "", approvalUserd, updateUser);
+		//验证时间
+	   String  dateRW=checkData(stateDate,endDate,ideaId);
+		if(!dateRW.equals("null")){
+			   return dateRW;
+		}else{
+			try{
+				Map<String,String>  userInfoMap=userInfo();
+				String updateUser= userInfoMap.get("userId");
+				if("SAVE".equals(status)){
+					approveService.startApprove(false,"YSZX","SAVE",ideaId,approvalUserd,updateUser);
+				}else{
+					approveService.sendApprove(false, approveId, "1", "", approvalUserd, updateUser);
+				}
+				rw = new ResultWarp(ResultWarp.SUCCESS ,"提交成功");  
+			}catch(Exception e){
+				rw = new ResultWarp(ResultWarp.FAILED ,"提交失败");  
 			}
-			rw = new ResultWarp(ResultWarp.SUCCESS ,"提交成功");  
-		}catch(Exception e){
-			rw = new ResultWarp(ResultWarp.FAILED ,"提交失败");  
+			bgServiceLog.info("演示中心参观预定主页面删除----->提交结束" );
+			String jsonStr=JSON.toJSONStringWithDateFormat(rw,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+			return jsonStr;
+			
 		}
-		bgServiceLog.info("演示中心参观预定主页面删除----->提交结束" );
-		String jsonStr=JSON.toJSONStringWithDateFormat(rw,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
-		return jsonStr;
 	}
 	@Override
 	public String repealForStatus(String ideaId) {
