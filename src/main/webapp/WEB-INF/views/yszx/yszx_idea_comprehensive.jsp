@@ -61,7 +61,7 @@
 			<select id = "applyDept" name = "applyDept"   class = "changeQuery userlevel" style="width: 240px">
 				<option value = "">   </option>
 				<c:forEach  var="deptInfo"  items="${deptInfo}">
-					        <option value ="${deptInfo.applyDeptID}"  > ${deptInfo.applyDeptName}</option>
+					        <option value ="${deptInfo.applyDeptID}" title=" ${deptInfo.applyDeptName}" > ${deptInfo.applyDeptName}</option>
 					     </c:forEach>
 			     </select>
 			

@@ -617,18 +617,25 @@ public class IdeaInfoServiceImpl implements IdeaInfoService {
 					  return JSON.toJSONString(rw);  
 			   }
 			if(visitLevel.equals("save")){//保存
-				  ideaInfo.setStatus("SAVE");
-				  yszxMapper.updataIdeaInfo(ideaInfo);
-			   }else if(visitLevel.equals("submit")){//提交
-				   ideaInfo.setStatus("DEPT_HEAD_CHECK");
-					  yszxMapper.updataIdeaInfo(ideaInfo);
 				  if(approveState.equals("RETURN")){
+					  ideaInfo.setStatus("RETURN");
+					  yszxMapper.updataIdeaInfo(ideaInfo);
+				  }else{
+					  ideaInfo.setStatus("SAVE");
+					  yszxMapper.updataIdeaInfo(ideaInfo);
+				  }
+			}else if(visitLevel.equals("submit")){//提交
+				  if(approveState.equals("RETURN")){
+					  ideaInfo.setStatus("DEPT_HEAD_CHECK");
+					  yszxMapper.updataIdeaInfo(ideaInfo);
 					  approveService.sendApprove(false, approveId, "1", "", approvalUserd, createUserId);
 				  }else{
+					  ideaInfo.setStatus("DEPT_HEAD_CHECK");
+					  yszxMapper.updataIdeaInfo(ideaInfo);
 					  approveService.startApprove(false,"YSZX","SAVE",ideaId,approvalUserd,createUserId);
 				  } 
 				 
-                }
+             }
 			
 		}
 		} catch (Exception e) {
