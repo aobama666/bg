@@ -268,7 +268,7 @@ roomList.initDataGrid = function(){
 
 	/* 同意信息库信息 */
 	messageAgree= function(stauts){
-		  debugger;
+		debugger;
 	    var html=messageagreeHtml();
 		if(html =='' || html ==undefined){
 			messager.tip("审批人查询失败",1000);
@@ -287,20 +287,27 @@ roomList.initDataGrid = function(){
 						 {title:'请选择审批人', area:'800px',skin:'demo-class'   },
 						 function(r){
 							 if(r){
+								 debugger;
 								 var checkedNumber = $(".userPrivilege").find("input[type=checkbox]:checked").length;
-								 var auditUserId=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
+								 var auditUserIds="";
 								 if(checkedNumber == 0){
 									    messager.tip("请选择要操作的数据",1000);
 										return;
+							     }else if (checkedNumber == 1){
+							    	    auditUserIds=$(".userPrivilege").find("input[type=checkbox]:checked").siblings(".userId").val();
 							     }else if(checkedNumber > 1 ){
-							    	    messager.tip("请选择一条数据",1000);
-										return;  
+							    	 $(".userPrivilege").find("input[type=checkbox]:checked").each(function(){
+										 var auditUserId=$(this).siblings(".userId").val();
+										 auditUserIds += auditUserId+","
+								    });
+									if(auditUserIds.length>0){
+										 auditUserIds = auditUserIds.substr(0,auditUserIds.length-1);
+									} 
 							     }else{
-							    	 var checkedIds = dataGrid.getCheckedIds();
-							    	 selectForAgree(approveId,stauts,auditUserId,approveRemark);
-							    	
-							    }
-								 
+							    	 messager.tip("选择审批人异常",1000);
+									 return;
+							     }
+								 selectForAgree(approveId,stauts,auditUserIds,approveRemark);
 							 }
 			             }
 						 );
@@ -309,7 +316,17 @@ roomList.initDataGrid = function(){
 		}
 
 	}
-	
+/*	function expertListChecked(){
+	    var expertIdStr = "";
+	    var num = 0;
+	    $("input[class*='mmg-check']:checked").each(function(){
+	        var path = $(this).parents("tr").find(".prevoew-more").attr("name");
+	        expertIdStr += path+","
+
+	    });
+
+	    return expertIdStr.substring(0,expertIdStr.length-1);
+	}*/
 	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
 		    debugger;
 		  
