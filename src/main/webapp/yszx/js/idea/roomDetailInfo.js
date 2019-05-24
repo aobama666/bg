@@ -33,6 +33,60 @@ function getNowFormatDate() {
     var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + " " + hours + seperator2 + minutes;    
     return currentdate;
 }
+
+function checkTime(stateDate,endDate){
+	var falg="0";
+	var startTmp=stateDate.replace(" ",":").replace(/\:/g,"-").split("-");
+    var endTmp=endDate.replace(" ",":").replace(/\:/g,"-").split("-");
+	  var  date=new Date();
+      var  stateTmp=date.setMinutes(startTmp[3],startTmp[4]);
+      var  stateTmpOne=date.setMinutes("08","30");
+      var  stateTmpTwo=date.setMinutes("11","30");
+     if(stateTmpOne<=stateTmp && stateTmp<=stateTmpTwo){
+  	    $("#stateDate").removeClass("validRefuse");
+  	    falg="1";
+     }else{
+  	   var  stateTmpOne=date.setMinutes("13","30");
+         var  stateTmpTwo=date.setMinutes("16","30");
+         if(stateTmpOne<=stateTmp && stateTmp<=stateTmpTwo){
+      	   $("#stateDate").removeClass("validRefuse");
+      	   falg="1";
+         }else{
+      	       messager.tip("参观开始时间有误,可预定时间为8:30-11:30 和 13:30-16:30时间段",2000);
+      	 	  $("#stateDate").addClass("validRefuse");
+ 			   roomDetailInfo.saveBtnClickFlag = 0;
+ 			   return  false;
+         }
+  	  
+     }
+     var  endTmp=date.setMinutes(endTmp[3],endTmp[4]);
+     var  endTmpOne=date.setMinutes("08","30");
+     var  endTmpTwo=date.setMinutes("11","30");
+     if(endTmpOne<=endTmp && endTmp<=stateTmpTwo){
+   	    $("#endDate").removeClass("validRefuse");
+     	falg="1";
+      }else{
+   	      var  endTmpOne=date.setMinutes("13","30");
+          var  endTmpTwo=date.setMinutes("16","30");
+          if(endTmpOne<=endTmp && endTmp<=endTmpTwo){
+       	   $("#endDate").removeClass("validRefuse");
+       	   falg="1";
+          }else{
+       	       messager.tip("参观结束时间有误,预定时间为8:30-11:30和13:30-16:30时间段",2000);
+       	       $("#endDate").addClass("validRefuse");
+  			   roomDetailInfo.saveBtnClickFlag = 0;
+  			   return  false;
+          }
+   	  
+      }
+     if(falg=="1"){
+    	 return  true;
+     }else{
+    	 return  false;
+     }
+     
+}
+
 //验证参观开始时间和参观结束时间
 function checkDate(stateDate,endDate){
     	var startTmp=stateDate.replace(" ",":").replace(/\:/g,"-").split("-");
@@ -47,25 +101,37 @@ function checkDate(stateDate,endDate){
         var  stateday=new Date(stateDate.replace("-","/")).getDay() ;
         var  endday=new Date(endDate.replace("-","/")).getDay();
         
+        
+        
+     
+        
+        
+      
+        
+        
+        
+        
+        
+        
         //参观开始时间和当前时间比较  
         if(sd.getTime()<ld.getTime()){
         	$("#stateDate").addClass("validRefuse");
-            messager.tip("参观开始时间不能早于当前时间！",2000);
+            messager.tip("参观开始时间不能早于当前时间",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return  false;
         }else if(sd.getTime()>ed.getTime()){
         	$("#endDate").addClass("validRefuse");
-            messager.tip("参观结束时间不能早于参观开始时间！",2000);
+            messager.tip("参观结束时间不能早于参观开始时间",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return false;
         }else if(stateday=="1"){
   		   $("#stateDate").addClass("validRefuse");
-		    messager.tip("参观开始时间有误,每周一常规检修,不接受预定！",2000);
+		    messager.tip("参观开始时间有误,每周一常规检修,不接受预定",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return  false;
 	    }else if(endday=="1"){
  		   $("#endDate").addClass("validRefuse");
-		    messager.tip("参观结束时间有误,每周一常规检修,不接受预定！",2000);
+		    messager.tip("参观结束时间有误,每周一常规检修,不接受预定",2000);
 			roomDetailInfo.saveBtnClickFlag = 0;
 			return  false;
 	    }else{
@@ -105,7 +171,7 @@ function checkLeaderInfo(){
 		     }
 		     
 			 if(username.length>20){
-				 messager.tip("参观领导名称不超过20个字",2000);
+				 messager.tip("参观领导名称长度不能超过20",2000);
 				 $(this).find(".visitUsername").addClass("validRefuse");
 				 roomDetailInfo.saveBtnClickFlag = 0;
 				 flag=false;
@@ -123,7 +189,7 @@ function checkLeaderInfo(){
 			 return  false;
 		 }else{
 			 if(position.length>50){
-				 messager.tip("参观领导职务不超过50个字",2000);
+				 messager.tip("参观领导职务长度不能超过50",2000);
 				 $(this).find(".visitposition").addClass("validRefuse");
 				 roomDetailInfo.saveBtnClickFlag = 0;
 				 flag=false;
@@ -245,6 +311,11 @@ roomDetailInfo.messageSave= function(approvalUserd){
 	    if(!checkDates){
 	    	return;
 	    } 
+	    var checkTimes =   checkTime(stateDate,endDate);
+	    if(!checkTimes){
+	    	return;
+	    } 
+	    
 	    //验证主要参观领导
 	    var visitinfo=[];
 	    var  sortId=0;
@@ -329,7 +400,7 @@ roomDetailInfo.messageSave= function(approvalUserd){
 	  if(remark!=""){
 		  if(remark.length>200){
 			  $("#remark").addClass("validRefuse");
-			  messager.tip("备注不超过200个字,现在字数"+remark.length,2000)
+			  messager.tip("备注不能超过200个字,现在字数"+remark.length,2000)
 			  roomDetailInfo.saveBtnClickFlag = 0;
 			  return;
 		  }else{
@@ -668,23 +739,23 @@ function delLeader(obj){
 		messager.tip("请选中需要删除的数据",2000);
 		return;
     }
-	else if(checkedNumber>1){
-    	messager.tip("每次只能删除一条数据",2000);
-    	return;
-    }
+//	else if(checkedNumber>1){
+//    	messager.tip("每次只能删除一条数据",2000);
+//    	return;
+//    }
 	else if(checkedNumber > 0){
     	 $.messager.confirm( "删除提示", "确认删除选中数据吗",
     	 function(r){
     		if(r){
     			delLeaderInfo(obj);  
     			}
-    		    layer.close(index);
+    		 
 			});
     }
 }
 /*参观领导删除逻辑*/
 function delLeaderInfo(obj){
-	 
+	     debugger;
 	     $(obj).parents(".contentBox").find("input[type=checkbox]:checked").each(function(){
          var  visitId= $(this).val();
          if(visitId==""){
@@ -721,10 +792,12 @@ function delUser(obj){
 	if(checkedNumber == 0){
 		messager.tip("请选中需要删除的数据",2000);
 		return;
-    }else if(checkedNumber>1){
-    	messager.tip("每次只能删除一条数据",2000);
-    	return;
-    }else if(checkedNumber > 0){
+    }
+//	else if(checkedNumber>1){
+//    	messager.tip("每次只能删除一条数据",2000);
+//    	return;
+//    }
+	else if(checkedNumber > 0){
     	 $.messager.confirm( "删除提示", "确认删除选中数据吗",
     	   function(r){
     	     if(r){
