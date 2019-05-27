@@ -177,7 +177,7 @@ public interface ApproveMapper {
 	 * 返回审批流程表
 	 * @return
 	 */
-	public List<Map<String, String>> selectForApproveID(@Param("approveId")String approveId);
+	public List<Map<String, Object>> selectForApproveID(@Param("approveId")String approveId);
 	/**
 	 * 返回审批流程表
 	 * @return

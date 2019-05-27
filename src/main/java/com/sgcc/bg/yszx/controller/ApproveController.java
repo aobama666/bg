@@ -1,5 +1,6 @@
 package com.sgcc.bg.yszx.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,13 @@ public class ApproveController {
 	@RequestMapping(value = "/selectForApproveID", method = RequestMethod.POST)
 	public String selectForApproveID(String approveId){
 		ResultWarp rw =  null;
-		List<Map<String, String>>  list=approveService.selectForApproveID(approveId);
+		List<Map<String, Object>> list = null;
+		try {
+			list = approveService.selectForApproveID(approveId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if(list.isEmpty()){
 			rw = new ResultWarp(ResultWarp.FAILED ,"审批流程查询失败"); 
 		}else{

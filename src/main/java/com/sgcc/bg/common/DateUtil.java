@@ -2,8 +2,14 @@ package com.sgcc.bg.common;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.text.DateFormat;
+import com.sgcc.bg.workinghourinfo.Utils.DataBean;
 
 public class DateUtil {
 	private final static SimpleDateFormat sdfYear = new SimpleDateFormat("yyyy");
@@ -15,7 +21,8 @@ public class DateUtil {
 	private final static SimpleDateFormat sdfDays = new SimpleDateFormat("yyyyMMdd");
 
 	private final static SimpleDateFormat sdfTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+   
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	/**
 	 * 获取YYYY格式
 	 * @return
@@ -370,37 +377,7 @@ public class DateUtil {
 		}
 	}
 	
-	 public static void main(String[] args) {
-		    String startTime="08:30:00";
-		    String endTime="11:30:00";
-		 
-		    
-		    String startTime1="13:30:00";
-		    String endTime1="16:30:00";
-		   
-		    
-		    
-		    String newTime="2018-08-09 19:20";
-		    
-		    boolean flag = false;
-		    boolean flag1 = false;
-			try {
-				flag = toHms(newTime,startTime,endTime);
-				flag1 = toHms(newTime,startTime1,endTime1);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block	 
-			}
-		    
-	       	System.out.print(flag);
-	     	System.out.print(flag1);
-	     	if(!flag){
-	     		if(!flag1){
-	     			System.out.println("错");
-	     		
-	     		} 
-	     	} 
-	     	
-	   	}
+ 
 	
 	
 	
@@ -516,7 +493,141 @@ public class DateUtil {
 			 
 		}
 	  
-	  
+		 
+		/** 
+		 * 根据当前日期获得所在周的日期区间（周一和周日日期） 
+		 */
+		public static  Map<String ,String >  getTimeInterval(Date date){
+			  Map<String ,String >  map=new HashMap<String ,String>();
+			  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		      Calendar cal = Calendar.getInstance();
+		      cal.setTime(date);
+		      // 判断要计算的日期是否是周日，如果是则减一天计算周六的，否则会出问题，计算到下一周去了  
+		      int dayWeek = cal.get(Calendar.DAY_OF_WEEK);// 获得当前日期是一个星期的第几天  
+		      if(1 == dayWeek){
+		         cal.add(Calendar.DAY_OF_MONTH,-1);
+		      }
+		      // 设置一个星期的第一天，按中国的习惯一个星期的第一天是星期一  
+		      cal.setFirstDayOfWeek(Calendar.MONDAY);
+		      // 获得当前日期是一个星期的第几天  
+		      int monday = cal.get(Calendar.DAY_OF_WEEK);
+		      // 根据日历的规则，给当前日期减去星期几与一个星期第一天的差值  
+		      cal.add(Calendar.DATE, cal.getFirstDayOfWeek() - monday);
+		      String imptimeBegin = sdf.format(cal.getTime());
+		   
+		      cal.setFirstDayOfWeek(Calendar.FRIDAY);
+		      
+		      int friday = cal.get(Calendar.DAY_OF_WEEK);
+		      cal.add(Calendar.DATE, cal.getFirstDayOfWeek() - friday);
+		      String imptimeEnd = sdf.format(cal.getTime());
+		      map.put("weekForStart", imptimeBegin);
+		      map.put("weekForEnd", imptimeEnd);
+		      return map;
+		}
+	
+		/** 
+		 * 根据当前日期获得上周的日期区间（上周周一和周日日期） 
+		 */
+		public static String getUpTimeInterval(Date date){   
+			  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		      Calendar calendar1 = Calendar.getInstance();
+		      Calendar calendar2 = Calendar.getInstance();
+		      calendar1.setTime(date);
+		      calendar2.setTime(date);
+		      int dayOfWeek = calendar1.get(Calendar.DAY_OF_WEEK) - 1;
+		      if(dayOfWeek <= 0){
+		          dayOfWeek = 7;
+		      }
+		   
+		      int offset1 = 1 - dayOfWeek;
+		      int offset2 = 7 - dayOfWeek;
+		      calendar1.add(Calendar.DATE, offset1 - 7);
+		      calendar2.add(Calendar.DATE, offset2 - 9);
+		      // last Monday
+		      String lastBeginDate = sdf.format(calendar1.getTime());
+		      // last Sunday  
+		      String lastEndDate = sdf.format(calendar2.getTime());
+		      return lastBeginDate + "," + lastEndDate;
+		}
+		/** 
+		 * 根据当前日期获得上周的日期区间（上周周一和周日日期） 
+		 */
+		public static String getDownTimeInterval(Date date){   
+			  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		      Calendar calendar1 = Calendar.getInstance();
+		      Calendar calendar2 = Calendar.getInstance();
+		      calendar1.setTime(date);
+		      calendar2.setTime(date);
+		      int dayOfWeek = calendar1.get(Calendar.DAY_OF_WEEK) - 1;
+		      if(dayOfWeek <= 0){
+		          dayOfWeek = 7;
+		      }
+		      int offset1 = 1 - dayOfWeek;
+		      int offset2 = 7 - dayOfWeek;
+		      calendar1.add(Calendar.DATE, offset1 + 7);
+		      calendar2.add(Calendar.DATE, offset2 + 5);
+		      // last Monday
+		      String lastBeginDate = sdf.format(calendar1.getTime());
+		      // last Sunday  
+		      String lastEndDate = sdf.format(calendar2.getTime());
+		      return lastBeginDate + "," + lastEndDate;
+		}
+		 /**
+	     * 给定开始和结束时间，遍历之间的所有日期
+	     *
+	     * @param startAt 开始时间，例：2017-04-04
+	     * @param endAt   结束时间，例：2017-04-11
+	     * @return 返回日期数组
+	     */
+	    public static List<DataBean> getDatas(String startAt, String endAt) {
+	        List<String> dates = new ArrayList<String>();
+	        try {
+	            Date startDate = dateFormat.parse(startAt);
+	            Date endDate = dateFormat.parse(endAt);
+	            dates.addAll(queryData(startDate, endDate));
+	        } catch (ParseException e) {
+	            e.printStackTrace();
+	        }
+	    	List<DataBean>  DataBeanlist=new ArrayList<DataBean>();
+	    	int counts=0;
+	        for(int i=0;i<dates.size();i++){
+	        	counts++;
+	        	String newday=dates.get(i);
+	        	DataBean  dataBean=new DataBean();
+				dataBean.setCount(counts);
+				dataBean.setStartData(newday+ " 00:00");
+				dataBean.setEndData(newday+ " 24:00");
+				DataBeanlist.add(dataBean);
+	        }
+	        return DataBeanlist;
+	    }
 
-   
+	    /**
+	     * 给定开始和结束时间，遍历之间的所有日期
+	     *
+	     * @param startAt 开始时间，例：2017-04-04
+	     * @param endAt   结束时间，例：2017-04-11
+	     * @return 返回日期数组
+	     */
+	    public static List<String> queryData(Date startAt, Date endAt) {
+	        List<String> dates = new ArrayList<String>();
+	        Calendar start = Calendar.getInstance();
+	        start.setTime(startAt);
+	        Calendar end = Calendar.getInstance();
+	        end.setTime(endAt);
+	        while (start.before(end) || start.equals(end)) {
+	            dates.add(dateFormat.format(start.getTime()));
+	            start.add(Calendar.DAY_OF_YEAR, 1);
+	            
+	        } 
+	        return dates;
+	    }
+	    public static void main(String[] args) {
+        	String startAt="2017-04-04";
+        	String endAt="2017-04-11";
+        	List<DataBean> list=getDatas(startAt,endAt);
+        	for(DataBean  bean:list){
+        		System.out.println(	bean.getStartData()+"至"+bean.getEndData());
+        	}
+		}
 }
