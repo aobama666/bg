@@ -1,7 +1,9 @@
 package com.sgcc.bg.yszx.controller;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,7 @@ import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.service.DataDictionaryService;
+import com.sgcc.bg.workinghourinfo.Utils.DataBean;
 import com.sgcc.bg.yszx.bean.WLApprove;
 import com.sgcc.bg.yszx.service.ApproveService;
 import com.sgcc.bg.yszx.service.IdeaInfoService;
@@ -125,7 +128,13 @@ public class YSZXController {
 		proInfo.put("visitUnitLevleInfo",dictData);
 		List<Map<String, String>>   visitUnitTypeList= dataDictionaryService.selectDictDataByPcode("visitunit_type");
 		proInfo.put("visitUnitTypeInfo", visitUnitTypeList);
-		List<Map<String, String>>  approveList=approveService.selectForApproveID(applyId);
+		List<Map<String, Object>> approveList = null;
+		try {
+			approveList = approveService.selectForApproveID(applyId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if(approveList.isEmpty()){
 			proInfo.put("approveInfo", "");
 			proInfo.put("approvetype", 1);
@@ -156,7 +165,13 @@ public class YSZXController {
 		proInfo.put("visitUnitLevleInfo",dictData);
 		List<Map<String, String>>   visitUnitTypeList= dataDictionaryService.selectDictDataByPcode("visitunit_type");
 		proInfo.put("visitUnitTypeInfo", visitUnitTypeList);
-		List<Map<String, String>>  approveList=approveService.selectForApproveID(applyId);
+		List<Map<String, Object>> approveList = null;
+		try {
+			approveList = approveService.selectForApproveID(applyId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if(approveList.isEmpty()){
 			proInfo.put("approveInfo", "");
 			proInfo.put("approvetype", 1);
@@ -329,7 +344,13 @@ public class YSZXController {
 		proInfo.put("visitUnitLevleInfo",dictData);
 		List<Map<String, String>>   visitUnitTypeList= dataDictionaryService.selectDictDataByPcode("visitunit_type");
 		proInfo.put("visitUnitTypeInfo", visitUnitTypeList);
-		List<Map<String, String>>  approveList=approveService.selectForApproveID(applyId);
+		List<Map<String, Object>> approveList = null;
+		try {
+			approveList = approveService.selectForApproveID(applyId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if(approveList.isEmpty()){
 			proInfo.put("approveInfo", "");
 			proInfo.put("approvetype", 1);
@@ -656,7 +677,13 @@ public class YSZXController {
 		proInfo.put("visitUnitLevleInfo",dictData);
 		List<Map<String, String>>   visitUnitTypeList= dataDictionaryService.selectDictDataByPcode("visitunit_type");
 		proInfo.put("visitUnitTypeInfo", visitUnitTypeList);
-		List<Map<String, String>>  approveList=approveService.selectForApproveID(applyId);
+		List<Map<String, Object>> approveList = null;
+		try {
+			approveList = approveService.selectForApproveID(applyId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if(approveList.isEmpty()){
 			proInfo.put("approveInfo", "");
 			proInfo.put("approvetype", 1);
@@ -681,6 +708,24 @@ public class YSZXController {
 		public ModelAndView todo(HttpServletRequest request){
 			Map<String, Object> map = new HashMap<>();
 			ModelAndView model = new ModelAndView("yszx/audit/todoItem", map);
+			return model;
+	    }
+		
+		
+		@RequestMapping(value = "/state", method = RequestMethod.GET)
+		public ModelAndView state(HttpServletRequest request){
+			Map<String, Object> map = new HashMap<>();
+			Date newDate = new Date();
+			Map<String ,String >  week =  DateUtil.getTimeInterval(newDate);
+		 
+			String weekForStart=week.get("weekForStart");
+			String weekForEnd=week.get("weekForEnd");
+			String weekForTime=weekForStart+"至"+weekForEnd;
+			map.put("week",weekForTime);
+			List<DataBean> beanlist=DateUtil.getDatas(weekForStart,weekForEnd);
+			
+			
+			ModelAndView model = new ModelAndView("yszx/yszx_idea_state", map);
 			return model;
 	    }
 	

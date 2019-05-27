@@ -336,3 +336,8 @@ table td .validRefuse{
  textarea{
  border:1px solid #ccc;
  }
+ 
+.tableStyle .rowsStyle{
+	 	height: 150px;
+}
+ 

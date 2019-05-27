@@ -1,6 +1,10 @@
 package com.sgcc.bg.yszx.service.impl;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.math.BigDecimal;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.sgcc.bg.common.ConfigUtils;
+import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.model.HRUser;
 import com.sgcc.bg.service.UserService;
 import com.sgcc.bg.yszx.bean.ReturnMessage;
@@ -825,11 +830,46 @@ public class ApproveServiceImpl implements ApproveService{
 	}
 
 	@Override
-	public List<Map<String, String>> selectForApproveID(String approveId) {
-		List<Map<String, String>>  list=approveMapper.selectForApproveID(approveId);
+	public List<Map<String, Object>> selectForApproveID(String approveId) throws IOException {
+		List<Map<String, Object>>  list=approveMapper.selectForApproveID(approveId);
 		if(!list.isEmpty()){
-			for(Map<String, String> map:list){
-				String ruleId=map.get("node");
+			for(Map<String, Object> map:list){
+				try {
+		    		String  nextapproveUserAlias=Rtext.toStringTrim(map.get("nextapproveUserAlias"), "");
+		    		String nextapproveUserAliasdata="";
+		    		if(nextapproveUserAlias!=""){
+		    			Clob  approveUserAlias=(Clob)map.get("nextapproveUserAlias");
+						Reader is=approveUserAlias.getCharacterStream();
+						char[] c=new char[(int)approveUserAlias.length()];
+						is.read(c);
+						nextapproveUserAliasdata=new String(c);
+						is.close();
+		    		}
+					map.put("nextapproveUserAlias", nextapproveUserAliasdata);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				try {
+		    		String  nextapprovePhone=Rtext.toStringTrim(map.get("nextapprovePhone"), "");
+		    		String nextapprovePhonedata="";
+		    		if(nextapprovePhone!=""){
+		    			Clob   approvePhone=(Clob)map.get("nextapprovePhone");
+						Reader is=approvePhone.getCharacterStream();
+						char[] c=new char[(int)approvePhone.length()];
+						is.read(c);
+						nextapprovePhonedata=new String(c);
+						is.close();
+		    		}
+		    		
+					map.put("nextapprovePhone", nextapprovePhonedata);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				
+				
+				
+				String  ruleId=Rtext.toStringTrim(map.get("node"), "");
+	    		
 				if(ruleId!=null){
 					Map<String, String>  rulemap=approveMapper.selectForRuleID(ruleId);
 					if(rulemap!=null){

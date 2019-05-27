@@ -256,7 +256,6 @@
 		<button id="messageSave"  type="button" class="btn" onclick="roomDetailInfo.messageSave()">保存</button>  
 		<button type="button" class="btn" onclick="roomDetailInfo.messageResign()">返回</button>
 	</div>
-	
 	<!-- end参观详情信息-->
 	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script> 
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
@@ -280,7 +279,7 @@
  	<script src="<%=request.getContextPath()%>/yszx/js/idea/roomDetailInfo.js"></script>
  
 </body>
- 
+ <!--
  <script type="text/javascript">
  $(function(){
 	 var approveState=$("#approveState").val();
@@ -292,5 +291,5 @@
 	
  });
  </script>
- 
+  -->
 </html>
