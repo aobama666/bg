@@ -1,5 +1,6 @@
 package com.sgcc.bg.yszx.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -52,8 +53,9 @@ public interface ApproveService {
 	  * @param bussinessId 业务数据ID
 	  * @param operatorId  操作人id
 	  * @return
+	 * @throws IOException 
 	  */
-	 public List<Map<String, String>>  selectForApproveID(String approveId);
+	 public List<Map<String, Object>>  selectForApproveID(String approveId) throws IOException;
 	 
 	 public WLApprove getApproveInfoByApproveId(String approveId);
 	 /**
