@@ -16,7 +16,6 @@ public class LunwenController {
      * 临时测试_论文管理
      * @return
      */
-
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public ModelAndView index(){
         ModelAndView model = new ModelAndView("lunwen/index");
