@@ -12,6 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class LunwenController {
     private static Logger log = LoggerFactory.getLogger(LunwenController.class);
 
+
     /**
      * 临时测试_论文管理
      * @return
