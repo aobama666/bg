@@ -9,6 +9,8 @@
 		<artifactId>oss-parent</artifactId>
 		<version>7</version>
 	</parent>
+
+
 	<version>0.0.1</version>
 	<!-- nexus-releases nexus-snapshots与settings.xml中server下的id对应 -->
 	<distributionManagement>
