@@ -246,4 +246,30 @@ public class LwPaper {
     public void setValid(String valid) {
         this.valid = valid;
     }
+
+    @Override
+    public String toString() {
+        return "LwPaper{" +
+                "uuid='" + uuid + '\'' +
+                ", paperCode='" + paperCode + '\'' +
+                ", paperName='" + paperName + '\'' +
+                ", year='" + year + '\'' +
+                ", unit='" + unit + '\'' +
+                ", author='" + author + '\'' +
+                ", journal='" + journal + '\'' +
+                ", recommendUnit='" + recommendUnit + '\'' +
+                ", paperType='" + paperType + '\'' +
+                ", quoteCount='" + quoteCount + '\'' +
+                ", downloadCount='" + downloadCount + '\'' +
+                ", field='" + field + '\'' +
+                ", scoreTableStatus='" + scoreTableStatus + '\'' +
+                ", scoreStatus='" + scoreStatus + '\'' +
+                ", allStatus='" + allStatus + '\'' +
+                ", createUser='" + createUser + '\'' +
+                ", createTime=" + createTime +
+                ", updateUser='" + updateUser + '\'' +
+                ", updateTime=" + updateTime +
+                ", valid='" + valid + '\'' +
+                '}';
+    }
 }

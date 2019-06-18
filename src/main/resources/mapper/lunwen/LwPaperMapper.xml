@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.lunwen.mapper.LwPaperMapper">
+
+    <!--新增论文信息-->
+    <insert id="addLwPaper">
+      insert into bg_lw_paper
+        (UUID,
+        PAPER_ID,
+        PAPER_NAME,
+        `year`,
+        UNIT,
+        AUTHOR,
+        JOURNAL,
+        RECOMMEND_UNIT,
+        PAPER_TYPE,
+        QUOTE_COUNT,
+        DOWNLOAD_COUNT,
+        FIELD,
+        SCORE_TABLE_STATUS,
+        SCORE_STATUS,
+        ALL_STATUS,
+        CREATE_USER,
+        UPDATE_USER,
+        CREATE_TIME,
+        UPDATE_TIME,
+        VALID)
+      VALUES
+        (#{uuid},
+        #{paperId},
+        #{paperName},
+        #{year},
+        #{unit},
+        #{author},
+        #{journal},
+        #{recommendUnit},
+        #{paperType},
+        #{quoteCount},
+        #{downloadCount},
+        #{field},
+        #{scoreTableStatus},
+        #{scoreStatus},
+        #{allStatus},
+        #{createUser},
+        #{updateUser},
+        #{createTime},
+        #{updateTime},
+        #{valid}
+        )
+    </insert>
+
+    <!--修改论文信息-->
+    <update id="updateLwPaper">
+        update bg_lw_paper set
+        PAPER_ID = #{paperId},
+        PAPER_NAME = #{paperName},
+        `year` = #{year},
+        UNIT = #{unit},
+        AUTHOR = #{author},
+        JOURNAL = #{journal},
+        RECOMMEND_UNIT = #{recommendUnit},
+        PAPER_TYPE = #{paperType},
+        QUOTE_COUNT = #{quoteCount},
+        DOWNLOAD_COUNT = #{downloadCount},
+        FIELD = #{field},
+        SCORE_TABLE_STATUS = #{scoreTableStatus},
+        SCORE_STATUS = #{scoreStatus},
+        ALL_STATUS = #{allStatus},
+        CREATE_USER = #{createUser},
+        UPDATE_USER = #{updateUser},
+        CREATE_TIME = #{createTime},
+        UPDATE_TIME = #{updateTime},
+        VALID = #{valid}
+        where UUID = #{uuid}
+    </update>
+
+    <!--修改生成打分表状态-->
+    <update id="updateScoreTableStatus">
+        update bg_lw_paper
+        set  SCORE_TABLE_STATUS  = #{scoreTableStatus}
+        where UUID  = #{uuid}
+    </update>
+
+    <!--修改打分状态-->
+    <update id="updateScoreStatus">
+        update bg_lw_paper
+        set  SCORE_STATUS  = #{scoreStatus}
+        where UUID  = #{uuid}
+    </update>
+
+    <!--修改论文全生命周期状态-->
+    <update id="updateAllStatus">
+        update bg_lw_paper
+        set  ALL_STATUS  = #{allStatus}
+        where UUID  = #{uuid}
+    </update>
+
+    <!--删除某条论文，逻辑删除，单纯修改有效状态-->
+    <update id="delLwPaper">
+        update bg_lw_paper
+        set  VALID  = #{valid}
+        where UUID  = #{uuid}
+    </update>
+
+    <!--查找某条论文-->
+    <select id="findPaper" resultType="com.sgcc.bg.lunwen.bean.LwPaper">
+       select  p.uuid               uuid,
+               p.paper_id           paperId,
+               p.paper_name         paperName,
+               p.year,
+               p.unit,
+               p.author,
+               p.journal,
+               p.recommend_unit     recommendUnit,
+               p.paper_type         paperType,
+               p.quote_count        quoteCount,
+               p.download_count     downloadCount,
+               p.field,
+               p.score_table_status scoreTableStatus,
+               p.score_status       scoreStatus,
+               p.all_status         allStatus,
+               p.create_user        createUser,
+               p.update_user        updateUser,
+               TO_CHAR(p.create_time, 'YYYY-MM-DD HH24:MI')    createTime,
+               TO_CHAR(p.update_time, 'YYYY-MM-DD HH24:MI')    updateTime,
+               p.valid
+       from bg_lw_paper p
+       where 1=1
+       <if test="uuid != null">
+          and p.uuid = #{uuid}
+       </if>
+       <if test="paperName != null">
+          and p.paper_name = '#{paperName}
+       </if>
+    </select>
+
+    <!--按条件查询某批论文信息-->
+    <select id="selectLwPaper" resultType="java.util.Map">
+        select *
+        from (select p.uuid uuid,
+            p.paper_id paperId,
+            p.paper_name paperName,
+            p.year,
+            p.unit,
+            p.author,
+            p.journal,
+            p.recommend_unit recommendUnit,
+            p.paper_type paperType,
+            p.quote_count quoteCount,
+            p.download_count downloadCount,
+            p.field,
+            p.score_table_status scoreTableStatus,
+            p.score_status scoreStatus,
+            p.all_status allStatus,
+            p.create_user createUser,
+            p.update_user updateUser,
+            TO_CHAR(p.create_time, 'YYYY-MM-DD HH24:MI') createTime,
+            TO_CHAR(p.update_time, 'YYYY-MM-DD HH24:MI') updateTime,
+            p.valid,
+            ROWNUM rown
+            from bg_lw_paper p
+            where 1 = 1
+            <if test="paperName != null">
+              and p.paper_name = #{paperName}
+            </if>
+            <if test="year != null">
+              and p.year = #{year}
+            </if>
+            <if test="paperId != null">
+              and p.paper_id = #{paperId}
+            </if>
+            <if test="uuid != null">
+              and p.unit = #{uuid}
+            </if>
+            <if test="author != null">
+              and p.author = #{author}
+            </if>
+            <if test="field != null">
+              and p.field = #{field})
+            </if>
+            <!--&gt;为大于号，&lt;为小于号-->
+        where rown &gt;= #{pageStart}
+        and rown &lt;= #{pageEnd}
+    </select>
+
+</mapper>
