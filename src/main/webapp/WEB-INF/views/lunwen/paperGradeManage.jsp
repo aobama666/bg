@@ -20,19 +20,73 @@
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-	<div class="main_div">
-		<div class="col-lg-6">
-			<h3 style="text-align: center">已匹配专家信息</h3>
+	<div class="main_div"></div>
+
+	<!-- start    查询条件 -->
+	<div class="sheach">
+		<div class='content_top'>论文打分</div>
+		<form id="queryForm" style="margin-bottom: 10px;">
+				<label class="yearTitle">论文题目：</label>
+				<input type = "text" id = "paper_name" name = "applyId" style="width: 200px" class = "inputQuery changeQuery" >
+				<label  for="score_status" class="yearTitle">打分状态：</label>
+				<select id = "score_status" name = "year"   class = "changeQuery changeYear" style="width: 100px">
+					<option value = "1">未打分</option>
+					<option value = "0"  selected>  已打分</option>
+				</select>
+				<!-- 查询按钮  " -->
+				<div id = "queryButton" class = "btn query" onclick = "roomList.query()">搜索</div>
+		</form>
+	</div>
+	<!-- end    查询条件 -->
+	
+
+	<!-- start 列表展示 -->
+	<div class="tab" role="tabplanel">
+		<%--功能按钮--%>
+		<div id="funcBtn" style="height: 35px;float: right">
+			<div class='btn right deleteButton' onclick="roomList.delEvent()" >提交</div>
+			<div class='btn right deleteButton' onclick="roomList.gradeOperation()" >打分</div>
 		</div>
-		<div class="col-lg-6">
-			<h3 style="text-align: center">可匹配专家信息</h3>
-		</div>
-		<div style="text-align: center;padding-top: 30%">
-			<div class='btn  deleteButton' onclick="roomList.delEvent()" >确定</div>
-			<div class='btn  deleteButton' onclick="roomList.delEvent()" >取消</div>
-		</div>
+		<%--分类按钮--%>
+		<ul class="nav nav-tabs" role="tablist" style="margin-top: 0px;" id="typeTabs">
+			<li role="presentation"><a href="#xueshu" aria-controls="home" role="tab" data-toggle="tab">学术类</a> </li>
+			<li role="presentation"><a href="#jishu" aria-controls="profile"  role="tab" data-toggle="tab">技术类</a> </li>
+			<li role="presentation"><a href="#zongshu" aria-controls="messages" role="tab" data-toggle="tab">综述类</a> </li>
+		</ul>
 	</div>
 
+	<div class="tab-content">
+		<%--学术类--%>
+		<div role="tabpanel" class="tab-pane fade" id="xueshu">
+			<div class="tab-content">
+				<div class="tab-pane active" >
+					<div id="datagrid"></div>
+					<div class="tablepage"></div>
+				</div>
+			</div>
+		</div>
+		<%--技术类--%>
+		<div role="tabpanel" class="tab-pane fade" id="jishu">
+			<div class="tab-content">
+				<div class="tab-pane active" >
+					<div id="datagrid2"></div>
+					<div class="tablepage"></div>
+				</div>
+			</div>
+		</div>
+		<%--综述类--%>
+		<div role="tabpanel" class="tab-pane fade" id="zongshu">
+			<div class="tab-content">
+				<div class="tab-pane active" >
+					<div id="datagrid3"></div>
+					<div class="tablepage"></div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	 
+	<!-- end 列表展示 -->
 	
 	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script> 
      <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
@@ -49,7 +103,7 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<!-- 本页面所需的js -->
- 	<%--<script src="<%=request.getContextPath()%>/js/lunwen/paper_manage.js"></script>--%>
+ 	<script src="<%=request.getContextPath()%>/js/lunwen/paperGrade.js"></script>
 </body>
 
 </html>
