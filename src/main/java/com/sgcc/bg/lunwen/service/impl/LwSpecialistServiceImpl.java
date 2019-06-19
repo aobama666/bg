@@ -3,8 +3,8 @@ package com.sgcc.bg.lunwen.service.impl;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.lunwen.bean.LwSpecialist;
-import com.sgcc.bg.lunwen.mapper.ExpertMapper;
-import com.sgcc.bg.lunwen.service.ExpertService;
+import com.sgcc.bg.lunwen.mapper.LwSpecialistMapper;
+import com.sgcc.bg.lunwen.service.LwSpecialistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,17 +13,17 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class ExpertServiceImpl implements ExpertService {
+public class LwSpecialistServiceImpl implements LwSpecialistService {
 
     @Autowired
-    private ExpertMapper expertMapper;
+    private LwSpecialistMapper lwSpecialistMapper;
     @Autowired
     private WebUtils webUtils;
 
 
     @Override
     public List<Map<String, Object>> expertList(String name, String researchDirection, String unitName, String field, String matchStatus, int start, int end) {
-        List<Map<String, Object>> expertList = expertMapper.expertList(name,researchDirection,unitName,field,matchStatus,start,end);
+        List<Map<String, Object>> expertList = lwSpecialistMapper.expertList(name,researchDirection,unitName,field,matchStatus,start,end);
         return expertList;
     }
 
@@ -36,13 +36,13 @@ public class ExpertServiceImpl implements ExpertService {
         lwSpecialist.setCreateUser(webUtils.getUsername());
         lwSpecialist.setUpdateUser(webUtils.getUsername());
         lwSpecialist.setValid("1");
-        int i = expertMapper.insertExpert(lwSpecialist);
+        int i = lwSpecialistMapper.insertExpert(lwSpecialist);
         return i;
     }
 
     @Override
     public Map<String, String> lwSpecialist(String id) {
-        Map<String, String> lwSpecialist = expertMapper.lwSpecialist(id);
+        Map<String, String> lwSpecialist = lwSpecialistMapper.lwSpecialist(id);
         return lwSpecialist;
     }
 
@@ -50,7 +50,7 @@ public class ExpertServiceImpl implements ExpertService {
     public int updateExpert(LwSpecialist lwSpecialist) {
         lwSpecialist.setUpdateUser(webUtils.getUsername());
         lwSpecialist.setUpdateTime(new Date());
-        int i = expertMapper.updateExpert(lwSpecialist);
+        int i = lwSpecialistMapper.updateExpert(lwSpecialist);
         return i;
     }
 
