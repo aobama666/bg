@@ -5,7 +5,7 @@ import com.sgcc.bg.lunwen.bean.LwSpecialist;
 import java.util.List;
 import java.util.Map;
 
-public interface ExpertService {
+public interface LwSpecialistService {
     List<Map<String,Object>> expertList(String name, String researchDirection, String unitName, String field, String matchStatus, int start, int end);
 
     int insertExpert(LwSpecialist lwSpecialist);
