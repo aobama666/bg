@@ -8,7 +8,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
-	<title>论文评审临时测试</title>
+	<title>新增论文</title>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
 	<!-- newPage、item.css 页面css-->
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/item.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
@@ -24,7 +24,7 @@
 
 	<!-- start    查询条件 -->
 	<div class="sheach">
-		<div class='content_top'>论文管理</div>
+		<div class='content_top'>添加论文</div>
 		<form id="queryForm" style="margin-bottom: 10px;">
 				<label  for="year" class="yearTitle">年度：</label>
 				<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 100px">
@@ -126,7 +126,7 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<!-- 本页面所需的js -->
- 	<script src="<%=request.getContextPath()%>/js/lunwen/paper_manage.js"></script>
+ 	<script src="<%=request.getContextPath()%>/js/lunwen/paperManage.js"></script>
 </body>
 
 </html>

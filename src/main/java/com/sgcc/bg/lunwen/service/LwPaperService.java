@@ -42,6 +42,7 @@ public interface LwPaperService {
             String year,
             String unit,
             String author,
-            String field
+            String field,
+            String scoreStatus
     );
 }

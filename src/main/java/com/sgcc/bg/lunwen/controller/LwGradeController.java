@@ -21,7 +21,7 @@ public class LwGradeController {
      */
     @RequestMapping(value = "/grade_jump_manage", method = RequestMethod.GET)
     public ModelAndView grade(){
-        ModelAndView modelAndView = new ModelAndView("lunwen/paper_grade_manage");
+        ModelAndView modelAndView = new ModelAndView("lunwen/paperGradeManage");
         return modelAndView;
     }
 
@@ -32,7 +32,7 @@ public class LwGradeController {
      */
     @RequestMapping(value="/grade_jump_operation", method = RequestMethod.GET)
     public ModelAndView grade_operation(){
-        ModelAndView modelAndView = new ModelAndView("lunwen/paper_grade_operation");
+        ModelAndView modelAndView = new ModelAndView("lunwen/paperGradeOperation");
         return modelAndView;
     }
 }
