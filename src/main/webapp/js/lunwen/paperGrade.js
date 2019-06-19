@@ -85,7 +85,7 @@ roomList.initDataGrid = function(){
 	}
 	/*打分弹出框 */
 	roomList.gradeOperation = function (){
-		var url = "/bg/lunwen/grade_operation"
+		var url = "/bg/lwGrade/grade_jump_operation"
 		layer.open({
 			type:2,
 			title:'<h4 style="height:42px;line-height:25px;">****论文</h4>',

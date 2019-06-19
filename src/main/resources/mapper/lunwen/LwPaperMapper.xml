@@ -179,6 +179,9 @@
             <if test="field != null">
               and p.field = #{field})
             </if>
+            <if test="scoreStatus != null">
+                and p.score_status = #{scoreStatus})
+            </if>
             <!--&gt;为大于号，&lt;为小于号-->
         where rown &gt;= #{pageStart}
         and rown &lt;= #{pageEnd}

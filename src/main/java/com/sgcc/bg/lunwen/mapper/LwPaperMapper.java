@@ -97,7 +97,8 @@ public interface LwPaperMapper {
             @Param("year") String year,
             @Param("unit") String unit,
             @Param("author") String author,
-            @Param("field") String field
+            @Param("field") String field,
+            @Param("scoreStatus") String scoreStatus
     );
 
 
