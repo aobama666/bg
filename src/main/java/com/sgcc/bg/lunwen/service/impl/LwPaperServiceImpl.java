@@ -51,9 +51,15 @@ public class LwPaperServiceImpl implements LwPaperService {
     }
 
     @Override
-    public List<Map<String, Object>> selectLwPaper(String pageStart, String pageEnd,
+    public List<Map<String, Object>> selectLwPaper(Integer pageStart, Integer pageEnd,
              String paperName, String paperId, String year, String unit,
-             String author, String field,String scoreStatus) {
-        return lwPaperMapper.selectLwPaper(pageStart,pageEnd,paperName,paperId,year,unit,author,field);
+             String author, String field,String scoreStatus,String paperType) {
+        return lwPaperMapper.selectLwPaper(pageStart,pageEnd,paperName,paperId,
+                year,unit,author,field,scoreStatus,paperType);
+    }
+
+    @Override
+    public Integer selectLwPaperCount(String paperName, String paperId, String year, String unit, String author, String field, String scoreStatus, String paperType) {
+        return lwPaperMapper.selectLwPaperCount(paperName,paperId,year,unit,author,field,scoreStatus,paperType);
     }
 }

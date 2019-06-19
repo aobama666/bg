@@ -35,14 +35,25 @@ public interface LwPaperService {
     );
 
     List<Map<String, Object>> selectLwPaper(
-            String pageStart,
-            String pageEnd,
+            Integer pageStart,
+            Integer pageEnd,
             String paperName,
             String paperId,
             String year,
             String unit,
             String author,
             String field,
-            String scoreStatus
+            String scoreStatus,
+            String paperType
+    );
+
+    public Integer selectLwPaperCount(String paperName,
+                                      String paperId,
+                                      String year,
+                                      String unit,
+                                      String author,
+                                      String field,
+                                      String scoreStatus,
+                                      String paperType
     );
 }

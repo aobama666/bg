@@ -60,7 +60,7 @@
 		<div role="tabpanel" class="tab-pane fade" id="xueshu">
 			<div class="tab-content">
 				<div class="tab-pane active" >
-					<div id="datagrid"></div>
+					<div id="datagrid1"></div>
 					<div class="tablepage"></div>
 				</div>
 			</div>
