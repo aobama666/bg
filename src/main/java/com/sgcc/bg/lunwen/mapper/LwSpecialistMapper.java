@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public interface ExpertMapper {
+public interface LwSpecialistMapper {
     /**
      * 查询
      * @param name

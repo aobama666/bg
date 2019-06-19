@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.lunwen.bean.LwSpecialist;
-import com.sgcc.bg.lunwen.service.ExpertService;
+import com.sgcc.bg.lunwen.service.LwSpecialistService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,12 @@ import java.util.Map;
 
 @Controller
 @RequestMapping(value = "expert")
-public class ExpertController {
+public class LwSpecialistController {
 
-    private static Logger log =  LoggerFactory.getLogger(ExpertController.class);
+    private static Logger log =  LoggerFactory.getLogger(LwSpecialistController.class);
 
     @Autowired
-    private ExpertService expertServiceImpl;
+    private LwSpecialistService lwSpecialistServiceImpl;
 
 
     /**
@@ -53,7 +53,7 @@ public class ExpertController {
             end = page*limit;
         }
 
-        List<Map<String, Object>> expertList  = expertServiceImpl.expertList(name,researchDirection,unitName,field,matchStatus,start,end);
+        List<Map<String, Object>> expertList  = lwSpecialistServiceImpl.expertList(name,researchDirection,unitName,field,matchStatus,start,end);
         Map map = new HashMap();
         map.put("data",expertList);
         map.put("msg","success");
@@ -75,7 +75,7 @@ public class ExpertController {
             map.put("success", "false");
             map.put("msg", "id不能为空");
         }
-        Map<String, String> lwSpecialist =expertServiceImpl.lwSpecialist(id);
+        Map<String, String> lwSpecialist = lwSpecialistServiceImpl.lwSpecialist(id);
         map.put("data", lwSpecialist);
         map.put("success", "ture");
         map.put("msg", "查询成功");
@@ -92,7 +92,7 @@ public class ExpertController {
     @ResponseBody
     @RequestMapping(value = "/insertExpert" ,method = RequestMethod.POST)
     public String insertExpert(LwSpecialist lwSpecialist){
-        int i = expertServiceImpl.insertExpert(lwSpecialist);
+        int i = lwSpecialistServiceImpl.insertExpert(lwSpecialist);
         return null;
     }
 
@@ -104,7 +104,7 @@ public class ExpertController {
     @ResponseBody
     @RequestMapping(value = "/updateExpert" ,method = RequestMethod.POST)
     public String updateExpert(LwSpecialist lwSpecialist){
-        int i = expertServiceImpl.updateExpert(lwSpecialist);
+        int i = lwSpecialistServiceImpl.updateExpert(lwSpecialist);
         return null;
     }
 
