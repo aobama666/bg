@@ -25,7 +25,7 @@ public interface LwPaperService {
             String allStatus
     );
 
-    LwPaper findPaper(
+    Map<String, Object> findPaper(
             String uuid,
             String paperName
     );

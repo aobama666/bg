@@ -62,7 +62,7 @@ public interface LwPaperMapper {
      * @param uuid,paperName
      * @return
      */
-    public LwPaper findPaper(
+    public Map<String, Object> findPaper(
             @Param("uuid")String uuid,
             @Param("paperName") String paperName
     );

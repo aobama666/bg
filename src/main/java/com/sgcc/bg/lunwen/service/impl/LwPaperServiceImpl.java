@@ -41,7 +41,7 @@ public class LwPaperServiceImpl implements LwPaperService {
     }
 
     @Override
-    public LwPaper findPaper(String uuid, String paperName) {
+    public Map<String, Object> findPaper(String uuid, String paperName) {
         return lwPaperMapper.findPaper(uuid,paperName);
     }
 

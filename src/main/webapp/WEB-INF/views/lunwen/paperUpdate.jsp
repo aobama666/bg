@@ -89,9 +89,8 @@
 	</table>
 
 	<div class="btnContent">
-		<button type="button" class="btn" onclick="roomDetailInfo.messageSubmit()" >提交</button>
-		<button type="button" class="btn" onclick="roomDetailInfo.messageSave('')">保存</button>
-		<button type="button" class="btn" onclick="roomDetailInfo.messageResign()">返回</button>
+		<button type="button" class="btn" onclick="paperList.updateEvent()">保存</button>
+		<button type="button" class="btn" onclick="paperList.addClose()">返回</button>
 	</div>
 
 	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script> 

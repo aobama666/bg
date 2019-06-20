@@ -2,6 +2,8 @@ package com.sgcc.bg.lunwen.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.sgcc.bg.common.DateUtil;
+import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.lunwen.bean.LwPaper;
@@ -13,12 +15,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,24 +128,65 @@ public class LwPaperController {
      * 新增论文
      * @return
      */
-    @RequestMapping(value = "/paperToAdd", method = RequestMethod.POST)
-    public ModelAndView paperToAdd(LwPaper lwPaper){
+    @ResponseBody
+    @RequestMapping(value = "/paperToAdd")
+    public String paperToAdd(@RequestBody Map<String, Object> paramsMap){
+        ResultWarp rw = null;
         //验证题目是否唯一
-
+        LwPaper lwPaper = mapToLwPaper(paramsMap);
+        Map<String,Object> lwMap = lwPaperService.findPaper(null,lwPaper.getPaperName());
+        if(null != lwMap){
+            log.info(getLoginUser()+"insert lwPaper fail,paperName exist,info:"+paramsMap.toString());
+            rw = new ResultWarp(ResultWarp.FAILED ,"添加论文失败，论文题目已存在");
+            return JSON.toJSONString(rw);
+        }
+        //处理论文编号，根据论文类型和上一个编号id，叠加
+        lwPaper.setPaperId("X999");
+        //获取当前年限
+        lwPaper.setYear(DateUtil.getYear());
         //验证附件是否正常上传，如何提示合适上传何时提交
 
+        String userName = webUtils.getUsername();
+        //初始化时间，创建人，各种状态
+        lwPaper.setUuid(Rtext.getUUID());
+        lwPaper.setCreateUser(userName);
+        lwPaper.setCreateTime(new Date());
+        lwPaper.setScoreTableStatus(LwPaperConstant.SCORE_TABLE_OFF);
+        lwPaper.setScoreStatus(LwPaperConstant.SCORE_STATUS_NO);
+        lwPaper.setAllStatus(LwPaperConstant.ALL_STATUS_ONE);
+        lwPaper.setValid(LwPaperConstant.VALID_YES);
         lwPaperService.addLwPaper(lwPaper);
         log.info(getLoginUser()+"insert lwPaper success,info:"+lwPaper.toString());
         //考虑是否调用查询，携带信息返回论文管理页面
         ModelAndView mv = new ModelAndView("lunwen/paperManage");
-        return mv;
+        rw = new ResultWarp(ResultWarp.SUCCESS ,"添加论文成功");
+        return JSON.toJSONString(rw);
+    }
+
+    /**
+     * map内容转lwpaper，add和update使用
+     * @param paramsMap
+     * @return
+     */
+    public LwPaper mapToLwPaper(Map<String, Object> paramsMap){
+        LwPaper lwPaper = new LwPaper();
+        lwPaper.setPaperName(paramsMap.get("paperName").toString());
+        lwPaper.setUnit(paramsMap.get("unit").toString());
+        lwPaper.setAuthor(paramsMap.get("author").toString());
+        lwPaper.setJournal(paramsMap.get("journal").toString());
+        lwPaper.setPaperType(paramsMap.get("paperType").toString());
+        lwPaper.setQuoteCount(paramsMap.get("quoteCount").toString());
+        lwPaper.setField(paramsMap.get("field").toString());
+        lwPaper.setDownloadCount(paramsMap.get("downloadCount").toString());
+        lwPaper.setRecommendUnit(paramsMap.get("recommendUnit").toString());
+        return lwPaper;
     }
 
     /**
      * 跳转至——论文修改
      * @return
      */
-    @RequestMapping(value = "/paperJumpUpdate", method = RequestMethod.GET)
+    @RequestMapping(value = "/paperJumpUpdate")
     public ModelAndView paperJumpUpdate(){
         ModelAndView mv = new ModelAndView("lunwen/paperUpdate");
         return mv;
@@ -149,12 +196,39 @@ public class LwPaperController {
      * 修改论文
      * @return
      */
-    @RequestMapping(value = "/paperToUpdate", method = RequestMethod.POST)
-    public ModelAndView paperToUpdate(LwPaper lwPaper){
+    @RequestMapping(value = "/paperToUpdate")
+    public ModelAndView paperToUpdate(@RequestBody Map<String, Object> paramsMap){
+        LwPaper lwPaper = mapToLwPaper(paramsMap);
         lwPaperService.updateLwPaper(lwPaper);
         log.info(getLoginUser()+"update lwPaper success,info:"+lwPaper.toString());
         //考虑是否调用查询，携带信息返回论文管理页面
         ModelAndView mv = new ModelAndView("lunwen/paperManage");
+        return mv;
+    }
+
+    /**
+     * 删除对应论文
+     * @param uuid
+     * @return
+     */
+    @RequestMapping(value = "/delLwPaper")
+    public String delLwPaper(String uuid){
+        lwPaperService.delLwPaper(uuid);
+        return "";
+    }
+
+    /**
+     * 查看论文详情
+     * @param uuid
+     * @return
+     */
+    @RequestMapping(value = "/detailLwPaper")
+    public ModelAndView detailLwPaper(String uuid){
+        Map<String, Object> lwPaper = lwPaperService.findPaper(uuid,null);
+        //根据论文id查询对应的文件信息
+        Map<String, Object> mvMap = new HashMap<String, Object>();
+        mvMap.put("lwPaper",lwPaper);
+        ModelAndView mv = new ModelAndView("lunwen/paperDetail",lwPaper);
         return mv;
     }
 
@@ -198,6 +272,57 @@ public class LwPaperController {
         String userName = webUtils.getUsername();
         HRUser user = userService.getUserByUserName(userName);
         return "--------------username:"+userName+",userId:"+user.getUserId()+"---";
+    }
+
+
+    /**
+     * 下载论文信息excel模板
+     *
+     * @param request
+     * @param response
+     */
+    @RequestMapping("/download_excel_temp")
+    public void downloadExcelTemp(HttpServletRequest request, HttpServletResponse response) {
+        OutputStream outp = null;
+        InputStream in = null;
+        try {
+            request.setCharacterEncoding("utf-8");
+            String fileName = request.getParameter("fileName").trim();
+            in = this.getClass().getClassLoader().getResourceAsStream("files/" + fileName);
+            log.info("the filename is " + fileName);
+            log.info(
+                    "the wanted file's path is " + this.getClass().getClassLoader().getResource("files/" + fileName));
+            response.reset();
+            response.setContentType("application/x-download");
+            fileName = URLEncoder.encode(fileName, "UTF-8");
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            outp = response.getOutputStream();
+            byte[] b = new byte[1024];
+            int i = 0;
+            while ((i = in.read(b)) > 0) {
+                outp.write(b, 0, i);
+            }
+            outp.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                in = null;
+            }
+            if (outp != null) {
+                try {
+                    outp.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                outp = null;
+            }
+        }
     }
 
 

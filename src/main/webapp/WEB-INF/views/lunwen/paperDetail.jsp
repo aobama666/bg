@@ -8,7 +8,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
-	<title>新增论文</title>
+	<title>查看论文</title>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
 	<!-- newPage、item.css 页面css-->
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/item.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
@@ -20,20 +20,20 @@
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-	<form id="ajaxFM">
+
 	<table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td>
 				<span title = "论文题目"><b class="mustWrite">*</b>论文题目</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="paperName"  name="paperName"  class="validNull"  len="20"   content="论文题目" title="必填项"/>
+				<span class="detailsLeft"> ${PAPERNAME}</span>
 			</td>
 			<td>
 				<span title = "作者单位"><b class="mustWrite">*</b>作者单位</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="unit" name="unit"  class="validNull"  content="作者单位"  title="必填项  "/>
+				<span class="detailsLeft"> ${UNIT}</span>
 			</td>
 		</tr>
 		<tr>
@@ -41,13 +41,13 @@
 				<span title = "领域"><b class="mustWrite">*</b>领域</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="field"  name="field"  class="validNull"  len="20"   content="领域" title="必填项"/>
+				<span class="detailsLeft"> ${FIELD}</span>
 			</td>
 			<td>
 				<span title = "被引量"><b class="mustWrite">*</b>被引量</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="quoteCount" name="quoteCount"  class="validNull"  content="被引量"  title="必填项  "/>
+				<span class="detailsLeft"> ${QUOTECOUNT}</span>
 			</td>
 		</tr>
 		<tr>
@@ -55,13 +55,13 @@
 			<span title = "论文作者"><b class="mustWrite">*</b>论文作者</span>
 		</td>
 		<td class="addInputStyle">
-			<input type="text"  id="author"  name="author"  class="validNull"  len="20"   content="论文作者" title="必填项"/>
+			<span class="detailsLeft"> ${AUTHOR}</span>
 		</td>
 		<td>
 			<span title = "期刊名称"><b class="mustWrite">*</b>期刊名称</span>
 		</td>
 		<td class="addInputStyle">
-			<input type="text"  id="journal" name="journal"  class="validNull"  content="期刊名称"  title="必填项  "/>
+			<span class="detailsLeft"> ${JOURNAL}</span>
 		</td>
 		</tr>
 		<tr>
@@ -69,34 +69,30 @@
 				<span title = "推荐单位"><b class="mustWrite">*</b>推荐单位</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="recommendUnit"  name="recommendUnit"  class="validNull"  len="20"   content="推荐单位" title="必填项"/>
+				<span class="detailsLeft"> ${RECOMMENDUNIT}</span>
 			</td>
 			<td>
 				<span title = "下载量"><b class="mustWrite">*</b>下载量</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="downloadCount" name="downloadCount"  class="validNull"  content="下载量"  title="必填项  "/>
+				<span class="detailsLeft"> ${DOWNLOADCOUNT}</span>
 			</td>
 		</tr>
+
+	</table>
+	<hr/>
+	<table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td>
-				<span title = "论文类型"><b class="mustWrite">*</b>论文类型</span>
+				<span title = "附件名称"><b class="mustWrite">*</b>附件名称</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="paperType" name="paperType"  class="validNull"  content="论文类型"  title="必填项  "/>
-			</td>
-			<td>
-				<span title = "论文附件"><b class="mustWrite">*</b>论文附件</span>
-			</td>
-			<td class="addInputStyle">
-				<input type="file"  id="file"  name="file"  class="validNull"  len="20"   content="论文附件" title="必填项"/>
+				<span class="detailsLeft"> ${PAPERNAME}</span>
 			</td>
 		</tr>
 	</table>
-	</form>
 
 	<div class="btnContent">
-		<button type="button" class="btn" onclick="paperList.addEvent()">保存</button>
 		<button type="button" class="btn" onclick="paperList.addClose()">返回</button>
 	</div>
 
@@ -114,9 +110,9 @@
     <!-- 验证校验公共方法，提示框公共方法 -->
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
-    <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 
-    <!-- 本页面所需的js -->
+	<!-- 本页面所需的js -->
  	<script src="<%=request.getContextPath()%>/js/lunwen/paperManage.js"></script>
 </body>
 
