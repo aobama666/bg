@@ -1,6 +1,7 @@
 package com.sgcc.bg.lunwen.service.impl;
 
 import com.sgcc.bg.lunwen.bean.LwPaper;
+import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.mapper.LwPaperMapper;
 import com.sgcc.bg.lunwen.service.LwPaperService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class LwPaperServiceImpl implements LwPaperService {
 
     @Override
     public Integer delLwPaper(String uuid) {
-        return lwPaperMapper.delLwPaper(uuid);
+        return lwPaperMapper.delLwPaper(uuid, LwPaperConstant.VALID_NO);
     }
 
     @Override
@@ -55,11 +56,13 @@ public class LwPaperServiceImpl implements LwPaperService {
              String paperName, String paperId, String year, String unit,
              String author, String field,String scoreStatus,String paperType) {
         return lwPaperMapper.selectLwPaper(pageStart,pageEnd,paperName,paperId,
-                year,unit,author,field,scoreStatus,paperType);
+                year,unit,author,field,scoreStatus,paperType,LwPaperConstant.VALID_YES);
     }
 
     @Override
-    public Integer selectLwPaperCount(String paperName, String paperId, String year, String unit, String author, String field, String scoreStatus, String paperType) {
-        return lwPaperMapper.selectLwPaperCount(paperName,paperId,year,unit,author,field,scoreStatus,paperType);
+    public Integer selectLwPaperCount(String paperName, String paperId, String year, String unit,
+                                      String author, String field, String scoreStatus, String paperType) {
+        return lwPaperMapper.selectLwPaperCount(paperName,paperId,year,unit,author,
+                field,scoreStatus,paperType,LwPaperConstant.VALID_YES);
     }
 }

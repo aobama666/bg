@@ -10,6 +10,7 @@ import com.sgcc.bg.lunwen.bean.LwPaper;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.service.LwPaperService;
 import com.sgcc.bg.model.HRUser;
+import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,8 @@ public class LwPaperController {
     private LwPaperService lwPaperService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private DataDictionaryService dataDictionaryService;
 
     /**
      * 跳转至——论文管理
@@ -120,7 +123,10 @@ public class LwPaperController {
      */
     @RequestMapping(value = "/paperJumpAdd", method = RequestMethod.GET)
     public ModelAndView paperJumpAdd(){
-        ModelAndView mv = new ModelAndView("lunwen/paperAdd");
+        Map<String, Object> mvMap = new HashMap<>();
+        List<Map<String, String>>   paperTypeList= dataDictionaryService.selectDictDataByPcode("paper_type");
+        mvMap.put("paperType", paperTypeList);
+        ModelAndView mv = new ModelAndView("lunwen/paperAdd",mvMap);
         return mv;
     }
 
@@ -142,12 +148,11 @@ public class LwPaperController {
         }
         //处理论文编号，根据论文类型和上一个编号id，叠加
         lwPaper.setPaperId("X999");
-        //获取当前年限
-        lwPaper.setYear(DateUtil.getYear());
         //验证附件是否正常上传，如何提示合适上传何时提交
 
         String userName = webUtils.getUsername();
         //初始化时间，创建人，各种状态
+        lwPaper.setYear(DateUtil.getYear());
         lwPaper.setUuid(Rtext.getUUID());
         lwPaper.setCreateUser(userName);
         lwPaper.setCreateTime(new Date());
@@ -158,13 +163,12 @@ public class LwPaperController {
         lwPaperService.addLwPaper(lwPaper);
         log.info(getLoginUser()+"insert lwPaper success,info:"+lwPaper.toString());
         //考虑是否调用查询，携带信息返回论文管理页面
-        ModelAndView mv = new ModelAndView("lunwen/paperManage");
         rw = new ResultWarp(ResultWarp.SUCCESS ,"添加论文成功");
         return JSON.toJSONString(rw);
     }
 
     /**
-     * map内容转lwpaper，add和update使用
+     * paramsMap内容转lwpaper，add和update使用
      * @param paramsMap
      * @return
      */
@@ -187,8 +191,15 @@ public class LwPaperController {
      * @return
      */
     @RequestMapping(value = "/paperJumpUpdate")
-    public ModelAndView paperJumpUpdate(){
-        ModelAndView mv = new ModelAndView("lunwen/paperUpdate");
+    public ModelAndView paperJumpUpdate(String uuid){
+        //根据论文id查询对应的文件信息
+        Map<String, Object> lwPaper = lwPaperService.findPaper(uuid,null);
+        //论文类型下拉框信息
+        List<Map<String, String>>   paperTypeList= dataDictionaryService.selectDictDataByPcode("paper_type");
+        Map<String, Object> mvMap = new HashMap<String, Object>();
+        mvMap.put("lwPaper",lwPaper);
+        mvMap.put("paperType", paperTypeList);
+        ModelAndView mv = new ModelAndView("lunwen/paperUpdate",mvMap);
         return mv;
     }
 
@@ -196,14 +207,19 @@ public class LwPaperController {
      * 修改论文
      * @return
      */
+    @ResponseBody
     @RequestMapping(value = "/paperToUpdate")
-    public ModelAndView paperToUpdate(@RequestBody Map<String, Object> paramsMap){
+    public String paperToUpdate(@RequestBody Map<String, Object> paramsMap){
+        ResultWarp rw = null;
         LwPaper lwPaper = mapToLwPaper(paramsMap);
+        String userName = webUtils.getUsername();
+        lwPaper.setUpdateUser(userName);
+        lwPaper.setUpdateTime(new Date());
+        lwPaper.setUuid(paramsMap.get("UUID").toString());
         lwPaperService.updateLwPaper(lwPaper);
         log.info(getLoginUser()+"update lwPaper success,info:"+lwPaper.toString());
-        //考虑是否调用查询，携带信息返回论文管理页面
-        ModelAndView mv = new ModelAndView("lunwen/paperManage");
-        return mv;
+        rw = new ResultWarp(ResultWarp.SUCCESS ,"修改论文成功");
+        return JSON.toJSONString(rw);
     }
 
     /**
@@ -211,10 +227,22 @@ public class LwPaperController {
      * @param uuid
      * @return
      */
+    @ResponseBody
     @RequestMapping(value = "/delLwPaper")
     public String delLwPaper(String uuid){
+        ResultWarp rw = null;
+        //如果打分状态为待提交，不可删除
+        Map<String,Object> lwMap = lwPaperService.findPaper(uuid,null);
+        String scoreTableStatus = lwMap.get("SCORETABLESTATUS").toString();
+        if(!LwPaperConstant.SCORE_TABLE_OFF.equals(scoreTableStatus)){
+            log.info(getLoginUser()+"delete lwPaper fail,scoreTableStatus is:"+scoreTableStatus+",uuid:"+uuid);
+            rw = new ResultWarp(ResultWarp.FAILED ,"删除论文失败,该论文已进行打分操作");
+            return JSON.toJSONString(rw);
+        }
         lwPaperService.delLwPaper(uuid);
-        return "";
+        log.info(getLoginUser()+"delete lwPaper success,uuid:"+uuid);
+        rw = new ResultWarp(ResultWarp.SUCCESS ,"删除论文成功");
+        return JSON.toJSONString(rw);
     }
 
     /**
@@ -237,12 +265,25 @@ public class LwPaperController {
      * @param uuid
      * @return
      */
+    @ResponseBody
     @RequestMapping(value = "/onScoreTable",method = RequestMethod.GET)
     public String onScoreTable(String uuid){
-        lwPaperService.updateScoreTableStatus(uuid,
-                LwPaperConstant.SCORE_TABLE_ON);
-        log.info(getLoginUser()+"this paper on score_table success,uuid="+uuid);
-        return "";
+        ResultWarp rw = null;
+        //做判断，该论文是否已经匹配完成，若匹配完成，可生成打分表，否则不可生成
+        Map<String,Object> lwPaper = lwPaperService.findPaper(uuid,null);
+        String allStatus = lwPaper.get("ALLSTATUS").toString();
+        if(LwPaperConstant.ALL_STATUS_TWO.equals(allStatus)){
+            //修改打分表生成状态和论文全流程状态
+            lwPaperService.updateScoreTableStatus(uuid, LwPaperConstant.SCORE_TABLE_ON);
+            lwPaperService.updateAllStatus(uuid,LwPaperConstant.ALL_STATUS_TWO);
+            log.info(getLoginUser()+"this paper generate score_table success,uuid="+uuid);
+            rw = new ResultWarp(ResultWarp.SUCCESS ,"生成打分表成功");
+            return JSON.toJSONString(rw);
+        }else{
+            log.info(getLoginUser()+"this paper generate score_table fail,uuid="+uuid+",allStatus:"+allStatus);
+            rw = new ResultWarp(ResultWarp.FAILED ,"生成打分表失败,未匹配专家");
+            return JSON.toJSONString(rw);
+        }
     }
 
     /**
@@ -250,17 +291,25 @@ public class LwPaperController {
      * @param uuid
      * @return
      */
+    @ResponseBody
     @RequestMapping(value = "/offScoreTable",method = RequestMethod.GET)
     public String offScoreTable(String uuid){
-        //做判断，查看关联表和明细表有没有对应专家论文进行打分操作
-        if(1!=2){
-            lwPaperService.updateScoreTableStatus(uuid,
-                LwPaperConstant.SCORE_TABLE_OFF);
-            log.info(getLoginUser()+"this paper off score_table success,uuid="+uuid);
+        ResultWarp rw = null;
+        //做判断，查看关联表和明细表有没有对应专家论文进行打分操作,也就是论文的状态是否为未打分
+        Map<String,Object> lwPaper = lwPaperService.findPaper(uuid,null);
+        String scoreStatus = lwPaper.get("SCORESTATUS").toString();
+        if(LwPaperConstant.SCORE_STATUS_NO.equals(scoreStatus)){
+            //修改打分表生成状态和论文全流程状态
+            lwPaperService.updateScoreTableStatus(uuid,LwPaperConstant.SCORE_TABLE_OFF);
+            lwPaperService.updateAllStatus(uuid,LwPaperConstant.ALL_STATUS_ONE);
+            log.info(getLoginUser()+"this paper cancel score_table success,uuid="+uuid);
+            rw = new ResultWarp(ResultWarp.SUCCESS ,"撤回打分表成功");
+            return JSON.toJSONString(rw);
         }else{
-            log.info(getLoginUser()+"this paper off score_table fail");
+            log.info(getLoginUser()+"this paper cancel score_table fail,scoreStatus="+scoreStatus+",uuid="+uuid);
+            rw = new ResultWarp(ResultWarp.FAILED ,"撤回打分表失败,该论文已进行打分操作");
+            return JSON.toJSONString(rw);
         }
-        return "";
     }
 
 
@@ -324,6 +373,4 @@ public class LwPaperController {
             }
         }
     }
-
-
 }

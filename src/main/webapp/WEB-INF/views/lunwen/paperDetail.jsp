@@ -24,58 +24,86 @@
 	<table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td>
-				<span title = "论文题目"><b class="mustWrite">*</b>论文题目</span>
+				<span title = "论文题目">论文题目</span>
 			</td>
 			<td class="addInputStyle">
 				<span class="detailsLeft"> ${PAPERNAME}</span>
 			</td>
 			<td>
-				<span title = "作者单位"><b class="mustWrite">*</b>作者单位</span>
+				<span title = "年份">年份</span>
 			</td>
 			<td class="addInputStyle">
-				<span class="detailsLeft"> ${UNIT}</span>
+				<span class="detailsLeft"> ${YEAR}</span>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<span title = "领域"><b class="mustWrite">*</b>领域</span>
+				<span title = "领域">领域</span>
 			</td>
 			<td class="addInputStyle">
 				<span class="detailsLeft"> ${FIELD}</span>
 			</td>
 			<td>
-				<span title = "被引量"><b class="mustWrite">*</b>被引量</span>
+				<span title = "期刊名称">期刊名称</span>
+			</td>
+			<td class="addInputStyle">
+				<span class="detailsLeft"> ${JOURNAL}</span>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<span title = "论文作者">论文作者</span>
+			</td>
+			<td class="addInputStyle">
+				<span class="detailsLeft"> ${AUTHOR}</span>
+			</td>
+			<td>
+				<span title = "被引量">被引量</span>
 			</td>
 			<td class="addInputStyle">
 				<span class="detailsLeft"> ${QUOTECOUNT}</span>
 			</td>
 		</tr>
 		<tr>
-		<td>
-			<span title = "论文作者"><b class="mustWrite">*</b>论文作者</span>
-		</td>
-		<td class="addInputStyle">
-			<span class="detailsLeft"> ${AUTHOR}</span>
-		</td>
-		<td>
-			<span title = "期刊名称"><b class="mustWrite">*</b>期刊名称</span>
-		</td>
-		<td class="addInputStyle">
-			<span class="detailsLeft"> ${JOURNAL}</span>
-		</td>
+			<td>
+				<span title = "作者单位">作者单位</span>
+			</td>
+			<td class="addInputStyle">
+				<span class="detailsLeft"> ${UNIT}</span>
+			</td>
+			<td>
+				<span title = "下载量">下载量</span>
+			</td>
+			<td class="addInputStyle">
+				<span class="detailsLeft"> ${DOWNLOADCOUNT}</span>
+			</td>
 		</tr>
 		<tr>
 			<td>
-				<span title = "推荐单位"><b class="mustWrite">*</b>推荐单位</span>
+				<span title = "推荐单位">推荐单位</span>
 			</td>
 			<td class="addInputStyle">
 				<span class="detailsLeft"> ${RECOMMENDUNIT}</span>
 			</td>
 			<td>
-				<span title = "下载量"><b class="mustWrite">*</b>下载量</span>
+				<span title = "打分表是否生成">打分表是否生成</span>
 			</td>
 			<td class="addInputStyle">
-				<span class="detailsLeft"> ${DOWNLOADCOUNT}</span>
+				<span class="detailsLeft"> ${SCORETABLESTATUSDETAIL}</span>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<span title = "打分状态">打分状态</span>
+			</td>
+			<td class="addInputStyle">
+				<span class="detailsLeft"> ${SCORESTATUSDETAIL}</span>
+			</td>
+			<td>
+				<span title = "论文全流程状态">论文全流程状态</span>
+			</td>
+			<td class="addInputStyle">
+				<span class="detailsLeft"> ${ALLSTATUSDETAIL}</span>
 			</td>
 		</tr>
 
@@ -84,11 +112,11 @@
 	<table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td>
-				<span title = "附件名称"><b class="mustWrite">*</b>附件名称</span>
+				<span title = "附件信息">附件信息</span>
 			</td>
-			<td class="addInputStyle">
-				<span class="detailsLeft"> ${PAPERNAME}</span>
-			</td>
+			<%--<td class="addInputStyle">--%>
+				<%--<span class="detailsLeft"> ${PAPERNAME}</span>--%>
+			<%--</td>--%>
 		</tr>
 	</table>
 

@@ -20,20 +20,20 @@
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-
-	<table class="visitOperate tableStyle specialTable">
+<table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td>
 				<span title = "论文题目"><b class="mustWrite">*</b>论文题目</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="paperName"  name="paperName"  class="validNull"  len="20"   content="论文题目" title="必填项"/>
+				<input type = "text" style="display: none" value = "${lwPaper.UUID}"  class="validNull"  id = "UUID" name="UUID">
+				<input type="text"  id="paperName"  name="paperName" value="${lwPaper.PAPERNAME}"  class="validNull"  len="20"   content="论文题目" title="必填项"/>
 			</td>
 			<td>
 				<span title = "作者单位"><b class="mustWrite">*</b>作者单位</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="unit" name="unit"  class="validNull"  content="作者单位"  title="必填项  "/>
+				<input type="text"  id="unit" name="unit" value="${lwPaper.UNIT}"  class="validNull"  len="20" content="作者单位"  title="必填项  "/>
 			</td>
 		</tr>
 		<tr>
@@ -41,42 +41,60 @@
 				<span title = "领域"><b class="mustWrite">*</b>领域</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="field"  name="field"  class="validNull"  len="20"   content="领域" title="必填项"/>
+				<input type="text"  id="field"  name="field" value="${lwPaper.FIELD}"  class="validNull"  len="20"   content="领域" title="必填项"/>
 			</td>
 			<td>
 				<span title = "被引量"><b class="mustWrite">*</b>被引量</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="quoteCount" name="quoteCount"  class="validNull"  content="被引量"  title="必填项  "/>
+				<input type="text"  id="quoteCount" name="quoteCount" value="${lwPaper.QUOTECOUNT}"  len="20"  class="validNull"  content="被引量"  title="必填项  "/>
 			</td>
 		</tr>
 		<tr>
-		<td>
-			<span title = "论文作者"><b class="mustWrite">*</b>论文作者</span>
-		</td>
-		<td class="addInputStyle">
-			<input type="text"  id="author"  name="author"  class="validNull"  len="20"   content="论文作者" title="必填项"/>
-		</td>
-		<td>
-			<span title = "期刊名称"><b class="mustWrite">*</b>期刊名称</span>
-		</td>
-		<td class="addInputStyle">
-			<input type="text"  id="journal" name="journal"  class="validNull"  content="期刊名称"  title="必填项  "/>
-		</td>
+			<td>
+				<span title = "论文作者"><b class="mustWrite">*</b>论文作者</span>
+			</td>
+			<td class="addInputStyle">
+				<input type="text"  id="author"  name="author" value="${lwPaper.AUTHOR}"  class="validNull"  len="20"   content="论文作者" title="必填项"/>
+			</td>
+			<td>
+				<span title = "期刊名称"><b class="mustWrite">*</b>期刊名称</span>
+			</td>
+			<td class="addInputStyle">
+				<input type="text"  id="journal" name="journal" value="${lwPaper.JOURNAL}"  class="validNull"   len="20" content="期刊名称"  title="必填项  "/>
+			</td>
 		</tr>
 		<tr>
 			<td>
 				<span title = "推荐单位"><b class="mustWrite">*</b>推荐单位</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="recommendUnit"  name="recommendUnit"  class="validNull"  len="20"   content="推荐单位" title="必填项"/>
+				<input type="text"  id="recommendUnit"  name="recommendUnit" value="${lwPaper.RECOMMENDUNIT}"  class="validNull"  len="20"   content="推荐单位" title="必填项"/>
 			</td>
 			<td>
 				<span title = "下载量"><b class="mustWrite">*</b>下载量</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="downloadCount" name="downloadCount"  class="validNull"  content="下载量"  title="必填项  "/>
+				<input type="text"  id="downloadCount" name="downloadCount" value="${lwPaper.DOWNLOADCOUNT}"  len="20"  class="validNull"  content="下载量"  title="必填项  "/>
 			</td>
+		</tr>
+		<tr>
+			<td>
+				<span title = "论文类型"><b class="mustWrite">*</b>论文类型</span>
+			</td>
+			<td class="addInputStyle">
+				<select id="paperType"  name = "paperType"   class = "validNull select-person"   content="论文类型"    title="必填项  "  >
+                    <option value=""  selected >请选择论文类型</option>
+                    <c:forEach  var="paperType"  items="${paperType}">
+                        <%--<option value ="${paperType.K}"> ${paperType.V}</option>--%>
+						<option value ="${paperType.K}"   ${paperType.K == lwPaper.PAPERTYPE ?"selected='selected'":''}     > ${paperType.V}</option>
+                    </c:forEach>
+				</select>
+
+			</td>
+		</tr>
+		<tr>
+			<hr/>
 		</tr>
 		<tr>
 			<td>
@@ -89,7 +107,7 @@
 	</table>
 
 	<div class="btnContent">
-		<button type="button" class="btn" onclick="paperList.updateEvent()">保存</button>
+		<button type="button" class="btn" onclick="paperList.updateEvent()">修改</button>
 		<button type="button" class="btn" onclick="paperList.addClose()">返回</button>
 	</div>
 
@@ -107,6 +125,8 @@
     <!-- 验证校验公共方法，提示框公共方法 -->
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
+
 	<!-- 本页面所需的js -->
  	<script src="<%=request.getContextPath()%>/js/lunwen/paperManage.js"></script>
 </body>
