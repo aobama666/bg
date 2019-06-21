@@ -9,7 +9,7 @@
         (UUID,
         PAPER_ID,
         PAPER_NAME,
-        `year`,
+        year,
         UNIT,
         AUTHOR,
         JOURNAL,
@@ -22,30 +22,26 @@
         SCORE_STATUS,
         ALL_STATUS,
         CREATE_USER,
-        UPDATE_USER,
         CREATE_TIME,
-        UPDATE_TIME,
         VALID)
       VALUES
-        (#{uuid},
-        #{paperId},
-        #{paperName},
-        #{year},
-        #{unit},
-        #{author},
-        #{journal},
-        #{recommendUnit},
-        #{paperType},
-        #{quoteCount},
-        #{downloadCount},
-        #{field},
-        #{scoreTableStatus},
-        #{scoreStatus},
-        #{allStatus},
-        #{createUser},
-        #{updateUser},
-        #{createTime},
-        #{updateTime},
+        (#{uuid,jdbcType=VARCHAR},
+        #{paperId,jdbcType=VARCHAR},
+        #{paperName,jdbcType=VARCHAR},
+        #{year,jdbcType=VARCHAR},
+        #{unit,jdbcType=VARCHAR},
+        #{author,jdbcType=VARCHAR},
+        #{journal,jdbcType=VARCHAR},
+        #{recommendUnit,jdbcType=VARCHAR},
+        #{paperType,jdbcType=VARCHAR},
+        #{quoteCount,jdbcType=VARCHAR},
+        #{downloadCount,jdbcType=VARCHAR},
+        #{field,jdbcType=VARCHAR},
+        #{scoreTableStatus,jdbcType=VARCHAR},
+        #{scoreStatus,jdbcType=VARCHAR},
+        #{allStatus,jdbcType=VARCHAR},
+        #{createUser,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP},
         #{valid}
         )
     </insert>
@@ -53,24 +49,24 @@
     <!--修改论文信息-->
     <update id="updateLwPaper">
         update bg_lw_paper set
-        PAPER_ID = #{paperId},
-        PAPER_NAME = #{paperName},
-        `year` = #{year},
-        UNIT = #{unit},
-        AUTHOR = #{author},
-        JOURNAL = #{journal},
-        RECOMMEND_UNIT = #{recommendUnit},
-        PAPER_TYPE = #{paperType},
-        QUOTE_COUNT = #{quoteCount},
-        DOWNLOAD_COUNT = #{downloadCount},
-        FIELD = #{field},
-        SCORE_TABLE_STATUS = #{scoreTableStatus},
-        SCORE_STATUS = #{scoreStatus},
-        ALL_STATUS = #{allStatus},
-        CREATE_USER = #{createUser},
-        UPDATE_USER = #{updateUser},
-        CREATE_TIME = #{createTime},
-        UPDATE_TIME = #{updateTime},
+        PAPER_ID = #{paperId,jdbcType=VARCHAR},
+        PAPER_NAME = #{paperName,jdbcType=VARCHAR},
+        `year` = #{year,jdbcType=VARCHAR},
+        UNIT = #{unit,jdbcType=VARCHAR},
+        AUTHOR = #{author,jdbcType=VARCHAR},
+        JOURNAL = #{journal,jdbcType=VARCHAR},
+        RECOMMEND_UNIT = #{recommendUnit,jdbcType=VARCHAR},
+        PAPER_TYPE = #{paperType,jdbcType=VARCHAR},
+        QUOTE_COUNT = #{quoteCount,jdbcType=VARCHAR},
+        DOWNLOAD_COUNT = #{downloadCount,jdbcType=VARCHAR},
+        FIELD = #{field,jdbcType=VARCHAR},
+        SCORE_TABLE_STATUS = #{scoreTableStatus,jdbcType=VARCHAR},
+        SCORE_STATUS = #{scoreStatus,jdbcType=VARCHAR},
+        ALL_STATUS = #{allStatus,jdbcType=VARCHAR},
+--         CREATE_USER = #{createUser,jdbcType=VARCHAR},
+        UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+--         CREATE_TIME = to_date(#{createTime},'YYYY-MM-DD HH24:MI:SS'),
+        UPDATE_TIME = to_date(#{updateTime},'YYYY-MM-DD HH24:MI:SS'),
         VALID = #{valid}
         where UUID = #{uuid}
     </update>
@@ -104,7 +100,7 @@
     </update>
 
     <!--查找某条论文-->
-    <select id="findPaper" resultType="com.sgcc.bg.lunwen.bean.LwPaper">
+    <select id="findPaper" resultType="java.util.Map">
        select  p.uuid               uuid,
                p.paper_id           paperId,
                p.paper_name         paperName,
@@ -127,18 +123,18 @@
                p.valid
        from bg_lw_paper p
        where 1=1
-       <if test="uuid != null">
+       <if test="uuid != null and uuid != ''">
           and p.uuid = #{uuid}
        </if>
-       <if test="paperName != null">
-          and p.paper_name = '#{paperName}
+       <if test="paperName != null and paperName != ''">
+          and p.paper_name = #{paperName}
        </if>
     </select>
 
     <!--按条件查询某批论文信息-->
     <select id="selectLwPaper" resultType="java.util.Map">
         select *
-        from (select p.uuid uuid,
+        from (select p.uuid,
             p.paper_id paperId,
             p.paper_name paperName,
             p.year,
@@ -161,30 +157,63 @@
             ROWNUM rown
             from bg_lw_paper p
             where 1 = 1
-            <if test="paperName != null">
+            <if test="paperName != null and paperName != ''">
               and p.paper_name = #{paperName}
             </if>
-            <if test="year != null">
+            <if test="year != null and year != ''">
               and p.year = #{year}
             </if>
-            <if test="paperId != null">
+            <if test="paperId != null and paperId != ''">
               and p.paper_id = #{paperId}
             </if>
-            <if test="uuid != null">
-              and p.unit = #{uuid}
+            <if test="unit != null and unit != ''">
+              and p.unit = #{unit}
             </if>
-            <if test="author != null">
+            <if test="author != null and author != ''">
               and p.author = #{author}
             </if>
-            <if test="field != null">
-              and p.field = #{field})
+            <if test="field != null and field != ''">
+              and p.field = #{field}
             </if>
-            <if test="scoreStatus != null">
-                and p.score_status = #{scoreStatus})
+            <if test="scoreStatus != null and scoreStatus != ''">
+                and p.score_status = #{scoreStatus}
             </if>
-            <!--&gt;为大于号，&lt;为小于号-->
-        where rown &gt;= #{pageStart}
-        and rown &lt;= #{pageEnd}
+            <if test="paperType != null and paperType != ''">
+                and p.paper_type = #{paperType}
+            </if>
+        AND #{pageEnd} >= ROWNUM
+        ) p WHERE p.rown > #{pageStart}
+    </select>
+
+    <!--按条件查询某批论文信息总数-->
+    <select id="selectLwPaperCount" resultType="java.lang.Integer">
+        select count(*)
+        from bg_lw_paper p
+        where 1 = 1
+        <if test="paperName != null and paperName != ''">
+            and p.paper_name = #{paperName}
+        </if>
+        <if test="year != null and year != ''">
+            and p.year = #{year}
+        </if>
+        <if test="paperId != null and paperId != ''">
+            and p.paper_id = #{paperId}
+        </if>
+        <if test="unit != null and unit != ''">
+            and p.unit = #{unit}
+        </if>
+        <if test="author != null and author != ''">
+            and p.author = #{author}
+        </if>
+        <if test="field != null and field != ''">
+            and p.field = #{field}
+        </if>
+        <if test="scoreStatus != null and scoreStatus != ''">
+            and p.score_status = #{scoreStatus}
+        </if>
+        <if test="paperType != null and paperType != ''">
+            and p.paper_type = #{paperType}
+        </if>
     </select>
 
 </mapper>

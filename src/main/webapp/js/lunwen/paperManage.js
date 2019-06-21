@@ -1,26 +1,26 @@
 
 //定义一个
-var roomList = {};
+var paperList = {};
 var dicts = {};
 var dataItems = new Array();
 var index = 0;
-roomList.btn_type_flag = 0;
+paperList.btn_type_flag = 0;
 $(function(){
-	roomList.initDataGrid();
+    paperList.initDataGrid();
 	/* 输入框的change事件，在输入过程中自动查询  */
 	$(".changeQuery").change(function(e){
-		roomList.query();
+        paperList.query();
 	});
 	$(".inputQuery").on("input",function(e){
 		var valLength = e.target.value.length;
 		if(valLength>0){
-			roomList.query();
+            paperList.query();
 		}
 	});
 //	$(document).on("keyup",".inputQuery",function(e){
 //		var valLength =$(this).val().length;
 //		if(valLength>1){
-//			roomList.query();
+//			paperList.query();
 //		}
 //	});
 	//回车键出发搜索按钮
@@ -32,74 +32,195 @@ $(function(){
 	        return false;
 	    }
 	});
-	roomList.btn_type_flag = 0;
+    paperList.btn_type_flag = 0;
 });
 
 /*  start  列表查询   */
-roomList.query = function(){
-	 
+paperList.query = function(){
 	dataItems = new Array();
 	index = 0;
 	$("#datagrid").datagrid("seach");
 }
 /*  end  列表查询  */
 
-/* 演示中心管理-初始化列表界面  */
-roomList.initDataGrid = function(){
-	    $("#datagrid").datagrid({
-	    url: '/bg/IdeaInfo/selectIdeaInfo',
-		type: 'POST',
-		form:'#queryForm',		 
-		pageSize:10,
-		successFinal:function(data){
-			$("#datagrid").find("input[type=checkbox]").eq(0).attr("style","display:none");
-        },
-
-		columns: [
-				  {name: '编号',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '论文题目',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '作者',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '作者单位',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '期刊名称',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '领域',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '推荐单位',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '被引量',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '下载量',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '专家信息',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '打分状态',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '加权平均分',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '去最高最低得分', style:{width:"120px"},data: 'contactPhone'}
-				]
-	});
-
+/**
+ * 切换论文类型查询
+ */
+paperList.updatePaperType = function(num) {
+    document.getElementById("paperType").value=num;
+    paperList.query();
 }
-    /*演示中心管理- 查看 */
-	roomList.forDetails = function (id,applyId){
-		var url = "/bg/yszx/details?id="+id+"&applyId="+applyId;
+
+/* 论文管理-初始化列表界面  */
+paperList.initDataGrid = function(){
+	    $("#datagrid").datagrid({
+        url: "/bg/lwPaper/selectLwPaper",
+        type: 'POST',
+        form: '#queryForm',
+        pageSize: 10,
+        tablepage: $(".tablepage"),//分页组件
+        successFinal:function(data){
+            paperList.resize();
+        },
+        callBackFunc:function(){
+            paperList.initItems();
+        },
+        columns: [
+            {name: '',style:{width:"2px"}, data: 'id',checkbox:true, forMat:function(row){
+                    dataItems[index] = row;//将一行数据放在一个list中
+                    return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.ID)+'"/>';
+                }
+            },
+            {name: '编号',style:{width:"50px"}, data: 'PAPERID'},
+            {name: '论文题目',style:{width:"10%"}, data: 'PAPERNAME',forMat:function(row){
+                    return "<a title = '"+row.applyNumber+"' style='width:250px;" +
+                        "text-align:left;" +
+                        // "white-space: nowrap;" +
+                        // "text-overflow: ellipsis;" +
+                        // "overflow: hidden;" +
+                        //不确定上面的哪个因素导致不能弹出layer弹出框，有空了研究下
+						"'id='"+row.UUID+"'" +
+                        "href = 'javascript:void(0)' onclick = paperList.forDetails('"+row.UUID+"')>"+row.PAPERNAME+"</a>";
+
+                }},
+            {name: '作者',style:{width:"50px"}, data: 'AUTHOR'},
+            {name: '作者单位',style:{width:"50px"}, data: 'UNIT'},
+            {name: '期刊名称',style:{width:"50px"}, data: 'JOURNAL'},
+            {name: '领域',style:{width:"50px"}, data: 'FIELD'},
+            {name: '推荐单位',style:{width:"50px"}, data: 'RECOMMENDUNIT'},
+            {name: '被引量',style:{width:"50px"}, data: 'QUOTECOUNT'},
+            {name: '下载量',style:{width:"50px"}, data: 'DOWNLOADCOUNT'},
+            {name: '专家信息',style:{width:"50px"}, data: 'UUID',
+                forMat:function(row){
+                    return "<a title = '点击查看专家信息' style='width:250px;" +
+                        // "text-align:left;" +
+                        "'id='"+row.UUID+"'" +
+                        "href = 'javascript:void(0)' onclick = paperList.forDetails('"+row.UUID+"')>查看详情</a>";
+
+                }},
+            {name: '打分状态',style:{width:"50px"}, data: 'SCORESTATUS'},
+            {name: '加权平均分',style:{width:"50px"}, data: 'DOWNLOADCOUNT'},
+            {name: '去最高最低得分', style:{width:"120px"},data: 'QUOTECOUNT'}
+        ]
+    });
+}
+
+/*弹出新增框 */
+paperList.addOperation = function (){
+    var url = "/bg/lwPaper/paperJumpAdd"
+    layer.open({
+        type:2,
+        title:'<h4 style="height:42px;line-height:25px;">论文信息新增</h4>',
+        area:['85%','85%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url,
+    });
+}
+
+
+/*查看*/
+paperList.forDetails = function (id){
+		var url = "/bg/lwPaper/detailLwPaper?uuid="+id;
 			layer.open({
 				type:2,
-				title:'<h4 style="height:42px;line-height:25px;">参观预定详情</h4>',
+				title:'<h4 style="height:42px;line-height:25px;">论文信息详情</h4>',
 				area:['85%','85%'],
 				fixed:false,//不固定
 				maxmin:true,
-				content:url, 
-			});
+				content:url
+			},function (index) {
+				layer.close(index);
+            });
 	}
-	/*演示中心管理-新增 */
-	roomList.addEvent = function (){
-		var url = "/bg/yszx/addPage"
-			layer.open({
-				type:2,
-				title:'<h4 style="height:42px;line-height:25px;">参观预定申请</h4>',
-				area:['85%','85%'],
-				fixed:false,//不固定
-				maxmin:true,
-				content:url, 
-			});
+
+/*新增*/
+paperList.addEvent = function (){
+		var paperName = document.getElementById("paperName").value;
+		var unit = document.getElementById("unit").value;
+		var field = document.getElementById("field").value;
+		var quoteCount = document.getElementById("quoteCount").value;
+		var author = document.getElementById("author").value;
+		var journal = document.getElementById("journal").value;
+		var recommendUnit = document.getElementById("recommendUnit").value;
+		var downloadCount = document.getElementById("downloadCount").value;
+		var paperType = document.getElementById("paperType").value;
+
+	if(null==paperName || ""==paperName){
+        messager.tip("论文题目不能为空",2000);
+		return;
 	}
+    if(null==unit || ""==unit){
+        messager.tip("作者单位不能为空",2000);
+        return;
+    }
+    if(null==field || ""==field){
+        messager.tip("领域不能为空",2000);
+        return;
+    }
+    if(null==quoteCount || ""==quoteCount){
+        messager.tip("被引量不能为空",2000);
+        return;
+    }if(null==author || ""==author){
+        messager.tip("作者不能为空",2000);
+        return;
+    }
+    if(null==journal || ""==journal){
+        messager.tip("期刊名称不能为空",2000);
+        return;
+    }
+    if(null==recommendUnit || ""==recommendUnit){
+        messager.tip("推荐单位不能为空",2000);
+        return;
+    }
+    if(null==downloadCount || ""==downloadCount){
+        messager.tip("下载量不能为空",2000);
+        return;
+    }
+    if(null==paperType || ""==paperType){
+        messager.tip("论文类型不能为空",2000);
+        return;
+    }
+
+    var paperDetailFormData = roomAddInfoCommon.getFormDataInfo();
+
+    $.messager.confirm( "保存提示", "确认保存该数据吗",
+        function(r){
+            if(r){
+                $.ajax({
+                    url: "/bg/lwPaper/paperToAdd",
+                    type: "post",
+                    dataType:"json",
+                    contentType: 'application/json',
+                    data: JSON.stringify(paperDetailFormData),
+                    success: function (data) {
+                        roomDetailInfo.saveBtnClickFlag = 0;//保存按钮点击事件
+                        if(data.success=="true"){
+                            messager.tip(data.msg,1000);
+                            roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
+                            window.parent.location.reload();
+                            var closeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(closeIndex);
+                        }else{
+                            messager.tip(data.msg,5000);
+                            return;
+                        }
+
+
+                    }
+                });
+            }
+        }
+    );
+}
+
+/*关闭新增页面*/
+paperList.addClose = function () {
+	parent.layer.closeAll();
+}
 		
-	/* 演示中心管理-修改*/
-	roomList.updateEvent = function(){
+	/*修改*/
+paperList.updateEvent = function(){
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
 			messager.tip("请选择要操作的数据",1000);
@@ -108,16 +229,16 @@ roomList.initDataGrid = function(){
 			messager.tip("每次只能修改一条数据",2000);
 			return;
 		}
-		if(checkedItems[0].approveState!="SAVE"&& checkedItems[0].approveState!="RETURN"){
-			messager.tip("该无法修改,审批状态为：待提交,被退回才可以修改",5000);
+		/*if(checkedItems[0].scoreStatus!="0"&& checkedItems[0].scoreStatus!="0"){
+			messager.tip("该无法修改,打分状态为：待提交,被退回才可以修改",5000);
 			return;
-		}
+		}*/
 		var id = dataGrid.getCheckedIds();
 		var status=checkedItems[0].approveState;
-		var url = "/bg/yszx/updatePage?id="+id+"&status="+status;
+		var url = "/bg/lwPaper/paperJumpUpdate?uuid="+id;
 		layer.open({
 			type:2,
-			title:'<h4 style="height:42px;line-height:25px;">参观预定修改 </h4>',
+			title:'<h4 style="height:42px;line-height:25px;">论文信息修改</h4>',
 			area:['85%','85%'],
 			fixed:false,//不固定
 			maxmin:true,
@@ -125,8 +246,8 @@ roomList.initDataGrid = function(){
 		});
 		 
 	}
-	/* 演示中心管理-删除方法*/
-	roomList.delEvent = function(){
+	/*删除方法*/
+paperList.delEvent = function(){
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
 			messager.tip("请选择要操作的数据",1000);
@@ -144,17 +265,17 @@ roomList.initDataGrid = function(){
 			function(r){
 				if(r){
 					$.ajax({
-					    url: "/bg/IdeaInfo/deleteIdeaInfo?ideaId="+checkedIds,//删除
+					    url: "/bg/lwPaper/delLwPaper?uuid="+checkedIds,//删除
 						type: "post",
 						dataType:"json",
 						contentType: 'application/json',
 						success: function (data) {
 							if(data.success == "true"){
 								messager.tip("删除成功",1000);
-								roomList.query();
+								paperList.query();
 							}else{
 								messager.tip("删除失败",1000);
-								roomList.query();
+								paperList.query();
 							}
 						}
 					});
@@ -165,8 +286,8 @@ roomList.initDataGrid = function(){
 	
 	 
 	
-	/* 演示中心管理-提交方法*/
-	roomList.submitEvent = function(){
+	/*提交方法*/
+paperList.submitEvent = function(){
 	   debugger;
 	 	var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
@@ -275,7 +396,7 @@ roomList.initDataGrid = function(){
 					success: function (data) {
 						if(data.success == "true"){
 							messager.tip("提交成功",1000);
-							roomList.query();
+							paperList.query();
 							layer.close(layer.index);
 						 }else{
 							messager.tip(data.msg,2000);
@@ -286,100 +407,7 @@ roomList.initDataGrid = function(){
 			   
 	  }
 
-	/* 提交信息库信息---页面拼接 */
-	messageSubmitHtml=  function (){
-		var checkedItems = dataGrid.getCheckedItems(dataItems);
-		var approveState= "SAVE";
-		var userPrivilegehtml = '';
-		$.ajax({
-		    url: "/bg/Privilege/getApproveUserByUserName?approveState="+approveState+"&type="+"submit",//获取申报界面数据字典
-			type: "post",
-			dataType: "json",
-			async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
-			success: function (data) {
-				if(data.success =='true'){
-			    	var userPrivilegelist = data.data.userPrivilege;
-					userPrivilegehtml += '<table class="userPrivilege tableStyle thTableStyle">';
-					userPrivilegehtml += '<tr>';
-					     userPrivilegehtml += '<th>选择</th>';
-					     userPrivilegehtml += '<th>审批人</th>';
-					     userPrivilegehtml += '<th>部门</th>';
-					userPrivilegehtml += '</tr>';
-						for (var i = 0; i < userPrivilegelist.length; i++) {
-							userPrivilegehtml += '<tr>';
-							     userPrivilegehtml += '<td>';
-							       userPrivilegehtml+='<input type="checkbox"   class="inputUserId"  />' 
-							       userPrivilegehtml+='<input type="hidden"    id="userId"  name = "userId"  class="userId"  value="' + userPrivilegelist[i].userId + '"  />' 
-							     userPrivilegehtml += '</td>';
-							     userPrivilegehtml += '<td class="addInputStyle">  ';
-							       userPrivilegehtml+='<input type="text" disabled  id="userAlias"  name = "userAlias"  class="userAlias inputChange"  value="' + userPrivilegelist[i].userAlias + '" title="审批人名称 " />' 
-							     userPrivilegehtml += '</td>';
-							     userPrivilegehtml += '<td class="addInputStyle">';
-							       userPrivilegehtml+='<input type="text" disabled   id="deptName"   name = "deptName"   class="deptName inputChange"  value="' + userPrivilegelist[i].deptName + '" title="审批人单位" />'
-							     userPrivilegehtml += '</td>';
-							       
-							 userPrivilegehtml += '</tr>';      
-						}
-					userPrivilegehtml += '</table>';
-				}else{
-					userPrivilegehtml ;
-				}
-			 
-			}
-		});
-		return userPrivilegehtml;
-	}
-	
-	
-	
-	
-	/* 演示中心管理-撤销方法*/
-	roomList.repealEvent = function(){
-		 
-		var checkedItems = dataGrid.getCheckedItems(dataItems);
-		
-		if(checkedItems.length==0){
-			messager.tip("请选择要操作的数据",1000);
-			return;
-		}else if(checkedItems.length>1){
-			messager.tip("每次只能撤销一条数据",2000);
-			return;
-		}
-		if(checkedItems[0].approveState =="SAVE"  ){
-			messager.tip("无法撤销,审批状态为：待提交不能撤销",2000);
-			return;
-		}
-		if(checkedItems[0].approveState =="CANCEL"  ){
-			messager.tip("无法撤销,审批状态为：已撤销",2000);
-			return;
-		}
-		
-		var checkedIds = dataGrid.getCheckedIds();
-		$.messager.confirm( "撤销提示", "确认撤销选中数据吗",
-			function(r){
-				if(r){
-					$.ajax({
-					    url: "/bg/IdeaInfo/repealForStatus?ideaId="+checkedIds,//删除
-						type: "post",
-						dataType:"json",
-						contentType: 'application/json',
-						success: function (data) {
-							if(data.success == "true"){
-								messager.tip("撤销成功",1000);
-								roomList.query();
-							}else{
-								messager.tip("撤销失败",1000);
-								roomList.query();
-							}
-						}
-					});
-				}
-			}
-		);
-	}
-	
-	
-	
+
 /*  start 全选、取消全选 */
 $(".check_").change(function(){
 	if(this.checked==true){
@@ -397,22 +425,17 @@ $(".check_").change(function(){
 /*  end 全选、取消全选 */
 
 /* 初始化dataItems */
-roomList.initItems = function(){
+paperList.initItems = function(){
 	dataItems = new Array();
 	index = 0;
 }
 
 
-
-
-/* end 删除方法*/
-
-
-roomList.resize=function(){
+paperList.resize=function(){
 	var height=$("body").height()-$(".sheach").height()-$("#funcBtn").height()-65;
 	$("#datagrid>div").css({"height":height});
 }
 $(window).resize(function(){
-	roomList.resize();
+    paperList.resize();
 })
 

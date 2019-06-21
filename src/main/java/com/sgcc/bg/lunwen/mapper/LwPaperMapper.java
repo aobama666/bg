@@ -62,7 +62,7 @@ public interface LwPaperMapper {
      * @param uuid,paperName
      * @return
      */
-    public LwPaper findPaper(
+    public Map<String, Object> findPaper(
             @Param("uuid")String uuid,
             @Param("paperName") String paperName
     );
@@ -90,16 +90,27 @@ public interface LwPaperMapper {
      * @return
      */
     public List<Map<String, Object>> selectLwPaper(
-            @Param("pageStart") String pageStart,
-            @Param("pageEnd") String pageEnd,
+            @Param("pageStart") Integer pageStart,
+            @Param("pageEnd") Integer pageEnd,
             @Param("paperName") String paperName,
             @Param("paperId") String paperId,
             @Param("year") String year,
             @Param("unit") String unit,
             @Param("author") String author,
             @Param("field") String field,
-            @Param("scoreStatus") String scoreStatus
+            @Param("scoreStatus") String scoreStatus,
+            @Param("paperType") String paperType
     );
 
+    public Integer selectLwPaperCount(
+            @Param("paperName") String paperName,
+            @Param("paperId") String paperId,
+            @Param("year") String year,
+            @Param("unit") String unit,
+            @Param("author") String author,
+            @Param("field") String field,
+            @Param("scoreStatus") String scoreStatus,
+            @Param("paperType") String paperType
+    );
 
 }
