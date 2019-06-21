@@ -13,7 +13,7 @@ public class LwPaper {
     /**
      * 论文编号
      */
-    private String paperCode;
+    private String paperId;
     /**
      * 论文名称
      */
@@ -95,12 +95,12 @@ public class LwPaper {
         this.uuid = uuid;
     }
 
-    public String getPaperCode() {
-        return paperCode;
+    public String getPaperId() {
+        return paperId;
     }
 
-    public void setPaperCode(String paperCode) {
-        this.paperCode = paperCode;
+    public void setPaperId(String paperId) {
+        this.paperId = paperId;
     }
 
     public String getPaperName() {
@@ -251,7 +251,7 @@ public class LwPaper {
     public String toString() {
         return "LwPaper{" +
                 "uuid='" + uuid + '\'' +
-                ", paperCode='" + paperCode + '\'' +
+                ", paperId='" + paperId + '\'' +
                 ", paperName='" + paperName + '\'' +
                 ", year='" + year + '\'' +
                 ", unit='" + unit + '\'' +

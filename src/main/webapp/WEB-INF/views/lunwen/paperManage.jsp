@@ -32,82 +32,63 @@
 					<%--<option value = "${year}"  selected>  ${year}</option>--%>
 				</select>
 				<label>论文题目：</label>
-				<input type = "text" id = "paper_name" name = "applyId" style="width: 200px" class = "inputQuery changeQuery" >
+				<input type = "text" id = "paperName" name = "paperName" style="width: 200px" class = "inputQuery changeQuery" >
 				<label>编号：</label>
-				<input type = "text" id = "paper_code" name = "applyId" style="width: 100px" class = "inputQuery changeQuery" >
+				<input type = "text" id = "paperId" name = "paperId" style="width: 100px" class = "inputQuery changeQuery" >
 				<label>单位：</label>
-				<input type = "text" id = "unit" name = "applyId" style="width: 100px" class = "inputQuery changeQuery" >
+				<input type = "text" id = "unit" name = "unit" style="width: 100px" class = "inputQuery changeQuery" >
 				<label>作者：</label>
-				<input type = "text" id = "author" name = "applyId" style="width: 100px" class = "inputQuery changeQuery" >
+				<input type = "text" id = "author" name = "author" style="width: 100px" class = "inputQuery changeQuery" >
 				<label>领域：</label>
-				<input type = "text" id = "field" name = "applyId" style="width: 100px" class = "inputQuery changeQuery" >
-				<label  for="score_status" class="yearTitle">打分状态：</label>
-				<select id = "score_status" name = "year"   class = "changeQuery changeYear" style="width: 100px">
+				<input type = "text" id = "field" name = "field" style="width: 100px" class = "inputQuery changeQuery" >
+				<label  for="scoreStatus" class="yearTitle">打分状态：</label>
+				<select id = "scoreStatus" name = "scoreStatus"   class = "changeQuery changeYear" style="width: 100px">
+					<option value = "" selected>请选择打分状态</option>
 					<option value = "1">未打分</option>
-					<option value = "0"  selected>  已打分</option>
+					<option value = "2">已保存</option>
+					<option value = "3">已完成</option>
 				</select>
+				<input type="text" id="paperType" name="paperType" style="display: none" value="1">
 				<!-- 查询按钮  " -->
-				<div style="float:right" id = "queryButton" class = "btn query" onclick = "roomList.query()">搜索</div>
+				<div style="float:right" id = "queryButton" class = "btn query" onclick = "paperList.query()">搜索</div>
 		</form>
 	</div>
 	<!-- end    查询条件 -->
-	
 
-
-
-	
-	
+	<hr/>
 
 	<!-- start 列表展示 -->
-	<div class="tab" role="tabplanel">
+	<div>
 		<!--  新增  修改  删除 功能按钮 -->
 		<div id="funcBtn" style="height: 35px;float:right">
-			<div class='btn right deleteButton' onclick="roomList.delEvent()" >删除</div>
+			<div class='btn right deleteButton' onclick="paperList.delEvent()" >删除</div>
 			<div class='btn right deleteButton' onclick="roomList.delEvent()" >下载模板</div>
 			<div class='btn right deleteButton' onclick="roomList.delEvent()" >附件批量导入</div>
 			<div class='btn right deleteButton' onclick="roomList.delEvent()" >导入</div>
-			<div class='btn right deleteButton' onclick="roomList.delEvent()" >修改</div>
-			<div class='btn right deleteButton' onclick="roomList.delEvent()" >新增</div>
+			<div class='btn right deleteButton' onclick="paperList.updateEvent()" >修改</div>
+			<div class='btn right deleteButton' onclick="paperList.addOperation()" >新增</div>
 			<div class='btn right deleteButton' onclick="roomList.delEvent()" >自动匹配</div>
 			<div class='btn right deleteButton' onclick="roomList.delEvent()" >生成打分表</div>
 			<div class='btn right deleteButton' onclick="roomList.delEvent()" >撤回打分表</div>
 		</div>
 		<!-- 学术技术综述分类按钮 -->
-		<ul class="nav nav-tabs" role="tablist" style="margin-top: 0px;" id="typeTabs">
-			<li role="presentation"><a href="#xueshu" aria-controls="home" role="tab" data-toggle="tab">学术类</a> </li>
-			<li role="presentation"><a href="#jishu" aria-controls="profile"  role="tab" data-toggle="tab">技术类</a> </li>
-			<li role="presentation"><a href="#zongshu" aria-controls="messages" role="tab" data-toggle="tab">综述类</a> </li>
-		</ul>
+		<div class="grid-title">
+			<h3 style="float: left">
+				<a href="#" style="color:black" onclick="paperList.updatePaperType(1)">学术类</a>
+			</h3>
+			<h3 style="float: left">
+				<a href="#" style="color:black" onclick="paperList.updatePaperType(2)">技术类</a>
+			</h3>
+			<h3 style="float: left">
+				<a href="#" style="color:black" onclick="paperList.updatePaperType(3)">综述类</a>
+			</h3>
+			<h3></h3>
+		</div>
+		<hr/>
 	</div>
-
-	<div class="tab-content">
-		<%--学术类--%>
-		<div role="tabpanel" class="tab-pane fade" id="xueshu">
-			<div class="tab-content">
-				<div class="tab-pane active" >
-					<div id="datagrid"></div>
-					<div class="tablepage"></div>
-				</div>
-			</div>
-		</div>
-		<%--技术类--%>
-		<div role="tabpanel" class="tab-pane fade" id="jishu">
-			<div class="tab-content">
-				<div class="tab-pane active" >
-					<div id="datagrid2"></div>
-					<div class="tablepage"></div>
-				</div>
-			</div>
-		</div>
-		<%--综述类--%>
-		<div role="tabpanel" class="tab-pane fade" id="zongshu">
-			<div class="tab-content">
-				<div class="tab-pane active" >
-					<div id="datagrid3"></div>
-					<div class="tablepage"></div>
-				</div>
-			</div>
-		</div>
+	<div class="tabbable active" >
+		<div id="datagrid" style=""></div>
+		<div class="tablepage"></div>
 	</div>
 	<!-- end 列表展示 -->
 

@@ -8,7 +8,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
-	<title>新增论文</title>
+	<title>修改论文</title>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
 	<!-- newPage、item.css 页面css-->
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/item.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
@@ -20,7 +20,7 @@
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-	<form id="ajaxFM">
+
 	<table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td>
@@ -80,12 +80,6 @@
 		</tr>
 		<tr>
 			<td>
-				<span title = "论文类型"><b class="mustWrite">*</b>论文类型</span>
-			</td>
-			<td class="addInputStyle">
-				<input type="text"  id="paperType" name="paperType"  class="validNull"  content="论文类型"  title="必填项  "/>
-			</td>
-			<td>
 				<span title = "论文附件"><b class="mustWrite">*</b>论文附件</span>
 			</td>
 			<td class="addInputStyle">
@@ -93,10 +87,9 @@
 			</td>
 		</tr>
 	</table>
-	</form>
 
 	<div class="btnContent">
-		<button type="button" class="btn" onclick="paperList.addEvent()">保存</button>
+		<button type="button" class="btn" onclick="paperList.updateEvent()">保存</button>
 		<button type="button" class="btn" onclick="paperList.addClose()">返回</button>
 	</div>
 
@@ -114,9 +107,7 @@
     <!-- 验证校验公共方法，提示框公共方法 -->
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
-    <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
-
-    <!-- 本页面所需的js -->
+	<!-- 本页面所需的js -->
  	<script src="<%=request.getContextPath()%>/js/lunwen/paperManage.js"></script>
 </body>
 
