@@ -17,12 +17,6 @@ $(function(){
             paperList.query();
 		}
 	});
-//	$(document).on("keyup",".inputQuery",function(e){
-//		var valLength =$(this).val().length;
-//		if(valLength>1){
-//			paperList.query();
-//		}
-//	});
 	//回车键出发搜索按钮
 	$("body").keydown(function () {
 	    if (event.keyCode == "13") {
@@ -58,13 +52,7 @@ paperList.initDataGrid = function(){
         type: 'POST',
         form: '#queryForm',
         pageSize: 10,
-        tablepage: $(".tablepage"),//分页组件
-        successFinal:function(data){
-            paperList.resize();
-        },
-        callBackFunc:function(){
-            paperList.initItems();
-        },
+        tablepage: $(".tablepage"),
         columns: [
             {name: '',style:{width:"2px"}, data: 'id',checkbox:true, forMat:function(row){
                     dataItems[index] = row;//将一行数据放在一个list中
@@ -221,7 +209,7 @@ paperList.updateEvent = function (){
     }
     //获取form表单内容
     var paperDetailFormData = roomAddInfoCommon.getFormDataInfo();
-    $.messager.confirm( "保存提示", "确认保存该数据吗",
+    $.messager.confirm( "修改提示", "确认修改该数据吗",
         function(r){
             if(r){
                 $.ajax({
@@ -260,12 +248,8 @@ paperList.delEvent = function(){
 			messager.tip("每次只能删除一条数据",2000);
 			return;
 		}
-		/*if(checkedItems[0].SCORETABLESTATUS!="0"){
-			messager.tip("选择的数据无法删除,已生成打分表",5000);
-			return;
-		}*/
-		// var checkedIds = dataGrid.getCheckedIds();
-		 $.messager.confirm( "删除提示", "确认删除选中数据吗",
+		//不在前台做是否能删除的判断，在后台判断，记录日志，同时比前台更safe
+		$.messager.confirm( "删除提示", "确认删除选中数据吗",
 			function(r){
 				if(r){
 					$.ajax({
@@ -288,37 +272,5 @@ paperList.delEvent = function(){
 			}
 		);
 }
-	
 
-
-/*  start 全选、取消全选 */
-$(".check_").change(function(){
-	if(this.checked==true){
-		var checkBoxs=$("input:checkbox[name=oneCheck]");
-		checkBoxs.each(function(i){
-			checkBoxs[i].checked=true;
-		});
-	}else{
-		var checkBoxs=$("input:checkbox[name=oneCheck]");
-			checkBoxs.each(function(i){
-				checkBoxs[i].checked=false;
-		});
-	}
-});
-/*  end 全选、取消全选 */
-
-/* 初始化dataItems */
-paperList.initItems = function(){
-	dataItems = new Array();
-	index = 0;
-}
-
-
-paperList.resize=function(){
-	var height=$("body").height()-$(".sheach").height()-$("#funcBtn").height()-65;
-	$("#datagrid>div").css({"height":height});
-}
-$(window).resize(function(){
-    paperList.resize();
-})
 

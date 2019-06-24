@@ -97,11 +97,8 @@
 			<hr/>
 		</tr>
 		<tr>
-			<td>
-				<span title = "论文附件"><b class="mustWrite">*</b>论文附件</span>
-			</td>
-			<td class="addInputStyle">
-				<input type="file"  id="file"  name="file"  class="validNull"  len="20"   content="论文附件" title="必填项"/>
+			<td colspan="4">
+				<span title = "论文附件信息"><b class="mustWrite">*</b>附件信息</span>
 			</td>
 		</tr>
 	</table>

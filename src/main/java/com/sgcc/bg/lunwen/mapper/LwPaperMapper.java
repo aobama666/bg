@@ -64,7 +64,8 @@ public interface LwPaperMapper {
      */
     public Map<String, Object> findPaper(
             @Param("uuid")String uuid,
-            @Param("paperName") String paperName
+            @Param("paperName") String paperName,
+            @Param("valid") String valid
     );
 
     /**

@@ -30,10 +30,10 @@
 				<span class="detailsLeft"> ${PAPERNAME}</span>
 			</td>
 			<td>
-				<span title = "年份">年份</span>
+				<span title = "论文编号">论文编号</span>
 			</td>
 			<td class="addInputStyle">
-				<span class="detailsLeft"> ${YEAR}</span>
+				<span class="detailsLeft"> ${PAPERID}</span>
 			</td>
 		</tr>
 		<tr>
@@ -106,19 +106,58 @@
 				<span class="detailsLeft"> ${ALLSTATUSDETAIL}</span>
 			</td>
 		</tr>
-
-	</table>
-	<hr/>
-	<table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td>
+				<span title = "创建用户">创建用户</span>
+			</td>
+			<td class="addInputStyle">
+				<span class="detailsLeft"> ${CREATEUSER}</span>
+			</td>
+			<td>
+				<span title = "创建时间">创建时间</span>
+			</td>
+			<td class="addInputStyle">
+				<span class="detailsLeft"> ${CREATETIME}</span>
+			</td>
+		</tr>
+		<c:if test="${UPDATEUSER != null}">
+			<tr>
+				<td>
+					<span title = "更新用户">更新用户</span>
+				</td>
+				<td class="addInputStyle">
+					<span class="detailsLeft"> ${UPDATEUSER}</span>
+				</td>
+				<td>
+					<span title = "更新时间">更新时间</span>
+				</td>
+				<td class="addInputStyle">
+					<span class="detailsLeft"> ${UPDATETIME}</span>
+				</td>
+			</tr>
+		</c:if>
+		<tr>
+			<td>
+				<span title = "年份">年份</span>
+			</td>
+			<td class="addInputStyle">
+				<span class="detailsLeft"> ${YEAR}</span>
+			</td>
+		</tr>
+		<tr>
+			<hr/>
+		</tr>
+		<tr>
+			<td colspan="4">
 				<span title = "附件信息">附件信息</span>
 			</td>
-			<%--<td class="addInputStyle">--%>
-				<%--<span class="detailsLeft"> ${PAPERNAME}</span>--%>
-			<%--</td>--%>
 		</tr>
 	</table>
+
+	<div class="" style="width: 94%;margin-left: 3%">
+		<div id="datagrid"></div>
+		<%--<div class="tablepage"></div>--%>
+	</div>
 
 	<div class="btnContent">
 		<button type="button" class="btn" onclick="paperList.addClose()">返回</button>
@@ -142,6 +181,7 @@
 
 	<!-- 本页面所需的js -->
  	<script src="<%=request.getContextPath()%>/js/lunwen/paperManage.js"></script>
+	<script src="<%=request.getContextPath()%>/js/lunwen/paperUploadAnnex.js"></script>
 </body>
 
 </html>

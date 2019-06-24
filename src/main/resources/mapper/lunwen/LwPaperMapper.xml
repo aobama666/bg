@@ -124,6 +124,9 @@
        <if test="paperName != null and paperName != ''">
           and p.paper_name = #{paperName}
        </if>
+       <if test="valid !=null and valid != ''">
+          and p.valid = #{valid}
+       </if>
     </select>
 
     <!--按条件查询某批论文信息-->
