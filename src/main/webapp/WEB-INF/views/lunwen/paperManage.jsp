@@ -43,7 +43,7 @@
 				<input type = "text" id = "field" name = "field" style="width: 100px" class = "inputQuery changeQuery" >
 				<label  for="scoreStatus" class="yearTitle">打分状态：</label>
 				<select id = "scoreStatus" name = "scoreStatus"   class = "changeQuery changeYear" style="width: 100px">
-					<option value = "" selected>请选择打分状态</option>
+					<option value = "" selected>请选择</option>
 					<option value = "1">未打分</option>
 					<option value = "2">已保存</option>
 					<option value = "3">已完成</option>
@@ -65,7 +65,7 @@
 			<div class='btn right deleteButton' onclick="roomList.delEvent()" >下载模板</div>
 			<div class='btn right deleteButton' onclick="roomList.delEvent()" >附件批量导入</div>
 			<div class='btn right deleteButton' onclick="roomList.delEvent()" >导入</div>
-			<div class='btn right deleteButton' onclick="paperList.updateEvent()" >修改</div>
+			<div class='btn right deleteButton' onclick="paperList.updateOperation()" >修改</div>
 			<div class='btn right deleteButton' onclick="paperList.addOperation()" >新增</div>
 			<div class='btn right deleteButton' onclick="roomList.delEvent()" >自动匹配</div>
 			<div class='btn right deleteButton' onclick="roomList.delEvent()" >生成打分表</div>
