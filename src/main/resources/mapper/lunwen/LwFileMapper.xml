@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.lunwen.mapper.LwFileMapper">
+
+    <insert id="addLwFile">
+        insert into bg_lw_file
+        (
+            UUID,
+            FILE_NAME,
+            BUSINESSID,
+            BUSINESS_TABLE,
+            FILE_EXT_NAME,
+            FTP_FILE_NAME,
+            FTP_FILE_PATH,
+            BUSINESS_MODULE,
+            FILE_SIZE,
+            CREATE_USER,
+            CREATE_TIME,
+            VALID
+        )
+        values (
+            #{uuid},
+            #{fileName},
+            #{businessId},
+            #{businessTable},
+            #{fileExtName},
+            #{ftpFileName},
+            #{ftpFilePath},
+            #{businessModule},
+            #{fileSize},
+            #{createUser},
+            #{createTime},
+            #{valid}
+        );
+    </insert>
+
+
+    <update id="delLwFile">
+      update bg_lw_file
+      set valid = #{valid}
+      where uuid = #{uuid}
+    </update>
+
+
+    <select id="selectLwFile" resultType="java.util.Map">
+
+    </select>
+</mapper>

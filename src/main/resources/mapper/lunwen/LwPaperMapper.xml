@@ -46,12 +46,10 @@
         )
     </insert>
 
-    <!--修改论文信息-->
+    <!--修改论文基本信息-->
     <update id="updateLwPaper">
         update bg_lw_paper set
-        PAPER_ID = #{paperId,jdbcType=VARCHAR},
         PAPER_NAME = #{paperName,jdbcType=VARCHAR},
-        `year` = #{year,jdbcType=VARCHAR},
         UNIT = #{unit,jdbcType=VARCHAR},
         AUTHOR = #{author,jdbcType=VARCHAR},
         JOURNAL = #{journal,jdbcType=VARCHAR},
@@ -60,14 +58,8 @@
         QUOTE_COUNT = #{quoteCount,jdbcType=VARCHAR},
         DOWNLOAD_COUNT = #{downloadCount,jdbcType=VARCHAR},
         FIELD = #{field,jdbcType=VARCHAR},
-        SCORE_TABLE_STATUS = #{scoreTableStatus,jdbcType=VARCHAR},
-        SCORE_STATUS = #{scoreStatus,jdbcType=VARCHAR},
-        ALL_STATUS = #{allStatus,jdbcType=VARCHAR},
---         CREATE_USER = #{createUser,jdbcType=VARCHAR},
         UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
---         CREATE_TIME = to_date(#{createTime},'YYYY-MM-DD HH24:MI:SS'),
-        UPDATE_TIME = to_date(#{updateTime},'YYYY-MM-DD HH24:MI:SS'),
-        VALID = #{valid}
+        UPDATE_TIME = sysdate
         where UUID = #{uuid}
     </update>
 
@@ -113,9 +105,12 @@
                p.quote_count        quoteCount,
                p.download_count     downloadCount,
                p.field,
-               p.score_table_status scoreTableStatus,
-               p.score_status       scoreStatus,
-               p.all_status         allStatus,
+               p.score_status  as scoreStatus,
+               p.score_table_status  as scoreTableStatus,
+               p.all_status  as allStatus,
+               (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='score_status' and vaild=1 and code= p.score_status)  as scoreStatusDetail,
+               (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='score_table_status' and vaild=1 and code= p.score_table_status)  as scoreTableStatusDetail,
+               (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_all_status' and vaild=1 and code= p.all_status)  as allStatusDetail,
                p.create_user        createUser,
                p.update_user        updateUser,
                TO_CHAR(p.create_time, 'YYYY-MM-DD HH24:MI')    createTime,
@@ -128,6 +123,9 @@
        </if>
        <if test="paperName != null and paperName != ''">
           and p.paper_name = #{paperName}
+       </if>
+       <if test="valid !=null and valid != ''">
+          and p.valid = #{valid}
        </if>
     </select>
 
@@ -147,7 +145,7 @@
             p.download_count downloadCount,
             p.field,
             p.score_table_status scoreTableStatus,
-            p.score_status scoreStatus,
+            (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='score_status' and vaild=1 and code= p.score_status)  as scoreStatus,
             p.all_status allStatus,
             p.create_user createUser,
             p.update_user updateUser,
@@ -181,11 +179,12 @@
             <if test="paperType != null and paperType != ''">
                 and p.paper_type = #{paperType}
             </if>
+            and valid = #{valid}
         AND #{pageEnd} >= ROWNUM
         ) p WHERE p.rown > #{pageStart}
     </select>
 
-    <!--按条件查询某批论文信息总数-->
+    <!--按条件查询某批论文信息总数，为上面那条sql提供总数，以便分页，total-->
     <select id="selectLwPaperCount" resultType="java.lang.Integer">
         select count(*)
         from bg_lw_paper p
@@ -214,6 +213,7 @@
         <if test="paperType != null and paperType != ''">
             and p.paper_type = #{paperType}
         </if>
+        and p.valid = #{valid}
     </select>
 
 </mapper>

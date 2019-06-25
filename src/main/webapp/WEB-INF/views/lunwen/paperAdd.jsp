@@ -20,7 +20,6 @@
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-	<form id="ajaxFM">
 	<table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td>
@@ -33,7 +32,7 @@
 				<span title = "作者单位"><b class="mustWrite">*</b>作者单位</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="unit" name="unit"  class="validNull"  content="作者单位"  title="必填项  "/>
+				<input type="text"  id="unit" name="unit"  class="validNull"  content="作者单位"  len="20"  title="必填项  "/>
 			</td>
 		</tr>
 		<tr>
@@ -47,7 +46,7 @@
 				<span title = "被引量"><b class="mustWrite">*</b>被引量</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="quoteCount" name="quoteCount"  class="validNull"  content="被引量"  title="必填项  "/>
+				<input type="text"  id="quoteCount" name="quoteCount"  class="validNull"   len="20" content="被引量"  title="必填项  "/>
 			</td>
 		</tr>
 		<tr>
@@ -61,7 +60,7 @@
 			<span title = "期刊名称"><b class="mustWrite">*</b>期刊名称</span>
 		</td>
 		<td class="addInputStyle">
-			<input type="text"  id="journal" name="journal"  class="validNull"  content="期刊名称"  title="必填项  "/>
+			<input type="text"  id="journal" name="journal"  class="validNull"  content="期刊名称"  len="20"  title="必填项  "/>
 		</td>
 		</tr>
 		<tr>
@@ -75,7 +74,7 @@
 				<span title = "下载量"><b class="mustWrite">*</b>下载量</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="downloadCount" name="downloadCount"  class="validNull"  content="下载量"  title="必填项  "/>
+				<input type="text"  id="downloadCount" name="downloadCount"  class="validNull"  len="20"  content="下载量"  title="必填项  "/>
 			</td>
 		</tr>
 		<tr>
@@ -83,17 +82,34 @@
 				<span title = "论文类型"><b class="mustWrite">*</b>论文类型</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="paperType" name="paperType"  class="validNull"  content="论文类型"  title="必填项  "/>
+				<select id="paperType"  name = "paperType"  class = "validNull select-person"   content="论文类型"    title="必填项  "  >
+					<option value=""  selected >请选择论文类型</option>
+					<c:forEach  var="paperType"  items="${paperType}">
+						<option value ="${paperType.K}"> ${paperType.V}</option>
+					</c:forEach>
+				</select>
+
 			</td>
-			<td>
-				<span title = "论文附件"><b class="mustWrite">*</b>论文附件</span>
-			</td>
-			<td class="addInputStyle">
-				<input type="file"  id="file"  name="file"  class="validNull"  len="20"   content="论文附件" title="必填项"/>
+		</tr>
+		<tr>
+			<hr/>
+		</tr>
+
+		<tr>
+			<td colspan="4">
+				<span title = "论文附件信息"><b class="mustWrite">*</b>附件信息
+					<div style="float: right">
+						<button type="button" class="btn" onclick="uploadAnnex.addOperation()">新增</button>
+						<button type="button" class="btn" onclick="uploadAnnex.delEvent()">删除</button>
+					</div>
+				</span>
 			</td>
 		</tr>
 	</table>
-	</form>
+	<div class="tabbable active" style="width: 94%;margin-left: 3%">
+		<div id="datagrid"></div>
+		<%--<div class="tablepage"></div>--%>
+	</div>
 
 	<div class="btnContent">
 		<button type="button" class="btn" onclick="paperList.addEvent()">保存</button>
@@ -118,6 +134,7 @@
 
     <!-- 本页面所需的js -->
  	<script src="<%=request.getContextPath()%>/js/lunwen/paperManage.js"></script>
+ 	<script src="<%=request.getContextPath()%>/js/lunwen/paperUploadAnnex.js"></script>
 </body>
 
 </html>
