@@ -8,7 +8,7 @@
         (
             UUID,
             FILE_NAME,
-            BUSINESSID,
+            BUSINESS_ID,
             BUSINESS_TABLE,
             FILE_EXT_NAME,
             FTP_FILE_NAME,
@@ -22,17 +22,17 @@
         values (
             #{uuid},
             #{fileName},
-            #{businessId},
-            #{businessTable},
+            #{bussinessId},
+            #{bussinessTable},
             #{fileExtName},
             #{ftpFileName},
             #{ftpFilePath},
-            #{businessModule},
+            #{bussinessModule},
             #{fileSize},
             #{createUser},
             #{createTime},
             #{valid}
-        );
+        )
     </insert>
 
 
@@ -44,6 +44,19 @@
 
 
     <select id="selectLwFile" resultType="java.util.Map">
-
+        select
+        f.uuid uuid,
+        f.file_name fileName,
+        f.business_id businessId,
+        f.file_ext_name fileExtName,
+        f.ftp_file_name ftpFileName,
+        f.ftp_file_path ftpFilePath,
+        to_char(f.create_time,'YYYY-mm-dd hh24:mm:ss') createTime,
+        f.file_size fileSize
+        from bg_lw_file f
+        where 1=1
+        and f.business_id = #{bussinessId}
+        and f.business_table = #{bussinessTable}
+        and f.valid = #{valid}
     </select>
 </mapper>

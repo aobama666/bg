@@ -146,11 +146,12 @@ paperList.addEvent = function (){
                     data: JSON.stringify(paperDetailFormData),
                     success: function (data) {
                         if(data.success=="true"){
-                            window.parent.location.reload();
-                            var closeIndex = parent.layer.getFrameIndex(window.name);
-                            parent.layer.close(closeIndex);
+                            // window.parent.location.reload();
+                            // var closeIndex = parent.layer.getFrameIndex(window.name);
+                            // parent.layer.close(closeIndex);
+                            // paperList.query();
                             parent.messager.tip(data.msg,5000);
-                            paperList.query();
+                            $("#uuid").val(data.data.uuid);
                         }else{
                             parent.messager.tip(data.msg,5000);
                             return;
@@ -164,7 +165,8 @@ paperList.addEvent = function (){
 
 /*返回按钮，关闭弹出框页面*/
 paperList.addClose = function () {
-	parent.layer.closeAll();
+    parent.layer.closeAll();
+    paperList.query();
 }
 		
 /*修改弹出框*/

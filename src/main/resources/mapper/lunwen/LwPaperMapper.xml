@@ -91,6 +91,11 @@
         where UUID  = #{uuid}
     </update>
 
+    <!--某类型的当前最大编号-->
+    <select id="maxPaperId" resultType="java.lang.String">
+        select MAX(paper_id)  from bg_lw_paper where paper_type = #{paperType}
+    </select>
+
     <!--查找某条论文-->
     <select id="findPaper" resultType="java.util.Map">
        select  p.uuid               uuid,
@@ -180,7 +185,8 @@
                 and p.paper_type = #{paperType}
             </if>
             and valid = #{valid}
-        AND #{pageEnd} >= ROWNUM
+            and #{pageEnd} >= ROWNUM
+            order  by p.paper_id desc
         ) p WHERE p.rown > #{pageStart}
     </select>
 

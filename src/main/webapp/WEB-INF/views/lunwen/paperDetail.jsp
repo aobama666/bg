@@ -21,12 +21,13 @@
 </head>
 <body>
 
-	<table class="visitOperate tableStyle specialTable">
+	<table class="visitOperate tableStyle specialTable" >
 		<tr>
 			<td>
 				<span title = "论文题目">论文题目</span>
 			</td>
 			<td class="addInputStyle">
+				<input type = "text" style="display: none" value = "${UUID}"  class="validNull"  id = "uuid" name="uuid">
 				<span class="detailsLeft"> ${PAPERNAME}</span>
 			</td>
 			<td>
@@ -149,12 +150,12 @@
 		</tr>
 		<tr>
 			<td colspan="4">
-				<span title = "附件信息">附件信息</span>
+					<span title = "论文附件信息">附件信息</span>
 			</td>
 		</tr>
 	</table>
 
-	<div class="" style="width: 94%;margin-left: 3%">
+	<div class="tabbable active" style="width: 94%;margin-left: 3%">
 		<div id="datagrid"></div>
 		<%--<div class="tablepage"></div>--%>
 	</div>
