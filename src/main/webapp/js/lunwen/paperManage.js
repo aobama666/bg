@@ -56,7 +56,7 @@ paperList.initDataGrid = function(){
         columns: [
             {name: '',style:{width:"2px"}, data: 'id',checkbox:true, forMat:function(row){
                     dataItems[index] = row;//将一行数据放在一个list中
-                    return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.ID)+'"/>';
+                    return '<input type="checkbox" name="oneCheck" id="oneCheck"  index = "'+(index++)+'"  value="'+(row.UUID)+'"/>';
                 }
             },
             {name: '编号',style:{width:"50px"}, data: 'PAPERID'},
@@ -90,6 +90,22 @@ paperList.initDataGrid = function(){
     });
 }
 
+// 获取选中uuid
+paperList.export = function () {
+    var checkUuidS = document.getElementsByName("oneCheck");
+    var checkUuid = "";
+    for (var i =0;i<checkUuidS.length;++i){
+        if(checkUuidS[i].checked){
+            checkUuid += checkUuidS[i].value+",";
+        }
+    }
+    if(checkUuid == ""){
+        alert("check null");
+    }else{
+        alert(checkUuid);
+    }
+}
+
 
 
 /*查看详情*/
@@ -118,6 +134,9 @@ paperList.addOperation = function (){
         fixed:false,//不固定
         maxmin:true,
         content:url,
+        end: function () {
+            paperList.query();
+        }
     });
 }
 
@@ -146,11 +165,8 @@ paperList.addEvent = function (){
                     data: JSON.stringify(paperDetailFormData),
                     success: function (data) {
                         if(data.success=="true"){
-                            window.parent.location.reload();
-                            var closeIndex = parent.layer.getFrameIndex(window.name);
-                            parent.layer.close(closeIndex);
+                            $("#uuid").val(data.data.uuid);
                             parent.messager.tip(data.msg,5000);
-                            paperList.query();
                         }else{
                             parent.messager.tip(data.msg,5000);
                             return;
@@ -164,7 +180,7 @@ paperList.addEvent = function (){
 
 /*返回按钮，关闭弹出框页面*/
 paperList.addClose = function () {
-	parent.layer.closeAll();
+    parent.layer.closeAll();
 }
 		
 /*修改弹出框*/
@@ -190,7 +206,10 @@ paperList.updateOperation = function(){
 			area:['85%','85%'],
 			fixed:false,//不固定
 			maxmin:true,
-			content:url, 
+			content:url,
+            end: function () {
+                paperList.query();
+            }
 		});
 }
 
@@ -222,15 +241,12 @@ paperList.updateEvent = function (){
                         if(data.success=="true"){
                             window.parent.location.reload();
                             var closeIndex = parent.layer.getFrameIndex(window.name);
-                            parent.layer.close(closeIndex);
                             parent.messager.tip(data.msg,5000);
                             paperList.query();
                         }else{
                             parent.messager.tip(data.msg,5000);
                             return;
                         }
-
-
                     }
                 });
             }

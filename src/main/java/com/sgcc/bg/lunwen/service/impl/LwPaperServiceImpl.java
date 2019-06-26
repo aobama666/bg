@@ -7,6 +7,7 @@ import com.sgcc.bg.lunwen.bean.LwPaper;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.mapper.LwPaperMapper;
 import com.sgcc.bg.lunwen.service.LwPaperService;
+import com.sgcc.bg.model.HRUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,23 +28,28 @@ public class LwPaperServiceImpl implements LwPaperService {
     public Integer addLwPaper(LwPaper lwPaper) {
         //处理论文编号，根据论文类型和上一个编号id，叠加
         StringBuffer before = new StringBuffer();
-        if("1".equals(lwPaper.getPaperType())){
-            before.append("X");
-        }else if("2".equals(lwPaper.getPaperType())){
-            before.append("J");
-        }else if("3".equals(lwPaper.getPaperType())){
-            before.append("Z");
+        if(LwPaperConstant.LW_TYPE_X.equals(lwPaper.getPaperType())){
+            before.append(LwPaperConstant.XUESHU);
+        }else if(LwPaperConstant.LW_TYPE_J.equals(lwPaper.getPaperType())){
+            before.append(LwPaperConstant.JISHU);
+        }else if(LwPaperConstant.LW_TYPE_Z.equals(lwPaper.getPaperType())){
+            before.append(LwPaperConstant.ZONGSHU);
         }
-        //先做个随机数，后期改成从数据库中查询当前类型的最大值后加1
-        Random random = new Random();
-        before.append(random.nextInt(1000));
+        //从数据库中查询当前类型的最大值后加1
+        String paperId = lwPaperMapper.maxPaperId(lwPaper.getPaperType());
+        if(null == paperId || "".equals(paperId)){
+            //这个类型的第一批论文
+            paperId = "000";
+        }
+        paperId = paperId.substring(1,paperId.length());
+        Integer maxNum = Integer.valueOf(paperId);
+        maxNum = ++maxNum;
+        paperId = String.format("%03d",maxNum);
+        before.append(paperId);
         lwPaper.setPaperId(before.toString());
 
-        String userName = webUtils.getUsername();
         //初始化时间，创建人，各种状态
         lwPaper.setYear(DateUtil.getYear());
-        lwPaper.setUuid(Rtext.getUUID());
-        lwPaper.setCreateUser(userName);
         lwPaper.setCreateTime(new Date());
         lwPaper.setScoreTableStatus(LwPaperConstant.SCORE_TABLE_OFF);
         lwPaper.setScoreStatus(LwPaperConstant.SCORE_STATUS_NO);
@@ -75,6 +81,11 @@ public class LwPaperServiceImpl implements LwPaperService {
     @Override
     public Map<String, Object> findPaper(String uuid, String paperName) {
         return lwPaperMapper.findPaper(uuid,paperName,LwPaperConstant.VALID_YES);
+    }
+
+    @Override
+    public String maxPaperId(String paperType) {
+        return lwPaperMapper.maxPaperId(paperType);
     }
 
     @Override

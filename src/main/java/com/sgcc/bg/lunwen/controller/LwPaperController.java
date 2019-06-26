@@ -3,8 +3,10 @@ package com.sgcc.bg.lunwen.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.*;
+import com.sgcc.bg.lunwen.bean.LwFile;
 import com.sgcc.bg.lunwen.bean.LwPaper;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
+import com.sgcc.bg.lunwen.service.LwFileService;
 import com.sgcc.bg.lunwen.service.LwPaperService;
 import com.sgcc.bg.model.HRUser;
 import com.sgcc.bg.service.DataDictionaryService;
@@ -38,6 +40,8 @@ public class LwPaperController {
     private WebUtils webUtils;
     @Autowired
     private LwPaperService lwPaperService;
+    @Autowired
+    private LwFileService lwFileService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -134,6 +138,7 @@ public class LwPaperController {
     @RequestMapping(value = "/paperToAdd")
     public String paperToAdd(@RequestBody Map<String, Object> paramsMap){
         ResultWarp rw = null;
+
         //验证题目是否唯一，考虑后期做成ajax形式，填完题目后直接验证
         LwPaper lwPaper = mapToLwPaper(paramsMap);
         Map<String,Object> lwMap = lwPaperService.findPaper(null,lwPaper.getPaperName());
@@ -142,12 +147,15 @@ public class LwPaperController {
             rw = new ResultWarp(ResultWarp.FAILED ,"添加论文失败，论文题目已存在");
             return JSON.toJSONString(rw);
         }
-        //验证附件是否正常上传，如何提示合适上传何时提交
 
         //新增操作
+        String uuid = Rtext.getUUID();
+        lwPaper.setUuid(uuid);
+        lwPaper.setCreateUser(getLoginUserUUID());
         lwPaperService.addLwPaper(lwPaper);
         log.info(getLoginUser()+"insert lwPaper success,info:"+lwPaper.toString());
         rw = new ResultWarp(ResultWarp.SUCCESS ,"添加论文成功");
+        rw.addData("uuid",uuid);
         return JSON.toJSONString(rw);
     }
 
@@ -178,8 +186,7 @@ public class LwPaperController {
     public String paperToUpdate(@RequestBody Map<String, Object> paramsMap){
         ResultWarp rw = null;
         LwPaper lwPaper = mapToLwPaper(paramsMap);
-        String userName = webUtils.getUsername();
-        lwPaper.setUpdateUser(userName);
+        lwPaper.setUpdateUser(getLoginUserUUID());
         lwPaper.setUpdateTime(new Date());
         lwPaper.setUuid(paramsMap.get("UUID").toString());
         lwPaperService.updateLwPaper(lwPaper);
@@ -369,13 +376,31 @@ public class LwPaperController {
     /**
      * 查询当前论文对应附件信息
      * @param uuid
-     * @param paperName
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/selectPaperAnnex")
-    public String selectAnnex(String uuid,String paperName){
-        return "";
+    public String selectAnnex(String uuid){
+        if(null == uuid || "".equals(uuid)){
+            Map<String, Object> mvMap = new HashMap<String, Object>();
+            mvMap.put("msg", "无论文参数");
+            mvMap.put("success", "true");
+            String jsonStr = JSON.toJSONStringWithDateFormat(mvMap, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+            return jsonStr;
+        }
+        List<Map<String,Object>> fileList = lwFileService.selectLwFile(uuid,LwPaperConstant.BUSSINESSTABLE,LwPaperConstant.VALID_YES);
+        //查询数据封装
+        Map<String, Object> listMap = new HashMap<String, Object>();
+        listMap.put("data", fileList);
+        listMap.put("total", "");
+
+        //data数据
+        Map<String, Object> mvMap = new HashMap<String, Object>();
+        mvMap.put("data",listMap);
+        mvMap.put("msg", "查询完成！");
+        mvMap.put("success", "true");
+        String jsonStr = JSON.toJSONStringWithDateFormat(mvMap, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+        return jsonStr;
     }
 
     /**
@@ -383,8 +408,10 @@ public class LwPaperController {
      * @return
      */
     @RequestMapping(value = "/paperJumpUploadAnnex")
-    public ModelAndView annexJump(){
-        ModelAndView mv = new ModelAndView("lunwen/paperUploadAnnex");
+    public ModelAndView annexJump(String paperUuid){
+        Map<String,Object> mvMap = new HashMap<>();
+        mvMap.put("paperUuid",paperUuid);
+        ModelAndView mv = new ModelAndView("lunwen/paperUploadAnnex",mvMap);
         return mv;
     }
 
@@ -396,11 +423,6 @@ public class LwPaperController {
     @RequestMapping(value = "/paperAddAnnex",method = RequestMethod.POST)
     public String addAnnex(HttpServletResponse response,HttpServletRequest request) throws Exception{
         ResultWarp rw = null;
-        //ftp配置信息
-        String ftpServer = ConfigUtils.getConfig("ftpServer");
-        int ftpPort = Rtext.ToInteger(ConfigUtils.getConfig("ftpPort"), 0);
-        String ftpUsername = ConfigUtils.getConfig("FtpUsername");
-        String ftpPassword = ConfigUtils.getConfig("FtpPassWord");
         //获取文件上传至服务对应文件夹
         String fileName = "";
         String localPath = "";
@@ -409,6 +431,7 @@ public class LwPaperController {
         String path = request.getSession().getServletContext().getRealPath("")+"\\upload\\lunwen\\";
         //获取解析器
         CommonsMultipartResolver resolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+        String paperUuid = request.getParameter("paperUuid");
         //判断是否是文件
         if(resolver.isMultipart(request)){
             //转换
@@ -432,23 +455,48 @@ public class LwPaperController {
                 //上传文件到指定文件夹
                 file.transferTo(newFile);
                 log.info(getLoginUser()+"localPath:"+localPath+",length="+fileLength);
-
-
             }
         }
+        //文件大小
+        Double fileSize = Double.valueOf(fileLength) / 1024;
 
-        //连接ftp
-//        FtpHelper ftp = new FtpHelper(ftpServer, ftpPort, ftpUsername, ftpPassword);
-        FtpUtils.getFtpHelper();
-        FtpUtils.uploadFile(new File(localPath),"/accessory/lunwen/");
-        //上传
-//        ftp.uplodeFile(new File(localPath),"/accessory/lunwen/");
-        //关闭连接
-//        ftp.disconnect();
+        //处理ftp文件名
+        String fileNameBefore = fileName.substring(0,fileName.lastIndexOf("."));
+        String fileNameAfter = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
+        String fileNameUUid = Rtext.getUUID();
+        String ftpFileName = fileNameUUid+"."+fileNameAfter;
+
+        //修改文件名
+        File localFile = new File(localPath);
+        File newFtpFile = new File(path+ftpFileName);
+        localFile.renameTo(newFtpFile);
+        //重新声明修改名称后的文件对象
+        newFtpFile = new File(path+ftpFileName);
+
+        //上传至ftp
+        FtpUtils.uploadFile(newFtpFile,FtpUtils.PaperUploadPath);
+
+        //删除原路径文件
+        newFtpFile.delete();
 
         //保存附件信息至数据库
+        LwFile lwFile = new LwFile();
+        lwFile.setUuid(Rtext.getUUID());
+        lwFile.setFileName(fileNameBefore);
+        lwFile.setBussinessId(paperUuid);
+        lwFile.setBussinessTable(LwPaperConstant.BUSSINESSTABLE);
+        lwFile.setFileExtName(fileNameAfter);
+        lwFile.setFtpFileName(ftpFileName);
+        lwFile.setFtpFilePath(FtpUtils.PaperUploadPath+ftpFileName);
+        lwFile.setBussinessModule(LwPaperConstant.BUSSINESSMODULE);
+        lwFile.setFileSize(fileSize+"KB");
+        lwFile.setCreateUser(getLoginUserUUID());
+        lwFile.setCreateTime(new Date());
+        lwFile.setValid(LwPaperConstant.VALID_YES);
+        lwFileService.addLwFile(lwFile);
 
         rw = new ResultWarp(ResultWarp.SUCCESS ,"上传附件成功");
+        rw.addData("fileUuid",lwFile.getUuid());
         return JSON.toJSONString(rw);
     }
 
@@ -458,9 +506,14 @@ public class LwPaperController {
      */
     @ResponseBody
     @RequestMapping(value = "/paperDelAnnex")
-    public String delAnnex(){
-        //获取对应附件id，删除对应ftp信息
-        return "";
+    public String delAnnex(String uuid,String ftpFilePath){
+        //删除对应路径的ftp文件
+        FtpUtils.deleteFile(ftpFilePath);
+        //删除
+        lwFileService.delLwFile(uuid);
+        ResultWarp rw = null;
+        rw = new ResultWarp(ResultWarp.SUCCESS ,"删除附件成功");
+        return JSON.toJSONString(rw);
     }
 
     /**
@@ -512,6 +565,12 @@ public class LwPaperController {
         String userName = webUtils.getUsername();
         HRUser user = userService.getUserByUserName(userName);
         return "--------------username:"+userName+",userId:"+user.getUserId()+"---";
+    }
+
+    public String getLoginUserUUID(){
+        String userName = webUtils.getUsername();
+        HRUser user = userService.getUserByUserName(userName);
+        return user.getUserId();
     }
 
 }

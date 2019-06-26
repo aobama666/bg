@@ -26,6 +26,7 @@ $(function(){
 	    }
 	});
     uploadAnnex.btn_type_flag = 0;
+    $(".paging").css("display","none");
 });
 
 /*  start  列表查询   */
@@ -39,33 +40,35 @@ uploadAnnex.query = function(){
 
 /* 附件信息-初始化列表界面  */
 uploadAnnex.initDataGrid = function(){
+        var paperUuid = $("#uuid").val();
 	    $("#datagrid").datagrid({
-        url: "/bg/lwPaper/selectPaperAnnex",
+        url: "/bg/lwPaper/selectPaperAnnex?uuid="+paperUuid,
         type: 'POST',
         form: '#queryForm',
-        // pageSize: 10,
-        // tablepage: $(".tablepage"),
-        //取消分页
-        pagination: false,
-        showHeader: false,
         columns: [
             {name: '',style:{width:"2px"}, data: 'id',checkbox:true, forMat:function(row){
                     dataItems[index] = row;//将一行数据放在一个list中
-                    return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.ID)+'"/>';
+                    return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.UUID)+'"/>';
                 }
             },
-            {name: '附件名称',style:{width:"50px"}, data: 'DOWNLOADCOUNT'},
-            {name: '文件扩展名',style:{width:"50px"}, data: 'DOWNLOADCOUNT'},
-            {name: 'FTP路径', style:{width:"120px"},data: 'QUOTECOUNT'},
-            {name: '上传时间', style:{width:"120px"},data: 'QUOTECOUNT'}
+            {name: '附件名称',style:{width:"120px"}, data: 'FILENAME'},
+            {name: '文件格式',style:{width:"50px"}, data: 'FILEEXTNAME'},
+            {name: '文件大小', style:{width:"50px"},data: 'FILESIZE'},
+            {name: '上传时间', style:{width:"120px"},data: 'CREATETIME'}
         ]
     });
 }
 
 
-/*弹出新增框 */
+/*弹出添加附件框 */
 uploadAnnex.addOperation = function (){
-    var url = "/bg/lwPaper/paperJumpUploadAnnex"
+
+    var paperUuid = $("#uuid").val();
+    if(!paperUuid){
+        messager.tip("请保存基本信息后再添加附件",3000);
+        return;
+    }
+    var url = "/bg/lwPaper/paperJumpUploadAnnex?paperUuid="+paperUuid;
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;">上传附件信息</h4>',
@@ -73,6 +76,9 @@ uploadAnnex.addOperation = function (){
         fixed:false,//不固定
         maxmin:true,
         content:url,
+        end: function(){
+            uploadAnnex.initDataGrid();
+        }
     });
 }
 
@@ -91,7 +97,7 @@ uploadAnnex.addEvent = function (){
     var formData = new FormData($("#queryForm")[0]);
     //获取form表单内容
     var paperDetailFormData = roomAddInfoCommon.getFormDataInfo();
-    $.messager.confirm( "保存提示", "确认保存该数据吗",
+    $.messager.confirm( "上传提示", "确认上传吗",
         function(r){
             if(r){
                 $.ajax({
@@ -104,13 +110,10 @@ uploadAnnex.addEvent = function (){
                     data: formData,
                     success: function (data) {
                         if(data.success=="true"){
-                            window.parent.location.reload();
-                            var closeIndex = parent.layer.getFrameIndex(window.name);
-                            parent.layer.close(closeIndex);
-                            parent.messager.tip(data.msg,5000);
-                            paperList.query();
+                            messager.tip(data.msg,5000);
+                            parent.layer.closeAll();
                         }else{
-                            parent.messager.tip(data.msg,5000);
+                            messager.tip(data.msg,5000);
                             return;
                         }
                     }
@@ -129,22 +132,17 @@ uploadAnnex.addClose = function () {
 uploadAnnex.delEvent = function(){
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        messager.tip("请选择要操作的数据",1000);
+        messager.tip("请选择要删除的数据",1000);
         return;
     }else if(checkedItems.length>1){
         messager.tip("每次只能删除一条数据",2000);
         return;
     }
-    /*if(checkedItems[0].SCORETABLESTATUS!="0"){
-        messager.tip("选择的数据无法删除,已生成打分表",5000);
-        return;
-    }*/
-    // var checkedIds = dataGrid.getCheckedIds();
     $.messager.confirm( "删除提示", "确认删除选中数据吗",
         function(r){
             if(r){
                 $.ajax({
-                    url: "/bg/lwPaper/delLwPaper?uuid="+checkedItems[0].UUID,//删除
+                    url: "/bg/lwPaper/paperDelAnnex?uuid="+checkedItems[0].UUID+"&ftpFilePath="+checkedItems[0].FTPFILEPATH,//删除
                     type: "post",
                     dataType:"json",
                     contentType: 'application/json',
@@ -152,10 +150,10 @@ uploadAnnex.delEvent = function(){
                     success: function (data) {
                         if(data.success == "true"){
                             messager.tip(data.msg,3000);
-                            paperList.query();
+                            uploadAnnex.query();
                         }else{
                             messager.tip(data.msg,3000);
-                            paperList.query();
+                            uploadAnnex.query();
                         }
                     }
                 });
