@@ -6,14 +6,14 @@
  -->
 <mapper namespace="com.sgcc.bg.lunwen.mapper.LwSpecialistMapper">
 
-    <select id="expertList" resultType="java.util.Map">
+    <select id="expertList" resultType="com.sgcc.bg.lunwen.bean.LwSpecialist">
         SELECT a.* FROM (
-            SELECT b.UUID AS id,
+            SELECT b.UUID AS uuid,
             b.NAME AS name,
             b.ADDRESS AS address,
             b.UNIT_NAME AS unitName,
             b.UNIT_NATURE AS unitNature,
-            b.POSITION AS positton,
+            b.POSITION AS position,
             b.RESEARCH_DIRECTION AS researchDirection,
             b.FIELD AS field,
             b.PHONE AS phone,
@@ -38,16 +38,17 @@
                 AND b.MATCH_STATUS LIKE '%'||#{matchStatus}||'%'
             </if>
             AND #{end} >= ROWNUM
+            order by b.UPDATE_TIME
         ) a WHERE a.ROWNO > #{start}
     </select>
 
-    <select id="lwSpecialist" resultType="java.util.Map">
-        SELECT UUID AS id,
+    <select id="lwSpecialist" resultType="com.sgcc.bg.lunwen.bean.LwSpecialist">
+        SELECT UUID AS uuid,
             NAME AS name,
             ADDRESS AS address,
             UNIT_NAME AS unitName,
             UNIT_NATURE AS unitNature,
-            POSITION AS positton,
+            POSITION AS position,
             RESEARCH_DIRECTION AS researchDirection,
             FIELD AS field,
             PHONE AS phone,
@@ -55,7 +56,27 @@
             MATCH_STATUS AS matchStatus
             FROM BG_LW_SPECIALIST
             WHERE VALID = '1'
-            AND UUID=#{id,jdbcType=VARCHAR}
+            AND UUID=#{uuid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="count" resultType="java.lang.Integer">
+        SELECT count(uuid) FROM BG_LW_SPECIALIST
+        WHERE VALID = '1'
+        <if test="name != null and name != ''">
+            AND NAME LIKE '%'||#{name}||'%'
+        </if>
+        <if test="researchDirection != null and researchDirection != ''">
+            AND RESEARCH_DIRECTION LIKE '%'||#{researchDirection}||'%'
+        </if>
+        <if test="unitName != null and unitName != ''">
+            AND UNIT_NAME LIKE '%'||#{unitName}||'%'
+        </if>
+        <if test="field != null and field !=''">
+            AND FIELD LIKE '%'||#{field}||'%'
+        </if>
+        <if test="matchStatus != null and matchStatus != ''">
+            AND MATCH_STATUS LIKE '%'||#{matchStatus}||'%'
+        </if>
     </select>
 
     <insert id="insertExpert" parameterType="com.sgcc.bg.lunwen.bean.LwSpecialist">
@@ -107,7 +128,7 @@
         <if test="unitName!=null and unitName!=''">
             UNIT_NAME = #{unitName,jdbcType=VARCHAR},
         </if>
-        <if test="unitNature">
+        <if test="unitNature != null and unitNature!= ''">
             UNIT_NATURE = #{unitNature,jdbcType=VARCHAR},
         </if>
         <if test="position != null and position != ''">
@@ -131,18 +152,147 @@
         <if test="createUser != null and createUser != ''">
             CREATE_USER = #{createUser,jdbcType=VARCHAR},
         </if>
-        <if test="createTime != null and createTime != ''">
-            UPDATE_USER = #{createTime,jdbcType=TIMESTAMP},
-        </if>
         <if test="updateUser != null and updateUser != ''">
-            CREATE_TIME = #{updateUser,jdbcType=VARCHAR},
+            UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
         </if>
-        <if test="updateTime != null and updateTime != ''">
-            UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
-        </if>
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
         <if test="valid != null and valid != ''">
-            VALID = #{valid,jdbcType=VARCHAR}
+            ,VALID = #{valid,jdbcType=VARCHAR}
         </if>
-        WHERE UUID = #{id,,jdbcType=VARCHAR}
+        WHERE UUID = #{uuid,jdbcType=VARCHAR}
     </update>
+
+    <update id="deleteExpert" parameterType="com.sgcc.bg.lunwen.bean.LwSpecialist">
+        UPDATE BG_LW_SPECIALIST SET
+        VALID = '0'
+        WHERE UUID = #{uuid,jdbcType=VARCHAR}
+    </update>
+
+    <select id="paperMap" resultType="com.sgcc.bg.lunwen.bean.PaperVO">
+        SELECT p.UUID AS uuid ,
+                p.PAPER_ID as paperId,
+                p.PAPER_NAME AS paperName,
+                p.YEAR AS year,
+                p.UNIT AS unit,
+                p.AUTHOR AS author,
+                p.JOURNAL AS journal,
+                p.RECOMMEND_UNIT AS recommendUnit,
+                p.PAPER_TYPE AS paperType,
+                p.FIELD AS field,
+                p.SCORE_TABLE_STATUS AS scoreTableStatus,
+                p.SCORE_STATUS AS scoreStatus,
+                p.ALL_STATUS AS allStatus,
+                e.uuid AS eid,
+                e.SPECIALIST_ID AS specialistId,
+                e.SCORE AS score,
+                e.SCORE_STATUS AS eScoreStatus
+        FROM bg_lw_paper p
+        LEFT JOIN bg_lw_paper_match_expert e
+        ON e.paper_id = p.UUID
+       WHERE e.specialist_id = #{uuid,jdbcType=VARCHAR}
+       and p.VALID = '1'
+       and e.VALID = '1'
+       order by e.UPDATE_TIME
+    </select>
+
+    <select id="paperMapPage" resultType="com.sgcc.bg.lunwen.bean.PaperVO">
+        SELECT a.* FROM (
+              SELECT p.UUID AS uuid ,
+                    p.PAPER_ID as paperId,
+                    p.PAPER_NAME AS paperName,
+                    p.YEAR AS year,
+                    p.UNIT AS unit,
+                    p.AUTHOR AS author,
+                    p.JOURNAL AS journal,
+                    p.RECOMMEND_UNIT AS recommendUnit,
+                    p.PAPER_TYPE AS paperType,
+                    p.FIELD AS field,
+                    p.SCORE_TABLE_STATUS AS scoreTableStatus,
+                    p.SCORE_STATUS AS scoreStatus,
+                    p.ALL_STATUS AS allStatus,
+                    e.uuid AS eid,
+                    e.SPECIALIST_ID AS specialistId,
+                    e.SCORE AS score,
+                    e.SCORE_STATUS AS eScoreStatus,
+                    ROWNUM AS ROWNO
+            FROM bg_lw_paper p
+            LEFT JOIN bg_lw_paper_match_expert e
+            ON e.paper_id = p.UUID
+           WHERE e.specialist_id = #{uuid,jdbcType=VARCHAR}
+           and p.VALID = '1'
+           and e.VALID = '1'
+           AND #{end} >= ROWNUM
+            order by e.UPDATE_TIME
+        ) a WHERE a.ROWNO > #{start}
+    </select>
+
+    <select id="specialistAndPaperCount" resultType="java.lang.Integer">
+        SELECT count(*) FROM bg_lw_paper p
+            LEFT JOIN bg_lw_paper_match_expert e
+            ON e.paper_id = p.UUID
+           WHERE e.specialist_id = #{uuid,jdbcType=VARCHAR}
+           and p.VALID = '1'
+           and e.VALID = '1'
+    </select>
+
+    <select id="list" resultType="com.sgcc.bg.lunwen.bean.LwSpecialist">
+        SELECT b.UUID AS uuid,
+        b.NAME AS name,
+        b.ADDRESS AS address,
+        b.UNIT_NAME AS unitName,
+        b.UNIT_NATURE AS unitNature,
+        b.POSITION AS position,
+        b.RESEARCH_DIRECTION AS researchDirection,
+        b.FIELD AS field,
+        b.PHONE AS phone,
+        b.EMAIL AS email,
+        CASE WHEN (b.MATCH_STATUS='1') THEN '已匹配' ELSE '未匹配' END AS matchStatus
+        FROM BG_LW_SPECIALIST b
+        WHERE b.VALID = '1'
+        <if test="name != null and name != ''">
+            AND b.NAME LIKE '%'||#{name}||'%'
+        </if>
+        <if test="researchDirection != null and researchDirection != ''">
+            AND b.RESEARCH_DIRECTION LIKE '%'||#{researchDirection}||'%'
+        </if>
+        <if test="unitName != null and unitName != ''">
+            AND b.UNIT_NAME LIKE '%'||#{unitName}||'%'
+        </if>
+        <if test="field != null and field !=''">
+            AND b.FIELD LIKE '%'||#{field}||'%'
+        </if>
+        <if test="matchStatus != null and matchStatus != ''">
+            AND b.MATCH_STATUS LIKE '%'||#{matchStatus}||'%'
+        </if>
+        order by b.UPDATE_TIME
+    </select>
+
+    <select id="getEmail"  resultType="java.lang.String">
+        SELECT EMAIL FROM BG_LW_SPECIALIST WHERE VALID = '1'
+    </select>
+
+    <insert id="addList" parameterType="java.util.List">
+        INSERT INTO BG_LW_SPECIALIST
+          (UUID, NAME, ADDRESS, UNIT_NAME,UNIT_NATURE,POSITION,RESEARCH_DIRECTION,FIELD, PHONE,
+          EMAIL,MATCH_STATUS,CREATE_USER,CREATE_TIME,UPDATE_USER,UPDATE_TIME,VALID)
+        VALUES
+          <foreach collection="lwSpecialistList" item="specialist" index="index" separator=",">
+              (#{specialist.uuid,jdbcType=VARCHAR},
+              #{specialist.name,jdbcType=VARCHAR},
+              #{specialist.address,jdbcType=VARCHAR},
+              #{specialist.unitName,jdbcType=VARCHAR},
+              #{specialist.unitNature,jdbcType=VARCHAR},
+              #{specialist.position,jdbcType=VARCHAR},
+              #{specialist.researchDirection,jdbcType=VARCHAR},
+              #{specialist.field,jdbcType=VARCHAR},
+              #{specialist.phone,jdbcType=VARCHAR},
+              #{specialist.email,jdbcType=VARCHAR},
+              #{specialist.matchStatus,jdbcType=VARCHAR},
+              #{specialist.createUser,jdbcType=VARCHAR},
+              #{specialist.createTime,jdbcType=TIMESTAMP},
+              #{specialist.updateUser,jdbcType=VARCHAR},
+              #{specialist.updateTime,jdbcType=TIMESTAMP},
+              #{specialist.valid,jdbcType=VARCHAR})
+          </foreach>
+    </insert>
 </mapper>

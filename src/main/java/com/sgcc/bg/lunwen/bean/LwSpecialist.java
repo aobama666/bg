@@ -198,4 +198,26 @@ public class LwSpecialist {
     public void setValid(String valid) {
         this.valid = valid;
     }
+
+    @Override
+    public String toString() {
+        return "LwSpecialist{" +
+                "uuid='" + uuid + '\'' +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", unitName='" + unitName + '\'' +
+                ", unitNature='" + unitNature + '\'' +
+                ", position='" + position + '\'' +
+                ", researchDirection='" + researchDirection + '\'' +
+                ", field='" + field + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", matchStatus='" + matchStatus + '\'' +
+                ", createUser='" + createUser + '\'' +
+                ", createTime=" + createTime +
+                ", updateUser='" + updateUser + '\'' +
+                ", updateTime=" + updateTime +
+                ", valid='" + valid + '\'' +
+                '}';
+    }
 }
