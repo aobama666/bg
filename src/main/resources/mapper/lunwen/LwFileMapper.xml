@@ -51,7 +51,7 @@
         f.file_ext_name fileExtName,
         f.ftp_file_name ftpFileName,
         f.ftp_file_path ftpFilePath,
-        to_char(f.create_time,'YYYY-mm-dd hh24:mm:ss') createTime,
+        to_char(f.create_time,'YYYY-MM-DD HH24:MI:SS') createTime,
         f.file_size fileSize
         from bg_lw_file f
         where 1=1

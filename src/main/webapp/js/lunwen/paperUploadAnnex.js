@@ -40,14 +40,15 @@ uploadAnnex.query = function(){
 
 /* 附件信息-初始化列表界面  */
 uploadAnnex.initDataGrid = function(){
+        var paperUuid = $("#uuid").val();
 	    $("#datagrid").datagrid({
-        url: "/bg/lwPaper/selectPaperAnnex?uuid="+$("#uuid").val(),
+        url: "/bg/lwPaper/selectPaperAnnex?uuid="+paperUuid,
         type: 'POST',
         form: '#queryForm',
         columns: [
             {name: '',style:{width:"2px"}, data: 'id',checkbox:true, forMat:function(row){
                     dataItems[index] = row;//将一行数据放在一个list中
-                    return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.ID)+'"/>';
+                    return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.UUID)+'"/>';
                 }
             },
             {name: '附件名称',style:{width:"120px"}, data: 'FILENAME'},
@@ -59,9 +60,14 @@ uploadAnnex.initDataGrid = function(){
 }
 
 
-/*弹出新增框 */
+/*弹出添加附件框 */
 uploadAnnex.addOperation = function (){
+
     var paperUuid = $("#uuid").val();
+    if(!paperUuid){
+        messager.tip("请保存基本信息后再添加附件",3000);
+        return;
+    }
     var url = "/bg/lwPaper/paperJumpUploadAnnex?paperUuid="+paperUuid;
     layer.open({
         type:2,
@@ -70,6 +76,9 @@ uploadAnnex.addOperation = function (){
         fixed:false,//不固定
         maxmin:true,
         content:url,
+        end: function(){
+            uploadAnnex.initDataGrid();
+        }
     });
 }
 
@@ -101,11 +110,8 @@ uploadAnnex.addEvent = function (){
                     data: formData,
                     success: function (data) {
                         if(data.success=="true"){
-                            // window.parent.location.reload();
-                            // var closeIndex = parent.layer.getFrameIndex(window.name);
-                            parent.layer.closeAll();
                             messager.tip(data.msg,5000);
-                            uploadAnnex.initDataGrid();
+                            parent.layer.closeAll();
                         }else{
                             messager.tip(data.msg,5000);
                             return;
@@ -126,7 +132,7 @@ uploadAnnex.addClose = function () {
 uploadAnnex.delEvent = function(){
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        messager.tip("请选择要操作的数据",1000);
+        messager.tip("请选择要删除的数据",1000);
         return;
     }else if(checkedItems.length>1){
         messager.tip("每次只能删除一条数据",2000);
@@ -136,7 +142,7 @@ uploadAnnex.delEvent = function(){
         function(r){
             if(r){
                 $.ajax({
-                    url: "/bg/lwPaper/paperDelAnnex?uuid="+checkedItems[0].UUID,//删除
+                    url: "/bg/lwPaper/paperDelAnnex?uuid="+checkedItems[0].UUID+"&ftpFilePath="+checkedItems[0].FTPFILEPATH,//删除
                     type: "post",
                     dataType:"json",
                     contentType: 'application/json',
@@ -144,10 +150,10 @@ uploadAnnex.delEvent = function(){
                     success: function (data) {
                         if(data.success == "true"){
                             messager.tip(data.msg,3000);
-                            paperList.query();
+                            uploadAnnex.query();
                         }else{
                             messager.tip(data.msg,3000);
-                            paperList.query();
+                            uploadAnnex.query();
                         }
                     }
                 });

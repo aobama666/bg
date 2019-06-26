@@ -151,6 +151,7 @@ public class LwPaperController {
         //新增操作
         String uuid = Rtext.getUUID();
         lwPaper.setUuid(uuid);
+        lwPaper.setCreateUser(getLoginUserUUID());
         lwPaperService.addLwPaper(lwPaper);
         log.info(getLoginUser()+"insert lwPaper success,info:"+lwPaper.toString());
         rw = new ResultWarp(ResultWarp.SUCCESS ,"添加论文成功");
@@ -185,8 +186,7 @@ public class LwPaperController {
     public String paperToUpdate(@RequestBody Map<String, Object> paramsMap){
         ResultWarp rw = null;
         LwPaper lwPaper = mapToLwPaper(paramsMap);
-        String userName = webUtils.getUsername();
-        lwPaper.setUpdateUser(userName);
+        lwPaper.setUpdateUser(getLoginUserUUID());
         lwPaper.setUpdateTime(new Date());
         lwPaper.setUuid(paramsMap.get("UUID").toString());
         lwPaperService.updateLwPaper(lwPaper);
@@ -457,13 +457,27 @@ public class LwPaperController {
                 log.info(getLoginUser()+"localPath:"+localPath+",length="+fileLength);
             }
         }
+        //文件大小
+        Double fileSize = Double.valueOf(fileLength) / 1024;
+
+        //处理ftp文件名
+        String fileNameBefore = fileName.substring(0,fileName.lastIndexOf("."));
+        String fileNameAfter = fileName.substring(fileName.lastIndexOf(".")+1,fileName.length());
+        String fileNameUUid = Rtext.getUUID();
+        String ftpFileName = fileNameUUid+"."+fileNameAfter;
+
+        //修改文件名
+        File localFile = new File(localPath);
+        File newFtpFile = new File(path+ftpFileName);
+        localFile.renameTo(newFtpFile);
+        //重新声明修改名称后的文件对象
+        newFtpFile = new File(path+ftpFileName);
 
         //上传至ftp
-        FtpUtils.uploadFile(new File(localPath),FtpUtils.PaperUploadPath);
-        String[] fileNameS = fileName.split("\\.");
-        String fileNameBefore = fileNameS[0];
-        String fileNameAfter = fileNameS[1];
-        String fileNameUUid = Rtext.getUUID();
+        FtpUtils.uploadFile(newFtpFile,FtpUtils.PaperUploadPath);
+
+        //删除原路径文件
+        newFtpFile.delete();
 
         //保存附件信息至数据库
         LwFile lwFile = new LwFile();
@@ -472,10 +486,10 @@ public class LwPaperController {
         lwFile.setBussinessId(paperUuid);
         lwFile.setBussinessTable(LwPaperConstant.BUSSINESSTABLE);
         lwFile.setFileExtName(fileNameAfter);
-        lwFile.setFtpFileName(fileNameUUid+"."+fileNameAfter);
-        lwFile.setFtpFilePath(FtpUtils.PaperUploadPath+fileNameUUid+"."+fileNameAfter);
+        lwFile.setFtpFileName(ftpFileName);
+        lwFile.setFtpFilePath(FtpUtils.PaperUploadPath+ftpFileName);
         lwFile.setBussinessModule(LwPaperConstant.BUSSINESSMODULE);
-        lwFile.setFileSize(fileLength+"B");
+        lwFile.setFileSize(fileSize+"KB");
         lwFile.setCreateUser(getLoginUserUUID());
         lwFile.setCreateTime(new Date());
         lwFile.setValid(LwPaperConstant.VALID_YES);

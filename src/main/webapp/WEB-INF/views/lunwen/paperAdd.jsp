@@ -26,7 +26,7 @@
 				<span title = "论文题目"><b class="mustWrite">*</b>论文题目</span>
 			</td>
 			<td class="addInputStyle">
-				<input type = "text" style="display: none"  id = "uuid" name="uuid">
+				<input type = "text" style="display: none" id = "uuid"  name="uuid">
 				<input type="text"  id="paperName"  name="paperName"  class="validNull"  len="20"   content="论文题目" title="必填项"/>
 			</td>
 			<td>
@@ -95,22 +95,16 @@
 		<tr>
 			<hr/>
 		</tr>
-
-		<tr>
-			<td colspan="4">
-				<span title = "论文附件信息"><b class="mustWrite">*</b>附件信息
-					<div style="float: right">
-						<button type="button" class="btn" onclick="uploadAnnex.addOperation()">新增附件</button>
-						<button type="button" class="btn" onclick="uploadAnnex.delEvent()">删除附件</button>
-					</div>
-				</span>
-			</td>
-		</tr>
-
 	</table>
-	<div class="tabbable active" style="width: 94%;margin-left: 3%;">
+
+	<div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 2%">
+        <div style="float: right">
+            <button type="button" class="btn" onclick="uploadAnnex.addOperation()">新增附件</button>
+            <button type="button" class="btn" onclick="uploadAnnex.delEvent()">删除附件</button>
+        </div>
+        <h3>附件信息</h3>
+
 		<div id="datagrid"></div>
-		<%--<div class="tablepage"></div>--%>
 	</div>
 
 	<div class="btnContent">

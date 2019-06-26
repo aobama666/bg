@@ -65,6 +65,7 @@
 			<div class='btn right deleteButton' onclick="roomList.delEvent()" >下载模板</div>
 			<div class='btn right deleteButton' onclick="roomList.delEvent()" >附件批量导入</div>
 			<div class='btn right deleteButton' onclick="roomList.delEvent()" >导入</div>
+			<div class='btn right deleteButton' onclick="paperList.export()" >导出</div>
 			<div class='btn right deleteButton' onclick="paperList.updateOperation()" >修改</div>
 			<div class='btn right deleteButton' onclick="paperList.addOperation()" >新增</div>
 			<div class='btn right deleteButton' onclick="roomList.delEvent()" >自动匹配</div>

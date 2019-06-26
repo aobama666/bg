@@ -107,7 +107,7 @@
 				<span class="detailsLeft"> ${ALLSTATUSDETAIL}</span>
 			</td>
 		</tr>
-		<tr>
+		<%--<tr>
 			<td>
 				<span title = "创建用户">创建用户</span>
 			</td>
@@ -144,20 +144,16 @@
 			<td class="addInputStyle">
 				<span class="detailsLeft"> ${YEAR}</span>
 			</td>
-		</tr>
+		</tr>--%>
 		<tr>
 			<hr/>
 		</tr>
-		<tr>
-			<td colspan="4">
-					<span title = "论文附件信息">附件信息</span>
-			</td>
-		</tr>
 	</table>
 
-	<div class="tabbable active" style="width: 94%;margin-left: 3%">
+	<div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 2%">
+		<h3>附件信息</h3>
+
 		<div id="datagrid"></div>
-		<%--<div class="tablepage"></div>--%>
 	</div>
 
 	<div class="btnContent">

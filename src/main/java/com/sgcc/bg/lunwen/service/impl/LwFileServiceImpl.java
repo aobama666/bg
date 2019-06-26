@@ -24,7 +24,7 @@ public class LwFileServiceImpl implements LwFileService {
 
     @Override
     public Integer delLwFile(String uuid) {
-        return lwFileMapper.delLwFile(uuid);
+        return lwFileMapper.delLwFile(uuid,LwPaperConstant.VALID_NO);
     }
 
     @Override

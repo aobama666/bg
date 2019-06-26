@@ -7,6 +7,7 @@ import com.sgcc.bg.lunwen.bean.LwPaper;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.mapper.LwPaperMapper;
 import com.sgcc.bg.lunwen.service.LwPaperService;
+import com.sgcc.bg.model.HRUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,10 +48,8 @@ public class LwPaperServiceImpl implements LwPaperService {
         before.append(paperId);
         lwPaper.setPaperId(before.toString());
 
-        String userName = webUtils.getUsername();
         //初始化时间，创建人，各种状态
         lwPaper.setYear(DateUtil.getYear());
-        lwPaper.setCreateUser(userName);
         lwPaper.setCreateTime(new Date());
         lwPaper.setScoreTableStatus(LwPaperConstant.SCORE_TABLE_OFF);
         lwPaper.setScoreStatus(LwPaperConstant.SCORE_STATUS_NO);

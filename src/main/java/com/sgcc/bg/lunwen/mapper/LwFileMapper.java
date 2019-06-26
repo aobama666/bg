@@ -23,7 +23,7 @@ public interface LwFileMapper {
      * @param uuid
      * @return
      */
-    Integer delLwFile(@Param("uuid") String uuid);
+    Integer delLwFile(@Param("uuid") String uuid,@Param("valid") String valid);
 
     //查询对应附件，根据论文题目，或者论文uuid
     List<Map<String, Object>> selectLwFile(
