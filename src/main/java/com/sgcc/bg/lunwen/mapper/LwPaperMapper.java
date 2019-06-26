@@ -15,14 +15,14 @@ public interface LwPaperMapper {
      * @param lwPaper
      * @return
      */
-    public Integer addLwPaper(LwPaper lwPaper);
+    Integer addLwPaper(LwPaper lwPaper);
 
     /**
      * 修改论文信息
      * @param lwPaper
      * @return
      */
-    public Integer updateLwPaper(LwPaper lwPaper);
+    Integer updateLwPaper(LwPaper lwPaper);
 
     /**
      * 修改生成打分表状态
@@ -30,7 +30,7 @@ public interface LwPaperMapper {
      * @param scoreTableStatus
      * @return
      */
-    public Integer updateScoreTableStatus(
+    Integer updateScoreTableStatus(
             @Param("uuid")String uuid,
             @Param("scoreTableStatus") String scoreTableStatus
     );
@@ -41,7 +41,7 @@ public interface LwPaperMapper {
      * @param scoreTableStatus
      * @return
      */
-    public Integer updateScoreStatus(
+    Integer updateScoreStatus(
             @Param("uuid")String uuid,
             @Param("scoreTableStatus")String scoreTableStatus
     );
@@ -52,7 +52,7 @@ public interface LwPaperMapper {
      * @param allStatus
      * @return
      */
-    public Integer updateAllStatus(
+    Integer updateAllStatus(
             @Param("uuid")String uuid,
             @Param("allStatus") String allStatus
     );
@@ -62,18 +62,25 @@ public interface LwPaperMapper {
      * @param uuid,paperName
      * @return
      */
-    public Map<String, Object> findPaper(
+    Map<String, Object> findPaper(
             @Param("uuid")String uuid,
             @Param("paperName") String paperName,
             @Param("valid") String valid
     );
 
     /**
+     * 查找当前对应类型的最大编号
+     * @param paperType
+     * @return
+     */
+    String maxPaperId(@Param("paperType") String paperType);
+
+    /**
      * 删除论文信息，逻辑删除，单纯修改有效状态
       * @param uuid
      * @return
      */
-    public Integer delLwPaper(
+    Integer delLwPaper(
             @Param("uuid") String uuid,
             @Param("valid") String valid
     );
@@ -91,7 +98,7 @@ public interface LwPaperMapper {
      * @param field
      * @return
      */
-    public List<Map<String, Object>> selectLwPaper(
+    List<Map<String, Object>> selectLwPaper(
             @Param("pageStart") Integer pageStart,
             @Param("pageEnd") Integer pageEnd,
             @Param("paperName") String paperName,
@@ -105,7 +112,7 @@ public interface LwPaperMapper {
             @Param("valid") String valid
     );
 
-    public Integer selectLwPaperCount(
+    Integer selectLwPaperCount(
             @Param("paperName") String paperName,
             @Param("paperId") String paperId,
             @Param("year") String year,

@@ -21,12 +21,13 @@
 </head>
 <body>
 
-	<table class="visitOperate tableStyle specialTable">
+	<table class="visitOperate tableStyle specialTable" >
 		<tr>
 			<td>
 				<span title = "论文题目">论文题目</span>
 			</td>
 			<td class="addInputStyle">
+				<input type = "text" style="display: none" value = "${UUID}"  class="validNull"  id = "uuid" name="uuid">
 				<span class="detailsLeft"> ${PAPERNAME}</span>
 			</td>
 			<td>
@@ -106,7 +107,7 @@
 				<span class="detailsLeft"> ${ALLSTATUSDETAIL}</span>
 			</td>
 		</tr>
-		<tr>
+		<%--<tr>
 			<td>
 				<span title = "创建用户">创建用户</span>
 			</td>
@@ -143,20 +144,16 @@
 			<td class="addInputStyle">
 				<span class="detailsLeft"> ${YEAR}</span>
 			</td>
-		</tr>
+		</tr>--%>
 		<tr>
 			<hr/>
 		</tr>
-		<tr>
-			<td colspan="4">
-				<span title = "附件信息">附件信息</span>
-			</td>
-		</tr>
 	</table>
 
-	<div class="" style="width: 94%;margin-left: 3%">
+	<div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 2%">
+		<h3>附件信息</h3>
+
 		<div id="datagrid"></div>
-		<%--<div class="tablepage"></div>--%>
 	</div>
 
 	<div class="btnContent">

@@ -91,6 +91,11 @@
         where UUID  = #{uuid}
     </update>
 
+    <!--某类型的当前最大编号-->
+    <select id="maxPaperId" resultType="java.lang.String">
+        select MAX(paper_id)  from bg_lw_paper where paper_type = #{paperType}
+    </select>
+
     <!--查找某条论文-->
     <select id="findPaper" resultType="java.util.Map">
        select  p.uuid               uuid,
@@ -111,8 +116,6 @@
                (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='score_status' and vaild=1 and code= p.score_status)  as scoreStatusDetail,
                (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='score_table_status' and vaild=1 and code= p.score_table_status)  as scoreTableStatusDetail,
                (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_all_status' and vaild=1 and code= p.all_status)  as allStatusDetail,
-               p.create_user        createUser,
-               p.update_user        updateUser,
                TO_CHAR(p.create_time, 'YYYY-MM-DD HH24:MI')    createTime,
                TO_CHAR(p.update_time, 'YYYY-MM-DD HH24:MI')    updateTime,
                p.valid
@@ -131,7 +134,8 @@
 
     <!--按条件查询某批论文信息-->
     <select id="selectLwPaper" resultType="java.util.Map">
-        select *
+        select * from(
+        select p.*,ROWNUM as r
         from (select p.uuid,
             p.paper_id paperId,
             p.paper_name paperName,
@@ -180,8 +184,10 @@
                 and p.paper_type = #{paperType}
             </if>
             and valid = #{valid}
-        AND #{pageEnd} >= ROWNUM
-        ) p WHERE p.rown > #{pageStart}
+            order  by p.paper_id desc
+        ) p
+        where  #{pageEnd} >= ROWNUM
+        ) where r > #{pageStart}
     </select>
 
     <!--按条件查询某批论文信息总数，为上面那条sql提供总数，以便分页，total-->

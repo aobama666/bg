@@ -9,14 +9,17 @@ public class LwPaperConstant {
      * 学术类
      */
     public static final String LW_TYPE_X = "1";
+    public static final String XUESHU = "X";
     /**
      * 技术类
      */
     public static final String LW_TYPE_J = "2";
+    public static final String JISHU = "J";
     /**
      * 综述类
      */
     public static final String LW_TYPE_Z = "3";
+    public static final String ZONGSHU = "Z";
 
 
     //打分表生成状态
@@ -81,4 +84,14 @@ public class LwPaperConstant {
      * 无效
      */
     public static final String VALID_NO = "0";
+
+    /**
+     * 附件上传对应业务表名
+     */
+    public static final String BUSSINESSTABLE = "bg_lw_paper";
+
+    /**
+     * 附件上传对应业务模块
+     */
+    public static final String BUSSINESSMODULE = "lunwen";
 }

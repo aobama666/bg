@@ -1,6 +1,8 @@
 package com.sgcc.bg.lunwen.service;
 
 import com.sgcc.bg.lunwen.bean.LwPaper;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +31,8 @@ public interface LwPaperService {
             String uuid,
             String paperName
     );
+
+    String maxPaperId(String paperType);
 
     Integer delLwPaper(
             String uuid

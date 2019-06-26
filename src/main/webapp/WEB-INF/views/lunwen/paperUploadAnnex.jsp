@@ -27,6 +27,7 @@
 				<span title = "附件"><b class="mustWrite">*</b>附件</span>
 			</td>
 			<td class="addInputStyle">
+				<input type = "text" style="display: none" value="${paperUuid}" id = "paperUuid" name="paperUuid">
 				<input type="file"  id="file"  name="file"  class="validNull"  len="50"   content="附件" title="必填项"/>
 			</td>
 		</tr>
