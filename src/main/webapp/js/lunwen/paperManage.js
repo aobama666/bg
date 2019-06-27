@@ -108,7 +108,7 @@ paperList.export = function () {
 
 
 
-/*查看详情*/
+/*查看论文详情*/
 paperList.forDetails = function (id){
 		var url = "/bg/lwPaper/detailLwPaper?uuid="+id;
 			layer.open({
@@ -140,7 +140,7 @@ paperList.addOperation = function (){
     });
 }
 
-/*新增*/
+/*新增论文*/
 paperList.addEvent = function (){
     //验证必填项是否为空
     var validNull = dataForm.validNullable();
@@ -214,7 +214,7 @@ paperList.updateOperation = function(){
 }
 
 
-/*修改*/
+/*修改论文基本信息*/
 paperList.updateEvent = function (){
     //验证必填项是否为空
     var validNull = dataForm.validNullable();
@@ -228,7 +228,7 @@ paperList.updateEvent = function (){
     }
     //获取form表单内容
     var paperDetailFormData = roomAddInfoCommon.getFormDataInfo();
-    $.messager.confirm( "修改提示", "确认修改该数据吗",
+    $.messager.confirm( "修改提示", "确认修改该论文吗",
         function(r){
             if(r){
                 $.ajax({
@@ -254,7 +254,7 @@ paperList.updateEvent = function (){
     );
 }
 
-/*删除方法*/
+/*删除论文*/
 paperList.delEvent = function(){
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
@@ -265,7 +265,7 @@ paperList.delEvent = function(){
 			return;
 		}
 		//不在前台做是否能删除的判断，在后台判断，记录日志，同时比前台更safe
-		$.messager.confirm( "删除提示", "确认删除选中数据吗",
+		$.messager.confirm( "删除提示", "确认删除选中论文吗",
 			function(r){
 				if(r){
 					$.ajax({
@@ -288,5 +288,99 @@ paperList.delEvent = function(){
 			}
 		);
 }
+
+
+/**
+ * 下载论文信息基础模板
+ */
+paperList.downLoadTempLate = function () {
+    document.forms[0].action = "/bg/lwPaper/download_excel_temp";
+    document.forms[0].submit();
+}
+
+
+/**
+ * 下载选中附件
+ */
+paperList.downloadAnnex = function (uuid) {
+    $("#annexUuid").val(uuid);
+    document.forms[0].action = "/bg/lwPaper/downloadAnnex";
+    document.forms[0].submit();
+}
+
+/**
+ * 生成打分表
+ */
+paperList.generateScoreTable = function () {
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length==0){
+        messager.tip("请选择要操作的数据",1000);
+        return;
+    }else if(checkedItems.length>1){
+        messager.tip("每次只能操作一条数据",2000);
+        return;
+    }
+    //不在前台做是否能删除的判断，在后台判断，记录日志，同时比前台更safe
+    $.messager.confirm( "生成提示", "确认生成选中论文打分表吗",
+        function(r){
+            if(r){
+                $.ajax({
+                    url: "/bg/lwPaper/generateScoreTable?uuid="+checkedItems[0].UUID,
+                    type: "post",
+                    dataType:"json",
+                    contentType: 'application/json',
+                    data: '',
+                    success: function (data) {
+                        if(data.success == "true"){
+                            messager.tip(data.msg,3000);
+                            paperList.query();
+                        }else{
+                            messager.tip(data.msg,3000);
+                            paperList.query();
+                        }
+                    }
+                });
+            }
+        }
+    );
+}
+
+/**
+ * 撤回打分表
+ */
+paperList.withdrawScoreTable = function () {
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length==0){
+        messager.tip("请选择要操作的数据",1000);
+        return;
+    }else if(checkedItems.length>1){
+        messager.tip("每次只能操作一条数据",2000);
+        return;
+    }
+    //不在前台做是否能删除的判断，在后台判断，记录日志，同时比前台更safe
+    $.messager.confirm( "撤回提示", "确认撤回选中论文打分表吗",
+        function(r){
+            if(r){
+                $.ajax({
+                    url: "/bg/lwPaper/withdrawScoreTable?uuid="+checkedItems[0].UUID,
+                    type: "post",
+                    dataType:"json",
+                    contentType: 'application/json',
+                    data: '',
+                    success: function (data) {
+                        if(data.success == "true"){
+                            messager.tip(data.msg,3000);
+                            paperList.query();
+                        }else{
+                            messager.tip(data.msg,3000);
+                            paperList.query();
+                        }
+                    }
+                });
+            }
+        }
+    );
+}
+
 
 
