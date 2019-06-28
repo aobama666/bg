@@ -51,7 +51,11 @@ uploadAnnex.initDataGrid = function(){
                     return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.UUID)+'"/>';
                 }
             },
-            {name: '附件名称',style:{width:"120px"}, data: 'FILENAME'},
+            {name: '附件名称',style:{width:"120px"}, data: 'FILENAME',forMat:function(row){
+                    return "<a title = '点击下载附件' style='width:250px;" +
+                        " text-align:left;'id='\"+row.UUID+\"'" +
+                        " href = 'javascript:void(0)' onclick = paperList.downloadAnnex('"+row.UUID+"')>"+row.FILENAME+"</a>";
+            }},
             {name: '文件格式',style:{width:"50px"}, data: 'FILEEXTNAME'},
             {name: '文件大小', style:{width:"50px"},data: 'FILESIZE'},
             {name: '上传时间', style:{width:"120px"},data: 'CREATETIME'}
@@ -161,3 +165,5 @@ uploadAnnex.delEvent = function(){
         }
     );
 }
+
+

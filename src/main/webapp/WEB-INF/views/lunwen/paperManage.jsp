@@ -56,21 +56,20 @@
 	<!-- end    查询条件 -->
 
 	<hr/>
-
 	<!-- start 列表展示 -->
 	<div>
 		<!--  新增  修改  删除 功能按钮 -->
 		<div id="funcBtn" style="height: 35px;float:right">
-			<div class='btn right deleteButton' onclick="paperList.delEvent()" >删除</div>
-			<div class='btn right deleteButton' onclick="roomList.delEvent()" >下载模板</div>
-			<div class='btn right deleteButton' onclick="roomList.delEvent()" >附件批量导入</div>
-			<div class='btn right deleteButton' onclick="roomList.delEvent()" >导入</div>
+			<div class='btn right deleteButton' onclick="paperList.downLoadTempLate()" >下载模板</div>
+			<div class='btn right deleteButton' onclick="paperList.export()" >附件批量导入</div>
+			<div class='btn right deleteButton' onclick="paperList.export()" >导入</div>
 			<div class='btn right deleteButton' onclick="paperList.export()" >导出</div>
+			<div class='btn right deleteButton' onclick="paperList.delEvent()" >删除</div>
 			<div class='btn right deleteButton' onclick="paperList.updateOperation()" >修改</div>
 			<div class='btn right deleteButton' onclick="paperList.addOperation()" >新增</div>
-			<div class='btn right deleteButton' onclick="roomList.delEvent()" >自动匹配</div>
-			<div class='btn right deleteButton' onclick="roomList.delEvent()" >生成打分表</div>
-			<div class='btn right deleteButton' onclick="roomList.delEvent()" >撤回打分表</div>
+			<div class='btn right deleteButton' onclick="paperList.export()" >自动匹配</div>
+			<div class='btn right deleteButton' onclick="paperList.generateScoreTable()" >生成打分表</div>
+			<div class='btn right deleteButton' onclick="paperList.withdrawScoreTable()" >撤回打分表</div>
 		</div>
 		<!-- 学术技术综述分类按钮 -->
 		<div class="grid-title">

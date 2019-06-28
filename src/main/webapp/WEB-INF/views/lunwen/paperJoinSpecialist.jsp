@@ -31,7 +31,7 @@
 
 
 </head>
-<body>
+<body style="background-color: white">
 <div class="page-header-sl">
 	<h5>上传Excel</h5>
 	<div class="button-box">

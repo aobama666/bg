@@ -28,6 +28,16 @@ public class LwFileServiceImpl implements LwFileService {
     }
 
     @Override
+    public Map<String, Object> findFile(String uuid) {
+        return lwFileMapper.findLwFile(uuid);
+    }
+
+    @Override
+    public Map<String, Object> findLwFileForFileName(String fileName, String fileExtName) {
+        return lwFileMapper.findLwFileForFileName(fileName,fileExtName,LwPaperConstant.VALID_YES);
+    }
+
+    @Override
     public List<Map<String, Object>> selectLwFile(String bussinessId, String bussinessTable, String valid) {
         return lwFileMapper.selectLwFile(bussinessId,bussinessTable, valid);
     }
