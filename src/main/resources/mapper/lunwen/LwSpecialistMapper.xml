@@ -18,6 +18,7 @@
             b.FIELD AS field,
             b.PHONE AS phone,
             b.EMAIL AS email,
+            b.UPDATE_TIME，
             b.MATCH_STATUS AS matchStatus,
             ROWNUM AS ROWNO
             FROM BG_LW_SPECIALIST b
@@ -182,6 +183,8 @@
                 p.SCORE_TABLE_STATUS AS scoreTableStatus,
                 p.SCORE_STATUS AS scoreStatus,
                 p.ALL_STATUS AS allStatus,
+                p.WEIGHTING_FRACTION AS weightingFraction,
+                p.AVERAGE_FRACTION AS averageFraction,
                 e.uuid AS eid,
                 e.SPECIALIST_ID AS specialistId,
                 e.SCORE AS score,
@@ -210,6 +213,8 @@
                     p.SCORE_TABLE_STATUS AS scoreTableStatus,
                     p.SCORE_STATUS AS scoreStatus,
                     p.ALL_STATUS AS allStatus,
+                    p.WEIGHTING_FRACTION AS weightingFraction,
+                    p.AVERAGE_FRACTION AS averageFraction,
                     e.uuid AS eid,
                     e.SPECIALIST_ID AS specialistId,
                     e.SCORE AS score,
@@ -295,4 +300,36 @@
               #{specialist.valid,jdbcType=VARCHAR})
           </foreach>
     </insert>
+
+    <select id="paperSpecialist" resultType="java.util.Map">
+        SELECT s.uuid,
+                s.name
+        FROM BG_LW_PAPER_MATCH_EXPERT e
+        LEFT JOIN BG_LW_SPECIALIST s
+        ON e.SPECIALIST_ID = s.UUID
+        WHERE e.VALID = '1'
+        AND  s.VALID = '1'
+        AND e.PAPER_ID = #{uuid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="listIds" resultType="com.sgcc.bg.lunwen.bean.LwSpecialist">
+        SELECT UUID AS uuid,
+            NAME AS name,
+            ADDRESS AS address,
+            UNIT_NAME AS unitName,
+            UNIT_NATURE AS unitNature,
+            POSITION AS position,
+            RESEARCH_DIRECTION AS researchDirection,
+            FIELD AS field,
+            PHONE AS phone,
+            EMAIL AS email,
+            MATCH_STATUS AS matchStatus
+            FROM BG_LW_SPECIALIST
+            WHERE VALID = '1'
+            AND UUID IN (
+            <foreach collection="strings"  item="string" index="index" separator=",">
+                #{string,jdbcType=VARCHAR}
+            </foreach>
+          )
+    </select>
 </mapper>

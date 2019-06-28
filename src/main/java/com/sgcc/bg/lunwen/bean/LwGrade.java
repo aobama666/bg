@@ -21,7 +21,7 @@ public class LwGrade {
     /**
      * 二级指标分数
      */
-    private String score;
+    private Double score;
     /**
      * 创建用户
      */
@@ -68,11 +68,11 @@ public class LwGrade {
         this.ruleId = ruleId;
     }
 
-    public String getScore() {
+    public Double getScore() {
         return score;
     }
 
-    public void setScore(String score) {
+    public void setScore(Double score) {
         this.score = score;
     }
 

@@ -1,6 +1,7 @@
 package com.sgcc.bg.lunwen.mapper;
 
 import com.sgcc.bg.lunwen.bean.LwPaper;
+import com.sgcc.bg.lunwen.bean.PaperComprehensiveVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -124,4 +125,30 @@ public interface LwPaperMapper {
             @Param("valid") String valid
     );
 
+    List<PaperComprehensiveVO> paperComprehensiveVOList(@Param("year") String year,
+                                                        @Param("paperName")String paperName,
+                                                        @Param("author")String author,
+                                                        @Param("paperId")String paperId,
+                                                        @Param("start")int start,
+                                                        @Param("end")int end);
+
+    /**
+     * 查全部
+     * @param year
+     * @param paperName
+     * @param author
+     * @param paperId
+     * @return
+     */
+    List<PaperComprehensiveVO> outPaperComprehensiveVOAll(@Param("year") String year,
+                                                          @Param("paperName")String paperName,
+                                                          @Param("author")String author,
+                                                          @Param("paperId")String paperId);
+
+    /**
+     * 根据ids查
+     * @param strings
+     * @return
+     */
+    List<PaperComprehensiveVO> outPaperComprehensiveVOIds(@Param("strings") String[] strings);
 }

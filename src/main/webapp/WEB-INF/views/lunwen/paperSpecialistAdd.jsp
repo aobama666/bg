@@ -32,6 +32,7 @@
 		<div class='content_top'>参观预定审请</div>	  
 	</div> -->
 	<!-- end  头部 -->
+	<div style="height: 50px;width: 100%"></div>
 	<table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td>

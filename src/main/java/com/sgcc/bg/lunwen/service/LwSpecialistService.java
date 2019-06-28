@@ -53,7 +53,7 @@ public interface LwSpecialistService {
      * @param field
      * @param matchStatus
      */
-    List<LwSpecialist> exportSelectedItems(String name, String researchDirection, String unitName, String field, String matchStatus, HttpServletResponse response);
+    List<LwSpecialist> exportSelectedItems(String name, String researchDirection, String unitName, String field, String matchStatus, String ids,HttpServletResponse response);
 
     /**
      * 解析上传的批量录入excel表格
