@@ -94,4 +94,9 @@ public class LwPaperConstant {
      * 附件上传对应业务模块
      */
     public static final String BUSSINESSMODULE = "lunwen";
+
+    /**
+     * 附件上传本地临时路径
+     */
+    public static final String ANNEX_UPLOAD_LOCAL_PATH = "\\upload\\lunwen\\";
 }

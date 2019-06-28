@@ -20,6 +20,10 @@
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+<form action="">
+	<input type = "text" style="display: none" value="" id = "annexUuid" name="annexUuid">
+</form>
+
 
 	<table class="visitOperate tableStyle specialTable" >
 		<tr>

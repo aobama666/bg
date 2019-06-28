@@ -59,4 +59,37 @@
         and f.business_table = #{bussinessTable}
         and f.valid = #{valid}
     </select>
+
+    <select id="findLwFile" resultType="java.util.Map">
+        select
+        f.uuid uuid,
+        f.file_name fileName,
+        f.business_id businessId,
+        f.file_ext_name fileExtName,
+        f.ftp_file_name ftpFileName,
+        f.ftp_file_path ftpFilePath,
+        to_char(f.create_time,'YYYY-MM-DD HH24:MI:SS') createTime,
+        f.file_size fileSize
+        from bg_lw_file f
+        where 1=1
+        and f.uuid = #{uuid}
+    </select>
+
+
+    <select id="findLwFileForFileName" resultType="java.util.Map">
+        select
+        f.uuid uuid,
+        f.file_name fileName,
+        f.business_id businessId,
+        f.file_ext_name fileExtName,
+        f.ftp_file_name ftpFileName,
+        f.ftp_file_path ftpFilePath,
+        to_char(f.create_time,'YYYY-MM-DD HH24:MI:SS') createTime,
+        f.file_size fileSize
+        from bg_lw_file f
+        where 1=1
+        and f.file_name = #{fileName}
+        and f.file_ext_name = #{fileExtName}
+        and f.valid = #{valid}
+    </select>
 </mapper>
