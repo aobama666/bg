@@ -3,8 +3,11 @@ package com.sgcc.bg.lunwen.service.impl;
 import com.sgcc.bg.common.*;
 import com.sgcc.bg.lunwen.bean.LwSpecialist;
 import com.sgcc.bg.lunwen.bean.PaperVO;
+import com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper;
 import com.sgcc.bg.lunwen.mapper.LwSpecialistMapper;
 import com.sgcc.bg.lunwen.service.LwSpecialistService;
+import com.sgcc.bg.model.HRUser;
+import com.sgcc.bg.service.UserService;
 import com.sgcc.bg.service.impl.BgNonProjectServiceImpl;
 import com.sgcc.bg.service.impl.StaffWorkbenchServiceImpl;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -27,12 +30,18 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
 
     @Autowired
     private LwSpecialistMapper lwSpecialistMapper;
+
+    @Autowired
+    private LwPaperMatchSpecialistMapper lwPaperMatchSpecialistMapper;
+
     @Autowired
     private WebUtils webUtils;
 
-    private static Logger bgServiceLog =  LoggerFactory.getLogger(BgNonProjectServiceImpl.class);
+    @Autowired
+    private UserService userService;
 
-    private static Logger SWServiceLog =  LoggerFactory.getLogger(StaffWorkbenchServiceImpl.class);
+    private static Logger lwServiceLog =  LoggerFactory.getLogger(LwSpecialistServiceImpl.class);
+
 
 
     @Override
@@ -47,8 +56,10 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
         lwSpecialist.setUuid(uuid);
         lwSpecialist.setCreateTime(new Date());
         lwSpecialist.setUpdateTime(new Date());
-        lwSpecialist.setCreateUser(webUtils.getUsername());
-        lwSpecialist.setUpdateUser(webUtils.getUsername());
+        String userName = webUtils.getUsername();
+        HRUser user = userService.getUserByUserName(userName);
+        lwSpecialist.setCreateUser(user.getUserId());
+        lwSpecialist.setUpdateUser(user.getUserId());
         lwSpecialist.setValid("1");
         lwSpecialist.setMatchStatus("0");
         int i = lwSpecialistMapper.insertExpert(lwSpecialist);
@@ -63,7 +74,9 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
 
     @Override
     public int updateExpert(LwSpecialist lwSpecialist) {
-        lwSpecialist.setUpdateUser(webUtils.getUsername());
+        String userName = webUtils.getUsername();
+        HRUser user = userService.getUserByUserName(userName);
+        lwSpecialist.setUpdateUser(user.getUserId());
         lwSpecialist.setUpdateTime(new Date());
         int i = lwSpecialistMapper.updateExpert(lwSpecialist);
         return i;
@@ -89,17 +102,12 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
     @Override
     public List<PaperVO> paperMap(String uuid) {
         List<PaperVO> paperMap = lwSpecialistMapper.paperMap(uuid);
-        for(PaperVO paperVO : paperMap){
-            if(paperVO.getAllStatus()!=null && paperVO.getAllStatus()!="" && paperVO.getAllStatus().equals("6")){
-
-            }
-        }
         return paperMap;
     }
 
     @Override
     public List<PaperVO> paperMapPage(String uuid, int start, int end) {
-        List<PaperVO>paperMapPage = lwSpecialistMapper.paperMapPage(uuid,start,end);
+        List<PaperVO> paperMapPage = lwSpecialistMapper.paperMapPage(uuid,start,end);
         return paperMapPage;
     }
 
@@ -110,8 +118,20 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
     }
 
     @Override
-    public List<LwSpecialist> exportSelectedItems(String name, String researchDirection, String unitName, String field, String matchStatus,HttpServletResponse response) {
-        List<LwSpecialist> list = lwSpecialistMapper.list(name,researchDirection,unitName,field,matchStatus);
+    public List<LwSpecialist> exportSelectedItems(String name, String researchDirection, String unitName,
+                                                  String field, String matchStatus,String ids,HttpServletResponse response) {
+        List<LwSpecialist> list = new ArrayList<>();
+        if(ids == null || ids == "") {
+           list = lwSpecialistMapper.list(name, researchDirection, unitName, field, matchStatus);
+        }else {
+            String [] strings=ids.split(",");
+            /*for(int i=0;i<strings.length;i++){
+                String uuid=strings[i];
+                LwSpecialist lwSpecialist = lwSpecialistMapper.lwSpecialist(uuid);
+                list.add(lwSpecialist);
+            }*/
+            list = lwSpecialistMapper.listIds(strings);
+        }
         Object[][] title = {
                 { "专家姓名", "name","nowrap" },
                 { "详细地址", "address","nowrap" },
@@ -153,14 +173,14 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
             //获取所有项目编号存入一个集合
             List<String> list=lwSpecialistMapper.getEmail();
             String regex = "^([1-9]+0*|[1-9]*\\.[05]|0\\.5)$";
-            SWServiceLog.info("项目信息excel表格最后一行： " + rows);
+            lwServiceLog.info("项目信息excel表格最后一行： " + rows);
             /* 保存有效的Excel模版列数 */
             String[] cellValue = new String[10];
 
             for (int i = 1; i <=rows; i++) {
                 // 获取正式数据并封装进cellValue数组中
                 StringBuffer checkStr = new StringBuffer();
-                SWServiceLog.info("第" + (i + 1) + "行");
+                lwServiceLog.info("第" + (i + 1) + "行");
                 row = sheet.getRow(i);
                 if (row == null) {
                     continue;
@@ -171,10 +191,10 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                         cellValue[c]= ExcelUtil.getStringCellValueForOnLine(cell);
                     }else{
                         cellValue[c]="";
-                        SWServiceLog.info("cell is null");
+                        lwServiceLog.info("cell is null");
                     }
                     checkStr.append(cellValue[c]);
-                    SWServiceLog.info("cellValue is " + cellValue[c]);
+                    lwServiceLog.info("cellValue is " + cellValue[c]);
                 }
                 //校验此行是否为空
                 if (!"#N/A!#N/A!".equals(checkStr.toString()) && !"".equals(checkStr.toString())) {
@@ -273,8 +293,10 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                         lwSpecialist.setPhone(cellValue[8]);
                         lwSpecialist.setEmail(cellValue[9]);
                         lwSpecialist.setMatchStatus("0");
-                        lwSpecialist.setCreateUser(webUtils.getUsername());
-                        lwSpecialist.setUpdateUser(webUtils.getUsername());
+                        String userName = webUtils.getUsername();
+                        HRUser user = userService.getUserByUserName(userName);
+                        lwSpecialist.setCreateUser(user.getUserId());
+                        lwSpecialist.setUpdateUser(user.getUserId());
                         lwSpecialist.setCreateTime(new Date());
                         lwSpecialist.setUpdateTime(new Date());
                         lwSpecialist.setValid("1");
@@ -300,7 +322,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
 
             // 返回错误数据
             if (errorList.size() > 0) {
-                SWServiceLog.info("出错的项目： " + errorList);
+                lwServiceLog.info("出错的项目： " + errorList);
                 Object[][] title = {
                         {"序号","id","nowrap"},
                         { "专家姓名", "name","nowrap" },
@@ -315,7 +337,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                         { "错误说明","errInfo"}
                 };
                 errorUUID = ExportExcelHelper.createErrorExcel(FtpUtils.BgTempUploadPath, title, errorList);
-                SWServiceLog.info("errorUUID: " + errorUUID);
+                lwServiceLog.info("errorUUID: " + errorUUID);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -344,5 +366,44 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
         return object;
     }
 
+
+    /**
+     * 计算平均分
+     * @param uuid
+     * @return
+     */
+    private Map<String,String> mapScore(String uuid){
+        List<Double> scoreList = lwPaperMatchSpecialistMapper.scoreList(uuid);
+        String weightingFraction;
+        String averageFraction;
+        if(scoreList.size()>2){
+            //最大
+            Double max = Collections.max(scoreList);
+            //最小
+            Double min = Collections.min(scoreList);
+            //和
+            Double sum = Double.valueOf(0);
+            for(int i = 0 ;i<scoreList.size(); i++) {
+                sum += (Double)scoreList.get(i);
+            }
+            //平均分 String.format("%.2f",(i+j)/2)
+            weightingFraction = String.format("%.2f",sum/scoreList.size());
+            //去最高最低
+            averageFraction = String.format("%.2f",(sum-max-min)/(scoreList.size()-2));
+        }else {
+            Double sum = Double.valueOf(0);
+            for(int i = 0 ;i<scoreList.size(); i++) {
+                sum += (Double)scoreList.get(i);
+            }
+            //平均分 String.format("%.2f",(i+j)/2)
+            weightingFraction = String.format("%.2f",sum/scoreList.size());
+            //去最高最低
+            averageFraction = String.format("%.2f",sum/scoreList.size());
+        }
+        Map<String,String> mapScore = new HashMap();
+        mapScore.put("weightingFraction",weightingFraction);
+        mapScore.put("averageFraction",averageFraction);
+        return mapScore;
+    }
 
 }

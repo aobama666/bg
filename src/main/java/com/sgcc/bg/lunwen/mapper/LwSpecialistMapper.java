@@ -100,4 +100,19 @@ public interface LwSpecialistMapper {
     List<String> getEmail();
 
     void addList(@Param("lwSpecialistList") List<LwSpecialist> lwSpecialistList);
+
+    /**
+     * 获取论文匹配的专家
+     * @param uuid
+     * @return
+     */
+    List<Map<String,String>> paperSpecialist(String uuid);
+
+    /**
+     * 根据ids查
+     * @param strings
+     * @return
+     */
+    List<LwSpecialist> listIds(@Param("strings") String[] strings);
+
 }

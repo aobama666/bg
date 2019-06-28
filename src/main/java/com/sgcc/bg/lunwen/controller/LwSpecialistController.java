@@ -35,12 +35,9 @@ public class LwSpecialistController {
 
     private static Logger log =  LoggerFactory.getLogger(LwSpecialistController.class);
 
-    private static Logger SWLog= LoggerFactory.getLogger(StaffWorkbenchController.class);
 
     @Autowired
     private LwSpecialistService lwSpecialistServiceImpl;
-
-    private static Logger bgLog = LoggerFactory.getLogger(BgNonProjectController.class);
 
 
     @RequestMapping("/specialist")
@@ -116,6 +113,11 @@ public class LwSpecialistController {
         return model;
     }
 
+    /**
+     * 专家详情（跳转专家和已匹配论文页面）
+     * @param uuid
+     * @return
+     */
     @RequestMapping(value = "/expertTO" ,method = RequestMethod.GET)
     public ModelAndView expertTO(String uuid){
         Map<String,Object> map = new HashMap<>();
@@ -130,6 +132,13 @@ public class LwSpecialistController {
         return model;
     }
 
+    /**
+     * 专家匹配的论文
+     * @param uuid
+     * @param page
+     * @param limit
+     * @return
+     */
     @RequestMapping(value = "/specialistAndPaperTO")
     @ResponseBody
     public String specialistAndPaperTO(String uuid,Integer page, Integer limit){
@@ -247,8 +256,8 @@ public class LwSpecialistController {
             request.setCharacterEncoding("utf-8");
             //String fileName = request.getParameter("fileName").trim();
             in = this.getClass().getClassLoader().getResourceAsStream("files/" + fileName);
-            bgLog.info("the filename is " + fileName);
-            bgLog.info("the wanted file's path is " + this.getClass().getClassLoader().getResource("files/" + fileName));
+            log.info("the filename is " + fileName);
+            log.info("the wanted file's path is " + this.getClass().getClassLoader().getResource("files/" + fileName));
             response.reset();
             response.setContentType("application/x-download");
             fileName = URLEncoder.encode(fileName, "UTF-8");
@@ -295,8 +304,9 @@ public class LwSpecialistController {
         String unitName  = request.getParameter("unitName") == null?"":request.getParameter("unitName");
         String field  = request.getParameter("field") == null?"":request.getParameter("field");
         String matchStatus  = request.getParameter("matchStatus") == null?"":request.getParameter("matchStatus");
+        String ids = request.getParameter("selectList") == null ?" " : request.getParameter("selectList");
 
-        List<LwSpecialist> list = lwSpecialistServiceImpl.exportSelectedItems(name,researchDirection,unitName,field,matchStatus,response);
+        List<LwSpecialist> list = lwSpecialistServiceImpl.exportSelectedItems(name,researchDirection,unitName,field,matchStatus,ids,response);
         log.info("将要导出的条目index:",list.size());
     }
 
@@ -330,7 +340,7 @@ public class LwSpecialistController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            SWLog.error("joinSpecialistExcel()【批量导入文件信息】", e);
+            log.error("joinSpecialistExcel()【批量导入专家文件信息】", e);
         } finally {
             if (out != null) {
                 out.flush();
@@ -339,10 +349,28 @@ public class LwSpecialistController {
         }
     }
 
+    /**
+     * 导出错误文件
+     * @param fileName
+     * @param response
+     * @param request
+     * @throws Exception
+     */
     @RequestMapping(value = "/specialistErrExecl", method = RequestMethod.POST)
     public void exportExcel(String fileName, HttpServletResponse response,HttpServletRequest request) throws Exception {
         FileDownloadUtil.fileDownloadFromFtp(response, request, fileName, "批量导入出错文件.xls");
-        SWLog.info("从ftp导出出错文件"+fileName);
+        log.info("从ftp导出出错文件"+fileName);
     }
+
+    /**
+     * 更换专家
+     * @param uuid
+     * @return
+     */
+    /*@RequestMapping(value = "/expertTO" ,method = RequestMethod.GET)
+    public ModelAndView renewalSpecialist(String uuid){
+
+        return null;
+    }*/
 
 }
