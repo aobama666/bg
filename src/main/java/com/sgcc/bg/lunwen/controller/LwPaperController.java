@@ -256,7 +256,6 @@ public class LwPaperController {
     @RequestMapping(value = "")
     public String automaticMatch(){
         //判断基本信息是否录入完成，尤其是附件内容
-
         return "";
     }
 
@@ -420,7 +419,6 @@ public class LwPaperController {
         return jsonStr;
     }
 
-
     /**
      * 跳转至新增论文附件上传界面
      * @return
@@ -545,14 +543,29 @@ public class LwPaperController {
         //生成uuid文件夹名称，解压到对应目录下
         String uuidPath = Rtext.getUUID();
         ZipUtil.unZip(new File(path+zipFileName),path+uuidPath);
+        //删除压缩包
+        new File(path+zipFileName).delete();
         //获取所有文件信息
-        List<String> fileNameList = new ArrayList<String>();
-        StringBuffer errorFileName = new StringBuffer();
+        File uuidPathFile = new File(path+uuidPath);
+        File[] fileNameList = uuidPathFile.listFiles();
+        //格式错误文件信息
+        List<String> errorFileName = new ArrayList<>();
+        //重复录入文件信息
+        List<String> repeatFileName = new ArrayList<>();
+        //成功录入文件信息
+        List<String> successFileName = new ArrayList<>();
 
-        for(String fileName : fileNameList){
+        for(File file : fileNameList){
+            String fileName = file.getName();
             //本地存放路径及文件名称
-            String localPath = path+fileName;
+            String localPath = file.getPath();
 
+            if(0>fileName.lastIndexOf("-") || 0>fileName.lastIndexOf(".")){
+                //如果不存在中划线或者点标志，这个文件名称不正确，不能继续操作，走下一个文件
+                errorFileName.add(fileName);
+                new File(localPath).delete();
+                continue;
+            }
             //根据fileName中划线前面的内容，获取论文题目
             String fileNameBeforeTitle = fileName.substring(0,fileName.lastIndexOf("-"));
             //通过本地文件信息生成ftp文件名
@@ -567,7 +580,7 @@ public class LwPaperController {
             if(null!=lwFileForFileName){
                 //附件已存在，删除本地路径附件，返回已存在标识
                 new File(localPath).delete();
-                errorFileName.append(fileName+",");
+                repeatFileName.add(fileName);
                 continue;
             }
 
@@ -586,8 +599,8 @@ public class LwPaperController {
             String fileLength = String.valueOf(newFtpFile.length());
             //上传至ftp
             FtpUtils.uploadFile(newFtpFile,FtpUtils.PaperUploadPath);
-            //删除原路径文件
-            newFtpFile.delete();
+            //删除上传成功的本地文件
+            new File(localPath).delete();
 
             //保存附件信息至数据库
             LwFile lwFile = new LwFile();
@@ -604,14 +617,17 @@ public class LwPaperController {
             lwFile.setCreateTime(new Date());
             lwFile.setValid(LwPaperConstant.VALID_YES);
             lwFileService.addLwFile(lwFile);
+            //录入成功的附件信息
+            successFileName.add(fileName);
         }
 
-        //处理重复上传附件信息
-
-        //删除刚才生成的uuid文件夹下的所有文件
-
+        //删除刚才生成的uuid文件夹
+        uuidPathFile.delete();
         //反馈前台
         rw = new ResultWarp(ResultWarp.SUCCESS ,"上传附件成功");
+        rw.addData("errorFileName",errorFileName.toString());
+        rw.addData("repeatFileName",repeatFileName.toString());
+        rw.addData("successFileName",successFileName.toString());
         return JSON.toJSONString(rw);
     }
 

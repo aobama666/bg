@@ -61,7 +61,7 @@
 		<!--  新增  修改  删除 功能按钮 -->
 		<div id="funcBtn" style="height: 35px;float:right">
 			<div class='btn right deleteButton' onclick="paperList.downLoadTempLate()" >下载模板</div>
-			<div class='btn right deleteButton' onclick="paperList.export()" >附件批量导入</div>
+			<div class='btn right deleteButton' onclick="paperList.batchUploadOperation()" >附件批量导入</div>
 			<div class='btn right deleteButton' onclick="paperList.export()" >导入</div>
 			<div class='btn right deleteButton' onclick="paperList.export()" >导出</div>
 			<div class='btn right deleteButton' onclick="paperList.delEvent()" >删除</div>
