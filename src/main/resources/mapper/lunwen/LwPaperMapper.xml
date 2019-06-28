@@ -222,4 +222,108 @@
         and p.valid = #{valid}
     </select>
 
+    <select id="paperComprehensiveVOList" resultType="com.sgcc.bg.lunwen.bean.PaperComprehensiveVO">
+        SELECT a.* FROM (
+            SELECT
+               p.UUID AS uuid,
+               p.PAPER_ID AS  paperId,
+               p.PAPER_NAME AS paperName,
+               p.YEAR AS year,
+               p.UNIT AS unit,
+               p.AUTHOR AS author,
+               p.JOURNAL AS journal,
+               p.RECOMMEND_UNIT AS recommendUnit,
+               p.PAPER_TYPE AS paperType,
+               p.QUOTE_COUNT AS quoteCount,
+               p.DOWNLOAD_COUNT AS downloadCount,
+               p.FIELD AS field,
+               p.SCORE_TABLE_STATUS AS  scoreTableStatus,
+               p.SCORE_STATUS  AS scoreStatus,
+               p.ALL_STATUS AS  allStatus,
+               p.WEIGHTING_FRACTION AS weightingFraction,
+               p.AVERAGE_FRACTION AS averageFraction,
+               ROWNUM AS ROWNO
+            FROM bg_lw_paper p
+            WHERE p.valid = 1
+                <if test="year != null and year != ''">
+                    and p.YEAR = #{year,jdbcType=VARCHAR}
+                </if>
+                <if test="author != null and author !=''">
+                    and p.AUTHOR = #{author,jdbcType=VARCHAR}
+                </if>
+                <if test="paperId != null and paperId != ''">
+                    and p.PAPER_ID = #{paperId,jdbcType=VARCHAR}
+                </if>
+                <if test="paperName != null and paperName != ''">
+                    and p.PAPER_NAME = #{paperName,jdbcType=VARCHAR}
+                </if>
+                AND #{end} >= ROWNUM
+        ) a WHERE a.ROWNO > #{start}
+    </select>
+
+    <select id="outPaperComprehensiveVOAll" resultType="com.sgcc.bg.lunwen.bean.PaperComprehensiveVO">
+        SELECT
+        p.UUID AS uuid,
+        p.PAPER_ID AS  paperId,
+        p.PAPER_NAME AS paperName,
+        p.YEAR AS year,
+        p.UNIT AS unit,
+        p.AUTHOR AS author,
+        p.JOURNAL AS journal,
+        p.RECOMMEND_UNIT AS recommendUnit,
+        p.PAPER_TYPE AS paperType,
+        p.QUOTE_COUNT AS quoteCount,
+        p.DOWNLOAD_COUNT AS downloadCount,
+        p.FIELD AS field,
+        p.SCORE_TABLE_STATUS AS  scoreTableStatus,
+        p.SCORE_STATUS  AS scoreStatus,
+        p.ALL_STATUS AS  allStatus,
+        p.WEIGHTING_FRACTION AS weightingFraction,
+        p.AVERAGE_FRACTION AS averageFraction,
+        ROWNUM AS ROWNO
+        FROM bg_lw_paper p
+        WHERE p.valid = 1
+        <if test="year != null and year != ''">
+            and p.YEAR = #{year,jdbcType=VARCHAR}
+        </if>
+        <if test="author != null and author !=''">
+            and p.AUTHOR = #{author,jdbcType=VARCHAR}
+        </if>
+        <if test="paperId != null and paperId != ''">
+            and p.PAPER_ID = #{paperId,jdbcType=VARCHAR}
+        </if>
+        <if test="paperName != null and paperName != ''">
+            and p.PAPER_NAME = #{paperName,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="outPaperComprehensiveVOIds" resultType="com.sgcc.bg.lunwen.bean.PaperComprehensiveVO">
+        SELECT
+        p.UUID AS uuid,
+        p.PAPER_ID AS  paperId,
+        p.PAPER_NAME AS paperName,
+        p.YEAR AS year,
+        p.UNIT AS unit,
+        p.AUTHOR AS author,
+        p.JOURNAL AS journal,
+        p.RECOMMEND_UNIT AS recommendUnit,
+        p.PAPER_TYPE AS paperType,
+        p.QUOTE_COUNT AS quoteCount,
+        p.DOWNLOAD_COUNT AS downloadCount,
+        p.FIELD AS field,
+        p.SCORE_TABLE_STATUS AS  scoreTableStatus,
+        p.SCORE_STATUS  AS scoreStatus,
+        p.ALL_STATUS AS  allStatus,
+        p.WEIGHTING_FRACTION AS weightingFraction,
+        p.AVERAGE_FRACTION AS averageFraction,
+        ROWNUM AS ROWNO
+        FROM bg_lw_paper p
+        WHERE p.VALID = 1
+        AND p.UUID in (
+        <foreach collection="strings"  item="string" index="index" separator=",">
+            #{string,jdbcType=VARCHAR}
+        </foreach>
+        )
+    </select>
+
 </mapper>

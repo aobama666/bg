@@ -3,12 +3,12 @@ var roomDetailInfo = {};
 roomDetailInfo.saveBtnClickFlag = 0;//保存按钮点击事件
 roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
 var  VisitunitLevelData='';
-$(function(){
+/*$(function(){
 	//‘新增’页面，院领导姓名多选下拉框
 	roomDetailInfo.initSelectForLeader();
 	//初始化人员选择树
 	$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'parent',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'}); 
-});
+});*/
 /*//获取当前时间
 function getNowFormatDate() {    
     var date = new Date();    
@@ -67,6 +67,14 @@ roomDetailInfo.messageSubmit= function(approvalUserd){
     var  phone=IsRight.telePhone("#phone");
     if(!phone){
         messager.tip("11位数字手机号码或固定电话，固定电话格式为：xxx-xxxxxxxx或xxxx-xxxxxxx",2000);
+        roomDetailInfo.saveBtnClickFlag = 0;
+        return;
+    }
+
+    var email=$("#email").val();
+    var exp =/^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+    if(!exp.test(email)){
+        messager.tip("邮箱格式不正确");
         roomDetailInfo.saveBtnClickFlag = 0;
         return;
     }

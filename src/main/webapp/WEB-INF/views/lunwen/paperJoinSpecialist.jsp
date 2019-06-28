@@ -31,12 +31,13 @@
 
 
 </head>
-<body style="background-color: white">
+<%--<body style="background-color: white">--%>
+<body>
 <div class="page-header-sl">
 	<h5>上传Excel</h5>
 	<div class="button-box">
-		<button type="button" class="btn btn-danger btn-xs" style="display:none;" id="ErrInfoButton" onclick="downLoadErr(this)"> 工时错误信息下载</button>
-		<button type="button" class="btn btn-primary btn-xs" onclick="downLoadTemp()"> 模板下载</button>
+		<button type="button" class="btn btn-danger btn-xs" style="display:none;" id="ErrInfoButton" onclick="downLoadErr(this)"> 专家导入错误信息下载</button>
+		<button type="button" class="btn btn-primary btn-xs" onclick="downLoadTemp()"> 下载模板</button>
 		<button type="button" class="btn btn-success btn-xs" onclick="uploadProFile()"> 确定</button>
 	</div>
 </div>
@@ -65,7 +66,7 @@
 $(function(){
 });
 
-
+/*导入*/
 function uploadProFile() {
     var checkResult = $(".form-box").sotoValidate([
         {name:'file',vali:'required;checkFileType()'}
@@ -81,7 +82,7 @@ function uploadProFile() {
         loadPage("close");
     }
 }
-
+/*错误信息下载*/
 function downLoadErr(_this){
     loadPage("open");
     var ran = Math.random()*1000;
@@ -93,6 +94,7 @@ function downLoadErr(_this){
     loadPage("close");
 }
 
+/*模板下载*/
 function downLoadTemp(fileName){
     var ran = Math.random()*1000;
     $("#fileName").val(fileName);
