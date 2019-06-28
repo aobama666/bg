@@ -24,18 +24,23 @@
 	<table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td>
-				<span title = "附件"><b class="mustWrite">*</b>附件</span>
+				<span title = "附件压缩包信息"><b class="mustWrite">*</b>附件压缩包信息</span>
 			</td>
 			<td class="addInputStyle">
-				<input type = "text" style="display: none" value="${paperUuid}" id = "paperUuid" name="paperUuid">
 				<input type="file"  id="file"  name="file"  class="validNull"  len="50"   content="附件" title="必填项"/>
 			</td>
 		</tr>
 	</table>
 </form>
 
+	<div style="text-align: center">
+		<h4 id="successFile" style="color: green"></h4>
+		<h4 id="repeatFile" style="color: darkred"></h4>
+		<h4 id="errorFile" style="color: red"></h4>
+	</div>
+
 	<div class="btnContent">
-		<button type="button" class="btn" onclick="uploadAnnex.addEvent()">上传</button>
+		<button type="button" class="btn" onclick="uploadAnnex.addBatchEvent()">上传</button>
 		<button type="button" class="btn" onclick="uploadAnnex.addClose()">返回</button>
 	</div>
 

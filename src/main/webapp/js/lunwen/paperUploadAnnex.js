@@ -127,6 +127,53 @@ uploadAnnex.addEvent = function (){
     );
 }
 
+/**
+ * 批量上传触发方法
+ */
+uploadAnnex.addBatchEvent = function(){
+    //验证必填项是否为空
+    var validNull = dataForm.validNullable();
+    if(!validNull){
+        return;
+    }
+    //验证字符长度
+    var checkLength = dataForm.checkLength();
+    if(!checkLength){
+        return;
+    }
+    var formData = new FormData($("#queryForm")[0]);
+    //获取form表单内容
+    var paperDetailFormData = roomAddInfoCommon.getFormDataInfo();
+    $.messager.confirm( "上传提示", "确认上传吗",
+        function(r){
+            if(r){
+                $.ajax({
+                    url: "/bg/lwPaper/btachUpload",
+                    type: "post",
+                    async: false,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function (data) {
+                        messager.tip("批量上传附件完成",1000);
+                        if("[]" != data.data.successFileName){
+                            $("#successFile").html("上传成功文件："+data.data.successFileName);
+                        }
+                        if("[]" != data.data.repeatFileName){
+                            $("#repeatFile").html("重复上传失败文件："+data.data.repeatFileName);
+                        }
+                        if("[]" != data.data.errorFileName){
+                            $("#errorFile").html("文件名称格式错误文件："+data.data.errorFileName);
+                        }
+                        return;
+                    }
+                });
+            }
+        }
+    );
+}
+
 /*返回按钮，关闭弹出框页面*/
 uploadAnnex.addClose = function () {
     parent.layer.closeAll();

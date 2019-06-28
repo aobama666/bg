@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Enumeration;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -153,7 +154,7 @@ public class ZipUtil {
             // 开始解压
             ZipFile zipFile = null;
             try {
-                zipFile = new ZipFile(srcFile);
+                zipFile = new ZipFile(srcFile, Charset.forName("gbk"));
                 Enumeration<?> entries = zipFile.entries();
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = (ZipEntry) entries.nextElement();
@@ -202,9 +203,10 @@ public class ZipUtil {
         public static void main(String[] args) {
             try {
                 //压缩
-                zip("F:\\爬虫入门.md","F:\\爬虫入门.zip");
+//                zip("D:\\20190611_mingliao\\评分规则.PNG","D:\\20190611_mingliao\\评分规则.zip");
                 //解压
-                unZip(new File("F:\\爬虫入门.zip"),"F:/bb/bb");
+                unZip(new File("D:\\20190611_mingliao\\IDEA_workspace\\epri\\default1-113005\\bg_new_v20180929\\src\\main\\webapp\\upload\\lunwen\\999.zip"),
+                        "D:\\20190611_mingliao\\IDEA_workspace\\epri\\default1-113005\\bg_new_v20180929\\src\\main\\webapp\\upload\\lunwen\\1A3DF7797B8F47D0B33B03F9A9C1A14D");
             } catch (Exception e) {
                 System.out.println(e.getLocalizedMessage());
             }

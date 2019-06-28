@@ -84,8 +84,8 @@ paperList.initDataGrid = function(){
 
                 }},
             {name: '打分状态',style:{width:"50px"}, data: 'SCORESTATUS'},
-            {name: '加权平均分',style:{width:"50px"}, data: 'DOWNLOADCOUNT'},
-            {name: '去最高最低得分', style:{width:"120px"},data: 'QUOTECOUNT'}
+            {name: '加权平均分',style:{width:"50px"}, data: 'WEIGHTINGFRACTION'},
+            {name: '去最高最低得分', style:{width:"120px"},data: 'AVERAGEFRACTION'}
         ]
     });
 }
@@ -139,6 +139,7 @@ paperList.addOperation = function (){
         }
     });
 }
+
 
 /*新增论文*/
 paperList.addEvent = function (){
@@ -384,3 +385,18 @@ paperList.withdrawScoreTable = function () {
 
 
 
+/*弹出批量上传框 */
+paperList.batchUploadOperation = function (){
+    var url = "/bg/lwPaper/btachUploadJump"
+    layer.open({
+        type:2,
+        title:'<h4 style="height:42px;line-height:25px;">论文附件批量上传</h4>',
+        area:['65%','50%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url,
+        end: function () {
+            paperList.query();
+        }
+    });
+}
