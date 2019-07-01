@@ -3,6 +3,7 @@ package com.sgcc.bg.lunwen.service;
 import com.sgcc.bg.lunwen.bean.LwPaper;
 import org.apache.ibatis.annotations.Param;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -60,4 +61,15 @@ public interface LwPaperService {
                                       String scoreStatus,
                                       String paperType
     );
+
+    public List<LwPaper> selectLwpaperExport(String paperName,
+                                    String paperId,
+                                    String year,
+                                    String unit,
+                                    String author,
+                                    String field,
+                                    String scoreStatus,
+                                    String paperType,
+                                    String ids,
+                                    HttpServletResponse response);
 }

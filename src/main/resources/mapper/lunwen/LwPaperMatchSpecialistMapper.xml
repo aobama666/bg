@@ -2,9 +2,38 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper">
+    <insert id="addPMS">
+        insert into bg_lw_paper_match_expert
+        (uuid,paper_id,specialist_id,score,socre_status,create_user,create_time,valid)
+        values (
+            #{uuid},
+            #{paperId},
+            #{specialistId},
+            #{score},
+            #{scoreStatus},
+            #{createUser},
+            #{createTime},
+            #{valid}
+        )
+    </insert>
+
+    <update id="updateScore">
+      update bg_lw_paper_match_expert set (socre,update_user,update_time)
+      values (#{score},#{updateUser},#{updateTime}) where uuid = #{uuid};
+    </update>
+
+    <update id="updateScoreStatus">
+      update bg_lw_paper_match_expert set (socre_status,update_user,update_time)
+      values (#{socreStatus},#{updateUser},#{updateTime}) where uuid = #{uuid}
+    </update>
 
     <select id="scoreList" resultType="java.lang.Double">
         SELECT SCORE FROM BG_LW_PAPER_MATCH_EXPERT WHERE  VALID = '1'
         AND PAPER_ID = #{uuid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectPMS" resultType="java.util.Map">
+        select uuid,paper_id paperId,specialist_id specialistId,score,score_status scoreStatus
+        from bg_lw_paper_match_expert where paper_id= #{paperId} and specialist_id = #{specialistId}
     </select>
 </mapper>

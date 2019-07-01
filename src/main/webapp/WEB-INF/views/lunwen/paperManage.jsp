@@ -26,6 +26,7 @@
 	<div class="sheach">
 		<div class='content_top'>论文管理</div>
 		<form id="queryForm" style="margin-bottom: 10px;">
+			<input type="hidden" name="selectList"/>
 				<label  for="year" class="yearTitle">年度：</label>
 				<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 100px">
 					<option value = "2019"  selected> 2019</option>
@@ -44,9 +45,9 @@
 				<label  for="scoreStatus" class="yearTitle">打分状态：</label>
 				<select id = "scoreStatus" name = "scoreStatus"   class = "changeQuery changeYear" style="width: 100px">
 					<option value = "" selected>请选择</option>
-					<option value = "1">未打分</option>
-					<option value = "2">已保存</option>
-					<option value = "3">已完成</option>
+                    <c:forEach  var="scoreStatus"  items="${scoreStatus}">
+                        <option value ="${scoreStatus.K}"}> ${scoreStatus.V}</option>
+                    </c:forEach>
 				</select>
 				<input type="text" id="paperType" name="paperType" style="display: none" value="1">
 				<!-- 查询按钮  " -->

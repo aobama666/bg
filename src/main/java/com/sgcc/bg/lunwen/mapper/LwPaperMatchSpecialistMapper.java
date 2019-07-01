@@ -1,9 +1,12 @@
 package com.sgcc.bg.lunwen.mapper;
 
 
+import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface LwPaperMatchSpecialistMapper {
@@ -16,5 +19,35 @@ public interface LwPaperMatchSpecialistMapper {
      */
     List<Double> scoreList(String uuid);
 
+    /**
+     * 添加匹配专家论文匹配关系
+     * @param lwPaperMatchSpecialist
+     * @return
+     */
+    Integer addPMS(LwPaperMatchSpecialist lwPaperMatchSpecialist);
+
+    /**
+     * 修改专家对应某论文打分分数
+     * @param uuid
+     * @param score
+     * @return
+     */
+    Integer updateScore(
+            @Param("uuid") String uuid,
+            @Param("score") String score);
+
+    /**
+     * 修改打分状态
+     * @param uuid
+     * @param socreStatus
+     * @return
+     */
+    Integer updateScoreStatus(
+            @Param("uuid") String uuid,
+            @Param("socreStatus") String socreStatus);
+
+    List<Map<String,Object>> selectPMS(
+            @Param("paperId") String paperId,
+            @Param("specialistId") String specialistId);
 
 }

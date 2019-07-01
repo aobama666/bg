@@ -90,23 +90,6 @@ paperList.initDataGrid = function(){
     });
 }
 
-// 获取选中uuid
-paperList.export = function () {
-    var checkUuidS = document.getElementsByName("oneCheck");
-    var checkUuid = "";
-    for (var i =0;i<checkUuidS.length;++i){
-        if(checkUuidS[i].checked){
-            checkUuid += checkUuidS[i].value+",";
-        }
-    }
-    if(checkUuid == ""){
-        alert("check null");
-    }else{
-        alert(checkUuid);
-    }
-}
-
-
 
 /*查看论文详情*/
 paperList.forDetails = function (id){
@@ -126,7 +109,7 @@ paperList.forDetails = function (id){
 
 /*弹出新增框 */
 paperList.addOperation = function (){
-    var url = "/bg/lwPaper/paperJumpAdd"
+    var url = "/bg/lwPaper/paperJumpAdd?paperType="+$("#paperType").val();
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;">论文信息新增</h4>',
@@ -240,10 +223,7 @@ paperList.updateEvent = function (){
                     data: JSON.stringify(paperDetailFormData),
                     success: function (data) {
                         if(data.success=="true"){
-                            window.parent.location.reload();
-                            var closeIndex = parent.layer.getFrameIndex(window.name);
                             parent.messager.tip(data.msg,5000);
-                            paperList.query();
                         }else{
                             parent.messager.tip(data.msg,5000);
                             return;
@@ -261,16 +241,25 @@ paperList.delEvent = function(){
 		if(checkedItems.length==0){
 			messager.tip("请选择要操作的数据",1000);
 			return;
-		}else if(checkedItems.length>1){
+		}
+		/*else if(checkedItems.length>1){
 			messager.tip("每次只能删除一条数据",2000);
 			return;
-		}
+		}*/
+        var uuids = "";
+        var checkedItems = dataGrid.getCheckedItems(dataItems);
+        if(checkedItems.length>0) {
+            for (var i = 0; i < checkedItems.length; i++) {
+                uuids += checkedItems[i].UUID + ",";
+            }
+        }
+        uuids = uuids.slice(0,uuids.length-1);
 		//不在前台做是否能删除的判断，在后台判断，记录日志，同时比前台更safe
-		$.messager.confirm( "删除提示", "确认删除选中论文吗",
+		$.messager.confirm( "删除提示", "确认删除选中的"+checkedItems.length+"条论文吗",
 			function(r){
 				if(r){
 					$.ajax({
-					    url: "/bg/lwPaper/delLwPaper?uuid="+checkedItems[0].UUID,//删除
+					    url: "/bg/lwPaper/delLwPaper?uuids="+uuids,//删除
 						type: "post",
 						dataType:"json",
 						contentType: 'application/json',
@@ -399,4 +388,35 @@ paperList.batchUploadOperation = function (){
             paperList.query();
         }
     });
+}
+
+
+/*导出*/
+paperList.export = function () {
+    var $tr = $("#datagrid tr");
+    if($tr.length == 1){
+        messager.tip("没有要导出的数据！",3000);
+    }else {
+        var year = $("#year").val();
+        var paperName = $("#paperName").val();
+        var paperId = $("#paperId").val();
+        var unit = $("#unit").val();
+        var author = $("#author").val();
+        var field = $("#field").val();
+        var scoreStatus = $("#scoreStatus").val();
+        var paperType = $("#paperType").val();
+
+        var ids = "";
+        var checkedItems = dataGrid.getCheckedItems(dataItems);
+        if(checkedItems.length>0) {
+            for (var i = 0; i < checkedItems.length; i++) {
+                ids += checkedItems[i].UUID + ",";
+            }
+        }
+        ids = ids.slice(0,ids.length-1);
+        $("input[name=selectList]").val(ids);
+        var ran = Math.random()*1000;
+        document.forms[0].action ="/bg/lwPaper/lwPaperExport?ran="+ran;
+        document.forms[0].submit();
+    }
 }

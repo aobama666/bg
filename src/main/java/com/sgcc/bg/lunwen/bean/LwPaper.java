@@ -86,6 +86,14 @@ public class LwPaper {
      * 有效标识 0无效 1有效
      */
     private String valid;
+    /**
+     * 加权平均分
+     */
+    private String weightingFaction;
+    /**
+     * 去最高最低得分
+     */
+    private String averageFaction;
 
     public String getUuid() {
         return uuid;

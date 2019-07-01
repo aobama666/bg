@@ -13,7 +13,7 @@
 	<!-- newPage、item.css 页面css-->
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/item.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/newPage.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
-    <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/datagrid.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css">   
+    <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/datagrid.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css">
 	<!-- easyuicss -->
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
 	<!-- 本页面所需css -->
@@ -27,13 +27,13 @@
 			</td>
 			<td class="addInputStyle">
 				<input type = "text" style="display: none" value = "${lwPaper.UUID}"  class="validNull"  id = "uuid" name="uuid">
-				<input type="text"  id="paperName"  name="paperName" value="${lwPaper.PAPERNAME}"  class="validNull"  len="20"   content="论文题目" title="必填项"/>
+				<input type="text"  id="paperName"  name="paperName" value="${lwPaper.PAPERNAME}"  class="validNull"  len="50"   content="论文题目" title="必填项"/>
 			</td>
 			<td>
 				<span title = "作者单位"><b class="mustWrite">*</b>作者单位</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="unit" name="unit" value="${lwPaper.UNIT}"  class="validNull"  len="20" content="作者单位"  title="必填项  "/>
+				<input type="text"  id="unit" name="unit" value="${lwPaper.UNIT}"  class="validNull"  len="50" content="作者单位"  title="必填项  "/>
 			</td>
 		</tr>
 		<tr>
@@ -47,7 +47,7 @@
 				<span title = "被引量"><b class="mustWrite">*</b>被引量</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="quoteCount" name="quoteCount" value="${lwPaper.QUOTECOUNT}"  len="20"  class="validNull"  content="被引量"  title="必填项  "/>
+				<input type="text"  id="quoteCount" name="quoteCount" value="${lwPaper.QUOTECOUNT}"  len="8"  class="validNull"  content="被引量"  title="必填项  "/>
 			</td>
 		</tr>
 		<tr>
@@ -55,13 +55,13 @@
 				<span title = "论文作者"><b class="mustWrite">*</b>论文作者</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="author"  name="author" value="${lwPaper.AUTHOR}"  class="validNull"  len="20"   content="论文作者" title="必填项"/>
+				<input type="text"  id="author"  name="author" value="${lwPaper.AUTHOR}"  class="validNull"  len="50"   content="论文作者" title="必填项"/>
 			</td>
 			<td>
 				<span title = "期刊名称"><b class="mustWrite">*</b>期刊名称</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="journal" name="journal" value="${lwPaper.JOURNAL}"  class="validNull"   len="20" content="期刊名称"  title="必填项  "/>
+				<input type="text"  id="journal" name="journal" value="${lwPaper.JOURNAL}"  class="validNull"   len="50" content="期刊名称"  title="必填项  "/>
 			</td>
 		</tr>
 		<tr>
@@ -69,36 +69,36 @@
 				<span title = "推荐单位"><b class="mustWrite">*</b>推荐单位</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="recommendUnit"  name="recommendUnit" value="${lwPaper.RECOMMENDUNIT}"  class="validNull"  len="20"   content="推荐单位" title="必填项"/>
+				<input type="text"  id="recommendUnit"  name="recommendUnit" value="${lwPaper.RECOMMENDUNIT}"  class="validNull"  len="200"   content="推荐单位" title="必填项"/>
 			</td>
 			<td>
 				<span title = "下载量"><b class="mustWrite">*</b>下载量</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="downloadCount" name="downloadCount" value="${lwPaper.DOWNLOADCOUNT}"  len="20"  class="validNull"  content="下载量"  title="必填项  "/>
+				<input type="text"  id="downloadCount" name="downloadCount" value="${lwPaper.DOWNLOADCOUNT}"  len="8"  class="validNull"  content="下载量"  title="必填项  "/>
 			</td>
 		</tr>
-		<tr>
+	<tr style="display: none">
 			<td>
 				<span title = "论文类型"><b class="mustWrite">*</b>论文类型</span>
 			</td>
 			<td class="addInputStyle">
-				<select id="paperType"  name = "paperType"   class = "validNull select-person"   content="论文类型"    title="必填项  "  >
+			<input type="text"  id="paperType" name="paperType" value="${lwPaper.PAPERTYPE}"/>
+				<%--<select id="paperType"  name = "paperType"   class = "validNull select-person"   content="论文类型"    title="必填项  "  >
                     <option value=""  selected >请选择论文类型</option>
                     <c:forEach  var="paperType"  items="${paperType}">
-                        <%--<option value ="${paperType.K}"> ${paperType.V}</option>--%>
+                        &lt;%&ndash;<option value ="${paperType.K}"> ${paperType.V}</option>&ndash;%&gt;
 						<option value ="${paperType.K}"   ${paperType.K == lwPaper.PAPERTYPE ?"selected='selected'":''}     > ${paperType.V}</option>
                     </c:forEach>
-				</select>
-
+				</select>--%>
 			</td>
 		</tr>
-		<tr>
+	<tr>
 			<hr/>
 		</tr>
-		</table>
+</table>
 
-		<div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 2%">
+<div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 2%">
 			<div style="float: right">
 				<button type="button" class="btn" onclick="uploadAnnex.addOperation()">新增附件</button>
 				<button type="button" class="btn" onclick="uploadAnnex.delEvent()">删除附件</button>
@@ -113,15 +113,15 @@
 		<button type="button" class="btn" onclick="paperList.addClose()">返回</button>
 	</div>
 
-	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script> 
+	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
      <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/locale/easyui-lang-zh_CN.js"></script>
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
-	
-    <script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script> 
-     
+
+    <script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>
+
  	<script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>  	<!-- 弹框.js  --> 
+	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>  	<!-- 弹框.js  -->
 	<!-- 引入datagrid -->
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
     <!-- 验证校验公共方法，提示框公共方法 -->
