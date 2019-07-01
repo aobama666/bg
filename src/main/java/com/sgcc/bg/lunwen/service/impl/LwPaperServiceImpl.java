@@ -2,9 +2,11 @@
 package com.sgcc.bg.lunwen.service.impl;
 
 import com.sgcc.bg.common.DateUtil;
+import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.lunwen.bean.LwPaper;
+import com.sgcc.bg.lunwen.bean.LwSpecialist;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.mapper.LwPaperMapper;
 import com.sgcc.bg.lunwen.service.LwPaperService;
@@ -12,10 +14,8 @@ import com.sgcc.bg.model.HRUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 
 @Service
 public class LwPaperServiceImpl implements LwPaperService {
@@ -107,5 +107,30 @@ public class LwPaperServiceImpl implements LwPaperService {
                                       String author, String field, String scoreStatus, String paperType) {
         return lwPaperMapper.selectLwPaperCount(paperName,paperId,year,unit,author,
                 field,scoreStatus,paperType,LwPaperConstant.VALID_YES);
+    }
+
+    @Override
+    public List<LwPaper>  selectLwpaperExport(String paperName, String paperId, String year, String unit
+            , String author, String field, String scoreStatus, String paperType, String ids, HttpServletResponse response) {
+        List<LwPaper> list = new ArrayList<>();
+        if(ids == null || ids == "") {
+            list = lwPaperMapper.selectLwPaperExport(paperName,paperId,year,unit,author,field,scoreStatus,paperType,LwPaperConstant.VALID_YES);
+        }else {
+            String [] uuids=ids.split(",");
+            list = lwPaperMapper.selectCheckIdExport(uuids);
+        }
+        Object[][] title = {
+                { "论文题目", "paperName","nowrap" },
+                { "作者", "author","nowrap" },
+                { "单位", "unit","nowrap" },
+                { "期刊名称", "journal","nowrap" },
+                { "推荐单位", "recommendUnit","nowrap" },
+                { "论文类型", "paperType","nowrap" },
+                { "被引量", "quoteCount","nowrap" },
+                { "下载量", "downloadCount","nowrap" },
+                { "领域","field","nowrap"}
+        };
+        ExportExcelHelper.getExcel(response, "论文详情"+ DateUtil.getDays(), title, list, "normal");
+        return list;
     }
 }

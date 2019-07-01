@@ -1,6 +1,7 @@
 package com.sgcc.bg.lunwen.mapper;
 
 import com.sgcc.bg.lunwen.bean.LwPaper;
+import com.sgcc.bg.lunwen.bean.LwSpecialist;
 import com.sgcc.bg.lunwen.bean.PaperComprehensiveVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -131,6 +132,46 @@ public interface LwPaperMapper {
                                                         @Param("paperId")String paperId,
                                                         @Param("start")int start,
                                                         @Param("end")int end);
+    /**
+     * 根据选中数据查询对应数据——导出
+     * @param uuids
+     * @return
+     */
+    List<LwPaper> selectCheckIdExport(@Param("uuids") String[] uuids);
+
+    /**
+     * 按条件查询某批论文信息——导出
+     * 条件：年度，论文题目，论文编号，单位，作者，领域
+     * @param paperName
+     * @param paperId
+     * @param year
+     * @param unit
+     * @param author
+     * @param field
+     * @return
+     */
+    List<LwPaper> selectLwPaperExport(
+            @Param("paperName") String paperName,
+            @Param("paperId") String paperId,
+            @Param("year") String year,
+            @Param("unit") String unit,
+            @Param("author") String author,
+            @Param("field") String field,
+            @Param("scoreStatus") String scoreStatus,
+            @Param("paperType") String paperType,
+            @Param("valid") String valid
+    );
+
+    /**
+     * 获取匹配领域的专家信息
+     * @param researchDirection
+     * @param field
+     * @param valid
+     * @return
+     */
+    List<LwSpecialist> selectSpecialistField(String researchDirection,String field,String valid);
+
+
 
     /**
      * 查全部

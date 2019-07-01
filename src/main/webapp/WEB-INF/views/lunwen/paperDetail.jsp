@@ -112,12 +112,11 @@
 			</td>
 		</tr>
 		<tr>
-			<h3>附件信息</h3>
-			<hr/>
+			<h3 style="width: 94%;margin-left: 3%;margin-top: 2%">基本信息</h3>
 		</tr>
 	</table>
 
-	<div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 2%">
+	<div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 2%;">
 		<h3>附件信息</h3>
 
 		<div id="datagrid"></div>
