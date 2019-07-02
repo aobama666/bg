@@ -37,15 +37,19 @@ public class LwPaperConstant {
     /**
      * 未打分
      */
-    public static final String SCORE_STATUS_NO = "1";
+    public static final String SCORE_STATUS_NO = "0";
     /**
      * 已打分未提交
      */
-    public static final String SCORE_STATUS_SAVE = "2";
+    public static final String SCORE_STATUS_SAVE = "1";
     /**
      * 已完成
      */
-    public static final String SCORE_STATUS_SUBMIT = "3";
+    public static final String SCORE_STATUS_SUBMIT = "2";
+    /**
+     * 重新评审
+     */
+    public static final String SCORE_STATUS_AGAIN = "3";
 
 
     //论文全生命周期状态

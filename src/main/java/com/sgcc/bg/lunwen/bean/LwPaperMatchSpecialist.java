@@ -27,6 +27,10 @@ public class LwPaperMatchSpecialist {
      */
     private String scoreStatus;
     /**
+     * 专家排序
+     */
+    private String specialistSort;
+    /**
      * 创建用户
      */
     private String createUser;
@@ -126,5 +130,13 @@ public class LwPaperMatchSpecialist {
 
     public void setValid(String valid) {
         this.valid = valid;
+    }
+
+    public String getSpecialistSort() {
+        return specialistSort;
+    }
+
+    public void setSpecialistSort(String specialistSort) {
+        this.specialistSort = specialistSort;
     }
 }

@@ -4,7 +4,7 @@
 <mapper namespace="com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper">
     <insert id="addPMS">
         insert into bg_lw_paper_match_expert
-        (uuid,paper_id,specialist_id,score,socre_status,create_user,create_time,valid)
+        (uuid,paper_id,specialist_id,score,socre_status,create_user,create_time,specialist_sort,valid)
         values (
             #{uuid},
             #{paperId},
@@ -13,6 +13,7 @@
             #{scoreStatus},
             #{createUser},
             #{createTime},
+            #{specialistSort},
             #{valid}
         )
     </insert>
@@ -32,8 +33,23 @@
         AND PAPER_ID = #{uuid,jdbcType=VARCHAR}
     </select>
 
-    <select id="selectPMS" resultType="java.util.Map">
-        select uuid,paper_id paperId,specialist_id specialistId,score,score_status scoreStatus
-        from bg_lw_paper_match_expert where paper_id= #{paperId} and specialist_id = #{specialistId}
+    <select id="selectPMS" resultType="com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist">
+        select
+            uuid,
+            paper_id paperId,
+            specialist_id specialistId,
+            score,
+            score_status scoreStatus
+        from bg_lw_paper_match_expert where 1=1
+        <if test="paperId != null and paperId != ''">
+          and paper_id= #{paperId}
+        </if>
+        <if test="specialistId != null and specialistId != ''">
+          and specialist_id = #{specialistId}
+        </if>
+    </select>
+
+    <select id="findSpecialistSort" resultType="java.lang.String">
+        select max(specialist_sort) from bg_lw_paper_match_expert where paper_id=#{paperId}
     </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.sgcc.bg.lunwen.util;
 
+import com.sgcc.bg.common.Rtext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +75,12 @@ public class DownLoadUtil {
                 }
                 outp = null;
             }
+        }
+    }
+
+    public static void main(String[] args) {
+        for (int i=0;i<10;i++){
+            System.out.println(Rtext.getUUID());
         }
     }
 }

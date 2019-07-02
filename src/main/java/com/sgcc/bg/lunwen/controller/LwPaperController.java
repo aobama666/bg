@@ -5,8 +5,12 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.*;
 import com.sgcc.bg.lunwen.bean.LwFile;
 import com.sgcc.bg.lunwen.bean.LwPaper;
+import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
+import com.sgcc.bg.lunwen.bean.LwSpecialist;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
+import com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper;
 import com.sgcc.bg.lunwen.service.LwFileService;
+import com.sgcc.bg.lunwen.service.LwPaperMatchSpecialistService;
 import com.sgcc.bg.lunwen.service.LwPaperService;
 import com.sgcc.bg.lunwen.util.DownLoadUtil;
 import com.sgcc.bg.lunwen.util.UploadUtil;
@@ -44,6 +48,8 @@ public class LwPaperController {
     private UserService userService;
     @Autowired
     private DataDictionaryService dataDictionaryService;
+    @Autowired
+    private LwPaperMatchSpecialistService lwPaperMatchSpecialistService;
 
     /**
      * 跳转至——论文管理
@@ -287,7 +293,7 @@ public class LwPaperController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "")
+    @RequestMapping(value = "/automaticMatch")
     public String automaticMatch(String uuid){
         ResultWarp rw = null;
         Map<String,Object> lwPaperMap = lwPaperService.findPaper(uuid,null);
@@ -296,19 +302,24 @@ public class LwPaperController {
         List<Map<String,Object>> fileList = lwFileService
                 .selectLwFile(uuid,LwPaperConstant.BUSSINESSTABLE,LwPaperConstant.VALID_YES);
         if(null == fileList){
-            rw = new ResultWarp("","该论文没有添加附件信息，不能进行自动匹配操作");
+            rw = new ResultWarp(ResultWarp.FAILED,"该论文没有添加附件信息，不能进行自动匹配操作");
         }
         //如果该论文全流程状态不是，，，不可进行自动匹配操作，，多加几个判断，反馈准确的错误信息
-        if("".equals(allStatus)){
-            rw = new ResultWarp("","该论文状态不匹配，自动匹配失败");
+        Integer successMatchNums = 0;
+        if(!LwPaperConstant.ALL_STATUS_ONE.equals(allStatus) && !LwPaperConstant.ALL_STATUS_TWO.equals(allStatus)){
+            rw = new ResultWarp(ResultWarp.FAILED,"该论文状态已匹配，正在进行打分操作");
+        }else if (LwPaperConstant.ALL_STATUS_TWO.equals(allStatus)){
+            //重复进行自动匹配操作
+            log.info(getLoginUser()+"repeat match,paper_id:"+uuid);
+            //查下面方面查的信息，查当前论文已经匹配了的信息，剔除重复的，添加新的，反馈前台有多少新添加的
+            successMatchNums = lwPaperService.autoMaticSecond(lwPaperMap,uuid);
+        }else{
+            //第一次进行自动匹配操作
+            successMatchNums = lwPaperService.autoMaticFirst(lwPaperMap,uuid);
         }
-        String field = lwPaperMap.get("FIELD").toString();
-        //根据论文所属领域，查询能够匹配的专家
-
-
-        //查询所有精准匹配的专家领域和专家研究方向
-        //拿到对应专家信息，入库
-        rw = new ResultWarp("","");
+        //反馈成功信息，匹配多少专家，亦或失败信息，没有符合自动匹配的专家
+        rw = new ResultWarp(ResultWarp.SUCCESS,"自动匹配完毕");
+        log.info(getLoginUser()+"该论文成功匹配到\"+successMatchNums+\"个专家！");
         return JSON.toJSONString(rw);
     }
 
@@ -317,10 +328,36 @@ public class LwPaperController {
      * 跳转手动匹配页面
      * @return
      */
-    @RequestMapping(value = "/manualMatchJumo")
-    public ModelAndView manualMatchJumo(){
-        //传递论文主键
-        ModelAndView mv = new ModelAndView();
+    @RequestMapping(value = "/manualMatchJump")
+    public ModelAndView manualMatchJumo(String paperUuid){
+        //前台验证是否已经进行过自动匹配操作，如果做过才能访问此方法
+        Map<String,Object> mvMap = new HashMap<>();
+        Map<String,Object> lwPaperMap = lwPaperService.findPaper(paperUuid,null);
+        String field = lwPaperMap.get("FIELD").toString();
+        String unit = lwPaperMap.get("UNIT").toString();
+        String author = lwPaperMap.get("AUTHOR").toString();
+        String[] authors = null;
+        if(author.contains(",")){
+            authors = author.split(",");
+        }else if(author.contains("，")){
+            authors = author.split("，");
+        }
+        //根据论文所属领域，查询能够匹配的专家
+        List<LwSpecialist> lwSpList = lwPaperService.selectSpecialistField(authors,unit,field);
+        //查询已经匹配上的专家
+        List<LwPaperMatchSpecialist> matchSpecialists = lwPaperMatchSpecialistService.selectPMS(paperUuid,null);
+        //判断是否有重复，剔除原有匹配专家信息
+        for(LwPaperMatchSpecialist lpm : matchSpecialists){
+            String specialistId = lpm.getSpecialistId();
+            for(int i =0;i<lwSpList.size();i++){
+                if(lwSpList.get(i).getUuid().equals(specialistId)){
+                    lwSpList.remove(i);
+                }
+            }
+        }
+        mvMap.put("left",matchSpecialists);
+        mvMap.put("right",lwSpList);
+        ModelAndView mv = new ModelAndView("/lunwen/manualMatchJumo",mvMap);
         return mv;
     }
 
@@ -331,7 +368,7 @@ public class LwPaperController {
      */
     @ResponseBody
     @RequestMapping(value = "/manualMatch")
-    public String manualMatch(){
+    public String manualMatch(String paperUuid){
         //获取对应论文id
         //获取选中的专家信息
         //获取当前论文已经匹配的专家信息

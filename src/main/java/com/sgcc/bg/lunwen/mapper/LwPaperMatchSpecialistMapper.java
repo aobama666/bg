@@ -37,6 +37,13 @@ public interface LwPaperMatchSpecialistMapper {
             @Param("score") String score);
 
     /**
+     * 获取当前论文下最大的排序数
+     * @param paperId
+     * @return
+     */
+    String findSpecialistSort(@Param("paperId") String paperId);
+
+    /**
      * 修改打分状态
      * @param uuid
      * @param socreStatus
@@ -46,7 +53,7 @@ public interface LwPaperMatchSpecialistMapper {
             @Param("uuid") String uuid,
             @Param("socreStatus") String socreStatus);
 
-    List<Map<String,Object>> selectPMS(
+    List<LwPaperMatchSpecialist> selectPMS(
             @Param("paperId") String paperId,
             @Param("specialistId") String specialistId);
 
