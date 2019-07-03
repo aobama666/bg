@@ -156,6 +156,8 @@
             TO_CHAR(p.create_time, 'YYYY-MM-DD HH24:MI') createTime,
             TO_CHAR(p.update_time, 'YYYY-MM-DD HH24:MI') updateTime,
             p.valid,
+            p.WEIGHTING_FRACTION weightingFaction,
+            p.AVERAGE_FRACTION averageFaction,
             ROWNUM rown
             from bg_lw_paper p
             where 1 = 1
@@ -324,6 +326,80 @@
             #{string,jdbcType=VARCHAR}
         </foreach>
         )
+    </select>
+
+    <select id="selectCheckIdExport" resultType="com.sgcc.bg.lunwen.bean.LwPaper">
+       select  p.uuid               uuid,
+               p.paper_id           paperId,
+               p.paper_name         paperName,
+               p.year,
+               p.unit,
+               p.author,
+               p.journal,
+               p.recommend_unit     recommendUnit,
+               (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_type' and vaild=1 and code= p.paper_type)  as paperType,
+               p.quote_count        quoteCount,
+               p.download_count     downloadCount,
+               p.field,
+               (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='score_status' and vaild=1 and code= p.score_status)  as scoreStatus,
+               p.valid
+       from bg_lw_paper p
+       where 1=1
+       AND p.uuid IN (
+        <foreach collection="uuids" item="uuid" index="index" separator=",">
+            #{uuid}
+        </foreach>
+       )
+    </select>
+
+    <select id="selectLwPaperExport" resultType="com.sgcc.bg.lunwen.bean.LwPaper">
+        select p.uuid,
+            p.paper_id paperId,
+            p.paper_name paperName,
+            p.year,
+            p.unit,
+            p.author,
+            p.journal,
+            p.recommend_unit recommendUnit,
+            (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_type' and vaild=1 and code= p.paper_type)  as paperType,
+            p.quote_count quoteCount,
+            p.download_count downloadCount,
+            p.field,
+            p.WEIGHTING_FRACTION weightingFaction,
+            p.AVERAGE_FRACTION averageFaction
+        from bg_lw_paper p
+        where 1 = 1
+        <if test="paperName != null and paperName != ''">
+            and p.paper_name = #{paperName}
+        </if>
+        <if test="year != null and year != ''">
+            and p.year = #{year}
+        </if>
+        <if test="paperId != null and paperId != ''">
+            and p.paper_id = #{paperId}
+        </if>
+        <if test="unit != null and unit != ''">
+            and p.unit = #{unit}
+        </if>
+        <if test="author != null and author != ''">
+            and p.author = #{author}
+        </if>
+        <if test="field != null and field != ''">
+            and p.field = #{field}
+        </if>
+        <if test="scoreStatus != null and scoreStatus != ''">
+            and p.score_status = #{scoreStatus}
+        </if>
+        <if test="paperType != null and paperType != ''">
+            and p.paper_type = #{paperType}
+        </if>
+        and valid = #{valid}
+        order  by p.paper_id desc
+    </select>
+
+    <select id="selectSpecialistField" resultType="com.sgcc.bg.lunwen.bean.LwSpecialist">
+      select * from bg_lw_specialist where valid = #{valid}
+      and (research_direction = #{researchDirection} or field = #{field})
     </select>
 
 </mapper>

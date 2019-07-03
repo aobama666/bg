@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.lunwen.mapper.LwGradeMapper">
+
+    <insert id="addLwGrade">
+        insert into bg_lw_grade (uuid,pme_id,rule_id,socre,create_user,create_time,valid)
+        values (
+            #{uuid},
+            #{pmeId},
+            #{ruleId},
+            #{score},
+            #{createUser},
+            #{createTime},
+            #{valid}
+        )
+    </insert>
+</mapper>

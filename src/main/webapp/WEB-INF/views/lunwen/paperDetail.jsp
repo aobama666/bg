@@ -111,50 +111,12 @@
 				<span class="detailsLeft"> ${ALLSTATUSDETAIL}</span>
 			</td>
 		</tr>
-		<%--<tr>
-			<td>
-				<span title = "创建用户">创建用户</span>
-			</td>
-			<td class="addInputStyle">
-				<span class="detailsLeft"> ${CREATEUSER}</span>
-			</td>
-			<td>
-				<span title = "创建时间">创建时间</span>
-			</td>
-			<td class="addInputStyle">
-				<span class="detailsLeft"> ${CREATETIME}</span>
-			</td>
-		</tr>
-		<c:if test="${UPDATEUSER != null}">
-			<tr>
-				<td>
-					<span title = "更新用户">更新用户</span>
-				</td>
-				<td class="addInputStyle">
-					<span class="detailsLeft"> ${UPDATEUSER}</span>
-				</td>
-				<td>
-					<span title = "更新时间">更新时间</span>
-				</td>
-				<td class="addInputStyle">
-					<span class="detailsLeft"> ${UPDATETIME}</span>
-				</td>
-			</tr>
-		</c:if>
 		<tr>
-			<td>
-				<span title = "年份">年份</span>
-			</td>
-			<td class="addInputStyle">
-				<span class="detailsLeft"> ${YEAR}</span>
-			</td>
-		</tr>--%>
-		<tr>
-			<hr/>
+			<h3 style="width: 94%;margin-left: 3%;margin-top: 2%">基本信息</h3>
 		</tr>
 	</table>
 
-	<div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 2%">
+	<div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 2%;">
 		<h3>附件信息</h3>
 
 		<div id="datagrid"></div>

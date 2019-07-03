@@ -27,13 +27,13 @@
 			</td>
 			<td class="addInputStyle">
 				<input type = "text" style="display: none" id = "uuid"  name="uuid">
-				<input type="text"  id="paperName"  name="paperName"  class="validNull"  len="20"   content="论文题目" title="必填项"/>
+				<input type="text"  id="paperName"  name="paperName"  class="validNull"  len="50"   content="论文题目" title="必填项"/>
 			</td>
 			<td>
 				<span title = "作者单位"><b class="mustWrite">*</b>作者单位</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="unit" name="unit"  class="validNull"  content="作者单位"  len="20"  title="必填项  "/>
+				<input type="text"  id="unit" name="unit"  class="validNull"  content="作者单位"  len="50"  title="必填项  "/>
 			</td>
 		</tr>
 		<tr>
@@ -47,7 +47,7 @@
 				<span title = "被引量"><b class="mustWrite">*</b>被引量</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="quoteCount" name="quoteCount"  class="validNull"   len="20" content="被引量"  title="必填项  "/>
+				<input type="text"  id="quoteCount" name="quoteCount"  class="validNull"   len="8" content="被引量"  title="必填项  "/>
 			</td>
 		</tr>
 		<tr>
@@ -55,13 +55,13 @@
 			<span title = "论文作者"><b class="mustWrite">*</b>论文作者</span>
 		</td>
 		<td class="addInputStyle">
-			<input type="text"  id="author"  name="author"  class="validNull"  len="20"   content="论文作者" title="必填项"/>
+			<input type="text"  id="author"  name="author"  class="validNull"  len="50"   content="论文作者" title="必填项"/>
 		</td>
 		<td>
 			<span title = "期刊名称"><b class="mustWrite">*</b>期刊名称</span>
 		</td>
 		<td class="addInputStyle">
-			<input type="text"  id="journal" name="journal"  class="validNull"  content="期刊名称"  len="20"  title="必填项  "/>
+			<input type="text"  id="journal" name="journal"  class="validNull"  content="期刊名称"  len="50"  title="必填项  "/>
 		</td>
 		</tr>
 		<tr>
@@ -69,27 +69,21 @@
 				<span title = "推荐单位"><b class="mustWrite">*</b>推荐单位</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="recommendUnit"  name="recommendUnit"  class="validNull"  len="20"   content="推荐单位" title="必填项"/>
+				<input type="text"  id="recommendUnit"  name="recommendUnit"  class="validNull"  len="200"   content="推荐单位" title="必填项"/>
 			</td>
 			<td>
 				<span title = "下载量"><b class="mustWrite">*</b>下载量</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="downloadCount" name="downloadCount"  class="validNull"  len="20"  content="下载量"  title="必填项  "/>
+				<input type="text"  id="downloadCount" name="downloadCount"  class="validNull"  len="8"  content="下载量"  title="必填项  "/>
 			</td>
 		</tr>
-		<tr>
+		<tr style="display: none">
 			<td>
 				<span title = "论文类型"><b class="mustWrite">*</b>论文类型</span>
 			</td>
 			<td class="addInputStyle">
-				<select id="paperType"  name = "paperType"  class = "validNull select-person"   content="论文类型"    title="必填项  "  >
-					<option value=""  selected >请选择论文类型</option>
-					<c:forEach  var="paperType"  items="${paperType}">
-						<option value ="${paperType.K}"> ${paperType.V}</option>
-					</c:forEach>
-				</select>
-
+				<input type="text"  id="paperType" name="paperType" value="${paperType}"/>
 			</td>
 		</tr>
 		<tr>

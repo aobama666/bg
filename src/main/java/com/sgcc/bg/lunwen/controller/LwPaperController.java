@@ -51,7 +51,10 @@ public class LwPaperController {
      */
     @RequestMapping(value = "/paperToManage", method = RequestMethod.GET)
     public ModelAndView paperToManage(){
-        ModelAndView mv = new ModelAndView("lunwen/paperManage");
+        Map<String, Object> mvMap = new HashMap<>();
+        List<Map<String, String>>   scoreStatusList= dataDictionaryService.selectDictDataByPcode("score_status");
+        mvMap.put("scoreStatus", scoreStatusList);
+        ModelAndView mv = new ModelAndView("lunwen/paperManage",mvMap);
         return mv;
     }
 
@@ -116,14 +119,34 @@ public class LwPaperController {
 
 
     /**
+     * 导出选中列或者全部论文数据
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/lwPaperExport")
+    public void lwPaperExport(HttpServletRequest request,HttpServletResponse response){
+        String year  = request.getParameter("year") == null?"":request.getParameter("year");
+        String paperName  = request.getParameter("paperName") == null?"":request.getParameter("paperName");
+        String paperId  = request.getParameter("paperId") == null?"":request.getParameter("paperId");
+        String unit  = request.getParameter("unit") == null?"":request.getParameter("unit");
+        String author  = request.getParameter("author") == null?"":request.getParameter("author");
+        String field  = request.getParameter("field") == null?"":request.getParameter("field");
+        String scoreStatus  = request.getParameter("scoreStatus") == null?"":request.getParameter("scoreStatus");
+        String paperType  = request.getParameter("paperType") == null?"":request.getParameter("paperType");
+        String ids = request.getParameter("selectList") == null ?" " : request.getParameter("selectList");
+        List<LwPaper> lwPaperList = lwPaperService.selectLwpaperExport(paperName,paperId,year,unit,author,field,scoreStatus,paperType,ids,response);
+        log.info(getLoginUser()+"exprot data");
+    }
+
+
+    /**
      * 跳转至——论文新增
      * @return
      */
     @RequestMapping(value = "/paperJumpAdd", method = RequestMethod.GET)
-    public ModelAndView paperJumpAdd(){
+    public ModelAndView paperJumpAdd(String paperType){
         Map<String, Object> mvMap = new HashMap<>();
-        List<Map<String, String>>   paperTypeList= dataDictionaryService.selectDictDataByPcode("paper_type");
-        mvMap.put("paperType", paperTypeList);
+        mvMap.put("paperType",paperType);
         ModelAndView mv = new ModelAndView("lunwen/paperAdd",mvMap);
         return mv;
     }
@@ -152,7 +175,7 @@ public class LwPaperController {
         lwPaper.setCreateUser(getLoginUserUUID());
         lwPaperService.addLwPaper(lwPaper);
         log.info(getLoginUser()+"insert lwPaper success,info:"+lwPaper.toString());
-        rw = new ResultWarp(ResultWarp.SUCCESS ,"添加论文成功");
+        rw = new ResultWarp(ResultWarp.SUCCESS ,"添加论文基本信息成功");
         rw.addData("uuid",uuid);
         return JSON.toJSONString(rw);
     }
@@ -186,49 +209,60 @@ public class LwPaperController {
         LwPaper lwPaper = mapToLwPaper(paramsMap);
         lwPaper.setUpdateUser(getLoginUserUUID());
         lwPaper.setUpdateTime(new Date());
-        lwPaper.setUuid(paramsMap.get("UUID").toString());
+        lwPaper.setUuid(paramsMap.get("uuid").toString());
         lwPaperService.updateLwPaper(lwPaper);
         log.info(getLoginUser()+"update lwPaper success,info:"+lwPaper.toString());
-        rw = new ResultWarp(ResultWarp.SUCCESS ,"修改论文成功");
+        rw = new ResultWarp(ResultWarp.SUCCESS ,"修改论文基本信息成功");
         return JSON.toJSONString(rw);
     }
 
     /**
      * 删除对应论文
-     * @param uuid
+     * @param uuids
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/delLwPaper")
-    public String delLwPaper(String uuid){
+    public String delLwPaper(String uuids){
+        String[] uuidArray = uuids.split(",");
+        List<String> successDel = new ArrayList<>();
+        List<String> failDel = new ArrayList<>();
         ResultWarp rw = null;
-        //如果打分状态为待提交，不可删除
-        Map<String,Object> lwMap = lwPaperService.findPaper(uuid,null);
-        String scoreTableStatus = lwMap.get("SCORETABLESTATUS").toString();
-        if(!LwPaperConstant.SCORE_TABLE_OFF.equals(scoreTableStatus)){
-            log.info(getLoginUser()+"delete lwPaper fail,scoreTableStatus is:"+scoreTableStatus+",uuid:"+uuid);
-            rw = new ResultWarp(ResultWarp.FAILED ,"删除论文失败,该论文已进行打分操作");
-            return JSON.toJSONString(rw);
-        }
-        lwPaperService.delLwPaper(uuid);
+        for(String uuid : uuidArray){
+            //如果已匹配，不可删除
+            Map<String,Object> lwMap = lwPaperService.findPaper(uuid,null);
+            String allstatus = lwMap.get("ALLSTATUS").toString();
+            if(!LwPaperConstant.ALL_STATUS_ONE.equals(allstatus)){
+                log.info(getLoginUser()+"delete lwPaper fail,allStatus is:"+allstatus+",uuid:"+uuid);
+                failDel.add(uuid);
+                continue;
+            }
+            lwPaperService.delLwPaper(uuid);
 
-        //删除论文对应的附件，在ftp服务器做删除操作
-        //查询论文对应所有附件信息
-        List<Map<String,Object>> fileList = lwFileService.selectLwFile(uuid,LwPaperConstant.BUSSINESSTABLE,LwPaperConstant.VALID_YES);
-        String fileUuid;
-        String ftpFilPath;
-        for(Map<String,Object> fileMap : fileList){
-            fileUuid = fileMap.get("UUID").toString();
-            ftpFilPath = fileMap.get("FTPFILEPATH").toString();
-            //删除服务器对应路径的ftp文件
-            FtpUtils.deleteFile(ftpFilPath);
-            //逻辑删除数据库附件表信息
-            lwFileService.delLwFile(fileUuid);
-            log.info(getLoginUser()+"delete lwPaper file,message:"+fileMap.toString());
+            //删除论文对应的附件，在ftp服务器做删除操作
+            //查询论文对应所有附件信息
+            List<Map<String,Object>> fileList = lwFileService.selectLwFile(uuid,LwPaperConstant.BUSSINESSTABLE,LwPaperConstant.VALID_YES);
+            String fileUuid;
+            String ftpFilPath;
+            for(Map<String,Object> fileMap : fileList){
+                fileUuid = fileMap.get("UUID").toString();
+                ftpFilPath = fileMap.get("FTPFILEPATH").toString();
+                //删除服务器对应路径的ftp文件
+                FtpUtils.deleteFile(ftpFilPath);
+                //逻辑删除数据库附件表信息
+                lwFileService.delLwFile(fileUuid);
+                log.info(getLoginUser()+"delete lwPaper file,message:"+fileMap.toString());
+            }
+            log.info(getLoginUser()+"delete lwPaper success,uuid:"+uuid+",del file nums is:"+fileList.size()+";");
+            successDel.add(uuid);
         }
-
-        log.info(getLoginUser()+"delete lwPaper success,uuid:"+uuid);
-        rw = new ResultWarp(ResultWarp.SUCCESS ,"删除论文成功,删除附件"+fileList.size()+"个");
+        String msg = "成功删除"+successDel.size()+"条论文信息";
+        if(failDel.size() == 0){
+            rw = new ResultWarp(ResultWarp.SUCCESS ,msg);
+        }else{
+            msg = msg+"，"+failDel.size()+"条删除失败，已匹配不可删除";
+            rw = new ResultWarp(ResultWarp.FAILED ,msg);
+        }
         return JSON.toJSONString(rw);
     }
 
@@ -254,10 +288,28 @@ public class LwPaperController {
      */
     @ResponseBody
     @RequestMapping(value = "")
-    public String automaticMatch(){
-        //判断基本信息是否录入完成，尤其是附件内容
+    public String automaticMatch(String uuid){
+        ResultWarp rw = null;
+        Map<String,Object> lwPaperMap = lwPaperService.findPaper(uuid,null);
+        String allStatus = lwPaperMap.get("ALLSTATUS").toString();
+        //根据论文主键查询附件信息
+        List<Map<String,Object>> fileList = lwFileService
+                .selectLwFile(uuid,LwPaperConstant.BUSSINESSTABLE,LwPaperConstant.VALID_YES);
+        if(null == fileList){
+            rw = new ResultWarp("","该论文没有添加附件信息，不能进行自动匹配操作");
+        }
+        //如果该论文全流程状态不是，，，不可进行自动匹配操作，，多加几个判断，反馈准确的错误信息
+        if("".equals(allStatus)){
+            rw = new ResultWarp("","该论文状态不匹配，自动匹配失败");
+        }
+        String field = lwPaperMap.get("FIELD").toString();
+        //根据论文所属领域，查询能够匹配的专家
 
-        return "";
+
+        //查询所有精准匹配的专家领域和专家研究方向
+        //拿到对应专家信息，入库
+        rw = new ResultWarp("","");
+        return JSON.toJSONString(rw);
     }
 
 
@@ -267,6 +319,7 @@ public class LwPaperController {
      */
     @RequestMapping(value = "/manualMatchJumo")
     public ModelAndView manualMatchJumo(){
+        //传递论文主键
         ModelAndView mv = new ModelAndView();
         return mv;
     }
@@ -279,6 +332,11 @@ public class LwPaperController {
     @ResponseBody
     @RequestMapping(value = "/manualMatch")
     public String manualMatch(){
+        //获取对应论文id
+        //获取选中的专家信息
+        //获取当前论文已经匹配的专家信息
+        //分离出新添加的专家信息
+        //添加关联信息到关联表
         return "";
     }
 
@@ -420,7 +478,6 @@ public class LwPaperController {
         return jsonStr;
     }
 
-
     /**
      * 跳转至新增论文附件上传界面
      * @return
@@ -545,14 +602,29 @@ public class LwPaperController {
         //生成uuid文件夹名称，解压到对应目录下
         String uuidPath = Rtext.getUUID();
         ZipUtil.unZip(new File(path+zipFileName),path+uuidPath);
+        //删除压缩包
+        new File(path+zipFileName).delete();
         //获取所有文件信息
-        List<String> fileNameList = new ArrayList<String>();
-        StringBuffer errorFileName = new StringBuffer();
+        File uuidPathFile = new File(path+uuidPath);
+        File[] fileNameList = uuidPathFile.listFiles();
+        //格式错误文件信息
+        List<String> errorFileName = new ArrayList<>();
+        //重复录入文件信息
+        List<String> repeatFileName = new ArrayList<>();
+        //成功录入文件信息
+        List<String> successFileName = new ArrayList<>();
 
-        for(String fileName : fileNameList){
+        for(File file : fileNameList){
+            String fileName = file.getName();
             //本地存放路径及文件名称
-            String localPath = path+fileName;
+            String localPath = file.getPath();
 
+            if(0>fileName.lastIndexOf("-") || 0>fileName.lastIndexOf(".")){
+                //如果不存在中划线或者点标志，这个文件名称不正确，不能继续操作，走下一个文件
+                errorFileName.add(fileName);
+                new File(localPath).delete();
+                continue;
+            }
             //根据fileName中划线前面的内容，获取论文题目
             String fileNameBeforeTitle = fileName.substring(0,fileName.lastIndexOf("-"));
             //通过本地文件信息生成ftp文件名
@@ -567,12 +639,19 @@ public class LwPaperController {
             if(null!=lwFileForFileName){
                 //附件已存在，删除本地路径附件，返回已存在标识
                 new File(localPath).delete();
-                errorFileName.append(fileName+",");
+                repeatFileName.add(fileName);
                 continue;
             }
 
             //如果不存在，查询一下论文的信息,获得论文id
             Map<String,Object> lwPaper = lwPaperService.findPaper(null,fileNameBeforeTitle);
+            //如果论文不存在
+            if(null != lwPaper){
+                errorFileName.add(fileName);
+                new File(localPath).delete();
+                continue;
+            }
+            //如果论文存在，执行正常流程，上传入库
             String paperUuid = lwPaper.get("UUID").toString();
 
             //重命名本地文件
@@ -586,8 +665,8 @@ public class LwPaperController {
             String fileLength = String.valueOf(newFtpFile.length());
             //上传至ftp
             FtpUtils.uploadFile(newFtpFile,FtpUtils.PaperUploadPath);
-            //删除原路径文件
-            newFtpFile.delete();
+            //删除上传成功的本地文件
+            new File(localPath).delete();
 
             //保存附件信息至数据库
             LwFile lwFile = new LwFile();
@@ -604,16 +683,20 @@ public class LwPaperController {
             lwFile.setCreateTime(new Date());
             lwFile.setValid(LwPaperConstant.VALID_YES);
             lwFileService.addLwFile(lwFile);
+            //录入成功的附件信息
+            successFileName.add(fileName);
         }
 
-        //处理重复上传附件信息
-
-        //删除刚才生成的uuid文件夹下的所有文件
-
+        //删除刚才生成的uuid文件夹
+        uuidPathFile.delete();
         //反馈前台
         rw = new ResultWarp(ResultWarp.SUCCESS ,"上传附件成功");
+        rw.addData("errorFileName",errorFileName.toString());
+        rw.addData("repeatFileName",repeatFileName.toString());
+        rw.addData("successFileName",successFileName.toString());
         return JSON.toJSONString(rw);
     }
+
 
 
     /**
