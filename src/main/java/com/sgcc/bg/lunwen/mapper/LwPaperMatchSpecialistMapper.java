@@ -41,7 +41,8 @@ public interface LwPaperMatchSpecialistMapper {
      * @param paperId
      * @return
      */
-    String findSpecialistSort(@Param("paperId") String paperId);
+    String findSpecialistSort(@Param("paperId") String paperId,
+                @Param("valid") String valid);
 
     /**
      * 修改打分状态
@@ -55,6 +56,7 @@ public interface LwPaperMatchSpecialistMapper {
 
     List<LwPaperMatchSpecialist> selectPMS(
             @Param("paperId") String paperId,
-            @Param("specialistId") String specialistId);
+            @Param("specialistId") String specialistId,
+            @Param("valid") String valid);
 
 }

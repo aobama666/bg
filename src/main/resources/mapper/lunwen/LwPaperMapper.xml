@@ -42,7 +42,7 @@
         #{allStatus,jdbcType=VARCHAR},
         #{createUser,jdbcType=VARCHAR},
         #{createTime,jdbcType=TIMESTAMP},
-        #{valid}
+        #{valid,jdbcType=VARCHAR}
         )
     </insert>
 
@@ -406,9 +406,9 @@
             field
         from bg_lw_specialist where valid = #{valid}
         <if test="field != null and field != ''">
-            and (research_direction = #{field}) or field = #{field})
+            and (research_direction = #{field} or field = #{field})
         </if>
-        <if test="authors != null and autohors != ''">
+        <if test="authors != null and authors != ''">
             and name not in (
                 <foreach collection="authors" item="author" index="index" separator=",">
                     #{author}

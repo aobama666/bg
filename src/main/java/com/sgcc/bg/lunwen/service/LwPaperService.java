@@ -172,14 +172,7 @@ public interface LwPaperService {
                                     HttpServletResponse response);
 
     /**
-     * 首次自动匹配
-     * @param lwPaperMap
-     * @return
-     */
-    public Integer autoMaticFirst(Map<String,Object> lwPaperMap,String paperUuid);
-
-    /**
-     * 二轮自动匹配
+     * 首次，亦或重复自动匹配
      * @param lwPaperMap
      * @return
      */

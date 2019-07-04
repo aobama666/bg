@@ -152,55 +152,13 @@ public class LwPaperServiceImpl implements LwPaperService {
         return list;
     }
 
-    @Override
-    public Integer autoMaticFirst(Map<String, Object> lwPaperMap,String paperUuid) {
-        String field = lwPaperMap.get("FIELD").toString();
-        String unit = lwPaperMap.get("UNIT").toString();
-        String author = lwPaperMap.get("AUTHOR").toString();
-        String[] authors = null;
-        if(author.contains(",")){
-            authors = author.split(",");
-        }else if(author.contains("，")){
-            authors = author.split("，");
-        }
-        //根据论文所属领域，查询能够匹配的专家
-        List<LwSpecialist> lwSpList = lwPaperService.selectSpecialistField(authors,unit,field);
 
-        //排序
-        List<String> specialistIdList = new ArrayList<>();
-        //1.领域，研究方向，皆相同，不同单位，不同作者
-        for(LwSpecialist lwSpecialist : lwSpList){
-            if(lwSpecialist.getField().contains(field) && lwSpecialist.getResearchDirection().contains(field)){
-                specialistIdList.add(lwSpecialist.getUuid());
-            }
-        }
-        //2.领域相同，研究方向不同，不同单位，不同作者
-        for(LwSpecialist lwSpecialist : lwSpList){
-            if(lwSpecialist.getField().contains(field) && !lwSpecialist.getResearchDirection().contains(field)){
-                specialistIdList.add(lwSpecialist.getUuid());
-            }
-        }
-        //3.研究方向相同,领域不同，不同单位，不同作者
-        for(LwSpecialist lwSpecialist : lwSpList){
-            if(!lwSpecialist.getField().contains(field) && lwSpecialist.getResearchDirection().contains(field)){
-                specialistIdList.add(lwSpecialist.getUuid());
-            }
-        }
-
-        //拿到对应专家信息，入库专家论文关联表
-        for(int i=0;i<specialistIdList.size();i++){
-            LwPaperMatchSpecialist lwPaperMatchSpecialist = new LwPaperMatchSpecialist();
-            lwPaperMatchSpecialist.setPaper_id(paperUuid);
-            lwPaperMatchSpecialist.setSpecialistId(specialistIdList.get(i));
-            lwPaperMatchSpecialist.setScoreStatus(LwPaperConstant.SCORE_STATUS_NO);
-            lwPaperMatchSpecialist.setCreateUser(getLoginUserUUID());
-            lwPaperMatchSpecialist.setCreateTime(new Date());
-            lwPaperMatchSpecialist.setSpecialistSort((i+1)+"");
-            lwPaperMatchSpecialistService.addPMS(lwPaperMatchSpecialist);
-        }
-        return lwSpList.size();
-    }
-
+    /**
+     * 重复匹配————附加首次匹配功能，缩减代码量
+     * @param lwPaperMap
+     * @param paperUuid
+     * @return
+     */
     @Override
     public Integer autoMaticSecond(Map<String, Object> lwPaperMap,String paperUuid) {
         String field = lwPaperMap.get("FIELD").toString();
@@ -211,6 +169,8 @@ public class LwPaperServiceImpl implements LwPaperService {
             authors = author.split(",");
         }else if(author.contains("，")){
             authors = author.split("，");
+        }else{
+            authors = new String[]{author};
         }
         //根据论文所属领域，查询能够匹配的专家
         List<LwSpecialist> lwSpList = lwPaperService.selectSpecialistField(authors,unit,field);
@@ -222,43 +182,52 @@ public class LwPaperServiceImpl implements LwPaperService {
             for(int i =0;i<lwSpList.size();i++){
                 if(lwSpList.get(i).getUuid().equals(specialistId)){
                     lwSpList.remove(i);
+                    break;
                 }
             }
         }
         //排序
         List<String> specialistIdList = new ArrayList<>();
-        //1.领域，研究方向，皆相同，不同单位，不同作者
+        //1.领域，研究方向，皆相同，不同单位，不同作者,统一控制总数，最多15个
         for(LwSpecialist lwSpecialist : lwSpList){
-            if(lwSpecialist.getField().contains(field) && lwSpecialist.getResearchDirection().contains(field)){
+            if(lwSpecialist.getField().contains(field) && lwSpecialist.getResearchDirection().contains(field)
+                    && specialistIdList.size()<15){
                 specialistIdList.add(lwSpecialist.getUuid());
             }
         }
         //2.领域相同，研究方向不同，不同单位，不同作者
         for(LwSpecialist lwSpecialist : lwSpList){
-            if(lwSpecialist.getField().contains(field) && !lwSpecialist.getResearchDirection().contains(field)){
+            if(lwSpecialist.getField().contains(field) && !lwSpecialist.getResearchDirection().contains(field)
+                    && specialistIdList.size()<15){
                 specialistIdList.add(lwSpecialist.getUuid());
             }
         }
         //3.研究方向相同,领域不同，不同单位，不同作者
         for(LwSpecialist lwSpecialist : lwSpList){
-            if(!lwSpecialist.getField().contains(field) && lwSpecialist.getResearchDirection().contains(field)){
+            if(!lwSpecialist.getField().contains(field) && lwSpecialist.getResearchDirection().contains(field)
+                    && specialistIdList.size()<15){
                 specialistIdList.add(lwSpecialist.getUuid());
             }
         }
         //查询当前论文对应匹配表中最大排序数
-        Integer specialistSort = Integer.valueOf(lwPaperMatchSpecialistMapper.findSpecialistSort(paperUuid));
+        String maxSort = lwPaperMatchSpecialistMapper.findSpecialistSort(paperUuid,LwPaperConstant.VALID_YES);
+        Integer specialistSort = 0;
+        if(!"".equals(maxSort) && null!=maxSort){
+            specialistSort = Integer.valueOf(maxSort);
+        }
         //添加新的专家信息
         LwPaperMatchSpecialist lwPaperMatchSpecialist;
-        for(String lwSpecialistId : specialistIdList){
+        for(int i =0;i<specialistIdList.size();i++){
             lwPaperMatchSpecialist = new LwPaperMatchSpecialist();
-            lwPaperMatchSpecialist.setPaper_id(paperUuid);
-            lwPaperMatchSpecialist.setSpecialistId(lwSpecialistId);
+            lwPaperMatchSpecialist.setPaperId(paperUuid);
+            lwPaperMatchSpecialist.setSpecialistId(specialistIdList.get(i));
             lwPaperMatchSpecialist.setScoreStatus(LwPaperConstant.SCORE_STATUS_NO);
             lwPaperMatchSpecialist.setCreateUser(getLoginUserUUID());
-            lwPaperMatchSpecialist.setCreateTime(new Date());
+            lwPaperMatchSpecialist.setSpecialistSort((specialistSort+i+1)+"");
             lwPaperMatchSpecialistService.addPMS(lwPaperMatchSpecialist);
         }
-        return lwSpList.size();
+        //返回当前匹配总数
+        return lwSpList.size()+specialistSort;
     }
 
     public String getLoginUserUUID(){

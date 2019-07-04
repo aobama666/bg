@@ -80,7 +80,7 @@ paperList.initDataGrid = function(){
             {name: '专家信息',style:{width:"50px"}, data: 'UUID',
                 forMat:function(row){
                     return "<a title = '点击查看匹配专家' style='width:250px;' id='"+row.UUID+"'" +
-                        "href = 'javascript:void(0)' onclick = paperList.forDetails('"+row.UUID+"')>查看详情</a>";
+                        "href = 'javascript:void(0)' onclick = paperList.manualMatch('"+row.UUID+"')>查看详情</a>";
 
                 }},
             {name: '打分状态',style:{width:"50px"}, data: 'SCORESTATUS'},
@@ -420,3 +420,119 @@ paperList.export = function () {
         document.forms[0].submit();
     }
 }
+
+
+
+paperList.automaticMatch = function(){
+    var info = "确认自动匹配选中的这条论文吗";
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length==0){
+        messager.tip("请选择要操作的数据",1000);
+        return;
+    }else if(checkedItems.length>1){
+        messager.tip("每次只能操作一条数据",2000);
+        return;
+    }else if(checkedItems[0].ALLSTATUS == 2 || checkedItems[0].ALLSTATUS == 7){
+        info = "该论文已自动匹配，确认重新自动匹配选中的这条论文吗";
+    }
+    //不在前台做是否能删除的判断，在后台判断，记录日志，同时比前台更safe
+    $.messager.confirm( "自动匹配提示", info,
+        function(r){
+            if(r){
+                $.ajax({
+                    url: "/bg/lwPaper/automaticMatch?uuid="+checkedItems[0].UUID,//删除
+                    type: "post",
+                    dataType:"json",
+                    contentType: 'application/json',
+                    data: '',
+                    success: function (data) {
+                        if(data.success == "true"){
+                            messager.tip(data.msg,3000);
+                            paperList.query();
+                        }else{
+                            messager.tip(data.msg,3000);
+                            paperList.query();
+                        }
+                    }
+                });
+            }
+        }
+    );
+}
+
+
+/*手动匹配*/
+paperList.manualMatch = function (id){
+    var url = "/bg/lwPaper/manualMatchJump?paperUuid="+id;
+    layer.open({
+        type:2,
+        title:'<h4 style="height:42px;line-height:25px;">专家匹配详情</h4>',
+        area:['85%','85%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url
+    },function (index) {
+        layer.close(index);
+    });
+}
+
+
+/**
+ * 手动匹配
+ */
+layui.config({
+    base: 'layui_exts/transfer/'
+}).use(['transfer'],function () {
+    var transfer = layui.transfer,$ = layui.$;
+    //数据源
+    var data1 = [
+        {'id':'10001','name':'杜甫','sex':'男'},
+        {'id':'10002','name':'李白','sex':'男'},
+        {'id':'10001','name':'康熙','sex':'男'},
+        {'id':'10002','name':'纪晓岚','sex':'男'},
+        {'id':'10001','name':'乾隆','sex':'男'},
+        {'id':'10002','name':'和珅','sex':'男'},
+        {'id':'10003','name':'王勃','sex':'男'},
+        {'id':'10004','name':'李清照','sex':'男'}
+    ];
+    var data2 = [
+        {'id':'10005','name':'王安石','sex':'男'},
+        {'id':'10005','name':'齐白石','sex':'男'},
+        {'id':'10005','name':'王羲之','sex':'男'},
+        {'id':'10005','name':'李开复','sex':'男'},
+        {'id':'10005','name':'李彦宏','sex':'男'},
+        {'id':'10005','name':'马云','sex':'男'},
+        {'id':'10005','name':'马化腾','sex':'男'},
+        {'id':'10005','name':'扎克伯格','sex':'男'},
+        {'id':'10005','name':'张一鸣','sex':'男'},
+        {'id':'10005','name':'王兴','sex':'男'},
+        {'id':'10005','name':'王石','sex':'男'},
+        {'id':'10005','name':'罗永浩','sex':'男'}
+    ];
+    //表格列
+    var cols = [{type: 'checkbox', fixed: 'left'},{field: 'id', title: 'ID', width: 80, sort: true},{field: 'name', title: '用户名'},{field: 'sex', title: '性别'}]
+    //表格配置文件
+    var tabConfig = {'page':false,'height':400}
+//'page':true,'limits':[10,50,100],
+    var tb1 = transfer.render({
+        elem: "#root", //指定元素
+        cols: cols, //表格列  支持layui数据表格所有配置
+        data: [data1,data2], //[左表数据,右表数据[非必填]]
+        tabConfig: tabConfig //表格配置项 支持layui数据表格所有配置
+    })
+
+    //transfer.get(参数1:初始化返回值,参数2:获取数据[all,left,right,l,r],参数:指定数据字段)
+    //获取数据
+    $('.all').on('click',function () {
+        var data = transfer.get(tb1,'all');
+        layer.msg(JSON.stringify(data))
+    });
+    $('.left').on('click',function () {
+        var data = transfer.get(tb1,'left','id');
+        layer.msg(JSON.stringify(data))
+    });
+    $('.right').on('click',function () {
+        var data = transfer.get(tb1,'r');
+        layer.msg(JSON.stringify(data))
+    });
+})

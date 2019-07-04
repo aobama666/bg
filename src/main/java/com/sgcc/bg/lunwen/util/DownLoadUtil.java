@@ -82,5 +82,9 @@ public class DownLoadUtil {
         for (int i=0;i<10;i++){
             System.out.println(Rtext.getUUID());
         }
+//        String[] as = null;
+//        String a = "asdfasdfa";
+//        as = new String[]{a};
+//        System.out.println(as);
     }
 }

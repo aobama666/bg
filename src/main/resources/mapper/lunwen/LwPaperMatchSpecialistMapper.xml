@@ -4,17 +4,25 @@
 <mapper namespace="com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper">
     <insert id="addPMS">
         insert into bg_lw_paper_match_expert
-        (uuid,paper_id,specialist_id,score,socre_status,create_user,create_time,specialist_sort,valid)
+        (uuid,
+        paper_id,
+        specialist_id,
+        score,
+        score_status,
+        create_user,
+        create_time,
+        specialist_sort,
+        valid)
         values (
-            #{uuid},
-            #{paperId},
-            #{specialistId},
-            #{score},
-            #{scoreStatus},
-            #{createUser},
-            #{createTime},
-            #{specialistSort},
-            #{valid}
+            #{uuid,jdbcType=VARCHAR},
+            #{paperId,jdbcType=VARCHAR},
+            #{specialistId,jdbcType=VARCHAR},
+            #{score,jdbcType=VARCHAR},
+            #{scoreStatus,jdbcType=VARCHAR},
+            #{createUser,jdbcType=VARCHAR},
+            #{createTime,jdbcType=TIMESTAMP},
+            #{specialistSort,jdbcType=INTEGER},
+            #{valid,jdbcType=VARCHAR}
         )
     </insert>
 
@@ -47,9 +55,10 @@
         <if test="specialistId != null and specialistId != ''">
           and specialist_id = #{specialistId}
         </if>
+        and valid = #{valid}
     </select>
 
     <select id="findSpecialistSort" resultType="java.lang.String">
-        select max(specialist_sort) from bg_lw_paper_match_expert where paper_id=#{paperId}
+        select max(specialist_sort) from bg_lw_paper_match_expert where paper_id=#{paperId,jdbcType=INTEGER} and valid = #{valid}
     </select>
 </mapper>

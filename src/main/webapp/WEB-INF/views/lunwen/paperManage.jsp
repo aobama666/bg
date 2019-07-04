@@ -22,6 +22,7 @@
 <body>
 	<div class="main_div"></div>
 
+
 	<!-- start    查询条件 -->
 	<div class="sheach">
 		<div class='content_top'>论文管理</div>
@@ -68,9 +69,9 @@
 			<div class='btn right deleteButton' onclick="paperList.delEvent()" >删除</div>
 			<div class='btn right deleteButton' onclick="paperList.updateOperation()" >修改</div>
 			<div class='btn right deleteButton' onclick="paperList.addOperation()" >新增</div>
-			<div class='btn right deleteButton' onclick="paperList.export()" >自动匹配</div>
-			<div class='btn right deleteButton' onclick="paperList.generateScoreTable()" >生成打分表</div>
+			<div class='btn right deleteButton' onclick="paperList.automaticMatch()" >自动匹配</div>
 			<div class='btn right deleteButton' onclick="paperList.withdrawScoreTable()" >撤回打分表</div>
+			<div class='btn right deleteButton' onclick="paperList.generateScoreTable()" >生成打分表</div>
 		</div>
 		<!-- 学术技术综述分类按钮 -->
 		<div class="grid-title">

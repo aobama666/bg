@@ -77,6 +77,10 @@ public class LwPaperConstant {
      * 已完成评审
      */
     public static final String ALL_STATUS_SIX = "6";
+    /**
+     * 已匹配专家未达标
+     */
+    public static final String All_STATUS_SEVEN = "7";
 
 
     //有效标识

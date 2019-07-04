@@ -13,7 +13,7 @@ public class LwPaperMatchSpecialist {
     /**
      * 论文id
      */
-    private String paper_id;
+    private String paperId;
     /**
      * 专家id
      */
@@ -60,12 +60,12 @@ public class LwPaperMatchSpecialist {
         this.uuid = uuid;
     }
 
-    public String getPaper_id() {
-        return paper_id;
+    public String getPaperId() {
+        return paperId;
     }
 
-    public void setPaper_id(String paper_id) {
-        this.paper_id = paper_id;
+    public void setPaperId(String paperId) {
+        this.paperId = paperId;
     }
 
     public String getSpecialistId() {
