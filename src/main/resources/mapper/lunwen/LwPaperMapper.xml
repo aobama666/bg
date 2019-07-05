@@ -399,11 +399,11 @@
 
     <select id="selectSpecialistField" resultType="com.sgcc.bg.lunwen.bean.LwSpecialist">
         select
-            uuid,
-            name,
-            unit_name unitName,
+            field,
             research_direction researchDirection,
-            field
+            unit_name unitName,
+            name,
+            uuid
         from bg_lw_specialist where valid = #{valid}
         <if test="field != null and field != ''">
             and (research_direction = #{field} or field = #{field})

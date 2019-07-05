@@ -3,10 +3,7 @@ package com.sgcc.bg.lunwen.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.*;
-import com.sgcc.bg.lunwen.bean.LwFile;
-import com.sgcc.bg.lunwen.bean.LwPaper;
-import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
-import com.sgcc.bg.lunwen.bean.LwSpecialist;
+import com.sgcc.bg.lunwen.bean.*;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper;
 import com.sgcc.bg.lunwen.service.LwFileService;
@@ -340,7 +337,9 @@ public class LwPaperController {
      */
     @RequestMapping(value = "/manualMatchJump")
     public ModelAndView manualMatchJumo(String paperUuid){
+//    public ModelAndView manualMatchJumo(){
         //前台验证是否已经进行过自动匹配操作，如果做过才能访问此方法
+//        String paperUuid="A5D48B8BCA8345ACAF192530E82CB0EF";
         Map<String,Object> mvMap = new HashMap<>();
         Map<String,Object> lwPaperMap = lwPaperService.findPaper(paperUuid,null);
         String field = lwPaperMap.get("FIELD").toString();
@@ -357,18 +356,18 @@ public class LwPaperController {
         //根据论文所属领域，查询能够匹配的专家
         List<LwSpecialist> lwSpList = lwPaperService.selectSpecialistField(authors,unit,field);
         //查询已经匹配上的专家
-        List<LwPaperMatchSpecialist> matchSpecialists = lwPaperMatchSpecialistService.selectPMS(paperUuid,null);
+        List<LwPaperMatchSpecialistVo> matchSpecialists = lwPaperMatchSpecialistService.selectPmsManual(paperUuid);
         //判断是否有重复，剔除原有匹配专家信息
-        for(LwPaperMatchSpecialist lpm : matchSpecialists){
-            String specialistId = lpm.getSpecialistId();
+        for(LwPaperMatchSpecialistVo lpmv : matchSpecialists){
+            String specialistId = lpmv.getUuid();
             for(int i =0;i<lwSpList.size();i++){
                 if(lwSpList.get(i).getUuid().equals(specialistId)){
                     lwSpList.remove(i);
                 }
             }
         }
-        mvMap.put("left",matchSpecialists);
-        mvMap.put("right",lwSpList);
+        mvMap.put("left",JSON.toJSON(matchSpecialists));
+        mvMap.put("right",JSON.toJSON(lwSpList));
         ModelAndView mv = new ModelAndView("lunwen/paperManualMatch",mvMap);
         return mv;
     }

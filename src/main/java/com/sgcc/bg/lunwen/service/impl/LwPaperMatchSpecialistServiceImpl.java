@@ -2,6 +2,7 @@ package com.sgcc.bg.lunwen.service.impl;
 
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
+import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialistVo;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper;
 import com.sgcc.bg.lunwen.service.LwPaperMatchSpecialistService;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class LwPaperMatchSpecialistServiceImpl implements LwPaperMatchSpecialistService{
@@ -43,5 +45,10 @@ public class LwPaperMatchSpecialistServiceImpl implements LwPaperMatchSpecialist
     @Override
     public List<LwPaperMatchSpecialist> selectPMS(String paperId, String specialistId) {
         return lwPaperMatchSpecialistMapper.selectPMS(paperId,specialistId, LwPaperConstant.VALID_YES);
+    }
+
+    @Override
+    public List<LwPaperMatchSpecialistVo> selectPmsManual(String paperId) {
+        return lwPaperMatchSpecialistMapper.selectPmsManual(paperId,LwPaperConstant.VALID_YES);
     }
 }

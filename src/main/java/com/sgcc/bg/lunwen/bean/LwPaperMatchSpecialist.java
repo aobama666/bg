@@ -139,4 +139,5 @@ public class LwPaperMatchSpecialist {
     public void setSpecialistSort(String specialistSort) {
         this.specialistSort = specialistSort;
     }
+
 }

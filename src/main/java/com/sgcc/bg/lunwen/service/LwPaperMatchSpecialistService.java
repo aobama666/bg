@@ -1,9 +1,11 @@
 package com.sgcc.bg.lunwen.service;
 
 import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
+import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialistVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface LwPaperMatchSpecialistService {
     //添加匹配关系
@@ -39,5 +41,12 @@ public interface LwPaperMatchSpecialistService {
      * @return
      */
     List<LwPaperMatchSpecialist> selectPMS(String paperId, String specialistId);
+
+    /**
+     * 根据论文信息查已经匹配的信息，手动匹配使用
+     * @param paperId
+     * @return
+     */
+    List<LwPaperMatchSpecialistVo> selectPmsManual(String paperId);
 
 }

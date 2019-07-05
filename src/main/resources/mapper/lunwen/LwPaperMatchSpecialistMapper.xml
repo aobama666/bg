@@ -61,4 +61,19 @@
     <select id="findSpecialistSort" resultType="java.lang.String">
         select max(specialist_sort) from bg_lw_paper_match_expert where paper_id=#{paperId,jdbcType=INTEGER} and valid = #{valid}
     </select>
+
+
+    <select id="selectPmsManual" resultType="com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialistVo">
+        select
+            s.field,
+            s.unit_name unitName,
+            s.name,
+            m.specialist_id uuid
+        from bg_lw_paper_match_expert m , bg_lw_specialist s
+        where m.specialist_id = s.uuid
+        <if test="paperId != null and paperId != ''">
+            and m.paper_id= #{paperId}
+        </if>
+        and m.valid = #{valid}
+    </select>
 </mapper>

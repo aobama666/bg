@@ -2,6 +2,7 @@ package com.sgcc.bg.lunwen.mapper;
 
 
 import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
+import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialistVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -58,5 +59,10 @@ public interface LwPaperMatchSpecialistMapper {
             @Param("paperId") String paperId,
             @Param("specialistId") String specialistId,
             @Param("valid") String valid);
+
+    List<LwPaperMatchSpecialistVo> selectPmsManual(
+            @Param("paperId") String paperId,
+            @Param("valid") String valid);
+
 
 }
