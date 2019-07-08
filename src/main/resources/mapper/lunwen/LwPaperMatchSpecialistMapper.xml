@@ -36,4 +36,27 @@
         select uuid,paper_id paperId,specialist_id specialistId,score,score_status scoreStatus
         from bg_lw_paper_match_expert where paper_id= #{paperId} and specialist_id = #{specialistId}
     </select>
+
+    <update id="updateValid" parameterType="com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist">
+        UPDATE BG_LW_PAPER_MATCH_EXPERT
+        SET VALID = '0'
+        WHERE SPECIALIST_ID = #{beforeUuid,jdbcType=VARCHAR}
+    </update>
+
+    <insert id="insertMatch" parameterType="com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist">
+        INSERT INTO BG_LW_PAPER_MATCH_EXPERT
+        (UUID, PAPER_ID, SPECIALIST_ID, SCORE_STATUS, CREATE_USER, CREATE_TIME, UPDATE_USER, UPDATE_TIME, VALID)
+        VALUES
+        <foreach collection="paperMatchSpecialist" item="match" index="index" separator=",">
+            (#{match.uuid},
+            #{match.paper_id},
+            #{match.specialistId},
+            #{match.scoreStatus},
+            #{match.createUser},
+            #{match.createTime},
+            #{match.updateUser},
+            #{match.updateTime},
+            #{match.valid})
+        </foreach>
+    </insert>
 </mapper>

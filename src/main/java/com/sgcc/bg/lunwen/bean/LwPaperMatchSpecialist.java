@@ -21,7 +21,7 @@ public class LwPaperMatchSpecialist {
     /**
      * 分数
      */
-    private Double score;
+    private String score;
     /**
      * 打分状态
      */
@@ -72,11 +72,11 @@ public class LwPaperMatchSpecialist {
         this.specialistId = specialistId;
     }
 
-    public Double getScore() {
+    public String getScore() {
         return score;
     }
 
-    public void setScore(Double score) {
+    public void setScore(String score) {
         this.score = score;
     }
 

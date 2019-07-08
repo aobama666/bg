@@ -29,13 +29,21 @@
 
 	<!-- start    查询条件 -->
 	<div class="sheach">
-		<div class='content_top'>评分统计</div>
+		<div class='content_top'>综合统计</div>
 		<form id="queryForm" style="margin-bottom: 10px;">
 
 			<input type="hidden" name="selectList"/>
 
 			<label>年度</label>
-			<input type = "text" class = "layui-input" id = "year" name = "year" style="width: 200px" >
+			<%--<input type = "text" class = "layui-input" id = "year" name = "year" style="width: 200px" >--%>
+			<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 100px">
+				<option></option>
+				<c:forEach var ="year" items="${year}">
+					<c:forEach var ="years" items="${year}">
+						<option value=${years.value}>${years.value}</option>
+					</c:forEach>
+				</c:forEach>
+			</select>
 
 			<label>论文题目</label>
 			<input type = "text" id = "paperName" name = "paperName" style="width: 100px" class = "inputQuery changeQuery" >
@@ -53,18 +61,6 @@
 		</form>
 	</div>
 	<!-- end    查询条件 -->
-
-	<%--<div class="tab" role="tabplanel">
-		<div id="funcBtn" style="width:100%;height: 35px;">
-			<div class='btn right addButton' onclick="queryAll.addEvent()">新增</div>
-			<div class='btn right joinButton' onclick="queryAll.joinEvent()">导入</div>
-			<div class='btn right updateButton' onclick="queryAll.updateEvent()">修改</div>
-			<div class='btn right downloadButton' onclick="queryAll.downLoadTemp()">下载模板</div>
-			<div class='btn right outButton' onclick="queryAll.outEvent()">导出</div>
-			<div class='btn right deleteButton' onclick="queryAll.delEvent()" >删除</div>
-			<div><h3>专家详情</h3></div>
-		</div>
-	</div>--%>
 
 	<div class="tabbable" >
 		<div id="datagrid" style="height:450px;margin-bottom: 10px;"></div>
@@ -102,13 +98,13 @@
 </body>
 
 <script type="text/javascript" charset="utf-8">
-	layui.use('laydate',function(){
+	/*layui.use('laydate',function(){
 	    var laydate = layui.laydate;
         laydate.render({
 			elem:"#year",
 			type:"year"
 		});
-	});
+	});*/
 </script>
 
 </html>

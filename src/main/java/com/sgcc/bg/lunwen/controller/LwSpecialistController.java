@@ -226,20 +226,14 @@ public class LwSpecialistController {
 
     /**
      * 删除专家
-     * @param uuid
+     * @param
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/deleteExpert" ,method = RequestMethod.POST)
-    public String deleteExpert(String uuid){
-        int i = lwSpecialistServiceImpl.deleteExpert(uuid);
-        ResultWarp rw =  null;
-        if(i>0){
-            rw = new ResultWarp(ResultWarp.SUCCESS,"成功");
-        }else {
-            rw = new ResultWarp(ResultWarp.FAILED,"失败");
-        }
-        return JSON.toJSONString(rw);
+    @RequestMapping(value = "/deleteSpecialist" ,method = RequestMethod.POST)
+    public String deleteExpert(String uuids,HttpServletRequest request,HttpServletResponse response){
+        String str = lwSpecialistServiceImpl.deleteSpecialist(uuids);
+        return JSON.toJSONString(str);
     }
 
     /**
@@ -363,14 +357,55 @@ public class LwSpecialistController {
     }
 
     /**
-     * 更换专家
+     * 判断是否有论文在进行打分
      * @param uuid
      * @return
      */
-    /*@RequestMapping(value = "/expertTO" ,method = RequestMethod.GET)
-    public ModelAndView renewalSpecialist(String uuid){
+    @RequestMapping(value = "/judge" ,method = RequestMethod.GET)
+    @ResponseBody
+    public String judge(String uuid){
+        String boo = "false";
+        List<PaperVO> paperVOList = lwSpecialistServiceImpl.paperMap(uuid);
+        for(PaperVO paperVO : paperVOList){
+            if("0".equals(paperVO.geteScoreStatus())){
+                boo = "true";
+            }else {
+                boo = "false";
+                break;
+            }
+        }
+        return boo;
+    }
 
-        return null;
-    }*/
+    /**
+     * 更换专家（查询出论文及符合条件的其他专家）
+     * @param uuid
+     * @return
+     */
+    @RequestMapping(value = "/renewalSpecialist" ,method = RequestMethod.GET)
+    public ModelAndView renewalSpecialist(String uuid){
+        Map<String,Object> renewalMap = lwSpecialistServiceImpl.renewalMap(uuid);
+        ModelAndView model = new ModelAndView("lunwen/paperRenewalSpecialist", renewalMap);
+        return model;
+    }
+
+    /**
+     * 更换专家（进行更换专家操作）
+     * @param beforeUuid 更换之前专家id
+     * @param nowUuid 更换之后的专家id
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/renewal" ,method = RequestMethod.GET)
+    public String renewal(String beforeUuid,String nowUuid){
+        ResultWarp rw =  null;
+        int j = lwSpecialistServiceImpl.renewal(beforeUuid,nowUuid);
+        if(j>0){
+            rw = new ResultWarp(ResultWarp.SUCCESS,"更换专家成功");
+        }else {
+            rw = new ResultWarp(ResultWarp.FAILED,"更换专家失败");
+        }
+        return JSON.toJSONString(rw);
+    }
 
 }

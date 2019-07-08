@@ -133,4 +133,10 @@ public class LwPaperServiceImpl implements LwPaperService {
         ExportExcelHelper.getExcel(response, "论文详情"+ DateUtil.getDays(), title, list, "normal");
         return list;
     }
+
+    @Override
+    public List<Map<String, Object>> fieldList() {
+        List<Map<String, Object>> fieldLsit = lwPaperMapper.fieldList();
+        return fieldLsit;
+    }
 }

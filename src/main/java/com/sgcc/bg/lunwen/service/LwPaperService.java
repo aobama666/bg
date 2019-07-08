@@ -72,4 +72,10 @@ public interface LwPaperService {
                                     String paperType,
                                     String ids,
                                     HttpServletResponse response);
+
+    /**
+     * 查询论文含有的所有领域
+     * @return
+     */
+    List<Map<String,Object>> fieldList();
 }

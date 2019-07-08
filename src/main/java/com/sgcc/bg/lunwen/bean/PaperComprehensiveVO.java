@@ -1,5 +1,8 @@
 package com.sgcc.bg.lunwen.bean;
 
+import java.util.List;
+import java.util.Map;
+
 public class PaperComprehensiveVO {
 
     /**
@@ -78,9 +81,23 @@ public class PaperComprehensiveVO {
     private Double averageFraction;
 
     /**
-     * 专家姓名
+     * 该论文所有评分的专家姓名
      */
     private StringBuilder specialistName;
+
+    private List<LwPaperMatchSpecialist> lwPaperMatchSpecialistList;
+
+    private List list;
+
+    private List<Map<String,Object>>  maps;
+
+    public List getList() {
+        return list;
+    }
+
+    public void setList(List list) {
+        this.list = list;
+    }
 
     public String getUuid() {
         return uuid;
@@ -224,5 +241,46 @@ public class PaperComprehensiveVO {
 
     public void setAverageFraction(Double averageFraction) {
         this.averageFraction = averageFraction;
+    }
+
+    public List<LwPaperMatchSpecialist> getLwPaperMatchSpecialistList() {
+        return lwPaperMatchSpecialistList;
+    }
+
+    public void setLwPaperMatchSpecialistList(List<LwPaperMatchSpecialist> lwPaperMatchSpecialistList) {
+        this.lwPaperMatchSpecialistList = lwPaperMatchSpecialistList;
+    }
+
+    public List<Map<String, Object>> getMaps() {
+        return maps;
+    }
+
+    public void setMaps(List<Map<String, Object>> maps) {
+        this.maps = maps;
+    }
+
+    @Override
+    public String toString() {
+        return "PaperComprehensiveVO{" +
+                "uuid='" + uuid + '\'' +
+                ", paperId='" + paperId + '\'' +
+                ", paperName='" + paperName + '\'' +
+                ", year='" + year + '\'' +
+                ", unit='" + unit + '\'' +
+                ", author='" + author + '\'' +
+                ", journal='" + journal + '\'' +
+                ", recommendUnit='" + recommendUnit + '\'' +
+                ", paperType='" + paperType + '\'' +
+                ", quoteCount='" + quoteCount + '\'' +
+                ", downloadCount='" + downloadCount + '\'' +
+                ", field='" + field + '\'' +
+                ", scoreTableStatus='" + scoreTableStatus + '\'' +
+                ", scoreStatus='" + scoreStatus + '\'' +
+                ", allStatus='" + allStatus + '\'' +
+                ", weightingFraction=" + weightingFraction +
+                ", averageFraction=" + averageFraction +
+                ", specialistName=" + specialistName +
+                ", lwPaperMatchSpecialistList=" + lwPaperMatchSpecialistList +
+                '}';
     }
 }

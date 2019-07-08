@@ -126,6 +126,16 @@ public interface LwPaperMapper {
             @Param("valid") String valid
     );
 
+    /**
+     * 综合统计论文查询
+     * @param year
+     * @param paperName
+     * @param author
+     * @param paperId
+     * @param start
+     * @param end
+     * @return
+     */
     List<PaperComprehensiveVO> paperComprehensiveVOList(@Param("year") String year,
                                                         @Param("paperName")String paperName,
                                                         @Param("author")String author,
@@ -192,4 +202,33 @@ public interface LwPaperMapper {
      * @return
      */
     List<PaperComprehensiveVO> outPaperComprehensiveVOIds(@Param("strings") String[] strings);
+
+    /**
+     * 取年份
+     * @return
+     */
+    List<Map<String,Object>> year();
+
+    /**
+     * 查询论文含有的所有领域
+     * @return
+     */
+    List<Map<String,Object>> fieldList();
+
+    /**
+     * 评分统计论文查询
+     * @param year
+     * @param paperName
+     * @param paperId
+     * @param field
+     * @param start
+     * @param end
+     * @return
+     */
+    List<PaperComprehensiveVO> comprehensiveVOList(@Param("year") String year,
+                                                   @Param("paperName") String paperName,
+                                                   @Param("paperId") String paperId,
+                                                   @Param("field") String field,
+                                                   @Param("start") int start,
+                                                   @Param("end") int end);
 }

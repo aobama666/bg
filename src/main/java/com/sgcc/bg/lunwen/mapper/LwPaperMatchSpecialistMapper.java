@@ -50,4 +50,17 @@ public interface LwPaperMatchSpecialistMapper {
             @Param("paperId") String paperId,
             @Param("specialistId") String specialistId);
 
+    /**
+     * 删除
+     * @param beforeUuid
+     * @return
+     */
+    int updateValid(String beforeUuid);
+
+    /**
+     * 新增
+     * @param paperMatchSpecialist
+     * @return
+     */
+    int insertMatch(@Param("paperMatchSpecialist") List<LwPaperMatchSpecialist> paperMatchSpecialist);
 }
