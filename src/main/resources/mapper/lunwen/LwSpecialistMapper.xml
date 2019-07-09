@@ -430,9 +430,9 @@
         WHERE e.VALID = '1'
         AND  s.VALID = '1'
         AND e.PAPER_ID = #{uuid,jdbcType=VARCHAR}
-        and e.SPECIALIST_ID in(
-        <foreach collection="list" item="list" index="index" separator=",">
-          #{list,jdbcType=VARCHAR}
-        </foreach>)
     </select>
+    <!--and e.SPECIALIST_ID in(
+    <foreach collection="list" item="list" index="index" separator=",">
+        #{list,jdbcType=VARCHAR}
+    </foreach>)-->
 </mapper>

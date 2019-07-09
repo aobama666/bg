@@ -225,10 +225,23 @@ public interface LwPaperMapper {
      * @param end
      * @return
      */
-    List<PaperComprehensiveVO> comprehensiveVOList(@Param("year") String year,
-                                                   @Param("paperName") String paperName,
-                                                   @Param("paperId") String paperId,
-                                                   @Param("field") String field,
-                                                   @Param("start") int start,
-                                                   @Param("end") int end);
+    List<Map<String,Object>> statisticsMap(@Param("year") String year,
+                                           @Param("paperName") String paperName,
+                                           @Param("paperId") String paperId,
+                                           @Param("field") String field,
+                                           @Param("start") int start,
+                                           @Param("end") int end);
+
+    /**
+     * 评分统计总数
+     * @param year
+     * @param paperName
+     * @param paperId
+     * @param field
+     * @return
+     */
+    int statisticsCount(@Param("year") String year,
+                        @Param("paperName") String paperName,
+                        @Param("paperId") String paperId,
+                        @Param("field") String field);
 }

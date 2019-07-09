@@ -48,8 +48,9 @@
 			<input type = "text" id = "paperName" name = "paperName" style="width: 100px" class = "inputQuery changeQuery" >
 
 			<label>编号</label>
-			<input type = "text" id = "paperId" name = "paperId" style="width: 100px" class = "inputQuery changeQuery" >
+			<input type = "text" id = "paperld" name = "paperld" style="width: 100px" class = "inputQuery changeQuery" >
 
+			<input type="text" id="field" name="field" style="display: none" value="${map.fieldList[0].FIELD}">
 
 			<!-- 查询按钮  " -->
 			<div style="float:right" id = "queryButton" class = "btn query" onclick = "queryAll.query()">搜索</div>
@@ -68,7 +69,11 @@
         <div class="grid-title">
             <c:forEach var ="fieldList" items="${map.fieldList}">
                 <c:forEach var ="field" items="${fieldList}">
-                    <h3 style="float: left"><span>${field.value}</span></h3>
+					<div  onclick="queryAll.field('${field.value}')">
+						<h3 style="float: left">
+							<a href="#" style="color:black">${field.value}</a>
+						</h3>
+					</div>
                 </c:forEach>
             </c:forEach>
             <h3></h3>
@@ -112,14 +117,5 @@
 
 </body>
 
-<script type="text/javascript" charset="utf-8">
-	/*layui.use('laydate',function(){
-	    var laydate = layui.laydate;
-        laydate.render({
-			elem:"#name",
-			type:"year"
-		});
-	});*/
-</script>
 
 </html>

@@ -412,24 +412,13 @@
         WHERE VALID = '1'GROUP BY FIELD
     </select>
 
-    <select id="comprehensiveVOList" resultType="com.sgcc.bg.lunwen.bean.PaperComprehensiveVO">
+
+    <select id="statisticsMap" resultType="java.util.Map">
         SELECT a.* FROM (
         SELECT
         p.UUID AS uuid,
         p.PAPER_ID AS  paperId,
         p.PAPER_NAME AS paperName,
-        p.YEAR AS year,
-        p.UNIT AS unit,
-        p.AUTHOR AS author,
-        p.JOURNAL AS journal,
-        p.RECOMMEND_UNIT AS recommendUnit,
-        p.PAPER_TYPE AS paperType,
-        p.QUOTE_COUNT AS quoteCount,
-        p.DOWNLOAD_COUNT AS downloadCount,
-        p.FIELD AS field,
-        p.SCORE_TABLE_STATUS AS  scoreTableStatus,
-        p.SCORE_STATUS  AS scoreStatus,
-        p.ALL_STATUS AS  allStatus,
         p.WEIGHTING_FRACTION AS weightingFraction,
         p.AVERAGE_FRACTION AS averageFraction,
         ROWNUM AS ROWNO
@@ -451,5 +440,24 @@
         AND #{end} >= ROWNUM
         ORDER BY P.AVERAGE_FRACTION DESC nulls last
         ) a WHERE a.ROWNO > #{start}
+    </select>
+
+    <select id="statisticsCount" resultType="java.lang.Integer">
+        SELECT COUNT(UUID)
+        FROM bg_lw_paper
+        WHERE valid = '1'
+        AND ALL_STATUS = '6'
+        <if test="year != null and year != ''">
+            and year = #{year,jdbcType=VARCHAR}
+        </if>
+        <if test="paperName != null and paperName != ''">
+            and paper_name  LIKE '%'||#{paperName,jdbcType=VARCHAR}||'%'
+        </if>
+        <if test="paperId != null and paperId != ''">
+            and paper_id = #{paperId,jdbcType=VARCHAR}
+        </if>
+        <if test="field != null and field != ''">
+            and field = #{field}
+        </if>
     </select>
 </mapper>

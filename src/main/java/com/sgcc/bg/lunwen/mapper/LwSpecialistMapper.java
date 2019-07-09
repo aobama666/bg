@@ -162,6 +162,5 @@ public interface LwSpecialistMapper {
                                                       @Param("paperId") String paperId,
                                                       @Param("field") String field);
 
-    List<Map<String,Object>> SpeciList(@Param("uuid") String uuid,
-                                       @Param("list") List<Map<String, Object>> list);
+    List<Map<String,Object>> SpeciList(@Param("uuid") String uuid);
 }

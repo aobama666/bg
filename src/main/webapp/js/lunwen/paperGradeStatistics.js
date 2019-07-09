@@ -13,7 +13,8 @@ roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
 var ran;
 
 $(function(){
-    queryAll.initDataGrid();
+    var myclomus = queryAll.seachHead();
+    queryAll.initDataGrid(myclomus);
     var classQuery = $(".changeQuery");
     $("#queryButton").on("click",function(e){
         queryAll.query();
@@ -26,106 +27,69 @@ $(function(){
         }
     });
 });
-
 /*  start  列表查询  */
 queryAll.query = function(){
     dataItems = new Array();
     index = 0;
-    $("#datagrid").datagrid("seach");
+    var myclomus = queryAll.seachHead();
+    //$("#datagrid").datagrid("seach");
+    queryAll.initDataGrid(myclomus);
 }
 
-/* 评分统计-初始化列表界面  */
-queryAll.initDataGrid = function(){
-debugger;
+queryAll.field = function (field) {
+    document.getElementById("field").value=field;
+    queryAll.query();
+}
+
+queryAll.seachHead = function(){
     ran = Math.random()*100000000;
     var year = $("#year").val();
     var paperName = $("#paperName").val();
+    var paperld = $("#paperld").val();
+    var field = $("#field").val();
     var statisticsSpecialistName ;
-    var comprehensiveVOList;
     var myclomus = new Array();
     $.ajax({
-        //url:"/bg/gradeStatistics/a?tm="+new Date().getTime(),
-        url: "/bg/gradeStatistics/statisticsList?tm="+new Date().getTime(),
+        url:"/bg/gradeStatistics/statisticsSpecialistName?tm="+new Date().getTime(),
         type:"POST",
-        data:{paperName:paperName},
+        data:{paperName:paperName,year:year,paperld:paperld,field:field},
         dataJson:"JSON",
         async:false,
         success:function (data) {
-            //statisticsSpecialistName = data.statisticsSpecialistName;
-            statisticsSpecialistName = data.data.data[0].maps
-            comprehensiveVOList = data.comprehensiveVOList;
+            statisticsSpecialistName = data.statisticsSpecialistName;
         }
-    })
-
-
+    });
     myclomus[0] = {name: '',style:{width:"2%"}, data: 'id',checkbox:true, forMat:function(row){
             dataItems[index] = row;//将一行数据放在一个list中
-            return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.uuid)+'"/>';
+            return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.UUID)+'"/>';
         }
     };
-    myclomus[1] = {name: '编号',style:{width:"10%"}, data: 'paperId'};
+    myclomus[1] = {name: '编号',style:{width:"10%"}, data: 'PAPERID'};
     myclomus[2] = {name: '论文题目',style:{width:"10%"}, data: 'paperName',forMat:function(row  ){
             return "<a title = '点击查看论文详情' style='width:250px;" +
-                " text-align:left;'id='\"+row.uuid+\"'" +
-                " href = 'javascript:void(0)' onclick = queryAll.forDetails('"+row.uuid+"')>"+row.paperName+"</a>";
+                " text-align:left;'id='\"+row.UUID+\"'" +
+                " href = 'javascript:void(0)' onclick = queryAll.forDetails('"+row.UUID+"')>"+row.PAPERNAME+"</a>";
         }};
-    var checkedItems = dataGrid.getCheckedItems(dataItems);
-    //myclomus[ 3] ={name: '444', style:{width: "10%"}, data: 'data.data.data[0].maps[0].score1'}
     for(i=0;i<statisticsSpecialistName.length ;i++) {
-
         var   scoresName=statisticsSpecialistName[i].scoresName;
-
-        myclomus[i + 3] ={name: statisticsSpecialistName[i].NAME, style:{width: "10%"}, data: statisticsSpecialistName[i].scoresName, forMat: function (row) {
-                var a = row.maps;
-                for (j = 0;j<a.length;j++) {
-                    debugger;
-                  var   scoresNames = a[j].scoresName;
-                    var num=j+1;
-                    alert(scoresName+"------"+scoresNames);
-                    if(scoresNames==scoresName){
-                        var  dd =a[j].scores+num;
-                        return   dd   ;
-                    }
-                    // if(id == 'B287C7EE3F71457C99D55E06DF830041'){
-                    //     return  row.lwPaperMatchSpecialistList[j].score
-                    // }
-                    //scores +=a[j].score +',';
-
-                }
-                //return  row.lwPaperMatchSpecialistList[i].score
-
-            }
-        }
-        /* for (j = 0;j<row.lwPaperMatchSpecialistList.length;j++) {
-             var score = row.lwPaperMatchSpecialistList[j].score;
-             var id = row.lwPaperMatchSpecialistList[j].specialistId;
-             for(z=0;z<statisticsSpecialistName.length ;z++) {
-                 var uuids = statisticsSpecialistName[z].UUID
-                 if (id == uuids) {
-                     return row.lwPaperMatchSpecialistList[j].score;
-                 } else {
-                     return row.lwPaperMatchSpecialistList[j].score;
-                 }
-             }
-         }*/
+        myclomus[i + 3] ={name: statisticsSpecialistName[i].NAME, style:{width: "10%"}, data: statisticsSpecialistName[i].scoresName}
     };
-    myclomus[3+statisticsSpecialistName.length] = {name: '加权平均分',style:{width:"8%"}, data: 'weightingFraction'};
-    myclomus[4+statisticsSpecialistName.length] = {name: '去最高最低得分', style:{width:"8%"},data: 'averageFraction'};
-console.log(myclomus)
-    $("#datagrid").datagrid({
+    myclomus[3+statisticsSpecialistName.length] = {name: '加权平均分',style:{width:"8%"}, data: 'WEIGHTINGFRACTION'};
+    myclomus[4+statisticsSpecialistName.length] = {name: '去最高最低得分', style:{width:"8%"},data: 'AVERAGEFRACTION'};
 
-        url: "/bg/gradeStatistics/statisticsList?tm="+new Date().getTime(),
+    return myclomus;
+}
+
+/* 评分统计-初始化列表界面  */
+queryAll.initDataGrid = function(myclomus){
+    $("#datagrid").datagrid({
+        url: "/bg/gradeStatistics/statistics?tm="+new Date().getTime(),
         type: 'POST',
         form:'#queryForm',
         pageSize:10,
         tablepage:$(".tablepage"),//分页组件
-        /*successFinal:function(data){
-            $("#datagrid").find("input[type=checkbox]").eq(0).attr("style","display:none");
-        },*/
         columns:myclomus
-
     });
-
 }
 
 /*论文详情*/
@@ -141,6 +105,50 @@ queryAll.forDetails = function (uuid){
     },function (index) {
         layer.close(index);
     });
+}
+
+/*重新评审*/
+queryAll.againReview = function(){
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length==0){
+        messager.tip("请选择要操作的数据",1000);
+        return;
+    }else if(checkedItems.length>1){
+        messager.tip("每次只能选中一条数据",2000);
+        return;
+    }
+
+    var uuids = "";
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length>0) {
+        for (var i = 0; i < checkedItems.length; i++) {
+            uuids += checkedItems[i].UUID + ",";
+        }
+    }
+    uuids = uuids.slice(0,uuids.length-1);
+    //不在前台做是否能删除的判断，在后台判断，记录日志，同时比前台更safe
+    $.messager.confirm( "提示", "确定需要重新评审吗？",
+        function(r){
+            if(r){
+                $.ajax({
+                    url: "/bg/lwPaper/?uuids="+uuids,//删除
+                    type: "post",
+                    dataType:"json",
+                    contentType: 'application/json',
+                    data: '',
+                    success: function (data) {
+                        if(data.success == "true"){
+                            messager.tip(data.msg,3000);
+                            paperList.query();
+                        }else{
+                            messager.tip(data.msg,3000);
+                            paperList.query();
+                        }
+                    }
+                });
+            }
+        }
+    );
 }
 
 

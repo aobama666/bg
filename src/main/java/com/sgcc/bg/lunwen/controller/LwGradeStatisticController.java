@@ -36,6 +36,11 @@ public class LwGradeStatisticController {
     private LwGradeStatisticService lwGradeStatisticServiceImpl;
 
 
+    /**
+     * 返回年份  领域
+     * @param request
+     * @return
+     */
     @RequestMapping("/gradeStatistics")
     public String specialist(HttpServletRequest request) {
         List<Map<String,Object>> fieldLsit = lwPaperServiceImpl.fieldList();
@@ -47,15 +52,21 @@ public class LwGradeStatisticController {
         return "lunwen/paperGradeStatistics";
     }
 
+    /**
+     * 查询专家姓名
+     * @param year
+     * @param paperName
+     * @param paperId
+     * @param field
+     * @return
+     */
     @ResponseBody
-    @RequestMapping("/a")
-    public String a(String year,String paperName,String paperId,String field){
+    @RequestMapping("/statisticsSpecialistName")
+    public String statisticsSpecialistName(String year,String paperName,String paperId,String field){
         //查专家姓名
         List<Map<String,Object>> statisticsSpecialistName = lwGradeStatisticServiceImpl.statisticsSpecialistName(year,paperName,paperId,field);
         Map map = new HashMap();
         map.put("statisticsSpecialistName",statisticsSpecialistName);
-
-
         String jsonStr = JSON.toJSONStringWithDateFormat(map, "yyyy-MM-dd",
                 SerializerFeature.WriteDateUseDateFormat);
         return jsonStr;
@@ -70,33 +81,41 @@ public class LwGradeStatisticController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("/statisticsList")
-    public String statisticsList(String year,String paperName,String paperId,String field,Integer page, Integer limit){
+    @RequestMapping("/statistics")
+    public String statistics(String year,String paperName,String paperId,String field,Integer page, Integer limit) {
         int start = 0;
         int end = 10;
-        if(page != null && limit!=null&&page>0&&limit>0){
-            start = (page-1)*limit;
-            end = page*limit;
+        if (page != null && limit != null && page > 0 && limit > 0) {
+            start = (page - 1) * limit;
+            end = page * limit;
         }
 
-        //查专家姓名
-        List<Map<String,Object>> statisticsSpecialistName = lwGradeStatisticServiceImpl.statisticsSpecialistName(year,paperName,paperId,field);
-        //论文及专家分数
-        List<PaperComprehensiveVO>  comprehensiveVOList = lwGradeStatisticServiceImpl.comprehensiveVOList(year,paperName,paperId,field,start,end);
-       /* Map map = new HashMap();
-        map.put("statisticsSpecialistName",statisticsSpecialistName);
-        map.put("comprehensiveVOList",comprehensiveVOList);*/
+        List<Map<String,Object>> statisticsMap = lwGradeStatisticServiceImpl.statisticsMap(year,paperName,paperId,field,start,end);
+        //总数
+        int count = lwGradeStatisticServiceImpl.statisticsCount(year,paperName,paperId,field);
         Map<String, Object> jsonMap = new HashMap<String, Object>();
         Map<String,Object>jsonMap1 = new HashMap<>();
-        jsonMap1.put("data", comprehensiveVOList );//列表
-        jsonMap1.put("total", 20);
-        /*jsonMap1.put("title", statisticsSpecialistName);//表头*/
+        jsonMap1.put("data", statisticsMap );//列表
+        jsonMap1.put("total", count);
         jsonMap.put("data", jsonMap1);
-
         jsonMap.put("msg", "success");
         jsonMap.put("success", "true");
         String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd",
                 SerializerFeature.WriteDateUseDateFormat);
         return jsonStr;
     }
+
+    /**
+     * 重新评审
+     * @param uuids
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/againReview")
+    public String againReview(String uuids){
+        String[] uuidStr = uuids.split(",");
+        String againReview = lwGradeStatisticServiceImpl.againReview(uuidStr);
+        return null;
+    }
+
 }
