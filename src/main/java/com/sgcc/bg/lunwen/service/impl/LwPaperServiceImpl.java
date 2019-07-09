@@ -6,11 +6,16 @@ import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.lunwen.bean.LwPaper;
+import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
 import com.sgcc.bg.lunwen.bean.LwSpecialist;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.mapper.LwPaperMapper;
+import com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper;
+import com.sgcc.bg.lunwen.service.LwPaperMatchSpecialistService;
 import com.sgcc.bg.lunwen.service.LwPaperService;
 import com.sgcc.bg.model.HRUser;
+import com.sgcc.bg.service.DataDictionaryService;
+import com.sgcc.bg.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +29,14 @@ public class LwPaperServiceImpl implements LwPaperService {
     private WebUtils webUtils;
     @Autowired
     private LwPaperMapper lwPaperMapper;
+    @Autowired
+    private LwPaperMatchSpecialistMapper lwPaperMatchSpecialistMapper;
+    @Autowired
+    private LwPaperService lwPaperService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private LwPaperMatchSpecialistService lwPaperMatchSpecialistService;
 
     @Override
     public Integer addLwPaper(LwPaper lwPaper) {
@@ -103,6 +116,11 @@ public class LwPaperServiceImpl implements LwPaperService {
     }
 
     @Override
+    public List<LwSpecialist> selectSpecialistField(String[] authors, String unit, String field) {
+        return lwPaperMapper.selectSpecialistField(authors,unit,field,LwPaperConstant.VALID_YES);
+    }
+
+    @Override
     public Integer selectLwPaperCount(String paperName, String paperId, String year, String unit,
                                       String author, String field, String scoreStatus, String paperType) {
         return lwPaperMapper.selectLwPaperCount(paperName,paperId,year,unit,author,
@@ -139,4 +157,89 @@ public class LwPaperServiceImpl implements LwPaperService {
         List<Map<String, Object>> fieldLsit = lwPaperMapper.fieldList();
         return fieldLsit;
     }
+
+
+    /**
+     * 重复匹配————附加首次匹配功能，缩减代码量
+     * @param lwPaperMap
+     * @param paperUuid
+     * @return
+     */
+    @Override
+    public Integer autoMaticSecond(Map<String, Object> lwPaperMap,String paperUuid) {
+        String field = lwPaperMap.get("FIELD").toString();
+        String unit = lwPaperMap.get("UNIT").toString();
+        String author = lwPaperMap.get("AUTHOR").toString();
+        String[] authors = null;
+        if(author.contains(",")){
+            authors = author.split(",");
+        }else if(author.contains("，")){
+            authors = author.split("，");
+        }else{
+            authors = new String[]{author};
+        }
+        //根据论文所属领域，查询能够匹配的专家
+        List<LwSpecialist> lwSpList = lwPaperService.selectSpecialistField(authors,unit,field);
+        //查询已经匹配上的专家
+        List<LwPaperMatchSpecialist> matchSpecialists = lwPaperMatchSpecialistService.selectPMS(paperUuid,null);
+        //判断是否有重复，剔除原有匹配专家信息
+        for(LwPaperMatchSpecialist lpm : matchSpecialists){
+            String specialistId = lpm.getSpecialistId();
+            for(int i =0;i<lwSpList.size();i++){
+                if(lwSpList.get(i).getUuid().equals(specialistId)){
+                    lwSpList.remove(i);
+                    break;
+                }
+            }
+        }
+        //排序
+        List<String> specialistIdList = new ArrayList<>();
+        //1.领域，研究方向，皆相同，不同单位，不同作者,统一控制总数，最多15个
+        for(LwSpecialist lwSpecialist : lwSpList){
+            if(lwSpecialist.getField().contains(field) && lwSpecialist.getResearchDirection().contains(field)
+                    && specialistIdList.size()<15){
+                specialistIdList.add(lwSpecialist.getUuid());
+            }
+        }
+        //2.领域相同，研究方向不同，不同单位，不同作者
+        for(LwSpecialist lwSpecialist : lwSpList){
+            if(lwSpecialist.getField().contains(field) && !lwSpecialist.getResearchDirection().contains(field)
+                    && specialistIdList.size()<15){
+                specialistIdList.add(lwSpecialist.getUuid());
+            }
+        }
+        //3.研究方向相同,领域不同，不同单位，不同作者
+        for(LwSpecialist lwSpecialist : lwSpList){
+            if(!lwSpecialist.getField().contains(field) && lwSpecialist.getResearchDirection().contains(field)
+                    && specialistIdList.size()<15){
+                specialistIdList.add(lwSpecialist.getUuid());
+            }
+        }
+        //查询当前论文对应匹配表中最大排序数
+        String maxSort = lwPaperMatchSpecialistMapper.findSpecialistSort(paperUuid,LwPaperConstant.VALID_YES);
+        Integer specialistSort = 0;
+        if(!"".equals(maxSort) && null!=maxSort){
+            specialistSort = Integer.valueOf(maxSort);
+        }
+        //添加新的专家信息
+        LwPaperMatchSpecialist lwPaperMatchSpecialist;
+        for(int i =0;i<specialistIdList.size();i++){
+            lwPaperMatchSpecialist = new LwPaperMatchSpecialist();
+            lwPaperMatchSpecialist.setPaperId(paperUuid);
+            lwPaperMatchSpecialist.setSpecialistId(specialistIdList.get(i));
+            lwPaperMatchSpecialist.setScoreStatus(LwPaperConstant.SCORE_STATUS_NO);
+            lwPaperMatchSpecialist.setCreateUser(getLoginUserUUID());
+            lwPaperMatchSpecialist.setSpecialistSort((specialistSort+i+1)+"");
+            lwPaperMatchSpecialistService.addPMS(lwPaperMatchSpecialist);
+        }
+        //返回当前匹配总数
+        return lwSpList.size()+specialistSort;
+    }
+
+    public String getLoginUserUUID(){
+        String userName = webUtils.getUsername();
+        HRUser user = userService.getUserByUserName(userName);
+        return user.getUserId();
+    }
+
 }

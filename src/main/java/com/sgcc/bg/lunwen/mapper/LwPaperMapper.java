@@ -174,13 +174,17 @@ public interface LwPaperMapper {
 
     /**
      * 获取匹配领域的专家信息
-     * @param researchDirection
+     * @param authors
+     * @param unit
      * @param field
      * @param valid
      * @return
      */
-    List<LwSpecialist> selectSpecialistField(String researchDirection,String field,String valid);
-
+    List<LwSpecialist> selectSpecialistField(
+            @Param("authors") String[] authors,
+            @Param("unit") String unit,
+            @Param("field") String field,
+            @Param("valid") String valid);
 
 
     /**
