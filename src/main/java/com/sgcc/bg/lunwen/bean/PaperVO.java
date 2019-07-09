@@ -46,6 +46,7 @@ public class PaperVO {
      */
     private String field;
 
+
     /**
      * 打分表状态 0未生成  1已生成
      */
