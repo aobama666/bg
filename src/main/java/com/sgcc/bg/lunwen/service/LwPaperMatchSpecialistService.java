@@ -4,6 +4,7 @@ import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
 import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialistVo;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -13,11 +14,14 @@ public interface LwPaperMatchSpecialistService {
 
     /**
      * 修改专家对应某论文打分分数
-     * @param uuid
+     * @param paperId
+     * @param specialistId
+     * @param updateUser
+     * @param updateTime
      * @param score
      * @return
      */
-    Integer updateScore( String uuid, String score);
+    Integer updateScore(String paperId, String specialistId,String updateUser,Date updateTime,String score);
 
     /**
      * 获取当前论文下最大的排序数
@@ -28,11 +32,20 @@ public interface LwPaperMatchSpecialistService {
 
     /**
      * 修改打分状态
-     * @param uuid
+     * @param paperId
+     * @param specialistId
      * @param socreStatus
      * @return
      */
-    Integer updateScoreStatus(String uuid, String socreStatus);
+    Integer updateScoreStatus(String paperId, String specialistId, String socreStatus);
+
+    /**
+     * 删除对应的匹配信息
+     * @param paperId
+     * @param specialistId
+     * @return
+     */
+    Integer delMatchMessage(String paperId, String specialistId);
 
     /**
      * 根据论文信息或专家信息查询已经匹配的信息

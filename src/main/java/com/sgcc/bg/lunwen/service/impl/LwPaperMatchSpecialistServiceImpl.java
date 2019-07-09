@@ -28,18 +28,23 @@ public class LwPaperMatchSpecialistServiceImpl implements LwPaperMatchSpecialist
     }
 
     @Override
-    public Integer updateScore(String uuid, String score) {
-        return lwPaperMatchSpecialistMapper.updateScore(uuid,score);
+    public Integer updateScore(String paperId, String specialistId,String updateUser,Date updateTime,String score) {
+        return lwPaperMatchSpecialistMapper.updateScore(paperId,specialistId,updateUser,updateTime,score);
     }
 
     @Override
     public String findSpecialistSort(String paperId) {
-        return lwPaperMatchSpecialistMapper.findSpecialistSort(paperId,LwPaperConstant.VALID_YES);
+        return lwPaperMatchSpecialistMapper.findSpecialistSort(paperId);
     }
 
     @Override
-    public Integer updateScoreStatus(String uuid, String socreStatus) {
-        return lwPaperMatchSpecialistMapper.updateScoreStatus(uuid,socreStatus);
+    public Integer updateScoreStatus(String paperId, String specialistId, String socreStatus) {
+        return lwPaperMatchSpecialistMapper.updateScoreStatus(paperId,specialistId,socreStatus);
+    }
+
+    @Override
+    public Integer delMatchMessage(String paperId, String specialistId) {
+        return lwPaperMatchSpecialistMapper.delMatchMessage(paperId,specialistId,LwPaperConstant.VALID_NO);
     }
 
     @Override
