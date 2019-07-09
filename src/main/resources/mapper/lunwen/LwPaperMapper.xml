@@ -42,7 +42,7 @@
         #{allStatus,jdbcType=VARCHAR},
         #{createUser,jdbcType=VARCHAR},
         #{createTime,jdbcType=TIMESTAMP},
-        #{valid}
+        #{valid,jdbcType=VARCHAR}
         )
     </insert>
 
@@ -398,8 +398,26 @@
     </select>
 
     <select id="selectSpecialistField" resultType="com.sgcc.bg.lunwen.bean.LwSpecialist">
-      select * from bg_lw_specialist where valid = #{valid}
-      and (research_direction = #{researchDirection} or field = #{field})
+        select
+            field,
+            research_direction researchDirection,
+            unit_name unitName,
+            name,
+            uuid
+        from bg_lw_specialist where valid = #{valid}
+        <if test="field != null and field != ''">
+            and (research_direction = #{field} or field = #{field})
+        </if>
+        <if test="authors != null and authors != ''">
+            and name not in (
+                <foreach collection="authors" item="author" index="index" separator=",">
+                    #{author}
+                </foreach>
+            )
+        </if>
+        <if test="unit != null and unit != ''">
+          and unit_name != #{unit}
+        </if>
     </select>
 
 </mapper>

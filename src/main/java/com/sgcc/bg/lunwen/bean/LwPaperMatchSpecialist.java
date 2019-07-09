@@ -13,7 +13,7 @@ public class LwPaperMatchSpecialist {
     /**
      * 论文id
      */
-    private String paper_id;
+    private String paperId;
     /**
      * 专家id
      */
@@ -26,6 +26,10 @@ public class LwPaperMatchSpecialist {
      * 打分状态
      */
     private String scoreStatus;
+    /**
+     * 专家排序
+     */
+    private String specialistSort;
     /**
      * 创建用户
      */
@@ -56,12 +60,12 @@ public class LwPaperMatchSpecialist {
         this.uuid = uuid;
     }
 
-    public String getPaper_id() {
-        return paper_id;
+    public String getPaperId() {
+        return paperId;
     }
 
-    public void setPaper_id(String paper_id) {
-        this.paper_id = paper_id;
+    public void setPaperId(String paperId) {
+        this.paperId = paperId;
     }
 
     public String getSpecialistId() {
@@ -127,4 +131,13 @@ public class LwPaperMatchSpecialist {
     public void setValid(String valid) {
         this.valid = valid;
     }
+
+    public String getSpecialistSort() {
+        return specialistSort;
+    }
+
+    public void setSpecialistSort(String specialistSort) {
+        this.specialistSort = specialistSort;
+    }
+
 }

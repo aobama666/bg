@@ -80,7 +80,7 @@ paperList.initDataGrid = function(){
             {name: '专家信息',style:{width:"50px"}, data: 'UUID',
                 forMat:function(row){
                     return "<a title = '点击查看匹配专家' style='width:250px;' id='"+row.UUID+"'" +
-                        "href = 'javascript:void(0)' onclick = paperList.forDetails('"+row.UUID+"')>查看详情</a>";
+                        "href = 'javascript:void(0)' onclick = paperList.manualMatch('"+row.UUID+"')>查看详情</a>";
 
                 }},
             {name: '打分状态',style:{width:"50px"}, data: 'SCORESTATUS'},
@@ -419,4 +419,59 @@ paperList.export = function () {
         document.forms[0].action ="/bg/lwPaper/lwPaperExport?ran="+ran;
         document.forms[0].submit();
     }
+}
+
+
+
+paperList.automaticMatch = function(){
+    var info = "确认自动匹配选中的这条论文吗";
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length==0){
+        messager.tip("请选择要操作的数据",1000);
+        return;
+    }else if(checkedItems.length>1){
+        messager.tip("每次只能操作一条数据",2000);
+        return;
+    }else if(checkedItems[0].ALLSTATUS == 2 || checkedItems[0].ALLSTATUS == 7){
+        info = "该论文已自动匹配，确认重新自动匹配选中的这条论文吗";
+    }
+    //不在前台做是否能删除的判断，在后台判断，记录日志，同时比前台更safe
+    $.messager.confirm( "自动匹配提示", info,
+        function(r){
+            if(r){
+                $.ajax({
+                    url: "/bg/lwPaper/automaticMatch?uuid="+checkedItems[0].UUID,//删除
+                    type: "post",
+                    dataType:"json",
+                    contentType: 'application/json',
+                    data: '',
+                    success: function (data) {
+                        if(data.success == "true"){
+                            messager.tip(data.msg,3000);
+                            paperList.query();
+                        }else{
+                            messager.tip(data.msg,3000);
+                            paperList.query();
+                        }
+                    }
+                });
+            }
+        }
+    );
+}
+
+
+/*手动匹配*/
+paperList.manualMatch = function (id){
+    var url = "/bg/lwPaper/manualMatchJump?paperUuid="+id;
+    layer.open({
+        type:2,
+        title:'<h4 style="height:42px;line-height:25px;">专家匹配详情</h4>',
+        area:['85%','85%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url
+    },function (index) {
+        layer.close(index);
+    });
 }

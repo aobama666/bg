@@ -4,16 +4,25 @@
 <mapper namespace="com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper">
     <insert id="addPMS">
         insert into bg_lw_paper_match_expert
-        (uuid,paper_id,specialist_id,score,socre_status,create_user,create_time,valid)
+        (uuid,
+        paper_id,
+        specialist_id,
+        score,
+        score_status,
+        create_user,
+        create_time,
+        specialist_sort,
+        valid)
         values (
-            #{uuid},
-            #{paperId},
-            #{specialistId},
-            #{score},
-            #{scoreStatus},
-            #{createUser},
-            #{createTime},
-            #{valid}
+            #{uuid,jdbcType=VARCHAR},
+            #{paperId,jdbcType=VARCHAR},
+            #{specialistId,jdbcType=VARCHAR},
+            #{score,jdbcType=VARCHAR},
+            #{scoreStatus,jdbcType=VARCHAR},
+            #{createUser,jdbcType=VARCHAR},
+            #{createTime,jdbcType=TIMESTAMP},
+            #{specialistSort,jdbcType=INTEGER},
+            #{valid,jdbcType=VARCHAR}
         )
     </insert>
 
@@ -32,8 +41,39 @@
         AND PAPER_ID = #{uuid,jdbcType=VARCHAR}
     </select>
 
-    <select id="selectPMS" resultType="java.util.Map">
-        select uuid,paper_id paperId,specialist_id specialistId,score,score_status scoreStatus
-        from bg_lw_paper_match_expert where paper_id= #{paperId} and specialist_id = #{specialistId}
+    <select id="selectPMS" resultType="com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist">
+        select
+            uuid,
+            paper_id paperId,
+            specialist_id specialistId,
+            score,
+            score_status scoreStatus
+        from bg_lw_paper_match_expert where 1=1
+        <if test="paperId != null and paperId != ''">
+          and paper_id= #{paperId}
+        </if>
+        <if test="specialistId != null and specialistId != ''">
+          and specialist_id = #{specialistId}
+        </if>
+        and valid = #{valid}
+    </select>
+
+    <select id="findSpecialistSort" resultType="java.lang.String">
+        select max(specialist_sort) from bg_lw_paper_match_expert where paper_id=#{paperId,jdbcType=INTEGER} and valid = #{valid}
+    </select>
+
+
+    <select id="selectPmsManual" resultType="com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialistVo">
+        select
+            s.field,
+            s.unit_name unitName,
+            s.name,
+            m.specialist_id uuid
+        from bg_lw_paper_match_expert m , bg_lw_specialist s
+        where m.specialist_id = s.uuid
+        <if test="paperId != null and paperId != ''">
+            and m.paper_id= #{paperId}
+        </if>
+        and m.valid = #{valid}
     </select>
 </mapper>

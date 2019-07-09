@@ -2,6 +2,7 @@ package com.sgcc.bg.lunwen.mapper;
 
 
 import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
+import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialistVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -37,6 +38,14 @@ public interface LwPaperMatchSpecialistMapper {
             @Param("score") String score);
 
     /**
+     * 获取当前论文下最大的排序数
+     * @param paperId
+     * @return
+     */
+    String findSpecialistSort(@Param("paperId") String paperId,
+                @Param("valid") String valid);
+
+    /**
      * 修改打分状态
      * @param uuid
      * @param socreStatus
@@ -46,8 +55,14 @@ public interface LwPaperMatchSpecialistMapper {
             @Param("uuid") String uuid,
             @Param("socreStatus") String socreStatus);
 
-    List<Map<String,Object>> selectPMS(
+    List<LwPaperMatchSpecialist> selectPMS(
             @Param("paperId") String paperId,
-            @Param("specialistId") String specialistId);
+            @Param("specialistId") String specialistId,
+            @Param("valid") String valid);
+
+    List<LwPaperMatchSpecialistVo> selectPmsManual(
+            @Param("paperId") String paperId,
+            @Param("valid") String valid);
+
 
 }
