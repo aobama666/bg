@@ -416,7 +416,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
         for(PaperVO paperVO : paperMap){
             LwPaperMatchSpecialist lwPaperMatchSpecialist = new LwPaperMatchSpecialist();
             lwPaperMatchSpecialist.setUuid(Rtext.getUUID());
-            lwPaperMatchSpecialist.setPaper_id(paperVO.getUuid());
+            lwPaperMatchSpecialist.setPaperId(paperVO.getUuid());
             lwPaperMatchSpecialist.setSpecialistId(nowUuid);
             lwPaperMatchSpecialist.setScoreStatus("0");
             lwPaperMatchSpecialist.setCreateTime(new Date());
