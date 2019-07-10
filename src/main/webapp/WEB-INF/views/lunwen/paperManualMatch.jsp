@@ -87,7 +87,6 @@
                     parent.messager.tip(data.msg,5000);
                 }
             });
-            console.info(specialistsIdS);
         });
 
         $('#return').on('click',function () {
