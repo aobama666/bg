@@ -18,14 +18,14 @@ $(function(){
 		}
 	});
 	//回车键出发搜索按钮
-	$("body").keydown(function () {
+	/*$("body").keydown(function () {
 	    if (event.keyCode == "13") {
 	    	dataItems = new Array();
 			index = 0;
 	        $("#datagrid").datagrid("seach");
 	        return false;
 	    }
-	});
+	});*/
     paperList.btn_type_flag = 0;
 });
 
@@ -374,12 +374,29 @@ paperList.withdrawScoreTable = function () {
 
 
 
-/*弹出批量上传框 */
+/*弹出附件批量上传框 */
 paperList.batchUploadOperation = function (){
     var url = "/bg/lwPaper/btachUploadJump"
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;">论文附件批量上传</h4>',
+        area:['65%','50%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url,
+        end: function () {
+            paperList.query();
+        }
+    });
+}
+
+
+/*弹出论文上传框 */
+paperList.jumpImport = function (){
+    var url = "/bg/lwPaper/paperJumpImport"
+    layer.open({
+        type:2,
+        title:'<h4 style="height:42px;line-height:25px;">论文批量导入</h4>',
         area:['65%','50%'],
         fixed:false,//不固定
         maxmin:true,
@@ -459,6 +476,7 @@ paperList.automaticMatch = function(){
         }
     );
 }
+
 
 
 /*手动匹配*/

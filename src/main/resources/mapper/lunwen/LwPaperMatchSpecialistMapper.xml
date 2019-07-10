@@ -27,13 +27,40 @@
     </insert>
 
     <update id="updateScore">
-      update bg_lw_paper_match_expert set (socre,update_user,update_time)
-      values (#{score},#{updateUser},#{updateTime}) where uuid = #{uuid};
+      update bg_lw_paper_match_expert set
+      socre = #{score,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      where 1=1
+        <if test="paperId != null and paperId != ''">
+            and paper_id= #{paperId}
+        </if>
+        <if test="specialistId != null and specialistId != ''">
+            and specialist_id = #{specialistId}
+        </if>
     </update>
 
     <update id="updateScoreStatus">
-      update bg_lw_paper_match_expert set (socre_status,update_user,update_time)
-      values (#{socreStatus},#{updateUser},#{updateTime}) where uuid = #{uuid}
+      update bg_lw_paper_match_expert set
+      socre_status = #{socreStatus,jdbcType=VARCHAR}
+        where 1=1
+        <if test="paperId != null and paperId != ''">
+            and paper_id= #{paperId}
+        </if>
+        <if test="specialistId != null and specialistId != ''">
+            and specialist_id = #{specialistId}
+        </if>
+    </update>
+
+    <update id="delMatchMessage">
+        update bg_lw_paper_match_expert set valid = #{valid}
+        where 1=1
+        <if test="paperId != null and paperId != ''">
+            and paper_id= #{paperId}
+        </if>
+        <if test="specialistId != null and specialistId != ''">
+            and specialist_id = #{specialistId}
+        </if>
     </update>
 
     <select id="scoreList" resultType="java.lang.Double">
@@ -59,7 +86,8 @@
     </select>
 
     <select id="findSpecialistSort" resultType="java.lang.String">
-        select max(specialist_sort) from bg_lw_paper_match_expert where paper_id=#{paperId,jdbcType=INTEGER} and valid = #{valid}
+        select max(specialist_sort) from bg_lw_paper_match_expert
+        where paper_id=#{paperId,jdbcType=INTEGER}
     </select>
 
 
@@ -75,6 +103,7 @@
             and m.paper_id= #{paperId}
         </if>
         and m.valid = #{valid}
+        order by m.SPECIALIST_SORT
     </select>
 
     <update id="updateValid" parameterType="com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist">
