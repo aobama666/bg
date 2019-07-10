@@ -20,7 +20,7 @@
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 </head>
 <body style="padding-top: 5%">
-<b style="margin-left: 3%;margin-bottom: 1%" class="mustWrite">提示语：请**********</b>
+<b style="margin-left: 3%;margin-bottom: 1%" class="mustWrite">提示语：请上传ZIP文件</b>
 <form id="queryForm" method="post" enctype="multipart/form-data">
 	<table class="visitOperate tableStyle specialTable">
 		<tr>

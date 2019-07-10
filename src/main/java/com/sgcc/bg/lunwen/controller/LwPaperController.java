@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -139,6 +140,68 @@ public class LwPaperController {
         String ids = request.getParameter("selectList") == null ?" " : request.getParameter("selectList");
         List<LwPaper> lwPaperList = lwPaperService.selectLwpaperExport(paperName,paperId,year,unit,author,field,scoreStatus,paperType,ids,response);
         log.info(getLoginUser()+"exprot data");
+    }
+
+    /**
+     * 跳转至——论文导入
+     * @return
+     */
+    @RequestMapping(value = "/paperJumpImport", method = RequestMethod.GET)
+    public ModelAndView paperJumpImport(){
+        Map<String, Object> mvMap = new HashMap<>();
+        ModelAndView mv = new ModelAndView("lunwen/paperImport");
+        return mv;
+    }
+
+    /**
+     * 解析上传的批量文件
+     * @param
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = "/joinExcel", method = { RequestMethod.POST, RequestMethod.GET })
+    public void joinExcel(@RequestParam("file") MultipartFile workHourFile, HttpServletResponse response) throws Exception {
+        PrintWriter out = null;
+        try {
+            out = response.getWriter();
+            out.print("<head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head>");
+            if (workHourFile != null) {
+                InputStream in = workHourFile.getInputStream();
+                String[] whArr = lwPaperService.joinExcel(in);
+                if (whArr[0].toString().indexOf("Error") != -1) {// 导入异常
+                    out.print("<script>parent.parent.layer.msg('" + whArr[0].toString().split(":")[1] + "');</script>");
+                } else if (!whArr[1].isEmpty()) {// 导入有错误数据
+                    out.print("<script>parent.parent.layer.alert('" + whArr[0].toString() + "');</script>");
+                    out.print("<script>parent.queryList();</script>");
+                    out.print("<script>parent.initProErrInfo('" + whArr[1]+ "');</script>");
+                } else {// 导入无错误数据
+                    out.print("<script>parent.parent.layer.msg('" + whArr[0].toString() + "');</script>");
+                    out.print("<script>parent.queryList();</script>");
+                    out.print("<script>parent.forClose();</script>");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("joinSpecialistExcel()【批量导入专家文件信息】", e);
+        } finally {
+            if (out != null) {
+                out.flush();
+                out.close();
+            }
+        }
+    }
+
+    /**
+     * 导出错误文件
+     * @param fileName
+     * @param response
+     * @param request
+     * @throws Exception
+     */
+    @RequestMapping(value = "/paperImportErrorFile", method = RequestMethod.POST)
+    public void exportExcel(String fileName, HttpServletResponse response,HttpServletRequest request) throws Exception {
+        FileDownloadUtil.fileDownloadFromFtp(response, request, fileName, "批量导入出错文件.xls");
+        log.info("从ftp导出出错文件"+fileName);
     }
 
 
@@ -337,10 +400,6 @@ public class LwPaperController {
      */
     @RequestMapping(value = "/manualMatchJump")
     public ModelAndView manualMatchJumo(String paperUuid){
-//    public ModelAndView manualMatchJumo(){
-        //前台验证是否已经进行过自动匹配操作，如果做过才能访问此方法
-//        String paperUuid="A5D48B8BCA8345ACAF192530E82CB0EF";
-        Map<String,Object> mvMap = new HashMap<>();
         Map<String,Object> lwPaperMap = lwPaperService.findPaper(paperUuid,null);
         String field = lwPaperMap.get("FIELD").toString();
         String unit = lwPaperMap.get("UNIT").toString();
@@ -363,15 +422,26 @@ public class LwPaperController {
             for(int i =0;i<lwSpList.size();i++){
                 if(lwSpList.get(i).getUuid().equals(specialistId)){
                     lwSpList.remove(i);
+                    break;
                 }
             }
         }
-        mvMap.put("left",JSON.toJSON(matchSpecialists));
-        mvMap.put("right",JSON.toJSON(lwSpList));
+
+        //前台验证是否已经进行过自动匹配操作，如果做过才能访问此方法
+        Map<String,Object> mvMap = new HashMap<>();
+        mvMap.put("paperUuid",JSON.toJSONString(paperUuid));
+        mvMap.put("left",JSON.toJSONString(matchSpecialists));
+        mvMap.put("right",JSON.toJSONString(lwSpList));
+        //查看是否生成打分表，生成打分表不允许手动匹配，只能查看详情
+        String scoreTableStatus = lwPaperMap.get("SCORETABLESTATUS").toString();
+        if(LwPaperConstant.SCORE_STATUS_NO.equals(scoreTableStatus)){
+            mvMap.put("scoreTableStatus","on");
+        }else{
+            mvMap.put("scoreTableStatus","off");
+        }
         ModelAndView mv = new ModelAndView("lunwen/paperManualMatch",mvMap);
         return mv;
     }
-
 
     /**
      * 手动匹配
@@ -379,14 +449,63 @@ public class LwPaperController {
      */
     @ResponseBody
     @RequestMapping(value = "/manualMatch")
-    public String manualMatch(String paperUuid){
-        //获取对应论文id
+    public String manualMatch(String paperUuid,String specialistsIdS){
         //获取选中的专家信息
+        List<String> spcialistsIdArray = new ArrayList<>(Arrays.asList(specialistsIdS.split(",")));
+        int successMatchNums = spcialistsIdArray.size();
         //获取当前论文已经匹配的专家信息
-        //分离出新添加的专家信息
-        //添加关联信息到关联表
-        //最少7个，最多15个，控制数量，控制全流程状态信息
-        return "";
+        List<LwPaperMatchSpecialistVo> matchSpecialists = lwPaperMatchSpecialistService.selectPmsManual(paperUuid);
+        //分离数据，留下新添加的，和已删除的
+        synchronized (this){
+            ListIterator<String> spcialIter = spcialistsIdArray.listIterator();
+            ListIterator<LwPaperMatchSpecialistVo> matchSpcialIter = null;
+            while(spcialIter.hasNext()){
+                String spcialistsId = spcialIter.next();
+                matchSpcialIter = matchSpecialists.listIterator();
+                while(matchSpcialIter.hasNext()){
+                    LwPaperMatchSpecialistVo lwPaperMatchSpecialistVo = matchSpcialIter.next();
+                    if(spcialistsId.equals(lwPaperMatchSpecialistVo.getUuid())){
+                        spcialIter.remove();
+                        matchSpcialIter.remove();
+                        break;
+                    }
+                }
+            }
+        }
+        //删除原有匹配本次取消的专家关联信息
+        for (LwPaperMatchSpecialistVo lmvo : matchSpecialists){
+            //传的id是专家id，应该传两个，一个为论文id，一个为专家id，也只有这个时候会用到删除匹配信息，不对，专家替换也是
+            lwPaperMatchSpecialistService.delMatchMessage(paperUuid,lmvo.getUuid());
+        }
+        //当前论文最大排序值获取
+        String findSpecialistSort = lwPaperMatchSpecialistService.findSpecialistSort(paperUuid);
+        Integer maxSort = 0;
+        if(findSpecialistSort != null && !"".equals(findSpecialistSort)){
+            maxSort = Integer.valueOf(findSpecialistSort);
+        }
+        //添加本次新增信息到关联表
+        LwPaperMatchSpecialist lwPaperMatchSpecialist = null;
+        for(int i = 0;i<spcialistsIdArray.size();i++){
+            lwPaperMatchSpecialist = new LwPaperMatchSpecialist();
+            lwPaperMatchSpecialist.setPaperId(paperUuid);
+            lwPaperMatchSpecialist.setSpecialistId(spcialistsIdArray.get(i));
+            lwPaperMatchSpecialist.setSpecialistSort((maxSort+i+1)+"");
+            lwPaperMatchSpecialist.setCreateUser(getLoginUserUUID());
+            lwPaperMatchSpecialist.setScoreStatus(LwPaperConstant.SCORE_STATUS_NO);
+            lwPaperMatchSpecialistService.addPMS(lwPaperMatchSpecialist);
+        }
+
+        //最少7个，最多15个，控制数量，显示本次匹配数量，控制全流程状态信息
+        if(successMatchNums>=7){
+            lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.ALL_STATUS_TWO);
+        }else{
+            lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.All_STATUS_SEVEN);
+        }
+        log.info(getLoginUser()+"论文id:"+paperUuid+"手动匹配专家"+successMatchNums+"个");
+
+        ResultWarp rw = null;
+        rw = new ResultWarp(ResultWarp.SUCCESS ,"手动匹配成功，当前论文匹配专家"+successMatchNums+"个");
+        return JSON.toJSONString(rw);
     }
 
 

@@ -5,6 +5,7 @@ import com.sgcc.bg.lunwen.bean.LwSpecialist;
 import org.apache.ibatis.annotations.Param;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -183,4 +184,12 @@ public interface LwPaperService {
      * @return
      */
     List<Map<String,Object>> fieldList();
+
+
+    /**
+     * 解析上传的批量录入excel表格
+     * @param in
+     * @return
+     */
+    String[] joinExcel(InputStream in);
 }

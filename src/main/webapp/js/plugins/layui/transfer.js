@@ -99,12 +99,10 @@ layui.define('table',function (exports) {
                       </div>\
                     </div>\
                   </div>';
-        debugger;
         $(elem).html(html)
     }
     //初始化表格
     Class.prototype.render = function () {
-        debugger;
         var that = this,options = that.config;
         var d1_c = {
             elem: '#'+LEFT_TABLE+that.index
