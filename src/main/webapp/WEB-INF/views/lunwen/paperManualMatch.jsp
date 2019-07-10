@@ -9,7 +9,8 @@
 	<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
 	<title>手动匹配</title>
-	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
+    <link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 	<link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" type="text/css">
 </head>
 <style>
@@ -22,6 +23,12 @@
 <input type="text" style="display: none;" value="${paperUuid}" id="paperUuid">
 
 <div class="layui-container" style="margin-top: 15px;">
+    <div class="col-lg-6">
+        <h3>已匹配专家信息</h3>
+    </div>
+    <div class="col-lg-5" style="float: right">
+        <h3>可匹配专家信息</h3>
+    </div>
     <div id="root"></div>
 </div>
 
@@ -35,16 +42,19 @@
     <button type="button" class="btn" id="return">返回</button>
 </div>
 
+<div style="display: none">
+    <span id="left">${left}</span>
+    <span id="right">${right}</span>
+</div>
+
 <!-- 本页面所需的js -->
-<%--<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js"></script>--%>
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 </body>
 <script>
+
     var left = ${left};
     var right = ${right};
     var paperUuid = ${paperUuid};
-
-
 
     layui.config({
         base: '/bg/js/plugins/layui/'
@@ -83,8 +93,9 @@
                 type: "post",
                 dataType:"json",
                 contentType: 'application/json',
+                async: false,
                 success: function (data) {
-                    parent.messager.tip(data.msg,5000);
+                    parent.paperList.closeAndOpen(data.msg);
                 }
             });
         });

@@ -83,6 +83,17 @@ public class LwPaperConstant {
     public static final String All_STATUS_SEVEN = "7";
 
 
+    //专家匹配状态
+    /**
+     * 已匹配
+     */
+    public static final String SPECIALIST_MATCH_ON = "1";
+    /**
+     * 未匹配
+     */
+    public static final String SPECIALIST_MATCH_OFF = "0";
+
+
     //有效标识
     /**
      * 有效

@@ -5,6 +5,7 @@ import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
 import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialistVo;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper;
+import com.sgcc.bg.lunwen.mapper.LwSpecialistMapper;
 import com.sgcc.bg.lunwen.service.LwPaperMatchSpecialistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,17 @@ public class LwPaperMatchSpecialistServiceImpl implements LwPaperMatchSpecialist
 
     @Autowired
     private LwPaperMatchSpecialistMapper lwPaperMatchSpecialistMapper;
+    @Autowired
+    private LwSpecialistMapper lwSpecialistMapper;
 
     @Override
     public Integer addPMS(LwPaperMatchSpecialist lwPaperMatchSpecialist) {
         lwPaperMatchSpecialist.setUuid(Rtext.getUUID());
         lwPaperMatchSpecialist.setCreateTime(new Date());
         lwPaperMatchSpecialist.setValid(LwPaperConstant.VALID_YES);
+        //修改专家匹配状态
+        lwSpecialistMapper.updateMatchStatus(lwPaperMatchSpecialist.getSpecialistId(),LwPaperConstant.SPECIALIST_MATCH_ON);
+        //添加论文和专家匹配信息
         return lwPaperMatchSpecialistMapper.addPMS(lwPaperMatchSpecialist);
     }
 

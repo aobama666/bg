@@ -153,12 +153,12 @@ public class LwPaperServiceImpl implements LwPaperService {
                 { "单位", "unit","nowrap" },
                 { "期刊名称", "journal","nowrap" },
                 { "推荐单位", "recommendUnit","nowrap" },
-//                { "论文类型", "paperType","nowrap" },
                 { "被引量", "quoteCount","nowrap" },
                 { "下载量", "downloadCount","nowrap" },
                 { "领域","field","nowrap"}
         };
-        ExportExcelHelper.getExcel(response, "论文详情"+ DateUtil.getDays(), title, list, "normal");
+        paperType = list.get(0).getPaperType();
+        ExportExcelHelper.getExcel(response, paperType+"-论文详情"+ DateUtil.getDays(), title, list, "normal");
         return list;
     }
 
@@ -166,6 +166,19 @@ public class LwPaperServiceImpl implements LwPaperService {
     public List<Map<String, Object>> fieldList() {
         List<Map<String, Object>> fieldLsit = lwPaperMapper.fieldList();
         return fieldLsit;
+    }
+
+    @Override
+    public List<Map<String,Object>> getTableYear() {
+        List<Map<String,Object>> yearList = lwPaperMapper.year();
+        String nowYear = DateUtil.getYear();
+        for (Map<String, Object> year : yearList) {
+            if (nowYear.equals(year.get("YEAR"))) {
+                    yearList.remove(year);
+                    break;
+            }
+        }
+        return yearList;
     }
 
 
@@ -192,6 +205,8 @@ public class LwPaperServiceImpl implements LwPaperService {
         List<LwSpecialist> lwSpList = lwPaperService.selectSpecialistField(authors,unit,field);
         //查询已经匹配上的专家
         List<LwPaperMatchSpecialist> matchSpecialists = lwPaperMatchSpecialistService.selectPMS(paperUuid,null);
+        //成功匹配数量
+        int successMatchNums = matchSpecialists.size();
         //判断是否有重复，剔除原有匹配专家信息
         for(LwPaperMatchSpecialist lpm : matchSpecialists){
             String specialistId = lpm.getSpecialistId();
@@ -202,26 +217,27 @@ public class LwPaperServiceImpl implements LwPaperService {
                 }
             }
         }
+        int limitNum = 15 - successMatchNums;
         //排序
         List<String> specialistIdList = new ArrayList<>();
         //1.领域，研究方向，皆相同，不同单位，不同作者,统一控制总数，最多15个
         for(LwSpecialist lwSpecialist : lwSpList){
             if(lwSpecialist.getField().contains(field) && lwSpecialist.getResearchDirection().contains(field)
-                    && specialistIdList.size()<15){
+                    && specialistIdList.size()<limitNum){
                 specialistIdList.add(lwSpecialist.getUuid());
             }
         }
         //2.领域相同，研究方向不同，不同单位，不同作者
         for(LwSpecialist lwSpecialist : lwSpList){
             if(lwSpecialist.getField().contains(field) && !lwSpecialist.getResearchDirection().contains(field)
-                    && specialistIdList.size()<15){
+                    && specialistIdList.size()<limitNum){
                 specialistIdList.add(lwSpecialist.getUuid());
             }
         }
         //3.研究方向相同,领域不同，不同单位，不同作者
         for(LwSpecialist lwSpecialist : lwSpList){
             if(!lwSpecialist.getField().contains(field) && lwSpecialist.getResearchDirection().contains(field)
-                    && specialistIdList.size()<15){
+                    && specialistIdList.size()<limitNum){
                 specialistIdList.add(lwSpecialist.getUuid());
             }
         }
@@ -241,9 +257,10 @@ public class LwPaperServiceImpl implements LwPaperService {
             lwPaperMatchSpecialist.setCreateUser(getLoginUserUUID());
             lwPaperMatchSpecialist.setSpecialistSort((specialistSort+i+1)+"");
             lwPaperMatchSpecialistService.addPMS(lwPaperMatchSpecialist);
+            successMatchNums = successMatchNums+1;
         }
         //返回当前匹配总数
-        return lwSpList.size()+specialistSort;
+        return successMatchNums;
     }
 
     @Override

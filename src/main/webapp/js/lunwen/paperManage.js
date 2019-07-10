@@ -80,7 +80,7 @@ paperList.initDataGrid = function(){
             {name: '专家信息',style:{width:"50px"}, data: 'UUID',
                 forMat:function(row){
                     return "<a title = '点击查看匹配专家' style='width:250px;' id='"+row.UUID+"'" +
-                        "href = 'javascript:void(0)' onclick = paperList.manualMatch('"+row.UUID+"')>查看详情</a>";
+                        "href = 'javascript:void(0)' onclick = paperList.manualMatch('"+row.UUID+"','"+row.ALLSTATUS+"')>查看详情</a>";
 
                 }},
             {name: '打分状态',style:{width:"50px"}, data: 'SCORESTATUS'},
@@ -439,7 +439,7 @@ paperList.export = function () {
 }
 
 
-
+/*自动匹配*/
 paperList.automaticMatch = function(){
     var info = "确认自动匹配选中的这条论文吗";
     var checkedItems = dataGrid.getCheckedItems(dataItems);
@@ -480,7 +480,11 @@ paperList.automaticMatch = function(){
 
 
 /*手动匹配*/
-paperList.manualMatch = function (id){
+paperList.manualMatch = function (id,allStatus){
+    if(allStatus == 1){
+        messager.tip("无匹配专家信息,请先进行自动匹配",2000);
+        return;
+    }
     var url = "/bg/lwPaper/manualMatchJump?paperUuid="+id;
     layer.open({
         type:2,
@@ -492,4 +496,11 @@ paperList.manualMatch = function (id){
     },function (index) {
         layer.close(index);
     });
+}
+
+
+/*关闭页面后弹出信息*/
+paperList.closeAndOpen = function (message) {
+    layer.closeAll();
+    messager.tip(message,3000);
 }

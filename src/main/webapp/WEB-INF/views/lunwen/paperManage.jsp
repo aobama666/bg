@@ -30,8 +30,10 @@
 			<input type="hidden" name="selectList"/>
 				<label  for="year" class="yearTitle">年度：</label>
 				<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 100px">
-					<option value = "2019"  selected> 2019</option>
-					<%--<option value = "${year}"  selected>  ${year}</option>--%>
+					<option value = "${nowYear}"  selected>${nowYear}</option>
+					<c:forEach  var="yearList"  items="${yearList}">
+						<option value ="${yearList.YEAR}"}> ${yearList.YEAR}</option>
+					</c:forEach>
 				</select>
 				<label>论文题目：</label>
 				<input type = "text" id = "paperName" name = "paperName" style="width: 200px" class = "inputQuery changeQuery" >

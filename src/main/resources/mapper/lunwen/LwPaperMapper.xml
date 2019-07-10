@@ -406,7 +406,11 @@
             uuid
         from bg_lw_specialist where valid = #{valid}
         <if test="field != null and field != ''">
-            and (research_direction = #{field} or field = #{field})
+            and (
+                    research_direction LIKE '%'||#{field}||'%'
+                    or
+                    field LIKE '%'||#{field}||'%'
+                )
         </if>
         <if test="authors != null and authors != ''">
             and name not in (
@@ -421,8 +425,7 @@
     </select>
 
     <select id="year" resultType="java.util.Map">
-        SELECT YEAR FROM  bg_lw_paper
-        WHERE VALID = '1' GROUP BY YEAR ORDER BY YEAR
+        SELECT YEAR FROM  bg_lw_paper GROUP BY YEAR ORDER BY YEAR DESC
     </select>
 
     <select id="fieldList" resultType="java.util.Map">

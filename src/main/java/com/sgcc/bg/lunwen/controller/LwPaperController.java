@@ -9,6 +9,7 @@ import com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper;
 import com.sgcc.bg.lunwen.service.LwFileService;
 import com.sgcc.bg.lunwen.service.LwPaperMatchSpecialistService;
 import com.sgcc.bg.lunwen.service.LwPaperService;
+import com.sgcc.bg.lunwen.service.LwSpecialistService;
 import com.sgcc.bg.lunwen.util.DownLoadUtil;
 import com.sgcc.bg.lunwen.util.UploadUtil;
 import com.sgcc.bg.lunwen.util.ZipUtil;
@@ -55,9 +56,13 @@ public class LwPaperController {
      */
     @RequestMapping(value = "/paperToManage", method = RequestMethod.GET)
     public ModelAndView paperToManage(){
-        Map<String, Object> mvMap = new HashMap<>();
+        String nowYear = DateUtil.getYear();
+        List<Map<String,Object>> yearList = lwPaperService.getTableYear();
         List<Map<String, String>>   scoreStatusList= dataDictionaryService.selectDictDataByPcode("score_status");
+        Map<String, Object> mvMap = new HashMap<>();
         mvMap.put("scoreStatus", scoreStatusList);
+        mvMap.put("nowYear", nowYear);
+        mvMap.put("yearList", yearList);
         ModelAndView mv = new ModelAndView("lunwen/paperManage",mvMap);
         return mv;
     }
@@ -434,10 +439,10 @@ public class LwPaperController {
         mvMap.put("right",JSON.toJSONString(lwSpList));
         //查看是否生成打分表，生成打分表不允许手动匹配，只能查看详情
         String scoreTableStatus = lwPaperMap.get("SCORETABLESTATUS").toString();
-        if(LwPaperConstant.SCORE_STATUS_NO.equals(scoreTableStatus)){
-            mvMap.put("scoreTableStatus","on");
-        }else{
+        if(LwPaperConstant.SCORE_TABLE_OFF.equals(scoreTableStatus)){
             mvMap.put("scoreTableStatus","off");
+        }else{
+            mvMap.put("scoreTableStatus","on");
         }
         ModelAndView mv = new ModelAndView("lunwen/paperManualMatch",mvMap);
         return mv;
@@ -492,11 +497,13 @@ public class LwPaperController {
             lwPaperMatchSpecialist.setSpecialistSort((maxSort+i+1)+"");
             lwPaperMatchSpecialist.setCreateUser(getLoginUserUUID());
             lwPaperMatchSpecialist.setScoreStatus(LwPaperConstant.SCORE_STATUS_NO);
-            lwPaperMatchSpecialistService.addPMS(lwPaperMatchSpecialist);
+            if(!"".equals(spcialistsIdArray.get(i)) && null!=spcialistsIdArray.get(i)){
+                lwPaperMatchSpecialistService.addPMS(lwPaperMatchSpecialist);
+            }
         }
 
         //最少7个，最多15个，控制数量，显示本次匹配数量，控制全流程状态信息
-        if(successMatchNums>=7){
+        if(successMatchNums >= 7){
             lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.ALL_STATUS_TWO);
         }else{
             lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.All_STATUS_SEVEN);
@@ -527,9 +534,10 @@ public class LwPaperController {
             lwPaperService.updateAllStatus(uuid,LwPaperConstant.ALL_STATUS_THREE);
             log.info(getLoginUser()+"this paper generate score_table success,uuid="+uuid);
             rw = new ResultWarp(ResultWarp.SUCCESS ,"生成打分表成功");
-        }else if(LwPaperConstant.ALL_STATUS_ONE.equals(allStatus)){
+        }else if(LwPaperConstant.ALL_STATUS_ONE.equals(allStatus) ||
+                    LwPaperConstant.All_STATUS_SEVEN.equals(allStatus)){
             log.info(getLoginUser()+"this paper generate score_table fail,uuid="+uuid+",allStatus:"+allStatus);
-            rw = new ResultWarp(ResultWarp.FAILED ,"生成打分表失败,未匹配专家");
+            rw = new ResultWarp(ResultWarp.FAILED ,"生成打分表失败,匹配专家未达标");
         }else{
             log.info(getLoginUser()+"this paper generate score_table fail,uuid="+uuid+",allStatus:"+allStatus);
             rw = new ResultWarp(ResultWarp.FAILED ,"该论文已生成打分表，请勿重复生成");
