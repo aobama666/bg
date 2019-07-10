@@ -38,7 +38,8 @@ queryAll.query = function(){
 queryAll.initDataGrid = function(){
 
     ran = Math.random()*100000000;
-    
+    var c = {name: '推荐单位',style:{width:"10%"}, data: 'recommendUnit'}
+    alert(datas);
     $("#datagrid").datagrid({
         url: "/bg/comprehensiveStatistics/comprehensiveList?tm="+new Date().getTime(),
         type: 'POST',
@@ -49,7 +50,8 @@ queryAll.initDataGrid = function(){
             $("#datagrid").find("input[type=checkbox]").eq(0).attr("style","display:none");
         },
         columns: [
-            {name: '',style:{width:"2%"}, data: 'id',checkbox:true, forMat:function(row){
+            c
+            /*{name: '',style:{width:"2%"}, data: 'id',checkbox:true, forMat:function(row){
                     dataItems[index] = row;//将一行数据放在一个list中
                     return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.ID)+'"/>';
                 }
@@ -69,7 +71,7 @@ queryAll.initDataGrid = function(){
             {name: '下载量',style:{width:"10%"}, data: 'downloadCount'},
             {name: '专家信息',style:{width:"200px"}, data: 'specialistName'},
             {name: '加权平均分',style:{width:"5%"}, data: 'weightingFraction'},
-            {name: '去最高最低得分', style:{width:"5%"},data: 'averageFraction'}
+            {name: '去最高最低得分', style:{width:"5%"},data: 'averageFraction'}*/
         ]
     });
 }
@@ -114,139 +116,6 @@ queryAll.outEvent = function () {
         document.forms[0].action ="/bg/comprehensiveStatistics/outEvent?ran="+ran;
         document.forms[0].submit();
     }
-}
-
-/*导入*/
-queryAll.joinEvent = function () {
-    var url = "/bg/expert/joinSpecialist"
-    layer.open({
-        type:2,
-        title:'<h4 style="height:42px;line-height:25px;">导入专家</h4>',
-        area:['50%','50%'],
-        fixed:false,//不固定
-        maxmin:true,
-        content:url,
-    });
-}
-
-/*下载模板*/
-queryAll.downLoadTemp = function () {
-    var ran = Math.random()*1000;
-    //$("#fileName").val();
-    document.forms[0].action = "/bg/expert/downloadExcelTemp?ran="+ran;
-    document.forms[0].submit();
-}
-
-/*  start 全选、取消全选 */
-$(".check_").change(function(){
-	if(this.checked==true){
-		var checkBoxs=$("input:checkbox[name=oneCheck]");
-		checkBoxs.each(function(i){
-			checkBoxs[i].checked=true;
-		});
-	}else{
-		var checkBoxs=$("input:checkbox[name=oneCheck]");
-			checkBoxs.each(function(i){
-				checkBoxs[i].checked=false;
-		});
-	}
-});
-
-/* 初始化dataItems */
-queryAll.initItems = function(){
-	dataItems = new Array();
-	index = 0;
-};
-
-/*专家删除方法*/
-queryAll.delEvent=function(){
-    var checkedItems = dataGrid.getCheckedItems(dataItems);
-    if(checkedItems.length==0){
-        messager.tip("请选择要操作的数据",1000);
-        return;
-    }else if(checkedItems.length>1){
-        messager.tip("每次只能删除一条数据",2000);
-        return;
-    }
-    if(checkedItems[0].matchStatus == '1'){
-        messager.tip("选择的数据无法删除,还有已匹配的论文",5000);
-        return;
-    }
-    var uuid = checkedItems[0].uuid;
-    $.messager.confirm( "删除提示", "确认删除选中数据吗",
-        function(r){
-            if(r){
-                $.ajax({
-                    url: "/bg/expert/deleteExpert?uuid="+uuid,//删除
-                    type: "post",
-                    success: function (data) {
-                        if(data.success == "true"){
-                            messager.tip("删除成功",1000);
-                            queryAll.query();
-                        }else{
-                            messager.tip("删除失败",5000);
-                            queryAll.query();
-                        }
-                    }
-                });
-            }
-        }
-    );
-}
-
-/* 专家修改*/
-queryAll.updateEvent = function(){
-    var checkedItems = dataGrid.getCheckedItems(dataItems);
-    if(checkedItems.length==0){
-        messager.tip("请选择要操作的数据",1000);
-        return;
-    }else if(checkedItems.length>1){
-        messager.tip("每次只能修改一条数据",2000);
-        return;
-    }
-    if(checkedItems[0].matchStatus == '1'){
-        messager.tip("选择的数据无法修改,还有已匹配的论文",5000);
-        return;
-    }
-    var uuid = checkedItems[0].uuid;
-    var url = "/bg/expert/expert?uuid="+uuid;
-    layer.open({
-        type:2,
-        title:'<h4 style="height:42px;line-height:25px;">专家修改 </h4>',
-        area:['85%','85%'],
-        fixed:false,//不固定
-        maxmin:true,
-        content:url,
-    });
-}
-
-/*专家-新增 */
-queryAll.addEvent = function (){
-    var url = "/bg/expert/speciaAdd"
-    layer.open({
-        type:2,
-        title:'<h4 style="height:42px;line-height:25px;">增加专家</h4>',
-        area:['85%','85%'],
-        fixed:false,//不固定
-        maxmin:true,
-        content:url,
-    });
-}
-
-
-/*跳转论文信息详情*/
-roomDetailInfo.paper = function (uuid){
-    var url = "/bg/lwPaper/detailLwPaper?uuid="+uuid;
-    layer.open({
-        type:2,
-        title:'<h4 style="height:42px;line-height:25px;">论文信息详情</h4>',
-        area:['70%','70%'],
-        fixed:false,//不固定
-        maxmin:true,
-        content:url
-    },function (index) {
-        layer.close(index);
-    });
 }
 
 //返回

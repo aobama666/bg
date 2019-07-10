@@ -26,6 +26,7 @@
 	<div class="main_div"></div>
 	<input type = "hidden" value = "${lwSpecialist.uuid}" id = "uuid" name="uuid">
 	<!-- end  头部 -->
+	<div style="height: 50px;width: 100%"></div>
 	<table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td>
@@ -62,7 +63,7 @@
 				<span title = "研究方向"><b class="mustWrite">*</b>研究方向</span>
 			</td>
 			<td class="addInputStyle">
-				<input id="researchDirection" name="researchDirection"  type="text" class="validNull"  value = "${lwSpecialist.researchDirection}"  content="研究方向"  len="20"  title="必填项，中文或英文,字段长度不能超过 20"  />
+				<input id="researchDirection" name="researchDirection"  type="text" class="validNull"  value = "${lwSpecialist.researchDirection}"  content="研究方向"  len="100"  title="必填项，中文或英文,字段长度不能超过100，多个研究方向用‘，’隔开"  />
 			</td>
 			<td >
 				<span title = "领域"><b class="mustWrite">*</b>领域</span>

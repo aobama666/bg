@@ -1,6 +1,7 @@
 package com.sgcc.bg.lunwen.service.impl;
 
 import com.sgcc.bg.common.*;
+import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
 import com.sgcc.bg.lunwen.bean.LwSpecialist;
 import com.sgcc.bg.lunwen.bean.PaperVO;
 import com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper;
@@ -89,9 +90,11 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
     }
 
     @Override
-    public int deleteExpert(String uuid) {
-        int i = lwSpecialistMapper.deleteExpert(uuid);
-        return i;
+    public String deleteSpecialist(String ids) {
+        String [] strings=ids.split(",");
+        int i = lwSpecialistMapper.deleteSpecialist(strings);
+        String str = "删除成功"+i+"条数据"+"，"+"删除失败"+(strings.length-i)+"条数据";
+        return str;
     }
 
     /**
@@ -274,7 +277,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                     }else {
                         for (String obj : list) {
                             if (obj.equals(cellValue[9])) {
-                                errorInfo.append("该用户已存在！ ");
+                                errorInfo.append("该电子邮箱已存在！ ");
                                 errorNum.add(9);
                             }
                         }
@@ -364,6 +367,76 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
         }
         String[] object = {"成功导入项目信息"+lwSpecialistList.size()+"条，失败"+errorList.size()+"条",errorUUID};
         return object;
+    }
+
+    //论文领域同专家领域（精准）、论文领域同专家研究方向（精准）、回避本人、回避本单位，回避已匹配的专家
+    @Override
+    public Map<String, Object> renewalMap(String uuid) {
+        //专家已匹配的所有论文
+        List<PaperVO> paperMap = lwSpecialistMapper.paperMap(uuid);
+        //存本人及已匹配的专家
+        Set spUuid = new HashSet();
+        //存论文涉及到的本单位
+        Set unitSet = new HashSet();
+        //储存涉及到的领域
+        Set fieIdSet = new HashSet();
+        //符合条件的专家list
+        List<LwSpecialist> matchingSpecialistList = new ArrayList<>();
+        for(PaperVO paperVO : paperMap){
+            //取出论文已经匹配的专家
+            List<Map<String,Object>> paperSpecialist = lwSpecialistMapper.paperSpecialist(paperVO.getUuid());
+            for (Map<String, Object> map : paperSpecialist) {
+               spUuid.add(map.get("UUID"));
+            }
+            //根据论文的作者姓名和单位查询出作者id（专家id）
+            LwSpecialist specialistMatching = lwSpecialistMapper.specialistMatching(paperVO.getAuthor(),paperVO.getUnit());
+            //回避本人（取出该论文专家本人的id 放入到spuuid中）
+            if(specialistMatching!=null){
+                spUuid.add(specialistMatching.getUuid());
+            }
+            unitSet.add(paperVO.getUnit());
+            fieIdSet.add(paperVO.getField());
+        }
+        if(fieIdSet.size()==1) {
+            //String fieId = fieIdSet.toString();
+            String fieId = fieIdSet.toArray()[0].toString();
+            matchingSpecialistList = lwSpecialistMapper.matchingSpecialistList(spUuid, unitSet, fieId);
+        }
+        Map map = new HashMap();
+        map.put("paperMap",paperMap);
+        map.put("matchingSpecialistList",matchingSpecialistList);
+        map.put("beforeUuid",uuid);
+        return map;
+    }
+
+    @Override
+    public int renewal(String beforeUuid, String nowUuid) {
+        List<PaperVO> paperMap = lwSpecialistMapper.paperMap(beforeUuid);
+        List<LwPaperMatchSpecialist> paperMatchSpecialist = new ArrayList<>();
+        for(PaperVO paperVO : paperMap){
+            LwPaperMatchSpecialist lwPaperMatchSpecialist = new LwPaperMatchSpecialist();
+            lwPaperMatchSpecialist.setUuid(Rtext.getUUID());
+            lwPaperMatchSpecialist.setPaperId(paperVO.getUuid());
+            lwPaperMatchSpecialist.setSpecialistId(nowUuid);
+            lwPaperMatchSpecialist.setScoreStatus("0");
+            lwPaperMatchSpecialist.setCreateTime(new Date());
+            lwPaperMatchSpecialist.setUpdateTime(new Date());
+            String userName = webUtils.getUsername();
+            HRUser user = userService.getUserByUserName(userName);
+            lwPaperMatchSpecialist.setCreateUser(user.getUserId());
+            lwPaperMatchSpecialist.setUpdateUser(user.getUserId());
+            lwPaperMatchSpecialist.setValid("1");
+            paperMatchSpecialist.add(lwPaperMatchSpecialist);
+        }
+        //删除原来专家匹配的信息
+        int i = lwPaperMatchSpecialistMapper.updateValid(beforeUuid);
+        //修改原来专家的匹配状态
+        lwSpecialistMapper.updateMatchStatus(beforeUuid,"0");
+        //增加新的
+        int j = lwPaperMatchSpecialistMapper.insertMatch(paperMatchSpecialist);
+        //修改新匹配专家的匹配状态
+        lwSpecialistMapper.updateMatchStatus(nowUuid,"1");
+        return j;
     }
 
 

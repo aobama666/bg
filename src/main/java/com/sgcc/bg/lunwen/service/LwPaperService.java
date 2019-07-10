@@ -186,4 +186,10 @@ public interface LwPaperService {
      * @return
      */
     String[] joinExcel(InputStream in);
+
+    /**
+     * 查询论文含有的所有领域
+     * @return
+     */
+    List<Map<String,Object>> fieldList();
 }

@@ -163,10 +163,13 @@
         WHERE UUID = #{uuid,jdbcType=VARCHAR}
     </update>
 
-    <update id="deleteExpert" parameterType="com.sgcc.bg.lunwen.bean.LwSpecialist">
+    <update id="deleteSpecialist" parameterType="com.sgcc.bg.lunwen.bean.LwSpecialist">
         UPDATE BG_LW_SPECIALIST SET
         VALID = '0'
-        WHERE UUID = #{uuid,jdbcType=VARCHAR}
+        WHERE UUID IN
+        <foreach collection="strings"  item="string" index="index" separator="," open="(" close=")">
+            #{string,jdbcType=VARCHAR}
+        </foreach>
     </update>
 
     <select id="paperMap" resultType="com.sgcc.bg.lunwen.bean.PaperVO">
@@ -188,10 +191,16 @@
                 e.uuid AS eid,
                 e.SPECIALIST_ID AS specialistId,
                 e.SCORE AS score,
-                e.SCORE_STATUS AS eScoreStatus
+                e.SCORE_STATUS AS eScoreStatus,
+                s.NAME AS specialistName,
+                s.FIELD AS specialistField,
+                s.RESEARCH_DIRECTION AS specialistResearchDirection,
+                s.UNIT_NAME AS specialistUnitName
         FROM bg_lw_paper p
         LEFT JOIN bg_lw_paper_match_expert e
-        ON e.paper_id = p.UUID
+        ON e.PAPER_ID = p.UUID
+        LEFT JOIN BG_LW_SPECIALIST s
+        ON s.UUID = e.SPECIALIST_ID
        WHERE e.specialist_id = #{uuid,jdbcType=VARCHAR}
        and p.VALID = '1'
        and e.VALID = '1'
@@ -303,7 +312,8 @@
 
     <select id="paperSpecialist" resultType="java.util.Map">
         SELECT s.uuid,
-                s.name
+                s.name,
+                e.score
         FROM BG_LW_PAPER_MATCH_EXPERT e
         LEFT JOIN BG_LW_SPECIALIST s
         ON e.SPECIALIST_ID = s.UUID
@@ -332,4 +342,97 @@
             </foreach>
           )
     </select>
+
+    <select id="specialistMatching" resultType="com.sgcc.bg.lunwen.bean.LwSpecialist">
+        SELECT UUID AS uuid,
+            NAME AS name,
+            ADDRESS AS address,
+            UNIT_NAME AS unitName,
+            UNIT_NATURE AS unitNature,
+            POSITION AS position,
+            RESEARCH_DIRECTION AS researchDirection,
+            FIELD AS field,
+            PHONE AS phone,
+            EMAIL AS email,
+            MATCH_STATUS AS matchStatus
+            FROM BG_LW_SPECIALIST
+            WHERE VALID = '1'
+            AND NAME=#{author,jdbcType=VARCHAR}
+            AND UNIT_NAME = #{unit,jdbcType=VARCHAR}
+    </select>
+
+    <select id="matchingSpecialistList" resultType="com.sgcc.bg.lunwen.bean.LwSpecialist">
+        SELECT UUID AS uuid,
+            NAME AS name,
+            ADDRESS AS address,
+            UNIT_NAME AS unitName,
+            UNIT_NATURE AS unitNature,
+            POSITION AS position,
+            RESEARCH_DIRECTION AS researchDirection,
+            FIELD AS field,
+            PHONE AS phone,
+            EMAIL AS email,
+            MATCH_STATUS AS matchStatus
+            FROM BG_LW_SPECIALIST
+            WHERE VALID = '1'
+            <if test="fieId != null and fieId !=''">
+                and FIELD = #{fieId,jdbcType=VARCHAR}
+                and RESEARCH_DIRECTION LIKE '%'||#{fieId,jdbcType=VARCHAR}||'%'
+            </if>
+            AND UUID NOT IN (
+            <foreach collection="spUuid" item="uuid" index="index" separator=",">
+                #{uuid,jdbcType=VARCHAR}
+            </foreach>)
+            and UNIT_NAME NOT IN (
+            <foreach collection="unitSet" item="unit" index="index" separator=",">
+                #{unit,jdbcType=VARCHAR}
+            </foreach>)
+    </select>
+
+    <update id="updateMatchStatus" parameterType="com.sgcc.bg.lunwen.bean.LwSpecialist">
+        UPDATE BG_LW_SPECIALIST SET
+        MATCH_STATUS = #{matchStatus,jdbcType=VARCHAR}
+        WHERE UUID = #{beforeUuid,jdbcType=VARCHAR}
+    </update>
+
+    <select id="statisticsSpecialistName" resultType="java.util.Map">
+        SELECT s.UUID AS uuid,s.NAME AS name FROM bg_lw_paper p
+           LEFT JOIN bg_lw_paper_match_expert e
+           ON p.UUID = e.PAPER_ID
+           LEFT JOIN bg_lw_specialist s
+           ON e.SPECIALIST_ID = s.UUID
+           WHERE s.VALID = '1'
+              AND p.VALID='1'
+              AND e.VALID = '1'
+              AND p.ALL_STATUS = '6'
+            <if test="year != null and year != ''">
+                and p.YEAR = #{year,jdbcType=VARCHAR}
+            </if>
+            <if test="paperName != null and paperName != ''">
+                and p.PAPER_NAME  LIKE '%'||#{paperName,jdbcType=VARCHAR}||'%'
+            </if>
+            <if test="paperId != null and paperId != ''">
+                and p.PAPER_ID = #{paperId,jdbcType=VARCHAR}
+            </if>
+            <if test="field != null and field != ''">
+                and p.field = #{field,jdbcType=VARCHAR}
+            </if>
+           GROUP BY s.uuid ,s.name
+    </select>
+
+    <select id="SpeciList" resultType="java.util.Map">
+        SELECT s.uuid,
+                s.name,
+                e.score
+        FROM BG_LW_PAPER_MATCH_EXPERT e
+        LEFT JOIN BG_LW_SPECIALIST s
+        ON e.SPECIALIST_ID = s.UUID
+        WHERE e.VALID = '1'
+        AND  s.VALID = '1'
+        AND e.PAPER_ID = #{uuid,jdbcType=VARCHAR}
+    </select>
+    <!--and e.SPECIALIST_ID in(
+    <foreach collection="list" item="list" index="index" separator=",">
+        #{list,jdbcType=VARCHAR}
+    </foreach>)-->
 </mapper>

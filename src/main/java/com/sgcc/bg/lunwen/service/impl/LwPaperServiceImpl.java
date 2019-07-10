@@ -162,6 +162,12 @@ public class LwPaperServiceImpl implements LwPaperService {
         return list;
     }
 
+    @Override
+    public List<Map<String, Object>> fieldList() {
+        List<Map<String, Object>> fieldLsit = lwPaperMapper.fieldList();
+        return fieldLsit;
+    }
+
 
     /**
      * 重复匹配————附加首次匹配功能，缩减代码量

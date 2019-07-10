@@ -34,6 +34,12 @@ queryAll.query = function(){
 	index = 0;
 	$("#datagrid").datagrid("seach");
 }
+/*刷新当前页*/
+queryAll.refresh = function(){
+    dataItems = new Array();
+    index = 0;
+    $("#datagrid").datagrid("refresh");
+}
 
 /* 专家管理-初始化列表界面  */
 queryAll.initDataGrid = function(){
@@ -46,12 +52,8 @@ queryAll.initDataGrid = function(){
         form:'#queryForm',
         pageSize:10,
         tablepage:$(".tablepage"),//分页组件
-        successFinal:function(data){
-            $("#datagrid").find("input[type=checkbox]").eq(0).attr("style","display:none");
-        },
         columns: [
             {name: '',style:{width:"2%"}, data: 'uuid',checkbox:true, forMat:function(row){
-                dataUUID[index] = row.uuid;
               dataItems[index] = row;//将一行数据放在一个list中
               return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.uuid)+'"/>';
             }
@@ -81,6 +83,27 @@ queryAll.initDataGrid = function(){
         ]
     });
 }
+
+/*  start 全选、取消全选 */
+$(".check_").change(function(){
+    if(this.checked==true){
+        var checkBoxs=$("input:checkbox[name=oneCheck]");
+        checkBoxs.each(function(i){
+            checkBoxs[i].checked=true;
+        });
+    }else{
+        var checkBoxs=$("input:checkbox[name=oneCheck]");
+        checkBoxs.each(function(i){
+            checkBoxs[i].checked=false;
+        });
+    }
+});
+
+/* 初始化dataItems */
+queryAll.initItems = function(){
+    dataItems = new Array();
+    index = 0;
+};
 
 /*导出*/
 queryAll.outEvent = function () {
@@ -130,56 +153,43 @@ queryAll.downLoadTemp = function () {
     document.forms[0].submit();
 }
 
-/*  start 全选、取消全选 */
-$(".check_").change(function(){
-	if(this.checked==true){
-		var checkBoxs=$("input:checkbox[name=oneCheck]");
-		checkBoxs.each(function(i){
-			checkBoxs[i].checked=true;
-		});
-	}else{
-		var checkBoxs=$("input:checkbox[name=oneCheck]");
-			checkBoxs.each(function(i){
-				checkBoxs[i].checked=false;
-		});
-	}
-});
-
-/* 初始化dataItems */
-queryAll.initItems = function(){
-	dataItems = new Array();
-	index = 0;
-};
-
 /*专家删除方法*/
 queryAll.delEvent=function(){
     var checkedItems = dataGrid.getCheckedItems(dataItems);
+    var uuids = "" ;
     if(checkedItems.length==0){
         messager.tip("请选择要操作的数据",1000);
         return;
-    }else if(checkedItems.length>1){
-        messager.tip("每次只能删除一条数据",2000);
-        return;
-    }
-    if(checkedItems[0].matchStatus == '1'){
+    }else if(checkedItems[0].matchStatus == '1' && checkedItems.length==1){
         messager.tip("选择的数据无法删除,还有已匹配的论文",5000);
         return;
+    }else if(checkedItems.length>1){
+        //messager.tip("每次只能删除一条数据",2000);
+        for(i=0; i<checkedItems.length;i++){
+            uuids += checkedItems[i].uuid + ",";
+        }
+    }else if (checkedItems.length==1){
+        uuids = checkedItems[0].uuid+",";
     }
-    var uuid = checkedItems[0].uuid;
+    uuids = uuids.slice(0,uuids.length-1);
+    //$("input[name=selectList]").val(uuids);
     $.messager.confirm( "删除提示", "确认删除选中数据吗",
         function(r){
             if(r){
                 $.ajax({
-                    url: "/bg/expert/deleteExpert?uuid="+uuid,//删除
+                    url: "/bg/expert/deleteSpecialist?uuids="+uuids,//删除
                     type: "post",
+                    dataType:"json",
                     success: function (data) {
-                        if(data.success == "true"){
+                        messager.tip(data,3000);
+                        queryAll.refresh();
+                        /*if(data.success == "true"){
                             messager.tip("删除成功",1000);
                             queryAll.query();
                         }else{
                             messager.tip("删除失败",5000);
                             queryAll.query();
-                        }
+                        }*/
                     }
                 });
             }
@@ -206,7 +216,7 @@ queryAll.updateEvent = function(){
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;">专家修改 </h4>',
-        area:['85%','85%'],
+        area:['85%','65%'],
         fixed:false,//不固定
         maxmin:true,
         content:url,
@@ -214,7 +224,7 @@ queryAll.updateEvent = function(){
 }
 
 /*更换专家*/
-queryAll.renewalSpecialist = function () {
+queryAll.renewal = function () {
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
         messager.tip("请选择要操作的数据",1000);
@@ -228,7 +238,31 @@ queryAll.renewalSpecialist = function () {
         return;
     }
     var uuid = checkedItems[0].uuid;
-    var url = "/bg/expert/renewalSpecialist?uuid="+uuid;
+    $.ajax({
+        type:"GET",
+        url:"/bg/expert/judge?uuid="+uuid,
+        dataType:"json",
+        success:function(data){
+            if(data == true){
+                var url = "/bg/expert/renewalSpecialist?uuid="+uuid;
+                layer.open({
+                    type:2,
+                    title:'<h4 style="height:42px;line-height:25px;">更换专家 </h4>',
+                    area:['85%','85%'],
+                    fixed:false,//不固定
+                    maxmin:true,
+                    content:url,
+                    end: function () {
+                        queryAll.query();
+                    }
+                });
+            }else {
+                messager.tip("该专家以有论文进行打分，无法更换",6000);
+                return;
+            }
+        }
+    });
+    /*var url = "/bg/expert/renewalSpecialist?uuid="+uuid;
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;">更换专家 </h4>',
@@ -236,7 +270,7 @@ queryAll.renewalSpecialist = function () {
         fixed:false,//不固定
         maxmin:true,
         content:url,
-    });
+    });*/
 }
 /*专家-新增 */
 queryAll.addEvent = function (){
@@ -257,7 +291,7 @@ queryAll.forDetails = function (uuid){
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;">专家详情</h4>',
-        area:['85%','85%'],
+        area:['85%','65%'],
         fixed:false,//不固定
         maxmin:true,
         content:url

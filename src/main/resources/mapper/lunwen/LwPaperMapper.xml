@@ -246,7 +246,7 @@
                p.AVERAGE_FRACTION AS averageFraction,
                ROWNUM AS ROWNO
             FROM bg_lw_paper p
-            WHERE p.valid = 1
+            WHERE p.valid = '1'
                 <if test="year != null and year != ''">
                     and p.YEAR = #{year,jdbcType=VARCHAR}
                 </if>
@@ -284,7 +284,7 @@
         p.AVERAGE_FRACTION AS averageFraction,
         ROWNUM AS ROWNO
         FROM bg_lw_paper p
-        WHERE p.valid = 1
+        WHERE p.valid = '1'
         <if test="year != null and year != ''">
             and p.YEAR = #{year,jdbcType=VARCHAR}
         </if>
@@ -320,7 +320,7 @@
         p.AVERAGE_FRACTION AS averageFraction,
         ROWNUM AS ROWNO
         FROM bg_lw_paper p
-        WHERE p.VALID = 1
+        WHERE p.VALID = '1'
         AND p.UUID in (
         <foreach collection="strings"  item="string" index="index" separator=",">
             #{string,jdbcType=VARCHAR}
@@ -420,4 +420,62 @@
         </if>
     </select>
 
+    <select id="year" resultType="java.util.Map">
+        SELECT YEAR FROM  bg_lw_paper
+        WHERE VALID = '1' GROUP BY YEAR ORDER BY YEAR
+    </select>
+
+    <select id="fieldList" resultType="java.util.Map">
+        SELECT FIELD FROM bg_lw_paper
+        WHERE VALID = '1'GROUP BY FIELD
+    </select>
+
+
+    <select id="statisticsMap" resultType="java.util.Map">
+        SELECT a.* FROM (
+        SELECT
+        p.UUID AS uuid,
+        p.PAPER_ID AS  paperId,
+        p.PAPER_NAME AS paperName,
+        p.WEIGHTING_FRACTION AS weightingFraction,
+        p.AVERAGE_FRACTION AS averageFraction,
+        ROWNUM AS ROWNO
+        FROM bg_lw_paper p
+        WHERE p.valid = '1'
+        AND p.ALL_STATUS = '6'
+        <if test="year != null and year != ''">
+            and p.year = #{year,jdbcType=VARCHAR}
+        </if>
+        <if test="paperName != null and paperName != ''">
+            and p.paper_name  LIKE '%'||#{paperName,jdbcType=VARCHAR}||'%'
+        </if>
+        <if test="paperId != null and paperId != ''">
+            and p.paper_id = #{paperId,jdbcType=VARCHAR}
+        </if>
+        <if test="field != null and field != ''">
+            and p.field = #{field}
+        </if>
+        AND #{end} >= ROWNUM
+        ORDER BY P.AVERAGE_FRACTION DESC nulls last
+        ) a WHERE a.ROWNO > #{start}
+    </select>
+
+    <select id="statisticsCount" resultType="java.lang.Integer">
+        SELECT COUNT(UUID)
+        FROM bg_lw_paper
+        WHERE valid = '1'
+        AND ALL_STATUS = '6'
+        <if test="year != null and year != ''">
+            and year = #{year,jdbcType=VARCHAR}
+        </if>
+        <if test="paperName != null and paperName != ''">
+            and paper_name  LIKE '%'||#{paperName,jdbcType=VARCHAR}||'%'
+        </if>
+        <if test="paperId != null and paperId != ''">
+            and paper_id = #{paperId,jdbcType=VARCHAR}
+        </if>
+        <if test="field != null and field != ''">
+            and field = #{field}
+        </if>
+    </select>
 </mapper>

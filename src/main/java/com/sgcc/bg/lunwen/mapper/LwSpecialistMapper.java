@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public interface LwSpecialistMapper {
@@ -65,7 +66,7 @@ public interface LwSpecialistMapper {
               @Param("field") String field,
               @Param("matchStatus") String matchStatus);
 
-    int deleteExpert(String uuid);
+    int deleteSpecialist(@Param("strings")String[] strings);
 
     /**
      * 专家匹配的论文
@@ -74,8 +75,20 @@ public interface LwSpecialistMapper {
      */
     List<PaperVO> paperMap(String uuid);
 
+    /**
+     * 专家匹配的论文分页
+     * @param uuid
+     * @param start
+     * @param end
+     * @return
+     */
     List<PaperVO> paperMapPage(@Param("uuid") String uuid, @Param("start") int start, @Param("end") int end);
 
+    /**
+     * 专家匹配的论文总数
+     * @param uuid
+     * @return
+     */
     int specialistAndPaperCount(String uuid);
 
     /**
@@ -99,6 +112,10 @@ public interface LwSpecialistMapper {
      */
     List<String> getEmail();
 
+    /**
+     * 批量添加
+     * @param lwSpecialistList
+     */
     void addList(@Param("lwSpecialistList") List<LwSpecialist> lwSpecialistList);
 
     /**
@@ -106,7 +123,7 @@ public interface LwSpecialistMapper {
      * @param uuid
      * @return
      */
-    List<Map<String,String>> paperSpecialist(String uuid);
+    List<Map<String,Object>> paperSpecialist(String uuid);
 
     /**
      * 根据ids查
@@ -115,4 +132,35 @@ public interface LwSpecialistMapper {
      */
     List<LwSpecialist> listIds(@Param("strings") String[] strings);
 
+    /**
+     * //根据论文的作者姓名和单位查询出作者id（专家id）
+     * @param author
+     * @param unit
+     * @return
+     */
+    LwSpecialist specialistMatching(@Param("author") String author, @Param("unit") String unit);
+
+
+    //论文领域同专家领域（精准）、论文领域同专家研究方向（精准）、回避本人、回避本单位，回避已匹配的专家
+    List<LwSpecialist> matchingSpecialistList(@Param("spUuid") Set spUuid,
+                                              @Param("unitSet") Set unitSet,
+                                              @Param("fieId") String fieId);
+
+    //修改专家的匹配状态
+    int updateMatchStatus(@Param("beforeUuid") String beforeUuid ,@Param("matchStatus") String matchStatus);
+
+    /**
+     * 评分统计专家查询
+     * @param year
+     * @param paperName
+     * @param paperId
+     * @param field
+     * @return
+     */
+    List<Map<String,Object>> statisticsSpecialistName(@Param("year") String year,
+                                                      @Param("paperName") String paperName,
+                                                      @Param("paperId") String paperId,
+                                                      @Param("field") String field);
+
+    List<Map<String,Object>> SpeciList(@Param("uuid") String uuid);
 }
