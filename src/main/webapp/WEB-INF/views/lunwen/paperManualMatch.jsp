@@ -22,24 +22,29 @@
 <input type="text" style="display: none;" value="${paperUuid}" id="paperUuid">
 
 <div class="layui-container" style="margin-top: 15px;">
-    <%--<div class="layui-btn-group">
-        <button class="layui-btn left">获取选中数据</button>
-    </div>--%>
     <div id="root"></div>
 </div>
 
 <div class="btnContent">
-    <button type="button" class="btn" id="save">保存</button>
+    <c:if test="${scoreTableStatus=='on'}">
+        <button type="button" class="btn layui-btn-disabled" id="save" disabled>已生成打分表</button>
+    </c:if>
+    <c:if test="${scoreTableStatus=='off'}">
+        <button type="button" class="btn" id="save">保存</button>
+    </c:if>
     <button type="button" class="btn" id="return">返回</button>
 </div>
 
 <!-- 本页面所需的js -->
+<%--<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js"></script>--%>
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 </body>
 <script>
     var left = ${left};
     var right = ${right};
     var paperUuid = ${paperUuid};
+
+
 
     layui.config({
         base: '/bg/js/plugins/layui/'
@@ -70,6 +75,7 @@
             // parent.layer.closeAll();
         });
 
+
         $('#save').on('click',function () {
             var specialistsIdS = transfer.get(tb1,'left','uuid');
             $.ajax({
@@ -78,7 +84,7 @@
                 dataType:"json",
                 contentType: 'application/json',
                 success: function (data) {
-                        parent.messager.tip(data.msg,5000);
+                    parent.messager.tip(data.msg,5000);
                 }
             });
         });
@@ -86,6 +92,7 @@
         $('#return').on('click',function () {
             parent.layer.closeAll();
         });
+
     })
 </script>
 </html>

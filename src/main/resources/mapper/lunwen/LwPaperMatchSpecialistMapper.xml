@@ -103,5 +103,6 @@
             and m.paper_id= #{paperId}
         </if>
         and m.valid = #{valid}
+        order by m.SPECIALIST_SORT
     </select>
 </mapper>
