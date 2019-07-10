@@ -46,6 +46,7 @@ public class PaperVO {
      */
     private String field;
 
+
     /**
      * 打分表状态 0未生成  1已生成
      */
@@ -87,6 +88,30 @@ public class PaperVO {
      * 打分状态
      */
     private String eScoreStatus;
+
+    /**
+     * 专家姓名
+     * @return
+     */
+    private String specialistName;
+
+    /**
+     * 单位名称
+     * @return
+     */
+    private String specialistUnitName;
+
+    /**
+     * 研究方向
+     * @return
+     */
+    private String specialistResearchDirection;
+
+    /**
+     * 领域
+     * @return
+     */
+    private String specialistField;
 
     public String getUuid() {
         return uuid;
@@ -240,6 +265,38 @@ public class PaperVO {
         this.averageFraction = averageFraction;
     }
 
+    public String getSpecialistName() {
+        return specialistName;
+    }
+
+    public void setSpecialistName(String specialistName) {
+        this.specialistName = specialistName;
+    }
+
+    public String getSpecialistUnitName() {
+        return specialistUnitName;
+    }
+
+    public void setSpecialistUnitName(String specialistUnitName) {
+        this.specialistUnitName = specialistUnitName;
+    }
+
+    public String getSpecialistResearchDirection() {
+        return specialistResearchDirection;
+    }
+
+    public void setSpecialistResearchDirection(String specialistResearchDirection) {
+        this.specialistResearchDirection = specialistResearchDirection;
+    }
+
+    public String getSpecialistField() {
+        return specialistField;
+    }
+
+    public void setSpecialistField(String specialistField) {
+        this.specialistField = specialistField;
+    }
+
     @Override
     public String toString() {
         return "PaperVO{" +
@@ -262,6 +319,10 @@ public class PaperVO {
                 ", specialistId='" + specialistId + '\'' +
                 ", score='" + score + '\'' +
                 ", eScoreStatus='" + eScoreStatus + '\'' +
+                ", specialistName='" + specialistName + '\'' +
+                ", specialistUnitName='" + specialistUnitName + '\'' +
+                ", specialistResearchDirection='" + specialistResearchDirection + '\'' +
+                ", specialistField='" + specialistField + '\'' +
                 '}';
     }
 }

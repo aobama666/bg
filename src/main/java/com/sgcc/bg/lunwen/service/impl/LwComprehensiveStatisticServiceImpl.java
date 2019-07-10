@@ -28,15 +28,21 @@ public class LwComprehensiveStatisticServiceImpl implements LwComprehensiveStati
 
 
     @Override
+    public List<Map<String,Object>> year() {
+        List<Map<String,Object>> year = lwPaperMapper.year();
+        return year;
+    }
+
+    @Override
     public List<PaperComprehensiveVO> paperComprehensiveVOList(String year, String paperName, String author, String paperId,int start,int end) {
         List<PaperComprehensiveVO> paperComprehensiveVOList = lwPaperMapper.paperComprehensiveVOList(year,paperName,author,paperId,start,end);
         if(paperComprehensiveVOList!=null && paperComprehensiveVOList.size()>0){
             for(PaperComprehensiveVO paperComprehensiveVO : paperComprehensiveVOList){
                 //取论文评判的专家
-                List<Map<String,String>> paperSpecialist = lwSpecialistMapper.paperSpecialist(paperComprehensiveVO.getUuid());
+                List<Map<String,Object>> paperSpecialist = lwSpecialistMapper.paperSpecialist(paperComprehensiveVO.getUuid());
                 if(paperSpecialist!=null && paperSpecialist.size()>0) {
                     StringBuilder sname = new StringBuilder();
-                    for (Map<String, String> map : paperSpecialist) {
+                    for (Map<String, Object> map : paperSpecialist) {
                         sname.append(map.get("NAME")).append("，");
                     }
                     sname.deleteCharAt(sname.length() - 1);
@@ -65,10 +71,10 @@ public class LwComprehensiveStatisticServiceImpl implements LwComprehensiveStati
         if(outPaperComprehensiveVO!=null && outPaperComprehensiveVO.size()>0){
             for(PaperComprehensiveVO paperComprehensiveVO : outPaperComprehensiveVO){
                 //取论文评判的专家
-                List<Map<String,String>> paperSpecialist = lwSpecialistMapper.paperSpecialist(paperComprehensiveVO.getUuid());
+                List<Map<String,Object>> paperSpecialist = lwSpecialistMapper.paperSpecialist(paperComprehensiveVO.getUuid());
                 if(paperSpecialist!=null && paperSpecialist.size()>0) {
                     StringBuilder sname = new StringBuilder();
-                    for (Map<String, String> map : paperSpecialist) {
+                    for (Map<String, Object> map : paperSpecialist) {
                         sname.append(map.get("NAME")).append("，");
                     }
                     sname.deleteCharAt(sname.length() - 1);

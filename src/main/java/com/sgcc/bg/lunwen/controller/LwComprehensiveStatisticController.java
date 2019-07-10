@@ -6,6 +6,8 @@ import com.sgcc.bg.lunwen.bean.PaperComprehensiveVO;
 import com.sgcc.bg.lunwen.bean.PaperVO;
 import com.sgcc.bg.lunwen.service.LwComprehensiveStatisticService;
 import com.sgcc.bg.lunwen.service.LwPaperService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,7 @@ import java.util.Map;
 @RequestMapping(value = "/comprehensiveStatistics")
 public class LwComprehensiveStatisticController {
 
+    private static Logger log =  LoggerFactory.getLogger(LwComprehensiveStatisticController.class);
 
     @Autowired
     private LwComprehensiveStatisticService lwComprehensiveStatisticServiceImpl;
@@ -35,8 +38,23 @@ public class LwComprehensiveStatisticController {
 
     @RequestMapping("/comprehensive")
     public String specialist(HttpServletRequest request) {
+        List<Map<String,Object>> year = lwComprehensiveStatisticServiceImpl.year();
+        request.setAttribute("year",year);
         return "lunwen/paperComprehensiveStatistics";
     }
+
+
+    /**
+     * 取年份
+     * @return
+     */
+    @RequestMapping(value = "/year")
+    public String year(HttpServletRequest request){
+        List<Map<String,Object>> year = lwComprehensiveStatisticServiceImpl.year();
+        request.setAttribute("year",year);
+        return "lunwen/paperComprehensiveStatistics";
+    }
+
 
     /**
      * 综合统计列表

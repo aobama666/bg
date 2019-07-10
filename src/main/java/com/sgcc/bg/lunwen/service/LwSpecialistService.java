@@ -20,7 +20,7 @@ public interface LwSpecialistService {
 
     int count(String name, String researchDirection, String unitName, String field, String matchStatus);
 
-    int deleteExpert(String uuid);
+    String deleteSpecialist(String ids);
 
     /**
      * 专家匹配的论文
@@ -61,4 +61,19 @@ public interface LwSpecialistService {
      * @return
      */
     String[] joinExcel(InputStream in);
+
+    /**
+     * 更换专家（查询出论文及符合条件的其他专家）
+     * @param uuid
+     * @return
+     */
+    Map<String,Object> renewalMap(String uuid);
+
+    /**
+     * 更换专家（经行更换专家操作）
+     * @param beforeUuid 更换之前专家id
+     * @param nowUuid 更换之后的专家id
+     * @return
+     */
+    int renewal(String beforeUuid, String nowUuid);
 }

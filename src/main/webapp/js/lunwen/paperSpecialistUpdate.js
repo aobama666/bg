@@ -3,36 +3,6 @@ var roomDetailInfo = {};
 roomDetailInfo.saveBtnClickFlag = 0;//保存按钮点击事件
 roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
 var  VisitunitLevelData='';
-/*$(function(){
-	//‘新增’页面，院领导姓名多选下拉框
-	roomDetailInfo.initSelectForLeader();
-	//初始化人员选择树
-	$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'parent',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'}); 
-});*/
-/*//获取当前时间
-function getNowFormatDate() {    
-    var date = new Date();    
-    var seperator1 = "-";    
-    var seperator2 = ":";    
-    var month = date.getMonth() + 1;    
-    var strDate = date.getDate();
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    if (month >= 1 && month <= 9) {        
-        month = "0" + month;    
-    }    
-    if (strDate >= 0 && strDate <= 9) {        
-    	strDate = "0" + strDate;    
-    } 
-    if (hours >= 0 && hours <= 9) {        
-    	hours = "0" + hours;    
-    } 
-    if (minutes >= 0 && minutes <= 9) {        
-    	minutes = "0" + minutes;    
-    } 
-    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + " " + hours + seperator2 + minutes;    
-    return currentdate;
-}*/
 
 /*修改保存*/
 roomDetailInfo.messageSubmit= function(approvalUserd){

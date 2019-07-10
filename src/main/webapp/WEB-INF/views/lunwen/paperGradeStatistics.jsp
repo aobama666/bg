@@ -35,31 +35,52 @@
 			<input type="hidden" name="selectList"/>
 
 			<label>年度</label>
-			<input type = "text" class = "layui-input" id = "name" name = "name" style="width: 200px" >
+			<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 100px">
+				<option></option>
+				<c:forEach var ="year" items="${map.year}">
+					<c:forEach var ="years" items="${year}">
+						<option value=${years.value}>${years.value}</option>
+					</c:forEach>
+				</c:forEach>
+			</select>
 
 			<label>论文题目</label>
-			<input type = "text" id = "researchDirection" name = "researchDirection" style="width: 100px" class = "inputQuery changeQuery" >
+			<input type = "text" id = "paperName" name = "paperName" style="width: 100px" class = "inputQuery changeQuery" >
 
 			<label>编号</label>
-			<input type = "text" id = "unitName" name = "unitName" style="width: 100px" class = "inputQuery changeQuery" >
+			<input type = "text" id = "paperld" name = "paperld" style="width: 100px" class = "inputQuery changeQuery" >
+
+			<input type="text" id="field" name="field" style="display: none" value="${map.fieldList[0].FIELD}">
 
 			<!-- 查询按钮  " -->
 			<div style="float:right" id = "queryButton" class = "btn query" onclick = "queryAll.query()">搜索</div>
 		</form>
 	</div>
 	<!-- end    查询条件 -->
+    <div><hr></div>
 
-	<div class="tab" role="tabplanel">
-		<div id="funcBtn" style="width:100%;height: 35px;">
-			<div class='btn right addButton' onclick="queryAll.addEvent()">新增</div>
-			<div class='btn right joinButton' onclick="queryAll.joinEvent()">导入</div>
-			<div class='btn right updateButton' onclick="queryAll.updateEvent()">修改</div>
-			<div class='btn right downloadButton' onclick="queryAll.downLoadTemp()">下载模板</div>
-			<div class='btn right outButton' onclick="queryAll.outEvent()">导出</div>
-			<div class='btn right deleteButton' onclick="queryAll.delEvent()" >删除</div>
-			<div><h3>专家详情</h3></div>
-		</div>
-	</div>
+    <div>
+        <!--  导出，重新评审 -->
+        <div id="funcBtn" style="height: 35px;float:right">
+            <div class='btn right outButton' onclick="queryAll.outEvent()">导出</div>
+            <div class='btn right deleteButton' onclick="queryAll.againReview()" >重新评审</div>
+        </div>
+        <!-- 领域 -->
+        <div class="grid-title">
+            <c:forEach var ="fieldList" items="${map.fieldList}">
+                <c:forEach var ="field" items="${fieldList}">
+					<div  onclick="queryAll.field('${field.value}')">
+						<h3 style="float: left">
+							<a href="#" style="color:black">${field.value}</a>
+						</h3>
+					</div>
+                </c:forEach>
+            </c:forEach>
+            <h3></h3>
+        </div>
+    </div>
+
+	<div id="taleInfo"></div>
 
 	<div class="tabbable" >
 		<div id="datagrid" style="height:450px;margin-bottom: 10px;"></div>
@@ -92,18 +113,9 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<!-- 本页面所需的js -->
-	<%--<script src="<%=request.getContextPath()%>/js/lunwen/paperSpecialistManage.js"></script>--%>
+	<script src="<%=request.getContextPath()%>/js/lunwen/paperGradeStatistics.js"></script>
 
 </body>
 
-<script type="text/javascript" charset="utf-8">
-	layui.use('laydate',function(){
-	    var laydate = layui.laydate;
-        laydate.render({
-			elem:"#name",
-			type:"year"
-		});
-	});
-</script>
 
 </html>
