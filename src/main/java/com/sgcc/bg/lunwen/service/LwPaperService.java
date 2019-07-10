@@ -179,12 +179,6 @@ public interface LwPaperService {
      */
     public Integer autoMaticSecond(Map<String,Object> lwPaperMap,String paperUuid);
 
-    /**
-     * 查询论文含有的所有领域
-     * @return
-     */
-    List<Map<String,Object>> fieldList();
-
 
     /**
      * 解析上传的批量录入excel表格
@@ -193,5 +187,9 @@ public interface LwPaperService {
      */
     String[] joinExcel(InputStream in);
 
-
+    /**
+     * 查询论文含有的所有领域
+     * @return
+     */
+    List<Map<String,Object>> fieldList();
 }
