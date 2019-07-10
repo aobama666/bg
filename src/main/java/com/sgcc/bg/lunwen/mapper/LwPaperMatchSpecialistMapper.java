@@ -6,6 +6,7 @@ import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialistVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -29,12 +30,16 @@ public interface LwPaperMatchSpecialistMapper {
 
     /**
      * 修改专家对应某论文打分分数
-     * @param uuid
+     * @param paperId
+     * @param specialistId
      * @param score
      * @return
      */
     Integer updateScore(
-            @Param("uuid") String uuid,
+            @Param("paperId") String paperId,
+            @Param("specialistId") String specialistId,
+            @Param("updateUser") String updateUser,
+            @Param("updateTime") Date updateTime,
             @Param("score") String score);
 
     /**
@@ -42,18 +47,24 @@ public interface LwPaperMatchSpecialistMapper {
      * @param paperId
      * @return
      */
-    String findSpecialistSort(@Param("paperId") String paperId,
-                @Param("valid") String valid);
+    String findSpecialistSort(@Param("paperId") String paperId);
 
     /**
      * 修改打分状态
-     * @param uuid
+     * @param paperId
+     * @param specialistId
      * @param socreStatus
      * @return
      */
     Integer updateScoreStatus(
-            @Param("uuid") String uuid,
+            @Param("paperId") String paperId,
+            @Param("specialistId") String specialistId,
             @Param("socreStatus") String socreStatus);
+
+    Integer delMatchMessage(
+        @Param("paperId") String paperId,
+        @Param("specialistId") String specialistId,
+        @Param("valid") String valid);
 
     List<LwPaperMatchSpecialist> selectPMS(
             @Param("paperId") String paperId,
