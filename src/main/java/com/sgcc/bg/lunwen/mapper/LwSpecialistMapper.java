@@ -162,5 +162,10 @@ public interface LwSpecialistMapper {
                                                       @Param("paperId") String paperId,
                                                       @Param("field") String field);
 
+    /**
+     * 根据论文id获取专家
+     * @param uuid
+     * @return
+     */
     List<Map<String,Object>> SpeciList(@Param("uuid") String uuid);
 }

@@ -248,4 +248,24 @@ public interface LwPaperMapper {
                         @Param("paperName") String paperName,
                         @Param("paperId") String paperId,
                         @Param("field") String field);
+
+    /**
+     * 评分统计论文查询不带分页（excel导出用）
+     * @param year
+     * @param paperName
+     * @param paperId
+     * @param field
+     * @return
+     */
+    List<Map<String,Object>> statisticsMapExcel(@Param("year") String year,
+                                                @Param("paperName") String paperName,
+                                                @Param("paperId") String paperId,
+                                                @Param("field") String field);
+
+    /**
+     * 评分统计根据选中的ids查询论文（excel导出用）
+     * @param uuids
+     * @return
+     */
+    List<Map<String,Object>> statisticsMapIds(@Param("uuids") String[] uuids);
 }

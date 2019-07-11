@@ -20,7 +20,7 @@ public interface LwSpecialistService {
 
     int count(String name, String researchDirection, String unitName, String field, String matchStatus);
 
-    String deleteSpecialist(String ids);
+    String deleteSpecialist(String uuids);
 
     /**
      * 专家匹配的论文

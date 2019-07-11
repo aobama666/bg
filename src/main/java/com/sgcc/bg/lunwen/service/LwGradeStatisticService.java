@@ -2,6 +2,7 @@ package com.sgcc.bg.lunwen.service;
 
 import com.sgcc.bg.lunwen.bean.PaperComprehensiveVO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -44,5 +45,15 @@ public interface LwGradeStatisticService {
      * @param uuidStr
      * @return
      */
-    String againReview(String[] uuidStr);
+    int againReview(String[] uuidStr);
+
+    /**
+     * 评分统计导出
+     * @param year
+     * @param paperName
+     * @param paperId
+     * @param field
+     * @return
+     */
+    List<Map<String,Object>> outStatisticExcel(String year, String paperName, String paperId, String field,String ids,HttpServletResponse response);
 }

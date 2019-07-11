@@ -260,6 +260,7 @@
                     and p.PAPER_NAME = #{paperName,jdbcType=VARCHAR}
                 </if>
                 AND #{end} >= ROWNUM
+        ORDER BY P.AVERAGE_FRACTION DESC nulls last
         ) a WHERE a.ROWNO > #{start}
     </select>
 
@@ -297,6 +298,7 @@
         <if test="paperName != null and paperName != ''">
             and p.PAPER_NAME = #{paperName,jdbcType=VARCHAR}
         </if>
+        ORDER BY P.AVERAGE_FRACTION DESC nulls last
     </select>
 
     <select id="outPaperComprehensiveVOIds" resultType="com.sgcc.bg.lunwen.bean.PaperComprehensiveVO">
@@ -326,6 +328,7 @@
             #{string,jdbcType=VARCHAR}
         </foreach>
         )
+        ORDER BY P.AVERAGE_FRACTION DESC nulls last
     </select>
 
     <select id="selectCheckIdExport" resultType="com.sgcc.bg.lunwen.bean.LwPaper">
@@ -480,5 +483,49 @@
         <if test="field != null and field != ''">
             and field = #{field}
         </if>
+    </select>
+
+    <select id="statisticsMapExcel" resultType="java.util.Map">
+        SELECT
+        p.UUID AS uuid,
+        p.PAPER_ID AS  paperId,
+        p.PAPER_NAME AS paperName,
+        p.WEIGHTING_FRACTION AS weightingFraction,
+        p.AVERAGE_FRACTION AS averageFraction,
+        ROWNUM AS ROWNO
+        FROM bg_lw_paper p
+        WHERE p.valid = '1'
+        AND p.ALL_STATUS = '6'
+        <if test="year != null and year != ''">
+            and p.year = #{year,jdbcType=VARCHAR}
+        </if>
+        <if test="paperName != null and paperName != ''">
+            and p.paper_name  LIKE '%'||#{paperName,jdbcType=VARCHAR}||'%'
+        </if>
+        <if test="paperId != null and paperId != ''">
+            and p.paper_id = #{paperId,jdbcType=VARCHAR}
+        </if>
+        <if test="field != null and field != ''">
+            and p.field = #{field}
+        </if>
+        ORDER BY P.AVERAGE_FRACTION DESC nulls last
+    </select>
+
+    <select id="statisticsMapIds" resultType="java.util.Map">
+        SELECT
+        UUID AS uuid,
+        PAPER_ID AS  paperId,
+        PAPER_NAME AS paperName,
+        WEIGHTING_FRACTION AS weightingFraction,
+        AVERAGE_FRACTION AS averageFraction,
+        ROWNUM AS ROWNO
+        FROM bg_lw_paper
+        WHERE VALID = '1'
+        AND UUID in (
+        <foreach collection="uuids"  item="uuid" index="index" separator=",">
+            #{uuid,jdbcType=VARCHAR}
+        </foreach>
+        )
+        ORDER BY P.AVERAGE_FRACTION DESC nulls last
     </select>
 </mapper>

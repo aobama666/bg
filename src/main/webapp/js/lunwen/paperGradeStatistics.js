@@ -45,14 +45,14 @@ queryAll.seachHead = function(){
     ran = Math.random()*100000000;
     var year = $("#year").val();
     var paperName = $("#paperName").val();
-    var paperld = $("#paperld").val();
+    var paperId = $("#paperId").val();
     var field = $("#field").val();
     var statisticsSpecialistName ;
     var myclomus = new Array();
     $.ajax({
         url:"/bg/gradeStatistics/statisticsSpecialistName?tm="+new Date().getTime(),
         type:"POST",
-        data:{paperName:paperName,year:year,paperld:paperld,field:field},
+        data:{paperName:paperName,year:year,paperId:paperId,field:field},
         dataJson:"JSON",
         async:false,
         success:function (data) {
@@ -126,12 +126,11 @@ queryAll.againReview = function(){
         }
     }
     uuids = uuids.slice(0,uuids.length-1);
-    //不在前台做是否能删除的判断，在后台判断，记录日志，同时比前台更safe
     $.messager.confirm( "提示", "确定需要重新评审吗？",
         function(r){
             if(r){
                 $.ajax({
-                    url: "/bg/lwPaper/?uuids="+uuids,//删除
+                    url: "/bg/gradeStatistics/againReview?uuids="+uuids,
                     type: "post",
                     dataType:"json",
                     contentType: 'application/json',
@@ -167,13 +166,13 @@ queryAll.outEvent = function () {
         var checkedItems = dataGrid.getCheckedItems(dataItems);
         if(checkedItems.length>0) {
             for (var i = 0; i < checkedItems.length; i++) {
-                ids += checkedItems[i].uuid + ",";
+                ids += checkedItems[i].UUID + ",";
             }
         }
         ids = ids.slice(0,ids.length-1);
         $("input[name=selectList]").val(ids);
         var ran = Math.random()*1000;
-        document.forms[0].action ="/bg/comprehensiveStatistics/outEvent?ran="+ran;
+        document.forms[0].action ="/bg/gradeStatistics/outStatisticExcel?ran="+ran;
         document.forms[0].submit();
     }
 }

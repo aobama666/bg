@@ -90,8 +90,8 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
     }
 
     @Override
-    public String deleteSpecialist(String ids) {
-        String [] strings=ids.split(",");
+    public String deleteSpecialist(String uuids) {
+        String[] strings=uuids.split(",");
         int i = lwSpecialistMapper.deleteSpecialist(strings);
         String str = "删除成功"+i+"条数据"+"，"+"删除失败"+(strings.length-i)+"条数据";
         return str;

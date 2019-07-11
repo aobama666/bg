@@ -3,6 +3,7 @@ package com.sgcc.bg.lunwen.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.lunwen.bean.PaperComprehensiveVO;
 import com.sgcc.bg.lunwen.service.LwComprehensiveStatisticService;
 import com.sgcc.bg.lunwen.service.LwGradeStatisticService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +50,7 @@ public class LwGradeStatisticController {
         Map map = new HashMap();
         map.put("fieldList",fieldLsit);
         map.put("year",year);
+        map.put("size",fieldLsit.size());
         request.setAttribute("map",map);
         return "lunwen/paperGradeStatistics";
     }
@@ -58,7 +61,7 @@ public class LwGradeStatisticController {
      * @param paperName
      * @param paperId
      * @param field
-     * @return
+     * @returnl
      */
     @ResponseBody
     @RequestMapping("/statisticsSpecialistName")
@@ -114,8 +117,31 @@ public class LwGradeStatisticController {
     @RequestMapping("/againReview")
     public String againReview(String uuids){
         String[] uuidStr = uuids.split(",");
-        String againReview = lwGradeStatisticServiceImpl.againReview(uuidStr);
-        return null;
+        int againReview = lwGradeStatisticServiceImpl.againReview(uuidStr);
+        ResultWarp rw = null;
+        if(againReview>0) {
+            String str = "重新评审成功";
+            rw = new ResultWarp(ResultWarp.SUCCESS ,str);
+        }else {
+            String str = "重新评审失败";
+            rw = new ResultWarp(ResultWarp.FAILED ,str);
+        }
+        return JSON.toJSONString(rw);
+    }
+
+    /**
+     * 评分统计导出
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/outStatisticExcel")
+    public void outStatisticExcel(HttpServletRequest request,HttpServletResponse response){
+        String year  = request.getParameter("year") == null?"":request.getParameter("year");
+        String paperName  = request.getParameter("paperName") == null?"":request.getParameter("paperName");
+        String paperId  = request.getParameter("paperId") == null?"":request.getParameter("paperId");
+        String field  = request.getParameter("field") == null?"":request.getParameter("field");
+        String ids = request.getParameter("selectList") == null ?" " : request.getParameter("selectList");
+        List<Map<String,Object>> outStatisticExcel = lwGradeStatisticServiceImpl.outStatisticExcel(year,paperName,paperId,field,ids,response);
     }
 
 }
