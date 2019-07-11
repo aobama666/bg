@@ -393,7 +393,8 @@ paperList.batchUploadOperation = function (){
 
 /*弹出论文上传框 */
 paperList.jumpImport = function (){
-    var url = "/bg/lwPaper/paperJumpImport"
+    var paperType = $("#paperType").val();
+    var url = "/bg/lwPaper/paperJumpImport?paperType="+paperType;
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;">论文批量导入</h4>',

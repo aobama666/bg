@@ -152,9 +152,10 @@ public class LwPaperController {
      * @return
      */
     @RequestMapping(value = "/paperJumpImport", method = RequestMethod.GET)
-    public ModelAndView paperJumpImport(){
+    public ModelAndView paperJumpImport(String paperType){
         Map<String, Object> mvMap = new HashMap<>();
-        ModelAndView mv = new ModelAndView("lunwen/paperImport");
+        mvMap.put("paperType",paperType);
+        ModelAndView mv = new ModelAndView("lunwen/paperImport",mvMap);
         return mv;
     }
 
@@ -165,14 +166,14 @@ public class LwPaperController {
      * @throws Exception
      */
     @RequestMapping(value = "/joinExcel", method = { RequestMethod.POST, RequestMethod.GET })
-    public void joinExcel(@RequestParam("file") MultipartFile workHourFile, HttpServletResponse response) throws Exception {
+    public void joinExcel(@RequestParam("file") MultipartFile workHourFile, HttpServletResponse response, String paperType) throws Exception {
         PrintWriter out = null;
         try {
             out = response.getWriter();
             out.print("<head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head>");
             if (workHourFile != null) {
                 InputStream in = workHourFile.getInputStream();
-                String[] whArr = lwPaperService.joinExcel(in);
+                String[] whArr = lwPaperService.joinExcel(in,paperType);
                 if (whArr[0].toString().indexOf("Error") != -1) {// 导入异常
                     out.print("<script>parent.parent.layer.msg('" + whArr[0].toString().split(":")[1] + "');</script>");
                 } else if (!whArr[1].isEmpty()) {// 导入有错误数据
@@ -187,7 +188,7 @@ public class LwPaperController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("joinSpecialistExcel()【批量导入专家文件信息】", e);
+            log.error("joinSpecialistExcel()【批量导入论文文件信息】", e);
         } finally {
             if (out != null) {
                 out.flush();
@@ -205,7 +206,7 @@ public class LwPaperController {
      */
     @RequestMapping(value = "/paperImportErrorFile", method = RequestMethod.POST)
     public void exportExcel(String fileName, HttpServletResponse response,HttpServletRequest request) throws Exception {
-        FileDownloadUtil.fileDownloadFromFtp(response, request, fileName, "批量导入出错文件.xls");
+        FileDownloadUtil.fileDownloadFromFtp(response, request, fileName, "论文批量导入出错文件.xls");
         log.info("从ftp导出出错文件"+fileName);
     }
 

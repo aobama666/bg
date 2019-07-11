@@ -185,7 +185,7 @@ public interface LwPaperService {
      * @param in
      * @return
      */
-    String[] joinExcel(InputStream in);
+    String[] joinExcel(InputStream in,String paperType);
 
     /**
      * 查询论文含有的所有领域

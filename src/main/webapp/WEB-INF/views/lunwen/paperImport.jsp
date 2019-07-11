@@ -52,6 +52,7 @@
 				<input id="file" type="file" name="file" property="file" style="display:inline-block;width:395px">
 			</div>
 		</div>
+		<input type="text" value="${paperType}" style="display: none" id="paperType">
 		<input type="hidden" name="fileName" id="fileName">
 	</form>
 	<iframe name='hidden_frame' id="hidden_frame" width="0" height="0"></iframe>
@@ -72,8 +73,11 @@ function uploadProFile() {
     ]);
     if(checkResult){
         loadPage("open");
+        debugger;
         var ran = Math.random()*1000;
-        document.forms[0].action ="<%=request.getContextPath() %>/lwPaper/joinExcel?&ran="+ran;
+        var paperType = ${paperType}
+        // var paperType = $("#paperType").val();
+        document.forms[0].action ="<%=request.getContextPath() %>/lwPaper/joinExcel?paperType="+paperType+"&ran="+ran;
         document.forms[0].submit();
         loadPage("close");
     }
@@ -85,7 +89,7 @@ function downLoadErr(_this){
     var uuid = $(_this).attr("uuid");
     var fileName = uuid + ".xls";
     $("#fileName").val(fileName);
-    document.forms[0].action = "<%=request.getContextPath() %>/lwPaper/specialistErrExecl?ran="+ran;
+    document.forms[0].action = "<%=request.getContextPath() %>/lwPaper/paperImportErrorFile?ran="+ran;
     document.forms[0].submit();
     loadPage("close");
 }
