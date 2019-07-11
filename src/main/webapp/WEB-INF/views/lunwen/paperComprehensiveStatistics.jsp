@@ -37,7 +37,7 @@
 			<label>年度</label>
 			<%--<input type = "text" class = "layui-input" id = "year" name = "year" style="width: 200px" >--%>
 			<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 100px">
-				<option></option>
+				<%--<option></option>--%>
 				<c:forEach var ="year" items="${year}">
 					<c:forEach var ="years" items="${year}">
 						<option value=${years.value}>${years.value}</option>
