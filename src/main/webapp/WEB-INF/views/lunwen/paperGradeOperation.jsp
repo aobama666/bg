@@ -21,12 +21,6 @@
 </head>
 <body>
 	<div class="main_div">
-		<div class="col-lg-6">
-			<h3 style="text-align: center">已匹配专家信息</h3>
-		</div>
-		<div class="col-lg-6">
-			<h3 style="text-align: center">可匹配专家信息</h3>
-		</div>
 		<div style="text-align: center;padding-top: 30%">
 			<div class='btn  deleteButton' onclick="roomList.delEvent()" >确定</div>
 			<div class='btn  deleteButton' onclick="roomList.delEvent()" >取消</div>

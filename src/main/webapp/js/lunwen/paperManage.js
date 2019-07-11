@@ -7,25 +7,6 @@ var index = 0;
 paperList.btn_type_flag = 0;
 $(function(){
     paperList.initDataGrid();
-	/* 输入框的change事件，在输入过程中自动查询  */
-	$(".changeQuery").change(function(e){
-        paperList.query();
-	});
-	$(".inputQuery").on("input",function(e){
-		var valLength = e.target.value.length;
-		if(valLength>0){
-            paperList.query();
-		}
-	});
-	//回车键出发搜索按钮
-	/*$("body").keydown(function () {
-	    if (event.keyCode == "13") {
-	    	dataItems = new Array();
-			index = 0;
-	        $("#datagrid").datagrid("seach");
-	        return false;
-	    }
-	});*/
     paperList.btn_type_flag = 0;
 });
 
@@ -33,7 +14,7 @@ $(function(){
 paperList.query = function(){
 	dataItems = new Array();
 	index = 0;
-	$("#datagrid").datagrid("seach");
+	$("#datagrid").datagrid("refresh");
 }
 /*  end  列表查询  */
 
@@ -94,16 +75,16 @@ paperList.initDataGrid = function(){
 /*查看论文详情*/
 paperList.forDetails = function (id){
 		var url = "/bg/lwPaper/detailLwPaper?uuid="+id;
-			layer.open({
-				type:2,
-				title:'<h4 style="height:42px;line-height:25px;">论文信息详情</h4>',
-				area:['85%','85%'],
-				fixed:false,//不固定
-				maxmin:true,
-				content:url
-			},function (index) {
-				layer.close(index);
-            });
+        layer.open({
+            type:2,
+            title:'<h4 style="height:42px;line-height:25px;">论文信息详情</h4>',
+            area:['85%','85%'],
+            fixed:false,//不固定
+            maxmin:true,
+            content:url
+        },function (index) {
+            layer.close(index);
+        });
 }
 
 
@@ -410,7 +391,7 @@ paperList.jumpImport = function (){
 
 
 /*导出*/
-paperList.export = function () {
+paperList.exportExcel = function () {
     var $tr = $("#datagrid tr");
     if($tr.length == 1){
         messager.tip("没有要导出的数据！",3000);
@@ -483,7 +464,7 @@ paperList.automaticMatch = function(){
 /*手动匹配*/
 paperList.manualMatch = function (id,allStatus){
     if(allStatus == 1){
-        messager.tip("无匹配专家信息,请先进行自动匹配",2000);
+        messager.tip("暂无匹配专家信息,请先进行自动匹配",2000);
         return;
     }
     var url = "/bg/lwPaper/manualMatchJump?paperUuid="+id;

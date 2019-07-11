@@ -1,82 +1,111 @@
 
 //定义一个
-var roomList = {};
+var grade = {};
 var dicts = {};
 var dataItems = new Array();
 var index = 0;
-roomList.btn_type_flag = 0;
+grade.btn_type_flag = 0;
 $(function(){
-	roomList.initDataGrid();
-	/* 输入框的change事件，在输入过程中自动查询  */
-	$(".changeQuery").change(function(e){
-		roomList.query();
-	});
-	$(".inputQuery").on("input",function(e){
-		var valLength = e.target.value.length;
-		if(valLength>0){
-			roomList.query();
-		}
-	});
-	//回车键出发搜索按钮
-	$("body").keydown(function () {
-	    if (event.keyCode == "13") {
-	    	dataItems = new Array();
-			index = 0;
-	        $("#datagrid").datagrid("seach");
-	        return false;
-	    }
-	});
-	roomList.btn_type_flag = 0;
+    grade.initDataGrid();
+    grade.btn_type_flag = 0;
 });
 
 /*  start  列表查询   */
-roomList.query = function(){
-	 
-	dataItems = new Array();
-	index = 0;
-	$("#datagrid").datagrid("seach");
+grade.query = function(){
+    dataItems = new Array();
+    index = 0;
+    $("#datagrid").datagrid("seach");
 }
 /*  end  列表查询  */
 
-/* 演示中心管理-初始化列表界面  */
-roomList.initDataGrid = function(){
-	    $("#datagrid").datagrid({
-	    url: '/bg/IdeaInfo/selectIdeaInfo',
-		type: 'POST',
-		form:'#queryForm',
-		pageSize:10,
-		successFinal:function(data){
-			$("#datagrid").find("input[type=checkbox]").eq(0).attr("style","display:none");
-        },
-
-		columns: [
-				  {name: '编号',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '论文题目',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '作者',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '作者单位',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '期刊名称',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '领域',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '推荐单位',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '被引量',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '下载量',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '专家打分',style:{width:"50px"}, data: 'ROWNO'},
-				  {name: '打分状态',style:{width:"50px"}, data: 'ROWNO'}
-				]
-	});
-
+/**
+ * 切换论文类型查询
+ */
+grade.updatePaperType = function(num) {
+    document.getElementById("paperType").value=num;
+    grade.query();
 }
 
-/* 初始化dataItems */
-roomList.initItems = function(){
-	dataItems = new Array();
-	index = 0;
+/* 论文管理-初始化列表界面  */
+grade.initDataGrid = function(){
+    $("#datagrid").datagrid({
+        url: "/bg/lwGrade/selectLwPaper",
+        type: 'POST',
+        form: '#queryForm',
+        pageSize: 10,
+        tablepage: $(".tablepage"),
+        columns: [
+            {name: '',style:{width:"2px"}, data: 'id',checkbox:true, forMat:function(row){
+                    dataItems[index] = row;//将一行数据放在一个list中
+                    return '<input type="checkbox" name="oneCheck" id="oneCheck"  index = "'+(index++)+'"  value="'+(row.UUID)+'"/>';
+                }
+            },
+            {name: '编号',style:{width:"50px"}, data: 'PAPERID'},
+            {name: '论文题目',style:{width:"10%"}, data: 'PAPERNAME',forMat:function(row){
+                    return "<a title = '点击查看论文详情' style='width:250px;" +
+                        " text-align:left;'id='\"+row.UUID+\"'" +
+                        " href = 'javascript:void(0)' onclick = grade.forDetails('"+row.UUID+"')>"+row.PAPERNAME+"</a>";
+
+                }},
+            {name: '作者',style:{width:"50px"}, data: 'AUTHOR'},
+            {name: '作者单位',style:{width:"50px"}, data: 'UNIT'},
+            {name: '期刊名称',style:{width:"50px"}, data: 'JOURNAL'},
+            {name: '领域',style:{width:"50px"}, data: 'FIELD'},
+            {name: '推荐单位',style:{width:"50px"}, data: 'RECOMMENDUNIT'},
+            {name: '被引量',style:{width:"50px"}, data: 'QUOTECOUNT'},
+            {name: '下载量',style:{width:"50px"}, data: 'DOWNLOADCOUNT'},
+            {name: '专家打分',style:{width:"50px"}, data: 'UUID',
+                forMat:function(row){
+                    return "<a title = '点击查看匹配专家' style='width:250px;' id='"+row.UUID+"'" +
+                        "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.UUID+"','"+row.ALLSTATUS+"')>打分</a>";
+
+                }},
+            {name: '打分状态',style:{width:"50px"}, data: 'SCORESTATUS'}
+        ]
+    });
 }
 
-roomList.resize=function(){
-	var height=$("body").height()-$(".sheach").height()-$("#funcBtn").height()-65;
-	$("#datagrid>div").css({"height":height});
-}
-$(window).resize(function(){
-	roomList.resize();
-})
 
+/*查看论文详情*/
+grade.forDetails = function (id){
+    var url = "/bg/lwPaper/detailLwPaper?uuid="+id;
+    layer.open({
+        type:2,
+        title:'<h4 style="height:42px;line-height:25px;">论文信息详情</h4>',
+        area:['85%','85%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url
+    },function (index) {
+        layer.close(index);
+    });
+}
+
+
+/*弹出打分框 */
+grade.gradeOperation = function (){
+    var url = "/bg/lwPaper/paperJumpAdd?paperType="+$("#paperType").val();
+    layer.open({
+        type:2,
+        title:'<h4 style="height:42px;line-height:25px;">论文信息新增</h4>',
+        area:['85%','85%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url,
+        end: function () {
+            grade.query();
+        }
+    });
+}
+
+
+/*返回按钮，关闭弹出框页面*/
+grade.addClose = function () {
+    parent.layer.closeAll();
+}
+
+/*关闭页面后弹出信息*/
+grade.closeAndOpen = function (message) {
+    layer.closeAll();
+    messager.tip(message,3000);
+}

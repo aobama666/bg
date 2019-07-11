@@ -171,13 +171,6 @@ public class LwPaperServiceImpl implements LwPaperService {
     @Override
     public List<Map<String,Object>> getTableYear() {
         List<Map<String,Object>> yearList = lwPaperMapper.year();
-        String nowYear = DateUtil.getYear();
-        for (Map<String, Object> year : yearList) {
-            if (nowYear.equals(year.get("YEAR"))) {
-                    yearList.remove(year);
-                    break;
-            }
-        }
         return yearList;
     }
 

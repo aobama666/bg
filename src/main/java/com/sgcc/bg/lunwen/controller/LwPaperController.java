@@ -51,35 +51,21 @@ public class LwPaperController {
     private LwPaperMatchSpecialistService lwPaperMatchSpecialistService;
 
     /**
-     * 跳转至——论文管理
-     * @return
+     * 跳转至论文管理
      */
     @RequestMapping(value = "/paperToManage", method = RequestMethod.GET)
     public ModelAndView paperToManage(){
-        String nowYear = DateUtil.getYear();
         List<Map<String,Object>> yearList = lwPaperService.getTableYear();
         List<Map<String, String>>   scoreStatusList= dataDictionaryService.selectDictDataByPcode("score_status");
         Map<String, Object> mvMap = new HashMap<>();
         mvMap.put("scoreStatus", scoreStatusList);
-        mvMap.put("nowYear", nowYear);
         mvMap.put("yearList", yearList);
         ModelAndView mv = new ModelAndView("lunwen/paperManage",mvMap);
         return mv;
     }
 
     /**
-     * 查询某类论文信息
-     * @param paperName
-     * @param paperId
-     * @param year
-     * @param unit
-     * @param author
-     * @param field
-     * @param scoreStatus
-     * @param page
-     * @param limit
-     * @param paperType
-     * @return
+     * 查询符合条件论文信息
      */
     @ResponseBody
     @RequestMapping(value = "/selectLwPaper")
@@ -129,8 +115,6 @@ public class LwPaperController {
 
     /**
      * 导出选中列或者全部论文数据
-     * @param request
-     * @param response
      */
     @RequestMapping(value = "/lwPaperExport")
     public void lwPaperExport(HttpServletRequest request,HttpServletResponse response){
@@ -149,7 +133,6 @@ public class LwPaperController {
 
     /**
      * 跳转至——论文导入
-     * @return
      */
     @RequestMapping(value = "/paperJumpImport", method = RequestMethod.GET)
     public ModelAndView paperJumpImport(String paperType){
@@ -161,9 +144,6 @@ public class LwPaperController {
 
     /**
      * 解析上传的批量文件
-     * @param
-     * @param response
-     * @throws Exception
      */
     @RequestMapping(value = "/joinExcel", method = { RequestMethod.POST, RequestMethod.GET })
     public void joinExcel(@RequestParam("file") MultipartFile workHourFile, HttpServletResponse response, String paperType) throws Exception {
@@ -199,10 +179,6 @@ public class LwPaperController {
 
     /**
      * 导出错误文件
-     * @param fileName
-     * @param response
-     * @param request
-     * @throws Exception
      */
     @RequestMapping(value = "/paperImportErrorFile", method = RequestMethod.POST)
     public void exportExcel(String fileName, HttpServletResponse response,HttpServletRequest request) throws Exception {
@@ -225,7 +201,6 @@ public class LwPaperController {
 
     /**
      * 新增论文
-     * @return
      */
     @ResponseBody
     @RequestMapping(value = "/paperToAdd")
@@ -255,7 +230,6 @@ public class LwPaperController {
 
     /**
      * 跳转至——论文修改
-     * @return
      */
     @RequestMapping(value = "/paperJumpUpdate")
     public ModelAndView paperJumpUpdate(String uuid){
@@ -272,7 +246,6 @@ public class LwPaperController {
 
     /**
      * 修改论文
-     * @return
      */
     @ResponseBody
     @RequestMapping(value = "/paperToUpdate")
@@ -290,8 +263,6 @@ public class LwPaperController {
 
     /**
      * 删除对应论文
-     * @param uuids
-     * @return
      */
     @ResponseBody
     @RequestMapping(value = "/delLwPaper")
@@ -340,8 +311,6 @@ public class LwPaperController {
 
     /**
      * 查看论文详情
-     * @param uuid
-     * @return
      */
     @RequestMapping(value = "/detailLwPaper")
     public ModelAndView detailLwPaper(String uuid){
@@ -356,7 +325,6 @@ public class LwPaperController {
 
     /**
      * 自动匹配
-     * @return
      */
     @ResponseBody
     @RequestMapping(value = "/automaticMatch")
@@ -402,7 +370,6 @@ public class LwPaperController {
 
     /**
      * 跳转手动匹配页面
-     * @return
      */
     @RequestMapping(value = "/manualMatchJump")
     public ModelAndView manualMatchJumo(String paperUuid){
@@ -438,7 +405,7 @@ public class LwPaperController {
         mvMap.put("paperUuid",JSON.toJSONString(paperUuid));
         mvMap.put("left",JSON.toJSONString(matchSpecialists));
         mvMap.put("right",JSON.toJSONString(lwSpList));
-        //查看是否生成打分表，生成打分表不允许手动匹配，只能查看详情
+        //查看是否生成打分表，生成打分表后不允许再次手动匹配，只能查看匹配专家详情
         String scoreTableStatus = lwPaperMap.get("SCORETABLESTATUS").toString();
         if(LwPaperConstant.SCORE_TABLE_OFF.equals(scoreTableStatus)){
             mvMap.put("scoreTableStatus","off");
@@ -451,7 +418,6 @@ public class LwPaperController {
 
     /**
      * 手动匹配
-     * @return
      */
     @ResponseBody
     @RequestMapping(value = "/manualMatch")
@@ -519,8 +485,6 @@ public class LwPaperController {
 
     /**
      * 生成打分表
-     * @param uuid
-     * @return
      */
     @ResponseBody
     @RequestMapping(value = "/generateScoreTable")
@@ -549,8 +513,6 @@ public class LwPaperController {
 
     /**
      * 撤回打分表
-     * @param uuid
-     * @return
      */
     @ResponseBody
     @RequestMapping(value = "/withdrawScoreTable")
@@ -580,8 +542,6 @@ public class LwPaperController {
 
     /**
      * 下载论文信息导入模板
-     * @param request
-     * @param response
      */
     @RequestMapping("/download_excel_temp")
     public void downloadExcelTemp(HttpServletRequest request, HttpServletResponse response) {
@@ -592,9 +552,6 @@ public class LwPaperController {
 
     /**
      * 根据附件主键id，下载对应论文
-     * @param annexUuid
-     * @param request
-     * @param response
      */
     @RequestMapping("/downloadAnnex")
     public void downLoadExcelTemp(String annexUuid,HttpServletRequest request,HttpServletResponse response){
@@ -613,8 +570,6 @@ public class LwPaperController {
 
     /**
      * 查询当前论文对应附件信息
-     * @param uuid
-     * @return
      */
     @ResponseBody
     @RequestMapping(value = "/selectPaperAnnex")
@@ -738,7 +693,6 @@ public class LwPaperController {
 
     /**
      * 删除附件
-     * @return
      */
     @ResponseBody
     @RequestMapping(value = "/paperDelAnnex")
@@ -754,7 +708,6 @@ public class LwPaperController {
 
     /**
      * 跳转附件批量上传页面
-     * @return
      */
     @RequestMapping(value = "/btachUploadJump")
     public ModelAndView btachUploadJump(){
@@ -764,7 +717,6 @@ public class LwPaperController {
 
     /**
      * 附件批量上传
-     * @return
      */
     @ResponseBody
     @RequestMapping(value = "/btachUpload")
@@ -878,8 +830,6 @@ public class LwPaperController {
 
     /**
      * paramsMap内容转lwpaper，add和update使用
-     * @param paramsMap
-     * @return
      */
     public LwPaper mapToLwPaper(Map<String, Object> paramsMap){
         LwPaper lwPaper = new LwPaper();
@@ -897,7 +847,6 @@ public class LwPaperController {
 
     /**
      * 获取当前登录用户信息，日志打印使用
-     * @return
      */
     public String getLoginUser(){
         String userName = webUtils.getUsername();
@@ -905,6 +854,9 @@ public class LwPaperController {
         return "--------------username:"+userName+",userId:"+user.getUserId()+"---";
     }
 
+    /**
+     * 获取当前登录用户主键id
+     */
     public String getLoginUserUUID(){
         String userName = webUtils.getUsername();
         HRUser user = userService.getUserByUserName(userName);

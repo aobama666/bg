@@ -42,11 +42,6 @@
     <button type="button" class="btn" id="return">返回</button>
 </div>
 
-<div style="display: none">
-    <span id="left">${left}</span>
-    <span id="right">${right}</span>
-</div>
-
 <!-- 本页面所需的js -->
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 </body>
@@ -78,14 +73,6 @@
         })
 
         //transfer.get(参数1:初始化返回值,参数2:获取数据[all,left,right,l,r],参数:指定数据字段)
-        //获取数据
-        $('.left').on('click',function () {
-            var data = transfer.get(tb1,'left','uuid');
-            alert(JSON.stringify(data));
-            // parent.layer.closeAll();
-        });
-
-
         $('#save').on('click',function () {
             var specialistsIdS = transfer.get(tb1,'left','uuid');
             $.ajax({

@@ -8,7 +8,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
-	<title>论文评审临时测试</title>
+	<title>论文管理</title>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
 	<!-- newPage、item.css 页面css-->
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/item.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
@@ -29,8 +29,8 @@
 		<form id="queryForm" style="margin-bottom: 10px;">
 			<input type="hidden" name="selectList"/>
 				<label  for="year" class="yearTitle">年度：</label>
-				<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 100px">
-					<option value = "${nowYear}"  selected>${nowYear}</option>
+				<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 90px">
+					<%--<option value = "${nowYear}"  selected>${nowYear}</option>--%>
 					<c:forEach  var="yearList"  items="${yearList}">
 						<option value ="${yearList.YEAR}"}> ${yearList.YEAR}</option>
 					</c:forEach>
@@ -39,7 +39,8 @@
 				<input type = "text" id = "paperName" name = "paperName" style="width: 200px" class = "inputQuery changeQuery" >
 				<label>编号：</label>
 				<input type = "text" id = "paperId" name = "paperId" style="width: 100px" class = "inputQuery changeQuery" >
-				<label>单位：</label>
+				<br/>
+				<label style="margin-left: 20px">单位：</label>
 				<input type = "text" id = "unit" name = "unit" style="width: 100px" class = "inputQuery changeQuery" >
 				<label>作者：</label>
 				<input type = "text" id = "author" name = "author" style="width: 100px" class = "inputQuery changeQuery" >
@@ -67,7 +68,7 @@
 			<div class='btn right deleteButton' onclick="paperList.downLoadTempLate()" >下载模板</div>
 			<div class='btn right deleteButton' onclick="paperList.batchUploadOperation()" >附件批量导入</div>
 			<div class='btn right deleteButton' onclick="paperList.jumpImport()" >导入</div>
-			<div class='btn right deleteButton' onclick="paperList.export()" >导出</div>
+			<div class='btn right deleteButton' onclick="paperList.exportExcel()" >导出</div>
 			<div class='btn right deleteButton' onclick="paperList.delEvent()" >删除</div>
 			<div class='btn right deleteButton' onclick="paperList.updateOperation()" >修改</div>
 			<div class='btn right deleteButton' onclick="paperList.addOperation()" >新增</div>
