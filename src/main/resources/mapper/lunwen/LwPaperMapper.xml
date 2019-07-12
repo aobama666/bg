@@ -528,4 +528,41 @@
         )
         ORDER BY P.AVERAGE_FRACTION DESC nulls last
     </select>
+
+    <select id="selectGrade" resultType="java.util.Map">
+
+    </select>
+
+    <select id="selectGradeCount" resultType="java.lang.Integer">
+        select p.*, ROWNUM as r
+        from (select p.uuid,
+            p.paper_id paperId,
+            p.paper_name paperName,
+            p.year,
+            p.unit,
+            p.author,
+            p.journal,
+            p.recommend_unit recommendUnit,
+            p.paper_type paperType,
+            p.quote_count quoteCount,
+            p.download_count downloadCount,
+            p.field,
+            m.score,
+            (SELECT name
+            FROM BG_SYS_DATADICTIONARY
+            WHERE pcode = 'score_status'
+            and vaild = 1
+            and code = p.score_status) as scoreStatus,
+            ROWNUM rown
+        from    bg_lw_paper      p，
+                bg_lw_paper_match_expert m,
+                bg_lw_specialist s,
+                bg_sys_user      u
+        where 1 = 1
+            and p.uuid = m.paper_id
+            and m.specialist_id = s.uuid
+            and p.valid = '1'
+            and u.userid = s.user_id
+            order by p.paper_id desc) p
+    </select>
 </mapper>

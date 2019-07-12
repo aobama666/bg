@@ -85,13 +85,18 @@ public class LwPaperConstant {
 
     //专家匹配状态
     /**
+     * 未匹配
+     */
+    public static final String SPECIALIST_MATCH_OFF = "0";
+    /**
      * 已匹配
      */
     public static final String SPECIALIST_MATCH_ON = "1";
     /**
-     * 未匹配
+     * 已屏蔽
      */
-    public static final String SPECIALIST_MATCH_OFF = "0";
+    public static final String SPECIALIST_MATCH_SHIELD = "2";
+
 
 
     //有效标识

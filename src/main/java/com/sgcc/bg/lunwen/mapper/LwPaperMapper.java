@@ -14,23 +14,16 @@ public interface LwPaperMapper {
 
     /**
      * 新增论文信息
-     * @param lwPaper
-     * @return
      */
     Integer addLwPaper(LwPaper lwPaper);
 
     /**
      * 修改论文信息
-     * @param lwPaper
-     * @return
      */
     Integer updateLwPaper(LwPaper lwPaper);
 
     /**
      * 修改生成打分表状态
-     * @param uuid
-     * @param scoreTableStatus
-     * @return
      */
     Integer updateScoreTableStatus(
             @Param("uuid")String uuid,
@@ -39,9 +32,6 @@ public interface LwPaperMapper {
 
     /**
      * 修改打分状态
-     * @param uuid
-     * @param scoreTableStatus
-     * @return
      */
     Integer updateScoreStatus(
             @Param("uuid")String uuid,
@@ -50,9 +40,6 @@ public interface LwPaperMapper {
 
     /**
      * 修改论文全生命周期状态
-     * @param uuid
-     * @param allStatus
-     * @return
      */
     Integer updateAllStatus(
             @Param("uuid")String uuid,
@@ -61,8 +48,6 @@ public interface LwPaperMapper {
 
     /**
      * 查找某条论文信息,或根据题目查重
-     * @param uuid,paperName
-     * @return
      */
     Map<String, Object> findPaper(
             @Param("uuid")String uuid,
@@ -72,15 +57,11 @@ public interface LwPaperMapper {
 
     /**
      * 查找当前对应类型的最大编号
-     * @param paperType
-     * @return
      */
     String maxPaperId(@Param("paperType") String paperType);
 
     /**
      * 删除论文信息，逻辑删除，单纯修改有效状态
-      * @param uuid
-     * @return
      */
     Integer delLwPaper(
             @Param("uuid") String uuid,
@@ -88,17 +69,8 @@ public interface LwPaperMapper {
     );
 
     /**
-     * 按条件查询某批论文信息
-     * 条件：年度，论文题目，论文编号，单位，作者，领域
-     * @param pageStart
-     * @param pageEnd
-     * @param paperName
-     * @param paperId
-     * @param year
-     * @param unit
-     * @param author
-     * @param field
-     * @return
+     * 论文管理按条件查某批论文-
+     * 条件：年度，论文题目，论文编号，单位，作者，领域，打分状态
      */
     List<Map<String, Object>> selectLwPaper(
             @Param("pageStart") Integer pageStart,
@@ -114,6 +86,9 @@ public interface LwPaperMapper {
             @Param("valid") String valid
     );
 
+    /**
+     * 论文管理按条件查某批论文-取分页总数
+     */
     Integer selectLwPaperCount(
             @Param("paperName") String paperName,
             @Param("paperId") String paperId,
@@ -127,14 +102,35 @@ public interface LwPaperMapper {
     );
 
     /**
+     * 论文打分——按条件查某批论文
+     * 条件：年度，论文题目，打分状态，论文类型
+     */
+    List<Map<String, Object>> selectGrade(
+            @Param("pageStart") Integer pageStart,
+            @Param("pageEnd") Integer pageEnd,
+            @Param("paperName") String paperName,
+            @Param("year") String year,
+            @Param("scoreStatus") String scoreStatus,
+            @Param("paperType") String paperType,
+            @Param("valid") String valid
+    );
+
+    /**
+     * 论文打分——按条件查某批论文
+     * 条件：年度，论文题目，打分状态，论文类型
+     */
+    Integer selectGradeCount(
+            @Param("pageStart") Integer pageStart,
+            @Param("pageEnd") Integer pageEnd,
+            @Param("paperName") String paperName,
+            @Param("year") String year,
+            @Param("scoreStatus") String scoreStatus,
+            @Param("paperType") String paperType,
+            @Param("valid") String valid
+    );
+
+    /**
      * 综合统计论文查询
-     * @param year
-     * @param paperName
-     * @param author
-     * @param paperId
-     * @param start
-     * @param end
-     * @return
      */
     List<PaperComprehensiveVO> paperComprehensiveVOList(@Param("year") String year,
                                                         @Param("paperName")String paperName,
@@ -152,13 +148,6 @@ public interface LwPaperMapper {
     /**
      * 按条件查询某批论文信息——导出
      * 条件：年度，论文题目，论文编号，单位，作者，领域
-     * @param paperName
-     * @param paperId
-     * @param year
-     * @param unit
-     * @param author
-     * @param field
-     * @return
      */
     List<LwPaper> selectLwPaperExport(
             @Param("paperName") String paperName,
@@ -174,11 +163,6 @@ public interface LwPaperMapper {
 
     /**
      * 获取匹配领域的专家信息
-     * @param authors
-     * @param unit
-     * @param field
-     * @param valid
-     * @return
      */
     List<LwSpecialist> selectSpecialistField(
             @Param("authors") String[] authors,
@@ -188,12 +172,7 @@ public interface LwPaperMapper {
 
 
     /**
-     * 查全部
-     * @param year
-     * @param paperName
-     * @param author
-     * @param paperId
-     * @return
+     * 查全部--统计导出
      */
     List<PaperComprehensiveVO> outPaperComprehensiveVOAll(@Param("year") String year,
                                                           @Param("paperName")String paperName,
@@ -202,32 +181,21 @@ public interface LwPaperMapper {
 
     /**
      * 根据ids查
-     * @param strings
-     * @return
      */
     List<PaperComprehensiveVO> outPaperComprehensiveVOIds(@Param("strings") String[] strings);
 
     /**
      * 取年份
-     * @return
      */
     List<Map<String,Object>> year();
 
     /**
      * 查询论文含有的所有领域
-     * @return
      */
     List<Map<String,Object>> fieldList();
 
     /**
      * 评分统计论文查询
-     * @param year
-     * @param paperName
-     * @param paperId
-     * @param field
-     * @param start
-     * @param end
-     * @return
      */
     List<Map<String,Object>> statisticsMap(@Param("year") String year,
                                            @Param("paperName") String paperName,
@@ -238,11 +206,6 @@ public interface LwPaperMapper {
 
     /**
      * 评分统计总数
-     * @param year
-     * @param paperName
-     * @param paperId
-     * @param field
-     * @return
      */
     int statisticsCount(@Param("year") String year,
                         @Param("paperName") String paperName,
@@ -251,11 +214,6 @@ public interface LwPaperMapper {
 
     /**
      * 评分统计论文查询不带分页（excel导出用）
-     * @param year
-     * @param paperName
-     * @param paperId
-     * @param field
-     * @return
      */
     List<Map<String,Object>> statisticsMapExcel(@Param("year") String year,
                                                 @Param("paperName") String paperName,
@@ -264,8 +222,6 @@ public interface LwPaperMapper {
 
     /**
      * 评分统计根据选中的ids查询论文（excel导出用）
-     * @param uuids
-     * @return
      */
     List<Map<String,Object>> statisticsMapIds(@Param("uuids") String[] uuids);
 }
