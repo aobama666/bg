@@ -60,6 +60,12 @@ public class LwComprehensiveStatisticServiceImpl implements LwComprehensiveStati
     }
 
     @Override
+    public int paperComprehensiveCount(String paperName, String paperId, String year, String author) {
+        int count = lwPaperMapper.paperComprehensiveCount(paperName,paperId,year,author);
+        return count;
+    }
+
+    @Override
     public List<PaperComprehensiveVO> outPaperComprehensiveVO(HttpServletResponse response, String year, String paperName, String author, String paperId, String ids) {
         List<PaperComprehensiveVO>  outPaperComprehensiveVO = new ArrayList<>();
         if(ids==null || ids == ""){

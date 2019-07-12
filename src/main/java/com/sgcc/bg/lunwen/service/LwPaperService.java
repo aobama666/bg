@@ -198,4 +198,5 @@ public interface LwPaperService {
      * 论文查询条件，年份
      */
     List<Map<String,Object>> getTableYear();
+
 }

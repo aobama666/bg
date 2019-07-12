@@ -81,7 +81,7 @@ public class LwComprehensiveStatisticController {
         Map map = new HashMap();
         Map jsonMap = new HashMap();
         List<PaperComprehensiveVO> paperComprehensiveVOList = lwComprehensiveStatisticServiceImpl.paperComprehensiveVOList(year,paperName,author,paperId,start,end);
-        int count = lwPaperServiceImpl.selectLwPaperCount(paperName,paperId,year,null,author,null,null,null);
+        int count = lwComprehensiveStatisticServiceImpl.paperComprehensiveCount(paperName,paperId,year,author);
         map.put("data",paperComprehensiveVOList);
         map.put("total",count);
         jsonMap.put("data",map);

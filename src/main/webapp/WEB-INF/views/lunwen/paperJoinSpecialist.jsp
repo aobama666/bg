@@ -1,14 +1,18 @@
 <!DOCTYPE>
 <!-- authentication_import_excel_page.jsp -->
-<%@ page language="java" contentType="text/html;charset=utf-8"
-    pageEncoding="utf-8"%>
+<%--<%@ page language="java" contentType="text/html;charset=utf-8" pageEncoding="utf-8"%>--%>
 <%-- <%@page import="crpri.ess.util.ToolsUtil"%>
 <%@page import="crpri.ess.util.JsonUtil"%> --%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.Map"%>
+<%--<%@page import="java.util.List"%>--%>
+<%--<%@page import="java.util.Map"%>--%>
 <%-- <%
 	String path = ToolsUtil.getContextPath(request);
 %> --%>
+
+<%@page import="com.sgcc.bg.common.VersionUtils"%>
+<%@page language="java" contentType="text/html; charset=UTF-8"  pageEncoding="UTF-8"%>
+<%@page import="java.util.Map"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <html>
 <head> 
@@ -17,28 +21,45 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>批量录入</title>
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/bootstrap/css/bootstrap.css">
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/css/bootstrap-datepicker.min.css" media="screen">
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/css/style.css">
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/css/bootstrap-datepicker.min.css" media="screen">
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/css/style.css">
+	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/jQuery/jquery-1.9.1.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/layer/layer.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/stuff-tree/stuff-tree.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoValidate/sotoValidate.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
+	<!-- newPage、item.css 页面css-->
+	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/item.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
+	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/newPage.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
+	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/datagrid.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmGrid.css">
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmPaginator.css">
+	<!-- easyuicss -->
+	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
+	<!-- 本页面所需css -->
+	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+
+	<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/jQuery/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/js/bootstrap-datepicker.js"></script>
+	<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/layer/layer.min.js"></script>
+	<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/stuff-tree/stuff-tree.js"></script>
+	<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoValidate/sotoValidate.js"></script>
+	<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
 
 
 </head>
 <%--<body style="background-color: white">--%>
 <body>
-<div class="page-header-sl">
-	<h5>上传Excel</h5>
-	<div class="button-box">
-		<button type="button" class="btn btn-danger btn-xs" style="display:none;" id="ErrInfoButton" onclick="downLoadErr(this)"> 专家导入错误信息下载</button>
-		<button type="button" class="btn btn-primary btn-xs" onclick="downLoadTemp()"> 下载模板</button>
-		<button type="button" class="btn btn-success btn-xs" onclick="uploadProFile()"> 确定</button>
+<div class="tab" role="tabplanel">
+	<div id="funcBtn" style="width:100%;height: 35px;">
+		<%--<div class="button-box">
+			<button type="button" class="btn btn-danger btn-xs" style="display:none;" id="ErrInfoButton" onclick="downLoadErr(this)"> 专家导入错误信息下载</button>
+			<button type="button" class="btn btn-primary btn-xs" onclick="downLoadTemp()"> 下载模板</button>
+			<button type="button" class="btn btn-success btn-xs" onclick="uploadProFile()"> 确定</button>
+		</div>--%>
+		<div class='btn right addButton' style="display:none;" id="ErrInfoButton" onclick="downLoadErr(this)">专家导入错误信息下载</div>
+		<div class='btn right updateButton' onclick="downLoadTemp()">下载模板</div>
+		<div class='btn right deleteButton'  onclick="uploadProFile()">确定</div>
+		<div><h4>上传Excel</h4></div>
 	</div>
 </div>
 <hr>
@@ -57,7 +78,7 @@
 	</form>
 	<iframe name='hidden_frame' id="hidden_frame" width="0" height="0"></iframe>
 </div>
-<div style="float:left;padding:5px;width: 100%;">
+<div style="float:left;padding:10px;width: 100%;">
 	<span>说明：下载模板，按照模板要求填入信息，再导入数据</span>
 </div>
 </body>

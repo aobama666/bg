@@ -76,25 +76,27 @@ queryAll.initDataGrid = function(){
             {name: '匹配状态', style:{width:"5%"},data: 'matchStatus',forMat:function(row){
                 if(row.matchStatus == '1'){
                     return "<span>"+"已匹配"+"</span>"
-                }else {
+                }else if(row.matchStatus == '0'){
                     return "<span>"+"未匹配"+"</span>"
+                }else if (row.matchStatus == '2'){
+                    return "<span>"+"已屏蔽"+"</span>"
                 }
             }}
         ]
     });
 }
 
-/*  start 全选、取消全选 */
+/*  start 全选、取消全选 input type="checkbox" name="oneCheck"   */
 $(".check_").change(function(){
-    if(this.checked==true){
+    if(this.checkbox==true){
         var checkBoxs=$("input:checkbox[name=oneCheck]");
         checkBoxs.each(function(i){
-            checkBoxs[i].checked=true;
+            checkBoxs[i].checkbox=true;
         });
     }else{
         var checkBoxs=$("input:checkbox[name=oneCheck]");
         checkBoxs.each(function(i){
-            checkBoxs[i].checked=false;
+            checkBoxs[i].checkbox=false;
         });
     }
 });
@@ -253,7 +255,8 @@ queryAll.renewal = function () {
                     maxmin:true,
                     content:url,
                     end: function () {
-                        queryAll.query();
+                        //queryAll.query();
+                        queryAll.refresh();
                     }
                 });
             }else {

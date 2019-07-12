@@ -92,7 +92,7 @@
                 <span title = "联系电话"><b class="mustWrite">*</b>详细地址</span>
             </td>
             <td class="addInputStyle" colspan="3">
-                <input id="address" name="address"  type="text" class="validNull"  value = "${lwSpecialist.address}"  content="详细地址"  len="20"  title="必填项，中文或英文,字段长度不能超过 20"  />
+                <input id="address" name="address"  type="text" class="validNull"  value = "${lwSpecialist.address}"  content="详细地址"  len="50"  title="必填项，中文或英文,字段长度不能超过 50"  />
             </td>
         </tr>
 	</table>
@@ -123,7 +123,8 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/stuff-tree/stuff-tree.js"></script>
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/organ-tree/organ-tree.js"></script>
  	<script src="<%=request.getContextPath()%>/js/lunwen/paperSpecialistUpdate.js"></script>
- 
+ 	<%--<script src="<%=request.getContextPath()%>/js/lunwen/paperSpecialistManage.js"></script>--%>
+
 </body>
 
 </html>

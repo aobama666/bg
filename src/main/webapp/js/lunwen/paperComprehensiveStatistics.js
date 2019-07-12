@@ -38,8 +38,6 @@ queryAll.query = function(){
 queryAll.initDataGrid = function(){
 
     ran = Math.random()*100000000;
-    var c = {name: '推荐单位',style:{width:"10%"}, data: 'recommendUnit'}
-    alert(datas);
     $("#datagrid").datagrid({
         url: "/bg/comprehensiveStatistics/comprehensiveList?tm="+new Date().getTime(),
         type: 'POST',
@@ -50,8 +48,7 @@ queryAll.initDataGrid = function(){
             $("#datagrid").find("input[type=checkbox]").eq(0).attr("style","display:none");
         },
         columns: [
-            c
-            /*{name: '',style:{width:"2%"}, data: 'id',checkbox:true, forMat:function(row){
+            {name: '',style:{width:"2%"}, data: 'id',checkbox:true, forMat:function(row){
                     dataItems[index] = row;//将一行数据放在一个list中
                     return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.ID)+'"/>';
                 }
@@ -71,7 +68,7 @@ queryAll.initDataGrid = function(){
             {name: '下载量',style:{width:"10%"}, data: 'downloadCount'},
             {name: '专家信息',style:{width:"200px"}, data: 'specialistName'},
             {name: '加权平均分',style:{width:"5%"}, data: 'weightingFraction'},
-            {name: '去最高最低得分', style:{width:"5%"},data: 'averageFraction'}*/
+            {name: '去最高最低得分', style:{width:"5%"},data: 'averageFraction'}
         ]
     });
 }

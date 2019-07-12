@@ -36,6 +36,13 @@ queryAll.query = function(){
     queryAll.initDataGrid(myclomus);
 }
 
+/*刷新当前页*/
+queryAll.refresh = function(){
+    dataItems = new Array();
+    index = 0;
+    $("#datagrid").datagrid("refresh");
+}
+
 queryAll.field = function (field) {
     document.getElementById("field").value=field;
     queryAll.query();
@@ -138,10 +145,10 @@ queryAll.againReview = function(){
                     success: function (data) {
                         if(data.success == "true"){
                             messager.tip(data.msg,3000);
-                            paperList.query();
+                            queryAll.query();
                         }else{
                             messager.tip(data.msg,3000);
-                            paperList.query();
+                            queryAll.query();
                         }
                     }
                 });

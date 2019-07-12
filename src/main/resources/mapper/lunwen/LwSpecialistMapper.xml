@@ -375,6 +375,7 @@
             MATCH_STATUS AS matchStatus
             FROM BG_LW_SPECIALIST
             WHERE VALID = '1'
+            AND MATCH_STATUS='0'OR MATCH_STATUS='1'
             <if test="fieId != null and fieId !=''">
                 and FIELD = #{fieId,jdbcType=VARCHAR}
                 and RESEARCH_DIRECTION LIKE '%'||#{fieId,jdbcType=VARCHAR}||'%'

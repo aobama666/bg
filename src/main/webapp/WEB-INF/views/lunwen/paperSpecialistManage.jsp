@@ -49,6 +49,7 @@
 				<option value="">不限</option>
 				<option value = "0">未匹配</option>
 				<option value = "1">已匹配</option>
+				<option value = "2">已屏蔽</option>
 			</select>
 			<!-- 查询按钮  " -->
 			<div style="float:right" id = "queryButton" class = "btn query" onclick = "queryAll.query()">搜索</div>

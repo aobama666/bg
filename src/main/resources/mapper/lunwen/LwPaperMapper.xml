@@ -247,6 +247,7 @@
                ROWNUM AS ROWNO
             FROM bg_lw_paper p
             WHERE p.valid = '1'
+              AND p.ALL_STATUS = '6'
                 <if test="year != null and year != ''">
                     and p.YEAR = #{year,jdbcType=VARCHAR}
                 </if>
@@ -262,6 +263,24 @@
                 AND #{end} >= ROWNUM
         ORDER BY P.AVERAGE_FRACTION DESC nulls last
         ) a WHERE a.ROWNO > #{start}
+    </select>
+
+    <select id="paperComprehensiveCount" resultType="java.lang.Integer">
+        SELECT COUNT(UUID) FROM bg_lw_paper
+        WHERE valid = '1'
+        AND ALL_STATUS = '6'
+        <if test="year != null and year != ''">
+            and YEAR = #{year,jdbcType=VARCHAR}
+        </if>
+        <if test="author != null and author !=''">
+            and AUTHOR = #{author,jdbcType=VARCHAR}
+        </if>
+        <if test="paperId != null and paperId != ''">
+            and PAPER_ID = #{paperId,jdbcType=VARCHAR}
+        </if>
+        <if test="paperName != null and paperName != ''">
+            and PAPER_NAME = #{paperName,jdbcType=VARCHAR}
+        </if>
     </select>
 
     <select id="outPaperComprehensiveVOAll" resultType="com.sgcc.bg.lunwen.bean.PaperComprehensiveVO">
@@ -286,6 +305,7 @@
         ROWNUM AS ROWNO
         FROM bg_lw_paper p
         WHERE p.valid = '1'
+        AND p.ALL_STATUS = '6'
         <if test="year != null and year != ''">
             and p.YEAR = #{year,jdbcType=VARCHAR}
         </if>
@@ -323,6 +343,7 @@
         ROWNUM AS ROWNO
         FROM bg_lw_paper p
         WHERE p.VALID = '1'
+        AND p.ALL_STATUS = '6'
         AND p.UUID in (
         <foreach collection="strings"  item="string" index="index" separator=",">
             #{string,jdbcType=VARCHAR}
@@ -517,8 +538,7 @@
         PAPER_ID AS  paperId,
         PAPER_NAME AS paperName,
         WEIGHTING_FRACTION AS weightingFraction,
-        AVERAGE_FRACTION AS averageFraction,
-        ROWNUM AS ROWNO
+        AVERAGE_FRACTION AS averageFraction
         FROM bg_lw_paper
         WHERE VALID = '1'
         AND UUID in (
@@ -526,6 +546,6 @@
             #{uuid,jdbcType=VARCHAR}
         </foreach>
         )
-        ORDER BY P.AVERAGE_FRACTION DESC nulls last
+        ORDER BY AVERAGE_FRACTION DESC nulls last
     </select>
 </mapper>
