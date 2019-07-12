@@ -322,6 +322,29 @@ public class LwPaperController {
         return mv;
     }
 
+    /**
+     * 判断当前论文是否有附件信息
+     */
+    @ResponseBody
+    @RequestMapping(value = "/ifAnnex")
+    public String ifAnnex(String uuid){
+        ResultWarp rw = null;
+        String msg = "";
+        rw = new ResultWarp(ResultWarp.SUCCESS,msg);
+        List<Map<String,Object>> fileList = lwFileService
+                .selectLwFile(uuid,LwPaperConstant.BUSSINESSTABLE,LwPaperConstant.VALID_YES);
+        if(0 == fileList.size()){
+            log.info(getLoginUser()+"匹配论文失败，没有添加附件信息"+uuid);
+            msg = "该论文没有添加附件信息，不能进行自动匹配操作";
+            rw.addData("ifAnnex","false");
+        }else{
+            msg = "该论文已添加附件信息，可进行匹配操作";
+            rw.addData("ifAnnex","true");
+        }
+        rw.setMsg(msg);
+        return JSON.toJSONString(rw);
+    }
+
 
     /**
      * 自动匹配
@@ -333,15 +356,16 @@ public class LwPaperController {
         Map<String,Object> lwPaperMap = lwPaperService.findPaper(uuid,null);
         String allStatus = lwPaperMap.get("ALLSTATUS").toString();
         //根据论文主键查询附件信息
-        List<Map<String,Object>> fileList = lwFileService
+        /*List<Map<String,Object>> fileList = lwFileService
                 .selectLwFile(uuid,LwPaperConstant.BUSSINESSTABLE,LwPaperConstant.VALID_YES);
         if(0 == fileList.size()){
             rw = new ResultWarp(ResultWarp.FAILED,"该论文没有添加附件信息，不能进行自动匹配操作");
             log.info(getLoginUser()+"自动匹配失败，该论文没有添加附件信息，不能进行自动匹配操作！paper_uuid:"+uuid);
             return JSON.toJSONString(rw);
-        }
+        }*/
         //当前成功匹配数量
         Integer successMatchNums = 0;
+        //判断状态
         if(!LwPaperConstant.ALL_STATUS_ONE.equals(allStatus) && !LwPaperConstant.ALL_STATUS_TWO.equals(allStatus)
                 && !LwPaperConstant.All_STATUS_SEVEN.equals(allStatus)){
             rw = new ResultWarp(ResultWarp.FAILED,"该论文状态已匹配完成，正在进行打分操作");
@@ -353,15 +377,15 @@ public class LwPaperController {
         }else{
             log.info(getLoginUser()+"首次进行自动匹配,paper_uuid:"+uuid);
         }
-        //匹配
+        //自动匹配操作
         successMatchNums = lwPaperService.autoMaticSecond(lwPaperMap,uuid);
-        //修改该论文的全流程状态,为已匹配专家,如果数量不够，为已匹配未达标
+        //修改该论文的全流程状态
         if(successMatchNums>=7){
             lwPaperService.updateAllStatus(uuid,LwPaperConstant.ALL_STATUS_TWO);
         }else{
             lwPaperService.updateAllStatus(uuid,LwPaperConstant.All_STATUS_SEVEN);
         }
-        //反馈成功信息，匹配多少专家，亦或失败信息，没有符合自动匹配的专家
+        //反馈信息
         rw = new ResultWarp(ResultWarp.SUCCESS,"自动匹配完毕，当前匹配专家"+successMatchNums+"个");
         log.info(getLoginUser()+"当前成功匹配到"+successMatchNums+"个专家！paper_uuid:"+uuid);
         return JSON.toJSONString(rw);

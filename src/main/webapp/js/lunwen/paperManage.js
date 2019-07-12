@@ -61,7 +61,7 @@ paperList.initDataGrid = function(){
             {name: '专家信息',style:{width:"50px"}, data: 'UUID',
                 forMat:function(row){
                     return "<a title = '点击查看匹配专家' style='width:250px;' id='"+row.UUID+"'" +
-                        "href = 'javascript:void(0)' onclick = paperList.manualMatch('"+row.UUID+"','"+row.ALLSTATUS+"')>查看详情</a>";
+                        "href = 'javascript:void(0)' onclick = paperList.manualMatch('"+row.UUID+"')>查看详情</a>";
 
                 }},
             {name: '打分状态',style:{width:"50px"}, data: 'SCORESTATUS'},
@@ -434,50 +434,76 @@ paperList.automaticMatch = function(){
     }else if(checkedItems[0].ALLSTATUS == 2 || checkedItems[0].ALLSTATUS == 7){
         info = "该论文已自动匹配，确认重新自动匹配选中的这条论文吗";
     }
-    //不在前台做是否能删除的判断，在后台判断，记录日志，同时比前台更safe
-    $.messager.confirm( "自动匹配提示", info,
-        function(r){
-            if(r){
-                $.ajax({
-                    url: "/bg/lwPaper/automaticMatch?uuid="+checkedItems[0].UUID,//删除
-                    type: "post",
-                    dataType:"json",
-                    contentType: 'application/json',
-                    data: '',
-                    success: function (data) {
-                        if(data.success == "true"){
-                            messager.tip(data.msg,3000);
-                            paperList.query();
-                        }else{
-                            messager.tip(data.msg,3000);
-                            paperList.query();
+
+    $.ajax({
+        url: "/bg/lwPaper/ifAnnex?uuid="+checkedItems[0].UUID,//判断是否有附件信息
+        type: "post",
+        dataType:"json",
+        contentType: 'application/json',
+        success: function (data) {
+            if(data.data.ifAnnex == "false"){
+                messager.tip("请先添加附件信息再进行匹配操作",2000);
+            }else{
+                $.messager.confirm( "自动匹配提示", info,
+                    function(r){
+                        if(r){
+                            $.ajax({
+                                url: "/bg/lwPaper/automaticMatch?uuid="+checkedItems[0].UUID,
+                                type: "post",
+                                dataType:"json",
+                                contentType: 'application/json',
+                                data: '',
+                                success: function (data) {
+                                    if(data.success == "true"){
+                                        messager.tip(data.msg,3000);
+                                        paperList.query();
+                                    }else{
+                                        messager.tip(data.msg,3000);
+                                        paperList.query();
+                                    }
+                                }
+                            });
                         }
                     }
-                });
+                );
             }
         }
-    );
+    });
+
+
 }
 
 
 
 /*手动匹配*/
-paperList.manualMatch = function (id,allStatus){
-    if(allStatus == 1){
-        messager.tip("暂无匹配专家信息,请先进行自动匹配",2000);
-        return;
-    }
-    var url = "/bg/lwPaper/manualMatchJump?paperUuid="+id;
-    layer.open({
-        type:2,
-        title:'<h4 style="height:42px;line-height:25px;">专家匹配详情</h4>',
-        area:['85%','85%'],
-        fixed:false,//不固定
-        maxmin:true,
-        content:url
-    },function (index) {
-        layer.close(index);
+paperList.manualMatch = function (id){
+    $.ajax({
+        url: "/bg/lwPaper/ifAnnex?uuid="+id,//判断是否有附件信息
+        type: "post",
+        dataType:"json",
+        contentType: 'application/json',
+        async: false,
+        success: function (data) {
+            debugger;
+            if(data.data.ifAnnex == "false"){
+                messager.tip("请先添加附件信息再进行匹配操作",2000);
+            }else{
+                //已添加附件，可手动匹配
+                var url = "/bg/lwPaper/manualMatchJump?paperUuid="+id;
+                layer.open({
+                    type:2,
+                    title:'<h4 style="height:42px;line-height:25px;">专家匹配详情</h4>',
+                    area:['85%','85%'],
+                    fixed:false,//不固定
+                    maxmin:true,
+                    content:url
+                },function (index) {
+                    layer.close(index);
+                });
+            }
+        }
     });
+
 }
 
 

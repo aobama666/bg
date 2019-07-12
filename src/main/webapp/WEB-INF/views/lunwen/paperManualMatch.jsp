@@ -22,14 +22,19 @@
 
 <input type="text" style="display: none;" value="${paperUuid}" id="paperUuid">
 
+
 <div class="layui-container" style="margin-top: 15px;">
-    <div class="col-lg-6">
-        <h3>已匹配专家信息</h3>
+    <div class="layui-row layui-container">
+        <div class="layui-col-md5">
+            <h3>已匹配专家信息</h3>
+        </div>
+        <div class="layui-col-md2"></div>
+        <div class="layui-col-md5" style="float: right">
+            <h3>可匹配专家信息</h3>
+        </div>
     </div>
-    <div class="col-lg-5" style="float: right">
-        <h3>可匹配专家信息</h3>
+    <div id="root">
     </div>
-    <div id="root"></div>
 </div>
 
 <div class="btnContent">
@@ -44,6 +49,8 @@
 
 <!-- 本页面所需的js -->
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
+<script src="<%=request.getContextPath()%>/js/plugins/layui/html5.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
+<script src="<%=request.getContextPath()%>/js/plugins/layui/respond.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
 </body>
 <script>
 
