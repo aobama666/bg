@@ -329,19 +329,15 @@ public class LwPaperController {
     @RequestMapping(value = "/ifAnnex")
     public String ifAnnex(String uuid){
         ResultWarp rw = null;
-        String msg = "";
-        rw = new ResultWarp(ResultWarp.SUCCESS,msg);
+        rw = new ResultWarp(ResultWarp.SUCCESS,"");
         List<Map<String,Object>> fileList = lwFileService
                 .selectLwFile(uuid,LwPaperConstant.BUSSINESSTABLE,LwPaperConstant.VALID_YES);
         if(0 == fileList.size()){
             log.info(getLoginUser()+"匹配论文失败，没有添加附件信息"+uuid);
-            msg = "该论文没有添加附件信息，不能进行自动匹配操作";
             rw.addData("ifAnnex","false");
         }else{
-            msg = "该论文已添加附件信息，可进行匹配操作";
             rw.addData("ifAnnex","true");
         }
-        rw.setMsg(msg);
         return JSON.toJSONString(rw);
     }
 
