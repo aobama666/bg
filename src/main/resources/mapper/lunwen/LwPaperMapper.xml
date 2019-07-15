@@ -446,6 +446,7 @@
         <if test="unit != null and unit != ''">
           and unit_name != #{unit}
         </if>
+        and match_status != #{matchStatus}
     </select>
 
     <select id="year" resultType="java.util.Map">

@@ -154,7 +154,9 @@ public interface LwPaperMapper {
             @Param("authors") String[] authors,
             @Param("unit") String unit,
             @Param("field") String field,
-            @Param("valid") String valid);
+            @Param("valid") String valid,
+            @Param("matchStatus") String matchStatus
+    );
 
 
     /**

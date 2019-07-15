@@ -124,7 +124,8 @@ public class LwPaperServiceImpl implements LwPaperService {
 
     @Override
     public List<LwSpecialist> selectSpecialistField(String[] authors, String unit, String field) {
-        return lwPaperMapper.selectSpecialistField(authors,unit,field,LwPaperConstant.VALID_YES);
+        return lwPaperMapper.selectSpecialistField(authors,unit,field,
+                LwPaperConstant.VALID_YES,LwPaperConstant.SPECIALIST_MATCH_SHIELD);
     }
 
     @Override

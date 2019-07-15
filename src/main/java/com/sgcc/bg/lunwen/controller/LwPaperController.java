@@ -351,14 +351,6 @@ public class LwPaperController {
         ResultWarp rw = null;
         Map<String,Object> lwPaperMap = lwPaperService.findPaper(uuid,null);
         String allStatus = lwPaperMap.get("ALLSTATUS").toString();
-        //根据论文主键查询附件信息
-        /*List<Map<String,Object>> fileList = lwFileService
-                .selectLwFile(uuid,LwPaperConstant.BUSSINESSTABLE,LwPaperConstant.VALID_YES);
-        if(0 == fileList.size()){
-            rw = new ResultWarp(ResultWarp.FAILED,"该论文没有添加附件信息，不能进行自动匹配操作");
-            log.info(getLoginUser()+"自动匹配失败，该论文没有添加附件信息，不能进行自动匹配操作！paper_uuid:"+uuid);
-            return JSON.toJSONString(rw);
-        }*/
         //当前成功匹配数量
         Integer successMatchNums = 0;
         //判断状态
