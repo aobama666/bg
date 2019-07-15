@@ -9,8 +9,6 @@ import com.sgcc.bg.lunwen.mapper.LwSpecialistMapper;
 import com.sgcc.bg.lunwen.service.LwSpecialistService;
 import com.sgcc.bg.model.HRUser;
 import com.sgcc.bg.service.UserService;
-import com.sgcc.bg.service.impl.BgNonProjectServiceImpl;
-import com.sgcc.bg.service.impl.StaffWorkbenchServiceImpl;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -410,6 +408,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
     }
 
     @Override
+    /*@Transactional*/
     public int renewal(String beforeUuid, String nowUuid) {
         List<PaperVO> paperMap = lwSpecialistMapper.paperMap(beforeUuid);
         List<LwPaperMatchSpecialist> paperMatchSpecialist = new ArrayList<>();
@@ -431,7 +430,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
         //删除原来专家匹配的信息
         int i = lwPaperMatchSpecialistMapper.updateValid(beforeUuid);
         //修改原来专家的匹配状态
-        lwSpecialistMapper.updateMatchStatus(beforeUuid,"0");
+        lwSpecialistMapper.updateMatchStatus(beforeUuid,"2");
         //增加新的
         int j = lwPaperMatchSpecialistMapper.insertMatch(paperMatchSpecialist);
         //修改新匹配专家的匹配状态

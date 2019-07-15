@@ -76,7 +76,7 @@ public class LwGradeStatisticController {
     }
 
     /**
-     *
+     *列表
      * @param year 年度
      * @param paperName 题目
      * @param paperId 编号

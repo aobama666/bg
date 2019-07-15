@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Array;
 import java.util.*;
 
 @Service
@@ -70,6 +69,7 @@ public class LwGradeStatisticServiceImpl implements LwGradeStatisticService{
     }
 
     @Override
+    /*@Transactional*/
     public int againReview(String[] uuidStr) {
         //修改论文的评审状态 改为 重新评审
         Date date = new Date();

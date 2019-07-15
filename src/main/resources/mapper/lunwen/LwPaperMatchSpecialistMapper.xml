@@ -42,7 +42,7 @@
 
     <update id="updateScoreStatus">
       update bg_lw_paper_match_expert set
-      socre_status = #{socreStatus,jdbcType=VARCHAR}
+        SCORE_STATUS = #{socreStatus,jdbcType=VARCHAR}
         where 1=1
         <if test="paperId != null and paperId != ''">
             and paper_id= #{paperId}

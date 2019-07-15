@@ -138,6 +138,20 @@ public interface LwPaperMapper {
                                                         @Param("paperId")String paperId,
                                                         @Param("start")int start,
                                                         @Param("end")int end);
+
+    /**
+     * 综合统计论文列表count
+     * @param paperName
+     * @param paperId
+     * @param year
+     * @param author
+     * @return
+     */
+    int paperComprehensiveCount(@Param("paperName") String paperName,
+                                @Param("paperId") String paperId,
+                                @Param("year") String year,
+                                @Param("author") String author);
+
     /**
      * 根据选中数据查询对应数据——导出
      * @param uuids
@@ -224,4 +238,5 @@ public interface LwPaperMapper {
      * 评分统计根据选中的ids查询论文（excel导出用）
      */
     List<Map<String,Object>> statisticsMapIds(@Param("uuids") String[] uuids);
+
 }
