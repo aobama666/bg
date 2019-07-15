@@ -18,6 +18,15 @@ grade.query = function(){
 }
 /*  end  列表查询  */
 
+
+/*  start   弹出框关闭后刷新本页  */
+grade.queryAddPage = function(){
+    dataItems = new Array();
+    index = 0;
+    $("#datagrid").datagrid("refresh");
+}
+/*  end   弹出框关闭后刷新本页 */
+
 /**
  * 切换论文类型查询
  */
@@ -29,7 +38,7 @@ grade.updatePaperType = function(num) {
 /* 论文管理-初始化列表界面  */
 grade.initDataGrid = function(){
     $("#datagrid").datagrid({
-        url: "/bg/lwGrade/selectLwPaper",
+        url: "/bg/lwGrade/selectLwGrade",
         type: 'POST',
         form: '#queryForm',
         pageSize: 10,
@@ -56,9 +65,13 @@ grade.initDataGrid = function(){
             {name: '下载量',style:{width:"50px"}, data: 'DOWNLOADCOUNT'},
             {name: '专家打分',style:{width:"50px"}, data: 'UUID',
                 forMat:function(row){
-                    return "<a title = '点击查看匹配专家' style='width:250px;' id='"+row.UUID+"'" +
-                        "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.UUID+"','"+row.ALLSTATUS+"')>打分</a>";
-
+                    if(row.SCORE == undefined){
+                        return "<a title = '点击查看匹配专家' style='width:250px;' id='"+row.UUID+"'" +
+                            "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.UUID+"','"+row.PAPERNAME+"')>打分</a>";
+                    }else{
+                        return "<a title = '点击查看匹配专家' style='width:250px;' id='"+row.UUID+"'" +
+                            "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.UUID+"','"+row.PAPERNAME+"')>"+row.SCORE +"</a>";
+                    }
                 }},
             {name: '打分状态',style:{width:"50px"}, data: 'SCORESTATUS'}
         ]
@@ -83,17 +96,17 @@ grade.forDetails = function (id){
 
 
 /*弹出打分框 */
-grade.gradeOperation = function (){
-    var url = "/bg/lwPaper/paperJumpAdd?paperType="+$("#paperType").val();
+grade.gradeOperation = function (pmeId,paperName){
+    var url = "/bg/lwGrade/grade_jump_operation?paperType="+$("#paperType").val()+"&pmeId="+pmeId+"&paperName="+paperName;
     layer.open({
         type:2,
-        title:'<h4 style="height:42px;line-height:25px;">论文信息新增</h4>',
+        title:'<h4 style="height:42px;line-height:25px;">论文打分</h4>',
         area:['85%','85%'],
         fixed:false,//不固定
         maxmin:true,
         content:url,
         end: function () {
-            grade.query();
+            grade.queryAddPage();
         }
     });
 }

@@ -14,9 +14,17 @@ $(function(){
 paperList.query = function(){
 	dataItems = new Array();
 	index = 0;
-	$("#datagrid").datagrid("refresh");
+	$("#datagrid").datagrid("seach");
 }
 /*  end  列表查询  */
+
+/*  start   弹出框关闭后刷新本页  */
+paperList.queryAddPage = function(){
+    dataItems = new Array();
+    index = 0;
+    $("#datagrid").datagrid("refresh");
+}
+/*  end   弹出框关闭后刷新本页 */
 
 /**
  * 切换论文类型查询
@@ -173,7 +181,7 @@ paperList.updateOperation = function(){
 			maxmin:true,
 			content:url,
             end: function () {
-                paperList.query();
+                paperList.queryAddPage();
             }
 		});
 }
@@ -203,12 +211,7 @@ paperList.updateEvent = function (){
                     contentType: 'application/json',
                     data: JSON.stringify(paperDetailFormData),
                     success: function (data) {
-                        if(data.success=="true"){
                             parent.messager.tip(data.msg,5000);
-                        }else{
-                            parent.messager.tip(data.msg,5000);
-                            return;
-                        }
                     }
                 });
             }
@@ -246,13 +249,8 @@ paperList.delEvent = function(){
 						contentType: 'application/json',
                         data: '',
 						success: function (data) {
-							if(data.success == "true"){
 								messager.tip(data.msg,3000);
-								paperList.query();
-							}else{
-								messager.tip(data.msg,3000);
-								paperList.query();
-							}
+								paperList.queryAddPage();
 						}
 					});
 				}
@@ -302,13 +300,8 @@ paperList.generateScoreTable = function () {
                     contentType: 'application/json',
                     data: '',
                     success: function (data) {
-                        if(data.success == "true"){
                             messager.tip(data.msg,3000);
-                            paperList.query();
-                        }else{
-                            messager.tip(data.msg,3000);
-                            paperList.query();
-                        }
+                            paperList.queryAddPage();
                     }
                 });
             }
@@ -339,13 +332,8 @@ paperList.withdrawScoreTable = function () {
                     contentType: 'application/json',
                     data: '',
                     success: function (data) {
-                        if(data.success == "true"){
                             messager.tip(data.msg,3000);
-                            paperList.query();
-                        }else{
-                            messager.tip(data.msg,3000);
-                            paperList.query();
-                        }
+                            paperList.queryAddPage();
                     }
                 });
             }
@@ -454,13 +442,8 @@ paperList.automaticMatch = function(){
                                 contentType: 'application/json',
                                 data: '',
                                 success: function (data) {
-                                    if(data.success == "true"){
                                         messager.tip(data.msg,3000);
-                                        paperList.query();
-                                    }else{
-                                        messager.tip(data.msg,3000);
-                                        paperList.query();
-                                    }
+                                        paperList.queryAddPage();
                                 }
                             });
                         }

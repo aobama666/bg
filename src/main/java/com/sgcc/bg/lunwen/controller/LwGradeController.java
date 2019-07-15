@@ -6,6 +6,7 @@ import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
+import com.sgcc.bg.lunwen.service.LwGradeService;
 import com.sgcc.bg.lunwen.service.LwPaperMatchSpecialistService;
 import com.sgcc.bg.lunwen.service.LwPaperService;
 import com.sgcc.bg.service.DataDictionaryService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,8 @@ public class LwGradeController {
     private DataDictionaryService dataDictionaryService;
     @Autowired
     private LwPaperMatchSpecialistService lwPaperMatchSpecialistService;
+    @Autowired
+    private LwGradeService lwGradeService;
 
     /**
      * 跳转至论文打分管理
@@ -58,7 +62,7 @@ public class LwGradeController {
      * 论文打分列表查询
      */
     @ResponseBody
-    @RequestMapping(value = "/selectLwPaper")
+    @RequestMapping(value = "/selectLwGrade")
     public String selectLwPaper(
             String paperName,String scoreStatus, Integer page, Integer limit, String paperType
     ){
@@ -77,10 +81,10 @@ public class LwGradeController {
             pageEnd = page*limit;
         }
         //分页获取对应某批论文信息
-        List<Map<String, Object>> lwPaperList =  lwPaperService.selectLwPaper(
-                pageStart,pageEnd,paperName,null,null,null,null,null,scoreStatus,paperType);
+        List<Map<String, Object>> lwPaperList =  lwGradeService.selectGrade(
+                pageStart,pageEnd,paperName, DateUtil.getYear(),scoreStatus,paperType,LwPaperConstant.VALID_YES);
         //获取对应某批论文信息总数
-        Integer lwPaperCount = lwPaperService.selectLwPaperCount(paperName,null,null,null,null,null,scoreStatus,paperType);
+        Integer lwPaperCount = lwGradeService.selectGradeCount(pageStart,pageEnd,paperName, DateUtil.getYear(),scoreStatus,paperType,LwPaperConstant.VALID_YES);
 
         //查询数据封装
         Map<String, Object> listMap = new HashMap<String, Object>();
@@ -101,8 +105,12 @@ public class LwGradeController {
      * 跳转至——论文打分操作
      */
     @RequestMapping(value="/grade_jump_operation", method = RequestMethod.GET)
-    public ModelAndView grade_operation(){
-        ModelAndView modelAndView = new ModelAndView("lunwen/paperGradeOperation");
+    public ModelAndView grade_operation(String paperType,String pmeId,String paperName){
+        Map<String,Object> mvMap = new HashMap<>();
+        mvMap.put("paperType",paperType);
+        mvMap.put("pmeId",pmeId);
+        mvMap.put("paperName",paperName);
+        ModelAndView modelAndView = new ModelAndView("lunwen/paperGradeOperation",mvMap);
         return modelAndView;
     }
 }

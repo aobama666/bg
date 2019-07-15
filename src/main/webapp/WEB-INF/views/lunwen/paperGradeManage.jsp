@@ -38,7 +38,7 @@
 		</select>
 		<input type="text" id="paperType" name="paperType" style="display: none" value="1">
 		<!-- 查询按钮  " -->
-		<div style="float:right" id = "queryButton" class = "btn query" onclick = "paperList.query()">搜索</div>
+		<div style="float:right" id = "queryButton" class = "btn query" onclick = "grade.query()">搜索</div>
 	</form>
 </div>
 <!-- end    查询条件 -->

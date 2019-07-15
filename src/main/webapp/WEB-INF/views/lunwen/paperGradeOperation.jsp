@@ -8,7 +8,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
-	<title>论文打分临时测试</title>
+	<title></title>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
 	<!-- newPage、item.css 页面css-->
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/item.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
@@ -20,10 +20,13 @@
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+	<h2 style="text-align:center">论文评分表-${paperName}</h2>
+	<span>pmeId:${pmeId}</span>
+	<span>paperType:${paperType}</span>
 	<div class="main_div">
 		<div style="text-align: center;padding-top: 30%">
-			<div class='btn  deleteButton' onclick="roomList.delEvent()" >确定</div>
-			<div class='btn  deleteButton' onclick="roomList.delEvent()" >取消</div>
+			<div class='btn  deleteButton' onclick="grade.addClose" >保存</div>
+			<div class='btn  deleteButton' onclick="grade.addClose" >返回</div>
 		</div>
 	</div>
 
@@ -43,7 +46,7 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<!-- 本页面所需的js -->
- 	<%--<script src="<%=request.getContextPath()%>/js/lunwen/paperManage.js"></script>--%>
+ 	<script src="<%=request.getContextPath()%>/js/lunwen/paperGrade.js"></script>
 </body>
 
 </html>

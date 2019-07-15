@@ -15,4 +15,103 @@
             #{valid}
         )
     </insert>
+
+    <select id="selectGrade" resultType="java.util.Map">
+        select * from(
+        select p.*, ROWNUM as r
+        from (select p.uuid,
+            p.paper_id paperId,
+            p.paper_name paperName,
+            p.year,
+            p.unit,
+            p.author,
+            p.journal,
+            p.recommend_unit recommendUnit,
+            p.paper_type paperType,
+            p.quote_count quoteCount,
+            p.download_count downloadCount,
+            p.field,
+            m.score,
+            (SELECT name
+            FROM BG_SYS_DATADICTIONARY
+            WHERE pcode = 'score_status'
+            and vaild = 1
+            and code = p.score_status) as scoreStatus,
+            ROWNUM rown
+            from    bg_lw_paper      p，
+            bg_lw_paper_match_expert m,
+            bg_lw_specialist s<!--,
+            bg_sys_user      u-->
+            where 1 = 1
+            <if test="paperName!=null and paperName!=''">
+                and p.paper_name = #{paperName}
+            </if>
+            <if test="year!=null and year!=''">
+                and p.year = #{year}
+            </if>
+            <if test="scoreStatus!=null and scoreStatus!=''">
+                and p.score_status = #{scoreStatus}
+            </if>
+            <if test="paperType!=null and paperType!=''">
+                and p.paper_type = #{paperType}
+            </if>
+            and p.uuid = m.paper_id
+            and m.specialist_id = s.uuid
+            and p.valid = #{valid}
+            and m.valid = #{valid}
+            and s.valid = #{valid}
+            <!--and u.userid = s.user_id-->
+            order by p.paper_id desc
+        ) p
+        where  #{pageEnd} >= ROWNUM
+        ) where r > #{pageStart}
+    </select>
+
+    <select id="selectGradeCount" resultType="java.lang.Integer">
+        select count(*)
+        from (select p.uuid,
+        p.paper_id paperId,
+        p.paper_name paperName,
+        p.year,
+        p.unit,
+        p.author,
+        p.journal,
+        p.recommend_unit recommendUnit,
+        p.paper_type paperType,
+        p.quote_count quoteCount,
+        p.download_count downloadCount,
+        p.field,
+        m.score,
+        (SELECT name
+        FROM BG_SYS_DATADICTIONARY
+        WHERE pcode = 'score_status'
+        and vaild = 1
+        and code = p.score_status) as scoreStatus,
+        ROWNUM rown
+        from    bg_lw_paper      p，
+        bg_lw_paper_match_expert m,
+        bg_lw_specialist s<!--,
+            bg_sys_user      u-->
+        where 1 = 1
+        <if test="paperName!=null and paperName!=''">
+            and p.paper_name = #{paperName}
+        </if>
+        <if test="year!=null and year!=''">
+            and p.year = #{year}
+        </if>
+        <if test="scoreStatus!=null and scoreStatus!=''">
+            and p.score_status = #{scoreStatus}
+        </if>
+        <if test="paperType!=null and paperType!=''">
+            and p.paper_type = #{paperType}
+        </if>
+        and p.uuid = m.paper_id
+        and m.specialist_id = s.uuid
+        and p.valid = #{valid}
+        and m.valid = #{valid}
+        and s.valid = #{valid}
+        <!--and u.userid = s.user_id-->
+        order by p.paper_id desc
+        ) p
+    </select>
 </mapper>

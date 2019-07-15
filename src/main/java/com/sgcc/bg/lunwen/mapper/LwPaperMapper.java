@@ -102,34 +102,6 @@ public interface LwPaperMapper {
     );
 
     /**
-     * 论文打分——按条件查某批论文
-     * 条件：年度，论文题目，打分状态，论文类型
-     */
-    List<Map<String, Object>> selectGrade(
-            @Param("pageStart") Integer pageStart,
-            @Param("pageEnd") Integer pageEnd,
-            @Param("paperName") String paperName,
-            @Param("year") String year,
-            @Param("scoreStatus") String scoreStatus,
-            @Param("paperType") String paperType,
-            @Param("valid") String valid
-    );
-
-    /**
-     * 论文打分——按条件查某批论文
-     * 条件：年度，论文题目，打分状态，论文类型
-     */
-    Integer selectGradeCount(
-            @Param("pageStart") Integer pageStart,
-            @Param("pageEnd") Integer pageEnd,
-            @Param("paperName") String paperName,
-            @Param("year") String year,
-            @Param("scoreStatus") String scoreStatus,
-            @Param("paperType") String paperType,
-            @Param("valid") String valid
-    );
-
-    /**
      * 综合统计论文查询
      */
     List<PaperComprehensiveVO> paperComprehensiveVOList(@Param("year") String year,
