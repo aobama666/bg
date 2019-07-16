@@ -340,15 +340,6 @@ queryAll.renewal = function () {
             }
         }
     });
-    /*var url = "/bg/expert/renewalSpecialist?uuid="+uuid;
-    layer.open({
-        type:2,
-        title:'<h4 style="height:42px;line-height:25px;">更换专家 </h4>',
-        area:['85%','85%'],
-        fixed:false,//不固定
-        maxmin:true,
-        content:url,
-    });*/
 }
 /*专家-新增 */
 queryAll.addEvent = function (){
@@ -377,21 +368,6 @@ queryAll.forDetails = function (uuid){
         layer.close(index);
     });
 }
-
-/*跳转论文信息详情*/
-/*roomDetailInfo.paper = function (uuid){
-    var url = "/bg/lwPaper/detailLwPaper?uuid="+uuid;
-    layer.open({
-        type:2,
-        title:'<h4 style="height:42px;line-height:25px;">论文信息详情</h4>',
-        area:['70%','70%'],
-        fixed:false,//不固定
-        maxmin:true,
-        content:url
-    },function (index) {
-        layer.close(index);
-    });
-}*/
 
 //返回
 queryAll.messageResign =function(){

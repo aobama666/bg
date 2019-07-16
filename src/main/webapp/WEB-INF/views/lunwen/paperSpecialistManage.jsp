@@ -103,16 +103,4 @@
 	<script src="<%=request.getContextPath()%>/js/lunwen/paperSpecialistManage.js"></script>
 
 </body>
-
-<%--<script type="text/javascript" charset="utf-8">
-
-    function downLoadTemp(fileName){
-        var ran = Math.random()*1000;
-        $("#fileName").val(fileName);
-        //$("#fileName").val(fileName);
-        document.forms[0].action = "<%=request.getContextPath() %>/expert/downloadExcelTemp?ran="+ran;
-        document.forms[0].submit();
-    }
-</script>--%>
-
 </html>
