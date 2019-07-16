@@ -97,7 +97,7 @@ grade.forDetails = function (id){
 
 /*弹出打分框 */
 grade.gradeOperation = function (pmeId,paperName){
-    var url = "/bg/lwGrade/grade_jump_operation?paperType="+$("#paperType").val()+"&pmeId="+pmeId+"&paperName="+paperName;
+    var url = "/bg/lwGrade/gradeJumpOperation?paperType="+$("#paperType").val()+"&pmeId="+pmeId+"&paperName="+paperName;
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;">论文打分</h4>',
@@ -111,11 +111,6 @@ grade.gradeOperation = function (pmeId,paperName){
     });
 }
 
-
-/*返回按钮，关闭弹出框页面*/
-grade.addClose = function () {
-    parent.layer.closeAll();
-}
 
 /*关闭页面后弹出信息*/
 grade.closeAndOpen = function (message) {

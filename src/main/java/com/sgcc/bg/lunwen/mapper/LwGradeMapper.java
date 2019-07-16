@@ -43,4 +43,22 @@ public interface LwGradeMapper {
             @Param("paperType") String paperType,
             @Param("valid") String valid
     );
+
+    /**
+     * 打分表初始页面
+     */
+    List<Map<String,Object>> nowScoreTable(
+            @Param("year") String year,
+            @Param("paperType") String paperType,
+            @Param("valid") String valid
+    );
+
+    /**
+     * 对应打分表每个一级指标的对应数量
+     */
+    List<String> firstIndexNums(
+            @Param("year") String year,
+            @Param("paperType") String paperType,
+            @Param("valid") String valid
+    );
 }
