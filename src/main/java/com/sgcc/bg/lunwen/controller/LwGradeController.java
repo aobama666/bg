@@ -9,6 +9,7 @@ import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.service.LwGradeService;
 import com.sgcc.bg.lunwen.service.LwPaperMatchSpecialistService;
 import com.sgcc.bg.lunwen.service.LwPaperService;
+import com.sgcc.bg.model.HRUser;
 import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.UserService;
 import org.slf4j.Logger;
@@ -80,11 +81,13 @@ public class LwGradeController {
             pageStart = (page-1)*limit;
             pageEnd = page*limit;
         }
+        String userId= getLoginUserUUID();
         //分页获取对应某批论文信息
         List<Map<String, Object>> lwPaperList =  lwGradeService.selectGrade(
-                pageStart,pageEnd,paperName, DateUtil.getYear(),scoreStatus,paperType,LwPaperConstant.VALID_YES);
+                pageStart,pageEnd,paperName, DateUtil.getYear(),scoreStatus,userId,paperType,LwPaperConstant.VALID_YES);
         //获取对应某批论文信息总数
-        Integer lwPaperCount = lwGradeService.selectGradeCount(pageStart,pageEnd,paperName, DateUtil.getYear(),scoreStatus,paperType,LwPaperConstant.VALID_YES);
+        Integer lwPaperCount = lwGradeService.selectGradeCount(
+                pageStart,pageEnd,paperName, DateUtil.getYear(),scoreStatus,userId,paperType,LwPaperConstant.VALID_YES);
 
         //查询数据封装
         Map<String, Object> listMap = new HashMap<String, Object>();
@@ -112,5 +115,14 @@ public class LwGradeController {
         mvMap.put("paperName",paperName);
         ModelAndView modelAndView = new ModelAndView("lunwen/paperGradeOperation",mvMap);
         return modelAndView;
+    }
+
+    /**
+     * 获取当前登录用户主键id
+     */
+    public String getLoginUserUUID(){
+        String userName = webUtils.getUsername();
+        HRUser user = userService.getUserByUserName(userName);
+        return user.getUserId();
     }
 }

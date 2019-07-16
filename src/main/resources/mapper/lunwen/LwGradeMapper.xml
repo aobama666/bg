@@ -40,8 +40,7 @@
             ROWNUM rown
             from    bg_lw_paper      p，
             bg_lw_paper_match_expert m,
-            bg_lw_specialist s<!--,
-            bg_sys_user      u-->
+            bg_lw_specialist s
             where 1 = 1
             <if test="paperName!=null and paperName!=''">
                 and p.paper_name = #{paperName}
@@ -55,12 +54,13 @@
             <if test="paperType!=null and paperType!=''">
                 and p.paper_type = #{paperType}
             </if>
+            and p.score_table_status = ${scoreTableStatus}
+            and s.user_id = #{userId}
             and p.uuid = m.paper_id
             and m.specialist_id = s.uuid
             and p.valid = #{valid}
             and m.valid = #{valid}
             and s.valid = #{valid}
-            <!--and u.userid = s.user_id-->
             order by p.paper_id desc
         ) p
         where  #{pageEnd} >= ROWNUM
@@ -90,8 +90,7 @@
         ROWNUM rown
         from    bg_lw_paper      p，
         bg_lw_paper_match_expert m,
-        bg_lw_specialist s<!--,
-            bg_sys_user      u-->
+        bg_lw_specialist s
         where 1 = 1
         <if test="paperName!=null and paperName!=''">
             and p.paper_name = #{paperName}
@@ -105,12 +104,13 @@
         <if test="paperType!=null and paperType!=''">
             and p.paper_type = #{paperType}
         </if>
+        and p.score_table_status = ${scoreTableStatus}
+        and s.user_id = #{userId}
         and p.uuid = m.paper_id
         and m.specialist_id = s.uuid
         and p.valid = #{valid}
         and m.valid = #{valid}
         and s.valid = #{valid}
-        <!--and u.userid = s.user_id-->
         order by p.paper_id desc
         ) p
     </select>

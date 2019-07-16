@@ -22,6 +22,8 @@ public interface LwGradeMapper {
             @Param("paperName") String paperName,
             @Param("year") String year,
             @Param("scoreStatus") String scoreStatus,
+            @Param("scoreTableStatus") String scoreTableStatus,
+            @Param("userId") String userId,
             @Param("paperType") String paperType,
             @Param("valid") String valid
     );
@@ -36,6 +38,8 @@ public interface LwGradeMapper {
             @Param("paperName") String paperName,
             @Param("year") String year,
             @Param("scoreStatus") String scoreStatus,
+            @Param("scoreTableStatus") String scoreTableStatus,
+            @Param("userId") String userId,
             @Param("paperType") String paperType,
             @Param("valid") String valid
     );
