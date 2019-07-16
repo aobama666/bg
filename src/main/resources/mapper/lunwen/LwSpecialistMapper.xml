@@ -119,7 +119,7 @@
         )
     </insert>
 
-    <!--<update id="updateExpert" parameterType="com.sgcc.bg.lunwen.bean.LwSpecialist">
+    <update id="updateExpert" parameterType="com.sgcc.bg.lunwen.bean.LwSpecialist">
         UPDATE BG_LW_SPECIALIST
         <set>
             <if test="name != null and name != ''">
@@ -161,13 +161,13 @@
             <if test="valid != null and valid != ''">
                 VALID = #{valid,jdbcType=VARCHAR},
             </if>
-            UPDATE_TIME = #{updateTime}
+            UPDATE_TIME = sysdate
         </set>
         WHERE UUID = #{uuid,jdbcType=VARCHAR}
-    </update>-->
+    </update>
     <!--UPDATE_TIME = sysdate-->
 
-    <update id="updateExpert" parameterType="com.sgcc.bg.lunwen.bean.LwSpecialist">
+    <!--<update id="updateExpert" parameterType="com.sgcc.bg.lunwen.bean.LwSpecialist">
         UPDATE BG_LW_SPECIALIST SET
 
                 NAME  = #{name,jdbcType=VARCHAR},
@@ -195,7 +195,7 @@
                 UPDATE_TIME = sysdate
 
         WHERE UUID = #{uuid,jdbcType=VARCHAR}
-    </update>
+    </update>-->
 
     <update id="deleteSpecialist" parameterType="com.sgcc.bg.lunwen.bean.LwSpecialist">
         UPDATE BG_LW_SPECIALIST SET

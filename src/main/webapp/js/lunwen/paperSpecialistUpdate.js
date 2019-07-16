@@ -60,18 +60,12 @@ roomDetailInfo.messageSubmit= function(approvalUserd){
                         contentType: 'application/json',
                         data: JSON.stringify(specialist),
                         success: function (data) {
-                            roomDetailInfo.saveBtnClickFlag = 0;//保存按钮点击事件
-                            if (data.success == "true") {
-                                messager.tip("保存成功", 1000);
-                                roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
-                                window.parent.location.reload();
-                                var closeIndex = parent.layer.getFrameIndex(window.name);
-                                parent.layer.close(closeIndex);
-                            } else {
-                                messager.tip("保存失败", 5000);
-                                return;
-                            }
+                            parent.messager.tip(data.msg,5000);
+                            roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
+                            var closeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(closeIndex);
                         }
+
                     });
                 }
             }
