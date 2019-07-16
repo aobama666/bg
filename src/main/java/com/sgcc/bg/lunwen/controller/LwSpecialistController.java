@@ -301,7 +301,7 @@ public class LwSpecialistController {
         String ids = request.getParameter("selectList") == null ?" " : request.getParameter("selectList");
 
         List<LwSpecialist> list = lwSpecialistServiceImpl.exportSelectedItems(name,researchDirection,unitName,field,matchStatus,ids,response);
-        log.info("将要导出的条目index:",list.size());
+        log.info("将要导出专家信息的条数index:",list.size());
     }
 
     /**
@@ -357,14 +357,14 @@ public class LwSpecialistController {
     }
 
     /**
-     * 判断是否有论文在进行打分
+     * 判断是否有论文在进行打分 true(可进行更换专家操作) false（不可进行更换专家操作）
      * @param uuid
      * @return
      */
     @RequestMapping(value = "/judge" ,method = RequestMethod.GET)
     @ResponseBody
     public String judge(String uuid){
-        String boo = "false";
+        String boo = "true";
         List<PaperVO> paperVOList = lwSpecialistServiceImpl.paperMap(uuid);
         for(PaperVO paperVO : paperVOList){
             if("0".equals(paperVO.geteScoreStatus())){
@@ -404,6 +404,24 @@ public class LwSpecialistController {
             rw = new ResultWarp(ResultWarp.SUCCESS,"更换专家成功");
         }else {
             rw = new ResultWarp(ResultWarp.FAILED,"更换专家失败");
+        }
+        return JSON.toJSONString(rw);
+    }
+
+    /**
+     * 解除屏蔽状态
+     * @param uuid
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/removeShield" ,method = RequestMethod.GET)
+    public String removeShield(String uuid){
+        int i = lwSpecialistServiceImpl.removeShield(uuid);
+        ResultWarp rw =  null;
+        if(i>0){
+            rw = new ResultWarp(ResultWarp.SUCCESS,"成功");
+        }else {
+            rw = new ResultWarp(ResultWarp.FAILED,"失败");
         }
         return JSON.toJSONString(rw);
     }

@@ -113,12 +113,6 @@ public interface LwSpecialistMapper {
     List<String> getEmail();
 
     /**
-     * 批量添加
-     * @param lwSpecialistList
-     */
-    void addList(@Param("lwSpecialistList") List<LwSpecialist> lwSpecialistList);
-
-    /**
      * 获取论文匹配的专家
      * @param uuid
      * @return

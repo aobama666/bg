@@ -107,7 +107,7 @@ public class LwComprehensiveStatisticController {
         String ids = request.getParameter("selectList") == null ?" " : request.getParameter("selectList");
 
         List<PaperComprehensiveVO> paperComprehensiveVOList = lwComprehensiveStatisticServiceImpl.outPaperComprehensiveVO(response,year,paperName,author,paperId,ids);
-
+        log.info("将要导出综合统计的条数index:",paperComprehensiveVOList.size());
     }
 
 }

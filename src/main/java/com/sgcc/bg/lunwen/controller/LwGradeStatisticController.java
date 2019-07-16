@@ -142,6 +142,7 @@ public class LwGradeStatisticController {
         String field  = request.getParameter("field") == null?"":request.getParameter("field");
         String ids = request.getParameter("selectList") == null ?" " : request.getParameter("selectList");
         List<Map<String,Object>> outStatisticExcel = lwGradeStatisticServiceImpl.outStatisticExcel(year,paperName,paperId,field,ids,response);
+        log.info("将要导出评分统计的条数index:",outStatisticExcel.size());
     }
 
 }

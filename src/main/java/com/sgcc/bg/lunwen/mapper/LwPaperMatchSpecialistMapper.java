@@ -83,10 +83,11 @@ public interface LwPaperMatchSpecialistMapper {
      */
     int updateValid(String beforeUuid);
 
+
     /**
      * 新增
-     * @param paperMatchSpecialist
+     * @param lwPaperMatchSpecialist
      * @return
      */
-    int insertMatch(@Param("paperMatchSpecialist") List<LwPaperMatchSpecialist> paperMatchSpecialist);
+    int insertpaperMatch(LwPaperMatchSpecialist lwPaperMatchSpecialist);
 }

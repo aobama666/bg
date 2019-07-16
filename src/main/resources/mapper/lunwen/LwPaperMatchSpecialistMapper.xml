@@ -112,20 +112,19 @@
         WHERE SPECIALIST_ID = #{beforeUuid,jdbcType=VARCHAR}
     </update>
 
-    <insert id="insertMatch" parameterType="com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist">
+    <insert id="insertpaperMatch" parameterType="com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist">
         INSERT INTO BG_LW_PAPER_MATCH_EXPERT
-        (UUID, PAPER_ID, SPECIALIST_ID, SCORE_STATUS, CREATE_USER, CREATE_TIME, UPDATE_USER, UPDATE_TIME, VALID)
-        VALUES
-        <foreach collection="paperMatchSpecialist" item="match" index="index" separator=",">
-            (#{match.uuid},
-            #{match.paper_id},
-            #{match.specialistId},
-            #{match.scoreStatus},
-            #{match.createUser},
-            #{match.createTime},
-            #{match.updateUser},
-            #{match.updateTime},
-            #{match.valid})
-        </foreach>
+        (UUID, PAPER_ID, SPECIALIST_ID, SCORE_STATUS, CREATE_USER, CREATE_TIME, UPDATE_USER, UPDATE_TIME, VALID,SPECIALIST_SORT)
+        VALUES(
+            #{uuid},
+            #{paperId},
+            #{specialistId},
+            #{scoreStatus},
+            #{createUser},
+            #{createTime},
+            #{updateUser},
+            #{updateTime},
+            #{valid},
+            #{specialistSort})
     </insert>
 </mapper>

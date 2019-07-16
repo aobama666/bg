@@ -7,7 +7,8 @@
 <mapper namespace="com.sgcc.bg.lunwen.mapper.LwSpecialistMapper">
 
     <select id="expertList" resultType="com.sgcc.bg.lunwen.bean.LwSpecialist">
-        SELECT a.* FROM (
+        SELECT * FROM (
+          SELECT c.*,ROWNUM as r FROM (
             SELECT b.UUID AS uuid,
             b.NAME AS name,
             b.ADDRESS AS address,
@@ -20,27 +21,27 @@
             b.EMAIL AS email,
             b.UPDATE_TIME，
             b.MATCH_STATUS AS matchStatus,
-            ROWNUM AS ROWNO
+            ROWNUM rown
             FROM BG_LW_SPECIALIST b
             WHERE b.VALID = '1'
             <if test="name != null and name != ''">
-                AND b.NAME LIKE '%'||#{name}||'%'
+                AND b.NAME LIKE '%'||#{name,jdbcType=VARCHAR}||'%'
             </if>
             <if test="researchDirection != null and researchDirection != ''">
-                AND b.RESEARCH_DIRECTION LIKE '%'||#{researchDirection}||'%'
+                AND b.RESEARCH_DIRECTION LIKE '%'||#{researchDirection,jdbcType=VARCHAR}||'%'
             </if>
             <if test="unitName != null and unitName != ''">
-                AND b.UNIT_NAME LIKE '%'||#{unitName}||'%'
+                AND b.UNIT_NAME LIKE '%'||#{unitName,jdbcType=VARCHAR}||'%'
             </if>
             <if test="field != null and field !=''">
-                AND b.FIELD LIKE '%'||#{field}||'%'
+                AND b.FIELD LIKE '%'||#{field,jdbcType=VARCHAR}||'%'
             </if>
             <if test="matchStatus != null and matchStatus != ''">
-                AND b.MATCH_STATUS LIKE '%'||#{matchStatus}||'%'
+                AND b.MATCH_STATUS = #{matchStatus,jdbcType=VARCHAR}
             </if>
-            AND #{end} >= ROWNUM
-            order by b.UPDATE_TIME
-        ) a WHERE a.ROWNO > #{start}
+            ORDER BY b.UPDATE_TIME DESC nulls last) c
+         where #{end}>= ROWNUM )
+        WHERE r > #{start}
     </select>
 
     <select id="lwSpecialist" resultType="com.sgcc.bg.lunwen.bean.LwSpecialist">
@@ -118,48 +119,81 @@
         )
     </insert>
 
+    <!--<update id="updateExpert" parameterType="com.sgcc.bg.lunwen.bean.LwSpecialist">
+        UPDATE BG_LW_SPECIALIST
+        <set>
+            <if test="name != null and name != ''">
+                NAME  = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null and address!=''">
+                ADDRESS = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="unitName!=null and unitName!=''">
+                UNIT_NAME = #{unitName,jdbcType=VARCHAR},
+            </if>
+            <if test="unitNature != null and unitNature!= ''">
+                UNIT_NATURE = #{unitNature,jdbcType=VARCHAR},
+            </if>
+            <if test="position != null and position != ''">
+                POSITION = #{position,jdbcType=VARCHAR},
+            </if>
+            <if test="researchDirection != null and researchDirection != ''">
+                RESEARCH_DIRECTION = #{researchDirection,jdbcType=VARCHAR},
+            </if>
+            <if test="field != null and field != ''">
+                FIELD = #{field,jdbcType=VARCHAR},
+            </if>
+            <if test="phone !=null and phone != ''">
+                PHONE = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null and email !=''">
+                EMAIL = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="matchStatus != null and matchStatus != ''">
+                MATCH_STATUS = #{matchStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null and createUser != ''">
+                CREATE_USER = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="updateUser != null and updateUser != ''">
+                UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="valid != null and valid != ''">
+                VALID = #{valid,jdbcType=VARCHAR},
+            </if>
+            UPDATE_TIME = #{updateTime}
+        </set>
+        WHERE UUID = #{uuid,jdbcType=VARCHAR}
+    </update>-->
+    <!--UPDATE_TIME = sysdate-->
+
     <update id="updateExpert" parameterType="com.sgcc.bg.lunwen.bean.LwSpecialist">
         UPDATE BG_LW_SPECIALIST SET
-        <if test="name != null and name != ''">
-            NAME  = #{name,jdbcType=VARCHAR},
-        </if>
-        <if test="address != null and address!=''">
-            ADDRESS = #{address,jdbcType=VARCHAR},
-        </if>
-        <if test="unitName!=null and unitName!=''">
-            UNIT_NAME = #{unitName,jdbcType=VARCHAR},
-        </if>
-        <if test="unitNature != null and unitNature!= ''">
-            UNIT_NATURE = #{unitNature,jdbcType=VARCHAR},
-        </if>
-        <if test="position != null and position != ''">
-            POSITION = #{position,jdbcType=VARCHAR},
-        </if>
-        <if test="researchDirection != null and researchDirection != ''">
-            RESEARCH_DIRECTION = #{researchDirection,jdbcType=VARCHAR},
-        </if>
-        <if test="field != null and field != ''">
-            FIELD = #{field,jdbcType=VARCHAR},
-        </if>
-        <if test="phone !=null and phone != ''">
-            PHONE = #{phone,jdbcType=VARCHAR},
-        </if>
-        <if test="email != null and email !=''">
-            EMAIL = #{email,jdbcType=VARCHAR},
-        </if>
-        <if test="matchStatus != null and matchStatus != ''">
-            MATCH_STATUS = #{matchStatus,jdbcType=VARCHAR},
-        </if>
-        <if test="createUser != null and createUser != ''">
-            CREATE_USER = #{createUser,jdbcType=VARCHAR},
-        </if>
-        <if test="updateUser != null and updateUser != ''">
-            UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
-        </if>
-        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP}
-        <if test="valid != null and valid != ''">
-            ,VALID = #{valid,jdbcType=VARCHAR}
-        </if>
+
+                NAME  = #{name,jdbcType=VARCHAR},
+
+                ADDRESS = #{address,jdbcType=VARCHAR},
+
+                UNIT_NAME = #{unitName,jdbcType=VARCHAR},
+
+                UNIT_NATURE = #{unitNature,jdbcType=VARCHAR},
+
+                POSITION = #{position,jdbcType=VARCHAR},
+
+                RESEARCH_DIRECTION = #{researchDirection,jdbcType=VARCHAR},
+
+                FIELD = #{field,jdbcType=VARCHAR},
+
+                PHONE = #{phone,jdbcType=VARCHAR},
+
+                EMAIL = #{email,jdbcType=VARCHAR},
+
+                MATCH_STATUS = #{matchStatus,jdbcType=VARCHAR},
+
+                UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+
+                UPDATE_TIME = sysdate
+
         WHERE UUID = #{uuid,jdbcType=VARCHAR}
     </update>
 
@@ -260,7 +294,9 @@
         b.FIELD AS field,
         b.PHONE AS phone,
         b.EMAIL AS email,
-        CASE WHEN (b.MATCH_STATUS='1') THEN '已匹配' ELSE '未匹配' END AS matchStatus
+        CASE WHEN (b.MATCH_STATUS='1') THEN '已匹配'
+              WHEN (b.MATCH_STATUS='0') THEN '未匹配'
+              ELSE '已屏蔽' END AS matchStatus
         FROM BG_LW_SPECIALIST b
         WHERE b.VALID = '1'
         <if test="name != null and name != ''">
@@ -278,37 +314,12 @@
         <if test="matchStatus != null and matchStatus != ''">
             AND b.MATCH_STATUS LIKE '%'||#{matchStatus}||'%'
         </if>
-        order by b.UPDATE_TIME
+        order by b.UPDATE_TIME DESC nulls last
     </select>
 
     <select id="getEmail"  resultType="java.lang.String">
         SELECT EMAIL FROM BG_LW_SPECIALIST WHERE VALID = '1'
     </select>
-
-    <insert id="addList" parameterType="java.util.List">
-        INSERT INTO BG_LW_SPECIALIST
-          (UUID, NAME, ADDRESS, UNIT_NAME,UNIT_NATURE,POSITION,RESEARCH_DIRECTION,FIELD, PHONE,
-          EMAIL,MATCH_STATUS,CREATE_USER,CREATE_TIME,UPDATE_USER,UPDATE_TIME,VALID)
-        VALUES
-          <foreach collection="lwSpecialistList" item="specialist" index="index" separator=",">
-              (#{specialist.uuid,jdbcType=VARCHAR},
-              #{specialist.name,jdbcType=VARCHAR},
-              #{specialist.address,jdbcType=VARCHAR},
-              #{specialist.unitName,jdbcType=VARCHAR},
-              #{specialist.unitNature,jdbcType=VARCHAR},
-              #{specialist.position,jdbcType=VARCHAR},
-              #{specialist.researchDirection,jdbcType=VARCHAR},
-              #{specialist.field,jdbcType=VARCHAR},
-              #{specialist.phone,jdbcType=VARCHAR},
-              #{specialist.email,jdbcType=VARCHAR},
-              #{specialist.matchStatus,jdbcType=VARCHAR},
-              #{specialist.createUser,jdbcType=VARCHAR},
-              #{specialist.createTime,jdbcType=TIMESTAMP},
-              #{specialist.updateUser,jdbcType=VARCHAR},
-              #{specialist.updateTime,jdbcType=TIMESTAMP},
-              #{specialist.valid,jdbcType=VARCHAR})
-          </foreach>
-    </insert>
 
     <select id="paperSpecialist" resultType="java.util.Map">
         SELECT s.uuid,
@@ -333,7 +344,9 @@
             FIELD AS field,
             PHONE AS phone,
             EMAIL AS email,
-            MATCH_STATUS AS matchStatus
+            CASE WHEN (MATCH_STATUS='1') THEN '已匹配'
+                  WHEN (MATCH_STATUS='0') THEN '未匹配'
+                  ELSE '已屏蔽' END AS matchStatus
             FROM BG_LW_SPECIALIST
             WHERE VALID = '1'
             AND UUID IN (

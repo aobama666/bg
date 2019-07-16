@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -76,7 +77,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
         String userName = webUtils.getUsername();
         HRUser user = userService.getUserByUserName(userName);
         lwSpecialist.setUpdateUser(user.getUserId());
-        lwSpecialist.setUpdateTime(new Date());
+        //lwSpecialist.setUpdateTime(new Date());
         int i = lwSpecialistMapper.updateExpert(lwSpecialist);
         return i;
     }
@@ -261,7 +262,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                     if(cellValue[8] == null || cellValue[8] ==""){
                         errorInfo.append("手机号码不能为空！ ");
                         errorNum.add(8);
-                    }else if (cellValue[8].length()>20){
+                    }else if (!ParamValidationUtil.mobile(cellValue[8])){
                         errorInfo.append("手机号码不能超过20位！ ");
                         errorNum.add(8);
                     }
@@ -269,7 +270,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                     if(cellValue[9] == null || cellValue[9] ==""){
                         errorInfo.append("邮箱不能为空！ ");
                         errorNum.add(9);
-                    }else if (ParamValidationUtil.eimail(cellValue[9])){
+                    }else if (!ParamValidationUtil.eimail(cellValue[9])){
                         errorInfo.append("邮箱格式不对！ ");
                         errorNum.add(9);
                     }else {
@@ -361,7 +362,9 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
             }
         }
         if(!lwSpecialistList.isEmpty()) {
-            lwSpecialistMapper.addList(lwSpecialistList);
+            for(LwSpecialist lwSpecialist : lwSpecialistList){
+                lwSpecialistMapper.insertExpert(lwSpecialist);
+            }
         }
         String[] object = {"成功导入项目信息"+lwSpecialistList.size()+"条，失败"+errorList.size()+"条",errorUUID};
         return object;
@@ -411,7 +414,6 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
     /*@Transactional*/
     public int renewal(String beforeUuid, String nowUuid) {
         List<PaperVO> paperMap = lwSpecialistMapper.paperMap(beforeUuid);
-        List<LwPaperMatchSpecialist> paperMatchSpecialist = new ArrayList<>();
         for(PaperVO paperVO : paperMap){
             LwPaperMatchSpecialist lwPaperMatchSpecialist = new LwPaperMatchSpecialist();
             lwPaperMatchSpecialist.setUuid(Rtext.getUUID());
@@ -425,17 +427,24 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
             lwPaperMatchSpecialist.setCreateUser(user.getUserId());
             lwPaperMatchSpecialist.setUpdateUser(user.getUserId());
             lwPaperMatchSpecialist.setValid("1");
-            paperMatchSpecialist.add(lwPaperMatchSpecialist);
+            int findSort = Integer.parseInt(lwPaperMatchSpecialistMapper.findSpecialistSort(paperVO.getUuid()));
+            lwPaperMatchSpecialist.setSpecialistSort(String.valueOf(findSort+1));
+            //增加新的
+            lwPaperMatchSpecialistMapper.insertpaperMatch(lwPaperMatchSpecialist);
         }
         //删除原来专家匹配的信息
         int i = lwPaperMatchSpecialistMapper.updateValid(beforeUuid);
         //修改原来专家的匹配状态
         lwSpecialistMapper.updateMatchStatus(beforeUuid,"2");
-        //增加新的
-        int j = lwPaperMatchSpecialistMapper.insertMatch(paperMatchSpecialist);
         //修改新匹配专家的匹配状态
         lwSpecialistMapper.updateMatchStatus(nowUuid,"1");
-        return j;
+        return paperMap.size();
+    }
+
+    @Override
+    public int removeShield(String uuid) {
+        int i = lwSpecialistMapper.updateMatchStatus(uuid,"0");
+        return i;
     }
 
 

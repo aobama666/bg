@@ -76,4 +76,11 @@ public interface LwSpecialistService {
      * @return
      */
     int renewal(String beforeUuid, String nowUuid);
+
+    /**
+     * 解除屏蔽状态
+     * @param uuid
+     * @return
+     */
+    int removeShield(String uuid);
 }

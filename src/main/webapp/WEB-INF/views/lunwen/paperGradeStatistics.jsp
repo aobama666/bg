@@ -137,7 +137,7 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<!-- 本页面所需的js -->
-	<script src="<%=request.getContextPath()%>/js/lunwen/paperGradeStatistics.js"></script>
+	<script src="<%=request.getContextPath()%>/js/lunwen/paperGradeSt	atistics.js"></script>
 
 </body>
 <script type="text/javascript" charset="utf-8">
@@ -160,6 +160,8 @@
         a.style.display="none";
         b.style.display="none";
 	}
+
+
     /*$(function(){
         var right_ = document.getElementById("right_");
         changBkColor(right_);

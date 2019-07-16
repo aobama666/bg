@@ -52,6 +52,9 @@ queryAll.initDataGrid = function(){
         form:'#queryForm',
         pageSize:10,
         tablepage:$(".tablepage"),//分页组件
+        successFinal:function(data){
+            $("#datagrid").find("input[type=checkbox]").eq(0).attr("style","display:inline");
+        },
         columns: [
             {name: '',style:{width:"2%"}, data: 'uuid',checkbox:true, forMat:function(row){
               dataItems[index] = row;//将一行数据放在一个list中
@@ -144,6 +147,9 @@ queryAll.joinEvent = function () {
         fixed:false,//不固定
         maxmin:true,
         content:url,
+        end: function () {
+            queryAll.query();
+        }
     });
 }
 
@@ -294,7 +300,7 @@ queryAll.forDetails = function (uuid){
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;">专家详情</h4>',
-        area:['85%','65%'],
+        area:['85%','85%'],
         fixed:false,//不固定
         maxmin:true,
         content:url
@@ -304,7 +310,7 @@ queryAll.forDetails = function (uuid){
 }
 
 /*跳转论文信息详情*/
-roomDetailInfo.paper = function (uuid){
+/*roomDetailInfo.paper = function (uuid){
     var url = "/bg/lwPaper/detailLwPaper?uuid="+uuid;
     layer.open({
         type:2,
@@ -316,7 +322,7 @@ roomDetailInfo.paper = function (uuid){
     },function (index) {
         layer.close(index);
     });
-}
+}*/
 
 //返回
 roomDetailInfo.messageResign =function(){

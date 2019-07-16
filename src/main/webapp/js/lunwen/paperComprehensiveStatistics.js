@@ -45,7 +45,7 @@ queryAll.initDataGrid = function(){
         pageSize:10,
         tablepage:$(".tablepage"),//分页组件
         successFinal:function(data){
-            $("#datagrid").find("input[type=checkbox]").eq(0).attr("style","display:none");
+            $("#datagrid").find("input[type=checkbox]").eq(0).attr("style","display:inline");
         },
         columns: [
             {name: '',style:{width:"2%"}, data: 'id',checkbox:true, forMat:function(row){

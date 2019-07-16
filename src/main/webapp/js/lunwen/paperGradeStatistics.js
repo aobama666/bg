@@ -45,6 +45,7 @@ queryAll.refresh = function(){
 
 queryAll.field = function (field) {
     document.getElementById("field").value=field;
+    //document.getElementById('q').style.backgroundColor="#ff0000";
     queryAll.query();
 }
 

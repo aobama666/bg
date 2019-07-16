@@ -225,7 +225,8 @@
     </select>
 
     <select id="paperComprehensiveVOList" resultType="com.sgcc.bg.lunwen.bean.PaperComprehensiveVO">
-        SELECT a.* FROM (
+        SELECT * FROM (
+          SELECT a.*,ROWNUM as r FROM (
             SELECT
                p.UUID AS uuid,
                p.PAPER_ID AS  paperId,
@@ -244,25 +245,25 @@
                p.ALL_STATUS AS  allStatus,
                p.WEIGHTING_FRACTION AS weightingFraction,
                p.AVERAGE_FRACTION AS averageFraction,
-               ROWNUM AS ROWNO
-            FROM bg_lw_paper p
-            WHERE p.valid = '1'
-              AND p.ALL_STATUS = '6'
-                <if test="year != null and year != ''">
-                    and p.YEAR = #{year,jdbcType=VARCHAR}
-                </if>
-                <if test="author != null and author !=''">
-                    and p.AUTHOR = #{author,jdbcType=VARCHAR}
-                </if>
-                <if test="paperId != null and paperId != ''">
-                    and p.PAPER_ID = #{paperId,jdbcType=VARCHAR}
-                </if>
-                <if test="paperName != null and paperName != ''">
-                    and p.PAPER_NAME = #{paperName,jdbcType=VARCHAR}
-                </if>
-                AND #{end} >= ROWNUM
-        ORDER BY P.AVERAGE_FRACTION DESC nulls last
-        ) a WHERE a.ROWNO > #{start}
+               ROWNUM rown
+               FROM bg_lw_paper p
+               WHERE p.valid = '1'
+               AND p.ALL_STATUS = '6'
+                    <if test="year != null and year != ''">
+                        and p.YEAR = #{year,jdbcType=VARCHAR}
+                    </if>
+                    <if test="author != null and author !=''">
+                        and p.AUTHOR = #{author,jdbcType=VARCHAR}
+                    </if>
+                    <if test="paperId != null and paperId != ''">
+                        and p.PAPER_ID = #{paperId,jdbcType=VARCHAR}
+                    </if>
+                    <if test="paperName != null and paperName != ''">
+                        and p.PAPER_NAME = #{paperName,jdbcType=VARCHAR}
+                    </if>
+                    ORDER BY P.AVERAGE_FRACTION DESC nulls last) a
+            where #{end} >= ROWNUM )
+        WHERE r > #{start}
     </select>
 
     <select id="paperComprehensiveCount" resultType="java.lang.Integer">
@@ -460,32 +461,33 @@
 
 
     <select id="statisticsMap" resultType="java.util.Map">
-        SELECT a.* FROM (
-        SELECT
-        p.UUID AS uuid,
-        p.PAPER_ID AS  paperId,
-        p.PAPER_NAME AS paperName,
-        p.WEIGHTING_FRACTION AS weightingFraction,
-        p.AVERAGE_FRACTION AS averageFraction,
-        ROWNUM AS ROWNO
-        FROM bg_lw_paper p
-        WHERE p.valid = '1'
-        AND p.ALL_STATUS = '6'
-        <if test="year != null and year != ''">
-            and p.year = #{year,jdbcType=VARCHAR}
-        </if>
-        <if test="paperName != null and paperName != ''">
-            and p.paper_name  LIKE '%'||#{paperName,jdbcType=VARCHAR}||'%'
-        </if>
-        <if test="paperId != null and paperId != ''">
-            and p.paper_id = #{paperId,jdbcType=VARCHAR}
-        </if>
-        <if test="field != null and field != ''">
-            and p.field = #{field}
-        </if>
-        AND #{end} >= ROWNUM
-        ORDER BY P.AVERAGE_FRACTION DESC nulls last
-        ) a WHERE a.ROWNO > #{start}
+        SELECT * FROM (
+            SELECT a.*,ROWNUM as r FROM (
+                SELECT
+                p.UUID AS uuid,
+                p.PAPER_ID AS  paperId,
+                p.PAPER_NAME AS paperName,
+                p.WEIGHTING_FRACTION AS weightingFraction,
+                p.AVERAGE_FRACTION AS averageFraction,
+                ROWNUM rown
+                FROM bg_lw_paper p
+                WHERE p.valid = '1'
+                AND p.ALL_STATUS = '6'
+                <if test="year != null and year != ''">
+                    and p.year = #{year,jdbcType=VARCHAR}
+                </if>
+                <if test="paperName != null and paperName != ''">
+                    and p.paper_name  LIKE '%'||#{paperName,jdbcType=VARCHAR}||'%'
+                </if>
+                <if test="paperId != null and paperId != ''">
+                    and p.paper_id = #{paperId,jdbcType=VARCHAR}
+                </if>
+                <if test="field != null and field != ''">
+                    and p.field = #{field}
+                </if>
+                ORDER BY P.AVERAGE_FRACTION DESC nulls last ) a
+            where #{end} >= ROWNUM )
+        WHERE r > #{start}
     </select>
 
     <select id="statisticsCount" resultType="java.lang.Integer">
