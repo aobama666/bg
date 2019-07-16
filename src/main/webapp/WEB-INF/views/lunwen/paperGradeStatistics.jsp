@@ -137,7 +137,7 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<!-- 本页面所需的js -->
-	<script src="<%=request.getContextPath()%>/js/lunwen/paperGradeSt	atistics.js"></script>
+	<script src="<%=request.getContextPath()%>/js/lunwen/paperGradeStatistics.js"></script>
 
 </body>
 <script type="text/javascript" charset="utf-8">
@@ -161,29 +161,6 @@
         b.style.display="none";
 	}
 
-
-    /*$(function(){
-        var right_ = document.getElementById("right_");
-        changBkColor(right_);
-    )};
-	function right_(obj) {
-        obj.onmouseover=function () {
-            this.className="over"
-        }
-        obj.onmouseout=function () {
-            this.className="out"
-        }
-        obj.onmousedown=function () {
-            this.className="down"
-        }
-    }*/
-    /*$(function(){
-       $("#b").hover(function(){
-           $("#b".addClass('over'))
-       },function () {
-           $("#b".removeClass('over').addClass('out'))
-       });
-    });*/
 </script>
 
 <style>

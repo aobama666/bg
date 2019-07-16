@@ -45,7 +45,6 @@ queryAll.refresh = function(){
 
 queryAll.field = function (field) {
     document.getElementById("field").value=field;
-    //document.getElementById('q').style.backgroundColor="#ff0000";
     queryAll.query();
 }
 
@@ -185,9 +184,3 @@ queryAll.outEvent = function () {
     }
 }
 
-//返回
-roomDetailInfo.messageResign =function(){
-    roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
-    var closeIndex = parent.layer.getFrameIndex(window.name);
-    parent.layer.close(closeIndex);
-}
