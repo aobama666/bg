@@ -104,6 +104,7 @@
 	<!-- 本页面所需的js -->
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/stuff-tree/stuff-tree.js"></script>
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/organ-tree/organ-tree.js"></script>
+	<script src="<%=request.getContextPath()%>/js/lunwen/paperSpecialistManage.js"></script>
 
 </body>
 <script type="text/javascript">
@@ -135,16 +136,12 @@
                 type: "GET",
 				data:{beforeUuid:beforeUuid,nowUuid:nowUuid},
                 contentType: 'application/json',
-				success:function(data){
-                    if (data.success == "true") {
-                        messager.tip("更换专家成功", 3000);
-                        roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
-                        var closeIndex = parent.layer.getFrameIndex(window.name);
-                        parent.layer.close(closeIndex);
-					}else {
-                        messager.tip("更换专家失败", 3000);
-					}
-				}
+                success: function (data) {
+                    parent.messager.tip(data.msg,5000);
+                    roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
+                    var closeIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(closeIndex);
+                }
 			})
 		}
     }
