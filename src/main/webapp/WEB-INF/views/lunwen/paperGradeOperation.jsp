@@ -21,16 +21,19 @@
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-	<h2 style="text-align:center">论文评分表-${paperName}</h2>
+	<h2 style="text-align:center">${paperTypeValue}论文评分表——${paperName}</h2>
+    <form>
         <input style="display: none" value="${pmeId}" id="pmeId"/>
         <input style="display: none" value="${paperType}" id="paperType"/>
-    <div id="scoreTable">
-    <%--打分表内容table基础--%>
-    </div>
+        <input style="display: none" id="scoreTableLength"/>
+        <div id="scoreTable">
+        <%--js初始化填充规则及分数内容table--%>
+        </div>
+    </form>
 	<div class="main_div">
 		<div style="text-align: center;margin-top:2%">
-			<div class='btn  deleteButton' onclick="grade.addClose" >保存</div>
-			<div class='btn  deleteButton' onclick="grade.addClose" >返回</div>
+			<div class='btn  deleteButton' onclick="grade.addClose()" >保存</div>
+			<div class='btn  deleteButton' onclick="grade.addClose()" >返回</div>
 		</div>
 	</div>
 

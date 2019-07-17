@@ -3,7 +3,7 @@
 
 <mapper namespace="com.sgcc.bg.lunwen.mapper.LwGradeMapper">
 
-    <insert id="addLwGrade">
+    <insert id="saveLwGrade">
         insert into bg_lw_grade (uuid,pme_id,rule_id,socre,create_user,create_time,valid)
         values (
             #{uuid},
@@ -11,10 +11,21 @@
             #{ruleId},
             #{score},
             #{createUser},
-            #{createTime},
+            sysdate,
             #{valid}
         )
     </insert>
+
+    <update id="updateGrade">
+        update bg_lw_grade set
+        uuid = #{uuid,jdbcType=VARCHAR},
+        pme_id = #{pemId,jdbcType=VARCHAR},
+        rule_id = #{ruleId,jdbcType=VARCHAR},
+        socre = #{score,jdbcType=DOUBLE},
+        update_user = #{updateUser,jdbcType=VARCHAR},
+        update_time = sysdate
+        where uuid = #{uuid}
+    </update>
 
     <select id="selectGrade" resultType="java.util.Map">
         select * from(
@@ -36,7 +47,7 @@
             FROM BG_SYS_DATADICTIONARY
             WHERE pcode = 'score_status'
             and vaild = 1
-            and code = p.score_status) as scoreStatus,
+            and code = m.score_status) as scoreStatus,
             ROWNUM rown
             from    bg_lw_paper      p，
             bg_lw_paper_match_expert m,
@@ -86,7 +97,7 @@
         FROM BG_SYS_DATADICTIONARY
         WHERE pcode = 'score_status'
         and vaild = 1
-        and code = p.score_status) as scoreStatus,
+        and code = m.score_status) as scoreStatus,
         ROWNUM rown
         from    bg_lw_paper      p，
         bg_lw_paper_match_expert m,

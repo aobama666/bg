@@ -30,7 +30,7 @@
       update bg_lw_paper_match_expert set
       socre = #{score,jdbcType=VARCHAR},
       update_user = #{updateUser,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = sysdate
       where 1=1
         <if test="paperId != null and paperId != ''">
             and paper_id= #{paperId}
@@ -42,7 +42,9 @@
 
     <update id="updateScoreStatus">
       update bg_lw_paper_match_expert set
-        SCORE_STATUS = #{socreStatus,jdbcType=VARCHAR}
+        SCORE_STATUS = #{socreStatus,jdbcType=VARCHAR},
+        update_user = #{updateUser,jdbcType=VARCHAR},
+        update_time = sysdate
         where 1=1
         <if test="paperId != null and paperId != ''">
             and paper_id= #{paperId}

@@ -6,6 +6,7 @@ import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.WebUtils;
+import com.sgcc.bg.lunwen.bean.LwGrade;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.service.LwGradeService;
 import com.sgcc.bg.lunwen.service.LwPaperMatchSpecialistService;
@@ -16,12 +17,14 @@ import com.sgcc.bg.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -109,10 +112,18 @@ public class LwGradeController {
      */
     @RequestMapping(value="/gradeJumpOperation", method = RequestMethod.GET)
     public ModelAndView gradeOperation(String paperType,String pmeId,String paperName){
+        List<Map<String, String>> paperTypeList = dataDictionaryService.selectDictDataByPcode("paper_type");
+        String paperTypeValue = "";
+        for(Map<String,String> m : paperTypeList){
+            if(paperType.equals(m.get("K"))){
+                paperTypeValue = m.get("V");
+            }
+        }
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("paperType",paperType);
         mvMap.put("pmeId",pmeId);
         mvMap.put("paperName",paperName);
+        mvMap.put("paperTypeValue",paperTypeValue);
         ModelAndView modelAndView = new ModelAndView("lunwen/paperGradeOperation",mvMap);
         return modelAndView;
     }
@@ -123,12 +134,58 @@ public class LwGradeController {
     @ResponseBody
     @RequestMapping(value = "/gradeInit")
     public String gradeInit(String paperType){
+        //获取该条论文匹配专家信息的打分状态
         ResultWarp rw = null;
         List<Map<String,Object>> scoreTable = lwGradeService.nowScoreTable(paperType);
         List<String> firstIndexs = lwGradeService.firstIndexNums(paperType);
         rw = new ResultWarp(ResultWarp.SUCCESS ,"打分表初始化成功");
         rw.addData("scoreTable",scoreTable);
         rw.addData("firstIndexs",firstIndexs);
+        return JSON.toJSONString(rw);
+    }
+
+
+    public String gradeSave(HttpServletRequest request){
+        //获取论文关联专家信息表id
+        String pmeId = request.getParameter("pmeId");
+        Integer scoreTableLength = Integer.valueOf(request.getParameter("scoreTableLength"));
+        //轮循获取对应分数信息
+        String gradeId;
+        String secondIndexId;
+        String score;
+        String scoreAll = "";
+        LwGrade lwGrade;
+        String userUuid = getLoginUserUUID();
+        for(int i=0;i<scoreTableLength;i++){
+            //查看首次入库还是二次修改，根据关联id和二级指标id查询是否有对应数据，有的话修改，没有的话添加
+            secondIndexId =request.getParameter("secondIndexId"+i);
+            score = request.getParameter("score"+i);
+//            gradeId = request.getParameter("gradeId"+i);
+            lwGrade = new LwGrade();
+            lwGrade.setPmeId(pmeId);
+            lwGrade.setRuleId(secondIndexId);
+            lwGrade.setScore(Double.valueOf(score));
+            lwGrade.setCreateUser(userUuid);
+            lwGrade.setUpdateUser(userUuid);
+            //入库还是修改
+            lwGradeService.saveGrade(lwGrade);
+
+            //计算加权总分
+            scoreAll = "";
+        }
+        if(1==1){
+            //入库
+            //修改关联表打分状态，总分分数
+            lwPaperMatchSpecialistService.updateScore("","",getLoginUserUUID(),scoreAll);
+            lwPaperMatchSpecialistService.updateScoreStatus("","",getLoginUserUUID());
+            //修改论文表打分状态，全流程状态
+            lwPaperService.updateScoreStatus("",LwPaperConstant.SCORE_STATUS_SAVE);
+            lwPaperService.updateAllStatus("",LwPaperConstant.ALL_STATUS_FIVE);
+        }else{
+            //修改关联表总分分数
+        }
+        ResultWarp rw = null;
+        rw = new ResultWarp(ResultWarp.SUCCESS ,"保存分数成功");
         return JSON.toJSONString(rw);
     }
 

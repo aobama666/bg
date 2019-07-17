@@ -100,7 +100,7 @@ grade.gradeOperation = function (pmeId,paperName){
     var url = "/bg/lwGrade/gradeJumpOperation?paperType="+$("#paperType").val()+"&pmeId="+pmeId+"&paperName="+paperName;
     layer.open({
         type:2,
-        title:'<h4 style="height:42px;line-height:25px;">论文打分</h4>',
+        title:'<h4 style="height:42px;line-height:25px;"> </h4>',
         area:['85%','85%'],
         fixed:false,//不固定
         maxmin:true,

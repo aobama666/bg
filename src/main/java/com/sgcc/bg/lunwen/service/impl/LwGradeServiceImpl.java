@@ -1,6 +1,7 @@
 package com.sgcc.bg.lunwen.service.impl;
 
 import com.sgcc.bg.common.DateUtil;
+import com.sgcc.bg.lunwen.bean.LwGrade;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.mapper.LwGradeMapper;
 import com.sgcc.bg.lunwen.service.LwGradeService;
@@ -15,6 +16,16 @@ public class LwGradeServiceImpl implements LwGradeService {
 
     @Autowired
     private LwGradeMapper lwGradeMapper;
+
+    @Override
+    public Integer saveGrade(LwGrade lwGrade) {
+        return lwGradeMapper.saveLwGrade(lwGrade);
+    }
+
+    @Override
+    public Integer updateGrade(LwGrade lwGrade) {
+        return lwGradeMapper.updateGrade(lwGrade);
+    }
 
     @Override
     public List<Map<String, Object>> selectGrade(Integer pageStart, Integer pageEnd, String paperName, String year, String scoreStatus,String userId, String paperType, String valid) {

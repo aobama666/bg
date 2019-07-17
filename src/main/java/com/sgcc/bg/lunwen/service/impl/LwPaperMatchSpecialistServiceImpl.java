@@ -34,8 +34,8 @@ public class LwPaperMatchSpecialistServiceImpl implements LwPaperMatchSpecialist
     }
 
     @Override
-    public Integer updateScore(String paperId, String specialistId,String updateUser,Date updateTime,String score) {
-        return lwPaperMatchSpecialistMapper.updateScore(paperId,specialistId,updateUser,updateTime,score);
+    public Integer updateScore(String paperId, String specialistId,String updateUser,String score) {
+        return lwPaperMatchSpecialistMapper.updateScore(paperId,specialistId,updateUser,score);
     }
 
     @Override

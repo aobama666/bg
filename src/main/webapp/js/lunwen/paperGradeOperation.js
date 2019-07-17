@@ -4,6 +4,7 @@ var grade = {};
 var dicts = {};
 $(function(){
     grade.init();
+    // messager.tip("打分成功",5000);
 });
 
 grade.init = function () {
@@ -16,8 +17,10 @@ grade.init = function () {
         success: function (data) {
             var scoreTable = data.data.scoreTable;
             var firstIndexs = data.data.firstIndexs;
+            var scoreTableLength = scoreTable.length;
+            $("#scoreTableLength").val(scoreTableLength);
             var scoreTableContent = '<table border="1px" align="center" style="text-align:center;width:100%;height:450px">' +
-                '<tr style="background-color: rgba(213, 231, 231, 1);">' +
+                '<tr style="background-color: #d5e7e7;">' +
                     '<th>一级指标</th>' +
                     '<th>二级指标</th>' +
                     '<th>参考要求</th>' +
@@ -38,7 +41,7 @@ grade.init = function () {
                     backColor = randomColor();
                 }
                 scoreTableContent += '<tr style="background-color:'+backColor+'">';
-                scoreTableContent += '<td style="display: none;">'+'<input id="uuid'+i+'" value="'+scoreTable[i].UUID+'"/></td>';
+                scoreTableContent += '<td style="display: none;">'+'<input id="secondIndexId'+i+'" value="'+scoreTable[i].UUID+'"/></td>';
                 if(add){
                     if(i!==0){
                         j++;
@@ -55,12 +58,12 @@ grade.init = function () {
                 scoreTableContent += '<td width="15%">'+scoreTable[i].SECOND_INDEX+'('+scoreTable[i].SWEIGHTS+'%)</td>';
                 scoreTableContent += '<td width="50%" style="text-align: left">'+scoreTable[i].REQUIRE+'</td>';
                 scoreTableContent += '<td width="10%">0~100</td>';
-                scoreTableContent += '<td width="10%" class="addInputStyle"><input type="text"/></td>';
+                scoreTableContent += '<td width="10%" class="addInputStyle"><input id="score'+i+'" type="text" class="validNull"/></td>';
                 scoreTableContent += '</tr>';
             }
-            scoreTableContent += +'<tr>' +
-                '<th style="background-color: rgba(213, 231, 231, 1)" colspan="4" >总分</th>' +
-                '<th style="background-color: rgba(213, 231, 231, 1)">0</th>' +
+            scoreTableContent += '<tr style="background-color: #d5e7e7;">' +
+                '<th colspan="4" >总分</th>' +
+                '<th>0</th>' +
                 '</tr>' +
                 '</table>';
             $("#scoreTable").html(scoreTableContent);
@@ -70,9 +73,10 @@ grade.init = function () {
 
 
 /**
- * 三种颜色轮循基础材料
+ * 三种颜色轮循基础材料,rgba不兼容ie8,故使用下方对应编码
  */
-var colors = ['rgba(255, 255, 204, 1)','rgba(204, 255, 255, 1)','rgba(255, 230, 255, 1)'];
+// var colors = ['rgba(255, 255, 204, 1)','rgba(204, 255, 255, 1)','rgba(255, 230, 255, 1)'];
+var colors = ['#ffffcc','#ccffff','#ffe6ff'];
 var randomColor = iteratorColor(colors);
 function iteratorColor(array) {
     var i =0;
@@ -86,6 +90,13 @@ function iteratorColor(array) {
     }
 }
 
+
+/**
+ * 触发保存操作
+ */
+grade.saveGrade = function () {
+
+}
 
 
 /*返回按钮，关闭弹出框页面*/
