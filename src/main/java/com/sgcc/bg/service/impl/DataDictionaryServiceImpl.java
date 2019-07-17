@@ -43,10 +43,10 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
 	}
 
 
-
 	@Override
 	public List<Map<String, String>> selectDictDataByPcode(String pcode) {
 		 List<Map<String, String>> list = dictMapper.getDictDataByPcode(pcode);
 		return  list;
 	}
+
 }
