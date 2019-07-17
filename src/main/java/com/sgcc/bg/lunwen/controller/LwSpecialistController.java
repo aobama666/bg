@@ -217,9 +217,9 @@ public class LwSpecialistController {
             i = lwSpecialistServiceImpl.updateExpert(lwSpecialist);
         }
         if(i>0){
-            rw = new ResultWarp(ResultWarp.SUCCESS,"成功");
+            rw = new ResultWarp(ResultWarp.SUCCESS,"操作成功");
         }else {
-            rw = new ResultWarp(ResultWarp.FAILED,"失败");
+            rw = new ResultWarp(ResultWarp.FAILED,"操作失败");
         }
         return JSON.toJSONString(rw);
     }
