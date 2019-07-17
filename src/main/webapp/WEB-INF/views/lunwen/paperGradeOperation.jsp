@@ -3,6 +3,7 @@
 <%@page import="java.util.Map"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%--<html style="overflow:hidden">--%>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -23,11 +24,11 @@
 	<h2 style="text-align:center">论文评分表-${paperName}</h2>
         <input style="display: none" value="${pmeId}" id="pmeId"/>
         <input style="display: none" value="${paperType}" id="paperType"/>
-    <span id="scoreTable">
+    <div id="scoreTable">
     <%--打分表内容table基础--%>
-    </span>
+    </div>
 	<div class="main_div">
-		<div style="text-align: center;">
+		<div style="text-align: center;margin-top:2%">
 			<div class='btn  deleteButton' onclick="grade.addClose" >保存</div>
 			<div class='btn  deleteButton' onclick="grade.addClose" >返回</div>
 		</div>

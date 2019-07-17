@@ -119,9 +119,9 @@
         select s.uuid,
             f.first_index,
             s.second_index,
-            s.weights,
-            s.second_order,
-            f.first_order
+            s.weights sweights,
+            s.REFERENCE_REQUIRE require,
+            f.weights fweights
         from bg_lw_rule_first f,
             bg_lw_rule_second s
         where 1 = 1
