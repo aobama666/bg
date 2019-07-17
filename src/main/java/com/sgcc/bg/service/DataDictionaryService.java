@@ -1,5 +1,6 @@
 package com.sgcc.bg.service;
 
+import java.util.List;
 import java.util.Map;
 
 public interface DataDictionaryService {
@@ -16,6 +17,8 @@ public interface DataDictionaryService {
 	 * @param pcode
 	 * @return 返回json字符串
 	 */
-	String getDictDataJsonStr(String pcode);
+	String getDictDataJsonStr(String pcode);		
+	
+    List<Map<String, String>>  selectDictDataByPcode(String pcode);
 
 }

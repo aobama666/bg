@@ -1,0 +1,343 @@
+*{margin:0;padding:0}
+html,body{width:100%;height:100%;}
+ul{list-style: none;}
+table a{color:blue;text-decoration: underline;}
+table a:HOVER{color:red;}
+/* start 閹兼粎鍌ㄥ鍡涚炊閺嶅洦鏂佹稉濠傚箵娴滃娆� */
+.changeQuery:HOVER{
+	border-color:#A2C1F5 ;
+}
+/* end 閹兼粎鍌ㄥ鍡涚炊閺嶅洦鏂佹稉濠傚箵娴滃娆� */
+
+/* start 閻愮懓鍤弬鏉款杻瀵懓鍤柅澶嬪缁夋垶濡ф總鏍уС缁鐎烽柅澶嬪濡楋拷 */
+body{
+	padding:0 5px;
+}
+#queryForm{
+	padding-top:10px;
+}
+.content_top {
+    line-height: 60px;
+    background-color: #fff;
+    width: 100%;
+    border-bottom: solid 1px #e3e3e3;
+    text-indent: 20px;
+    font-size: 18px;
+}
+body #hiddenDiv{
+	width:100%;
+	height:100%;
+	background-color: #cbcbcb;
+	opacity:0.5;
+	filter:alpha(opacity = 50);
+	position:absolute;
+	top:0;
+	left:0;
+	display: none;
+}
+/* end  閻愮懓鍤弬鏉款杻瀵懓鍤柅澶嬪缁夋垶濡ф總鏍уС缁鐎烽柅澶嬪濡楋拷 */
+
+/* start 婵傛牕濮崇猾璇茬�烽柅澶嬪  */
+body div.btn_type_box{
+	background-color:#fff;
+	position: absolute;
+	width: 300px; 			
+	height:400px;
+	left:0;
+	right:0;
+	bottom:0;
+	top:0;
+	margin:auto;
+	display: none;
+}
+/* end  婵傛牕濮崇猾璇茬�烽柅澶嬪  */
+
+/* start 瀵懓鍤鍡楀彠闂傤厽瀵滈柦锟� */
+body div.btn_type_box img{
+	height:15px;
+	width:15px;
+	float:right;
+	margin-top:6px;
+	margin-right:6px;
+}
+body div.btn_type_box img:HOVER{
+	height:17px;
+	width:17px;
+	cursor: pointer;
+}
+/* end 瀵懓鍤鍡楀彠闂傤厽瀵滈柦锟�  */
+
+/* start 閸忣厺閲滄總鏍�嶉惃鍕瘻闁斤拷  */
+body div.btn_type_box .btn_type{
+	width:60%;
+	height:40px;
+	margin:0 auto;
+	margin-top:15px;
+	background-color: #fefefe;
+	color: #5e5e5e;
+	text-align: center;
+	line-height: 40px;
+	font-size: 16px;
+	font-weight: bold;
+	border:1px solid #8EC6C4;
+	border-radius:4px;
+	-webkit-user-select:none;
+	-moz-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+	cursor: pointer;
+}
+.btn_type_box ul{
+	padding-top:20px;
+}
+body div.btn_type_box .btn_type:HOVER {
+	box-shadow:0 0 10px #4CECDF;
+	background-color: #FaFaFa;
+}
+body div.btn_type_box .btn_type:ACTIVE {
+	background-color: #F7F7F7;
+}
+/* end 閸忣厺閲滄總鏍�嶉惃鍕瘻闁斤拷  */
+
+/* 2019.04.11婕旂ず涓績椤甸潰鏂板鏍峰紡 */
+.sheach .changeYear, .sheach .changeMonth{
+	width:6%;
+}
+.sheach .changeYear{
+	margin-right:15px;
+}
+.yearTitle{
+	margin-left:20px;
+}
+.grid-title{
+	border-bottom:1px solid #ccc;
+	margin:10px 0;
+}
+.grid-title h3{
+	font-size: 16px;
+    width: 122px;
+    border: 1px solid #ccc;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    margin: 0;
+    border-bottom: 0;
+}
+.backBtn{
+	margin-top:-40px;
+}
+.tableStyle{
+	width: 94%;
+    border: 1px solid #ccc;
+    margin-bottom: 30px;
+    table-layout: fixed;
+    margin: 0 auto;
+ 
+}
+.specialTable td:first-child{
+background-color:#D5E7E7;
+}
+.specialTable td:first-child+td+td{
+background-color:#D5E7E7;
+}
+
+.tableStyle td,.tableStyle th{
+	border: 1px solid #ccc;
+    text-align: center;
+    padding: 5px 10px;
+    text-align:left;
+    padding-left: 20px;
+}
+.specialTable td:nth-child(2n+1) {
+   background-color:#D5E7E7;
+}
+.width-one{
+	width:25%;
+}
+.width-two{
+	width:15%;
+}
+.tableStyle .width-three{
+	width:6%;
+}
+.details{
+	margin-bottom: 30px;
+}
+.tableTitle{
+	font-weight: 700;
+    font-size: 16px;
+    padding-left: 3%;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+.visitLeader td,.visitLeader th{
+	width:33%;
+	text-align:center;
+}
+.visitUnitAccompany th,.visitUnitAccompany td{
+	width:50%;
+	text-align:center;
+}
+.approveMessage{
+	width: 98%;
+    margin: 30px auto 10px;
+}
+.visitApprove{
+	width:98%;
+}
+.visitApprove th,.visitApprove td{
+	text-align:center;
+}
+.demo-class .layui-layer-btn .layui-layer-btn0 {
+    border-color: #2D9592;
+    background-color: #2D9592;
+}
+.maxBox{
+/* 	height:100px; */
+	overflow-y:auto;
+	width:94%;
+	margin:0 auto;
+}
+.maxLine{
+	border: 1px solid #ccc;
+	height:125px
+}
+.maxLine table{
+	margin-top:-1px;
+}
+.maxBox .tableStyle{
+	width:100%;
+}
+.tableStyle input[disabled] {
+    cursor: not-allowed;
+    background-color:#ebebe4;
+}
+ .tableStyle .addInputStyle{
+	padding:0;
+}
+.addInputStyle input,.addInputStyle select{
+	width:100%;
+	height:100%;
+	border:0;
+	padding-left:10px;
+}
+.mustWrite{
+	color: red;
+    font-weight: 700;
+    font-size: 16px;
+    display: inline-block;
+    height: 18px;
+    vertical-align: middle;
+}
+.contentBox .btnBox{
+	margin-top: -30px;
+    margin-right: 3%;
+}
+/* .contentBox .maxBox{
+	margin-top:5px;
+} */
+.commonBtn{
+	height: 30px;
+    /* width: 100px; */
+    color: #fff;
+    margin-left: 15px;
+    border-width: 0;
+    padding: 5px 12px;
+    font-size: 14px;
+    outline: none !important;
+    background: #2d9592;
+    filter: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    text-shadow: none;
+}
+.btn {
+    height: 30px;
+    /* width: 100px; */
+    color: #fff;
+    margin-left: 15px;
+    border-width: 0;
+    padding: 5px 12px;
+    font-size: 14px;
+    outline: none !important;
+    background: #2d9592;
+    filter: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    text-shadow: none;
+}
+.btnContent{
+    text-align: center;
+    margin: 50px 0 20px;
+   }
+ .reserveState{
+ 	width:98%;
+ }
+ .reserveState tr th{
+ padding:15px 0;
+ 
+  }
+  .thTableStyle tr td,.thTableStyle tr th{
+  	text-align:center;
+  }
+.thTableStyle tr td:nth-child(2n+1){
+	background-color:#fff;
+}
+.thTableStyle tr th{
+	background-color:#D5E7E7;
+}
+.tableStyle  .redColor{
+	color:red;
+}
+.visitApprove th{
+	font-weight:normal;
+	padding-top:12px;
+	padding-bottom:12px;
+	
+}
+.textbox{
+	width:100%!important;
+	border:0!important;
+}
+.panel-header, .panel-body{
+	border-color:#ccc!important;
+}
+.combo-arrow{
+	    background:#fff!important;
+}
+.inputChange{
+	padding:0!important;
+	margin:0!important;
+	text-align:center!important;
+}
+.inputUserId{
+	 width: 50px!important;
+     margin-top: 10px!important;
+ 
+}
+/* cyj  楠岃瘉瀛楁涓虹┖   鏍峰紡鏄慨鏀� 鎴愮孩鑹�*/
+table td .validRefuse{
+	border:solid 1px red!important;
+}
+.validRefuses{
+	border:solid 1px red!important;
+}
+.tableStyle tr{
+	height:31px;
+}
+ .visitUnitAccompany input[type="text"]:disabled{
+ background:#fff;
+ }
+ .detailsLeft{
+ padding-left:5px;
+ }
+ textarea{
+ border:1px solid #ccc;
+ }
+ 
+.tableStyle .rowsStyle{
+	 	height: 150px;
+}
+ 
