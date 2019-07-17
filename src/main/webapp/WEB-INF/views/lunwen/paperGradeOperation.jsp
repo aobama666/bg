@@ -21,10 +21,13 @@
 </head>
 <body>
 	<h2 style="text-align:center">论文评分表-${paperName}</h2>
-	<span>pmeId:${pmeId}</span>
-	<span>paperType:${paperType}</span>
+        <input style="display: none" value="${pmeId}" id="pmeId"/>
+        <input style="display: none" value="${paperType}" id="paperType"/>
+    <span id="scoreTable">
+    <%--打分表内容table基础--%>
+    </span>
 	<div class="main_div">
-		<div style="text-align: center;padding-top: 30%">
+		<div style="text-align: center;">
 			<div class='btn  deleteButton' onclick="grade.addClose" >保存</div>
 			<div class='btn  deleteButton' onclick="grade.addClose" >返回</div>
 		</div>
@@ -46,7 +49,7 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<!-- 本页面所需的js -->
- 	<script src="<%=request.getContextPath()%>/js/lunwen/paperGrade.js"></script>
+ 	<script src="<%=request.getContextPath()%>/js/lunwen/paperGradeOperation.js"></script>
 </body>
 
 </html>

@@ -1,5 +1,6 @@
 package com.sgcc.bg.lunwen.service.impl;
 
+import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.mapper.LwGradeMapper;
 import com.sgcc.bg.lunwen.service.LwGradeService;
@@ -25,5 +26,15 @@ public class LwGradeServiceImpl implements LwGradeService {
     public Integer selectGradeCount(Integer pageStart, Integer pageEnd, String paperName, String year, String scoreStatus,String userId, String paperType, String valid) {
         return lwGradeMapper.selectGradeCount(pageStart,pageEnd,paperName,year,scoreStatus
                 ,LwPaperConstant.SCORE_TABLE_ON,userId,paperType,valid);
+    }
+
+    @Override
+    public List<Map<String, Object>> nowScoreTable(String paperType) {
+        return lwGradeMapper.nowScoreTable(DateUtil.getYear(),paperType,LwPaperConstant.VALID_YES);
+    }
+
+    @Override
+    public List<String> firstIndexNums(String paperType) {
+        return lwGradeMapper.firstIndexNums(DateUtil.getYear(),paperType,LwPaperConstant.VALID_YES);
     }
 }

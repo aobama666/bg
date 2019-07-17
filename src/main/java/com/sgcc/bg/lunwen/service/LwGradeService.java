@@ -20,4 +20,14 @@ public interface LwGradeService {
     Integer selectGradeCount(Integer pageStart,Integer pageEnd,String paperName,
                              String year,String scoreStatus,String userId, String paperType,String valid
     );
+
+    /**
+     * 初始打分表页面
+     */
+    List<Map<String,Object>> nowScoreTable(String paperType);
+
+    /**
+     * 每个一级指标对应的二级指标数量
+     */
+    List<String> firstIndexNums(String paperType);
 }

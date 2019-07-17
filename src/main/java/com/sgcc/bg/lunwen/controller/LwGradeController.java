@@ -3,6 +3,7 @@ package com.sgcc.bg.lunwen.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.DateUtil;
+import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
@@ -85,7 +86,7 @@ public class LwGradeController {
         //分页获取对应某批论文信息
         List<Map<String, Object>> lwPaperList =  lwGradeService.selectGrade(
                 pageStart,pageEnd,paperName, DateUtil.getYear(),scoreStatus,userId,paperType,LwPaperConstant.VALID_YES);
-        //获取对应某批论文信息总数
+        //获取总数
         Integer lwPaperCount = lwGradeService.selectGradeCount(
                 pageStart,pageEnd,paperName, DateUtil.getYear(),scoreStatus,userId,paperType,LwPaperConstant.VALID_YES);
 
@@ -103,18 +104,32 @@ public class LwGradeController {
         return jsonStr;
     }
 
-
     /**
      * 跳转至——论文打分操作
      */
-    @RequestMapping(value="/grade_jump_operation", method = RequestMethod.GET)
-    public ModelAndView grade_operation(String paperType,String pmeId,String paperName){
+    @RequestMapping(value="/gradeJumpOperation", method = RequestMethod.GET)
+    public ModelAndView gradeOperation(String paperType,String pmeId,String paperName){
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("paperType",paperType);
         mvMap.put("pmeId",pmeId);
         mvMap.put("paperName",paperName);
         ModelAndView modelAndView = new ModelAndView("lunwen/paperGradeOperation",mvMap);
         return modelAndView;
+    }
+
+    /**
+     * 打分表初始化
+     */
+    @ResponseBody
+    @RequestMapping(value = "/gradeInit")
+    public String gradeInit(String paperType){
+        ResultWarp rw = null;
+        List<Map<String,Object>> scoreTable = lwGradeService.nowScoreTable(paperType);
+        List<String> firstIndexs = lwGradeService.firstIndexNums(paperType);
+        rw = new ResultWarp(ResultWarp.SUCCESS ,"打分表初始化成功");
+        rw.addData("scoreTable",scoreTable);
+        rw.addData("firstIndexs",firstIndexs);
+        return JSON.toJSONString(rw);
     }
 
     /**
