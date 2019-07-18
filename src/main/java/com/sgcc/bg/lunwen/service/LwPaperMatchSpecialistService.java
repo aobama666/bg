@@ -45,4 +45,9 @@ public interface LwPaperMatchSpecialistService {
      */
     List<LwPaperMatchSpecialistVo> selectPmsManual(String paperId);
 
+    /**
+     * 获取对应分数-打分详情中显示总分
+     */
+    double getTotalScore(String pmeId);
+
 }

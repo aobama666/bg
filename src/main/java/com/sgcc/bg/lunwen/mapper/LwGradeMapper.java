@@ -58,6 +58,7 @@ public interface LwGradeMapper {
     List<Map<String,Object>> nowScoreTable(
             @Param("year") String year,
             @Param("paperType") String paperType,
+            @Param("pmeId") String pmeId,
             @Param("valid") String valid
     );
 

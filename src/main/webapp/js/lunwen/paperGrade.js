@@ -67,10 +67,10 @@ grade.initDataGrid = function(){
                 forMat:function(row){
                     if(row.SCORE == undefined){
                         return "<a title = '点击查看打分详情' style='width:250px;' id='"+row.PMEID+"'" +
-                            "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.PMEID+"','"+row.PAPERNAME+"','"+row.PAPERUUID+"')>打分</a>";
+                            "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.PMEID+"','"+row.PAPERNAME+"','"+row.PAPERUUID+"','"+row.SCORESTATUSCODE+"')>打分</a>";
                     }else{
                         return "<a title = '点击查看打分详情' style='width:250px;' id='"+row.PAPERUUID+"'" +
-                            "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.PMEID+"','"+row.PAPERNAME+"','"+row.PAPERUUID+"')>"+row.SCORE +"</a>";
+                            "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.PMEID+"','"+row.PAPERNAME+"','"+row.PAPERUUID+"','"+row.SCORESTATUSCODE+"')>"+row.SCORE +"</a>";
                     }
                 }},
             {name: '打分状态',style:{width:"50px"}, data: 'SCORESTATUS'}
@@ -96,8 +96,9 @@ grade.forDetails = function (id){
 
 
 /*弹出打分框 */
-grade.gradeOperation = function (pmeId,paperName,paperUuid){
-    var url = "/bg/lwGrade/gradeJumpOperation?paperType="+$("#paperType").val()+"&pmeId="+pmeId+"&paperName="+paperName+"&paperUuid="+paperUuid;
+grade.gradeOperation = function (pmeId,paperName,paperUuid,scoreStatus){
+    var url = "/bg/lwGrade/gradeJumpOperation?paperType="+$("#paperType").val()
+        +"&pmeId="+pmeId+"&paperName="+paperName+"&paperUuid="+paperUuid+"&scoreStatus="+scoreStatus;
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;"> </h4>',

@@ -14,7 +14,7 @@
 	<!-- newPage、item.css 页面css-->
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/item.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/newPage.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
-    <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/datagrid.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css">   
+    <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/datagrid.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css">
 	<!-- easyuicss -->
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
 	<!-- 本页面所需css -->
@@ -22,10 +22,12 @@
 </head>
 <body>
 	<h2 style="text-align:center">${paperTypeValue}论文评分表——${paperName}</h2>
-    <form>
+	<form id="queryForm" method="post" enctype="multipart/form-data">
         <input style="display: none" value="${pmeId}" id="pmeId" name="pmeId"/>
         <input style="display: none" value="${paperUuid}" id="paperUuid" name="paperUuid"/>
         <input style="display: none" value="${paperType}" id="paperType" name="paperType"/>
+        <input style="display: none" value="${scoreStatus}" id="scoreStatus" name="scoreStatus"/>
+        <input style="display: none" value="${totalScoreAfter}" id="totalScoreAfter" name="totalScoreAfter"/>
         <input style="display: none" id="scoreTableLength" name="scoreTableLength"/>
         <div id="scoreTable">
         <%--js初始化填充规则及分数内容table--%>
@@ -33,26 +35,33 @@
     </form>
 	<div class="main_div">
 		<div style="text-align: center;margin-top:2%">
-			<div class='btn  deleteButton' onclick="grade.saveGrade()" >保存</div>
+			<c:if test="${scoreStatus=='0'}">
+				<div class='btn  deleteButton' onclick="grade.saveGrade()" >保存</div>
+			</c:if>
+			<c:if test="${scoreStatus=='1'}">
+				<div class='btn  deleteButton' onclick="grade.saveGrade()" >修改</div>
+			</c:if>
 			<div class='btn  deleteButton' onclick="grade.addClose()" >返回</div>
 		</div>
 	</div>
 
-	
-	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script> 
+
+	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
      <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/locale/easyui-lang-zh_CN.js"></script>
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
-	
-    <script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script> 
-     
+
+    <script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>
+
  	<script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>  	<!-- 弹框.js  --> 
+	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>  	<!-- 弹框.js  -->
 	<!-- 引入datagrid -->
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
     <!-- 验证校验公共方法，提示框公共方法 -->
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
+
 	<!-- 本页面所需的js -->
  	<script src="<%=request.getContextPath()%>/js/lunwen/paperGradeOperation.js"></script>
 </body>

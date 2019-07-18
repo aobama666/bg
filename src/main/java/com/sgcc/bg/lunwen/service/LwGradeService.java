@@ -35,7 +35,7 @@ public interface LwGradeService {
     /**
      * 初始打分表页面
      */
-    List<Map<String,Object>> nowScoreTable(String paperType);
+    List<Map<String,Object>> nowScoreTable(String paperType,String pmeId);
 
     /**
      * 每个一级指标对应的二级指标数量

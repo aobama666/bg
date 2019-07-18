@@ -102,6 +102,10 @@
         order by m.SPECIALIST_SORT
     </select>
 
+    <select id="getTotalScore" resultType="java.lang.Double">
+        select score from  BG_LW_PAPER_MATCH_EXPERT where uuid = #{pmeId}
+    </select>
+
     <update id="updateValid" parameterType="com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist">
         UPDATE BG_LW_PAPER_MATCH_EXPERT
         SET VALID = '0'

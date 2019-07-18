@@ -80,4 +80,6 @@ public interface LwPaperMatchSpecialistMapper {
      * 新增——更换专家使用，author：gaoshuo
      */
     int insertpaperMatch(LwPaperMatchSpecialist lwPaperMatchSpecialist);
+
+    double getTotalScore(@Param("pmeId") String pmeId);
 }

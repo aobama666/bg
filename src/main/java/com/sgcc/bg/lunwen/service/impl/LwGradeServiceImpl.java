@@ -40,8 +40,8 @@ public class LwGradeServiceImpl implements LwGradeService {
     }
 
     @Override
-    public List<Map<String, Object>> nowScoreTable(String paperType) {
-        return lwGradeMapper.nowScoreTable(DateUtil.getYear(),paperType,LwPaperConstant.VALID_YES);
+    public List<Map<String, Object>> nowScoreTable(String paperType,String pmeId) {
+        return lwGradeMapper.nowScoreTable(DateUtil.getYear(),paperType,pmeId,LwPaperConstant.VALID_YES);
     }
 
     @Override

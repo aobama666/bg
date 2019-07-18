@@ -49,6 +49,7 @@
             WHERE pcode = 'score_status'
             and vaild = 1
             and code = m.score_status) as scoreStatus,
+            m.score_status scoreStatusCode,
             ROWNUM rown
             from    bg_lw_paper      p，
             bg_lw_paper_match_expert m,
@@ -134,14 +135,24 @@
             s.weights sweights,
             s.REFERENCE_REQUIRE require,
             f.weights fweights
+            <if test="pmeId != null and pmeId != ''">
+                ,g.score
+            </if>
         from bg_lw_rule_first f,
             bg_lw_rule_second s
+            <if test="pmeId != null and pmeId != ''">
+                ,bg_lw_grade g
+            </if>
         where 1 = 1
             and f.uuid = s.first_index_id
             and f.year = #{year}
             and f.paper_type = #{paperType}
             and f.valid = #{valid}
             and s.valid = #{valid}
+            <if test="pmeId != null and pmeId != ''">
+                and g.rule_id = s.uuid
+                and g.pme_id = #{pmeId}
+            </if>
             order by first_order, second_order
     </select>
 

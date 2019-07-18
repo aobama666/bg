@@ -62,4 +62,9 @@ public class LwPaperMatchSpecialistServiceImpl implements LwPaperMatchSpecialist
     public List<LwPaperMatchSpecialistVo> selectPmsManual(String paperId) {
         return lwPaperMatchSpecialistMapper.selectPmsManual(paperId,LwPaperConstant.VALID_YES);
     }
+
+    @Override
+    public double getTotalScore(String pmeId) {
+        return lwPaperMatchSpecialistMapper.getTotalScore(pmeId);
+    }
 }

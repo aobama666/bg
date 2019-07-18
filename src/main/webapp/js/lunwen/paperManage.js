@@ -321,7 +321,6 @@ paperList.withdrawScoreTable = function () {
         messager.tip("每次只能操作一条数据",2000);
         return;
     }
-    //不在前台做是否能删除的判断，在后台判断，记录日志，同时比前台更safe
     $.messager.confirm( "撤回提示", "确认撤回选中论文打分表吗",
         function(r){
             if(r){
