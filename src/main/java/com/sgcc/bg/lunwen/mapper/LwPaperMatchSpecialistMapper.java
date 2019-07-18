@@ -28,8 +28,7 @@ public interface LwPaperMatchSpecialistMapper {
      * 修改专家对应某论文打分分数
      */
     Integer updateScore(
-            @Param("paperId") String paperId,
-            @Param("specialistId") String specialistId,
+            @Param("uuid") String uuid,
             @Param("updateUser") String updateUser,
             @Param("score") String score);
 
@@ -37,9 +36,9 @@ public interface LwPaperMatchSpecialistMapper {
      * 修改打分状态
      */
     Integer updateScoreStatus(
-            @Param("paperId") String paperId,
-            @Param("specialistId") String specialistId,
-            @Param("socreStatus") String socreStatus);
+            @Param("uuid") String uuid,
+            @Param("updateUser") String updateUser,
+            @Param("scoreStatus") String scoreStatus);
 
     /**
      * 获取当前论文下最大的排序数

@@ -435,7 +435,11 @@ public class LwPaperController {
     @RequestMapping(value = "/manualMatch")
     public String manualMatch(String paperUuid,String specialistsIdS){
         //获取选中的专家信息
-        List<String> spcialistsIdArray = new ArrayList<>(Arrays.asList(specialistsIdS.split(",")));
+        String[] specialistsArray = {};
+        if(specialistsIdS.contains(",")){
+            specialistsArray = specialistsIdS.split(",");
+        }
+        List<String> spcialistsIdArray = new ArrayList<>(Arrays.asList(specialistsArray));
         int successMatchNums = spcialistsIdArray.size();
         //获取当前论文已经匹配的专家信息
         List<LwPaperMatchSpecialistVo> matchSpecialists = lwPaperMatchSpecialistService.selectPmsManual(paperUuid);

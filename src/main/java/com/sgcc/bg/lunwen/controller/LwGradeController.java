@@ -25,10 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 论文打分控制层
@@ -111,7 +108,7 @@ public class LwGradeController {
      * 跳转至——论文打分操作
      */
     @RequestMapping(value="/gradeJumpOperation", method = RequestMethod.GET)
-    public ModelAndView gradeOperation(String paperType,String pmeId,String paperName){
+    public ModelAndView gradeOperation(String paperType,String pmeId,String paperName,String paperUuid){
         List<Map<String, String>> paperTypeList = dataDictionaryService.selectDictDataByPcode("paper_type");
         String paperTypeValue = "";
         for(Map<String,String> m : paperTypeList){
@@ -122,6 +119,7 @@ public class LwGradeController {
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("paperType",paperType);
         mvMap.put("pmeId",pmeId);
+        mvMap.put("paperUuid",paperUuid);
         mvMap.put("paperName",paperName);
         mvMap.put("paperTypeValue",paperTypeValue);
         ModelAndView modelAndView = new ModelAndView("lunwen/paperGradeOperation",mvMap);
@@ -145,47 +143,81 @@ public class LwGradeController {
     }
 
 
+    /**
+     * 保存打分信息
+     */
+    @ResponseBody
+    @RequestMapping(value = "/gradeSave")
     public String gradeSave(HttpServletRequest request){
         //获取论文关联专家信息表id
         String pmeId = request.getParameter("pmeId");
+        String paperType = request.getParameter("paperType");
+        String paperUuid = request.getParameter("paperUuid");
         Integer scoreTableLength = Integer.valueOf(request.getParameter("scoreTableLength"));
         //轮循获取对应分数信息
-        String gradeId;
-        String secondIndexId;
-        String score;
-        String scoreAll = "";
+        String gradeId;//分数详情表主键id，修改分数使用
+        String secondIndexId;//二级指标id
+        String score;//二级指标对应的分数
+        Double totalScore = 0.0;//总分
         LwGrade lwGrade;
-        String userUuid = getLoginUserUUID();
+        String userUuid = getLoginUserUUID();//当前登录用户id
+        List<LwGrade> lwGradeList = new ArrayList<>();
         for(int i=0;i<scoreTableLength;i++){
             //查看首次入库还是二次修改，根据关联id和二级指标id查询是否有对应数据，有的话修改，没有的话添加
             secondIndexId =request.getParameter("secondIndexId"+i);
             score = request.getParameter("score"+i);
-//            gradeId = request.getParameter("gradeId"+i);
+            //gradeId = request.getParameter("gradeId"+i);
             lwGrade = new LwGrade();
+            lwGrade.setUuid(Rtext.getUUID());
             lwGrade.setPmeId(pmeId);
             lwGrade.setRuleId(secondIndexId);
             lwGrade.setScore(Double.valueOf(score));
             lwGrade.setCreateUser(userUuid);
             lwGrade.setUpdateUser(userUuid);
-            //入库还是修改
+            lwGrade.setValid(LwPaperConstant.VALID_YES);
+            //入库还是修改,先入库，后期加了修改再整合
             lwGradeService.saveGrade(lwGrade);
-
-            //计算加权总分
-            scoreAll = "";
+            lwGradeList.add(lwGrade);
         }
-        if(1==1){
-            //入库
-            //修改关联表打分状态，总分分数
-            lwPaperMatchSpecialistService.updateScore("","",getLoginUserUUID(),scoreAll);
-            lwPaperMatchSpecialistService.updateScoreStatus("","",getLoginUserUUID());
-            //修改论文表打分状态，全流程状态
-            lwPaperService.updateScoreStatus("",LwPaperConstant.SCORE_STATUS_SAVE);
-            lwPaperService.updateAllStatus("",LwPaperConstant.ALL_STATUS_FIVE);
-        }else{
-            //修改关联表总分分数
+        //计算加权总分
+        //嵌套循环，内部嵌套叠加每个二级的分数，外部叠加一级分数，求得总分
+        //每个一级指标对应二级指标的数量
+        List<String> firstIndexs = lwGradeService.firstIndexNums(paperType);
+        List<Map<String,Object>> scoreTable = lwGradeService.nowScoreTable(paperType);
+        Double firstScore = 0.0;//单个一级指标分数
+        Double secondScore = 0.0;//单个二级指标分数
+        Double weightsS = 0.0;//单个二级指标权重
+        Double weightsF = 0.0;//单个一级指标权重
+        Integer indexNum  = 0;//当前处于第几个指标
+        for(String firstIndex : firstIndexs){
+            Integer firstNums = Integer.valueOf(firstIndex);
+            for(int i=0;i<firstNums;i++){
+                //查询当前二级指标对应的权重
+                weightsS = Double.valueOf(scoreTable.get(indexNum).get("SWEIGHTS").toString());
+                //二级指标分数计算叠加至一级指标
+                secondScore = lwGradeList.get(indexNum).getScore();
+                secondScore = (secondScore * weightsS)/100;
+                firstScore += secondScore;
+                indexNum++;
+            }
+            //查询当前一级指标对应权重
+            firstNums = indexNum-firstNums;
+            weightsF = Double.valueOf(scoreTable.get(firstNums).get("FWEIGHTS").toString());
+            //一级指标分数计算叠加至总分
+            firstScore = (firstScore * weightsF)/100;
+            totalScore += firstScore;
+            //一级指标对应分数归零
+            firstScore = 0.0;
         }
+        //修改关联表打分状态，总分分数
+        lwPaperMatchSpecialistService.updateScore(pmeId,userUuid,totalScore.toString());
+        lwPaperMatchSpecialistService.updateScoreStatus(pmeId,userUuid,LwPaperConstant.SCORE_STATUS_SAVE);
+        //修改论文表打分状态，全流程状态
+        lwPaperService.updateScoreStatus(paperUuid,LwPaperConstant.SCORE_STATUS_SAVE);
+        lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.ALL_STATUS_FIVE);
         ResultWarp rw = null;
         rw = new ResultWarp(ResultWarp.SUCCESS ,"保存分数成功");
+        rw.addData("totalScore",totalScore);
         return JSON.toJSONString(rw);
     }
 

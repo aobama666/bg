@@ -18,12 +18,12 @@ public interface LwPaperMatchSpecialistService {
     /**
      * 修改打分状态
      */
-    Integer updateScoreStatus(String paperId, String specialistId, String socreStatus);
+    Integer updateScoreStatus(String pmeId,String updateUser,String scoreStatus);
 
     /**
      * 修改专家对应某论文打分分数
      */
-    Integer updateScore(String paperId, String specialistId,String updateUser,String score);
+    Integer updateScore(String pmeId,String updateUser,String score);
 
     /**
      * 获取当前论文下最大的排序数

@@ -4,7 +4,7 @@
 <mapper namespace="com.sgcc.bg.lunwen.mapper.LwGradeMapper">
 
     <insert id="saveLwGrade">
-        insert into bg_lw_grade (uuid,pme_id,rule_id,socre,create_user,create_time,valid)
+        insert into bg_lw_grade (uuid,pme_id,rule_id,score,create_user,create_time,valid)
         values (
             #{uuid},
             #{pmeId},
@@ -21,7 +21,7 @@
         uuid = #{uuid,jdbcType=VARCHAR},
         pme_id = #{pemId,jdbcType=VARCHAR},
         rule_id = #{ruleId,jdbcType=VARCHAR},
-        socre = #{score,jdbcType=DOUBLE},
+        score = #{score,jdbcType=DOUBLE},
         update_user = #{updateUser,jdbcType=VARCHAR},
         update_time = sysdate
         where uuid = #{uuid}
@@ -30,7 +30,8 @@
     <select id="selectGrade" resultType="java.util.Map">
         select * from(
         select p.*, ROWNUM as r
-        from (select p.uuid,
+        from (select p.uuid paperUuid,
+            m.uuid pmeId,
             p.paper_id paperId,
             p.paper_name paperName,
             p.year,

@@ -28,29 +28,23 @@
 
     <update id="updateScore">
       update bg_lw_paper_match_expert set
-      socre = #{score,jdbcType=VARCHAR},
+      score = #{score,jdbcType=VARCHAR},
       update_user = #{updateUser,jdbcType=VARCHAR},
       update_time = sysdate
       where 1=1
-        <if test="paperId != null and paperId != ''">
-            and paper_id= #{paperId}
-        </if>
-        <if test="specialistId != null and specialistId != ''">
-            and specialist_id = #{specialistId}
+        <if test="uuid != null and uuid != ''">
+            and uuid= #{uuid}
         </if>
     </update>
 
     <update id="updateScoreStatus">
       update bg_lw_paper_match_expert set
-        SCORE_STATUS = #{socreStatus,jdbcType=VARCHAR},
+        SCORE_STATUS = #{scoreStatus,jdbcType=VARCHAR},
         update_user = #{updateUser,jdbcType=VARCHAR},
         update_time = sysdate
         where 1=1
-        <if test="paperId != null and paperId != ''">
-            and paper_id= #{paperId}
-        </if>
-        <if test="specialistId != null and specialistId != ''">
-            and specialist_id = #{specialistId}
+        <if test="uuid != null and uuid != ''">
+            and uuid= #{uuid}
         </if>
     </update>
 

@@ -46,14 +46,14 @@ grade.initDataGrid = function(){
         columns: [
             {name: '',style:{width:"2px"}, data: 'id',checkbox:true, forMat:function(row){
                     dataItems[index] = row;//将一行数据放在一个list中
-                    return '<input type="checkbox" name="oneCheck" id="oneCheck"  index = "'+(index++)+'"  value="'+(row.UUID)+'"/>';
+                    return '<input type="checkbox" name="oneCheck" id="oneCheck"  index = "'+(index++)+'"  value="'+(row.PMEID)+'"/>';
                 }
             },
             {name: '编号',style:{width:"50px"}, data: 'PAPERID'},
             {name: '论文题目',style:{width:"10%"}, data: 'PAPERNAME',forMat:function(row){
                     return "<a title = '点击查看论文详情' style='width:250px;" +
-                        " text-align:left;'id='\"+row.UUID+\"'" +
-                        " href = 'javascript:void(0)' onclick = grade.forDetails('"+row.UUID+"')>"+row.PAPERNAME+"</a>";
+                        " text-align:left;'id='\"+row.PAPERUUID+\"'" +
+                        " href = 'javascript:void(0)' onclick = grade.forDetails('"+row.PAPERUUID+"')>"+row.PAPERNAME+"</a>";
 
                 }},
             {name: '作者',style:{width:"50px"}, data: 'AUTHOR'},
@@ -63,14 +63,14 @@ grade.initDataGrid = function(){
             {name: '推荐单位',style:{width:"50px"}, data: 'RECOMMENDUNIT'},
             {name: '被引量',style:{width:"50px"}, data: 'QUOTECOUNT'},
             {name: '下载量',style:{width:"50px"}, data: 'DOWNLOADCOUNT'},
-            {name: '专家打分',style:{width:"50px"}, data: 'UUID',
+            {name: '专家打分',style:{width:"50px"}, data: 'PAPERUUID',
                 forMat:function(row){
                     if(row.SCORE == undefined){
-                        return "<a title = '点击查看匹配专家' style='width:250px;' id='"+row.UUID+"'" +
-                            "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.UUID+"','"+row.PAPERNAME+"')>打分</a>";
+                        return "<a title = '点击查看打分详情' style='width:250px;' id='"+row.PMEID+"'" +
+                            "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.PMEID+"','"+row.PAPERNAME+"','"+row.PAPERUUID+"')>打分</a>";
                     }else{
-                        return "<a title = '点击查看匹配专家' style='width:250px;' id='"+row.UUID+"'" +
-                            "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.UUID+"','"+row.PAPERNAME+"')>"+row.SCORE +"</a>";
+                        return "<a title = '点击查看打分详情' style='width:250px;' id='"+row.PAPERUUID+"'" +
+                            "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.PMEID+"','"+row.PAPERNAME+"','"+row.PAPERUUID+"')>"+row.SCORE +"</a>";
                     }
                 }},
             {name: '打分状态',style:{width:"50px"}, data: 'SCORESTATUS'}
@@ -96,8 +96,8 @@ grade.forDetails = function (id){
 
 
 /*弹出打分框 */
-grade.gradeOperation = function (pmeId,paperName){
-    var url = "/bg/lwGrade/gradeJumpOperation?paperType="+$("#paperType").val()+"&pmeId="+pmeId+"&paperName="+paperName;
+grade.gradeOperation = function (pmeId,paperName,paperUuid){
+    var url = "/bg/lwGrade/gradeJumpOperation?paperType="+$("#paperType").val()+"&pmeId="+pmeId+"&paperName="+paperName+"&paperUuid="+paperUuid;
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;"> </h4>',

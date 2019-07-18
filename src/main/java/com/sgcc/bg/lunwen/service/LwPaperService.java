@@ -38,13 +38,10 @@ public interface LwPaperService {
 
     /**
      * 修改打分状态
-     * @param uuid
-     * @param scoreTableStatus
-     * @return
      */
     Integer updateScoreStatus(
             String uuid,
-            String scoreTableStatus
+            String scoreStatus
     );
 
     /**

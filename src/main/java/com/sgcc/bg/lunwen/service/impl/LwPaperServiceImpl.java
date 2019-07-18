@@ -90,8 +90,8 @@ public class LwPaperServiceImpl implements LwPaperService {
     }
 
     @Override
-    public Integer updateScoreStatus(String uuid, String scoreTableStatus) {
-        return lwPaperMapper.updateScoreStatus(uuid,scoreTableStatus);
+    public Integer updateScoreStatus(String uuid, String scoreStatus) {
+        return lwPaperMapper.updateScoreStatus(uuid,scoreStatus);
     }
 
     @Override

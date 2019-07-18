@@ -23,16 +23,17 @@
 <body>
 	<h2 style="text-align:center">${paperTypeValue}论文评分表——${paperName}</h2>
     <form>
-        <input style="display: none" value="${pmeId}" id="pmeId"/>
-        <input style="display: none" value="${paperType}" id="paperType"/>
-        <input style="display: none" id="scoreTableLength"/>
+        <input style="display: none" value="${pmeId}" id="pmeId" name="pmeId"/>
+        <input style="display: none" value="${paperUuid}" id="paperUuid" name="paperUuid"/>
+        <input style="display: none" value="${paperType}" id="paperType" name="paperType"/>
+        <input style="display: none" id="scoreTableLength" name="scoreTableLength"/>
         <div id="scoreTable">
         <%--js初始化填充规则及分数内容table--%>
         </div>
     </form>
 	<div class="main_div">
 		<div style="text-align: center;margin-top:2%">
-			<div class='btn  deleteButton' onclick="grade.addClose()" >保存</div>
+			<div class='btn  deleteButton' onclick="grade.saveGrade()" >保存</div>
 			<div class='btn  deleteButton' onclick="grade.addClose()" >返回</div>
 		</div>
 	</div>
