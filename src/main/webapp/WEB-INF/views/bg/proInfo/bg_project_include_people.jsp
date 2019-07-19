@@ -289,9 +289,6 @@
             return;
         }*/
 
-
-        
-
         //校验人员+日期是否唯一
         if(nameArr.length>0){
             layer.msg(nameArr.toString()+" 日期存在重叠");
