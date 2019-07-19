@@ -79,7 +79,7 @@
 		<!-- 学术技术综述分类按钮 -->
 		<div class="grid-title">
 			<h3 style="float: left">
-				<a href="#" style="color:black" onclick="paperList.updatePaperType(1)">学术类</a>
+				<a href="#" style="color:black" onclick="paperList.updatePaperType(1)"><b>学术类</b></a>
 			</h3>
 			<h3 style="float: left">
 				<a href="#" style="color:black" onclick="paperList.updatePaperType(2)">技术类</a>

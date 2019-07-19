@@ -41,4 +41,9 @@ public interface LwGradeService {
      * 每个一级指标对应的二级指标数量
      */
     List<String> firstIndexNums(String paperType);
+
+    /**
+     * 查询当前专家还没打分的论文数量
+     */
+    List<Map<String,Object>> noScoreNums(String userId);
 }

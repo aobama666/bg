@@ -277,6 +277,34 @@ public class LwGradeController {
         return JSON.toJSONString(rw);
     }
 
+
+    /**
+     * 提交打分信息
+     */
+    @ResponseBody
+    @RequestMapping(value = "/gradeSubmit")
+    public String gradeSubmit(){
+        ResultWarp rw = null;
+        //查询当前专家有哪个类型没有打分操作
+        List<Map<String,Object>> noScoreNums = lwGradeService.noScoreNums(getLoginUserUUID());
+        if(noScoreNums!=null){
+            StringBuffer msg = new StringBuffer();
+//            综述类论文中2个、技术类论文中3个未打分完成，请重新打分
+            for(int i=0;i<noScoreNums.size();i++){
+                String paperType = noScoreNums.get(i).get("PAPERTYPE").toString();
+                BigDecimal nums = (BigDecimal) noScoreNums.get(i).get("NUMS");
+                msg.append(paperType+"论文中"+nums.toString()+"个");
+                if(i!=(noScoreNums.size()-1)){
+                    msg.append("、");
+                }
+            }
+            msg.append("未打分完成，请重新打分");
+            rw = new ResultWarp(ResultWarp.SUCCESS ,msg.toString());
+            return JSON.toJSONString(rw);
+        }
+        return "";
+    }
+
     /**
      * 获取当前登录用户主键id
      */

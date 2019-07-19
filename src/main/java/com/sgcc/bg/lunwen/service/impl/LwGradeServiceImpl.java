@@ -48,4 +48,10 @@ public class LwGradeServiceImpl implements LwGradeService {
     public List<String> firstIndexNums(String paperType) {
         return lwGradeMapper.firstIndexNums(DateUtil.getYear(),paperType,LwPaperConstant.VALID_YES);
     }
+
+    @Override
+    public List<Map<String, Object>> noScoreNums(String userId) {
+        return lwGradeMapper.noScoreNums(DateUtil.getYear(),LwPaperConstant.SCORE_STATUS_NO
+        ,LwPaperConstant.SCORE_TABLE_ON,userId,LwPaperConstant.VALID_YES);
+    }
 }
