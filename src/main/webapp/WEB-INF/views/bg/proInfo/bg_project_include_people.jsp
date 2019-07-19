@@ -288,6 +288,7 @@
             layer.msg("只能选择一名项目负责人");
             return;
         }*/
+        
 
         //校验人员+日期是否唯一
         if(nameArr.length>0){
