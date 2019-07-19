@@ -10,7 +10,22 @@ import java.util.Map;
 @Repository
 public interface LwGradeMapper {
 
-    Integer addLwGrade(LwGrade lwGrade);
+    /**
+     * 添加打分信息
+     */
+    Integer saveLwGrade(LwGrade lwGrade);
+
+
+    /**
+     * 修改分数表具体分值
+     */
+    Integer updateScore(
+            @Param("score") String score,
+            @Param("updateUser") String updateUser,
+            @Param("pmeId") String pmeId,
+            @Param("ruleId") String ruleId,
+            @Param("valid") String valid
+    );
 
     /**
      * 论文打分——按条件查某批论文
@@ -50,6 +65,7 @@ public interface LwGradeMapper {
     List<Map<String,Object>> nowScoreTable(
             @Param("year") String year,
             @Param("paperType") String paperType,
+            @Param("pmeId") String pmeId,
             @Param("valid") String valid
     );
 
@@ -61,4 +77,6 @@ public interface LwGradeMapper {
             @Param("paperType") String paperType,
             @Param("valid") String valid
     );
+
+
 }

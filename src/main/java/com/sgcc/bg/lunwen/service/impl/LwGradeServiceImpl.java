@@ -1,6 +1,7 @@
 package com.sgcc.bg.lunwen.service.impl;
 
 import com.sgcc.bg.common.DateUtil;
+import com.sgcc.bg.lunwen.bean.LwGrade;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.mapper.LwGradeMapper;
 import com.sgcc.bg.lunwen.service.LwGradeService;
@@ -17,6 +18,16 @@ public class LwGradeServiceImpl implements LwGradeService {
     private LwGradeMapper lwGradeMapper;
 
     @Override
+    public Integer saveGrade(LwGrade lwGrade) {
+        return lwGradeMapper.saveLwGrade(lwGrade);
+    }
+
+    @Override
+    public Integer updateScore(String score, String updateUser, String pmeId, String ruleId) {
+        return lwGradeMapper.updateScore(score,updateUser,pmeId,ruleId,LwPaperConstant.VALID_YES);
+    }
+
+    @Override
     public List<Map<String, Object>> selectGrade(Integer pageStart, Integer pageEnd, String paperName, String year, String scoreStatus,String userId, String paperType, String valid) {
         return lwGradeMapper.selectGrade(pageStart,pageEnd,paperName,year,scoreStatus
                 ,LwPaperConstant.SCORE_TABLE_ON,userId,paperType,valid);
@@ -29,8 +40,8 @@ public class LwGradeServiceImpl implements LwGradeService {
     }
 
     @Override
-    public List<Map<String, Object>> nowScoreTable(String paperType) {
-        return lwGradeMapper.nowScoreTable(DateUtil.getYear(),paperType,LwPaperConstant.VALID_YES);
+    public List<Map<String, Object>> nowScoreTable(String paperType,String pmeId) {
+        return lwGradeMapper.nowScoreTable(DateUtil.getYear(),paperType,pmeId,LwPaperConstant.VALID_YES);
     }
 
     @Override

@@ -3,23 +3,35 @@
 
 <mapper namespace="com.sgcc.bg.lunwen.mapper.LwGradeMapper">
 
-    <insert id="addLwGrade">
-        insert into bg_lw_grade (uuid,pme_id,rule_id,socre,create_user,create_time,valid)
+    <insert id="saveLwGrade">
+        insert into bg_lw_grade (uuid,pme_id,rule_id,score,create_user,create_time,valid)
         values (
             #{uuid},
             #{pmeId},
             #{ruleId},
             #{score},
             #{createUser},
-            #{createTime},
+            sysdate,
             #{valid}
         )
     </insert>
 
+
+    <update id="updateScore">
+        update bg_lw_grade
+        set score = #{score},
+        update_user = #{updateUser},
+        update_time = sysdate
+        where pme_id = #{pmeId}
+        and rule_id = #{ruleId}
+        and valid = #{valid}
+    </update>
+
     <select id="selectGrade" resultType="java.util.Map">
         select * from(
         select p.*, ROWNUM as r
-        from (select p.uuid,
+        from (select p.uuid paperUuid,
+            m.uuid pmeId,
             p.paper_id paperId,
             p.paper_name paperName,
             p.year,
@@ -36,7 +48,8 @@
             FROM BG_SYS_DATADICTIONARY
             WHERE pcode = 'score_status'
             and vaild = 1
-            and code = p.score_status) as scoreStatus,
+            and code = m.score_status) as scoreStatus,
+            m.score_status scoreStatusCode,
             ROWNUM rown
             from    bg_lw_paper      p，
             bg_lw_paper_match_expert m,
@@ -86,7 +99,7 @@
         FROM BG_SYS_DATADICTIONARY
         WHERE pcode = 'score_status'
         and vaild = 1
-        and code = p.score_status) as scoreStatus,
+        and code = m.score_status) as scoreStatus,
         ROWNUM rown
         from    bg_lw_paper      p，
         bg_lw_paper_match_expert m,
@@ -119,17 +132,27 @@
         select s.uuid,
             f.first_index,
             s.second_index,
-            s.weights,
-            s.second_order,
-            f.first_order
+            s.weights sweights,
+            s.REFERENCE_REQUIRE require,
+            f.weights fweights
+            <if test="pmeId != null and pmeId != ''">
+                ,g.score
+            </if>
         from bg_lw_rule_first f,
             bg_lw_rule_second s
+            <if test="pmeId != null and pmeId != ''">
+                ,bg_lw_grade g
+            </if>
         where 1 = 1
             and f.uuid = s.first_index_id
             and f.year = #{year}
             and f.paper_type = #{paperType}
             and f.valid = #{valid}
             and s.valid = #{valid}
+            <if test="pmeId != null and pmeId != ''">
+                and g.rule_id = s.uuid
+                and g.pme_id = #{pmeId}
+            </if>
             order by first_order, second_order
     </select>
 

@@ -28,27 +28,23 @@
 
     <update id="updateScore">
       update bg_lw_paper_match_expert set
-      socre = #{score,jdbcType=VARCHAR},
+      score = #{score,jdbcType=VARCHAR},
       update_user = #{updateUser,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = sysdate
       where 1=1
-        <if test="paperId != null and paperId != ''">
-            and paper_id= #{paperId}
-        </if>
-        <if test="specialistId != null and specialistId != ''">
-            and specialist_id = #{specialistId}
+        <if test="uuid != null and uuid != ''">
+            and uuid= #{uuid}
         </if>
     </update>
 
     <update id="updateScoreStatus">
       update bg_lw_paper_match_expert set
-        SCORE_STATUS = #{socreStatus,jdbcType=VARCHAR}
+        SCORE_STATUS = #{scoreStatus,jdbcType=VARCHAR},
+        update_user = #{updateUser,jdbcType=VARCHAR},
+        update_time = sysdate
         where 1=1
-        <if test="paperId != null and paperId != ''">
-            and paper_id= #{paperId}
-        </if>
-        <if test="specialistId != null and specialistId != ''">
-            and specialist_id = #{specialistId}
+        <if test="uuid != null and uuid != ''">
+            and uuid= #{uuid}
         </if>
     </update>
 
@@ -104,6 +100,10 @@
         </if>
         and m.valid = #{valid}
         order by m.SPECIALIST_SORT
+    </select>
+
+    <select id="getTotalScore" resultType="java.lang.Double">
+        select score from  BG_LW_PAPER_MATCH_EXPERT where uuid = #{pmeId}
     </select>
 
     <update id="updateValid" parameterType="com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist">

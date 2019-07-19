@@ -35,7 +35,7 @@ public interface LwPaperMapper {
      */
     Integer updateScoreStatus(
             @Param("uuid")String uuid,
-            @Param("scoreTableStatus")String scoreTableStatus
+            @Param("scoreStatus")String scoreStatus
     );
 
     /**
