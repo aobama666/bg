@@ -419,9 +419,9 @@ public class LwSpecialistController {
         int i = lwSpecialistServiceImpl.removeShield(uuid);
         ResultWarp rw =  null;
         if(i>0){
-            rw = new ResultWarp(ResultWarp.SUCCESS,"成功");
+            rw = new ResultWarp(ResultWarp.SUCCESS,"成功解除屏蔽");
         }else {
-            rw = new ResultWarp(ResultWarp.FAILED,"失败");
+            rw = new ResultWarp(ResultWarp.FAILED,"解除屏蔽失败");
         }
         return JSON.toJSONString(rw);
     }
