@@ -19,6 +19,14 @@
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+	<style>
+		th{
+			text-align:center;
+		}
+		input{
+			text-align:center;
+		}
+	</style>
 </head>
 <body>
 	<h2 style="text-align:center">${paperTypeValue}论文评分表——${paperName}</h2>
@@ -27,7 +35,9 @@
         <input style="display: none" value="${paperUuid}" id="paperUuid" name="paperUuid"/>
         <input style="display: none" value="${paperType}" id="paperType" name="paperType"/>
         <input style="display: none" value="${scoreStatus}" id="scoreStatus" name="scoreStatus"/>
-        <input style="display: none" value="${totalScoreAfter}" id="totalScoreAfter" name="totalScoreAfter"/>
+		<c:if test="${totalScoreAfter!=null}">
+			<input style="display: none" value="${totalScoreAfter}" id="totalScoreAfter" name="totalScoreAfter"/>
+		</c:if>
         <input style="display: none" id="scoreTableLength" name="scoreTableLength"/>
         <div id="scoreTable">
         <%--js初始化填充规则及分数内容table--%>

@@ -15,10 +15,17 @@ public interface LwGradeMapper {
      */
     Integer saveLwGrade(LwGrade lwGrade);
 
+
     /**
-     * 修改打分信息
+     * 修改分数表具体分值
      */
-    Integer updateGrade(LwGrade lwGrade);
+    Integer updateScore(
+            @Param("score") String score,
+            @Param("updateUser") String updateUser,
+            @Param("pmeId") String pmeId,
+            @Param("ruleId") String ruleId,
+            @Param("valid") String valid
+    );
 
     /**
      * 论文打分——按条件查某批论文
@@ -70,5 +77,6 @@ public interface LwGradeMapper {
             @Param("paperType") String paperType,
             @Param("valid") String valid
     );
+
 
 }

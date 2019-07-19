@@ -16,15 +16,15 @@
         )
     </insert>
 
-    <update id="updateGrade">
-        update bg_lw_grade set
-        uuid = #{uuid,jdbcType=VARCHAR},
-        pme_id = #{pemId,jdbcType=VARCHAR},
-        rule_id = #{ruleId,jdbcType=VARCHAR},
-        score = #{score,jdbcType=DOUBLE},
-        update_user = #{updateUser,jdbcType=VARCHAR},
+
+    <update id="updateScore">
+        update bg_lw_grade
+        set score = #{score},
+        update_user = #{updateUser},
         update_time = sysdate
-        where uuid = #{uuid}
+        where pme_id = #{pmeId}
+        and rule_id = #{ruleId}
+        and valid = #{valid}
     </update>
 
     <select id="selectGrade" resultType="java.util.Map">

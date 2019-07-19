@@ -14,9 +14,9 @@ public interface LwGradeService {
     Integer saveGrade(LwGrade lwGrade);
 
     /**
-     * 修改分数
+     * 修改分数明细表对应分值
      */
-    Integer updateGrade(LwGrade lwGrade);
+    Integer updateScore( String score, String updateUser,String pmeId, String ruleId);
 
     /**
      * 论文打分——按条件查某批论文

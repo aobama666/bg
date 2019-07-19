@@ -23,8 +23,8 @@ public class LwGradeServiceImpl implements LwGradeService {
     }
 
     @Override
-    public Integer updateGrade(LwGrade lwGrade) {
-        return lwGradeMapper.updateGrade(lwGrade);
+    public Integer updateScore(String score, String updateUser, String pmeId, String ruleId) {
+        return lwGradeMapper.updateScore(score,updateUser,pmeId,ruleId,LwPaperConstant.VALID_YES);
     }
 
     @Override

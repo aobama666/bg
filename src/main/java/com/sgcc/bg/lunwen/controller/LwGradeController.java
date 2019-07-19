@@ -107,7 +107,7 @@ public class LwGradeController {
     }
 
     /**
-     * 跳转至——论文打分操作
+     * 跳转至——论文打分详情
      */
     @RequestMapping(value="/gradeJumpOperation", method = RequestMethod.GET)
     public ModelAndView gradeOperation(String paperType,String pmeId
@@ -126,6 +126,11 @@ public class LwGradeController {
         mvMap.put("paperName",paperName);
         mvMap.put("scoreStatus",scoreStatus);
         mvMap.put("paperTypeValue",paperTypeValue);
+        if(!LwPaperConstant.SCORE_STATUS_NO.equals(scoreStatus)){
+            //如果打分状态不是未打分，获取总分，以供修改亦或查看打分详情
+            Double totalScoreAfter = lwPaperMatchSpecialistService.getTotalScore(pmeId);
+            mvMap.put("totalScoreAfter",totalScoreAfter);
+        }
         ModelAndView modelAndView = new ModelAndView("lunwen/paperGradeOperation",mvMap);
         return modelAndView;
     }
@@ -148,11 +153,6 @@ public class LwGradeController {
         rw.addData("scoreTable",scoreTable);
         rw.addData("firstIndexs",firstIndexs);
         rw.addData("scoreStatus",scoreStatus);
-        if(LwPaperConstant.SCORE_STATUS_NO != scoreStatus){
-            //如果打分状态不是未打分，获取总分，以供修改亦或查看打分详情
-            Double totalScoreAfter = lwPaperMatchSpecialistService.getTotalScore(pmeId);
-            rw.addData("totalScoreAfter",totalScoreAfter);
-        }
         return JSON.toJSONString(rw);
     }
 
@@ -219,40 +219,43 @@ public class LwGradeController {
 
 
     /**
-     * 保存打分信息
+     * 保存或修改打分信息
      */
     @ResponseBody
     @RequestMapping(value = "/gradeSave")
     public String gradeSave(HttpServletRequest request){
         //获取论文关联专家信息表id
         String pmeId = request.getParameter("pmeId");
-        String paperType = request.getParameter("paperType");
         String paperUuid = request.getParameter("paperUuid");
         String totalScore = request.getParameter("totalScore");
+        String scoreStatus = request.getParameter("scoreStatus");
         Integer scoreTableLength = Integer.valueOf(request.getParameter("scoreTableLength"));
+        //判断是保存还是修改操作，如果打分状态为未打分，保存，若打分状态为其他，修改
+        Boolean ifSave = true;
+        if(!LwPaperConstant.SCORE_STATUS_NO.equals(scoreStatus)){
+            ifSave = false;
+        }
         //轮循获取对应分数信息
-        String gradeId;//分数详情表主键id，修改分数使用
         String secondIndexId;//二级指标id
         String score;//二级指标对应的分数
         LwGrade lwGrade;
         String userUuid = getLoginUserUUID();//当前登录用户id
-        List<LwGrade> lwGradeList = new ArrayList<>();
         for(int i=0;i<scoreTableLength;i++){
-            //查看首次入库还是二次修改，根据关联id和二级指标id查询是否有对应数据，有的话修改，没有的话添加
             secondIndexId =request.getParameter("secondIndexId"+i);
             score = request.getParameter("score"+i);
-            //gradeId = request.getParameter("gradeId"+i);
-            lwGrade = new LwGrade();
-            lwGrade.setUuid(Rtext.getUUID());
-            lwGrade.setPmeId(pmeId);
-            lwGrade.setRuleId(secondIndexId);
-            lwGrade.setScore(Double.valueOf(score));
-            lwGrade.setCreateUser(userUuid);
-            lwGrade.setUpdateUser(userUuid);
-            lwGrade.setValid(LwPaperConstant.VALID_YES);
-            //入库还是修改,先入库，后期加了修改再整合
-            lwGradeService.saveGrade(lwGrade);
-            lwGradeList.add(lwGrade);
+            if(ifSave){
+                lwGrade = new LwGrade();
+                lwGrade.setUuid(Rtext.getUUID());
+                lwGrade.setPmeId(pmeId);
+                lwGrade.setRuleId(secondIndexId);
+                lwGrade.setScore(Double.valueOf(score));
+                lwGrade.setCreateUser(userUuid);
+                lwGrade.setUpdateUser(userUuid);
+                lwGrade.setValid(LwPaperConstant.VALID_YES);
+                lwGradeService.saveGrade(lwGrade);
+            }else{
+                lwGradeService.updateScore(score,userUuid,pmeId,secondIndexId);
+            }
         }
         //修改论文专家关联表打分状态，总分分数
         lwPaperMatchSpecialistService.updateScore(pmeId,userUuid,totalScore);
