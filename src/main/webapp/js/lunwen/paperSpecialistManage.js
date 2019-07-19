@@ -82,7 +82,10 @@ queryAll.initDataGrid = function(){
                 }else if(row.matchStatus == '0'){
                     return "<span>"+"未匹配"+"</span>"
                 }else if (row.matchStatus == '2'){
-                    return "<span>"+"已屏蔽"+"</span>"
+                    return "<a title = '已屏蔽' style='width:250px;" +
+                        "text-align:left;" +
+                        "'id='"+row.uuid+"'" +
+                        "href = 'javascript:void(0)' onclick = queryAll.removeShield('"+row.uuid+"')>"+'已屏蔽'+"</a>";
                 }
             }}
         ]
@@ -109,6 +112,24 @@ queryAll.initItems = function(){
     dataItems = new Array();
     index = 0;
 };
+
+queryAll.removeShield=function (uuid) {
+    $.messager.confirm( "变更提示","确定将“已屏蔽”状态变更为“未匹配”状态吗？",
+        function(r){
+            if(r){
+                $.ajax({
+                    url: "/bg/expert/removeShield?uuid="+uuid,//删除
+                    type: "get",
+                    dataType:"json",
+                    success: function (data) {
+                        messager.tip(data.msg,3000);
+                        queryAll.refresh();
+                    }
+                });
+            }
+        }
+    );
+}
 
 /*导出*/
 queryAll.outEvent = function () {
