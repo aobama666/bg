@@ -664,7 +664,7 @@ public class BGServiceImpl implements IBGService {
 					}else if(!roleStr.contains("["+cellValue[6]+"]")){
 						errorInfo.append("不存在此角色！  ");
 						errorNum.add(6);
-					}else if(!Rtext.isEmpty(proId)){//项目存在
+					}/*else if(!Rtext.isEmpty(proId)){//项目存在
 						//获取map中指定项目的项目负责人数量
 						int currentValue=roleMap.get(proId);
 						if("项目负责人".equals(cellValue[6])){
@@ -674,7 +674,7 @@ public class BGServiceImpl implements IBGService {
 								errorNum.add(6);
 							}
 						}
-					}
+					}*/
 					
 					//校验项目中负责人只能存在一条
 					if(!Rtext.isEmpty(proId) && !errorNum.contains(3) && !errorNum.contains(6)){//项目存在，此人存在且角色存在并不冲突
@@ -707,6 +707,22 @@ public class BGServiceImpl implements IBGService {
 						}
 					}
 
+					//验证项目负责人 负责的时间段是否有交叉
+					//取出该项目所有负责人的开始时间和结束时间
+					//与已存在参与人"+user.getUserAlias()+"日期("+dateMap.get("startDate")+"至"+dateMap.get("endDate")+")重叠!
+					List<Map<String,String>> listPrincipalDate = bgMapper.listPrincipalDate(proId);
+					for (Map<String, String> principalDateMap : listPrincipalDate) {
+						if (DateUtil.fomatDate(cellValue[4]).getTime() >= DateUtil.fomatDate(principalDateMap.get("endDate")).getTime() ||
+								DateUtil.fomatDate(cellValue[5]).getTime() <= DateUtil.fomatDate(principalDateMap.get("startDate")).getTime()) {
+							//日期不重叠
+						} else {
+							errorInfo.append("与项目负责人" + principalDateMap.get("empName") + "日期(" + principalDateMap.get("startDate") + "至" + principalDateMap.get("endDate") + ")重叠! ");
+							errorNum.add(7);
+							break;
+						}
+					}
+
+
 					if(!Rtext.isEmpty(cellValue[7]) && cellValue[7].length()>200){
 						errorInfo.append("工作任务超过200字！  ");
 						errorNum.add(7);
@@ -737,7 +753,9 @@ public class BGServiceImpl implements IBGService {
 							proUser.setRole("0");
 						}
 						proUser.setTask(cellValue[7]);
-						proUser.setPlanHours(Double.parseDouble(cellValue[8]));
+						if(null!=cellValue[8]&&cellValue[8]!="") {
+							proUser.setPlanHours(Double.parseDouble(cellValue[8]));
+						}
 						proUser.setStatus("1");
 						proUser.setCreateDate(new Date());
 						proUser.setUpdateDate(new Date());
