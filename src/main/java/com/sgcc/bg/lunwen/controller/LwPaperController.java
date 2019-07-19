@@ -643,8 +643,9 @@ public class LwPaperController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/paperAddAnnex",method = RequestMethod.POST)
+    @RequestMapping(value = "/paperAddAnnex")
     public String addAnnex(HttpServletResponse response,HttpServletRequest request) throws Exception{
+        response.setContentType("text/plain;charset=utf-8");
         ResultWarp rw = null;
         String paperUuid = request.getParameter("paperUuid");
         //服务器的保存路径
@@ -737,6 +738,7 @@ public class LwPaperController {
     @ResponseBody
     @RequestMapping(value = "/btachUpload")
     public String btachUpload(HttpServletResponse response,HttpServletRequest request){
+        response.setContentType("text/plain;charset=utf-8");
         ResultWarp rw = null;
         //服务器的保存路径
         String path = request.getSession().getServletContext().getRealPath("")
@@ -791,7 +793,7 @@ public class LwPaperController {
             //如果不存在，查询一下论文的信息,获得论文id
             Map<String,Object> lwPaper = lwPaperService.findPaper(null,fileNameBeforeTitle);
             //如果论文不存在
-            if(null != lwPaper){
+            if(null == lwPaper){
                 errorFileName.add(fileName);
                 new File(localPath).delete();
                 continue;

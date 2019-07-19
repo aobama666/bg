@@ -11,7 +11,6 @@ grade.init = function () {
     var paperType = $("#paperType").val();
     var pmeId = $("#pmeId").val();
     var scoreStatus = $("#scoreStatus").val();
-    debugger;
     var totalScoreAfter = $("#totalScoreAfter").val();
     $.ajax({
         url: "/bg/lwGrade/gradeInit?paperType="+paperType+"&pmeId="+pmeId+"&scoreStatus="+scoreStatus,
@@ -132,17 +131,13 @@ grade.saveGrade = function () {
         msgTitle = '修改提示';
         msg = '确认修改该分数信息吗?';
     }
-    var formData = new FormData($("#queryForm")[0]);
     $.messager.confirm( msgTitle, msg,
         function(r){
             if(r){
-                $.ajax({
+                $("#queryForm").ajaxSubmit({
                     url: "/bg/lwGrade/gradeSave",
                     type: "post",
-                    cache: false,
-                    processData: false,
-                    contentType: false,
-                    data: formData,
+                    dataType: "json",
                     success: function (data) {
                         parent.grade.closeAndOpen(data.msg);
                     }
@@ -186,14 +181,10 @@ grade.ifValidNull = function (obj) {
  * 计算总分
  */
 grade.getTotalScore = function () {
-    var formData = new FormData($("#queryForm")[0]);
-    $.ajax({
+    $("#queryForm").ajaxSubmit({
         url: "/bg/lwGrade/getTotalScore",
         type: "post",
-        cache: false,
-        processData: false,
-        contentType: false,
-        data: formData,
+        dataType: "json",
         success: function (data) {
             //修改总分值
             $("#totalScore").val(data.data.totalScore);

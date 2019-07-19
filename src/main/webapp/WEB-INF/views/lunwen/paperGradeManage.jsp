@@ -48,7 +48,7 @@
 <div>
 	<!--  新增  修改  删除 功能按钮 -->
 	<div id="funcBtn" style="height: 35px;float:right">
-		<div class='btn right deleteButton' onclick="grade.sumbit()" >提交</div>
+		<div class='btn right deleteButton' onclick="grade.sumbitStatus()" >提交</div>
 	</div>
 	<!-- 学术技术综述分类按钮 -->
 	<div class="grid-title">

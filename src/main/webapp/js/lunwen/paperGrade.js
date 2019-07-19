@@ -113,6 +113,22 @@ grade.gradeOperation = function (pmeId,paperName,paperUuid,scoreStatus){
 }
 
 
+grade.sumbitStatus = function () {
+    $.messager.confirm( '提交提示', '确认提交当前打分信息吗？',
+        function(r){
+            if(r){
+                $.ajax({
+                    url: "/bg/lwGrade/gradeSubmit",
+                    type: "post",
+                    success: function (data) {
+                        message.tip(data.msg,3000);
+                    }
+                });
+            }
+        }
+    );
+}
+
 /*关闭页面后弹出信息*/
 grade.closeAndOpen = function (message) {
     layer.closeAll();

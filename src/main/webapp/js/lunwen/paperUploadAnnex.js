@@ -98,20 +98,13 @@ uploadAnnex.addEvent = function (){
     if(!checkLength){
         return;
     }
-    var formData = new FormData($("#queryForm")[0]);
-    //获取form表单内容
-    var paperDetailFormData = roomAddInfoCommon.getFormDataInfo();
     $.messager.confirm( "上传提示", "确认上传吗",
         function(r){
             if(r){
-                $.ajax({
+                $("#queryForm").ajaxSubmit({
                     url: "/bg/lwPaper/paperAddAnnex",
                     type: "post",
-                    async: false,
-                    cache: false,
-                    processData: false,
-                    contentType: false,
-                    data: formData,
+                    dataType: "json",
                     success: function (data) {
                         if(data.success=="true"){
                             messager.tip(data.msg,5000);
@@ -141,21 +134,18 @@ uploadAnnex.addBatchEvent = function(){
     if(!checkLength){
         return;
     }
-    var formData = new FormData($("#queryForm")[0]);
-    //获取form表单内容
-    var paperDetailFormData = roomAddInfoCommon.getFormDataInfo();
     $.messager.confirm( "上传提示", "确认上传吗",
         function(r){
             if(r){
-                $.ajax({
+                $("#queryForm").ajaxSubmit({
                     url: "/bg/lwPaper/btachUpload",
                     type: "post",
-                    async: false,
-                    cache: false,
-                    processData: false,
-                    contentType: false,
-                    data: formData,
+                    dataType: "json",
                     success: function (data) {
+                        $("#successFile").html("");
+                        $("#repeatFile").html("");
+                        $("#errorFile").html("");
+
                         messager.tip("批量上传附件完成",1000);
                         if("[]" != data.data.successFileName){
                             $("#successFile").html("上传成功文件："+data.data.successFileName);

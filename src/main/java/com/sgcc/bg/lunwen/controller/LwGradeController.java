@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -161,7 +162,8 @@ public class LwGradeController {
      */
     @ResponseBody
     @RequestMapping(value = "/getTotalScore")
-    public String getTotalScore(HttpServletRequest request){
+    public String getTotalScore(HttpServletRequest request, HttpServletResponse response){
+        response.setContentType("text/plain;charset=utf-8");
         //获取论文关联专家信息表id
         String pmeId = request.getParameter("pmeId");
         String paperType = request.getParameter("paperType");
@@ -223,7 +225,8 @@ public class LwGradeController {
      */
     @ResponseBody
     @RequestMapping(value = "/gradeSave")
-    public String gradeSave(HttpServletRequest request){
+    public String gradeSave(HttpServletRequest request,HttpServletResponse response){
+        response.setContentType("text/plain;charset=utf-8");
         //获取论文关联专家信息表id
         String pmeId = request.getParameter("pmeId");
         String paperUuid = request.getParameter("paperUuid");
@@ -264,7 +267,13 @@ public class LwGradeController {
         lwPaperService.updateScoreStatus(paperUuid,LwPaperConstant.SCORE_STATUS_SAVE);
         lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.ALL_STATUS_FIVE);
         ResultWarp rw = null;
-        rw = new ResultWarp(ResultWarp.SUCCESS ,"保存分数成功");
+        String msg = "";
+        if(ifSave){
+            msg = "保存分数成功";
+        }else{
+            msg = "修改分数成功";
+        }
+        rw = new ResultWarp(ResultWarp.SUCCESS ,msg);
         return JSON.toJSONString(rw);
     }
 
