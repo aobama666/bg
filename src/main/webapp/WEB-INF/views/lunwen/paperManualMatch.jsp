@@ -87,7 +87,7 @@
             var specialistsIdS = transfer.get(tb1,'left','uuid');
             var specialistsIdArray = specialistsIdS.split(',');
             if(specialistsIdArray.length%2 == 0){
-                alert("已匹配专家信息数量不能为双数，请调整");
+                parent.messager.tip("已匹配专家信息数量不能为双数，请调整",3000);
                 location.replace(location.href);
                 return;
             }
