@@ -79,15 +79,6 @@ public interface LwGradeMapper {
     );
 
 
-    /**
-     * 查询当前专家还没打分的论文数量
-     */
-    List<Map<String,Object>> noScoreNums(
-            @Param("year") String year,
-            @Param("scoreStatus") String scoreStatus,
-            @Param("scoreTableStatus") String scoreTableStatus,
-            @Param("userId") String userId,
-            @Param("valid") String valid
-    );
+
 
 }

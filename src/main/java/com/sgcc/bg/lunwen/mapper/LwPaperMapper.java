@@ -213,4 +213,14 @@ public interface LwPaperMapper {
      */
     List<Map<String,Object>> statisticsMapIds(@Param("uuids") String[] uuids);
 
+
+    /**
+     * 修改平均分，和最高最低得分
+     */
+    Integer updateAverageScore(
+            @Param("paperId") String paperId,
+            @Param("averageScore") Double averageScore,
+            @Param("highestLowestAverage") Double highestLowestAverage
+    );
+
 }

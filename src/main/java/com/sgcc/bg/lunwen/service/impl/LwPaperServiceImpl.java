@@ -238,6 +238,13 @@ public class LwPaperServiceImpl implements LwPaperService {
         if(!"".equals(maxSort) && null!=maxSort){
             specialistSort = Integer.valueOf(maxSort);
         }
+
+        //控制匹配专家数量不能为双数
+        int readyMatchNums = matchSpecialists.size()+specialistIdList.size();
+        if(readyMatchNums>7 && readyMatchNums%2 == 0){
+            specialistIdList.remove(specialistIdList.size()-1);
+        }
+
         //添加新的专家信息
         LwPaperMatchSpecialist lwPaperMatchSpecialist;
         for(int i =0;i<specialistIdList.size();i++){

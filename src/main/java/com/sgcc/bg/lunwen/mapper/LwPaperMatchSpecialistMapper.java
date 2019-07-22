@@ -81,5 +81,45 @@ public interface LwPaperMatchSpecialistMapper {
      */
     int insertpaperMatch(LwPaperMatchSpecialist lwPaperMatchSpecialist);
 
+    /**
+     * 获取对应分数
+     */
     double getTotalScore(@Param("pmeId") String pmeId);
+
+    /**
+     * 查询当前专家还没打分的论文数量
+     */
+    List<Map<String,Object>> noScoreNums(
+            @Param("year") String year,
+            @Param("scoreStatus") String scoreStatus,
+            @Param("scoreTableStatus") String scoreTableStatus,
+            @Param("userId") String userId,
+            @Param("valid") String valid
+    );
+
+    /**
+     * 当前专家需要提交的论文和关联信息
+     */
+    List<Map<String,Object>> needSubmitMessage(
+            @Param("userId") String userId,
+            @Param("scoreStatus") String scoreStatus,
+            @Param("valid") String valid
+    );
+
+    /**
+     * 判断该论文对应其他专家是否都进行了打分操作
+     */
+    List<Map<String,Object>> ifAllScore(
+            @Param("paperId") String paperId,
+            @Param("scoreStatus") String scoreStatus,
+            @Param("valid") String valid
+    );
+
+    /**
+     * 获取该论文所有专家的打分分数
+     */
+    List<Double> allScore(
+            @Param("paperId") String paperId,
+            @Param("valid") String valid
+    );
 }

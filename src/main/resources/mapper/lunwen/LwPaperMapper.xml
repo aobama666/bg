@@ -91,6 +91,14 @@
         where UUID  = #{uuid}
     </update>
 
+    <!--修改两个平均分的值,代码中的名称和库中稍有冲突，再修改的话涉及太多，认清就好，多谢体谅-->
+    <update id="updateAverageScore">
+        update bg_lw_paper
+        set  WEIGHTING_FRACTION  = #{averageScore}
+        , AVERAGE_FRACTION = #{highestLowestAverage}
+        where UUID  = #{paperId}
+    </update>
+
     <!--某类型的当前最大编号-->
     <select id="maxPaperId" resultType="java.lang.String">
         select MAX(paper_id)  from bg_lw_paper where paper_type = #{paperType}
@@ -156,8 +164,8 @@
             TO_CHAR(p.create_time, 'YYYY-MM-DD HH24:MI') createTime,
             TO_CHAR(p.update_time, 'YYYY-MM-DD HH24:MI') updateTime,
             p.valid,
-            p.WEIGHTING_FRACTION weightingFaction,
-            p.AVERAGE_FRACTION averageFaction,
+            p.WEIGHTING_FRACTION WEIGHTINGFRACTION,
+            p.AVERAGE_FRACTION AVERAGEFRACTION,
             ROWNUM rown
             from bg_lw_paper p
             where 1 = 1

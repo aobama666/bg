@@ -47,10 +47,13 @@
     <button type="button" class="btn" id="return">返回</button>
 </div>
 
-<!-- 本页面所需的js -->
-<script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
-<script src="<%=request.getContextPath()%>/js/plugins/layui/html5.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
-<script src="<%=request.getContextPath()%>/js/plugins/layui/respond.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
+    <!-- 验证校验公共方法，提示框公共方法 -->
+    <!-- <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
+    <script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script> -->
+    <!-- 本页面所需的js -->
+    <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
+    <script src="<%=request.getContextPath()%>/js/plugins/layui/html5.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
+    <script src="<%=request.getContextPath()%>/js/plugins/layui/respond.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
 </body>
 <script>
 
@@ -82,6 +85,12 @@
         //transfer.get(参数1:初始化返回值,参数2:获取数据[all,left,right,l,r],参数:指定数据字段)
         $('#save').on('click',function () {
             var specialistsIdS = transfer.get(tb1,'left','uuid');
+            var specialistsIdArray = specialistsIdS.split(',');
+            if(specialistsIdArray.length%2 == 0){
+                alert("已匹配专家信息数量不能为双数，请调整");
+                location.replace(location.href);
+                return;
+            }
             $.ajax({
                 url: "/bg/lwPaper/manualMatch?paperUuid="+paperUuid+"&specialistsIdS="+specialistsIdS,
                 type: "post",

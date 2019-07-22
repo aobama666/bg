@@ -46,4 +46,10 @@ public interface LwGradeService {
      * 查询当前专家还没打分的论文数量
      */
     List<Map<String,Object>> noScoreNums(String userId);
+
+    /**
+     * 当前登录专家提交分数，具体操作步骤详见实现类
+     */
+    String gradeSubmit(String userId);
+
 }

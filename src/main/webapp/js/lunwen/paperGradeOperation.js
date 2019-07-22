@@ -193,25 +193,6 @@ grade.getTotalScore = function () {
 }
 
 
-grade.scoreSubmit = function () {
-    $.messager.confirm( "提交提示", "确认提交当前打分信息吗",
-        function(r){
-            if(r){
-                $.ajax({
-                    url: "/bg/lwGrade/gradeSubmit",
-                    type: "post",
-                    dataType:"json",
-                    contentType: 'application/json',
-                    success: function (data) {
-                        messager.tip(data.msg,3000);
-                    }
-                });
-            }
-        }
-    );
-}
-
-
 /*返回按钮，关闭弹出框页面*/
 grade.addClose = function () {
     parent.layer.closeAll();

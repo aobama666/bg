@@ -466,7 +466,6 @@ paperList.manualMatch = function (id){
         contentType: 'application/json',
         async: false,
         success: function (data) {
-            debugger;
             if(data.data.ifAnnex == "false"){
                 messager.tip("请先添加附件信息再进行匹配操作",2000);
             }else{

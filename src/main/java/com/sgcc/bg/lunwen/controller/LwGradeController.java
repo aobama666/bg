@@ -285,11 +285,12 @@ public class LwGradeController {
     @RequestMapping(value = "/gradeSubmit")
     public String gradeSubmit(){
         ResultWarp rw = null;
-        //查询当前专家有哪个类型没有打分操作
-        List<Map<String,Object>> noScoreNums = lwGradeService.noScoreNums(getLoginUserUUID());
-        if(noScoreNums!=null){
+        String userId = getLoginUserUUID();
+        //查询当前专家有没有遗漏的论文未打分
+        List<Map<String,Object>> noScoreNums = lwGradeService.noScoreNums(userId);
+        if(noScoreNums!=null && noScoreNums.size()!=0){
+            //不用多想，这个循环就是单纯的拼接一下提示语
             StringBuffer msg = new StringBuffer();
-//            综述类论文中2个、技术类论文中3个未打分完成，请重新打分
             for(int i=0;i<noScoreNums.size();i++){
                 String paperType = noScoreNums.get(i).get("PAPERTYPE").toString();
                 BigDecimal nums = (BigDecimal) noScoreNums.get(i).get("NUMS");
@@ -302,7 +303,9 @@ public class LwGradeController {
             rw = new ResultWarp(ResultWarp.SUCCESS ,msg.toString());
             return JSON.toJSONString(rw);
         }
-        return "";
+        String result = lwGradeService.gradeSubmit(userId);
+        rw = new ResultWarp(ResultWarp.SUCCESS ,result);
+        return JSON.toJSONString(rw);
     }
 
     /**
@@ -312,5 +315,15 @@ public class LwGradeController {
         String userName = webUtils.getUsername();
         HRUser user = userService.getUserByUserName(userName);
         return user.getUserId();
+    }
+
+    /**
+     *  注销登录,在这里加为的是测试时方便各个专家来回切换，前台不会有按钮出现，直接调链接
+     */
+    @ResponseBody
+    @RequestMapping("/logout")
+    public String logout(HttpServletResponse response,HttpServletRequest request){
+        webUtils.logOut(request,response);
+        return "logout success !";
     }
 }

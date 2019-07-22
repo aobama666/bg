@@ -112,22 +112,29 @@ grade.gradeOperation = function (pmeId,paperName,paperUuid,scoreStatus){
     });
 }
 
-
-grade.sumbitStatus = function () {
-    $.messager.confirm( '提交提示', '确认提交当前打分信息吗？',
+/**
+ * 提交打分信息
+ */
+grade.scoreSubmit = function () {
+    $.messager.confirm( "提交提示", "确认提交当前打分信息吗",
         function(r){
             if(r){
                 $.ajax({
                     url: "/bg/lwGrade/gradeSubmit",
                     type: "post",
+                    dataType:"json",
+                    contentType: 'application/json',
+                    data: '',
                     success: function (data) {
-                        message.tip(data.msg,3000);
+                        messager.tip(data.msg,3000);
+                        grade.query();
                     }
                 });
             }
         }
     );
 }
+
 
 /*关闭页面后弹出信息*/
 grade.closeAndOpen = function (message) {
