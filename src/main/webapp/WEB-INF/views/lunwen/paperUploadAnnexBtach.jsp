@@ -20,18 +20,13 @@
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 </head>
 <body style="padding-top: 5%">
-    <span style="margin-left: 3%;margin-bottom: 1%" >
-        上传的压缩包需为
-        <b>zip</b>
-    </span><br/>
-    <span style="margin-left: 3%;margin-bottom: 1%" >
-        压缩包内上传文件名称格式为：
-        <b>“论文题目-材料类别.文件类型”</b>
-    </span><br/>
-    <span style="margin-left: 3%;margin-bottom: 1%" >
-        压缩包内上传文件类型为：
-        <b>“Pdf/jpg/docx/rar/bmp/doc”</b>
-    </span><br/>
+<div style="margin-left: 3%;margin-bottom: 1%;color:red" >
+        上传的压缩包需为zip
+		<br/>
+        压缩包内上传文件名称格式为：论文题目-材料类别.文件类型
+    	<br/>
+        压缩包内上传文件类型为：Pdf/jpg/docx/rar/bmp/doc
+    </div>
 
 <form id="queryForm" method="post" enctype="multipart/form-data">
 	<table class="visitOperate tableStyle specialTable">

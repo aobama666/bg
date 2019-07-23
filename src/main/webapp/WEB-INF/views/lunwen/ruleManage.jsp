@@ -21,8 +21,12 @@
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 	<style>
 		th{
+			 text-align:center;
+			 height:45px;
+		 }
+		td{
 			text-align:center;
-			height:70px;
+			height:45px;
 		}
 		input{
 			text-align:center;

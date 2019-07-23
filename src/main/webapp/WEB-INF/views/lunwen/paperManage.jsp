@@ -113,6 +113,7 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<!-- 本页面所需的js -->
 	<script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
+	<script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
  	<script src="<%=request.getContextPath()%>/js/lunwen/paperManage.js"></script>
 </body>
 

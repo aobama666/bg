@@ -98,7 +98,7 @@
 	</table>
 	
 	<div class="btnContent">
-		<button type="button" class="btn" onclick="queryAll.updateSubmit('')" >提交</button>
+		<button type="button" class="btn" onclick="queryAll.updateSubmit('')" >保存</button>
 		<button type="button" class="btn" onclick="queryAll.messageResign()">返回</button>
 	</div>
 	<!-- end参观详情信息-->

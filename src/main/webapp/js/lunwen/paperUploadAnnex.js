@@ -26,7 +26,6 @@ $(function(){
 	    }
 	});
     uploadAnnex.btn_type_flag = 0;
-    $(".paging").css("display","none");
 });
 
 /*  start  列表查询   */
@@ -34,6 +33,7 @@ uploadAnnex.query = function(){
 	dataItems = new Array();
 	index = 0;
 	$("#datagrid").datagrid("seach");
+
 }
 /*  end  列表查询  */
 
@@ -41,26 +41,33 @@ uploadAnnex.query = function(){
 /* 附件信息-初始化列表界面  */
 uploadAnnex.initDataGrid = function(){
         var paperUuid = $("#uuid").val();
+        debugger;
+        if(paperUuid === ''){
+            //防止无参数导致的无数据导致的组件关闭不掉
+            paperUuid = 'epri';
+        }
 	    $("#datagrid").datagrid({
-        url: "/bg/lwPaper/selectPaperAnnex?uuid="+paperUuid,
-        type: 'POST',
-        form: '#queryForm',
-        columns: [
-            {name: '',style:{width:"2px"}, data: 'id',checkbox:true, forMat:function(row){
-                    dataItems[index] = row;//将一行数据放在一个list中
-                    return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.UUID)+'"/>';
-                }
-            },
-            {name: '附件名称',style:{width:"120px"}, data: 'FILENAME',forMat:function(row){
-                    return "<a title = '点击下载附件' style='width:250px;" +
-                        " text-align:left;'id='\"+row.UUID+\"'" +
-                        " href = 'javascript:void(0)' onclick = paperList.downloadAnnex('"+row.UUID+"')>"+row.FILENAME+"</a>";
-            }},
-            {name: '文件格式',style:{width:"50px"}, data: 'FILEEXTNAME'},
-            {name: '文件大小', style:{width:"50px"},data: 'FILESIZE'},
-            {name: '上传时间', style:{width:"120px"},data: 'CREATETIME'}
-        ]
-    });
+            url: "/bg/lwPaper/selectPaperAnnex?uuid="+paperUuid,
+            type: 'POST',
+            form: '#queryForm',
+            columns: [
+                {name: '',style:{width:"2px"}, data: 'id',checkbox:true, forMat:function(row){
+                        dataItems[index] = row;//将一行数据放在一个list中
+                        return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.UUID)+'"/>';
+                    }
+                },
+                {name: '附件名称',style:{width:"120px"}, data: 'FILENAME',forMat:function(row){
+                        return "<a title = '点击下载附件' style='width:250px;" +
+                            " text-align:left;'id='\"+row.UUID+\"'" +
+                            " href = 'javascript:void(0)' onclick = paperList.downloadAnnex('"+row.UUID+"')>"+row.FILENAME+"</a>";
+                }},
+                {name: '文件格式',style:{width:"50px"}, data: 'FILEEXTNAME'},
+                {name: '文件大小', style:{width:"50px"},data: 'FILESIZE'},
+                {name: '上传时间', style:{width:"120px"},data: 'CREATETIME'}
+            ]
+        });
+        $(".paging").css("display","none");
+        // $("#datagrid").css("height","20px");
 }
 
 

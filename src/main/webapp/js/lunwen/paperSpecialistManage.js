@@ -52,11 +52,11 @@ queryAll.initDataGrid = function(){
         form:'#queryForm',
         pageSize:10,
         tablepage:$(".tablepage"),//分页组件
-        successFinal:function(data){
+        /*successFinal:function(data){
             $("#datagrid").find("input[type=checkbox]").eq(0).attr("style","display:inline");
-        },
+        },*/
         columns: [
-            {name: '',style:{width:"2%"}, data: 'uuid',checkbox:true, forMat:function(row){
+            {name: '',style:{width:"2px"}, data: 'uuid',checkbox:true, forMat:function(row){
               dataItems[index] = row;//将一行数据放在一个list中
               return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.uuid)+'"/>';
             }
@@ -245,7 +245,7 @@ queryAll.updateEvent = function(){
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;">专家修改 </h4>',
-        area:['85%','65%'],
+        area:['85%','50%'],
         fixed:false,//不固定
         maxmin:true,
         content:url,
@@ -346,7 +346,7 @@ queryAll.renewal = function () {
                 layer.open({
                     type:2,
                     title:'<h4 style="height:42px;line-height:25px;">更换专家 </h4>',
-                    area:['85%','85%'],
+                    area:['85%','75%'],
                     fixed:false,//不固定
                     maxmin:true,
                     content:url,
@@ -367,11 +367,14 @@ queryAll.addEvent = function (){
     var url = "/bg/expert/speciaAdd"
     layer.open({
         type:2,
-        title:'<h4 style="height:42px;line-height:25px;">增加专家</h4>',
-        area:['85%','65%'],
+        title:'<h4 style="height:42px;line-height:25px;">专家新增</h4>',
+        area:['85%','50%'],
         fixed:false,//不固定
         maxmin:true,
         content:url,
+        end: function () {
+            queryAll.refresh();
+        }
     });
 }
 

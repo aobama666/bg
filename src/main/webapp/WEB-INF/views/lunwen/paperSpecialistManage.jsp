@@ -66,10 +66,8 @@
 			<div class='btn right joinButton' onclick="queryAll.joinEvent()">导入</div>
 			<div class='btn right outButton' onclick="queryAll.outEvent()">导出</div>
 			<div class='btn right renewalButton' onclick="queryAll.renewal()" >更换专家</div>
-			<div><h3>专家信息</h3></div>
 		</div>
 	</div>
-	<div><hr></div>
 
 	<div class="tabbable" >
 		<div id="datagrid" style="height:450px;margin-bottom: 10px;"></div>

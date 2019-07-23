@@ -554,7 +554,7 @@ public class LwPaperController {
             rw = new ResultWarp(ResultWarp.FAILED ,"撤回打分表失败,该论文还未生成打分表");
         }else{
             log.info(getLoginUser()+"this paper cancel score_table fail,scoreStatus="+scoreStatus+",uuid="+uuid);
-            rw = new ResultWarp(ResultWarp.FAILED ,"撤回打分表失败,该论文已进行打分操作");
+            rw = new ResultWarp(ResultWarp.FAILED ,"打分期间不能操作该功能");
         }
         return JSON.toJSONString(rw);
     }

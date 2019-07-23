@@ -410,7 +410,8 @@ paperList.exportExcel = function () {
 
 /*自动匹配*/
 paperList.automaticMatch = function(){
-    var info = "确认自动匹配选中的这条论文吗";
+    debugger
+    var info = "确认自动匹配操作吗";
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
         messager.tip("请选择要操作的数据",1000);
@@ -419,7 +420,7 @@ paperList.automaticMatch = function(){
         messager.tip("每次只能操作一条数据",2000);
         return;
     }else if(checkedItems[0].ALLSTATUS == 2 || checkedItems[0].ALLSTATUS == 7){
-        info = "该论文已自动匹配，确认重新自动匹配选中的这条论文吗";
+        info = "是否再次操作此功能";
     }
 
     $.ajax({
@@ -431,7 +432,25 @@ paperList.automaticMatch = function(){
             if(data.data.ifAnnex == "false"){
                 messager.tip("请先添加附件信息再进行匹配操作",2000);
             }else{
-                $.messager.confirm( "自动匹配提示", info,
+                layer.confirm(info,{
+                    btn:['确定','取消'],icon:0,title:'自动匹配'
+                },function () {
+                    $.ajax({
+                        url: "/bg/lwPaper/automaticMatch?uuid="+checkedItems[0].UUID,
+                        type: "post",
+                        dataType:"json",
+                        contentType: 'application/json',
+                        data: '',
+                        success: function (data) {
+                            layer.close(index);
+                            layer.alert(data.msg,{icon:2,title:'信息提示'});
+                            paperList.queryAddPage();
+                        }
+                    });
+                },function () {
+                    layer.close(index);
+                })
+                /*$.messager.confirm( "自动匹配提示", info,
                     function(r){
                         if(r){
                             $.ajax({
@@ -447,7 +466,7 @@ paperList.automaticMatch = function(){
                             });
                         }
                     }
-                );
+                );*/
             }
         }
     });

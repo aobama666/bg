@@ -18,7 +18,7 @@ rule.init = function () {
             var firstIndexs = data.data.firstIndexs;
             var scoreTableLength = scoreTable.length;
             $("#scoreTableLength").val(scoreTableLength);
-            var scoreTableContent = '<table border="1px" align="center" style="text-align:center;width:100%;height:450px">' +
+            var scoreTableContent = '<table border="1px" align="center" style="text-align:center;width:100%;">' +
                 '<tr style="background-color: #d5e7e7;">' +
                 '<th>一级指标</th>' +
                 '<th>二级指标</th>' +
