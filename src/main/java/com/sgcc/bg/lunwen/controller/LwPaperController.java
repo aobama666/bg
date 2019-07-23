@@ -437,7 +437,11 @@ public class LwPaperController {
         //获取选中的专家信息
         String[] specialistsArray = {};
         if(specialistsIdS.contains(",")){
+            //排除一个也不选
             specialistsArray = specialistsIdS.split(",");
+        }else if(!"".equals(specialistsIdS)){
+            //当直选中一个
+            specialistsArray = new String[]{specialistsIdS};
         }
         List<String> spcialistsIdArray = new ArrayList<>(Arrays.asList(specialistsArray));
         int successMatchNums = spcialistsIdArray.size();

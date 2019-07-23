@@ -85,11 +85,13 @@
         //transfer.get(参数1:初始化返回值,参数2:获取数据[all,left,right,l,r],参数:指定数据字段)
         $('#save').on('click',function () {
             var specialistsIdS = transfer.get(tb1,'left','uuid');
-            var specialistsIdArray = specialistsIdS.split(',');
-            if(specialistsIdArray.length%2 == 0){
-                parent.messager.tip("已匹配专家信息数量不能为双数，请调整",3000);
-                location.replace(location.href);
-                return;
+            if(specialistsIdS.length !== 0){
+                var specialistsIdArray = specialistsIdS.split(',');
+                if(specialistsIdArray.length%2 == 0){
+                    parent.messager.tip("已匹配专家信息数量不能为双数，请调整",3000);
+                    location.replace(location.href);
+                    return;
+                }
             }
             $.ajax({
                 url: "/bg/lwPaper/manualMatch?paperUuid="+paperUuid+"&specialistsIdS="+specialistsIdS,
