@@ -226,10 +226,6 @@ paperList.delEvent = function(){
 			messager.tip("请选择要操作的数据",1000);
 			return;
 		}
-		/*else if(checkedItems.length>1){
-			messager.tip("每次只能删除一条数据",2000);
-			return;
-		}*/
         var uuids = "";
         var checkedItems = dataGrid.getCheckedItems(dataItems);
         if(checkedItems.length>0) {
@@ -239,23 +235,24 @@ paperList.delEvent = function(){
         }
         uuids = uuids.slice(0,uuids.length-1);
 		//不在前台做是否能删除的判断，在后台判断，记录日志，同时比前台更safe
-		$.messager.confirm( "删除提示", "确认删除选中的"+checkedItems.length+"条论文吗",
-			function(r){
-				if(r){
-					$.ajax({
-					    url: "/bg/lwPaper/delLwPaper?uuids="+uuids,//删除
-						type: "post",
-						dataType:"json",
-						contentType: 'application/json',
-                        data: '',
-						success: function (data) {
-								messager.tip(data.msg,3000);
-								paperList.queryAddPage();
-						}
-					});
-				}
-			}
-		);
+        layer.confirm('确认删除选中的'+checkedItems.length+'条论文吗',{
+                btn:['确定','取消'],icon:0,title:'删除提示'
+            },function () {
+                $.ajax({
+                    url: "/bg/lwPaper/delLwPaper?uuids="+uuids,//删除
+                    type: "post",
+                    dataType:"json",
+                    contentType: 'application/json',
+                    data: '',
+                    success: function (data) {
+                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                        paperList.queryAddPage();
+                    }
+                });
+            },function () {
+                layer.close(index);
+            }
+        )
 }
 
 
@@ -281,63 +278,56 @@ paperList.downloadAnnex = function (uuid) {
  * 生成打分表
  */
 paperList.generateScoreTable = function () {
-    var checkedItems = dataGrid.getCheckedItems(dataItems);
-    if(checkedItems.length==0){
-        messager.tip("请选择要操作的数据",1000);
-        return;
-    }else if(checkedItems.length>1){
-        messager.tip("每次只能操作一条数据",2000);
-        return;
-    }
-    //不在前台做是否能删除的判断，在后台判断，记录日志，同时比前台更safe
-    $.messager.confirm( "生成提示", "确认生成选中论文打分表吗",
-        function(r){
-            if(r){
-                $.ajax({
-                    url: "/bg/lwPaper/generateScoreTable?uuid="+checkedItems[0].UUID,
-                    type: "post",
-                    dataType:"json",
-                    contentType: 'application/json',
-                    data: '',
-                    success: function (data) {
-                            messager.tip(data.msg,3000);
-                            paperList.queryAddPage();
-                    }
-                });
+    layer.confirm('确定生成打分表吗',{
+        btn:['确定','取消'],icon:0,title:'自动匹配'
+    },function () {
+        layer.alert('success',{icon:1,title:'信息提示'});
+        /*$.ajax({
+            url: "/bg/lwPaper/generateScoreTable",
+            type: "post",
+            dataType:"json",
+            contentType: 'application/json',
+            data: '',
+            success: function (data) {
+                //根据反馈结果来间接选择图标
+                //判断当前哪个论文没有附件信息
+                //如果成功，那就成功。
+                layer.close(index);
+                layer.alert(data.msg,{icon:2,title:'信息提示'});
+                paperList.queryAddPage();
             }
-        }
-    );
+        });*/
+    },function () {
+        layer.close(index);
+    })
 }
 
 /**
  * 撤回打分表
  */
 paperList.withdrawScoreTable = function () {
-    var checkedItems = dataGrid.getCheckedItems(dataItems);
-    if(checkedItems.length==0){
-        messager.tip("请选择要操作的数据",1000);
-        return;
-    }else if(checkedItems.length>1){
-        messager.tip("每次只能操作一条数据",2000);
-        return;
-    }
-    $.messager.confirm( "撤回提示", "确认撤回选中论文打分表吗",
-        function(r){
-            if(r){
-                $.ajax({
-                    url: "/bg/lwPaper/withdrawScoreTable?uuid="+checkedItems[0].UUID,
-                    type: "post",
-                    dataType:"json",
-                    contentType: 'application/json',
-                    data: '',
-                    success: function (data) {
-                            messager.tip(data.msg,3000);
-                            paperList.queryAddPage();
-                    }
-                });
+    layer.confirm('确定撤回打分表吗',{
+        btn:['确定','取消'],icon:0,title:'自动匹配'
+    },function () {
+        layer.alert('success',{icon:1,title:'信息提示'});
+        /*$.ajax({
+            url: "/bg/lwPaper/withdrawScoreTable",
+            type: "post",
+            dataType:"json",
+            contentType: 'application/json',
+            data: '',
+            success: function (data) {
+                //根据反馈结果来间接选择图标
+                //判断当前哪个论文没有附件信息
+                //如果成功，那就成功。
+                layer.close(index);
+                layer.alert(data.msg,{icon:2,title:'信息提示'});
+                paperList.queryAddPage();
             }
-        }
-    );
+        });*/
+    },function () {
+        layer.close(index);
+    })
 }
 
 
@@ -450,7 +440,7 @@ paperList.manualMatch = function (id){
         async: false,
         success: function (data) {
             if(data.data.ifAnnex == "false"){
-                messager.tip("请先添加附件信息再进行匹配操作",2000);
+                layer.alert('请先添加附件信息再进行匹配操作',{icon:0,title:'信息提示'});
             }else{
                 //已添加附件，可手动匹配
                 var url = "/bg/lwPaper/manualMatchJump?paperUuid="+id;

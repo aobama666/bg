@@ -117,9 +117,9 @@ public class LwPaperServiceImpl implements LwPaperService {
     @Override
     public List<Map<String, Object>> selectLwPaper(Integer pageStart, Integer pageEnd,
              String paperName, String paperId, String year, String unit,
-             String author, String field,String scoreStatus,String paperType) {
+             String author, String field,String allStatus,String paperType) {
         return lwPaperMapper.selectLwPaper(pageStart,pageEnd,paperName,paperId,
-                year,unit,author,field,scoreStatus,paperType,LwPaperConstant.VALID_YES);
+                year,unit,author,field,allStatus,paperType,LwPaperConstant.VALID_YES);
     }
 
     @Override
@@ -130,17 +130,17 @@ public class LwPaperServiceImpl implements LwPaperService {
 
     @Override
     public Integer selectLwPaperCount(String paperName, String paperId, String year, String unit,
-                                      String author, String field, String scoreStatus, String paperType) {
+                                      String author, String field, String allStatus, String paperType) {
         return lwPaperMapper.selectLwPaperCount(paperName,paperId,year,unit,author,
-                field,scoreStatus,paperType,LwPaperConstant.VALID_YES);
+                field,allStatus,paperType,LwPaperConstant.VALID_YES);
     }
 
     @Override
     public List<LwPaper>  selectLwpaperExport(String paperName, String paperId, String year, String unit
-            , String author, String field, String scoreStatus, String paperType, String ids, HttpServletResponse response) {
+            , String author, String field, String allStatus, String paperType, String ids, HttpServletResponse response) {
         List<LwPaper> list = new ArrayList<>();
         if(ids == null || ids == "") {
-            list = lwPaperMapper.selectLwPaperExport(paperName,paperId,year,unit,author,field,scoreStatus,paperType,LwPaperConstant.VALID_YES);
+            list = lwPaperMapper.selectLwPaperExport(paperName,paperId,year,unit,author,field,allStatus,paperType,LwPaperConstant.VALID_YES);
         }else {
             String [] uuids=ids.split(",");
             list = lwPaperMapper.selectCheckIdExport(uuids);

@@ -56,9 +56,9 @@ public class LwPaperController {
     @RequestMapping(value = "/paperToManage", method = RequestMethod.GET)
     public ModelAndView paperToManage(){
         List<Map<String,Object>> yearList = lwPaperService.getTableYear();
-        List<Map<String, String>>   scoreStatusList= dataDictionaryService.selectDictDataByPcode("score_status");
+        List<Map<String, String>>   scoreStatusList= dataDictionaryService.selectDictDataByPcode("paper_all_status");
         Map<String, Object> mvMap = new HashMap<>();
-        mvMap.put("scoreStatus", scoreStatusList);
+        mvMap.put("allStatus", scoreStatusList);
         mvMap.put("yearList", yearList);
         ModelAndView mv = new ModelAndView("lunwen/paperManage",mvMap);
         return mv;
@@ -71,7 +71,7 @@ public class LwPaperController {
     @RequestMapping(value = "/selectLwPaper")
     public String selectLwPaper(
             String paperName,String paperId, String year, String unit, String author,
-            String field, String scoreStatus, Integer page, Integer limit, String paperType
+            String field, String allStatus, Integer page, Integer limit, String paperType
     ){
         //处理请求参数
         paperName = Rtext.toStringTrim(paperName,"");
@@ -80,7 +80,7 @@ public class LwPaperController {
         unit = Rtext.toStringTrim(unit,"");
         author = Rtext.toStringTrim(author,"");
         field = Rtext.toStringTrim(field,"");
-        scoreStatus = Rtext.toStringTrim(scoreStatus,"");
+        allStatus = Rtext.toStringTrim(allStatus,"");
         if(paperType==null || "".equals(paperType)){
             //默认学术类型
             paperType = LwPaperConstant.LW_TYPE_X;
@@ -94,9 +94,9 @@ public class LwPaperController {
         }
         //分页获取对应某批论文信息
         List<Map<String, Object>> lwPaperList =  lwPaperService.selectLwPaper(
-                pageStart,pageEnd,paperName,paperId,year,unit,author,field,scoreStatus,paperType);
+                pageStart,pageEnd,paperName,paperId,year,unit,author,field,allStatus,paperType);
         //获取对应某批论文信息总数
-        Integer lwPaperCount = lwPaperService.selectLwPaperCount(paperName,paperId,year,unit,author,field,scoreStatus,paperType);
+        Integer lwPaperCount = lwPaperService.selectLwPaperCount(paperName,paperId,year,unit,author,field,allStatus,paperType);
 
         //查询数据封装
         Map<String, Object> listMap = new HashMap<String, Object>();
@@ -124,10 +124,10 @@ public class LwPaperController {
         String unit  = request.getParameter("unit") == null?"":request.getParameter("unit");
         String author  = request.getParameter("author") == null?"":request.getParameter("author");
         String field  = request.getParameter("field") == null?"":request.getParameter("field");
-        String scoreStatus  = request.getParameter("scoreStatus") == null?"":request.getParameter("scoreStatus");
+        String allStatus  = request.getParameter("allStatus") == null?"":request.getParameter("allStatus");
         String paperType  = request.getParameter("paperType") == null?"":request.getParameter("paperType");
         String ids = request.getParameter("selectList") == null ?" " : request.getParameter("selectList");
-        List<LwPaper> lwPaperList = lwPaperService.selectLwpaperExport(paperName,paperId,year,unit,author,field,scoreStatus,paperType,ids,response);
+        List<LwPaper> lwPaperList = lwPaperService.selectLwpaperExport(paperName,paperId,year,unit,author,field,allStatus,paperType,ids,response);
         log.info(getLoginUser()+"exprot data");
     }
 

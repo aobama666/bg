@@ -35,11 +35,11 @@
 							<option value ="${yearList.YEAR}"}> ${yearList.YEAR}</option>
 						</c:forEach>
 					</select>
-					<label  for="scoreStatus">打分状态：</label>
-					<select id = "scoreStatus" name = "scoreStatus"   class = "changeQuery changeYear" style="width: 100px">
+					<label  for="allStatus">论文状态：</label>
+					<select id = "allStatus" name = "allStatus"   class = "changeQuery changeYear" style="width: 100px">
 						<option value = "" selected>请选择</option>
-						<c:forEach  var="scoreStatus"  items="${scoreStatus}">
-							<option value ="${scoreStatus.K}"}> ${scoreStatus.V}</option>
+						<c:forEach  var="allStatus"  items="${allStatus}">
+							<option value ="${allStatus.K}"}> ${allStatus.V}</option>
 						</c:forEach>
 					</select>
 					<label>编号：</label>
@@ -49,11 +49,10 @@
 			<br/>
 				<label style="margin-left: 20px">论文题目：</label>
 				<input type = "text" id = "paperName" name = "paperName" style="width: 248px" class = "inputQuery changeQuery" >
-				<label style="margin-left: 15px">单位：</label>
-				<input type = "text" id = "unit" name = "unit" style="width: 100px" class = "inputQuery changeQuery" >
-				<label>作者：</label>
+				<label style="margin-left: 15px">作者：</label>
 				<input type = "text" id = "author" name = "author" style="width: 100px" class = "inputQuery changeQuery" >
-
+				<label>单位：</label>
+				<input type = "text" id = "unit" name = "unit" style="width: 100px" class = "inputQuery changeQuery" >
 				<input type="text" id="paperType" name="paperType" style="display: none" value="1">
 				<!-- 查询按钮  " -->
 				<div style="float:right" id = "queryButton" class = "btn query" onclick = "paperList.query()">搜索</div>
@@ -66,30 +65,30 @@
 	<div>
 		<!--  新增  修改  删除 功能按钮 -->
 		<div id="funcBtn" style="height: 35px;float:right">
-			<div class='btn right deleteButton' onclick="paperList.downLoadTempLate()" >下载模板</div>
-			<div class='btn right deleteButton' onclick="paperList.batchUploadOperation()" >附件批量导入</div>
-			<div class='btn right deleteButton' onclick="paperList.jumpImport()" >导入</div>
-			<div class='btn right deleteButton' onclick="paperList.exportExcel()" >导出</div>
-			<div class='btn right deleteButton' onclick="paperList.delEvent()" >删除</div>
-			<div class='btn right deleteButton' onclick="paperList.updateOperation()" >修改</div>
-			<div class='btn right deleteButton' onclick="paperList.addOperation()" >新增</div>
-			<div class='btn right deleteButton' onclick="paperList.automaticMatch()" >自动匹配</div>
-			<div class='btn right deleteButton' onclick="paperList.withdrawScoreTable()" >撤回打分表</div>
-			<div class='btn right deleteButton' onclick="paperList.generateScoreTable()" >生成打分表</div>
+			<div class='btn right ' onclick="paperList.downLoadTempLate()" >下载模板</div>
+			<div class='btn right ' onclick="paperList.batchUploadOperation()" >附件批量导入</div>
+			<div class='btn right ' onclick="paperList.jumpImport()" >导入</div>
+			<div class='btn right ' onclick="paperList.exportExcel()" >导出</div>
+			<div class='btn right ' onclick="paperList.delEvent()" >删除</div>
+			<div class='btn right ' onclick="paperList.updateOperation()" >修改</div>
+			<div class='btn right ' onclick="paperList.addOperation()" >新增</div>
+			<div class='btn right ' onclick="paperList.automaticMatch()" >自动匹配</div>
+			<div class='btn right ' onclick="paperList.withdrawScoreTable()" >撤回打分表</div>
+			<div class='btn right ' onclick="paperList.generateScoreTable()" >生成打分表</div>
 		</div>
 		<!-- 学术技术综述分类按钮 -->
 		<%--选中效果状态color:white;background-color: #2d9592--%>
 		<div class="grid-title">
-			<h3 style="float: left;color:white;background-color: #2d9592" onclick="paperList.updatePaperType(1)">
+			<h3 style="width: 80px;float: left;color:white;background-color: #2d9592" onclick="paperList.updatePaperType(1)">
 				学术类
 			</h3>
-			<h3 style="float: left">
+			<h3 style="width: 80px;float: left">
 				<a href="#" style="color:black" onclick="paperList.updatePaperType(2)">技术类</a>
 			</h3>
-			<h3 style="float: left">
+			<h3 style="width: 80px;float: left">
 				<a href="#" style="color:black" onclick="paperList.updatePaperType(3)">综述类</a>
 			</h3>
-			<h3></h3>
+			<h3 style="width: 80px;"></h3>
 		</div>
 	</div>
 	<div class="tabbable active" >

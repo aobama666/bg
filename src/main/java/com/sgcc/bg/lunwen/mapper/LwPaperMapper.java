@@ -81,7 +81,7 @@ public interface LwPaperMapper {
             @Param("unit") String unit,
             @Param("author") String author,
             @Param("field") String field,
-            @Param("scoreStatus") String scoreStatus,
+            @Param("allStatus") String allStatus,
             @Param("paperType") String paperType,
             @Param("valid") String valid
     );
@@ -96,7 +96,7 @@ public interface LwPaperMapper {
             @Param("unit") String unit,
             @Param("author") String author,
             @Param("field") String field,
-            @Param("scoreStatus") String scoreStatus,
+            @Param("allStatus") String allStatus,
             @Param("paperType") String paperType,
             @Param("valid") String valid
     );
@@ -142,7 +142,7 @@ public interface LwPaperMapper {
             @Param("unit") String unit,
             @Param("author") String author,
             @Param("field") String field,
-            @Param("scoreStatus") String scoreStatus,
+            @Param("allStatus") String allStatus,
             @Param("paperType") String paperType,
             @Param("valid") String valid
     );

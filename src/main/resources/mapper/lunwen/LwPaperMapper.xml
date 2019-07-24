@@ -188,8 +188,8 @@
             <if test="field != null and field != ''">
               and p.field = #{field}
             </if>
-            <if test="scoreStatus != null and scoreStatus != ''">
-                and p.score_status = #{scoreStatus}
+            <if test="allStatus != null and allStatus != ''">
+                and p.all_Status = #{allStatus}
             </if>
             <if test="paperType != null and paperType != ''">
                 and p.paper_type = #{paperType}
@@ -224,8 +224,8 @@
         <if test="field != null and field != ''">
             and p.field = #{field}
         </if>
-        <if test="scoreStatus != null and scoreStatus != ''">
-            and p.score_status = #{scoreStatus}
+        <if test="allStatus != null and allStatus != ''">
+            and p.all_status = #{allStatus}
         </if>
         <if test="paperType != null and paperType != ''">
             and p.paper_type = #{paperType}
@@ -421,8 +421,8 @@
         <if test="field != null and field != ''">
             and p.field = #{field}
         </if>
-        <if test="scoreStatus != null and scoreStatus != ''">
-            and p.score_status = #{scoreStatus}
+        <if test="allStatus != null and allStatus != ''">
+            and p.all_status = #{allStatus}
         </if>
         <if test="paperType != null and paperType != ''">
             and p.paper_type = #{paperType}

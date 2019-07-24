@@ -50,15 +50,14 @@
 </div>
 
     <!-- 本页面所需的js -->
-    <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
     <script src="<%=request.getContextPath()%>/js/plugins/layui/html5.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
     <script src="<%=request.getContextPath()%>/js/plugins/layui/respond.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
+    <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 <script src="<%=request.getContextPath()%>/js/lunwen/paperManualMatch.js"></script>
 <script type="application/javascript">
     var left = ${left};
     var right = ${right};
     var paperUuid = ${paperUuid};
-
 
     layui.config({
         base: '/bg/js/plugins/layui/'

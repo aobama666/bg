@@ -92,7 +92,7 @@ public interface LwPaperService {
      * @param unit
      * @param author
      * @param field
-     * @param scoreStatus
+     * @param allStatus
      * @param paperType
      * @return
      */
@@ -105,7 +105,7 @@ public interface LwPaperService {
             String unit,
             String author,
             String field,
-            String scoreStatus,
+            String allStatus,
             String paperType
     );
 
@@ -130,7 +130,7 @@ public interface LwPaperService {
      * @param unit
      * @param author
      * @param field
-     * @param scoreStatus
+     * @param allStatus
      * @param paperType
      * @return
      */
@@ -140,7 +140,7 @@ public interface LwPaperService {
                                       String unit,
                                       String author,
                                       String field,
-                                      String scoreStatus,
+                                      String allStatus,
                                       String paperType
     );
 
@@ -152,7 +152,7 @@ public interface LwPaperService {
      * @param unit
      * @param author
      * @param field
-     * @param scoreStatus
+     * @param allStatus
      * @param paperType
      * @param ids
      * @param response
@@ -164,7 +164,7 @@ public interface LwPaperService {
                                     String unit,
                                     String author,
                                     String field,
-                                    String scoreStatus,
+                                    String allStatus,
                                     String paperType,
                                     String ids,
                                     HttpServletResponse response);
