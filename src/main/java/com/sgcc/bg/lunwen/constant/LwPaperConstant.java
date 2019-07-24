@@ -52,35 +52,40 @@ public class LwPaperConstant {
     public static final String SCORE_STATUS_AGAIN = "3";
 
 
-    //论文全生命周期状态
+    //论文全生命周期状态,p_a_s代表paper_all_status
     /**
-     * 论文信息已保存
+     * 已保存
      */
-    public static final String ALL_STATUS_ONE = "1";
+    public static final String P_A_S_SAVED = "1";
     /**
-     * 已匹配专家
+     * 匹配中
      */
-    public static final String ALL_STATUS_TWO = "2";
+    public static final String P_A_S_MATCHING = "2";
     /**
-     * 已生成打分表
+     * 已匹配
      */
-    public static final String ALL_STATUS_THREE = "3";
+    public static final String P_A_S_MATCHED = "3";
+    /**
+     * 待打分
+     */
+    public static final String P_A_S_UNRATED = "4";
+    /**
+     * 已撤回
+     */
+    public static final String P_A_S_WITHDRAWN = "5";
+    /**
+     * 已打分
+     */
+    public static final String P_A_S_SCORED = "6";
     /**
      * 重新评审
      */
-    public static final String ALL_STATUS_FOUR = "4";
+    public static final String P_A_S_REVIEW = "7";
     /**
-     * 已打分，待提交
+     * 已完成
      */
-    public static final String ALL_STATUS_FIVE = "5";
-    /**
-     * 已完成评审
-     */
-    public static final String ALL_STATUS_SIX = "6";
-    /**
-     * 已匹配专家未达标
-     */
-    public static final String All_STATUS_SEVEN = "7";
+    public static final String P_A_S_COMPLETED = "8";
+
 
 
     //专家匹配状态

@@ -265,7 +265,7 @@ public class LwGradeController {
         lwPaperMatchSpecialistService.updateScoreStatus(pmeId,userUuid,LwPaperConstant.SCORE_STATUS_SAVE);
         //修改论文表打分状态，全流程状态
         lwPaperService.updateScoreStatus(paperUuid,LwPaperConstant.SCORE_STATUS_SAVE);
-        lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.ALL_STATUS_FIVE);
+        lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.P_A_S_SCORED);
         ResultWarp rw = null;
         String msg = "";
         if(ifSave){
@@ -319,11 +319,12 @@ public class LwGradeController {
 
     /**
      *  注销登录,在这里加为的是测试时方便各个专家来回切换，前台不会有按钮出现，直接调链接
+     *  ie不能直接调用接口，所以在这返回一个页面
      */
-    @ResponseBody
     @RequestMapping("/logout")
-    public String logout(HttpServletResponse response,HttpServletRequest request){
+    public ModelAndView logout(HttpServletResponse response,HttpServletRequest request){
         webUtils.logOut(request,response);
-        return "logout success !";
+        ModelAndView modelAndView = new ModelAndView("lunwen/logout");
+        return modelAndView;
     }
 }

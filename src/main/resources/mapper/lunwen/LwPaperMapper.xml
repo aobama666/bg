@@ -158,6 +158,7 @@
             p.field,
             p.score_table_status scoreTableStatus,
             (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='score_status' and vaild=1 and code= p.score_status)  as scoreStatus,
+          (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_all_status' and vaild=1 and code= p.all_status)  as allStatusContent,
             p.all_status allStatus,
             p.create_user createUser,
             p.update_user updateUser,
@@ -256,7 +257,7 @@
                ROWNUM rown
                FROM bg_lw_paper p
                WHERE p.valid = '1'
-               AND p.ALL_STATUS = '6'
+               AND p.ALL_STATUS = '8'
                     <if test="year != null and year != ''">
                         and p.YEAR = #{year,jdbcType=VARCHAR}
                     </if>
@@ -277,7 +278,7 @@
     <select id="paperComprehensiveCount" resultType="java.lang.Integer">
         SELECT COUNT(UUID) FROM bg_lw_paper
         WHERE valid = '1'
-        AND ALL_STATUS = '6'
+        AND ALL_STATUS = '8'
         <if test="year != null and year != ''">
             and YEAR = #{year,jdbcType=VARCHAR}
         </if>
@@ -314,7 +315,7 @@
         ROWNUM AS ROWNO
         FROM bg_lw_paper p
         WHERE p.valid = '1'
-        AND p.ALL_STATUS = '6'
+        AND p.ALL_STATUS = '8'
         <if test="year != null and year != ''">
             and p.YEAR = #{year,jdbcType=VARCHAR}
         </if>
@@ -352,7 +353,7 @@
         ROWNUM AS ROWNO
         FROM bg_lw_paper p
         WHERE p.VALID = '1'
-        AND p.ALL_STATUS = '6'
+        AND p.ALL_STATUS = '8'
         AND p.UUID in (
         <foreach collection="strings"  item="string" index="index" separator=",">
             #{string,jdbcType=VARCHAR}
@@ -480,7 +481,7 @@
                 ROWNUM rown
                 FROM bg_lw_paper p
                 WHERE p.valid = '1'
-                AND p.ALL_STATUS = '6'
+                AND p.ALL_STATUS = '8'
                 <if test="year != null and year != ''">
                     and p.year = #{year,jdbcType=VARCHAR}
                 </if>
@@ -502,7 +503,7 @@
         SELECT COUNT(UUID)
         FROM bg_lw_paper
         WHERE valid = '1'
-        AND ALL_STATUS = '6'
+        AND ALL_STATUS = '8'
         <if test="year != null and year != ''">
             and year = #{year,jdbcType=VARCHAR}
         </if>
@@ -527,7 +528,7 @@
         ROWNUM AS ROWNO
         FROM bg_lw_paper p
         WHERE p.valid = '1'
-        AND p.ALL_STATUS = '6'
+        AND p.ALL_STATUS = '8'
         <if test="year != null and year != ''">
             and p.year = #{year,jdbcType=VARCHAR}
         </if>

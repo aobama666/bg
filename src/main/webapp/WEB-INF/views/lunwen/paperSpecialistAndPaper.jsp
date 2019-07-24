@@ -36,16 +36,16 @@
     <div class="sheach">
         <table class="visitOperate tableStyle specialTable">
             <tr>
-                <td>
+                <td style="width: 10%">
                     <span title = "专家姓名"><b class="mustWrite">*</b>专家姓名</span>
                 </td>
-                <td class="addInputStyle">
+                <td class="addInputStyle" style="width: 40%">
                     <input id="name" name="name"  type="text" class="validNull"  value = "${lwSpecialist.name}"  content="联系人" len="20"  title="必填项，中文或英文,字段长度不能超过 20"   />
                 </td>
-                <td >
+                <td  style="width: 10%">
                     <span title = "单位名称"><b class="mustWrite">*</b>单位名称</span>
                 </td>
-                <td class="addInputStyle">
+                <td class="addInputStyle" style="width: 40%">
                     <input type="text"  id="unitName" name="unitName"  class="validNull"  value = "${lwSpecialist.unitName}" content="单位名称"  title="必填项  "/>
                 </td>
             </tr>

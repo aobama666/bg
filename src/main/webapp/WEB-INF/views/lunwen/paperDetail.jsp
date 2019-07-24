@@ -27,17 +27,17 @@
 
 	<table class="visitOperate tableStyle specialTable" >
 		<tr>
-			<td>
+			<td style="width: 10%">
 				<span title = "论文题目">论文题目</span>
 			</td>
-			<td class="addInputStyle">
+			<td style="width: 40%" class="addInputStyle">
 				<input type = "text" style="display: none" value = "${UUID}"  class="validNull"  id = "uuid" name="uuid">
 				<span class="detailsLeft"> ${PAPERNAME}</span>
 			</td>
-			<td>
+			<td style="width: 10%">
 				<span title = "论文编号">论文编号</span>
 			</td>
-			<td class="addInputStyle">
+			<td style="width: 40%" class="addInputStyle">
 				<span class="detailsLeft"> ${PAPERID}</span>
 			</td>
 		</tr>
@@ -91,21 +91,7 @@
 				<span class="detailsLeft"> ${RECOMMENDUNIT}</span>
 			</td>
 			<td>
-				<span title = "打分表是否生成">打分表是否生成</span>
-			</td>
-			<td class="addInputStyle">
-				<span class="detailsLeft"> ${SCORETABLESTATUSDETAIL}</span>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<span title = "打分状态">打分状态</span>
-			</td>
-			<td class="addInputStyle">
-				<span class="detailsLeft"> ${SCORESTATUSDETAIL}</span>
-			</td>
-			<td>
-				<span title = "论文全流程状态">论文全流程状态</span>
+				<span title = "论文状态">论文状态</span>
 			</td>
 			<td class="addInputStyle">
 				<span class="detailsLeft"> ${ALLSTATUSDETAIL}</span>

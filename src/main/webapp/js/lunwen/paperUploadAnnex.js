@@ -26,6 +26,7 @@ $(function(){
 	    }
 	});
     uploadAnnex.btn_type_flag = 0;
+    $(".tableBody").css("height","150px");
 });
 
 /*  start  列表查询   */
@@ -33,7 +34,7 @@ uploadAnnex.query = function(){
 	dataItems = new Array();
 	index = 0;
 	$("#datagrid").datagrid("seach");
-
+    $(".tableBody").css("height","150px");
 }
 /*  end  列表查询  */
 
@@ -41,7 +42,6 @@ uploadAnnex.query = function(){
 /* 附件信息-初始化列表界面  */
 uploadAnnex.initDataGrid = function(){
         var paperUuid = $("#uuid").val();
-        debugger;
         if(paperUuid === ''){
             //防止无参数导致的无数据导致的组件关闭不掉
             paperUuid = 'epri';
@@ -67,7 +67,6 @@ uploadAnnex.initDataGrid = function(){
             ]
         });
         $(".paging").css("display","none");
-        // $("#datagrid").css("height","20px");
 }
 
 

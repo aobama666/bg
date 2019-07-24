@@ -72,9 +72,9 @@ paperList.initDataGrid = function(){
                         "href = 'javascript:void(0)' onclick = paperList.manualMatch('"+row.UUID+"')>查看详情</a>";
 
                 }},
-            {name: '打分状态',style:{width:"50px"}, data: 'SCORESTATUS'},
+            {name: '论文状态',style:{width:"50px"}, data: 'ALLSTATUSCONTENT'},
             {name: '加权平均分',style:{width:"50px"}, data: 'WEIGHTINGFRACTION'},
-            {name: '去最高最低得分', style:{width:"120px"},data: 'AVERAGEFRACTION'}
+            {name: '去最高最低得分', style:{width:"70px"},data: 'AVERAGEFRACTION'}
         ]
     });
 }
@@ -412,66 +412,30 @@ paperList.exportExcel = function () {
 paperList.automaticMatch = function(){
     debugger
     var info = "确认自动匹配操作吗";
-    var checkedItems = dataGrid.getCheckedItems(dataItems);
-    if(checkedItems.length==0){
-        messager.tip("请选择要操作的数据",1000);
-        return;
-    }else if(checkedItems.length>1){
-        messager.tip("每次只能操作一条数据",2000);
-        return;
-    }else if(checkedItems[0].ALLSTATUS == 2 || checkedItems[0].ALLSTATUS == 7){
-        info = "是否再次操作此功能";
-    }
-
-    $.ajax({
-        url: "/bg/lwPaper/ifAnnex?uuid="+checkedItems[0].UUID,//判断是否有附件信息
-        type: "post",
-        dataType:"json",
-        contentType: 'application/json',
-        success: function (data) {
-            if(data.data.ifAnnex == "false"){
-                messager.tip("请先添加附件信息再进行匹配操作",2000);
-            }else{
-                layer.confirm(info,{
-                    btn:['确定','取消'],icon:0,title:'自动匹配'
-                },function () {
-                    $.ajax({
-                        url: "/bg/lwPaper/automaticMatch?uuid="+checkedItems[0].UUID,
-                        type: "post",
-                        dataType:"json",
-                        contentType: 'application/json',
-                        data: '',
-                        success: function (data) {
-                            layer.close(index);
-                            layer.alert(data.msg,{icon:2,title:'信息提示'});
-                            paperList.queryAddPage();
-                        }
-                    });
-                },function () {
-                    layer.close(index);
-                })
-                /*$.messager.confirm( "自动匹配提示", info,
-                    function(r){
-                        if(r){
-                            $.ajax({
-                                url: "/bg/lwPaper/automaticMatch?uuid="+checkedItems[0].UUID,
-                                type: "post",
-                                dataType:"json",
-                                contentType: 'application/json',
-                                data: '',
-                                success: function (data) {
-                                        messager.tip(data.msg,3000);
-                                        paperList.queryAddPage();
-                                }
-                            });
-                        }
-                    }
-                );*/
+    //加一个ajax，看是否全量中的重复操作
+    //     info = "是否再次操作此功能";
+    layer.confirm(info,{
+        btn:['确定','取消'],icon:0,title:'自动匹配'
+    },function () {
+        layer.alert('success',{icon:1,title:'信息提示'});
+        /*$.ajax({
+            url: "/bg/lwPaper/automaticMatch",
+            type: "post",
+            dataType:"json",
+            contentType: 'application/json',
+            data: '',
+            success: function (data) {
+                //根据反馈结果来间接选择图标
+                //判断当前哪个论文没有附件信息
+                //如果成功，那就成功。
+                layer.close(index);
+                layer.alert(data.msg,{icon:2,title:'信息提示'});
+                paperList.queryAddPage();
             }
-        }
-    });
-
-
+        });*/
+    },function () {
+            layer.close(index);
+    })
 }
 
 

@@ -104,7 +104,7 @@ public class LwGradeServiceImpl implements LwGradeService {
                 //修改论文表打分状态和对应分值
                 lwPaperMapper.updateAverageScore(paperId,averageScore,highestLowestScore);
                 lwPaperMapper.updateScoreStatus(paperId,LwPaperConstant.SCORE_STATUS_SUBMIT);
-                lwPaperMapper.updateAllStatus(paperId,LwPaperConstant.ALL_STATUS_SIX);
+                lwPaperMapper.updateAllStatus(paperId,LwPaperConstant.P_A_S_COMPLETED);
             }
         }
         return "提交成功";

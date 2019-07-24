@@ -28,31 +28,32 @@
 		<div class='content_top'>论文管理</div>
 		<form id="queryForm" style="margin-bottom: 10px;">
 			<input type="hidden" name="selectList"/>
-				<label  for="year" class="yearTitle">年度：</label>
-				<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 90px">
-					<%--<option value = "${nowYear}"  selected>${nowYear}</option>--%>
-					<c:forEach  var="yearList"  items="${yearList}">
-						<option value ="${yearList.YEAR}"}> ${yearList.YEAR}</option>
-					</c:forEach>
-				</select>
-				<label>论文题目：</label>
-				<input type = "text" id = "paperName" name = "paperName" style="width: 200px" class = "inputQuery changeQuery" >
-				<label>编号：</label>
-				<input type = "text" id = "paperId" name = "paperId" style="width: 100px" class = "inputQuery changeQuery" >
-				<br/>
-				<label style="margin-left: 20px">单位：</label>
+					<label for="year" style="margin-left: 20px">年度：</label>
+					<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 90px">
+						<%--<option value = "${nowYear}"  selected>${nowYear}</option>--%>
+						<c:forEach  var="yearList"  items="${yearList}">
+							<option value ="${yearList.YEAR}"}> ${yearList.YEAR}</option>
+						</c:forEach>
+					</select>
+					<label  for="scoreStatus">打分状态：</label>
+					<select id = "scoreStatus" name = "scoreStatus"   class = "changeQuery changeYear" style="width: 100px">
+						<option value = "" selected>请选择</option>
+						<c:forEach  var="scoreStatus"  items="${scoreStatus}">
+							<option value ="${scoreStatus.K}"}> ${scoreStatus.V}</option>
+						</c:forEach>
+					</select>
+					<label>编号：</label>
+					<input type = "text" id = "paperId" name = "paperId" style="width: 100px" class = "inputQuery changeQuery" >
+					<label>领域：</label>
+					<input type = "text" id = "field" name = "field" style="width: 100px" class = "inputQuery changeQuery" >
+			<br/>
+				<label style="margin-left: 20px">论文题目：</label>
+				<input type = "text" id = "paperName" name = "paperName" style="width: 248px" class = "inputQuery changeQuery" >
+				<label style="margin-left: 15px">单位：</label>
 				<input type = "text" id = "unit" name = "unit" style="width: 100px" class = "inputQuery changeQuery" >
 				<label>作者：</label>
 				<input type = "text" id = "author" name = "author" style="width: 100px" class = "inputQuery changeQuery" >
-				<label>领域：</label>
-				<input type = "text" id = "field" name = "field" style="width: 100px" class = "inputQuery changeQuery" >
-				<label  for="scoreStatus" class="yearTitle">打分状态：</label>
-				<select id = "scoreStatus" name = "scoreStatus"   class = "changeQuery changeYear" style="width: 100px">
-					<option value = "" selected>请选择</option>
-                    <c:forEach  var="scoreStatus"  items="${scoreStatus}">
-                        <option value ="${scoreStatus.K}"}> ${scoreStatus.V}</option>
-                    </c:forEach>
-				</select>
+
 				<input type="text" id="paperType" name="paperType" style="display: none" value="1">
 				<!-- 查询按钮  " -->
 				<div style="float:right" id = "queryButton" class = "btn query" onclick = "paperList.query()">搜索</div>
@@ -77,9 +78,10 @@
 			<div class='btn right deleteButton' onclick="paperList.generateScoreTable()" >生成打分表</div>
 		</div>
 		<!-- 学术技术综述分类按钮 -->
+		<%--选中效果状态color:white;background-color: #2d9592--%>
 		<div class="grid-title">
-			<h3 style="float: left">
-				<a href="#" style="color:black" onclick="paperList.updatePaperType(1)"><b>学术类</b></a>
+			<h3 style="float: left;color:white;background-color: #2d9592" onclick="paperList.updatePaperType(1)">
+				学术类
 			</h3>
 			<h3 style="float: left">
 				<a href="#" style="color:black" onclick="paperList.updatePaperType(2)">技术类</a>
@@ -89,7 +91,6 @@
 			</h3>
 			<h3></h3>
 		</div>
-		<hr/>
 	</div>
 	<div class="tabbable active" >
 		<div id="datagrid" style=""></div>
@@ -111,6 +112,8 @@
     <!-- 验证校验公共方法，提示框公共方法 -->
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
+	<script src="<%=request.getContextPath()%>/js/plugins/layui/html5.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
+	<script src="<%=request.getContextPath()%>/js/plugins/layui/respond.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
 	<!-- 本页面所需的js -->
 	<script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 	<script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>

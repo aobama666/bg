@@ -44,11 +44,11 @@ grade.initDataGrid = function(){
         pageSize: 10,
         tablepage: $(".tablepage"),
         columns: [
-            {name: '',style:{width:"2px"}, data: 'id',checkbox:true, forMat:function(row){
+            /*{name: '',style:{width:"2px"}, data: 'id',checkbox:true, forMat:function(row){
                     dataItems[index] = row;//将一行数据放在一个list中
                     return '<input type="checkbox" name="oneCheck" id="oneCheck"  index = "'+(index++)+'"  value="'+(row.PMEID)+'"/>';
                 }
-            },
+            },*/
             {name: '编号',style:{width:"50px"}, data: 'PAPERID'},
             {name: '论文题目',style:{width:"10%"}, data: 'PAPERNAME',forMat:function(row){
                     return "<a title = '点击查看论文详情' style='width:250px;" +

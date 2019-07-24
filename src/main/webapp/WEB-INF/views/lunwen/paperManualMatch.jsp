@@ -21,6 +21,8 @@
 <body>
 
 <input type="text" style="display: none;" value="${paperUuid}" id="paperUuid">
+<span style="display: none" id="left">${left}</span>
+<span style="display: none" id="right">${right}</span>
 
 
 <div class="layui-container" style="margin-top: 15px;">
@@ -47,19 +49,16 @@
     <button type="button" class="btn" id="return">返回</button>
 </div>
 
-    <!-- 验证校验公共方法，提示框公共方法 -->
-    <!-- <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
-    <script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script> -->
     <!-- 本页面所需的js -->
     <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
     <script src="<%=request.getContextPath()%>/js/plugins/layui/html5.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
     <script src="<%=request.getContextPath()%>/js/plugins/layui/respond.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
-</body>
-<script>
-
+<script src="<%=request.getContextPath()%>/js/lunwen/paperManualMatch.js"></script>
+<script type="application/javascript">
     var left = ${left};
     var right = ${right};
     var paperUuid = ${paperUuid};
+
 
     layui.config({
         base: '/bg/js/plugins/layui/'
@@ -111,4 +110,5 @@
 
     })
 </script>
+</body>
 </html>

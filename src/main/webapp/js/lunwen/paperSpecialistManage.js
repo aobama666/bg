@@ -61,22 +61,21 @@ queryAll.initDataGrid = function(){
               return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.uuid)+'"/>';
             }
           },
-            {name: '专家姓名',style:{width:"10%"}, data: 'PAPERNAME',forMat:function(row){
+            {name: '专家姓名',style:{width:"50px"}, data: 'PAPERNAME',forMat:function(row){
                     return "<a title = '"+row.name+"' style='width:250px;" +
                         "text-align:left;" +
                        "'id='"+row.uuid+"'" +
                         "href = 'javascript:void(0)' onclick = queryAll.forDetails('"+row.uuid+"')>"+row.name+"</a>";
-
                 }},
-            {name: '详细地址', style:{width:"15%"},data: 'address'},
-            {name: '单位名称', style:{width:"10%"},data: 'unitName'},
-            {name: '单位性质', style:{width:"10%"},data: 'unitNature'},
-            {name: '职称/职务', style:{width:"10%"},data: 'position'},
-            {name: '研究方向', style:{width:"10%"},data: 'researchDirection'},
-            {name: '领域', style:{width:"10%"},data: 'field'},
-            {name: '联系电话', style:{width:"10%"},data: 'phone'},
-            {name: '电子邮箱', style:{width:"10%"},data: 'email'},
-            {name: '匹配状态', style:{width:"5%"},data: 'matchStatus',forMat:function(row){
+            {name: '详细地址', style:{width:"60px"},data: 'address'},
+            {name: '单位名称', style:{width:"50px"},data: 'unitName'},
+            {name: '单位性质', style:{width:"50px"},data: 'unitNature'},
+            {name: '职称/职务', style:{width:"50px"},data: 'position'},
+            {name: '研究方向', style:{width:"50px"},data: 'researchDirection'},
+            {name: '领域', style:{width:"50px"},data: 'field'},
+            {name: '联系电话', style:{width:"50px"},data: 'phone'},
+            {name: '电子邮箱', style:{width:"50px"},data: 'email'},
+            {name: '匹配状态', style:{width:"30px"},data: 'matchStatus',forMat:function(row){
                 if(row.matchStatus == '1'){
                     return "<span>"+"已匹配"+"</span>"
                 }else if(row.matchStatus == '0'){

@@ -272,10 +272,13 @@ public class LwPaperController {
         List<String> failDel = new ArrayList<>();
         ResultWarp rw = null;
         for(String uuid : uuidArray){
-            //如果已匹配，不可删除
+            //如果已生成打分表，不可删除
             Map<String,Object> lwMap = lwPaperService.findPaper(uuid,null);
             String allstatus = lwMap.get("ALLSTATUS").toString();
-            if(!LwPaperConstant.ALL_STATUS_ONE.equals(allstatus)){
+            if(!LwPaperConstant.P_A_S_SAVED.equals(allstatus)
+                    || !LwPaperConstant.P_A_S_MATCHING.equals(allstatus)
+                    || !LwPaperConstant.P_A_S_MATCHED.equals(allstatus)
+               ){
                 log.info(getLoginUser()+"delete lwPaper fail,allStatus is:"+allstatus+",uuid:"+uuid);
                 failDel.add(uuid);
                 continue;
@@ -297,6 +300,9 @@ public class LwPaperController {
                 log.info(getLoginUser()+"delete lwPaper file,message:"+fileMap.toString());
             }
             log.info(getLoginUser()+"delete lwPaper success,uuid:"+uuid+",del file nums is:"+fileList.size()+";");
+
+            //删除该论文在关联表中的信息
+
             successDel.add(uuid);
         }
         String msg = "成功删除"+successDel.size()+"条论文信息";
@@ -354,13 +360,15 @@ public class LwPaperController {
         //当前成功匹配数量
         Integer successMatchNums = 0;
         //判断状态
-        if(!LwPaperConstant.ALL_STATUS_ONE.equals(allStatus) && !LwPaperConstant.ALL_STATUS_TWO.equals(allStatus)
-                && !LwPaperConstant.All_STATUS_SEVEN.equals(allStatus)){
+        if(!LwPaperConstant.P_A_S_SAVED.equals(allStatus)
+                || !LwPaperConstant.P_A_S_MATCHING.equals(allStatus)
+                || !LwPaperConstant.P_A_S_MATCHED.equals(allStatus)
+                ){
             rw = new ResultWarp(ResultWarp.FAILED,"该论文状态已匹配完成，正在进行打分操作");
             log.info(getLoginUser()+"自动匹配失败，该论文没有添加附件信息，不能进行自动匹配操作！paper_uuid:"+uuid);
             return JSON.toJSONString(rw);
-        }else if (LwPaperConstant.ALL_STATUS_TWO.equals(allStatus) ||
-                        LwPaperConstant.All_STATUS_SEVEN.equals(allStatus)){
+        }else if (LwPaperConstant.P_A_S_MATCHING.equals(allStatus) ||
+                        LwPaperConstant.P_A_S_MATCHED.equals(allStatus)){
             log.info(getLoginUser()+"重复进行自动匹配,paper_uuid:"+uuid);
         }else{
             log.info(getLoginUser()+"首次进行自动匹配,paper_uuid:"+uuid);
@@ -369,9 +377,9 @@ public class LwPaperController {
         successMatchNums = lwPaperService.autoMaticSecond(lwPaperMap,uuid);
         //修改该论文的全流程状态
         if(successMatchNums>=7){
-            lwPaperService.updateAllStatus(uuid,LwPaperConstant.ALL_STATUS_TWO);
+            lwPaperService.updateAllStatus(uuid,LwPaperConstant.P_A_S_MATCHED);
         }else{
-            lwPaperService.updateAllStatus(uuid,LwPaperConstant.All_STATUS_SEVEN);
+            lwPaperService.updateAllStatus(uuid,LwPaperConstant.P_A_S_MATCHING);
         }
         //反馈信息
         rw = new ResultWarp(ResultWarp.SUCCESS,"自动匹配完毕，当前匹配专家"+successMatchNums+"个");
@@ -491,9 +499,9 @@ public class LwPaperController {
 
         //最少7个，最多15个，控制数量，显示本次匹配数量，控制全流程状态信息
         if(successMatchNums >= 7){
-            lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.ALL_STATUS_TWO);
+            lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.P_A_S_MATCHED);
         }else{
-            lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.All_STATUS_SEVEN);
+            lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.P_A_S_MATCHING);
         }
         log.info(getLoginUser()+"论文id:"+paperUuid+"手动匹配专家"+successMatchNums+"个");
 
@@ -513,14 +521,14 @@ public class LwPaperController {
         //做判断，该论文是否已经匹配完成，若匹配完成，可生成打分表，否则不可生成
         Map<String,Object> lwPaper = lwPaperService.findPaper(uuid,null);
         String allStatus = lwPaper.get("ALLSTATUS").toString();
-        if(LwPaperConstant.ALL_STATUS_TWO.equals(allStatus)){
+        if(LwPaperConstant.P_A_S_MATCHED.equals(allStatus)){
             //修改打分表生成状态和论文全流程状态
             lwPaperService.updateScoreTableStatus(uuid, LwPaperConstant.SCORE_TABLE_ON);
-            lwPaperService.updateAllStatus(uuid,LwPaperConstant.ALL_STATUS_THREE);
+            lwPaperService.updateAllStatus(uuid,LwPaperConstant.P_A_S_UNRATED);
             log.info(getLoginUser()+"this paper generate score_table success,uuid="+uuid);
             rw = new ResultWarp(ResultWarp.SUCCESS ,"生成打分表成功");
-        }else if(LwPaperConstant.ALL_STATUS_ONE.equals(allStatus) ||
-                    LwPaperConstant.All_STATUS_SEVEN.equals(allStatus)){
+        }else if(LwPaperConstant.P_A_S_SAVED.equals(allStatus) ||
+                    LwPaperConstant.P_A_S_MATCHING.equals(allStatus)){
             log.info(getLoginUser()+"this paper generate score_table fail,uuid="+uuid+",allStatus:"+allStatus);
             rw = new ResultWarp(ResultWarp.FAILED ,"生成打分表失败,匹配专家未达标");
         }else{
@@ -543,13 +551,16 @@ public class LwPaperController {
         String scoreStatus = lwPaper.get("SCORESTATUS").toString();
         String allStatus = lwPaper.get("ALLSTATUS").toString();
         //成功的前提，打分表状态未生成，全流程状态为自动匹配成功
-        if(LwPaperConstant.SCORE_STATUS_NO.equals(scoreStatus) && LwPaperConstant.ALL_STATUS_THREE.equals(allStatus)){
+        if(LwPaperConstant.SCORE_STATUS_NO.equals(scoreStatus) && LwPaperConstant.P_A_S_UNRATED.equals(allStatus)){
             //修改打分表生成状态和论文全流程状态
             lwPaperService.updateScoreTableStatus(uuid,LwPaperConstant.SCORE_TABLE_OFF);
-            lwPaperService.updateAllStatus(uuid,LwPaperConstant.ALL_STATUS_TWO);
+            lwPaperService.updateAllStatus(uuid,LwPaperConstant.P_A_S_WITHDRAWN);
             log.info(getLoginUser()+"this paper cancel score_table success,uuid="+uuid);
             rw = new ResultWarp(ResultWarp.SUCCESS ,"撤回打分表成功");
-        }else if(LwPaperConstant.ALL_STATUS_ONE.equals(allStatus)){
+        }else if(LwPaperConstant.P_A_S_SAVED.equals(allStatus)
+                    ||LwPaperConstant.P_A_S_MATCHING.equals(allStatus)
+                    ||LwPaperConstant.P_A_S_MATCHED.equals(allStatus)
+                ){
             log.info(getLoginUser()+"this paper cancel score_table fail,scoreStatus="+scoreStatus+",allStatus="+allStatus+",uuid="+uuid);
             rw = new ResultWarp(ResultWarp.FAILED ,"撤回打分表失败,该论文还未生成打分表");
         }else{

@@ -35,7 +35,10 @@
 				<span title = "附件压缩包信息"><b class="mustWrite">*</b>附件压缩包信息</span>
 			</td>
 			<td class="addInputStyle" colspan="2">
-				<input type="file"  id="file"  name="file"  class="validNull"  len="50"   content="附件" title="必填项"/>
+				<div class="controls" class="form-control">
+					<input id="file" type="file" name="file" class="validNull"  property="file"
+						   content="附件" title="必填项" style="display:inline-block;">
+				</div>
 			</td>
 		</tr>
 	</table>

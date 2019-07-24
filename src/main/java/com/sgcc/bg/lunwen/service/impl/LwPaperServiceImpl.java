@@ -74,7 +74,7 @@ public class LwPaperServiceImpl implements LwPaperService {
         lwPaper.setCreateTime(new Date());
         lwPaper.setScoreTableStatus(LwPaperConstant.SCORE_TABLE_OFF);
         lwPaper.setScoreStatus(LwPaperConstant.SCORE_STATUS_NO);
-        lwPaper.setAllStatus(LwPaperConstant.ALL_STATUS_ONE);
+        lwPaper.setAllStatus(LwPaperConstant.P_A_S_SAVED);
         lwPaper.setValid(LwPaperConstant.VALID_YES);
         return lwPaperMapper.addLwPaper(lwPaper);
     }

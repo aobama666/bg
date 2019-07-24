@@ -22,17 +22,17 @@
 <body>
 <table class="visitOperate tableStyle specialTable">
 		<tr>
-			<td>
+			<td style="width: 10%">
 				<span title = "论文题目"><b class="mustWrite">*</b>论文题目</span>
 			</td>
-			<td class="addInputStyle">
+			<td class="addInputStyle" style="width: 40%">
 				<input type = "text" style="display: none" value = "${lwPaper.UUID}"  class="validNull"  id = "uuid" name="uuid">
 				<input type="text"  id="paperName"  name="paperName" value="${lwPaper.PAPERNAME}"  class="validNull"  len="50"   content="论文题目" title="必填项"/>
 			</td>
-			<td>
+			<td style="width: 10%">
 				<span title = "作者单位"><b class="mustWrite">*</b>作者单位</span>
 			</td>
-			<td class="addInputStyle">
+			<td class="addInputStyle" style="width: 40%">
 				<input type="text"  id="unit" name="unit" value="${lwPaper.UNIT}"  class="validNull"  len="50" content="作者单位"  title="必填项  "/>
 			</td>
 		</tr>
@@ -109,7 +109,7 @@
 		</div>
 
 	<div class="btnContent">
-		<button type="button" class="btn" onclick="paperList.updateEvent()">修改</button>
+		<button type="button" class="btn" onclick="paperList.updateEvent()">保存</button>
 		<button type="button" class="btn" onclick="paperList.addClose()">返回</button>
 	</div>
 
