@@ -47,6 +47,24 @@ public interface LwPaperMapper {
     );
 
     /**
+     * 批量修改全流程状态，生成、撤回打分表基础sql
+     */
+    Integer batchUpdateAllStatus(
+            @Param("allStatus") String allStatus,
+            @Param("year") String year,
+            @Param("valid") String valid
+    );
+
+    /**
+     * 批量修改打分表状态，生成、撤回打分表基础sql
+     */
+    Integer batchUpdateScoreTableStatus(
+            @Param("scoreTableStatus") String scoreTableStatus,
+            @Param("year") String year,
+            @Param("valid") String valid
+    );
+
+    /**
      * 查找某条论文信息,或根据题目查重
      */
     Map<String, Object> findPaper(
@@ -221,6 +239,51 @@ public interface LwPaperMapper {
             @Param("paperId") String paperId,
             @Param("averageScore") Double averageScore,
             @Param("highestLowestAverage") Double highestLowestAverage
+    );
+
+    /**
+     * 自动匹配，查看当前没有附件信息的论文
+     */
+    List<Map<String,Object>> notAnnexPaper(
+      @Param("bussinessTable") String bussinessTable,
+      @Param("year") String year,
+      @Param("valid") String valid
+    );
+
+    /**
+     * 生成打分表前提条件，判断当年全部论文是否匹配完成
+     */
+    List<Map<String,Object>> ifAllMatch(
+            @Param("allStatus") String allStatus,
+            @Param("year") String year,
+            @Param("valid") String valid
+    );
+
+    /**
+     * 撤回打分表的前提条件，判断当年全部论文是否未打分
+     */
+    List<Map<String,Object>> ifAllUnrated(
+            @Param("scoreStatus") String scoreStatus,
+            @Param("year") String year,
+            @Param("valid") String valid
+    );
+
+    /**
+     * 查看当前有效论文全流程状态的最大数，论文评审的最快进展
+     * 但是这种排序由于字段类型关系只能在10以内排序，符合当前8种状态
+     * 如果有10以上的请及时更换其他方式
+     */
+    Integer maxAllStatus(
+            @Param("year") String year,
+            @Param("valid") String valid
+    );
+
+    /**
+     * 当前年份，能够处理的所有论文主键id,主要提供自动匹配操作
+     */
+    List<String> allPaperPrimaryKey(
+            @Param("year") String year,
+            @Param("valid") String valid
     );
 
 }

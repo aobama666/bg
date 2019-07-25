@@ -74,7 +74,7 @@ public class LwPaperConstant {
      */
     public static final String P_A_S_WITHDRAWN = "5";
     /**
-     * 已打分
+     * 打分中
      */
     public static final String P_A_S_SCORED = "6";
     /**

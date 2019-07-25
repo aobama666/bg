@@ -309,7 +309,7 @@ public class LwPaperController {
         if(failDel.size() == 0){
             rw = new ResultWarp(ResultWarp.SUCCESS ,msg);
         }else{
-            msg = msg+"，"+failDel.size()+"条删除失败，已匹配不可删除";
+            msg = msg+"，"+failDel.size()+"条删除失败，已生成打分表不可删除";
             rw = new ResultWarp(ResultWarp.FAILED ,msg);
         }
         return JSON.toJSONString(rw);
@@ -353,37 +353,39 @@ public class LwPaperController {
      */
     @ResponseBody
     @RequestMapping(value = "/automaticMatch")
-    public String automaticMatch(String uuid){
+    public String automaticMatch(){
         ResultWarp rw = null;
-        Map<String,Object> lwPaperMap = lwPaperService.findPaper(uuid,null);
-        String allStatus = lwPaperMap.get("ALLSTATUS").toString();
-        //当前成功匹配数量
-        Integer successMatchNums = 0;
-        //判断状态
-        if(!LwPaperConstant.P_A_S_SAVED.equals(allStatus)
-                || !LwPaperConstant.P_A_S_MATCHING.equals(allStatus)
-                || !LwPaperConstant.P_A_S_MATCHED.equals(allStatus)
-                ){
-            rw = new ResultWarp(ResultWarp.FAILED,"该论文状态已匹配完成，正在进行打分操作");
-            log.info(getLoginUser()+"自动匹配失败，该论文没有添加附件信息，不能进行自动匹配操作！paper_uuid:"+uuid);
+        //判断是否未上传附件
+        List<Map<String,Object>> ifAnnex = lwPaperService.notAnnexPaper();
+        if(0 != ifAnnex.size()){
+            String paperType = ifAnnex.get(0).get("PAPER_TYPE").toString();
+            String paperName = ifAnnex.get(0).get("PAPER_NAME").toString();
+            rw = new ResultWarp(ResultWarp.FAILED,"自动匹配失败,"+paperType+"-"+paperName+"未上传附件!");
             return JSON.toJSONString(rw);
-        }else if (LwPaperConstant.P_A_S_MATCHING.equals(allStatus) ||
-                        LwPaperConstant.P_A_S_MATCHED.equals(allStatus)){
-            log.info(getLoginUser()+"重复进行自动匹配,paper_uuid:"+uuid);
-        }else{
-            log.info(getLoginUser()+"首次进行自动匹配,paper_uuid:"+uuid);
         }
-        //自动匹配操作
-        successMatchNums = lwPaperService.autoMaticSecond(lwPaperMap,uuid);
-        //修改该论文的全流程状态
-        if(successMatchNums>=7){
-            lwPaperService.updateAllStatus(uuid,LwPaperConstant.P_A_S_MATCHED);
-        }else{
-            lwPaperService.updateAllStatus(uuid,LwPaperConstant.P_A_S_MATCHING);
+        //判断是否已进入打分操作
+        Integer allStatus = lwPaperService.maxAllStatus();
+        if(allStatus >= Integer.valueOf(LwPaperConstant.P_A_S_UNRATED)){
+            rw = new ResultWarp(ResultWarp.FAILED ,"打分表已生成,请勿进行匹配操作");
+            return JSON.toJSONString(rw);
         }
-        //反馈信息
-        rw = new ResultWarp(ResultWarp.SUCCESS,"自动匹配完毕，当前匹配专家"+successMatchNums+"个");
-        log.info(getLoginUser()+"当前成功匹配到"+successMatchNums+"个专家！paper_uuid:"+uuid);
+        List<String> allPaperPrimaryKey = lwPaperService.allPaperPrimaryKey();
+        for(String paperUuid : allPaperPrimaryKey){
+            Map<String,Object> lwPaperMap = lwPaperService.findPaper(paperUuid,null);
+            //当前成功匹配数量
+            Integer successMatchNums = 0;
+            //自动匹配操作
+            successMatchNums = lwPaperService.autoMaticSecond(lwPaperMap,paperUuid);
+            //修改该论文的全流程状态
+            if(successMatchNums>=7){
+                lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.P_A_S_MATCHED);
+            }else{
+                lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.P_A_S_MATCHING);
+            }
+            log.info(getLoginUser()+"当前成功匹配到"+successMatchNums+"个专家！paper_uuid:"+paperUuid);
+        }
+
+        rw = new ResultWarp(ResultWarp.SUCCESS,"自动匹配成功");
         return JSON.toJSONString(rw);
     }
 
@@ -516,8 +518,22 @@ public class LwPaperController {
      */
     @ResponseBody
     @RequestMapping(value = "/generateScoreTable")
-    public String generateScoreTable(String uuid){
+    public String generateScoreTable(){
         ResultWarp rw = null;
+        Integer allStatus = lwPaperService.maxAllStatus();
+        if(allStatus >= Integer.valueOf(LwPaperConstant.P_A_S_UNRATED)){
+            rw = new ResultWarp(ResultWarp.FAILED ,"打分表已生成,请勿重复操作");
+        }else{
+            List<Map<String,Object>> ifAllMatch = lwPaperService.ifAllMatch(LwPaperConstant.P_A_S_MATCHED);
+            if(0 == ifAllMatch.size()){
+                lwPaperService.batchUpdateScoreTableStatus(LwPaperConstant.SCORE_TABLE_ON);
+                lwPaperService.batchUpdateAllStatus(LwPaperConstant.P_A_S_UNRATED);
+                rw = new ResultWarp(ResultWarp.SUCCESS ,"生成打分表成功");
+            }else{
+                rw = new ResultWarp(ResultWarp.FAILED ,"生成打分表失败,匹配专家未达标");
+            }
+        }
+        /*  原有按照单个选中生成打分表代码
         //做判断，该论文是否已经匹配完成，若匹配完成，可生成打分表，否则不可生成
         Map<String,Object> lwPaper = lwPaperService.findPaper(uuid,null);
         String allStatus = lwPaper.get("ALLSTATUS").toString();
@@ -535,6 +551,7 @@ public class LwPaperController {
             log.info(getLoginUser()+"this paper generate score_table fail,uuid="+uuid+",allStatus:"+allStatus);
             rw = new ResultWarp(ResultWarp.FAILED ,"该论文已生成打分表，请勿重复生成");
         }
+        */
         return JSON.toJSONString(rw);
     }
 
@@ -544,8 +561,22 @@ public class LwPaperController {
      */
     @ResponseBody
     @RequestMapping(value = "/withdrawScoreTable")
-    public String withdrawScoreTable(String uuid){
+    public String withdrawScoreTable(){
         ResultWarp rw = null;
+        Integer allStatus = lwPaperService.maxAllStatus();
+        if(allStatus < Integer.valueOf(LwPaperConstant.P_A_S_UNRATED)){
+            rw = new ResultWarp(ResultWarp.FAILED ,"打分表未生成,无法撤回");
+        }else{
+            List<Map<String,Object>> ifAllUnrated = lwPaperService.ifAllUnrated();
+            if(0 == ifAllUnrated.size()){
+                lwPaperService.batchUpdateScoreTableStatus(LwPaperConstant.SCORE_TABLE_OFF);
+                lwPaperService.batchUpdateAllStatus(LwPaperConstant.P_A_S_MATCHED);
+                rw = new ResultWarp(ResultWarp.SUCCESS ,"撤回打分表成功");
+            }else{
+                rw = new ResultWarp(ResultWarp.FAILED ,"撤回打分表失败，论文已打分");
+            }
+        }
+        /*  原有按照单个论文撤回打分表代码
         //做判断，查看关联表和明细表有没有对应专家论文进行打分操作,也就是论文的状态是否为未打分
         Map<String,Object> lwPaper = lwPaperService.findPaper(uuid,null);
         String scoreStatus = lwPaper.get("SCORESTATUS").toString();
@@ -566,7 +597,7 @@ public class LwPaperController {
         }else{
             log.info(getLoginUser()+"this paper cancel score_table fail,scoreStatus="+scoreStatus+",uuid="+uuid);
             rw = new ResultWarp(ResultWarp.FAILED ,"打分期间不能操作该功能");
-        }
+        }*/
         return JSON.toJSONString(rw);
     }
 

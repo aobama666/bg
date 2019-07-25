@@ -172,6 +172,41 @@ public class LwPaperServiceImpl implements LwPaperService {
         return yearList;
     }
 
+    @Override
+    public List<Map<String,Object>> notAnnexPaper() {
+        return lwPaperMapper.notAnnexPaper(LwPaperConstant.BUSSINESSTABLE,DateUtil.getYear(),LwPaperConstant.VALID_YES);
+    }
+
+    @Override
+    public List<Map<String, Object>> ifAllMatch(String allStatus) {
+        return lwPaperMapper.ifAllMatch(allStatus,DateUtil.getYear(),LwPaperConstant.VALID_YES);
+    }
+
+    @Override
+    public List<Map<String, Object>> ifAllUnrated() {
+        return lwPaperMapper.ifAllUnrated(LwPaperConstant.SCORE_STATUS_NO,DateUtil.getYear(),LwPaperConstant.VALID_YES);
+    }
+
+    @Override
+    public Integer batchUpdateAllStatus(String allStatus) {
+        return lwPaperMapper.batchUpdateAllStatus(allStatus,DateUtil.getYear(),LwPaperConstant.VALID_YES);
+    }
+
+    @Override
+    public Integer batchUpdateScoreTableStatus(String scoreTableStatus) {
+        return lwPaperMapper.batchUpdateScoreTableStatus(scoreTableStatus,DateUtil.getYear(),LwPaperConstant.VALID_YES);
+    }
+
+    @Override
+    public Integer maxAllStatus() {
+        return lwPaperMapper.maxAllStatus(DateUtil.getYear(),LwPaperConstant.VALID_YES);
+    }
+
+    @Override
+    public List<String> allPaperPrimaryKey() {
+        return lwPaperMapper.allPaperPrimaryKey(DateUtil.getYear(),LwPaperConstant.VALID_YES);
+    }
+
 
     /**
      * 重复匹配————附加首次匹配功能，缩减代码量

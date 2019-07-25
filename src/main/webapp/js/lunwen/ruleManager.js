@@ -4,6 +4,11 @@ var rule = {};
 var dicts = {};
 $(function(){
     rule.init();
+
+    //点选背景效果
+    $("li").click(function () {
+        $(this).addClass("checkkk").siblings().removeClass("checkkk");
+    })
 });
 
 rule.init = function () {

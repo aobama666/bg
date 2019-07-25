@@ -34,7 +34,7 @@
 
 			<input type="hidden" name="selectList"/>
 
-			<label>年度</label>
+			<label style="margin-left: 20px">年度</label>
 			<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 100px">
 				<%--<option></option>--%>
 				<c:forEach var ="year" items="${map.year}">

@@ -19,6 +19,28 @@
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 </head>
+<style>
+	.checkkk{
+		color:white;
+		background: #00828a;
+	}
+	.paperTypeTab{
+		height: 50px;
+	}
+	.paperTypeTab li{
+		float:left;
+		display:block;
+		list-style: none;
+		height: 40px;
+		width: 80px;
+		text-align: center;
+		font-size: 15px;
+		padding-top: 7px;
+		border:1px solid #ccc;
+		border-bottom: 0;
+		border-left: 0;
+	}
+</style>
 <body>
 <div class="main_div"></div>
 
@@ -45,23 +67,18 @@
 
 <hr/>
 <!-- start 列表展示 -->
-<div>
+<div style="height: 50px">
 	<!--  新增  修改  删除 功能按钮 -->
 	<div id="funcBtn" style="height: 35px;float:right">
 		<div class='btn right deleteButton' onclick="grade.scoreSubmit()">提交</div>
 	</div>
 	<!-- 学术技术综述分类按钮 -->
-	<div class="grid-title">
-		<h3 style="float: left">
-			<a href="#" style="color:black" onclick="grade.updatePaperType(1)">学术类</a>
-		</h3>
-		<h3 style="float: left">
-			<a href="#" style="color:black" onclick="grade.updatePaperType(2)">技术类</a>
-		</h3>
-		<h3 style="float: left">
-			<a href="#" style="color:black" onclick="grade.updatePaperType(3)">综述类</a>
-		</h3>
-		<h3></h3>
+	<div class="paperTypeTab">
+		<ul>
+			<li style="border-left: 1px solid #ccc" class="checkkk" onclick="grade.updatePaperType(1)">学术类</li>
+			<li onclick="grade.updatePaperType(2)">技术类</li>
+			<li onclick="grade.updatePaperType(3)">综述类</li>
+		</ul>
 	</div>
 	<hr/>
 </div>

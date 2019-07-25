@@ -31,6 +31,26 @@
 		input{
 			text-align:center;
 		}
+		.checkkk{
+			color:white;
+			background: #00828a;
+		}
+		.paperTypeTab{
+			height: 50px;
+		}
+		.paperTypeTab li{
+			float:left;
+			display:block;
+			list-style: none;
+			height: 40px;
+			width: 80px;
+			text-align: center;
+			font-size: 15px;
+			padding-top: 7px;
+			border:1px solid #ccc;
+			border-bottom: 0;
+			border-left: 0;
+		}
 	</style>
 </head>
 <body>
@@ -40,19 +60,13 @@
 		<div class='btn right deleteButton' onclick="rule.downLoadTempLate()" >保存</div>
 	</div>
 	<!-- 学术技术综述分类按钮 -->
-	<div class="grid-title">
-		<h3 style="float: left">
-			<a href="#" style="color:black" onclick="rule.updatePaperType(1)">学术类</a>
-		</h3>
-		<h3 style="float: left">
-			<a href="#" style="color:black" onclick="rule.updatePaperType(2)">技术类</a>
-		</h3>
-		<h3 style="float: left">
-			<a href="#" style="color:black" onclick="rule.updatePaperType(3)">综述类</a>
-		</h3>
-		<h3></h3>
+	<div class="paperTypeTab">
+		<ul>
+			<li style="border-left: 1px solid #ccc" class="checkkk" onclick="rule.updatePaperType(1)">学术类</li>
+			<li onclick="rule.updatePaperType(2)">技术类</li>
+			<li onclick="rule.updatePaperType(3)">综述类</li>
+		</ul>
 	</div>
-	<hr/>
 	<form id="queryForm" method="post" enctype="multipart/form-data">
         <input style="display: none" value="1" id="paperType" name="paperType"/>
         <div id="ruleTable">

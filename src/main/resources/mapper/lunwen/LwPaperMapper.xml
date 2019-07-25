@@ -99,6 +99,14 @@
         where UUID  = #{paperId}
     </update>
 
+    <update id="batchUpdateAllStatus">
+        update bg_lw_paper set all_status=#{allStatus} where valid = #{valid} and year =#{year}
+    </update>
+
+    <update id="batchUpdateScoreTableStatus">
+        update bg_lw_paper set score_table_status=#{scoreTableStatus} where valid = #{valid} and year =#{year}
+    </update>
+
     <!--某类型的当前最大编号-->
     <select id="maxPaperId" resultType="java.lang.String">
         select MAX(paper_id)  from bg_lw_paper where paper_type = #{paperType}
@@ -559,6 +567,45 @@
         </foreach>
         )
         ORDER BY AVERAGE_FRACTION DESC nulls last
+    </select>
+
+    <select id="notAnnexPaper" resultType="java.util.Map">
+      select paper_name,
+      (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_type' and vaild=1 and code= paper_type)  as paper_type
+          from bg_lw_paper
+      where uuid not in (select p.uuid
+                        from bg_lw_file f, bg_lw_paper p
+                       where f.business_id = p.uuid
+                         and f.business_table = #{bussinessTable}
+                         and p.year = #{year}
+                         and p.valid = #{valid}
+                         and f.valid = #{valid})
+    </select>
+
+    <select id="ifAllMatch" resultType="java.util.Map">
+        select *
+          from bg_lw_paper p
+         where p.all_status != #{allStatus}
+           and p.year = #{year}
+           and p.valid = #{valid}
+    </select>
+
+    <select id="ifAllUnrated" resultType="java.util.Map">
+        select *
+          from bg_lw_paper_match_expert m, bg_lw_paper p
+         where m.paper_id = p.uuid
+           and p.year = #{year}
+           and m.score_status != #{scoreStatus}
+           and p.valid = #{valid}
+           and m.valid = #{valid}
+    </select>
+
+    <select id="maxAllStatus" resultType="java.lang.Integer">
+        select MAX(all_status) from bg_lw_paper where valid = #{valid} and year = #{year}
+    </select>
+
+    <select id="allPaperPrimaryKey" resultType="java.lang.String">
+        select uuid from bg_lw_paper p where  valid = #{valid} and year = #{year}
     </select>
 
 

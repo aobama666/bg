@@ -18,6 +18,28 @@
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+	<style>
+		.checkkk{
+			color:white;
+			background: #00828a;
+		}
+		.paperTypeTab{
+			height: 50px;
+		}
+		.paperTypeTab li{
+			float:left;
+			display:block;
+			list-style: none;
+			height: 40px;
+			width: 80px;
+			text-align: center;
+			font-size: 15px;
+			padding-top: 7px;
+			border:1px solid #ccc;
+			border-bottom: 0;
+			border-left: 0;
+		}
+	</style>
 </head>
 <body>
 	<div class="main_div"></div>
@@ -62,6 +84,7 @@
 
 	<hr/>
 	<!-- start 列表展示 -->
+
 	<div>
 		<!--  新增  修改  删除 功能按钮 -->
 		<div id="funcBtn" style="height: 35px;float:right">
@@ -77,18 +100,12 @@
 			<div class='btn right ' onclick="paperList.generateScoreTable()" >生成打分表</div>
 		</div>
 		<!-- 学术技术综述分类按钮 -->
-		<%--选中效果状态color:white;background-color: #2d9592--%>
-		<div class="grid-title">
-			<h3 style="width: 80px;float: left;color:white;background-color: #2d9592" onclick="paperList.updatePaperType(1)">
-				学术类
-			</h3>
-			<h3 style="width: 80px;float: left">
-				<a href="#" style="color:black" onclick="paperList.updatePaperType(2)">技术类</a>
-			</h3>
-			<h3 style="width: 80px;float: left">
-				<a href="#" style="color:black" onclick="paperList.updatePaperType(3)">综述类</a>
-			</h3>
-			<h3 style="width: 80px;"></h3>
+		<div class="paperTypeTab">
+			<ul>
+				<li style="border-left: 1px solid #ccc" class="checkkk" onclick="paperList.updatePaperType(1)">学术类</li>
+				<li onclick="paperList.updatePaperType(2)">技术类</li>
+				<li onclick="paperList.updatePaperType(3)">综述类</li>
+			</ul>
 		</div>
 	</div>
 	<div class="tabbable active" >
@@ -111,9 +128,7 @@
     <!-- 验证校验公共方法，提示框公共方法 -->
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
-	<script src="<%=request.getContextPath()%>/js/plugins/layui/html5.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
-	<script src="<%=request.getContextPath()%>/js/plugins/layui/respond.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
-	<!-- 本页面所需的js -->
+		<!-- 本页面所需的js -->
 	<script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 	<script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
  	<script src="<%=request.getContextPath()%>/js/lunwen/paperManage.js"></script>

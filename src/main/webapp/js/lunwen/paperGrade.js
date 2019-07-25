@@ -8,6 +8,11 @@ grade.btn_type_flag = 0;
 $(function(){
     grade.initDataGrid();
     grade.btn_type_flag = 0;
+
+    //点选背景效果
+    $("li").click(function () {
+        $(this).addClass("checkkk").siblings().removeClass("checkkk");
+    })
 });
 
 /*  start  列表查询   */

@@ -8,6 +8,11 @@ paperList.btn_type_flag = 0;
 $(function(){
     paperList.initDataGrid();
     paperList.btn_type_flag = 0;
+
+    //点选背景效果
+    $("li").click(function () {
+        $(this).addClass("checkkk").siblings().removeClass("checkkk");
+    })
 });
 
 /*  start  列表查询   */
@@ -281,22 +286,22 @@ paperList.generateScoreTable = function () {
     layer.confirm('确定生成打分表吗',{
         btn:['确定','取消'],icon:0,title:'自动匹配'
     },function () {
-        layer.alert('success',{icon:1,title:'信息提示'});
-        /*$.ajax({
+        $.ajax({
             url: "/bg/lwPaper/generateScoreTable",
             type: "post",
             dataType:"json",
             contentType: 'application/json',
             data: '',
             success: function (data) {
-                //根据反馈结果来间接选择图标
-                //判断当前哪个论文没有附件信息
-                //如果成功，那就成功。
                 layer.close(index);
-                layer.alert(data.msg,{icon:2,title:'信息提示'});
-                paperList.queryAddPage();
+                if(data.success==='true'){
+                    layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    paperList.queryAddPage();
+                }else{
+                    layer.alert(data.msg,{icon:2,title:'信息提示'});
+                }
             }
-        });*/
+        });
     },function () {
         layer.close(index);
     })
@@ -309,22 +314,22 @@ paperList.withdrawScoreTable = function () {
     layer.confirm('确定撤回打分表吗',{
         btn:['确定','取消'],icon:0,title:'自动匹配'
     },function () {
-        layer.alert('success',{icon:1,title:'信息提示'});
-        /*$.ajax({
+        $.ajax({
             url: "/bg/lwPaper/withdrawScoreTable",
             type: "post",
             dataType:"json",
             contentType: 'application/json',
             data: '',
             success: function (data) {
-                //根据反馈结果来间接选择图标
-                //判断当前哪个论文没有附件信息
-                //如果成功，那就成功。
                 layer.close(index);
-                layer.alert(data.msg,{icon:2,title:'信息提示'});
-                paperList.queryAddPage();
+                if(data.success==='true'){
+                    layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    paperList.queryAddPage();
+                }else{
+                    layer.alert(data.msg,{icon:2,title:'信息提示'});
+                }
             }
-        });*/
+        });
     },function () {
         layer.close(index);
     })
@@ -407,22 +412,22 @@ paperList.automaticMatch = function(){
     layer.confirm(info,{
         btn:['确定','取消'],icon:0,title:'自动匹配'
     },function () {
-        layer.alert('success',{icon:1,title:'信息提示'});
-        /*$.ajax({
+        $.ajax({
             url: "/bg/lwPaper/automaticMatch",
             type: "post",
             dataType:"json",
             contentType: 'application/json',
             data: '',
             success: function (data) {
-                //根据反馈结果来间接选择图标
-                //判断当前哪个论文没有附件信息
-                //如果成功，那就成功。
                 layer.close(index);
-                layer.alert(data.msg,{icon:2,title:'信息提示'});
-                paperList.queryAddPage();
+                if(data.success==='true'){
+                    layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    paperList.queryAddPage();
+                }else{
+                    layer.alert(data.msg,{icon:2,title:'信息提示'});
+                }
             }
-        });*/
+        });
     },function () {
             layer.close(index);
     })

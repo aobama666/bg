@@ -32,8 +32,8 @@
 
 			<input type="hidden" name="selectList"/>
 
-			<label>专家姓名</label>
-			<input type = "text" id = "name" name = "name" style="width: 200px" class = "inputQuery changeQuery" >
+			<label style="margin-left: 20px">专家姓名</label>
+			<input type = "text" id = "name" name = "name" style="width: 100px" class = "inputQuery changeQuery" >
 
 			<label>研究方向</label>
 			<input type = "text" id = "researchDirection" name = "researchDirection" style="width: 100px" class = "inputQuery changeQuery" >

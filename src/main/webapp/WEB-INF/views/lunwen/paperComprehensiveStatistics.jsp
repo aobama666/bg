@@ -34,7 +34,7 @@
 
 			<input type="hidden" name="selectList"/>
 
-			<label>年度</label>
+			<label style="margin-left: 20px">年度</label>
 			<%--<input type = "text" class = "layui-input" id = "year" name = "year" style="width: 200px" >--%>
 			<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 100px">
 				<%--<option></option>--%>

@@ -196,4 +196,40 @@ public interface LwPaperService {
      */
     List<Map<String,Object>> getTableYear();
 
+
+    /**
+     * 自动匹配，查看当前没有附件信息的论文
+     */
+    List<Map<String,Object>> notAnnexPaper();
+
+    /**
+     * 生成打分表前提条件，判断当年全部论文是否匹配完成
+     */
+    List<Map<String,Object>> ifAllMatch(String allStatus);
+
+
+    /**
+     * 撤回打分表的前提条件，判断当年全部论文是否未打分
+     */
+    List<Map<String,Object>> ifAllUnrated();
+
+    /**
+     * 批量修改全流程状态，生成、撤回打分表基础sql
+     */
+    Integer batchUpdateAllStatus(String allStatus);
+
+    /**
+     * 批量修改打分表状态，生成、撤回打分表基础sql
+     */
+    Integer batchUpdateScoreTableStatus(String scoreTableStatus);
+
+    /**
+     * 查看当前有效论文全流程状态的最大数，论文评审的最快进展
+     */
+    Integer maxAllStatus();
+
+    /**
+     * 当前年份，能够处理的所有论文主键id,主要提供自动匹配操作
+     */
+    List<String> allPaperPrimaryKey();
 }

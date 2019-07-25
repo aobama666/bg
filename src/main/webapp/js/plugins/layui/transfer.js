@@ -88,14 +88,14 @@ layui.define('table',function (exports) {
         var html = '<div class="layui-container">\
                     <div class="layui-row">\
                       <div class="'+MD5+'">\
-                        <table class="layui-hide" id="'+LEFT_TABLE+index+'" lay-filter="'+FILTER+'"></table>\
+                        <table name="leftttt" class="layui-hide" id="'+LEFT_TABLE+index+'" lay-filter="'+FILTER+'"></table>\
                       </div>\
                       <div class="'+MD2+'" style="text-align: center;">\
                         <div id="'+LEFT_BTN+index+'"  style="margin-bottom: 10px;"><button data-type="0" data-index="'+index+'" class="layui-btn  '+DISABLED+' '+BTN_STLY+'"> <i class="layui-icon">&#xe602;</i></button></div>\
                         <div id="'+RIGHT_BTN+index+'" ><button data-type="1" data-index="'+index+'" class="layui-btn '+DISABLED+' '+BTN_STLY+'"> <i class="layui-icon">&#xe603;</i></button></div>\
                       </div>\
                       <div class="'+MD5+'">\
-                        <table class="layui-hide" id="'+RIGHT_TABLE+index+'" lay-filter="'+FILTER+'"></table>\
+                        <table name="rightttt" class="layui-hide" id="'+RIGHT_TABLE+index+'" lay-filter="'+FILTER+'"></table>\
                       </div>\
                     </div>\
                   </div>';
