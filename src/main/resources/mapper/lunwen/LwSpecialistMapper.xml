@@ -39,7 +39,7 @@
             <if test="matchStatus != null and matchStatus != ''">
                 AND b.MATCH_STATUS = #{matchStatus,jdbcType=VARCHAR}
             </if>
-            ORDER BY b.create_time DESC nulls last) c
+            ORDER BY b.create_time DESC) c
          where #{end}>= ROWNUM )
         WHERE r > #{start}
     </select>

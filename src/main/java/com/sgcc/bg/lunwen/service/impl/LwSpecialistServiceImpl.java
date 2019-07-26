@@ -456,6 +456,11 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
         return i;
     }
 
+    @Override
+    public int updateMatchStatus(String specialistId, String matchStatus) {
+        return lwSpecialistMapper.updateMatchStatus(specialistId,matchStatus);
+    }
+
 
     /**
      * 计算平均分

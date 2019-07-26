@@ -328,6 +328,17 @@ queryAll.renewal = function () {
         layer.alert('该专家无已匹配的论文，无法更换',{icon:0,title:'信息提示'});
         return;
     }
+    $.ajax({
+        url: "/bg/lwGrade/ifExportScore?specialistId="+checkedItems[0].uuid,
+        type: "post",
+        contentType: 'application/json',
+        success: function (data) {
+            if(data.success !== 'true'){
+                layer.alert('该专家所属论文已进行打分操作，无法更换',{icon:0,title:'信息提示'});
+                return;
+            }
+        }
+    });
     var uuid = checkedItems[0].uuid;
     $.ajax({
         type:"GET",

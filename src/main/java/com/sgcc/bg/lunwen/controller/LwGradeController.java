@@ -327,4 +327,20 @@ public class LwGradeController {
         ModelAndView modelAndView = new ModelAndView("lunwen/logout");
         return modelAndView;
     }
+
+    /**
+     * 判断当前专家对应论文是否进行打分操作
+     */
+    @ResponseBody
+    @RequestMapping("/ifExportScore")
+    public String ifExportScore(String specialistId){
+        ResultWarp rw = null;
+        List<Map<String,Object>> ifExpertScore = lwPaperMatchSpecialistService.ifExpertScore(specialistId);
+        if(0 == ifExpertScore.size()){
+            rw = new ResultWarp(ResultWarp.SUCCESS ,"success");
+        }else{
+            rw = new ResultWarp(ResultWarp.FAILED ,"fail");
+        }
+        return JSON.toJSONString(rw);
+    }
 }

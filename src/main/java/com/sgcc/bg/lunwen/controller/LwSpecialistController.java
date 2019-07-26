@@ -232,13 +232,8 @@ public class LwSpecialistController {
     @ResponseBody
     @RequestMapping(value = "/deleteSpecialist" ,method = RequestMethod.POST)
     public String deleteExpert(String uuids,HttpServletRequest request,HttpServletResponse response){
-        ResultWarp rw =  null;
         String str = lwSpecialistServiceImpl.deleteSpecialist(uuids);
-        rw = new ResultWarp(ResultWarp.SUCCESS,str);
-        if(str.contains("失败")){
-            rw = new ResultWarp(ResultWarp.FAILED,str);
-        }
-        return JSON.toJSONString(rw);
+        return JSON.toJSONString(str);
     }
 
     /**

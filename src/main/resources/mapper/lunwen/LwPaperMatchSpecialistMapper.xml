@@ -174,4 +174,21 @@
         and m.valid = #{valid}
         order by m.score
     </select>
+
+    <select id="expertIfMatchPaper" resultType="java.util.Map">
+        select * from bg_lw_paper_match_expert m , bg_lw_paper p
+        where m.specialist_id = #{specialistId}
+        and m.valid = #{valid}
+        and p.year = #{year}
+        and p.uuid = m.paper_id
+    </select>
+
+    <select id="ifExpertScore" resultType="java.util.Map">
+        select * from bg_lw_paper_match_expert m , bg_lw_paper p
+        where m.specialist_id = #{specialistId}
+        and m.valid = #{valid}
+        and p.year = #{year}
+        and m.score_status != #{scoreStatus}
+        and p.uuid = m.paper_id
+    </select>
 </mapper>

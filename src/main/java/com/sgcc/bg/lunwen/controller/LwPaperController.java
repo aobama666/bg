@@ -49,6 +49,8 @@ public class LwPaperController {
     private DataDictionaryService dataDictionaryService;
     @Autowired
     private LwPaperMatchSpecialistService lwPaperMatchSpecialistService;
+    @Autowired
+    private LwSpecialistService lwSpecialistService;
 
     /**
      * 跳转至论文管理
@@ -478,6 +480,12 @@ public class LwPaperController {
         for (LwPaperMatchSpecialistVo lmvo : matchSpecialists){
             //传的id是专家id，应该传两个，一个为论文id，一个为专家id，也只有这个时候会用到删除匹配信息，不对，专家替换也是
             lwPaperMatchSpecialistService.delMatchMessage(paperUuid,lmvo.getUuid());
+            //如果该专家没有其他匹配信息，修改匹配状态为未匹配
+            List<Map<String,Object>> expertIfMatchPaper = lwPaperMatchSpecialistService.expertIfMatchPaper(lmvo.getUuid());
+            if(0 == expertIfMatchPaper.size()){
+                //修改专家匹配状态
+                lwSpecialistService.updateMatchStatus(lmvo.getUuid(),LwPaperConstant.SPECIALIST_MATCH_OFF);
+            }
         }
         //当前论文最大排序值获取
         String findSpecialistSort = lwPaperMatchSpecialistService.findSpecialistSort(paperUuid);

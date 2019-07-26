@@ -83,4 +83,7 @@ public interface LwSpecialistService {
      * @return
      */
     int removeShield(String uuid);
+
+    //修改专家的匹配状态
+    int updateMatchStatus(String specialistId,String matchStatus);
 }

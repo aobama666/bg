@@ -122,4 +122,23 @@ public interface LwPaperMatchSpecialistMapper {
             @Param("paperId") String paperId,
             @Param("valid") String valid
     );
+
+    /**
+     * 判断当前专家是否还是匹配别的论文
+     */
+    List<Map<String,Object>> expertIfMatchPaper(
+            @Param("specialistId") String specialistId,
+            @Param("year") String year,
+            @Param("valid") String valid
+    );
+
+    /**
+     * 查询该专家已经开始打分的论文
+     */
+    List<Map<String,Object>> ifExpertScore(
+            @Param("specialistId") String specialistId,
+            @Param("scoreStatus") String scoreStatus,
+            @Param("year") String year,
+            @Param("valid") String valid
+    );
 }

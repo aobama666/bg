@@ -50,4 +50,15 @@ public interface LwPaperMatchSpecialistService {
      */
     double getTotalScore(String pmeId);
 
+
+    /**
+     * 判断当前专家是否还是匹配别的论文
+     */
+    List<Map<String,Object>> expertIfMatchPaper(String specialistId);
+
+    /**
+     * 查询该专家已经开始打分的论文
+     */
+    List<Map<String,Object>> ifExpertScore(String specialistId);
+
 }

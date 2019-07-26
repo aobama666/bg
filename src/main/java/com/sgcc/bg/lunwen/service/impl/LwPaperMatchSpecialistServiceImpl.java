@@ -1,5 +1,6 @@
 package com.sgcc.bg.lunwen.service.impl;
 
+import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
 import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialistVo;
@@ -66,5 +67,16 @@ public class LwPaperMatchSpecialistServiceImpl implements LwPaperMatchSpecialist
     @Override
     public double getTotalScore(String pmeId) {
         return lwPaperMatchSpecialistMapper.getTotalScore(pmeId);
+    }
+
+    @Override
+    public List<Map<String, Object>> expertIfMatchPaper(String specialistId) {
+        return lwPaperMatchSpecialistMapper.expertIfMatchPaper(specialistId, DateUtil.getYear(),LwPaperConstant.VALID_YES);
+    }
+
+    @Override
+    public List<Map<String, Object>> ifExpertScore(String specialistId) {
+        return lwPaperMatchSpecialistMapper.ifExpertScore(specialistId,LwPaperConstant.SCORE_STATUS_NO
+                ,DateUtil.getYear(),LwPaperConstant.VALID_YES);
     }
 }
