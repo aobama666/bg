@@ -13,19 +13,22 @@ roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
 var ran;
 
 $(function(){
+    var checkkk = $(".fields li:first").html();
+    $(".fields li:first").attr("class","checkkk");
+    document.getElementById("field").value=checkkk;
+
     var myclomus = queryAll.seachHead();
     queryAll.initDataGrid(myclomus);
     var classQuery = $(".changeQuery");
     $("#queryButton").on("click",function(e){
         queryAll.query();
     });
-    //回车键出发搜索按钮
-    $("body").keydown(function () {
-        if (event.keyCode == "13") {
-            queryAll.query();
-            return false;
-        }
-    });
+
+    //点选背景效果
+    $(".fields li").click(function () {
+        $(this).addClass("checkkk").siblings().removeClass("checkkk");
+    })
+
 });
 /*  start  列表查询  */
 queryAll.query = function(){

@@ -4,6 +4,7 @@ import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.WebUtils;
+import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.mapper.LwPaperMapper;
 import com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper;
 import com.sgcc.bg.lunwen.mapper.LwSpecialistMapper;
@@ -80,8 +81,8 @@ public class LwGradeStatisticServiceImpl implements LwGradeStatisticService{
         int z=0;
         ResultWarp rw = null;
         for(int i=0 ; i<uuidStr.length; i++){
-            j = lwPaperMapper.updateAllStatus(uuidStr[i],"4");
-            z = lwPaperMatchSpecialistMapper.updateScoreStatus(uuidStr[i],null,"3");
+            j = lwPaperMapper.updateAllStatus(uuidStr[i], LwPaperConstant.P_A_S_REVIEW);
+            z = lwPaperMatchSpecialistMapper.updateScoreStatus(uuidStr[i],getLoginUserUUID(),LwPaperConstant.SCORE_STATUS_AGAIN);
         }
         return j;
     }
@@ -121,5 +122,14 @@ public class LwGradeStatisticServiceImpl implements LwGradeStatisticService{
         Object[][] title = title2;
         ExportExcelHelper.getExcel(response, "论文详情"+ DateUtil.getDays(), title, statisticsMap, "normal");
         return statisticsMap;
+    }
+
+    /**
+     * 获取当前登录用户主键id
+     */
+    public String getLoginUserUUID(){
+        String userName = webUtils.getUsername();
+        HRUser user = userService.getUserByUserName(userName);
+        return user.getUserId();
     }
 }

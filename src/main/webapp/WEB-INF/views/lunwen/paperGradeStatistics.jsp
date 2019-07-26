@@ -23,6 +23,42 @@
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+	<style>
+		ul{
+			margin:0px;
+			padding:0px;
+		}
+		li{
+			float:left;
+			cursor:pointer;
+		}
+		.map_div{
+			width:900px;
+			height:40px;
+			background-color: transparent;
+			overflow:hidden;
+		}
+		#dh_li li{
+			width:100px;
+			height:40px;
+			border:1px solid #cacaca;
+			border-bottom: 0px;
+			text-align:center;
+			padding-top:10px;
+		}
+		.dh_li{
+			font-size:20px;
+			font-weight:bold;
+			color:white;
+			text-align:center;
+			padding-top:10px;
+			background-color:#d5e7e7;
+		}
+		.checkkk{
+			color:white;
+			background: #00828a;
+		}
+	</style>
 </head>
 <body>
 	<div class="main_div"></div>
@@ -57,9 +93,8 @@
 		</form>
 	</div>
 	<!-- end    查询条件 -->
-    <div><hr></div>
-
-    <div style=" padding-top: 40px">
+	<hr/>
+    <div style=" padding-top: 10px">
         <!--  导出，重新评审 -->
         <div id="funcBtn" style="height: 35px;float:right">
             <div class='btn right outButton' onclick="queryAll.outEvent()">导出</div>
@@ -82,15 +117,15 @@
 		<div class="map_div">
 			<ul>
 				<div id="a" onclick="move_left();">
-					<li id="left_" class="dh_li" ><<</li>
+					<li id="left_" class="dh_li" ><</li>
 				</div>
 				<li id="dh_li">
 					<div style="width:1500px;">
-						<ul>
+						<ul class="fields">
 							<c:forEach var ="fieldList" items="${map.fieldList}">
 								<c:forEach var ="field" items="${fieldList}">
-									<div style="float: left" onclick="queryAll.field('${field.value}')">
-										<li><a href="#" style="color:black">${field.value}</a></li>
+									<div onclick="queryAll.field('${field.value}')">
+										<li>${field.value}</li>
 									</div>
 								</c:forEach>
 							</c:forEach>
@@ -98,7 +133,7 @@
 					</div>
 				</li>
 				<div id="b" onclick="move_right();">
-					<li id="right_" class="dh_li">>></li>
+					<li id="right_" class="dh_li">></li>
 				</div>
 			</ul>
 		</div>
@@ -164,62 +199,5 @@
 
 </script>
 
-<style>
-	ul{
-		margin:0px;
-		padding:0px;
-	}
-	li{
-		float:left;
-		cursor:pointer;
-	}
-	.map_div{
-		width:900px;
-		height:40px;
-		background-color: transparent;
-		overflow:hidden;
-	}
-	#dh_li{
-		width:750px;
-		height:40px;
-		background-color: transparent;
-		white-space:nowrap;
-		text-overflow:ellipsis;
-		overflow:hidden;
-		text-overflow:ellipsis;
-		display:block;
-		/*after:content"...";*/
-	}
-	#dh_li li{
-		width:150px;
-		height:40px;
-		background-color: transparent;
-		color:#0C0C0C;
-		border-right:1px solid #cacaca;
-		border-top: 1px solid #cacaca;
-		border-left: 1px solid #cacaca;
-		text-align:center;
-		padding-top:10px;
-		overflow:hidden;
-	}
-	#dh_li li a:link{
-		color:#0C0C0C;
-	}
-	#dh_li li a:visited{
-		color:#0C0C0C;
-	}
-	#dh_li li a:hover{
-		color:#0C0C0C;
-	}
-	.dh_li{
-		width:50px;
-		height:40px;
-		font-size:20px;
-		font-weight:bold;
-		color:#0a433a;
-		text-align:center;
-		padding-top:10px;
-		background-color:#2d9592;
-	}
-</style>
+
 </html>

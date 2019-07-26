@@ -29,12 +29,12 @@
 		<div class='content_top'>参观预定审请</div>	  
 	</div> -->
 	<!-- end  头部 -->
-	<div class="row" style=" height: 400px;padding-left: 100px">
-		<div class="col-md-5" style="height:400px">
+	<div style="height: 400px;width: 100%;">
+		<div style="width: 40%;float: right;padding-right: 10%">
 			<h4 class="tableTitle">
 				已匹配论文信息
 			</h4>
-			<div class="maxBox maxLine" style="height: 350px ">
+			<div class="maxBox maxLine" style="height: 380px ">
 				<table class="visitLeader tableStyle thTableStyle">
 					<tr>
 						<th>论文题目</th>
@@ -52,15 +52,14 @@
 			</div>
 		</div>
 
-		<div class="col-md-2" style=" height: 400px"></div>
 
-		<div class="col-md-5" style="height: 400px">
+		<div  style="width: 40%;padding-left: 10%;padding-top: 1px">
 			<h4 class="tableTitle">
 				可匹配专家信息
 			</h4>
-			<div class="maxBox maxLine" style="height: 350px">
+			<div class="maxBox maxLine" style="height: 380px">
 				<table class="visitLeader tableStyle thTableStyle">
-					<tr <%--style="background-color: #0dc4c4"--%>>
+					<tr>
 						<th>选择</th>
 						<th>专家姓名</th>
 						<th>领域</th>
