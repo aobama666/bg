@@ -4,7 +4,6 @@ var grade = {};
 var dicts = {};
 $(function(){
     grade.init();
-    // messager.tip("打分成功",5000);
 });
 
 grade.init = function () {
@@ -131,20 +130,21 @@ grade.saveGrade = function () {
         msgTitle = '修改提示';
         msg = '确认修改该分数信息吗?';
     }
-    $.messager.confirm( msgTitle, msg,
-        function(r){
-            if(r){
-                $("#queryForm").ajaxSubmit({
-                    url: "/bg/lwGrade/gradeSave",
-                    type: "post",
-                    dataType: "json",
-                    success: function (data) {
-                        parent.grade.closeAndOpen(data.msg);
-                    }
-                });
-            }
+    layer.confirm(msg,{
+            btn:['确定','取消'],icon:0,title:msgTitle
+        },function () {
+            $("#queryForm").ajaxSubmit({
+                url: "/bg/lwGrade/gradeSave",
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    parent.grade.closeAndOpen(data.msg);
+                }
+            });
+        },function () {
+            layer.close(index);
         }
-    );
+    )
 }
 
 

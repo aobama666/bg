@@ -118,10 +118,10 @@ queryAll.forDetails = function (uuid){
 queryAll.againReview = function(){
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        messager.tip("请选择要操作的数据",1000);
+        layer.alert('请选择要操作的数据',{icon:0,title:'信息提示'});
         return;
     }else if(checkedItems.length>1){
-        messager.tip("每次只能选中一条数据",2000);
+        layer.alert('每次只能选中一条数据',{icon:0,title:'信息提示'});
         return;
     }
 
@@ -133,28 +133,29 @@ queryAll.againReview = function(){
         }
     }
     uuids = uuids.slice(0,uuids.length-1);
-    $.messager.confirm( "提示", "确定需要重新评审吗？",
-        function(r){
-            if(r){
-                $.ajax({
-                    url: "/bg/gradeStatistics/againReview?uuids="+uuids,
-                    type: "post",
-                    dataType:"json",
-                    contentType: 'application/json',
-                    data: '',
-                    success: function (data) {
-                        if(data.success == "true"){
-                            messager.tip(data.msg,3000);
-                            queryAll.query();
-                        }else{
-                            messager.tip(data.msg,3000);
-                            queryAll.query();
-                        }
+    layer.confirm('确定需要重新评审吗',{
+            btn:['确定','取消'],icon:0,title:'重新评审'
+        },function () {
+            $.ajax({
+                url: "/bg/gradeStatistics/againReview?uuids="+uuids,
+                type: "post",
+                dataType:"json",
+                contentType: 'application/json',
+                data: '',
+                success: function (data) {
+                    if(data.success == "true"){
+                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                        queryAll.query();
+                    }else{
+                        layer.alert(data.msg,{icon:2,title:'信息提示'});
+                        queryAll.query();
                     }
-                });
-            }
+                }
+            });
+        },function () {
+            layer.close(index);
         }
-    );
+    )
 }
 
 
@@ -162,7 +163,7 @@ queryAll.againReview = function(){
 queryAll.outEvent = function () {
     var $tr = $("#datagrid tr");
     if($tr.length == 1){
-        alert("没有要导出的数据！");
+        layer.alert('没有要导出的数据!',{icon:0,title:'信息提示'});
     }else {
         var year = $("#year").val();
         var paperName = $("#paperName").val();

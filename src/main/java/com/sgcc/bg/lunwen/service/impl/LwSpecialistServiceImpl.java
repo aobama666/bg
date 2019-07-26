@@ -92,8 +92,17 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
     public String deleteSpecialist(String uuids) {
         String[] strings=uuids.split(",");
         int i = lwSpecialistMapper.deleteSpecialist(strings);
-        String str = "删除成功"+i+"条数据"+"，"+"删除失败"+(strings.length-i)+"条数据";
-        return str;
+        StringBuffer stringBuffer = new StringBuffer();
+        if(i!=0){
+            stringBuffer.append("删除成功"+i+"条数据");
+            if(strings.length-i!=0){
+                stringBuffer.append("、");
+            }
+        }
+        if(strings.length-i!=0){
+            stringBuffer.append("删除失败"+(strings.length-i)+"条数据,已匹配专家不可删除!");
+        }
+        return stringBuffer.toString();
     }
 
     /**

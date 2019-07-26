@@ -21,7 +21,7 @@
 </head>
 <body style="padding-top: 5%">
 <span style="margin-left: 3%;margin-bottom: 1%;color:red" >
-        上传文件类型应为：Pdf/jpg/docx/rar/bmp/doc
+        上传文件类型应为：doc/docx/pdf/jpg/rar/bmp
     </span><br/>
 <form id="queryForm" method="post" enctype="multipart/form-data">
 	<table class="visitOperate tableStyle specialTable">
@@ -61,6 +61,7 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
     <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
+	<script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
 
     <!-- 本页面所需的js -->
  	<script src="<%=request.getContextPath()%>/js/lunwen/paperManage.js"></script>

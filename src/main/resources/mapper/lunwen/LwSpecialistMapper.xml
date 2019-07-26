@@ -204,6 +204,7 @@
         <foreach collection="strings"  item="string" index="index" separator="," open="(" close=")">
             #{string,jdbcType=VARCHAR}
         </foreach>
+        and MATCH_STATUS = '0'
     </update>
 
     <select id="paperMap" resultType="com.sgcc.bg.lunwen.bean.PaperVO">

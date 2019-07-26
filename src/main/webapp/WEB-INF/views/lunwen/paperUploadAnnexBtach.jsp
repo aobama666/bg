@@ -25,7 +25,7 @@
 		<br/>
         压缩包内上传文件名称格式为：论文题目-材料类别.文件类型
     	<br/>
-        压缩包内上传文件类型为：Pdf/jpg/docx/rar/bmp/doc
+        压缩包内上传文件类型为：doc/docx/pdf/jpg/rar/bmp
     </div>
 
 <form id="queryForm" method="post" enctype="multipart/form-data">
@@ -70,7 +70,7 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
     <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
-
+	<script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
     <!-- 本页面所需的js -->
  	<script src="<%=request.getContextPath()%>/js/lunwen/paperManage.js"></script>
 	<script src="<%=request.getContextPath()%>/js/plugins/jquery.form.js"></script>

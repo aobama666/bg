@@ -92,19 +92,10 @@
     <!-- 验证校验公共方法，提示框公共方法 -->
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
+	<script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
 	<!-- 本页面所需的js -->
 	<script src="<%=request.getContextPath()%>/js/lunwen/paperComprehensiveStatistics.js"></script>
 
 </body>
-
-<script type="text/javascript" charset="utf-8">
-	/*layui.use('laydate',function(){
-	    var laydate = layui.laydate;
-        laydate.render({
-			elem:"#year",
-			type:"year"
-		});
-	});*/
-</script>
 
 </html>

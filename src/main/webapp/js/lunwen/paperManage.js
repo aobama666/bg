@@ -132,28 +132,29 @@ paperList.addEvent = function (){
     }
     //获取form表单内容
     var paperDetailFormData = roomAddInfoCommon.getFormDataInfo();
-    $.messager.confirm( "保存提示", "确认保存该数据吗",
-        function(r){
-            if(r){
-                $.ajax({
-                    url: "/bg/lwPaper/paperToAdd",
-                    type: "post",
-                    dataType:"json",
-                    contentType: 'application/json',
-                    data: JSON.stringify(paperDetailFormData),
-                    success: function (data) {
-                        if(data.success=="true"){
-                            $("#uuid").val(data.data.uuid);
-                            parent.messager.tip(data.msg,5000);
-                        }else{
-                            parent.messager.tip(data.msg,5000);
-                            return;
-                        }
+    layer.confirm('确认保存该数据吗',{
+            btn:['确定','取消'],icon:0,title:'保存提示'
+        },function () {
+            $.ajax({
+                url: "/bg/lwPaper/paperToAdd",
+                type: "post",
+                dataType:"json",
+                contentType: 'application/json',
+                data: JSON.stringify(paperDetailFormData),
+                success: function (data) {
+                    if(data.success=="true"){
+                        $("#uuid").val(data.data.uuid);
+                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    }else{
+                        layer.alert(data.msg,{icon:2,title:'信息提示'});
+                        return;
                     }
-                });
-            }
+                }
+            });
+        },function () {
+            layer.close(index);
         }
-    );
+    )
 }
 
 /*返回按钮，关闭弹出框页面*/
@@ -165,14 +166,14 @@ paperList.addClose = function () {
 paperList.updateOperation = function(){
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
-			messager.tip("请选择要操作的数据",1000);
+            layer.alert('请选择要操作的数据',{icon:0,title:'信息提示'});
 			return;
 		}else if(checkedItems.length>1){
-			messager.tip("每次只能修改一条数据",2000);
+            layer.alert('每次只能修改一条数据',{icon:0,title:'信息提示'});
 			return;
 		}
 		if(checkedItems[0].SCORETABLESTATUS!="0"){
-			messager.tip("选择的数据无法修改,已生成打分表",5000);
+            layer.alert('选择的数据无法修改,已生成打分表',{icon:0,title:'信息提示'});
 			return;
 		}
 		var id = dataGrid.getCheckedIds();
@@ -206,29 +207,30 @@ paperList.updateEvent = function (){
     }
     //获取form表单内容
     var paperDetailFormData = roomAddInfoCommon.getFormDataInfo();
-    $.messager.confirm( "修改提示", "确认修改该论文吗",
-        function(r){
-            if(r){
-                $.ajax({
-                    url: "/bg/lwPaper/paperToUpdate",
-                    type: "post",
-                    dataType:"json",
-                    contentType: 'application/json',
-                    data: JSON.stringify(paperDetailFormData),
-                    success: function (data) {
-                            parent.messager.tip(data.msg,5000);
-                    }
-                });
-            }
+    layer.confirm('确认修改该论文吗',{
+            btn:['确定','取消'],icon:0,title:'修改提示'
+        },function () {
+            $.ajax({
+                url: "/bg/lwPaper/paperToUpdate",
+                type: "post",
+                dataType:"json",
+                contentType: 'application/json',
+                data: JSON.stringify(paperDetailFormData),
+                success: function (data) {
+                    layer.alert(data.msg,{icon:0,title:'信息提示'});
+                }
+            });
+        },function () {
+            layer.close(index);
         }
-    );
+    )
 }
 
 /*删除论文*/
 paperList.delEvent = function(){
 		var checkedItems = dataGrid.getCheckedItems(dataItems);
 		if(checkedItems.length==0){
-			messager.tip("请选择要操作的数据",1000);
+            layer.alert('请选择要操作的数据',{icon:0,title:'信息提示'});
 			return;
 		}
         var uuids = "";
@@ -376,7 +378,7 @@ paperList.jumpImport = function (){
 paperList.exportExcel = function () {
     var $tr = $("#datagrid tr");
     if($tr.length == 1){
-        messager.tip("没有要导出的数据！",3000);
+        layer.alert('没有要导出的数据！',{icon:0,title:'信息提示'});
     }else {
         var year = $("#year").val();
         var paperName = $("#paperName").val();
@@ -469,5 +471,5 @@ paperList.manualMatch = function (id){
 /*关闭页面后弹出信息*/
 paperList.closeAndOpen = function (message) {
     layer.closeAll();
-    messager.tip(message,3000);
+    layer.alert(message,{icon:1,title:'信息提示'});
 }

@@ -28,7 +28,7 @@
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/stuff-tree/stuff-tree.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoValidate/sotoValidate.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
-
+	<script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
 
 </head>
 <body style="background-color: white">

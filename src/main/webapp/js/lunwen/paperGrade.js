@@ -121,28 +121,29 @@ grade.gradeOperation = function (pmeId,paperName,paperUuid,scoreStatus){
  * 提交打分信息
  */
 grade.scoreSubmit = function () {
-    $.messager.confirm( "提交提示", "确认提交当前打分信息吗",
-        function(r){
-            if(r){
-                $.ajax({
-                    url: "/bg/lwGrade/gradeSubmit",
-                    type: "post",
-                    dataType:"json",
-                    contentType: 'application/json',
-                    data: '',
-                    success: function (data) {
-                        messager.tip(data.msg,3000);
-                        grade.query();
-                    }
-                });
-            }
+    layer.confirm('确认提交当前打分信息吗',{
+            btn:['确定','取消'],icon:0,title:'提交提示'
+        },function () {
+            $.ajax({
+                url: "/bg/lwGrade/gradeSubmit",
+                type: "post",
+                dataType:"json",
+                contentType: 'application/json',
+                data: '',
+                success: function (data) {
+                    layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    grade.query();
+                }
+            });
+        },function () {
+            layer.close(index);
         }
-    );
+    )
 }
 
 
 /*关闭页面后弹出信息*/
 grade.closeAndOpen = function (message) {
     layer.closeAll();
-    messager.tip(message,3000);
+    layer.alert(message,{icon:1,title:'信息提示'});
 }

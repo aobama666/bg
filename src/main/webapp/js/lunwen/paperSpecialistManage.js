@@ -113,28 +113,29 @@ queryAll.initItems = function(){
 };
 
 queryAll.removeShield=function (uuid) {
-    $.messager.confirm( "变更提示","确定将“已屏蔽”状态变更为“未匹配”状态吗？",
-        function(r){
-            if(r){
-                $.ajax({
-                    url: "/bg/expert/removeShield?uuid="+uuid,//删除
-                    type: "get",
-                    dataType:"json",
-                    success: function (data) {
-                        messager.tip(data.msg,3000);
-                        queryAll.refresh();
-                    }
-                });
-            }
+    layer.confirm('确定将“已屏蔽”状态变更为“未匹配”状态吗？',{
+            btn:['确定','取消'],icon:0,title:'变更提示'
+        },function () {
+            $.ajax({
+                url: "/bg/expert/removeShield?uuid="+uuid,//删除
+                type: "get",
+                dataType:"json",
+                success: function (data) {
+                    layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    queryAll.refresh();
+                }
+            });
+        },function () {
+            layer.close(index);
         }
-    );
+    )
 }
 
 /*导出*/
 queryAll.outEvent = function () {
     var $tr = $("#datagrid tr");
     if($tr.length == 1){
-        alert("没有要导出的数据！");
+        layer.alert("没有要导出的数据",{icon:0,title:'信息提示'});
     }else {
         var name = $("#name").val();
         var researchDirection = $("#researchDirection").val();
@@ -176,7 +177,6 @@ queryAll.joinEvent = function () {
 /*下载模板*/
 queryAll.downLoadTemp = function () {
     var ran = Math.random()*1000;
-    //$("#fileName").val();
     document.forms[0].action = "/bg/expert/downloadExcelTemp?ran="+ran;
     document.forms[0].submit();
 }
@@ -186,13 +186,9 @@ queryAll.delEvent=function(){
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     var uuids = "" ;
     if(checkedItems.length==0){
-        messager.tip("请选择要操作的数据",1000);
-        return;
-    }else if(checkedItems[0].matchStatus == '1' && checkedItems.length==1){
-        messager.tip("选择的数据无法删除,还有已匹配的论文",5000);
+        layer.alert("请选择要操作的数据",{icon:0,title:'信息提示'});
         return;
     }else if(checkedItems.length>1){
-        //messager.tip("每次只能删除一条数据",2000);
         for(i=0; i<checkedItems.length;i++){
             uuids += checkedItems[i].uuid + ",";
         }
@@ -200,43 +196,40 @@ queryAll.delEvent=function(){
         uuids = checkedItems[0].uuid+",";
     }
     uuids = uuids.slice(0,uuids.length-1);
-    //$("input[name=selectList]").val(uuids);
-    $.messager.confirm( "删除提示", "确认删除选中数据吗",
-        function(r){
-            if(r){
-                $.ajax({
-                    url: "/bg/expert/deleteSpecialist?uuids="+uuids,//删除
-                    type: "post",
-                    dataType:"json",
-                    success: function (data) {
-                        messager.tip(data,3000);
-                        queryAll.refresh();
-                        /*if(data.success == "true"){
-                            messager.tip("删除成功",1000);
-                            queryAll.query();
-                        }else{
-                            messager.tip("删除失败",5000);
-                            queryAll.query();
-                        }*/
+    layer.confirm('确认删除选中数据吗',{
+            btn:['确定','取消'],icon:0,title:'删除提示'
+        },function () {
+            $.ajax({
+                url: "/bg/expert/deleteSpecialist?uuids="+uuids,//删除
+                type: "post",
+                dataType:"json",
+                success: function (data) {
+                    if(data.success == "true"){
+                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    }else{
+                        layer.alert(data.msg,{icon:2,title:'信息提示'});
                     }
-                });
-            }
+                    queryAll.refresh();
+                }
+            });
+        },function () {
+            layer.close(index);
         }
-    );
+    )
 }
 
 /* 专家修改*/
 queryAll.updateEvent = function(){
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        messager.tip("请选择要操作的数据",1000);
+        layer.alert("请选择要操作的数据",{icon:0,title:'信息提示'});
         return;
     }else if(checkedItems.length>1){
-        messager.tip("每次只能修改一条数据",2000);
+        layer.alert("每次只能修改一条数据",{icon:0,title:'信息提示'});
         return;
     }
     if(checkedItems[0].matchStatus == '1'){
-        messager.tip("选择的数据无法修改,还有已匹配的论文",5000);
+        layer.alert("选择的数据无法修改,还有已匹配的论文",{icon:0,title:'信息提示'});
         return;
     }
     var uuid = checkedItems[0].uuid;
@@ -278,14 +271,14 @@ queryAll.updateSubmit = function () {
     /* 验证联系人只能含有中文或者英文  */
     var  name=IsRight.onlyTwo("#name");
     if(!name){
-        messager.tip("联系人只能含有中文或者英文",2000);
+        layer.alert('联系人只能含有中文或者英文',{icon:0,title:'信息提示'});
         roomDetailInfo.saveBtnClickFlag = 0;
         return;
     }
     /* 验证联系人电话格式 手机号或者xxx-xxxxxxxx或者xxxx-xxxxxxx */
     var  phone=IsRight.telePhone("#phone");
     if(!phone){
-        messager.tip("11位数字手机号码或固定电话，固定电话格式为：xxx-xxxxxxxx或xxxx-xxxxxxx",2000);
+        layer.alert('11位数字手机号码或固定电话，固定电话格式为：xxx-xxxxxxxx或xxxx-xxxxxxx',{icon:0,title:'信息提示'});
         roomDetailInfo.saveBtnClickFlag = 0;
         return;
     }
@@ -293,45 +286,46 @@ queryAll.updateSubmit = function () {
     var email=$("#email").val();
     var exp =/^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
     if(!exp.test(email)){
-        messager.tip("邮箱格式不正确");
+        layer.alert('邮箱格式不正确',{icon:0,title:'信息提示'});
         roomDetailInfo.saveBtnClickFlag = 0;
         return;
     }
 
     var specialist = roomAddInfoCommon.getFormDataInfo();
     specialist.uuid = uuid;
-    $.messager.confirm( "保存提示", "确认保存该数据吗",
-        function(r){
-            if (r) {
-                $.ajax({
-                    url: "/bg/expert/updateExpert",
-                    type: "post",
-                    contentType: 'application/json',
-                    data: JSON.stringify(specialist),
-                    success: function (data) {
-                        parent.messager.tip(data.msg,5000);
-                        roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
-                        var closeIndex = parent.layer.getFrameIndex(window.name);
-                        parent.layer.close(closeIndex);
-                    }
-                });
-            }
+    layer.confirm('确认保存该数据吗',{
+            btn:['确定','取消'],icon:0,title:'保存提示'
+        },function () {
+            $.ajax({
+                url: "/bg/expert/updateExpert",
+                type: "post",
+                contentType: 'application/json',
+                data: JSON.stringify(specialist),
+                success: function (data) {
+                    layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
+                    var closeIndex = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(closeIndex);
+                }
+            });
+        },function () {
+            layer.close(index);
         }
-    );
+    )
 }
 
 /*更换专家*/
 queryAll.renewal = function () {
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        messager.tip("请选择要操作的数据",1000);
+        layer.alert('请选择要操作的数据',{icon:0,title:'信息提示'});
         return;
     }else if(checkedItems.length>1){
-        messager.tip("每次只能操作一条数据",2000);
+        layer.alert('每次只能操作一条数据',{icon:0,title:'信息提示'});
         return;
     }
     if(checkedItems[0].matchStatus == '0'){
-        messager.tip("该专家无已匹配的论文，无法更换",5000);
+        layer.alert('该专家无已匹配的论文，无法更换',{icon:0,title:'信息提示'});
         return;
     }
     var uuid = checkedItems[0].uuid;
@@ -355,7 +349,7 @@ queryAll.renewal = function () {
                     }
                 });
             }else {
-                messager.tip("该专家以有论文进行打分，无法更换",6000);
+                layer.alert('该专家以有论文进行打分，无法更换',{icon:0,title:'信息提示'});
                 return;
             }
         }

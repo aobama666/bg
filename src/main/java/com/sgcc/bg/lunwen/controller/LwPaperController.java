@@ -710,6 +710,21 @@ public class LwPaperController {
         String fileNameUUID = Rtext.getUUID();
         String ftpFileName = fileNameUUID+"."+fileNameAfter;
 
+        //判断附件格式是否符合条件
+        String[] file_types = LwPaperConstant.FILE_TYPE;
+        Boolean errorFileFormat = true;
+        for (String fileType : file_types){
+            if(fileNameAfter.equals(fileType)){
+                errorFileFormat = false;
+            }
+        }
+        if(errorFileFormat){
+            //附件文件格式不正常
+            new File(localPath).delete();
+            rw = new ResultWarp(ResultWarp.FAILED ,"附件文件格式不符合条件");
+            return JSON.toJSONString(rw);
+        }
+
         //判断该附件是否存在
         Map<String,Object> lwFileForFileName = lwFileService.findLwFileForFileName(fileNameBefore,fileNameAfter);
         if(null!=lwFileForFileName){
@@ -791,7 +806,11 @@ public class LwPaperController {
                 +LwPaperConstant.ANNEX_UPLOAD_LOCAL_PATH;
         //把获取到的文件上传至服务对应文件夹
         String zipFileName = UploadUtil.uploadFileForLocal(path,request);
-
+        String zipFileNameAfter = zipFileName.substring(zipFileName.lastIndexOf(".")+1,zipFileName.length());
+        if(!"zip".equals(zipFileNameAfter)){
+            rw = new ResultWarp(ResultWarp.FAILED ,"请上传ZIP格式的压缩包");
+            return JSON.toJSONString(rw);
+        }
         //生成uuid文件夹名称，解压到对应目录下
         String uuidPath = Rtext.getUUID();
         ZipUtil.unZip(new File(path+zipFileName),path+uuidPath);
@@ -808,8 +827,8 @@ public class LwPaperController {
         List<String> successFileName = new ArrayList<>();
 
         for(File file : fileNameList){
-            String fileName = file.getName();
             //本地存放路径及文件名称
+            String fileName = file.getName();
             String localPath = file.getPath();
 
             if(0>fileName.lastIndexOf("-") || 0>fileName.lastIndexOf(".")){
@@ -826,6 +845,19 @@ public class LwPaperController {
             String fileNameUUID = Rtext.getUUID();
             String ftpFileName = fileNameUUID+"."+fileNameAfter;
 
+            //判断附件格式是否符合条件
+            String[] file_types = LwPaperConstant.FILE_TYPE;
+            Boolean errorFileFormat = true;
+            for (String fileType : file_types){
+                if(fileNameAfter.equals(fileType)){
+                    errorFileFormat = false;
+                }
+            }
+            if(errorFileFormat){
+                new File(localPath).delete();
+                errorFileName.add(fileName);
+                continue;
+            }
 
             //判断该附件是否存在
             Map<String,Object> lwFileForFileName = lwFileService.findLwFileForFileName(fileNameBefore,fileNameAfter);

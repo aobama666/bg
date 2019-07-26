@@ -75,7 +75,7 @@ uploadAnnex.addOperation = function (){
 
     var paperUuid = $("#uuid").val();
     if(!paperUuid){
-        messager.tip("请保存基本信息后再添加附件",3000);
+        layer.alert('请保存基本信息后再添加附件',{icon:0,title:'信息提示'});
         return;
     }
     var url = "/bg/lwPaper/paperJumpUploadAnnex?paperUuid="+paperUuid;
@@ -104,26 +104,27 @@ uploadAnnex.addEvent = function (){
     if(!checkLength){
         return;
     }
-    $.messager.confirm( "上传提示", "确认上传吗",
-        function(r){
-            if(r){
-                $("#queryForm").ajaxSubmit({
-                    url: "/bg/lwPaper/paperAddAnnex",
-                    type: "post",
-                    dataType: "json",
-                    success: function (data) {
-                        if(data.success=="true"){
-                            messager.tip(data.msg,5000);
-                            parent.layer.closeAll();
-                        }else{
-                            messager.tip(data.msg,5000);
-                            return;
-                        }
+    layer.confirm('确认上传吗',{
+            btn:['确定','取消'],icon:0,title:'上传提示'
+        },function () {
+            $("#queryForm").ajaxSubmit({
+                url: "/bg/lwPaper/paperAddAnnex",
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    if(data.success=="true"){
+                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                        parent.layer.closeAll();
+                    }else{
+                        layer.alert(data.msg,{icon:2,title:'信息提示'});
+                        return;
                     }
-                });
-            }
+                }
+            });
+        },function () {
+            layer.close(index);
         }
-    );
+    )
 }
 
 /**
@@ -140,19 +141,19 @@ uploadAnnex.addBatchEvent = function(){
     if(!checkLength){
         return;
     }
-    $.messager.confirm( "上传提示", "确认上传吗",
-        function(r){
-            if(r){
-                $("#queryForm").ajaxSubmit({
-                    url: "/bg/lwPaper/btachUpload",
-                    type: "post",
-                    dataType: "json",
-                    success: function (data) {
+    layer.confirm('确认上传吗',{
+            btn:['确定','取消'],icon:0,title:'上传提示'
+        },function () {
+            $("#queryForm").ajaxSubmit({
+                url: "/bg/lwPaper/btachUpload",
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    if(data.success === 'true'){
+                        layer.alert(data.msg,{icon:1,title:'信息提示'});
                         $("#successFile").html("");
                         $("#repeatFile").html("");
                         $("#errorFile").html("");
-
-                        messager.tip("批量上传附件完成",1000);
                         if("[]" != data.data.successFileName){
                             $("#successFile").html("上传成功文件："+data.data.successFileName);
                         }
@@ -160,14 +161,18 @@ uploadAnnex.addBatchEvent = function(){
                             $("#repeatFile").html("重复上传失败文件："+data.data.repeatFileName);
                         }
                         if("[]" != data.data.errorFileName){
-                            $("#errorFile").html("文件名称格式错误文件："+data.data.errorFileName);
+                            $("#errorFile").html("文件格式错误文件："+data.data.errorFileName);
                         }
-                        return;
+                    }else{
+                        layer.alert(data.msg,{icon:2,title:'信息提示'});
                     }
-                });
-            }
+                    return;
+                }
+            });
+        },function () {
+            layer.close(index);
         }
-    );
+    )
 }
 
 /*返回按钮，关闭弹出框页面*/
@@ -179,34 +184,35 @@ uploadAnnex.addClose = function () {
 uploadAnnex.delEvent = function(){
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        messager.tip("请选择要删除的数据",1000);
+        layer.alert('请选择要删除的数据',{icon:0,title:'信息提示'});
         return;
     }else if(checkedItems.length>1){
-        messager.tip("每次只能删除一条数据",2000);
+        layer.alert('每次只能删除一条数据',{icon:0,title:'信息提示'});
         return;
     }
-    $.messager.confirm( "删除提示", "确认删除选中数据吗",
-        function(r){
-            if(r){
-                $.ajax({
-                    url: "/bg/lwPaper/paperDelAnnex?uuid="+checkedItems[0].UUID+"&ftpFilePath="+checkedItems[0].FTPFILEPATH,//删除
-                    type: "post",
-                    dataType:"json",
-                    contentType: 'application/json',
-                    data: '',
-                    success: function (data) {
-                        if(data.success == "true"){
-                            messager.tip(data.msg,3000);
-                            uploadAnnex.query();
-                        }else{
-                            messager.tip(data.msg,3000);
-                            uploadAnnex.query();
-                        }
+    layer.confirm('确认删除选中数据吗',{
+            btn:['确定','取消'],icon:0,title:'删除提示'
+        },function () {
+            $.ajax({
+                url: "/bg/lwPaper/paperDelAnnex?uuid="+checkedItems[0].UUID+"&ftpFilePath="+checkedItems[0].FTPFILEPATH,//删除
+                type: "post",
+                dataType:"json",
+                contentType: 'application/json',
+                data: '',
+                success: function (data) {
+                    if(data.success == "true"){
+                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                        uploadAnnex.query();
+                    }else{
+                        layer.alert(data.msg,{icon:2,title:'信息提示'});
+                        uploadAnnex.query();
                     }
-                });
-            }
+                }
+            });
+        },function () {
+            layer.close(index);
         }
-    );
+    )
 }
 
 

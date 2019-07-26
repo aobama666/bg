@@ -29,13 +29,12 @@
 		<div class='content_top'>参观预定审请</div>	  
 	</div> -->
 	<!-- end  头部 -->
-	<div style="height: 30px;width: 100%"></div>
-	<div style="width: 100%; height: 400px;padding-left: 100px">
-		<div class="col-lg-5" style="width: 45%; height:400px">
+	<div class="row" style=" height: 400px;padding-left: 100px">
+		<div class="col-md-5" style="height:400px">
 			<h4 class="tableTitle">
 				已匹配论文信息
 			</h4>
-			<div class="maxBox maxLine" style="width: 100%; height: 350px ">
+			<div class="maxBox maxLine" style="height: 350px ">
 				<table class="visitLeader tableStyle thTableStyle">
 					<tr>
 						<th>论文题目</th>
@@ -53,13 +52,13 @@
 			</div>
 		</div>
 
-		<div class="col-lg-2" style="width: 3%; height: 400px"></div>
+		<div class="col-md-2" style=" height: 400px"></div>
 
-		<div class="col-lg-5" style="width: 45%; height: 400px">
+		<div class="col-md-5" style="height: 400px">
 			<h4 class="tableTitle">
 				可匹配专家信息
 			</h4>
-			<div class="maxBox maxLine" style="width: 100% ;height: 350px">
+			<div class="maxBox maxLine" style="height: 350px">
 				<table class="visitLeader tableStyle thTableStyle">
 					<tr <%--style="background-color: #0dc4c4"--%>>
 						<th>选择</th>
@@ -101,6 +100,11 @@
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
+	<script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
+	<script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
+	<script src="<%=request.getContextPath()%>/js/plugins/layui/html5.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
+	<script src="<%=request.getContextPath()%>/js/plugins/layui/respond.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
+
 	<!-- 本页面所需的js -->
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/stuff-tree/stuff-tree.js"></script>
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/organ-tree/organ-tree.js"></script>

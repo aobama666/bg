@@ -121,6 +121,7 @@
 	<!-- 本页面所需的js -->
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/stuff-tree/stuff-tree.js"></script>
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/organ-tree/organ-tree.js"></script>
+	<script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
  	<%--<script src="<%=request.getContextPath()%>/js/lunwen/paperSpecialistUpdate.js"></script>--%>
 	<script src="<%=request.getContextPath()%>/js/lunwen/paperSpecialistManage.js"></script>
 
