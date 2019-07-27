@@ -20,53 +20,64 @@
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet"/>
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+	<style type="text/css">
+		table{
+			width: 94%;
+			border: 1px solid #ccc;
+			margin-bottom: 30px;
+			table-layout: fixed;
+			margin: 0 auto;
+			text-align: center;
+		}
+		table td{
+			border: 1px solid #ccc;
+		}
+		th{
+			text-align: center;
+			background: #d5e7e7;
+		}
+	</style>
  </head>
 <body>
     <input type = "hidden" value = "${beforeUuid}" id = "beforeUuid" name="beforeUuid">
-	<div class="main_div"></div>
-	<!-- start  头部 -->
-	<!-- <div class="sheach details">
-		<div class='content_top'>参观预定审请</div>	  
-	</div> -->
-	<!-- end  头部 -->
-	<div style="height: 400px;width: 100%;">
-		<div style="width: 40%;float: right;padding-right: 10%">
+	<div style="height: 300px;" class="row">
+		<div class="col-md-1"></div>
+		<div class="col-md-4">
 			<h4 class="tableTitle">
 				已匹配论文信息
 			</h4>
-			<div class="maxBox maxLine" style="height: 380px ">
-				<table class="visitLeader tableStyle thTableStyle">
-					<tr>
+				<table class="">
+				<%--<table class="visitLeader tableStyle thTableStyle">--%>
+					<tr style="height: 30px;">
 						<th>论文题目</th>
 						<th>领域</th>
 						<th>作者</th>
 					</tr>
 					<c:forEach var="papers" items="${paperMap}">
-						<tr>
+						<tr style="height: 30px;">
 							<td><span>${papers.paperName}</span></td>
 							<td><span>${papers.field}</span></td>
 							<td><span>${papers.author}</span></td>
 						</tr>
 					</c:forEach>
 				</table>
-			</div>
 		</div>
 
+		<div class="col-md-2"></div>
 
-		<div  style="width: 40%;padding-left: 10%;padding-top: 1px">
+		<div class="col-md-4">
 			<h4 class="tableTitle">
 				可匹配专家信息
 			</h4>
-			<div class="maxBox maxLine" style="height: 380px">
-				<table class="visitLeader tableStyle thTableStyle">
-					<tr>
+				<table class="">
+					<tr style="height: 30px;">
 						<th>选择</th>
 						<th>专家姓名</th>
 						<th>领域</th>
 						<th>研究方向</th>
 					</tr>
 					<c:forEach var="sp" items="${matchingSpecialistList}">
-						<tr>
+						<tr style="height: 30px;">
 							<td><input type="radio" id="uuid" name="uuid" value="${sp.uuid}"></td>
 							<td><span>${sp.name}</span></td>
 							<td><span>${sp.field}</span></td>
@@ -74,15 +85,15 @@
 						</tr>
 					</c:forEach>
 				</table>
-			</div>
 		</div>
+		<div class="col-md-1"></div>
 	</div>
 
-	<div class="btnContent">
-		<button type="button" class="btn" onclick="submit()" >提交</button>
-		<button type="button" class="btn" onclick="messageResign()">返回</button>
+		<div style="text-align: center">
+			<button type="button" class="btn" onclick="submit()" >提交</button>
+			<button type="button" class="btn" onclick="messageResign()">返回</button>
 	</div>
-	
+
 	<!-- end参观详情信息-->
     <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script> 
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>

@@ -106,6 +106,7 @@
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
 <script src="<%=request.getContextPath()%>/js/lunwen/paperGrade.js"></script>
+<script src="<%=request.getContextPath()%>/js/lunwen/allCheckBox.js"></script>
 </body>
 
 </html>

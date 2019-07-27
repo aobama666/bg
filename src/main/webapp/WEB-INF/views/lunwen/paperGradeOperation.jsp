@@ -75,6 +75,7 @@
 	<!-- 本页面所需的js -->
  	<script src="<%=request.getContextPath()%>/js/lunwen/paperGradeOperation.js"></script>
 	<script src="<%=request.getContextPath()%>/js/plugins/jquery.form.js"></script>
+	<script src="<%=request.getContextPath()%>/js/lunwen/allCheckBox.js"></script>
 </body>
 
 </html>

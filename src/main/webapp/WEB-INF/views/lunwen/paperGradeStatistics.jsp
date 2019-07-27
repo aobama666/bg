@@ -174,6 +174,7 @@
 	<script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
 	<!-- 本页面所需的js -->
 	<script src="<%=request.getContextPath()%>/js/lunwen/paperGradeStatistics.js"></script>
+	<script src="<%=request.getContextPath()%>/js/lunwen/allCheckBox.js"></script>
 
 </body>
 <script type="text/javascript" charset="utf-8">

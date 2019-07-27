@@ -141,7 +141,8 @@
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/organ-tree/organ-tree.js"></script>
     <script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
  	<script src="<%=request.getContextPath()%>/js/lunwen/paperSpecialistAndPaper.js"></script>
- 
+    <script src="<%=request.getContextPath()%>/js/lunwen/allCheckBox.js"></script>
+
 </body>
 
 </html>

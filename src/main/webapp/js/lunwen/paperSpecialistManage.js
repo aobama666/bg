@@ -52,9 +52,6 @@ queryAll.initDataGrid = function(){
         form:'#queryForm',
         pageSize:10,
         tablepage:$(".tablepage"),//分页组件
-        /*successFinal:function(data){
-            $("#datagrid").find("input[type=checkbox]").eq(0).attr("style","display:inline");
-        },*/
         columns: [
             {name: '',style:{width:"2px"}, data: 'uuid',checkbox:true, forMat:function(row){
               dataItems[index] = row;//将一行数据放在一个list中
@@ -91,20 +88,6 @@ queryAll.initDataGrid = function(){
     });
 }
 
-/*  start 全选、取消全选 input type="checkbox" name="oneCheck"   */
-$(".check_").change(function(){
-    if(this.checkbox==true){
-        var checkBoxs=$("input:checkbox[name=oneCheck]");
-        checkBoxs.each(function(i){
-            checkBoxs[i].checkbox=true;
-        });
-    }else{
-        var checkBoxs=$("input:checkbox[name=oneCheck]");
-        checkBoxs.each(function(i){
-            checkBoxs[i].checkbox=false;
-        });
-    }
-});
 
 /* 初始化dataItems */
 queryAll.initItems = function(){
@@ -350,7 +333,7 @@ queryAll.renewal = function () {
                 layer.open({
                     type:2,
                     title:'<h4 style="height:42px;line-height:25px;">更换专家 </h4>',
-                    area:['85%','75%'],
+                    area:['85%','60%'],
                     fixed:false,//不固定
                     maxmin:true,
                     content:url,

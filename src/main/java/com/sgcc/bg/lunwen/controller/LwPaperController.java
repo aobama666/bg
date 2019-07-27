@@ -376,7 +376,7 @@ public class LwPaperController {
             Map<String,Object> lwPaperMap = lwPaperService.findPaper(paperUuid,null);
             //当前成功匹配数量
             Integer successMatchNums = 0;
-            //自动匹配操作
+            //单个论文自动匹配操作
             successMatchNums = lwPaperService.autoMaticSecond(lwPaperMap,paperUuid);
             //修改该论文的全流程状态
             if(successMatchNums>=7){
@@ -575,13 +575,14 @@ public class LwPaperController {
         if(allStatus < Integer.valueOf(LwPaperConstant.P_A_S_UNRATED)){
             rw = new ResultWarp(ResultWarp.FAILED ,"打分表未生成,无法撤回");
         }else{
+            //查看是否有打分操作
             List<Map<String,Object>> ifAllUnrated = lwPaperService.ifAllUnrated();
             if(0 == ifAllUnrated.size()){
                 lwPaperService.batchUpdateScoreTableStatus(LwPaperConstant.SCORE_TABLE_OFF);
                 lwPaperService.batchUpdateAllStatus(LwPaperConstant.P_A_S_MATCHED);
                 rw = new ResultWarp(ResultWarp.SUCCESS ,"撤回打分表成功");
             }else{
-                rw = new ResultWarp(ResultWarp.FAILED ,"撤回打分表失败，论文已打分");
+                rw = new ResultWarp(ResultWarp.FAILED ,"打分期间不能操作该功能");
             }
         }
         /*  原有按照单个论文撤回打分表代码

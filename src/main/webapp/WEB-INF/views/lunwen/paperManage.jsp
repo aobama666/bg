@@ -126,12 +126,13 @@
 	<!-- 引入datagrid -->
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
     <!-- 验证校验公共方法，提示框公共方法 -->
-	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/commrecommonedCommonon.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/.js"></script>
 		<!-- 本页面所需的js -->
 	<script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 	<script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
  	<script src="<%=request.getContextPath()%>/js/lunwen/paperManage.js"></script>
+ 	<script src="<%=request.getContextPath()%>/js/lunwen/allCheckBox.js"></script>
 </body>
 
 </html>
