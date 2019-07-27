@@ -447,13 +447,20 @@
             name,
             uuid
         from bg_lw_specialist where valid = #{valid}
-        <if test="field != null and field != ''">
-            and (
-                    research_direction LIKE '%'||#{field}||'%'
-                    or
-                    field LIKE '%'||#{field}||'%'
+        <choose>
+            <when test="likeMatch!=null and likeMatch!=''">
+                and (
+                research_direction LIKE '%'||#{field}||'%'
                 )
-        </if>
+            </when>
+            <otherwise>
+                and (
+                research_direction = #{field}
+                or
+                field = #{field}
+                )
+            </otherwise>
+        </choose>
         <if test="authors != null and authors != ''">
             and name not in (
                 <foreach collection="authors" item="author" index="index" separator=",">

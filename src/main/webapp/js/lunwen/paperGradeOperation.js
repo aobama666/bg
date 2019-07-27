@@ -21,8 +21,8 @@ grade.init = function () {
             var firstIndexs = data.data.firstIndexs;
             var scoreTableLength = scoreTable.length;
             $("#scoreTableLength").val(scoreTableLength);
-            var scoreTableContent = '<table border="1px" align="center" style="text-align:center;width:100%;height:450px">' +
-                '<tr style="background-color: #d5e7e7;">' +
+            var scoreTableContent = '<table border="1px" align="center" style="text-align:center;width:100%">' +
+                '<tr style="background-color: #d5e7e7;height: 40px;">' +
                     '<th>一级指标</th>' +
                     '<th>二级指标</th>' +
                     '<th>参考要求</th>' +
@@ -42,7 +42,7 @@ grade.init = function () {
                 if(add){
                     backColor = randomColor();
                 }
-                scoreTableContent += '<tr style="background-color:'+backColor+'">';
+                scoreTableContent += '<tr style="background-color:'+backColor+';height: 40px">';
                 scoreTableContent += '<td style="display: none;">'+'<input name="secondIndexId'+i+'" value="'+scoreTable[i].UUID+'"/></td>';
                 if(add){
                     if(i!==0){
@@ -72,7 +72,7 @@ grade.init = function () {
                 }
                 scoreTableContent += '</tr>';
             }
-            scoreTableContent += '<tr style="background-color: #d5e7e7;">' +
+            scoreTableContent += '<tr style="background-color: #d5e7e7;height: 40px;">' +
                 '<th colspan="4" >总分</th>' +
                 '<th  class="addInputStyle">';
             if(scoreStatus === '0') {

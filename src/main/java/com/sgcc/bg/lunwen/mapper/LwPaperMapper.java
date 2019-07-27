@@ -167,13 +167,15 @@ public interface LwPaperMapper {
 
     /**
      * 获取匹配领域的专家信息
+     * 如果有likeMatch，代表模糊匹配研究方向，如果没有则是精准匹配研究方向和领域
      */
     List<LwSpecialist> selectSpecialistField(
             @Param("authors") String[] authors,
             @Param("unit") String unit,
             @Param("field") String field,
             @Param("valid") String valid,
-            @Param("matchStatus") String matchStatus
+            @Param("matchStatus") String matchStatus,
+            @Param("likeMatch") String likeMatch
     );
 
 

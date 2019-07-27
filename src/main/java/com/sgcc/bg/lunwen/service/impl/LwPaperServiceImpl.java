@@ -125,7 +125,13 @@ public class LwPaperServiceImpl implements LwPaperService {
     @Override
     public List<LwSpecialist> selectSpecialistField(String[] authors, String unit, String field) {
         return lwPaperMapper.selectSpecialistField(authors,unit,field,
-                LwPaperConstant.VALID_YES,LwPaperConstant.SPECIALIST_MATCH_SHIELD);
+                LwPaperConstant.VALID_YES,LwPaperConstant.SPECIALIST_MATCH_SHIELD,null);
+    }
+
+    @Override
+    public List<LwSpecialist> selectSpecialistFieldLike(String[] authors, String unit, String field) {
+        return lwPaperMapper.selectSpecialistField(authors,unit,field,
+                LwPaperConstant.VALID_YES,LwPaperConstant.SPECIALIST_MATCH_SHIELD,"likeMatch");
     }
 
     @Override
@@ -227,8 +233,23 @@ public class LwPaperServiceImpl implements LwPaperService {
         }else{
             authors = new String[]{author};
         }
-        //根据论文所属领域，查询能够匹配的专家
+        //根据论文所属领域，查询能够匹配的专家,精准匹配在前，模糊匹配在后
         List<LwSpecialist> lwSpList = lwPaperService.selectSpecialistField(authors,unit,field);
+        List<LwSpecialist> lwSpListLike = lwPaperService.selectSpecialistFieldLike(authors,unit,field);
+
+        for(LwSpecialist ls : lwSpList){
+            String specialistId = ls.getUuid();
+            for (LwSpecialist lwSpecialist : lwSpListLike){
+                if(specialistId.equals(lwSpecialist.getUuid())){
+                    lwSpListLike.remove(lwSpecialist);
+                    break;
+                }
+            }
+        }
+        for (LwSpecialist lwSpecialist : lwSpListLike){
+            lwSpList.add(lwSpecialist);
+        }
+
         //查询已经匹配上的专家
         List<LwPaperMatchSpecialist> matchSpecialists = lwPaperMatchSpecialistService.selectPMS(paperUuid,null);
         //成功匹配数量

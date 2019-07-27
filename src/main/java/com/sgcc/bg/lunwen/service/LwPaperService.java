@@ -121,6 +121,18 @@ public interface LwPaperService {
             String unit,
             String field);
 
+    /**
+     * 查询符合论文领域的专家——模糊匹配专家研究方向
+     * @param authors
+     * @param unit
+     * @param field
+     * @return
+     */
+    List<LwSpecialist> selectSpecialistFieldLike(
+            String[] authors,
+            String unit,
+            String field);
+
 
     /**
      * 提供分页查询总数
