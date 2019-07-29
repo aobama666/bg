@@ -389,11 +389,11 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
         //存论文涉及到的本单位
         Set unitSet = new HashSet();
         //储存涉及到的领域
-        Set fieIdSet = new HashSet();
+        Set fieldSet = new HashSet();
         //符合条件的专家list
         List<LwSpecialist> matchingSpecialistList = new ArrayList<>();
         for(PaperVO paperVO : paperMap){
-            //取出论文已经匹配的专家
+            //论文已经匹配的专家
             List<Map<String,Object>> paperSpecialist = lwSpecialistMapper.paperSpecialist(paperVO.getUuid());
             for (Map<String, Object> map : paperSpecialist) {
                spUuid.add(map.get("UUID"));
@@ -405,13 +405,10 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                 spUuid.add(specialistMatching.getUuid());
             }
             unitSet.add(paperVO.getUnit());
-            fieIdSet.add(paperVO.getField());
+            fieldSet.add(paperVO.getField());
         }
-        if(fieIdSet.size()==1) {
-            //String fieId = fieIdSet.toString();
-            String fieId = fieIdSet.toArray()[0].toString();
-            matchingSpecialistList = lwSpecialistMapper.matchingSpecialistList(spUuid, unitSet, fieId);
-        }
+        //查询符合条件的专家
+        matchingSpecialistList = lwSpecialistMapper.matchingSpecialistList(spUuid, unitSet, fieldSet);
         Map map = new HashMap();
         map.put("paperMap",paperMap);
         map.put("matchingSpecialistList",matchingSpecialistList);

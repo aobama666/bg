@@ -20,7 +20,7 @@ paperList.query = function(){
 	dataItems = new Array();
 	index = 0;
 	$("#datagrid").datagrid("seach");
-}
+};
 /*  end  列表查询  */
 
 /*  start   弹出框关闭后刷新本页  */
@@ -28,7 +28,7 @@ paperList.queryAddPage = function(){
     dataItems = new Array();
     index = 0;
     $("#datagrid").datagrid("refresh");
-}
+};
 /*  end   弹出框关闭后刷新本页 */
 
 /**
@@ -37,7 +37,7 @@ paperList.queryAddPage = function(){
 paperList.updatePaperType = function(num) {
     document.getElementById("paperType").value=num;
     paperList.query();
-}
+};
 
 /* 论文管理-初始化列表界面  */
 paperList.initDataGrid = function(){
@@ -82,7 +82,7 @@ paperList.initDataGrid = function(){
             {name: '去最高最低得分', style:{width:"70px"},data: 'AVERAGEFRACTION'}
         ]
     });
-}
+};
 
 
 /*查看论文详情*/
@@ -98,7 +98,7 @@ paperList.forDetails = function (id){
         },function (index) {
             layer.close(index);
         });
-}
+};
 
 
 /*弹出新增框 */
@@ -115,7 +115,7 @@ paperList.addOperation = function (){
             paperList.query();
         }
     });
-}
+};
 
 
 /*新增论文*/
@@ -155,12 +155,12 @@ paperList.addEvent = function (){
             layer.close(index);
         }
     )
-}
+};
 
 /*返回按钮，关闭弹出框页面*/
 paperList.addClose = function () {
     parent.layer.closeAll();
-}
+};
 		
 /*修改弹出框*/
 paperList.updateOperation = function(){
@@ -190,7 +190,7 @@ paperList.updateOperation = function(){
                 paperList.queryAddPage();
             }
 		});
-}
+};
 
 
 /*修改论文基本信息*/
@@ -224,7 +224,7 @@ paperList.updateEvent = function (){
             layer.close(index);
         }
     )
-}
+};
 
 /*删除论文*/
 paperList.delEvent = function(){
@@ -260,7 +260,7 @@ paperList.delEvent = function(){
                 layer.close(index);
             }
         )
-}
+};
 
 
 /**
@@ -269,7 +269,7 @@ paperList.delEvent = function(){
 paperList.downLoadTempLate = function () {
     document.forms[0].action = "/bg/lwPaper/download_excel_temp";
     document.forms[0].submit();
-}
+};
 
 
 /**
@@ -279,7 +279,7 @@ paperList.downloadAnnex = function (uuid) {
     $("#annexUuid").val(uuid);
     document.forms[0].action = "/bg/lwPaper/downloadAnnex";
     document.forms[0].submit();
-}
+};
 
 /**
  * 生成打分表
@@ -304,10 +304,8 @@ paperList.generateScoreTable = function () {
                 }
             }
         });
-    },function () {
-        layer.close(index);
     })
-}
+};
 
 /**
  * 撤回打分表
@@ -335,7 +333,7 @@ paperList.withdrawScoreTable = function () {
     },function () {
         layer.close(index);
     })
-}
+};
 
 
 
@@ -353,7 +351,7 @@ paperList.batchUploadOperation = function (){
             paperList.query();
         }
     });
-}
+};
 
 
 /*弹出论文上传框 */
@@ -371,7 +369,7 @@ paperList.jumpImport = function (){
             paperList.query();
         }
     });
-}
+};
 
 
 /*导出*/
@@ -402,7 +400,7 @@ paperList.exportExcel = function () {
         document.forms[0].action ="/bg/lwPaper/lwPaperExport?ran="+ran;
         document.forms[0].submit();
     }
-}
+};
 
 
 /*自动匹配*/
@@ -433,7 +431,7 @@ paperList.automaticMatch = function(){
     },function () {
             layer.close(index);
     })
-}
+};
 
 
 
@@ -465,11 +463,11 @@ paperList.manualMatch = function (id){
         }
     });
 
-}
+};
 
 
 /*关闭页面后弹出信息*/
 paperList.closeAndOpen = function (message) {
     layer.closeAll();
     layer.alert(message,{icon:1,title:'信息提示'});
-}
+};

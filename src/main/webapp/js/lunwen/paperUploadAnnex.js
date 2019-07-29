@@ -141,6 +141,13 @@ uploadAnnex.addBatchEvent = function(){
     if(!checkLength){
         return;
     }
+    /*var uploadFile = document.getElementById('file');
+    //判断上传文件大小
+    alert(uploadFile.files[0].size());
+    if(uploadFile.size > 32505856){
+        layer.alert('zip大小不能超过31mb',{icon:0,title:'信息提示'});
+    }*/
+
     layer.confirm('确认上传吗',{
             btn:['确定','取消'],icon:0,title:'上传提示'
         },function () {
@@ -150,7 +157,7 @@ uploadAnnex.addBatchEvent = function(){
                 dataType: "json",
                 success: function (data) {
                     if(data.success === 'true'){
-                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                        layer.alert(data.msg,{icon:0,title:'信息提示'});
                         $("#successFile").html("");
                         $("#repeatFile").html("");
                         $("#errorFile").html("");
@@ -161,7 +168,7 @@ uploadAnnex.addBatchEvent = function(){
                             $("#repeatFile").html("重复上传失败文件："+data.data.repeatFileName);
                         }
                         if("[]" != data.data.errorFileName){
-                            $("#errorFile").html("文件格式错误文件："+data.data.errorFileName);
+                            $("#errorFile").html("格式错误文件："+data.data.errorFileName);
                         }
                     }else{
                         layer.alert(data.msg,{icon:2,title:'信息提示'});

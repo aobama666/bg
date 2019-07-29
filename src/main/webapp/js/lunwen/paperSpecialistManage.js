@@ -311,6 +311,10 @@ queryAll.renewal = function () {
         layer.alert('该专家无已匹配的论文，无法更换',{icon:0,title:'信息提示'});
         return;
     }
+    if(checkedItems[0].matchStatus == '2'){
+        layer.alert('该专家已屏蔽，无法更换',{icon:0,title:'信息提示'});
+        return;
+    }
     $.ajax({
         url: "/bg/lwGrade/ifExportScore?specialistId="+checkedItems[0].uuid,
         type: "post",
@@ -338,7 +342,6 @@ queryAll.renewal = function () {
                     maxmin:true,
                     content:url,
                     end: function () {
-                        //queryAll.query();
                         queryAll.refresh();
                     }
                 });

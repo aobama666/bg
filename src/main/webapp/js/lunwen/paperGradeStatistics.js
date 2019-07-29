@@ -25,7 +25,8 @@ $(function(){
     });
 
     //点选背景效果
-    $(".fields li").click(function () {
+    $("li").click(function () {
+        debugger;
         $(this).addClass("checkkk").siblings().removeClass("checkkk");
     })
 

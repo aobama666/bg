@@ -138,7 +138,7 @@ public interface LwSpecialistMapper {
     //论文领域同专家领域（精准）、论文领域同专家研究方向（精准）、回避本人、回避本单位，回避已匹配的专家
     List<LwSpecialist> matchingSpecialistList(@Param("spUuid") Set spUuid,
                                               @Param("unitSet") Set unitSet,
-                                              @Param("fieId") String fieId);
+                                              @Param("fieldSet") Set fieldSet);
 
     //修改专家的匹配状态
     int updateMatchStatus(@Param("beforeUuid") String beforeUuid ,@Param("matchStatus") String matchStatus);

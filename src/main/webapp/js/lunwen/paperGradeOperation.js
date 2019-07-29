@@ -141,8 +141,6 @@ grade.saveGrade = function () {
                     parent.grade.closeAndOpen(data.msg);
                 }
             });
-        },function () {
-            layer.close(index);
         }
     )
 }

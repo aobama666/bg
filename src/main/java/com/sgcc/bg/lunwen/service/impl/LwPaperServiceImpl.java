@@ -215,10 +215,10 @@ public class LwPaperServiceImpl implements LwPaperService {
 
 
     /**
-     * 重复匹配————附加首次匹配功能，缩减代码量
-     * @param lwPaperMap
-     * @param paperUuid
-     * @return
+     * 自动匹配
+     * @param lwPaperMap 匹配排斥参数
+     * @param paperUuid 论文主键id
+     * @return 返回成功该论文成功匹配个数
      */
     @Override
     public Integer autoMaticSecond(Map<String, Object> lwPaperMap,String paperUuid) {

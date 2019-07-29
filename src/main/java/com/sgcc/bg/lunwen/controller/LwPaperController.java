@@ -27,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -338,7 +339,7 @@ public class LwPaperController {
     public String ifAnnex(String uuid){
         ResultWarp rw = null;
         rw = new ResultWarp(ResultWarp.SUCCESS,"");
-        List<Map<String,Object>> fileList = lwFileService
+        List<Map<String,Object>> fileList =lwFileService
                 .selectLwFile(uuid,LwPaperConstant.BUSSINESSTABLE,LwPaperConstant.VALID_YES);
         if(0 == fileList.size()){
             log.info(getLoginUser()+"匹配论文失败，没有添加附件信息"+uuid);
@@ -409,8 +410,23 @@ public class LwPaperController {
         }else{
             authors = new String[]{author};
         }
-        //根据论文所属领域，查询能够匹配的专家
+        //根据论文所属领域，查询能够匹配的专家,精准匹配在前，模糊匹配在后
         List<LwSpecialist> lwSpList = lwPaperService.selectSpecialistField(authors,unit,field);
+        List<LwSpecialist> lwSpListLike = lwPaperService.selectSpecialistFieldLike(authors,unit,field);
+        for(LwSpecialist ls : lwSpList){
+            String specialistId = ls.getUuid();
+            for (LwSpecialist lwSpecialist : lwSpListLike){
+                if(specialistId.equals(lwSpecialist.getUuid())){
+                    lwSpListLike.remove(lwSpecialist);
+                    break;
+                }
+            }
+        }
+        for (LwSpecialist lwSpecialist : lwSpListLike){
+            lwSpList.add(lwSpecialist);
+        }
+
+
         //查询已经匹配上的专家
         List<LwPaperMatchSpecialistVo> matchSpecialists = lwPaperMatchSpecialistService.selectPmsManual(paperUuid);
         //判断是否有重复，剔除原有匹配专家信息
@@ -658,12 +674,13 @@ public class LwPaperController {
             //{1mb = 1048576b,1kb = 1024b}
             String fileSize = fileMap.get("FILESIZE").toString();
             Double size = Double.valueOf(fileSize);
+            BigDecimal bigDecimal = null;
             if(size > 1048576){
-                fileSize = (size/1048576) + "MB";
+                fileSize = MathUtil.round(size/1048576,2) + "MB";
             }else if(size > 1024){
-                fileSize = (size/1024) + "KB";
+                fileSize = MathUtil.round(size/1024,2) + "KB";
             }else{
-                fileSize = size + "B";
+                fileSize = MathUtil.round(size,2) + "B";
             }
             fileMap.put("FILESIZE",fileSize);
         }
@@ -817,14 +834,23 @@ public class LwPaperController {
         String zipFileName = UploadUtil.uploadFileForLocal(path,request);
         String zipFileNameAfter = zipFileName.substring(zipFileName.lastIndexOf(".")+1,zipFileName.length());
         if(!"zip".equals(zipFileNameAfter)){
-            rw = new ResultWarp(ResultWarp.FAILED ,"请上传ZIP格式的压缩包");
+            rw = new ResultWarp(ResultWarp.FAILED ,"上传的压缩包需为zip");
+            return JSON.toJSONString(rw);
+        }
+        /**
+         * 还是有问题，框架层面直接限制31MB
+         */
+        File zipFile = new File(path+zipFileName);
+        if(zipFile.length() > 104857600){
+            zipFile.delete();
+            rw = new ResultWarp(ResultWarp.FAILED ,"上传的zip包大小不得大于100MB");
             return JSON.toJSONString(rw);
         }
         //生成uuid文件夹名称，解压到对应目录下
         String uuidPath = Rtext.getUUID();
         ZipUtil.unZip(new File(path+zipFileName),path+uuidPath);
         //删除压缩包
-        new File(path+zipFileName).delete();
+        zipFile.delete();
         //获取所有文件信息
         File uuidPathFile = new File(path+uuidPath);
         File[] fileNameList = uuidPathFile.listFiles();
@@ -869,7 +895,7 @@ public class LwPaperController {
             }
 
             //判断该附件是否存在
-            Map<String,Object> lwFileForFileName = lwFileService.findLwFileForFileName(fileNameBefore,fileNameAfter);
+            Map<String,Object> lwFileForFileName = lwFileService.findLwFileForFileName(fileNameBefore.trim(),fileNameAfter.trim());
             if(null!=lwFileForFileName){
                 //附件已存在，删除本地路径附件，返回已存在标识
                 new File(localPath).delete();
@@ -924,7 +950,7 @@ public class LwPaperController {
         //删除刚才生成的uuid文件夹
         uuidPathFile.delete();
         //反馈前台
-        rw = new ResultWarp(ResultWarp.SUCCESS ,"上传附件成功");
+        rw = new ResultWarp(ResultWarp.SUCCESS ,"上传附件完成");
         rw.addData("errorFileName",errorFileName.toString());
         rw.addData("repeatFileName",repeatFileName.toString());
         rw.addData("successFileName",successFileName.toString());
