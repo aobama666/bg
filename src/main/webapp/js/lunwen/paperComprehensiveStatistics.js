@@ -55,7 +55,7 @@ queryAll.initDataGrid = function(){
             },
             {name: '编号',style:{width:"10%px"}, data: 'paperId'},
             {name: '论文题目',style:{width:"10%"}, data: 'paperName',forMat:function(row){
-                    return "<a title = '点击查看论文详情' style='width:250px;" +
+                    return "<a title = '点击查看论文详情' style='width:250px;color: #0080FF;" +
                         " text-align:left;'id='\"+row.uuid+\"'" +
                         " href = 'javascript:void(0)' onclick = queryAll.forDetails('"+row.uuid+"')>"+row.paperName+"</a>";
                 }},

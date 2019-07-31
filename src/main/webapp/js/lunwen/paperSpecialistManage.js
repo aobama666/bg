@@ -59,7 +59,7 @@ queryAll.initDataGrid = function(){
             }
           },
             {name: '专家姓名',style:{width:"50px"}, data: 'PAPERNAME',forMat:function(row){
-                    return "<a title = '"+row.name+"' style='width:250px;" +
+                    return "<a title = '"+row.name+"' style='width:250px;color: #0080FF;" +
                         "text-align:left;" +
                        "'id='"+row.uuid+"'" +
                         "href = 'javascript:void(0)' onclick = queryAll.forDetails('"+row.uuid+"')>"+row.name+"</a>";
@@ -78,7 +78,7 @@ queryAll.initDataGrid = function(){
                 }else if(row.matchStatus == '0'){
                     return "<span>"+"未匹配"+"</span>"
                 }else if (row.matchStatus == '2'){
-                    return "<a title = '已屏蔽' style='width:250px;" +
+                    return "<a title = '已屏蔽' style='width:250px;color: #0080FF;" +
                         "text-align:left;" +
                         "'id='"+row.uuid+"'" +
                         "href = 'javascript:void(0)' onclick = queryAll.removeShield('"+row.uuid+"')>"+'已屏蔽'+"</a>";

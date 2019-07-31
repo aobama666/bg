@@ -32,7 +32,7 @@ queryAll.initDataGrid = function(){
                 {name: '编号', style:{width:"15%"},data: 'paperId'},
                 {name: '年度', style:{width:"15%"},data: 'year'},
                 {name: '论文题目', style:{width:"15%"},data: 'paperName',forMat:function(row){
-                        return "<a title = '"+row.name+"' style='width:250px;" +
+                        return "<a title = '"+row.name+"' style='width:250px;color: #0080FF;" +
                             "text-align:left;" +
                             "'id='"+row.uuid+"'" +
                             "href = 'javascript:void(0)' onclick = queryAll.forDetails('"+row.uuid+"')>"+row.paperName+"</a>";

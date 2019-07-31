@@ -80,7 +80,7 @@ queryAll.seachHead = function(){
     };
     myclomus[1] = {name: '编号',style:{width:"10%"}, data: 'PAPERID'};
     myclomus[2] = {name: '论文题目',style:{width:"10%"}, data: 'paperName',forMat:function(row  ){
-            return "<a title = '点击查看论文详情' style='width:250px;" +
+            return "<a title = '点击查看论文详情' style='width:250px;color: #0080FF;" +
                 " text-align:left;'id='\"+row.UUID+\"'" +
                 " href = 'javascript:void(0)' onclick = queryAll.forDetails('"+row.UUID+"')>"+row.PAPERNAME+"</a>";
         }};

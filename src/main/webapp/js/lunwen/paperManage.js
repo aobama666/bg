@@ -55,7 +55,7 @@ paperList.initDataGrid = function(){
             },
             {name: '编号',style:{width:"40px"}, data: 'PAPERID'},
             {name: '论文题目',style:{width:"10%"}, data: 'PAPERNAME',forMat:function(row){
-                    return "<a title = '点击查看论文详情' style='width:250px;" +
+                    return "<a title = '点击查看论文详情' style='width:250px;color: #0080FF;" +
                         " text-align:left;'id='\"+row.UUID+\"'" +
                         // "white-space: nowrap;" +
                         // "text-overflow: ellipsis;" +
@@ -73,7 +73,7 @@ paperList.initDataGrid = function(){
             {name: '下载量',style:{width:"40px"}, data: 'DOWNLOADCOUNT'},
             {name: '专家信息',style:{width:"50px"}, data: 'UUID',
                 forMat:function(row){
-                    return "<a title = '点击查看匹配专家' style='width:250px;' id='"+row.UUID+"'" +
+                    return "<a title = '点击查看匹配专家' style='width:250px;color: #0080FF;' id='"+row.UUID+"'" +
                         "href = 'javascript:void(0)' onclick = paperList.manualMatch('"+row.UUID+"')>查看详情</a>";
 
                 }},

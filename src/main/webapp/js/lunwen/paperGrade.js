@@ -56,7 +56,7 @@ grade.initDataGrid = function(){
             },*/
             {name: '编号',style:{width:"50px"}, data: 'PAPERID'},
             {name: '论文题目',style:{width:"10%"}, data: 'PAPERNAME',forMat:function(row){
-                    return "<a title = '点击查看论文详情' style='width:250px;" +
+                    return "<a title = '点击查看论文详情' style='width:250px;color: #0080FF;" +
                         " text-align:left;'id='\"+row.PAPERUUID+\"'" +
                         " href = 'javascript:void(0)' onclick = grade.forDetails('"+row.PAPERUUID+"')>"+row.PAPERNAME+"</a>";
 
@@ -71,10 +71,10 @@ grade.initDataGrid = function(){
             {name: '专家打分',style:{width:"50px"}, data: 'PAPERUUID',
                 forMat:function(row){
                     if(row.SCORE == undefined){
-                        return "<a title = '点击查看打分详情' style='width:250px;' id='"+row.PMEID+"'" +
+                        return "<a title = '点击查看打分详情' style='width:250px;color: #0080FF;' id='"+row.PMEID+"'" +
                             "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.PMEID+"','"+row.PAPERNAME+"','"+row.PAPERUUID+"','"+row.SCORESTATUSCODE+"')>打分</a>";
                     }else{
-                        return "<a title = '点击查看打分详情' style='width:250px;' id='"+row.PAPERUUID+"'" +
+                        return "<a title = '点击查看打分详情' style='width:250px;color: #0080FF;' id='"+row.PAPERUUID+"'" +
                             "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.PMEID+"','"+row.PAPERNAME+"','"+row.PAPERUUID+"','"+row.SCORESTATUSCODE+"')>"+row.SCORE +"</a>";
                     }
                 }},
