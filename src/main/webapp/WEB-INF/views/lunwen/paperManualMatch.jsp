@@ -18,6 +18,9 @@
     .layui-table-cell .layui-form-checkbox[lay-skin=primary] {
         top: 5px;
     }
+    td{
+        text-align: center;
+    }
 </style>
 <body>
 
@@ -70,7 +73,7 @@
         var transfer = layui.transfer,$ = layui.$;
         var cols = [
             {type: 'checkbox', fixed: 'left'},
-            {title: '',width: 40,templet: '#indexTpl'},
+            {title: '',width: 50,templet: '#indexTpl'},
             {field: 'uuid', title: 'ID',  sort: true,hide:true},
             {field: 'name', title: '专家姓名'},
             {field: 'field', title: '领域'},

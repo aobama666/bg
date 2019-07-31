@@ -61,20 +61,20 @@ grade.init = function () {
                 scoreTableContent += '<td width="50%" style="text-align: left">'+scoreTable[i].REQUIRE+'</td>';
                 scoreTableContent += '<td width="10%">0~100</td>';
                 if(scoreStatus === '0'){//未打分
-                    scoreTableContent += '<td width="10%" class="addInputStyle"><input name="score'+i+'"' +
+                    scoreTableContent += '<td style="background-color: white" width="10%" class="addInputStyle"><input name="score'+i+'"' +
                         ' type="text" class="validNull" content="对应分值" onkeyup="grade.ifValidNull(this)"/></td>';
                 }else if(scoreStatus === '2'){//已完成
-                    scoreTableContent += '<td width="10%" class="addInputStyle"><input name="score'+i+'"' +
+                    scoreTableContent += '<td style="background-color: white" width="10%" class="addInputStyle"><input name="score'+i+'"' +
                         ' value="'+scoreTable[i].SCORE+'" type="text" readonly/></td>';
                 }else {//未提交，或者重新评审
-                    scoreTableContent += '<td width="10%" class="addInputStyle"><input name="score'+i+'"' +
+                    scoreTableContent += '<td style="background-color: white" width="10%" class="addInputStyle"><input name="score'+i+'"' +
                         ' value="'+scoreTable[i].SCORE+'" type="text" class="validNull" content="对应分值" onkeyup="grade.ifValidNull(this)"/></td>';
                 }
                 scoreTableContent += '</tr>';
             }
             scoreTableContent += '<tr style="background-color: #d5e7e7;height: 40px;">' +
                 '<th colspan="4" >总分</th>' +
-                '<th  class="addInputStyle">';
+                '<th style="background-color: white" class="addInputStyle">';
             if(scoreStatus === '0') {
                 scoreTableContent +='<input id="totalScore" name="totalScore" value="0" readonly/>'
             }else{
@@ -123,6 +123,7 @@ grade.saveGrade = function () {
     }
     var msgTitle = '';
     var msg = '';
+    debugger
     if(scoreStatus === '0'){
         msgTitle = '保存提示';
         msg = '确认保存该分数信息吗?';

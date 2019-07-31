@@ -130,7 +130,7 @@ public class LwPaperController {
         String allStatus  = request.getParameter("allStatus") == null?"":request.getParameter("allStatus");
         String paperType  = request.getParameter("paperType") == null?"":request.getParameter("paperType");
         String ids = request.getParameter("selectList") == null ?" " : request.getParameter("selectList");
-        List<LwPaper> lwPaperList = lwPaperService.selectLwpaperExport(paperName,paperId,year,unit,author,field,allStatus,paperType,ids,response);
+        lwPaperService.selectLwpaperExport(paperName,paperId,year,unit,author,field,allStatus,paperType,ids,response);
         log.info(getLoginUser()+"exprot data");
     }
 
@@ -350,6 +350,23 @@ public class LwPaperController {
         return JSON.toJSONString(rw);
     }
 
+    /**
+     * 是否开始打分操作，自动匹配之前使用
+     */
+    @ResponseBody
+    @RequestMapping(value = "/ifScoreTable")
+    public String ifScoreTable(){
+        //判断是否已进入打分操作
+        ResultWarp rw = null;
+        Integer allStatus = lwPaperService.maxAllStatus();
+        if(allStatus >= Integer.valueOf(LwPaperConstant.P_A_S_UNRATED)){
+            rw = new ResultWarp(ResultWarp.FAILED ,"打分表已生成");
+        }else{
+            rw = new ResultWarp(ResultWarp.SUCCESS ,"打分表未生成");
+        }
+        return JSON.toJSONString(rw);
+    }
+
 
     /**
      * 自动匹配
@@ -366,12 +383,12 @@ public class LwPaperController {
             rw = new ResultWarp(ResultWarp.FAILED,"自动匹配失败,"+paperType+"-"+paperName+"未上传附件!");
             return JSON.toJSONString(rw);
         }
-        //判断是否已进入打分操作
-        Integer allStatus = lwPaperService.maxAllStatus();
+        //判断是否已进入打分操作，直接在外面先判断再匹配
+        /*Integer allStatus = lwPaperService.maxAllStatus();
         if(allStatus >= Integer.valueOf(LwPaperConstant.P_A_S_UNRATED)){
             rw = new ResultWarp(ResultWarp.FAILED ,"打分表已生成,请勿进行匹配操作");
             return JSON.toJSONString(rw);
-        }
+        }*/
         List<String> allPaperPrimaryKey = lwPaperService.allPaperPrimaryKey();
         for(String paperUuid : allPaperPrimaryKey){
             Map<String,Object> lwPaperMap = lwPaperService.findPaper(paperUuid,null);
@@ -545,12 +562,10 @@ public class LwPaperController {
     public String generateScoreTable(){
         ResultWarp rw = null;
         Integer allStatus = lwPaperService.maxAllStatus();
-        if(allStatus >= Integer.valueOf(LwPaperConstant.P_A_S_UNRATED)
-                &&
-                allStatus != Integer.valueOf(LwPaperConstant.P_A_S_WITHDRAWN)){
+        if(allStatus >= Integer.valueOf(LwPaperConstant.P_A_S_UNRATED)){
             rw = new ResultWarp(ResultWarp.FAILED ,"打分表已生成,请勿重复操作");
         }else{
-            List<Map<String,Object>> ifAllMatch = lwPaperService.ifAllMatch(LwPaperConstant.P_A_S_MATCHED);
+            List<Map<String,Object>> ifAllMatch = lwPaperService.ifAllMatch(LwPaperConstant.P_A_S_MATCHED,LwPaperConstant.P_A_S_WITHDRAW);
             if(0 == ifAllMatch.size()){
                 lwPaperService.batchUpdateScoreTableStatus(LwPaperConstant.SCORE_TABLE_ON);
                 lwPaperService.batchUpdateAllStatus(LwPaperConstant.P_A_S_UNRATED);
@@ -597,7 +612,7 @@ public class LwPaperController {
             List<Map<String,Object>> ifAllUnrated = lwPaperService.ifAllUnrated();
             if(0 == ifAllUnrated.size()){
                 lwPaperService.batchUpdateScoreTableStatus(LwPaperConstant.SCORE_TABLE_OFF);
-                lwPaperService.batchUpdateAllStatus(LwPaperConstant.P_A_S_WITHDRAWN);
+                lwPaperService.batchUpdateAllStatus(LwPaperConstant.P_A_S_WITHDRAW);
                 rw = new ResultWarp(ResultWarp.SUCCESS ,"撤回打分表成功");
             }else{
                 rw = new ResultWarp(ResultWarp.FAILED ,"打分期间不能操作该功能");
@@ -821,14 +836,21 @@ public class LwPaperController {
         return mv;
     }
 
+
     /**
      * 附件批量上传
      */
     @ResponseBody
     @RequestMapping(value = "/btachUpload")
     public String btachUpload(HttpServletResponse response,HttpServletRequest request){
-        response.setContentType("text/plain;charset=utf-8");
         ResultWarp rw = null;
+        response.setContentType("text/plain;charset=utf-8");
+        //如果上传zip文件大于100mb，直接驳回，不允许他有这种猖狂的操作
+        int fileSize = request.getContentLength();//上传文件大小，单位为B
+        if(fileSize > 104857600){
+            rw = new ResultWarp(ResultWarp.FAILED ,"上传的zip包大小不得大于100MB");
+            return JSON.toJSONString(rw);
+        }
         //服务器的保存路径
         String path = request.getSession().getServletContext().getRealPath("")
                 +LwPaperConstant.ANNEX_UPLOAD_LOCAL_PATH;

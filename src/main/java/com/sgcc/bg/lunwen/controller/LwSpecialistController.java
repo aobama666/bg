@@ -226,20 +226,18 @@ public class LwSpecialistController {
 
     /**
      * 删除专家
-     * @param
-     * @return
      */
     @ResponseBody
     @RequestMapping(value = "/deleteSpecialist" ,method = RequestMethod.POST)
-    public String deleteExpert(String uuids,HttpServletRequest request,HttpServletResponse response){
-        String str = lwSpecialistServiceImpl.deleteSpecialist(uuids);
-        return JSON.toJSONString(str);
+    public String deleteExpert(String uuids){
+        ResultWarp rw = null;
+        String result = lwSpecialistServiceImpl.deleteSpecialist(uuids);
+        rw = new ResultWarp(ResultWarp.SUCCESS ,result);
+        return JSON.toJSONString(rw);
     }
 
     /**
      * 下载模板
-     * @param request
-     * @param response
      */
     @RequestMapping("/downloadExcelTemp")
     public void downloadExcelTemp(HttpServletRequest request, HttpServletResponse response) {

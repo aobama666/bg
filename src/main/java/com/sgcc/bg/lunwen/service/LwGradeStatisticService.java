@@ -45,7 +45,7 @@ public interface LwGradeStatisticService {
      * @param uuidStr
      * @return
      */
-    int againReview(String[] uuidStr);
+    void againReview(String[] uuidStr);
 
     /**
      * 评分统计导出

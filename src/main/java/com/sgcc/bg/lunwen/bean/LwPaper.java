@@ -255,6 +255,22 @@ public class LwPaper {
         this.valid = valid;
     }
 
+    public String getWeightingFaction() {
+        return weightingFaction;
+    }
+
+    public void setWeightingFaction(String weightingFaction) {
+        this.weightingFaction = weightingFaction;
+    }
+
+    public String getAverageFaction() {
+        return averageFaction;
+    }
+
+    public void setAverageFaction(String averageFaction) {
+        this.averageFaction = averageFaction;
+    }
+
     @Override
     public String toString() {
         return "LwPaper{" +
@@ -278,6 +294,8 @@ public class LwPaper {
                 ", updateUser='" + updateUser + '\'' +
                 ", updateTime=" + updateTime +
                 ", valid='" + valid + '\'' +
+                ", weightingFaction='" + weightingFaction + '\'' +
+                ", averageFaction='" + averageFaction + '\'' +
                 '}';
     }
 }

@@ -45,11 +45,8 @@
     </form>
 	<div class="main_div">
 		<div style="text-align: center;margin-top:2%">
-			<c:if test="${scoreStatus=='0'}">
+			<c:if test="${scoreStatus!='2'}">
 				<div class='btn  deleteButton' onclick="grade.saveGrade()" >保存</div>
-			</c:if>
-			<c:if test="${scoreStatus=='1'}">
-				<div class='btn  deleteButton' onclick="grade.saveGrade()" >修改</div>
 			</c:if>
 			<div class='btn  deleteButton' onclick="grade.addClose()" >返回</div>
 		</div>

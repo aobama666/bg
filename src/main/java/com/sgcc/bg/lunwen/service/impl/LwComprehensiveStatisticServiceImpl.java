@@ -86,12 +86,6 @@ public class LwComprehensiveStatisticServiceImpl implements LwComprehensiveStati
                     sname.deleteCharAt(sname.length() - 1);
                     paperComprehensiveVO.setSpecialistName(sname);
                 }
-                //判断专家是否全部完成打分
-                /*if("6".equals(paperComprehensiveVO.getAllStatus())){
-                    Map<String,String> mapScore = mapScore(paperComprehensiveVO.getUuid());
-                    paperComprehensiveVO.setWeightingFraction(mapScore.get("weightingFraction"));
-                    paperComprehensiveVO.setAverageFraction(mapScore.get("averageFraction"));
-                }*/
             }
         }
         Object[][] title = {

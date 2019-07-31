@@ -368,9 +368,9 @@
         </foreach>
         )
         ORDER BY P.AVERAGE_FRACTION DESC nulls last
-    </select>
+        </select>
 
-    <select id="selectCheckIdExport" resultType="com.sgcc.bg.lunwen.bean.LwPaper">
+    <select id="selectCheckIdExport" resultType="com.sgcc.bg.lunwen.bean.PaperComprehensiveVO">
        select  p.uuid               uuid,
                p.paper_id           paperId,
                p.paper_name         paperName,
@@ -384,7 +384,9 @@
                p.download_count     downloadCount,
                p.field,
                (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='score_status' and vaild=1 and code= p.score_status)  as scoreStatus,
-               p.valid
+               p.valid,
+               p.WEIGHTING_FRACTION weightingFraction,
+               p.AVERAGE_FRACTION averageFraction
        from bg_lw_paper p
        where 1=1
        AND p.uuid IN (
@@ -394,7 +396,7 @@
        )
     </select>
 
-    <select id="selectLwPaperExport" resultType="com.sgcc.bg.lunwen.bean.LwPaper">
+    <select id="selectLwPaperExport" resultType="com.sgcc.bg.lunwen.bean.PaperComprehensiveVO">
         select p.uuid,
             p.paper_id paperId,
             p.paper_name paperName,
@@ -407,8 +409,8 @@
             p.quote_count quoteCount,
             p.download_count downloadCount,
             p.field,
-            p.WEIGHTING_FRACTION weightingFaction,
-            p.AVERAGE_FRACTION averageFaction
+            p.WEIGHTING_FRACTION weightingFraction,
+            p.AVERAGE_FRACTION averageFraction
         from bg_lw_paper p
         where 1 = 1
         <if test="paperName != null and paperName != ''">
@@ -593,7 +595,8 @@
     <select id="ifAllMatch" resultType="java.util.Map">
         select *
           from bg_lw_paper p
-         where p.all_status != #{allStatus}
+         where p.all_status != #{matched}
+           and p.all_status != #{withdraw}
            and p.year = #{year}
            and p.valid = #{valid}
     </select>

@@ -147,13 +147,13 @@ public interface LwPaperMapper {
      * @param uuids
      * @return
      */
-    List<LwPaper> selectCheckIdExport(@Param("uuids") String[] uuids);
+    List<PaperComprehensiveVO> selectCheckIdExport(@Param("uuids") String[] uuids);
 
     /**
      * 按条件查询某批论文信息——导出
      * 条件：年度，论文题目，论文编号，单位，作者，领域
      */
-    List<LwPaper> selectLwPaperExport(
+    List<PaperComprehensiveVO> selectLwPaperExport(
             @Param("paperName") String paperName,
             @Param("paperId") String paperId,
             @Param("year") String year,
@@ -256,7 +256,8 @@ public interface LwPaperMapper {
      * 生成打分表前提条件，判断当年全部论文是否匹配完成
      */
     List<Map<String,Object>> ifAllMatch(
-            @Param("allStatus") String allStatus,
+            @Param("matched") String matched,
+            @Param("withdraw") String withdraw,
             @Param("year") String year,
             @Param("valid") String valid
     );

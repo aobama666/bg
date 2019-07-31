@@ -141,8 +141,8 @@ uploadAnnex.addBatchEvent = function(){
     if(!checkLength){
         return;
     }
-    //判断是否为zip文件和限制文件大小100mb以内
-    var uploadFile = document.getElementById('file').files[0];
+    //判断是否为zip文件和限制文件大小100mb以内----------不兼容ie8，瞬间被摒弃
+    /*var uploadFile = document.getElementById('file').files[0];
     var uploadFileSize = uploadFile.size;
     var uploadFileName = uploadFile.name;
     uploadFileName = uploadFileName.substr(uploadFileName.lastIndexOf('.'),uploadFileName.length);
@@ -152,6 +152,23 @@ uploadAnnex.addBatchEvent = function(){
     }
     if(uploadFileSize > 104857600){
         layer.alert('zip大小不能超过100MB',{icon:0,title:'信息提示'});
+        return;
+    }*/
+
+    //判断文件类型
+    var uploadFile = document.getElementById('file');
+    var uploadName = uploadFile.value;
+    var ifzip = false;
+    if(uploadName.indexOf('.') !== -1){
+        uploadName = uploadName.substr(uploadName.lastIndexOf('.'),uploadName.length);
+        if('.zip' !== uploadName){
+            ifzip = true;
+        }
+    }else{
+        ifzip = true;
+    }
+    if(ifzip){
+        layer.alert('上传的压缩包需为zip',{icon:0,title:'信息提示'});
         return;
     }
 

@@ -71,20 +71,19 @@ public class LwGradeStatisticServiceImpl implements LwGradeStatisticService{
 
     @Override
     /*@Transactional*/
-    public int againReview(String[] uuidStr) {
+    public void againReview(String[] uuidStr) {
         //修改论文的评审状态 改为 重新评审
         Date date = new Date();
         String userName = webUtils.getUsername();
         HRUser user = userService.getUserByUserName(userName);
         String userId = user.getUserId();
-        int j=0;
-        int z=0;
         ResultWarp rw = null;
         for(int i=0 ; i<uuidStr.length; i++){
-            j = lwPaperMapper.updateAllStatus(uuidStr[i], LwPaperConstant.P_A_S_REVIEW);
-            z = lwPaperMatchSpecialistMapper.updateScoreStatus(uuidStr[i],getLoginUserUUID(),LwPaperConstant.SCORE_STATUS_AGAIN);
+            //修改论文全流程状态
+            lwPaperMapper.updateAllStatus(uuidStr[i], LwPaperConstant.P_A_S_REVIEW);
+            //修改论文关联表打分状态
+            lwPaperMatchSpecialistMapper.updateScoreStatusForPaperId(uuidStr[i],getLoginUserUUID(),LwPaperConstant.SCORE_STATUS_AGAIN);
         }
-        return j;
     }
 
     @Override

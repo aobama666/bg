@@ -39,6 +39,13 @@ public interface LwPaperMatchSpecialistMapper {
             @Param("uuid") String uuid,
             @Param("updateUser") String updateUser,
             @Param("scoreStatus") String scoreStatus);
+    /**
+     * 修改打分状态,使用论文id，重新评审使用
+     */
+    Integer updateScoreStatusForPaperId(
+            @Param("paperId") String paperId,
+            @Param("updateUser") String updateUser,
+            @Param("scoreStatus") String scoreStatus);
 
     /**
      * 获取当前论文下最大的排序数
@@ -91,7 +98,8 @@ public interface LwPaperMatchSpecialistMapper {
      */
     List<Map<String,Object>> noScoreNums(
             @Param("year") String year,
-            @Param("scoreStatus") String scoreStatus,
+            @Param("noScore") String noScore,
+            @Param("reviewScore") String reviewScore,
             @Param("scoreTableStatus") String scoreTableStatus,
             @Param("userId") String userId,
             @Param("valid") String valid

@@ -60,7 +60,7 @@ public class LwGradeServiceImpl implements LwGradeService {
     @Override
     public List<Map<String, Object>> noScoreNums(String userId) {
         return lwPaperMatchSpecialistMapper.noScoreNums(DateUtil.getYear(),LwPaperConstant.SCORE_STATUS_NO
-        ,LwPaperConstant.SCORE_TABLE_ON,userId,LwPaperConstant.VALID_YES);
+        ,LwPaperConstant.SCORE_STATUS_AGAIN,LwPaperConstant.SCORE_TABLE_ON,userId,LwPaperConstant.VALID_YES);
     }
 
     @Override

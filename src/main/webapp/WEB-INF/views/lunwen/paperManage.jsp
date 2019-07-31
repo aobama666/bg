@@ -75,7 +75,7 @@
 			<br/>
 				<label style="margin-left: 20px">论文题目：</label>
 				<input type = "text" id = "paperName" name = "paperName" style="width: 248px" class = "inputQuery changeQuery" >
-				<label style="margin-left: 15px">作者：</label>
+				<label style="margin-left: 14px">作者：</label>
 				<input type = "text" id = "author" name = "author" style="width: 100px" class = "inputQuery changeQuery" >
 				<label style="margin-left: 15px">作者单位：</label>
 				<input type = "text" id = "unit" name = "unit" style="width: 100px" class = "inputQuery changeQuery" >

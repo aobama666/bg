@@ -100,7 +100,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
             }
         }
         if(strings.length-i!=0){
-            stringBuffer.append("删除失败"+(strings.length-i)+"条数据,已匹配专家不可删除!");
+            stringBuffer.append("删除失败"+(strings.length-i)+"条数据，已匹配、已屏蔽专家不可删除!");
         }
         return stringBuffer.toString();
     }

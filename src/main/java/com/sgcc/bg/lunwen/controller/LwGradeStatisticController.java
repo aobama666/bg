@@ -117,15 +117,9 @@ public class LwGradeStatisticController {
     @RequestMapping("/againReview")
     public String againReview(String uuids){
         String[] uuidStr = uuids.split(",");
-        int againReview = lwGradeStatisticServiceImpl.againReview(uuidStr);
+        lwGradeStatisticServiceImpl.againReview(uuidStr);
         ResultWarp rw = null;
-        if(againReview>0) {
-            String str = "重新评审成功";
-            rw = new ResultWarp(ResultWarp.SUCCESS ,str);
-        }else {
-            String str = "重新评审失败";
-            rw = new ResultWarp(ResultWarp.FAILED ,str);
-        }
+        rw = new ResultWarp(ResultWarp.SUCCESS ,"选中论文重新评审成功");
         return JSON.toJSONString(rw);
     }
 

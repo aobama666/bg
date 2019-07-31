@@ -53,7 +53,7 @@ queryAll.initDataGrid = function(){
         pageSize:10,
         tablepage:$(".tablepage"),//分页组件
         columns: [
-            {name: '',style:{width:"2px"}, data: 'uuid',checkbox:true, forMat:function(row){
+            {name: '',style:{width:"2%"}, data: 'uuid',checkbox:true, forMat:function(row){
               dataItems[index] = row;//将一行数据放在一个list中
               return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.uuid)+'"/>';
             }
@@ -168,14 +168,14 @@ queryAll.downLoadTemp = function () {
 queryAll.delEvent=function(){
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     var uuids = "" ;
-    if(checkedItems.length==0){
+    if(checkedItems.length===0){
         layer.alert("请选择要操作的数据",{icon:0,title:'信息提示'});
         return;
     }else if(checkedItems.length>1){
         for(i=0; i<checkedItems.length;i++){
             uuids += checkedItems[i].uuid + ",";
         }
-    }else if (checkedItems.length==1){
+    }else if (checkedItems.length===1){
         uuids = checkedItems[0].uuid+",";
     }
     uuids = uuids.slice(0,uuids.length-1);
@@ -187,10 +187,10 @@ queryAll.delEvent=function(){
                 type: "post",
                 dataType:"json",
                 success: function (data) {
-                    if(data.success == "true"){
-                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    if(data.success === "true"){
+                        layer.alert(data.msg,{icon:0,title:'信息提示'});
                     }else{
-                        layer.alert(data.msg,{icon:2,title:'信息提示'});
+                        layer.alert(data.msg,{icon:0,title:'信息提示'});
                     }
                     queryAll.refresh();
                 }
@@ -204,14 +204,14 @@ queryAll.delEvent=function(){
 /* 专家修改*/
 queryAll.updateEvent = function(){
     var checkedItems = dataGrid.getCheckedItems(dataItems);
-    if(checkedItems.length==0){
+    if(checkedItems.length===0){
         layer.alert("请选择要操作的数据",{icon:0,title:'信息提示'});
         return;
     }else if(checkedItems.length>1){
         layer.alert("每次只能修改一条数据",{icon:0,title:'信息提示'});
         return;
     }
-    if(checkedItems[0].matchStatus == '1'){
+    if(checkedItems[0].matchStatus === '1'){
         layer.alert("选择的数据无法修改,还有已匹配的论文",{icon:0,title:'信息提示'});
         return;
     }

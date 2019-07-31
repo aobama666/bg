@@ -68,11 +68,11 @@ public class LwPaperConstant {
     /**
      * 待打分
      */
-    public static final String P_A_S_UNRATED = "4";
+    public static final String P_A_S_UNRATED = "5";
     /**
      * 已撤回
      */
-    public static final String P_A_S_WITHDRAWN = "5";
+    public static final String P_A_S_WITHDRAW = "4";
     /**
      * 打分中
      */

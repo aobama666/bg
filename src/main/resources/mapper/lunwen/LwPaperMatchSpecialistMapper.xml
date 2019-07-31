@@ -48,6 +48,17 @@
         </if>
     </update>
 
+    <update id="updateScoreStatusForPaperId">
+        update bg_lw_paper_match_expert set
+        SCORE_STATUS = #{scoreStatus,jdbcType=VARCHAR},
+        update_user = #{updateUser,jdbcType=VARCHAR},
+        update_time = sysdate
+        where 1=1
+        <if test="paperId != null and paperId != ''">
+            and paper_id= #{paperId}
+        </if>
+    </update>
+
     <update id="delMatchMessage">
         update bg_lw_paper_match_expert set valid = #{valid}
         where 1=1
@@ -146,7 +157,8 @@
         and p.valid = #{valid}
         and m.valid = #{valid}
         and s.valid = #{valid}
-        and m.score_status = #{scoreStatus}
+        and (m.score_status = #{noScore}
+        or m.score_status = #{reviewScore})
         group by p.paper_type
     </select>
 

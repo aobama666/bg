@@ -217,7 +217,7 @@ public interface LwPaperService {
     /**
      * 生成打分表前提条件，判断当年全部论文是否匹配完成
      */
-    List<Map<String,Object>> ifAllMatch(String allStatus);
+    List<Map<String,Object>> ifAllMatch(String matched,String withdraw);
 
 
     /**

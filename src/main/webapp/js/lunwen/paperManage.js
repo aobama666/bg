@@ -339,7 +339,7 @@ paperList.withdrawScoreTable = function () {
 
 /*弹出附件批量上传框 */
 paperList.batchUploadOperation = function (){
-    var url = "/bg/lwPaper/btachUploadJump"
+    var url = "/bg/lwPaper/btachUploadJump";
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;">论文附件批量上传</h4>',
@@ -405,10 +405,22 @@ paperList.exportExcel = function () {
 
 /*自动匹配*/
 paperList.automaticMatch = function(){
-    debugger
+    $.ajax({
+        url: "/bg/lwPaper/ifScoreTable",
+        type: "post",
+        dataType:"json",
+        contentType: 'application/json',
+        data: '',
+        success: function (data) {
+            if(data.success==='true'){
+                //无操作，直接匹配去
+            }else{
+                layer.alert('打分表已生成，请勿进行匹配操作',{icon:2,title:'信息提示'});
+                return;
+            }
+        }
+    });
     var info = "确认自动匹配操作吗";
-    //加一个ajax，看是否全量中的重复操作
-    //     info = "是否再次操作此功能";
     layer.confirm(info,{
         btn:['确定','取消'],icon:0,title:'自动匹配'
     },function () {

@@ -5,9 +5,11 @@ import com.sgcc.bg.common.*;
 import com.sgcc.bg.lunwen.bean.LwPaper;
 import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
 import com.sgcc.bg.lunwen.bean.LwSpecialist;
+import com.sgcc.bg.lunwen.bean.PaperComprehensiveVO;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.mapper.LwPaperMapper;
 import com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper;
+import com.sgcc.bg.lunwen.mapper.LwSpecialistMapper;
 import com.sgcc.bg.lunwen.service.LwPaperMatchSpecialistService;
 import com.sgcc.bg.lunwen.service.LwPaperService;
 import com.sgcc.bg.model.HRUser;
@@ -44,6 +46,8 @@ public class LwPaperServiceImpl implements LwPaperService {
     private UserService userService;
     @Autowired
     private LwPaperMatchSpecialistService lwPaperMatchSpecialistService;
+    @Autowired
+    private LwSpecialistMapper lwSpecialistMapper;
 
     @Override
     public Integer addLwPaper(LwPaper lwPaper) {
@@ -144,12 +148,26 @@ public class LwPaperServiceImpl implements LwPaperService {
     @Override
     public List<LwPaper>  selectLwpaperExport(String paperName, String paperId, String year, String unit
             , String author, String field, String allStatus, String paperType, String ids, HttpServletResponse response) {
-        List<LwPaper> list = new ArrayList<>();
+        List<PaperComprehensiveVO> list = new ArrayList<>();
         if(ids == null || ids == "") {
             list = lwPaperMapper.selectLwPaperExport(paperName,paperId,year,unit,author,field,allStatus,paperType,LwPaperConstant.VALID_YES);
         }else {
             String [] uuids=ids.split(",");
             list = lwPaperMapper.selectCheckIdExport(uuids);
+        }
+        if(list!=null && list.size()>0){
+            for(PaperComprehensiveVO paperComprehensiveVO : list){
+                //取论文评判的专家
+                List<Map<String,Object>> paperSpecialist = lwSpecialistMapper.paperSpecialist(paperComprehensiveVO.getUuid());
+                if(paperSpecialist!=null && paperSpecialist.size()>0) {
+                    StringBuilder sname = new StringBuilder();
+                    for (Map<String, Object> map : paperSpecialist) {
+                        sname.append(map.get("NAME")).append("，");
+                    }
+                    sname.deleteCharAt(sname.length() - 1);
+                    paperComprehensiveVO.setSpecialistName(sname);
+                }
+            }
         }
         Object[][] title = {
                 { "论文题目", "paperName","nowrap" },
@@ -159,11 +177,14 @@ public class LwPaperServiceImpl implements LwPaperService {
                 { "推荐单位", "recommendUnit","nowrap" },
                 { "被引量", "quoteCount","nowrap" },
                 { "下载量", "downloadCount","nowrap" },
-                { "领域","field","nowrap"}
+                { "领域","field","nowrap"},
+                { "专家信息","specialistName","nowrap"},
+                { "加权平均分","weightingFraction","nowrap"},
+                { "去最高最低得分","averageFraction","nowrap"},
         };
         paperType = list.get(0).getPaperType();
         ExportExcelHelper.getExcel(response, paperType+"-论文详情"+ DateUtil.getDays(), title, list, "normal");
-        return list;
+        return null;
     }
 
     @Override
@@ -184,8 +205,8 @@ public class LwPaperServiceImpl implements LwPaperService {
     }
 
     @Override
-    public List<Map<String, Object>> ifAllMatch(String allStatus) {
-        return lwPaperMapper.ifAllMatch(allStatus,DateUtil.getYear(),LwPaperConstant.VALID_YES);
+    public List<Map<String, Object>> ifAllMatch(String matched,String withdraw) {
+        return lwPaperMapper.ifAllMatch(matched,withdraw,DateUtil.getYear(),LwPaperConstant.VALID_YES);
     }
 
     @Override
