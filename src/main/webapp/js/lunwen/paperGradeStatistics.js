@@ -13,8 +13,10 @@ roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
 var ran;
 
 $(function(){
-    var checkkk = $(".fields li:first").html();
-    $(".fields li:first").attr("class","checkkk");
+
+    // var checkkk = $(".checkli  li:first").html();
+    var checkkk = $("#dh_li .checkli  li:first").text();
+    $("#dh_li .checkli li:first").attr("class","checkkk");
     document.getElementById("field").value=checkkk;
 
     var myclomus = queryAll.seachHead();
@@ -24,11 +26,12 @@ $(function(){
         queryAll.query();
     });
 
+
     //点选背景效果
-    $("li").click(function () {
-        debugger;
-        $(this).addClass("checkkk").siblings().removeClass("checkkk");
-    })
+    $("#dh_li .checkli li").click(function () {
+        $("#dh_li .checkli li").removeClass("checkkk");
+        $(this).addClass("checkkk");
+    });
 
 });
 /*  start  列表查询  */
@@ -81,12 +84,13 @@ queryAll.seachHead = function(){
                 " text-align:left;'id='\"+row.UUID+\"'" +
                 " href = 'javascript:void(0)' onclick = queryAll.forDetails('"+row.UUID+"')>"+row.PAPERNAME+"</a>";
         }};
+    myclomus[3] = {name: '作者',style:{width:"10%"}, data: 'AUTHOR'};
     for(i=0;i<statisticsSpecialistName.length ;i++) {
         var   scoresName=statisticsSpecialistName[i].scoresName;
-        myclomus[i + 3] ={name: statisticsSpecialistName[i].NAME, style:{width: "10%"}, data: statisticsSpecialistName[i].scoresName}
+        myclomus[i + 4] ={name: statisticsSpecialistName[i].NAME, style:{width: "10%"}, data: statisticsSpecialistName[i].scoresName}
     };
-    myclomus[3+statisticsSpecialistName.length] = {name: '加权平均分',style:{width:"8%"}, data: 'WEIGHTINGFRACTION'};
-    myclomus[4+statisticsSpecialistName.length] = {name: '去最高最低得分', style:{width:"8%"},data: 'AVERAGEFRACTION'};
+    myclomus[4+statisticsSpecialistName.length] = {name: '加权平均分',style:{width:"8%"}, data: 'WEIGHTINGFRACTION'};
+    myclomus[5+statisticsSpecialistName.length] = {name: '去最高最低得分', style:{width:"8%"},data: 'AVERAGEFRACTION'};
 
     return myclomus;
 }

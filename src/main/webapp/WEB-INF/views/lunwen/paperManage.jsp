@@ -39,6 +39,10 @@
 			border-bottom: 0;
 			border-left: 0;
 		}
+        .datagrid-header-row .datagrid-cell span{
+            white-space: normal !important;
+            word-wrap: normal !important;
+        }
 	</style>
 </head>
 <body>
@@ -66,14 +70,14 @@
 					</select>
 					<label>编号：</label>
 					<input type = "text" id = "paperId" name = "paperId" style="width: 100px" class = "inputQuery changeQuery" >
-					<label>领域：</label>
+					<label style="margin-left: 44px">领域：</label>
 					<input type = "text" id = "field" name = "field" style="width: 100px" class = "inputQuery changeQuery" >
 			<br/>
 				<label style="margin-left: 20px">论文题目：</label>
 				<input type = "text" id = "paperName" name = "paperName" style="width: 248px" class = "inputQuery changeQuery" >
 				<label style="margin-left: 15px">作者：</label>
 				<input type = "text" id = "author" name = "author" style="width: 100px" class = "inputQuery changeQuery" >
-				<label>单位：</label>
+				<label style="margin-left: 15px">作者单位：</label>
 				<input type = "text" id = "unit" name = "unit" style="width: 100px" class = "inputQuery changeQuery" >
 				<input type="text" id="paperType" name="paperType" style="display: none" value="1">
 				<!-- 查询按钮  " -->
@@ -82,7 +86,7 @@
 	</div>
 	<!-- end    查询条件 -->
 
-	<hr/>
+	<%--<hr/>--%>
 	<!-- start 列表展示 -->
 
 	<div>

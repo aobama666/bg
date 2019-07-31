@@ -19,13 +19,11 @@ $(function(){
         }
     });
     // 全选/取消
-    $(".check_").click(function(){
-        debugger;
+    $(document).on("click",".check_",function(){
         if ($(this).is(':checked')) {
             $(".tableBody").find('input').each(function(){
                 $(this).prop("checked",true);
             });
-
         } else {
             $(".tableBody").find('input').each(function(){
                 $(this).removeAttr("checked",false);

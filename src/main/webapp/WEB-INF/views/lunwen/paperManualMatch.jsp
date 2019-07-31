@@ -3,7 +3,8 @@
 <%@page import="java.util.Map"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html style="overflow:hidden">
+<%--<html style="overflow:hidden">--%>
+<html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
@@ -23,7 +24,7 @@
 <input type="text" style="display: none;" value="${paperUuid}" id="paperUuid">
 
 
-<div class="layui-container" style="margin-top: 15px;">
+<div class="layui-container" style="margin-top: 5px;">
     <div class="layui-row layui-container">
         <div class="layui-col-md5">
             <h3>已匹配专家信息</h3>
@@ -37,7 +38,7 @@
     </div>
 </div>
 
-<div class="btnContent">
+<div style="text-align: center;margin-top: 5px">
     <c:if test="${scoreTableStatus=='on'}">
         <button type="button" class="layui-btn layui-btn-disabled" id="save" disabled>已生成打分表</button>
     </c:if>
@@ -109,8 +110,9 @@
                 contentType: 'application/json',
                 async: false,
                 success: function (data) {
-                    parent.paperList.closeAndOpen(data.msg);
-                    parent.paperList.queryAddPage();
+                    // parent.paperList.closeAndOpen(data.msg);
+                    layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    // parent.paperList.queryAddPage();
                 }
             });
         });

@@ -491,6 +491,7 @@
                 p.UUID AS uuid,
                 p.PAPER_ID AS  paperId,
                 p.PAPER_NAME AS paperName,
+                p.AUTHOR,
                 p.WEIGHTING_FRACTION AS weightingFraction,
                 p.AVERAGE_FRACTION AS averageFraction,
                 ROWNUM rown

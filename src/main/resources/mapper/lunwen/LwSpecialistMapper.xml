@@ -423,7 +423,7 @@
            WHERE s.VALID = '1'
               AND p.VALID='1'
               AND e.VALID = '1'
-              AND p.ALL_STATUS = '6'
+              AND p.ALL_STATUS = '8'
             <if test="year != null and year != ''">
                 and p.YEAR = #{year,jdbcType=VARCHAR}
             </if>

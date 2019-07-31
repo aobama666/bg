@@ -26,7 +26,7 @@
 	<div class="main_div"></div>
 	<input type = "hidden" value = "${lwSpecialist.uuid}" id = "uuid" name="uuid">
 	<!-- end  头部 -->
-	<div style="height: 50px;width: 100%"></div>
+	<div style="height: 5px;width: 100%"></div>
 	<table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td  style="width: 10%">

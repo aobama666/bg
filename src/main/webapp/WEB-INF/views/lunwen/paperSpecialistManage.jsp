@@ -32,19 +32,19 @@
 
 			<input type="hidden" name="selectList"/>
 
-			<label style="margin-left: 20px">专家姓名</label>
+			<label style="margin-left: 20px">专家姓名:</label>
 			<input type = "text" id = "name" name = "name" style="width: 100px" class = "inputQuery changeQuery" >
 
-			<label>研究方向</label>
+			<label style="margin-left: 20px">研究方向:</label>
 			<input type = "text" id = "researchDirection" name = "researchDirection" style="width: 100px" class = "inputQuery changeQuery" >
 
-			<label>单位名称</label>
+			<label style="margin-left: 20px">领域：</label>
+			<input type = "text" id = "field" name = "field" style="width: 100px;" class = "inputQuery changeQuery" >
+			<br/>
+			<label style="margin-left: 20px">单位名称:</label>
 			<input type = "text" id = "unitName" name = "unitName" style="width: 100px" class = "inputQuery changeQuery" >
 
-			<label>领域：</label>
-			<input type = "text" id = "field" name = "field" style="width: 100px" class = "inputQuery changeQuery" >
-
-			<label  for="matchStatus" class="yearTitle">匹配状态</label>
+			<label  for="matchStatus" class="yearTitle">匹配状态:</label>
 			<select id = "matchStatus" name = "matchStatus"   class = "changeQuery changeYear" style="width: 100px">
 				<option value="">不限</option>
 				<option value = "0">未匹配</option>

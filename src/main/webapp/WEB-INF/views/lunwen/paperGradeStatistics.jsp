@@ -74,11 +74,11 @@
 			</div>
 			<li id="dh_li">
 				<div style="width:1500px;">
-					<ul>
+					<ul class="checkli">
 						<c:forEach var ="fieldList" items="${map.fieldList}">
 							<c:forEach var ="field" items="${fieldList}">
 								<div  onclick="queryAll.field('${field.value}')">
-									<li><a href="#" style="color:black">${field.value}</a></li>
+									<li>${field.value}</li>
 								</div>
 							</c:forEach>
 						</c:forEach>
@@ -187,8 +187,8 @@
 	#dh_li li{
 		width:100px;
 		height:40px;
-		background-color: transparent;
-		color:#0C0C0C;
+		/*background-color: transparent;*/
+		/*color:#0C0C0C;*/
 		border-right:1px solid #cacaca;
 		border-top: 1px solid #cacaca;
 		border-left: 1px solid #cacaca;

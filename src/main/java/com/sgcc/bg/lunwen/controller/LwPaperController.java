@@ -545,7 +545,9 @@ public class LwPaperController {
     public String generateScoreTable(){
         ResultWarp rw = null;
         Integer allStatus = lwPaperService.maxAllStatus();
-        if(allStatus >= Integer.valueOf(LwPaperConstant.P_A_S_UNRATED)){
+        if(allStatus >= Integer.valueOf(LwPaperConstant.P_A_S_UNRATED)
+                &&
+                allStatus != Integer.valueOf(LwPaperConstant.P_A_S_WITHDRAWN)){
             rw = new ResultWarp(ResultWarp.FAILED ,"打分表已生成,请勿重复操作");
         }else{
             List<Map<String,Object>> ifAllMatch = lwPaperService.ifAllMatch(LwPaperConstant.P_A_S_MATCHED);
@@ -595,7 +597,7 @@ public class LwPaperController {
             List<Map<String,Object>> ifAllUnrated = lwPaperService.ifAllUnrated();
             if(0 == ifAllUnrated.size()){
                 lwPaperService.batchUpdateScoreTableStatus(LwPaperConstant.SCORE_TABLE_OFF);
-                lwPaperService.batchUpdateAllStatus(LwPaperConstant.P_A_S_MATCHED);
+                lwPaperService.batchUpdateAllStatus(LwPaperConstant.P_A_S_WITHDRAWN);
                 rw = new ResultWarp(ResultWarp.SUCCESS ,"撤回打分表成功");
             }else{
                 rw = new ResultWarp(ResultWarp.FAILED ,"打分期间不能操作该功能");
@@ -832,20 +834,7 @@ public class LwPaperController {
                 +LwPaperConstant.ANNEX_UPLOAD_LOCAL_PATH;
         //把获取到的文件上传至服务对应文件夹
         String zipFileName = UploadUtil.uploadFileForLocal(path,request);
-        String zipFileNameAfter = zipFileName.substring(zipFileName.lastIndexOf(".")+1,zipFileName.length());
-        if(!"zip".equals(zipFileNameAfter)){
-            rw = new ResultWarp(ResultWarp.FAILED ,"上传的压缩包需为zip");
-            return JSON.toJSONString(rw);
-        }
-        /**
-         * 还是有问题，框架层面直接限制31MB
-         */
         File zipFile = new File(path+zipFileName);
-        if(zipFile.length() > 104857600){
-            zipFile.delete();
-            rw = new ResultWarp(ResultWarp.FAILED ,"上传的zip包大小不得大于100MB");
-            return JSON.toJSONString(rw);
-        }
         //生成uuid文件夹名称，解压到对应目录下
         String uuidPath = Rtext.getUUID();
         ZipUtil.unZip(new File(path+zipFileName),path+uuidPath);
@@ -854,12 +843,8 @@ public class LwPaperController {
         //获取所有文件信息
         File uuidPathFile = new File(path+uuidPath);
         File[] fileNameList = uuidPathFile.listFiles();
-        //格式错误文件信息
-        List<String> errorFileName = new ArrayList<>();
-        //重复录入文件信息
-        List<String> repeatFileName = new ArrayList<>();
-        //成功录入文件信息
-        List<String> successFileName = new ArrayList<>();
+        List<Map<String,String>> errorMessage = new ArrayList<>();
+        Map<String,String> errorMessageMap = null;
 
         for(File file : fileNameList){
             //本地存放路径及文件名称
@@ -868,8 +853,11 @@ public class LwPaperController {
 
             if(0>fileName.lastIndexOf("-") || 0>fileName.lastIndexOf(".")){
                 //如果不存在中划线或者点标志，这个文件名称不正确，不能继续操作，走下一个文件
-                errorFileName.add(fileName);
                 new File(localPath).delete();
+                errorMessageMap = new HashMap<>();
+                errorMessageMap.put("fileName",fileName);
+                errorMessageMap.put("errorReason","文件名称格式不符合条件");
+                errorMessage.add(errorMessageMap);
                 continue;
             }
             //根据fileName中划线前面的内容，获取论文题目
@@ -890,7 +878,10 @@ public class LwPaperController {
             }
             if(errorFileFormat){
                 new File(localPath).delete();
-                errorFileName.add(fileName);
+                errorMessageMap = new HashMap<>();
+                errorMessageMap.put("fileName",fileName);
+                errorMessageMap.put("errorReason","文件类型不符合条件");
+                errorMessage.add(errorMessageMap);
                 continue;
             }
 
@@ -899,7 +890,10 @@ public class LwPaperController {
             if(null!=lwFileForFileName){
                 //附件已存在，删除本地路径附件，返回已存在标识
                 new File(localPath).delete();
-                repeatFileName.add(fileName);
+                errorMessageMap = new HashMap<>();
+                errorMessageMap.put("fileName",fileName);
+                errorMessageMap.put("errorReason","该附件已存在");
+                errorMessage.add(errorMessageMap);
                 continue;
             }
 
@@ -907,8 +901,12 @@ public class LwPaperController {
             Map<String,Object> lwPaper = lwPaperService.findPaper(null,fileNameBeforeTitle);
             //如果论文不存在
             if(null == lwPaper){
-                errorFileName.add(fileName);
+//                errorFileName.add(fileName);
                 new File(localPath).delete();
+                errorMessageMap = new HashMap<>();
+                errorMessageMap.put("fileName",fileName);
+                errorMessageMap.put("errorReason","该论文不存在");
+                errorMessage.add(errorMessageMap);
                 continue;
             }
             //如果论文存在，执行正常流程，上传入库
@@ -924,7 +922,18 @@ public class LwPaperController {
             //获取文件大小
             String fileLength = String.valueOf(newFtpFile.length());
             //上传至ftp
-            FtpUtils.uploadFile(newFtpFile,FtpUtils.PaperUploadPath);
+            try{
+                FtpUtils.uploadFile(newFtpFile,FtpUtils.PaperUploadPath);
+            }catch(Exception e){
+                log.error("ftp操作异常");
+                e.printStackTrace();
+                new File(localPath).delete();
+                errorMessageMap = new HashMap<>();
+                errorMessageMap.put("fileName",fileName);
+                errorMessageMap.put("errorReason","文件服务器连接异常");
+                errorMessage.add(errorMessageMap);
+                continue;
+            }
             //删除上传成功的本地文件
             new File(localPath).delete();
 
@@ -943,17 +952,17 @@ public class LwPaperController {
             lwFile.setCreateTime(new Date());
             lwFile.setValid(LwPaperConstant.VALID_YES);
             lwFileService.addLwFile(lwFile);
-            //录入成功的附件信息
-            successFileName.add(fileName);
         }
 
         //删除刚才生成的uuid文件夹
         uuidPathFile.delete();
         //反馈前台
-        rw = new ResultWarp(ResultWarp.SUCCESS ,"上传附件完成");
-        rw.addData("errorFileName",errorFileName.toString());
-        rw.addData("repeatFileName",repeatFileName.toString());
-        rw.addData("successFileName",successFileName.toString());
+        if(errorMessage.size() == 0){
+            rw = new ResultWarp(ResultWarp.SUCCESS ,"上传附件完成");
+        }else{
+            rw = new ResultWarp(ResultWarp.FAILED ,"上传附件完成");
+            rw.addData("errorMessage",errorMessage);
+        }
         return JSON.toJSONString(rw);
     }
 

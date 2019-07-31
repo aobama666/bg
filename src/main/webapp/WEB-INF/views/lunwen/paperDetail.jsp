@@ -34,11 +34,11 @@
 				<input type = "text" style="display: none" value = "${UUID}"  class="validNull"  id = "uuid" name="uuid">
 				<span class="detailsLeft"> ${PAPERNAME}</span>
 			</td>
-			<td style="width: 10%">
-				<span title = "论文编号">论文编号</span>
+			<td>
+				<span title = "期刊名称">期刊名称</span>
 			</td>
-			<td style="width: 40%" class="addInputStyle">
-				<span class="detailsLeft"> ${PAPERID}</span>
+			<td class="addInputStyle">
+				<span class="detailsLeft"> ${JOURNAL}</span>
 			</td>
 		</tr>
 		<tr>
@@ -49,10 +49,10 @@
 				<span class="detailsLeft"> ${FIELD}</span>
 			</td>
 			<td>
-				<span title = "期刊名称">期刊名称</span>
+				<span title = "推荐单位">推荐单位</span>
 			</td>
 			<td class="addInputStyle">
-				<span class="detailsLeft"> ${JOURNAL}</span>
+				<span class="detailsLeft"> ${RECOMMENDUNIT}</span>
 			</td>
 		</tr>
 		<tr>
@@ -81,20 +81,6 @@
 			</td>
 			<td class="addInputStyle">
 				<span class="detailsLeft"> ${DOWNLOADCOUNT}</span>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<span title = "推荐单位">推荐单位</span>
-			</td>
-			<td class="addInputStyle">
-				<span class="detailsLeft"> ${RECOMMENDUNIT}</span>
-			</td>
-			<td>
-				<span title = "论文状态">论文状态</span>
-			</td>
-			<td class="addInputStyle">
-				<span class="detailsLeft"> ${ALLSTATUSDETAIL}</span>
 			</td>
 		</tr>
 		<tr>

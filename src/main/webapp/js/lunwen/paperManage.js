@@ -53,7 +53,7 @@ paperList.initDataGrid = function(){
                     return '<input type="checkbox" name="oneCheck" id="oneCheck"  index = "'+(index++)+'"  value="'+(row.UUID)+'"/>';
                 }
             },
-            {name: '编号',style:{width:"50px"}, data: 'PAPERID'},
+            {name: '编号',style:{width:"40px"}, data: 'PAPERID'},
             {name: '论文题目',style:{width:"10%"}, data: 'PAPERNAME',forMat:function(row){
                     return "<a title = '点击查看论文详情' style='width:250px;" +
                         " text-align:left;'id='\"+row.UUID+\"'" +
@@ -69,8 +69,8 @@ paperList.initDataGrid = function(){
             {name: '期刊名称',style:{width:"50px"}, data: 'JOURNAL'},
             {name: '领域',style:{width:"50px"}, data: 'FIELD'},
             {name: '推荐单位',style:{width:"50px"}, data: 'RECOMMENDUNIT'},
-            {name: '被引量',style:{width:"50px"}, data: 'QUOTECOUNT'},
-            {name: '下载量',style:{width:"50px"}, data: 'DOWNLOADCOUNT'},
+            {name: '被引量',style:{width:"40px"}, data: 'QUOTECOUNT'},
+            {name: '下载量',style:{width:"40px"}, data: 'DOWNLOADCOUNT'},
             {name: '专家信息',style:{width:"50px"}, data: 'UUID',
                 forMat:function(row){
                     return "<a title = '点击查看匹配专家' style='width:250px;' id='"+row.UUID+"'" +
@@ -79,7 +79,7 @@ paperList.initDataGrid = function(){
                 }},
             {name: '论文状态',style:{width:"50px"}, data: 'ALLSTATUSCONTENT'},
             {name: '加权平均分',style:{width:"50px"}, data: 'WEIGHTINGFRACTION'},
-            {name: '去最高最低得分', style:{width:"70px"},data: 'AVERAGEFRACTION'}
+            {name: '去最高最低得分', style:{width:"80px"},data: 'AVERAGEFRACTION'}
         ]
     });
 };
@@ -360,7 +360,7 @@ paperList.jumpImport = function (){
     var url = "/bg/lwPaper/paperJumpImport?paperType="+paperType;
     layer.open({
         type:2,
-        title:'<h4 style="height:42px;line-height:25px;">论文批量导入</h4>',
+        title:'<h4 style="height:42px;line-height:25px;">论文基本信息批量导入</h4>',
         area:['65%','50%'],
         fixed:false,//不固定
         maxmin:true,
@@ -455,7 +455,10 @@ paperList.manualMatch = function (id){
                     area:['85%','85%'],
                     fixed:false,//不固定
                     maxmin:true,
-                    content:url
+                    content:url,
+                    end: function () {
+                        paperList.queryAddPage();
+                    }
                 },function (index) {
                     layer.close(index);
                 });

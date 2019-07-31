@@ -141,12 +141,19 @@ uploadAnnex.addBatchEvent = function(){
     if(!checkLength){
         return;
     }
-    /*var uploadFile = document.getElementById('file');
-    //判断上传文件大小
-    alert(uploadFile.files[0].size());
-    if(uploadFile.size > 32505856){
-        layer.alert('zip大小不能超过31mb',{icon:0,title:'信息提示'});
-    }*/
+    //判断是否为zip文件和限制文件大小100mb以内
+    var uploadFile = document.getElementById('file').files[0];
+    var uploadFileSize = uploadFile.size;
+    var uploadFileName = uploadFile.name;
+    uploadFileName = uploadFileName.substr(uploadFileName.lastIndexOf('.'),uploadFileName.length);
+    if('.zip' !== uploadFileName){
+        layer.alert('上传的压缩包需为zip',{icon:0,title:'信息提示'});
+        return;
+    }
+    if(uploadFileSize > 104857600){
+        layer.alert('zip大小不能超过100MB',{icon:0,title:'信息提示'});
+        return;
+    }
 
     layer.confirm('确认上传吗',{
             btn:['确定','取消'],icon:0,title:'上传提示'
@@ -156,22 +163,28 @@ uploadAnnex.addBatchEvent = function(){
                 type: "post",
                 dataType: "json",
                 success: function (data) {
+                    $("#errorFile").html('');
                     if(data.success === 'true'){
-                        layer.alert(data.msg,{icon:0,title:'信息提示'});
-                        $("#successFile").html("");
-                        $("#repeatFile").html("");
-                        $("#errorFile").html("");
-                        if("[]" != data.data.successFileName){
-                            $("#successFile").html("上传成功文件："+data.data.successFileName);
-                        }
-                        if("[]" != data.data.repeatFileName){
-                            $("#repeatFile").html("重复上传失败文件："+data.data.repeatFileName);
-                        }
-                        if("[]" != data.data.errorFileName){
-                            $("#errorFile").html("格式错误文件："+data.data.errorFileName);
-                        }
+                        debugger;
+                        parent.paperList.closeAndOpen(data.msg);
                     }else{
-                        layer.alert(data.msg,{icon:2,title:'信息提示'});
+                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                        var errorMessage = data.data.errorMessage;
+                        var errorFile = '<table>' +
+                            '<tr>' +
+                            '<th>序号</th>' +
+                            '<th>文件名称</th>' +
+                            '<th>上传错误原因</th>' +
+                            '</tr>';
+                        for(i=0;i<errorMessage.length;i++){
+                            errorFile += '<tr>' +
+                                '<td>'+(i+1)+'</td>' +
+                                '<td>'+errorMessage[i].fileName+'</td>' +
+                                '<td>'+errorMessage[i].errorReason+'</td>' +
+                                '</tr>';
+                        }
+                        errorFile += '</table>';
+                        $("#errorFile").html(errorFile);
                     }
                     return;
                 }
@@ -180,7 +193,7 @@ uploadAnnex.addBatchEvent = function(){
             layer.close(index);
         }
     )
-}
+};
 
 /*返回按钮，关闭弹出框页面*/
 uploadAnnex.addClose = function () {

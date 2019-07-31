@@ -139,11 +139,11 @@ grade.scoreSubmit = function () {
             layer.close(index);
         }
     )
-}
+};
 
 
 /*关闭页面后弹出信息*/
 grade.closeAndOpen = function (message) {
-    layer.closeAll();
     layer.alert(message,{icon:1,title:'信息提示'});
-}
+    layer.closeAll();
+};

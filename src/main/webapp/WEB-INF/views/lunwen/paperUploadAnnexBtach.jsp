@@ -18,14 +18,29 @@
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+	<style type="text/css">
+		#errorFile table{
+			width: 100%;
+		}
+        #errorFile  th{
+            border: 1px solid black;
+            text-align: center;
+        }
+		#errorFile  td{
+			border: 1px solid black;
+			text-align: center;
+		}
+	</style>
 </head>
 <body style="padding-top: 5%">
 <div style="margin-left: 3%;margin-bottom: 1%;color:red" >
-        上传的压缩包需为zip
+        提示：
+        <br/>
+        1.上传的压缩包需为zip
 		<br/>
-        压缩包内上传文件名称格式为：论文题目-材料类别.文件类型
+        2.压缩包内上传文件名称格式为：论文题目-材料类别.文件类型
     	<br/>
-        压缩包内上传文件类型为：doc/docx/pdf/jpg/rar/bmp
+        3.压缩包内上传文件类型为：doc/docx/pdf/jpg/rar/bmp
     </div>
 
 <form id="queryForm" method="post" enctype="multipart/form-data">
@@ -50,9 +65,7 @@
 	</div>
 
 	<div style="margin-left: 3%">
-		<h4 id="successFile" style="color: green"></h4>
-		<h4 id="repeatFile" style="color: darkred"></h4>
-		<h4 id="errorFile" style="color: red"></h4>
+		<div id="errorFile"></div>
 	</div>
 
 	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script> 
