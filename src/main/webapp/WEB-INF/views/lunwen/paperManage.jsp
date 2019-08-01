@@ -92,16 +92,16 @@
 	<div>
 		<!--  新增  修改  删除 功能按钮 -->
 		<div id="funcBtn" style="height: 35px;float:right">
-			<div class='btn right ' onclick="paperList.downLoadTempLate()" >下载模板</div>
-			<div class='btn right ' onclick="paperList.batchUploadOperation()" >附件批量导入</div>
-			<div class='btn right ' onclick="paperList.jumpImport()" >导入</div>
-			<div class='btn right ' onclick="paperList.exportExcel()" >导出</div>
-			<div class='btn right ' onclick="paperList.delEvent()" >删除</div>
-			<div class='btn right ' onclick="paperList.updateOperation()" >修改</div>
-			<div class='btn right ' onclick="paperList.addOperation()" >新增</div>
-			<div class='btn right ' onclick="paperList.automaticMatch()" >自动匹配</div>
-			<div class='btn right ' onclick="paperList.withdrawScoreTable()" >撤回打分表</div>
-			<div class='btn right ' onclick="paperList.generateScoreTable()" >生成打分表</div>
+			<div style="margin-left: 5px;" class='btn right ' onclick="paperList.downLoadTempLate()" >下载模板</div>
+			<div style="margin-left: 5px;" class='btn right ' onclick="paperList.batchUploadOperation()" >附件批量导入</div>
+			<div style="margin-left: 5px;" class='btn right ' onclick="paperList.jumpImport()" >导入</div>
+			<div style="margin-left: 5px;" class='btn right ' onclick="paperList.exportExcel()" >导出</div>
+			<div style="margin-left: 5px;" class='btn right ' onclick="paperList.delEvent()" >删除</div>
+			<div style="margin-left: 5px;" class='btn right ' onclick="paperList.updateOperation()" >修改</div>
+			<div style="margin-left: 5px;" class='btn right ' onclick="paperList.addOperation()" >新增</div>
+			<div style="margin-left: 5px;" class='btn right ' onclick="paperList.automaticMatch()" >自动匹配</div>
+			<div style="margin-left: 5px;" class='btn right ' onclick="paperList.withdrawScoreTable()" >撤回打分表</div>
+			<div style="margin-left: 5px;" class='btn right ' onclick="paperList.generateScoreTable()" >生成打分表</div>
 		</div>
 		<!-- 学术技术综述分类按钮 -->
 		<div class="paperTypeTab">

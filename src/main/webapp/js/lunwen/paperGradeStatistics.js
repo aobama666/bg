@@ -188,7 +188,7 @@ queryAll.outEvent = function () {
         ids = ids.slice(0,ids.length-1);
         $("input[name=selectList]").val(ids);
         var ran = Math.random()*1000;
-        document.forms[0].action ="/bg/gradeStatistics/outStatisticExcel?ran="+ran;
+        document.forms[0].action ="/bg/gradeStatistics/outStatisticExcel?field="+field;
         document.forms[0].submit();
     }
 }

@@ -409,7 +409,8 @@
             p.quote_count quoteCount,
             p.download_count downloadCount,
             p.field,
-            p.WEIGHTING_FRACTION weightingFraction,
+            (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_all_status' and vaild=1 and code= p.all_status)  as allStatus,
+        p.WEIGHTING_FRACTION weightingFraction,
             p.AVERAGE_FRACTION averageFraction
         from bg_lw_paper p
         where 1 = 1

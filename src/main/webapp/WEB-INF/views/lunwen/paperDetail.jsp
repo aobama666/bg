@@ -84,7 +84,7 @@
 			</td>
 		</tr>
 		<tr>
-			<h3 style="width: 94%;margin-left: 3%;margin-top: 2%">基本信息</h3>
+			<h3 style="width: 94%;margin-left: 3%;margin-top: 2%;margin-bottom: 1%">基本信息</h3>
 		</tr>
 	</table>
 

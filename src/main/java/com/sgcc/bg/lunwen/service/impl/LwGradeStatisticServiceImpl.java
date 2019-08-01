@@ -119,7 +119,7 @@ public class LwGradeStatisticServiceImpl implements LwGradeStatisticService{
         title2[size+3]=new Object[]{ "去最高最低得分", "AVERAGEFRACTION","nowrap" };
 
         Object[][] title = title2;
-        ExportExcelHelper.getExcel(response, "论文详情"+ DateUtil.getDays(), title, statisticsMap, "normal");
+        ExportExcelHelper.getExcel(response, field+"领域-评分统计信息"+ DateUtil.getDays(), title, statisticsMap, "normal");
         return statisticsMap;
     }
 

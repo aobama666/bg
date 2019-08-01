@@ -41,6 +41,8 @@
         2.压缩包内上传文件名称格式为：论文题目-材料类别.文件类型
     	<br/>
         3.压缩包内上传文件类型为：doc/docx/pdf/jpg/rar/bmp
+		<br/>
+		4.压缩包大小不能超过<b>100MB</b>
     </div>
 
 <form id="queryForm" method="post" enctype="multipart/form-data">

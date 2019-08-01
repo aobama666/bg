@@ -98,7 +98,7 @@
             debugger;
             if(specialistsIdS.length !== 0){
                 var specialistsIdArray = specialistsIdS.split(',');
-                if(specialistsIdArray.length %2 == 0){
+                if(specialistsIdArray.length>7 && specialistsIdArray.length %2 == 0){
                     parent.layer.alert('已匹配专家信息数量不能为双数，请调整',{icon:0,title:'信息提示'});
                     return;
                 }else if(specialistsIdArray.length > 15){

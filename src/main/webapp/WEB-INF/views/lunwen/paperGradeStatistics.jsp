@@ -57,9 +57,8 @@
 	</form>
 </div>
 <!-- end    查询条件 -->
-<div><hr></div>
 
-<div style=" padding-top: 40px">
+<div style=" padding-top: 10px">
 	<!--  导出，重新评审 -->
 	<div id="funcBtn" style="height: 35px;float:right">
 		<div class='btn right outButton' onclick="queryAll.outEvent()">导出</div>

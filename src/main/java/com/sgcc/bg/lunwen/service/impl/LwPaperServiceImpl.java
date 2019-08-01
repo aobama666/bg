@@ -179,6 +179,7 @@ public class LwPaperServiceImpl implements LwPaperService {
                 { "下载量", "downloadCount","nowrap" },
                 { "领域","field","nowrap"},
                 { "专家信息","specialistName","nowrap"},
+                { "论文状态","allStatus","nowrap"},
                 { "加权平均分","weightingFraction","nowrap"},
                 { "去最高最低得分","averageFraction","nowrap"},
         };
