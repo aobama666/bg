@@ -53,7 +53,7 @@ queryAll.initDataGrid = function(){
         pageSize:10,
         tablepage:$(".tablepage"),//分页组件
         columns: [
-            {name: '',style:{width:"2%"}, data: 'uuid',checkbox:true, forMat:function(row){
+            {name: '',style:{width:"2px"}, data: 'uuid',checkbox:true, forMat:function(row){
               dataItems[index] = row;//将一行数据放在一个list中
               return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.uuid)+'"/>';
             }

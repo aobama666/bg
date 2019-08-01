@@ -590,6 +590,7 @@
                          and p.year = #{year}
                          and p.valid = #{valid}
                          and f.valid = #{valid})
+      and valid = #{valid}
     </select>
 
     <select id="ifAllMatch" resultType="java.util.Map">

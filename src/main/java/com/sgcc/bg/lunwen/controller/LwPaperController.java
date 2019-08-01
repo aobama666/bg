@@ -277,12 +277,9 @@ public class LwPaperController {
         for(String uuid : uuidArray){
             //如果已生成打分表，不可删除
             Map<String,Object> lwMap = lwPaperService.findPaper(uuid,null);
-            String allstatus = lwMap.get("ALLSTATUS").toString();
-            if(!LwPaperConstant.P_A_S_SAVED.equals(allstatus)
-                    || !LwPaperConstant.P_A_S_MATCHING.equals(allstatus)
-                    || !LwPaperConstant.P_A_S_MATCHED.equals(allstatus)
-               ){
-                log.info(getLoginUser()+"delete lwPaper fail,allStatus is:"+allstatus+",uuid:"+uuid);
+            String scoreTableStatus = lwMap.get("SCORETABLESTATUS").toString();
+            if(!LwPaperConstant.SCORE_STATUS_NO.equals(scoreTableStatus)){
+                log.info(getLoginUser()+"delete lwPaper fail,scoreTableStauts is:"+scoreTableStatus+",uuid:"+uuid);
                 failDel.add(uuid);
                 continue;
             }
