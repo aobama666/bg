@@ -30,7 +30,23 @@
 	<update id="syncHrOrganData">
 		MERGE INTO BG_SYS_DEPT D
 		USING (SELECT DEPTID DEPTCODE,
-		              DECODE(DEPTTYPE, 'UNIT', 0, 'DEPT', 1, 'LAB', 2) TYPE,
+		              /*DECODE(DEPTTYPE, 'UNIT', 0, 'DEPT', 1, 'LAB', 2) TYPE,*/
+						case
+						when PARENTID is null then
+						'-1'
+						when parentid in
+						(select deptid from BG_ERP_HR_DEPT where parentid is null) then
+						'0'
+						when parentid in
+						(select deptid
+						from BG_ERP_HR_DEPT
+						where parentid = (select deptid
+						from BG_ERP_HR_DEPT
+						where parentid is null)) then
+						'1'
+						else
+						'2'
+						end TYPE,
 		              DEPTNAME,
 		              PARENTID PDEPTCODE
 		         FROM BG_ERP_HR_DEPT) T
