@@ -256,7 +256,8 @@
 		           ON P.Z00HRSSBZID = D.DEPTCODE
 		         LEFT JOIN BG_SYS_DEPT D1
 		           ON P.Z00HRSSBMID = D1.DEPTCODE
-		        WHERE P.Z00HRSSDWID = '41000001'
+		        WHERE 1=1
+		        /*P.Z00HRSSDWID = '41000001'*/
 		          AND P.BEGDA IS NOT NULL
 		          AND P.ENDDA IS NOT NULL
 		          AND U.USERID IS NOT NULL
