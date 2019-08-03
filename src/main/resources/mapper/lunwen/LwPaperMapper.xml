@@ -166,7 +166,7 @@
             p.field,
             p.score_table_status scoreTableStatus,
             (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='score_status' and vaild=1 and code= p.score_status)  as scoreStatus,
-          (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_all_status' and vaild=1 and code= p.all_status)  as allStatusContent,
+            (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_all_status' and vaild=1 and code= p.all_status)  as allStatusContent,
             p.all_status allStatus,
             p.create_user createUser,
             p.update_user updateUser,
@@ -581,8 +581,9 @@
     </select>
 
     <select id="notAnnexPaper" resultType="java.util.Map">
-      select paper_name,
-      (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_type' and vaild=1 and code= paper_type)  as paper_type
+      select
+      (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_type' and vaild=#{valid} and code= paper_type)  as paperType,
+      count(*) countNoAnnex
           from bg_lw_paper
       where uuid not in (select p.uuid
                         from bg_lw_file f, bg_lw_paper p
@@ -592,6 +593,7 @@
                          and p.valid = #{valid}
                          and f.valid = #{valid})
       and valid = #{valid}
+      group by paper_type
     </select>
 
     <select id="ifAllMatch" resultType="java.util.Map">
@@ -621,5 +623,17 @@
         select uuid from bg_lw_paper p where  valid = #{valid} and year = #{year}
     </select>
 
+    <select id="matchingPaper" resultType="java.util.Map">
+        select (SELECT name
+                FROM BG_SYS_DATADICTIONARY
+                WHERE pcode = 'paper_type'
+                      and vaild = #{valid}
+                      and code = paper_type) as paperType,
+               count(*) countMatching
+        from bg_lw_paper
+        where uuid in (select uuid from bg_lw_paper where all_status = #{allStatus})
+              and valid = #{valid}
+        group by paper_type
+    </select>
 
 </mapper>

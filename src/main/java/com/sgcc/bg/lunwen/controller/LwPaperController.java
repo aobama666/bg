@@ -375,9 +375,14 @@ public class LwPaperController {
         //判断是否未上传附件
         List<Map<String,Object>> ifAnnex = lwPaperService.notAnnexPaper();
         if(0 != ifAnnex.size()){
-            String paperType = ifAnnex.get(0).get("PAPER_TYPE").toString();
-            String paperName = ifAnnex.get(0).get("PAPER_NAME").toString();
-            rw = new ResultWarp(ResultWarp.FAILED,"自动匹配失败,"+paperType+"-"+paperName+"未上传附件!");
+            String msg = "自动匹配失败";
+            for(Map<String,Object> notAnnes : ifAnnex){
+                String paperType = notAnnes.get("PAPERTYPE").toString();
+                String countNoAnnex = notAnnes.get("COUNTNOANNEX").toString();
+                msg += "，"+paperType+"有"+countNoAnnex+"个";
+            }
+            msg += "未上传附件";
+            rw = new ResultWarp(ResultWarp.FAILED,msg);
             return JSON.toJSONString(rw);
         }
         //判断是否已进入打分操作，直接在外面先判断再匹配
@@ -400,6 +405,20 @@ public class LwPaperController {
                 lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.P_A_S_MATCHING);
             }
             log.info(getLoginUser()+"当前成功匹配到"+successMatchNums+"个专家！paper_uuid:"+paperUuid);
+        }
+
+        //查看当前哪些类有多少没有匹配达标的论文
+        List<Map<String,Object>> matchingPaper = lwPaperService.matchingPaper();
+        if(0 != matchingPaper.size()){
+            String msg = "自动匹配完成";
+            for(Map<String,Object> noMatched : matchingPaper){
+                String paperType = noMatched.get("PAPERTYPE").toString();
+                String countMatching = noMatched.get("COUNTMATCHING").toString();
+                msg += "，"+paperType+"有"+countMatching+"个";
+            }
+            msg += "未达标";
+            rw = new ResultWarp(ResultWarp.SUCCESS,msg);
+            return JSON.toJSONString(rw);
         }
 
         rw = new ResultWarp(ResultWarp.SUCCESS,"自动匹配成功");

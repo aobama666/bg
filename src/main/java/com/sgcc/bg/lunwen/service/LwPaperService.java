@@ -244,4 +244,9 @@ public interface LwPaperService {
      * 当前年份，能够处理的所有论文主键id,主要提供自动匹配操作
      */
     List<String> allPaperPrimaryKey();
+
+    /**
+     * 查看匹配未达标的论文数量，按论文类型划分
+     */
+    List<Map<String,Object>> matchingPaper();
 }

@@ -235,6 +235,11 @@ public class LwPaperServiceImpl implements LwPaperService {
         return lwPaperMapper.allPaperPrimaryKey(DateUtil.getYear(),LwPaperConstant.VALID_YES);
     }
 
+    @Override
+    public List<Map<String, Object>> matchingPaper() {
+        return lwPaperMapper.matchingPaper(LwPaperConstant.P_A_S_MATCHING,LwPaperConstant.VALID_YES);
+    }
+
 
     /**
      * 自动匹配

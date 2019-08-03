@@ -253,6 +253,14 @@ public interface LwPaperMapper {
     );
 
     /**
+     * 查看匹配未达标的论文数量，按论文类型划分
+     */
+    List<Map<String,Object>> matchingPaper(
+            @Param("allStatus") String allStatus,
+            @Param("valid") String valid
+    );
+
+    /**
      * 生成打分表前提条件，判断当年全部论文是否匹配完成
      */
     List<Map<String,Object>> ifAllMatch(
