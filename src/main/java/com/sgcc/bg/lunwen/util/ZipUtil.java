@@ -201,6 +201,7 @@ public class ZipUtil {
 
 
         public static void main(String[] args) {
+
             try {
                 //压缩
 //                zip("D:\\20190611_mingliao\\评分规则.PNG","D:\\20190611_mingliao\\评分规则.zip");
