@@ -1,6 +1,8 @@
-package com.sgcc.bg.common;
+package com.sgcc.bg.jdbcforzh;
 
 
+
+import com.sgcc.bg.common.ConfigUtils;
 
 import java.sql.*;
 import java.util.ArrayList;

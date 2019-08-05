@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper">
+    <insert id="addPMS">
+        insert into bg_lw_paper_match_expert
+        (uuid,
+        paper_id,
+        specialist_id,
+        score,
+        score_status,
+        create_user,
+        create_time,
+        specialist_sort,
+        valid)
+        values (
+            #{uuid,jdbcType=VARCHAR},
+            #{paperId,jdbcType=VARCHAR},
+            #{specialistId,jdbcType=VARCHAR},
+            #{score,jdbcType=VARCHAR},
+            #{scoreStatus,jdbcType=VARCHAR},
+            #{createUser,jdbcType=VARCHAR},
+            #{createTime,jdbcType=TIMESTAMP},
+            #{specialistSort,jdbcType=INTEGER},
+            #{valid,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateScore">
+      update bg_lw_paper_match_expert set
+      score = #{score,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=VARCHAR},
+      update_time = sysdate
+      where 1=1
+        <if test="uuid != null and uuid != ''">
+            and uuid= #{uuid}
+        </if>
+    </update>
+
+    <update id="updateScoreStatus">
+      update bg_lw_paper_match_expert set
+        SCORE_STATUS = #{scoreStatus,jdbcType=VARCHAR},
+        update_user = #{updateUser,jdbcType=VARCHAR},
+        update_time = sysdate
+        where 1=1
+        <if test="uuid != null and uuid != ''">
+            and uuid= #{uuid}
+        </if>
+    </update>
+
+    <update id="updateScoreStatusForPaperId">
+        update bg_lw_paper_match_expert set
+        SCORE_STATUS = #{scoreStatus,jdbcType=VARCHAR},
+        update_user = #{updateUser,jdbcType=VARCHAR},
+        update_time = sysdate
+        where 1=1
+        <if test="paperId != null and paperId != ''">
+            and paper_id= #{paperId}
+        </if>
+    </update>
+
+    <update id="delMatchMessage">
+        update bg_lw_paper_match_expert set valid = #{valid}
+        where 1=1
+        <if test="paperId != null and paperId != ''">
+            and paper_id= #{paperId}
+        </if>
+        <if test="specialistId != null and specialistId != ''">
+            and specialist_id = #{specialistId}
+        </if>
+    </update>
+
+    <select id="scoreList" resultType="java.lang.Double">
+        SELECT SCORE FROM BG_LW_PAPER_MATCH_EXPERT WHERE  VALID = '1'
+        AND PAPER_ID = #{uuid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectPMS" resultType="com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist">
+        select
+            uuid,
+            paper_id paperId,
+            specialist_id specialistId,
+            score,
+            score_status scoreStatus
+        from bg_lw_paper_match_expert where 1=1
+        <if test="paperId != null and paperId != ''">
+          and paper_id= #{paperId}
+        </if>
+        <if test="specialistId != null and specialistId != ''">
+          and specialist_id = #{specialistId}
+        </if>
+        and valid = #{valid}
+    </select>
+
+    <select id="findSpecialistSort" resultType="java.lang.String">
+        select max(specialist_sort) from bg_lw_paper_match_expert
+        where paper_id=#{paperId,jdbcType=INTEGER}
+    </select>
+
+
+    <select id="selectPmsManual" resultType="com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialistVo">
+        select
+            s.field,
+            s.unit_name unitName,
+            s.name,
+            m.specialist_id uuid
+        from bg_lw_paper_match_expert m , bg_lw_specialist s
+        where m.specialist_id = s.uuid
+        <if test="paperId != null and paperId != ''">
+            and m.paper_id= #{paperId}
+        </if>
+        and m.valid = #{valid}
+        order by m.SPECIALIST_SORT
+    </select>
+
+    <select id="getTotalScore" resultType="java.lang.Double">
+        select score from  BG_LW_PAPER_MATCH_EXPERT where uuid = #{pmeId}
+    </select>
+
+    <update id="updateValid" parameterType="com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist">
+        UPDATE BG_LW_PAPER_MATCH_EXPERT
+        SET VALID = '0'
+        WHERE SPECIALIST_ID = #{beforeUuid,jdbcType=VARCHAR}
+    </update>
+
+    <insert id="insertpaperMatch" parameterType="com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist">
+        INSERT INTO BG_LW_PAPER_MATCH_EXPERT
+        (UUID, PAPER_ID, SPECIALIST_ID, SCORE_STATUS, CREATE_USER, CREATE_TIME, UPDATE_USER, UPDATE_TIME, VALID,SPECIALIST_SORT)
+        VALUES(
+            #{uuid},
+            #{paperId},
+            #{specialistId},
+            #{scoreStatus},
+            #{createUser},
+            #{createTime},
+            #{updateUser},
+            #{updateTime},
+            #{valid},
+            #{specialistSort})
+    </insert>
+
+
+    <select id="noScoreNums" resultType="java.util.Map">
+        select count(*) nums,
+        (SELECT name
+        FROM BG_SYS_DATADICTIONARY
+        WHERE pcode = 'paper_type'
+        and vaild = 1
+        and code = p.paper_type) paperType
+        from bg_lw_paper p， bg_lw_paper_match_expert m, bg_lw_specialist s
+        where 1 = 1
+        and p.year = #{year}
+        and p.score_table_status = #{scoreTableStatus}
+        and s.user_id = #{userId}
+        and p.uuid = m.paper_id
+        and m.specialist_id = s.uuid
+        and p.valid = #{valid}
+        and m.valid = #{valid}
+        and s.valid = #{valid}
+        and (m.score_status = #{noScore}
+        or m.score_status = #{reviewScore})
+        group by p.paper_type
+    </select>
+
+    <select id="needSubmitMessage" resultType="java.util.Map">
+        select m.uuid pmeId, m.paper_id paperId
+        from bg_lw_paper_match_expert m, bg_lw_specialist s
+        where s.user_id = #{userId}
+        and m.valid = #{valid}
+        and m.score_status = #{scoreStatus}
+        and m.specialist_id = s.uuid
+    </select>
+
+    <select id="ifAllScore" resultType="java.util.Map">
+        select *
+        from bg_lw_paper_match_expert
+        where paper_id = #{paperId}
+        and score_status != #{scoreStatus}
+        and valid = #{valid}
+    </select>
+
+    <select id="allScore" resultType="java.lang.Double">
+        select m.score
+        from bg_lw_paper_match_expert m
+        where m.paper_id =  #{paperId}
+        and m.valid = #{valid}
+        order by m.score
+    </select>
+
+    <select id="expertIfMatchPaper" resultType="java.util.Map">
+        select * from bg_lw_paper_match_expert m , bg_lw_paper p
+        where m.specialist_id = #{specialistId}
+        and m.valid = #{valid}
+        and p.year = #{year}
+        and p.uuid = m.paper_id
+    </select>
+
+    <select id="ifExpertScore" resultType="java.util.Map">
+        select * from bg_lw_paper_match_expert m , bg_lw_paper p
+        where m.specialist_id = #{specialistId}
+        and m.valid = #{valid}
+        and p.year = #{year}
+        and m.score_status != #{scoreStatus}
+        and p.uuid = m.paper_id
+    </select>
+</mapper>
