@@ -30,6 +30,11 @@ public class LwComprehensiveStatisticServiceImpl implements LwComprehensiveStati
     @Override
     public List<Map<String,Object>> year() {
         List<Map<String,Object>> year = lwPaperMapper.year();
+        if(year.size() == 0){
+            Map<String,Object> yearMap = new HashMap<>();
+            yearMap.put("YEAR",DateUtil.getYear());
+            year.add(yearMap);
+        }
         return year;
     }
 
