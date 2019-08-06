@@ -12,7 +12,7 @@
 	</div>
 	<hr>
 	<div class="form-box">
-		<div class="form-group col-xs-11">
+		<div class="form-group col-xs-5">
 			<label for="category"><font
 				class="glyphicon glyphicon-asterisk required"></font>项目分类</label>
 			<div class="controls">
@@ -28,6 +28,15 @@
 				</select>
 			</div>
 		</div>
+
+		<div class="form-group col-xs-6">
+			<label for="projectGrade"><font
+					class="glyphicon glyphicon-asterisk required"></font>项目级别</label>
+			<div class="controls">
+				<input type="text" name="projectGrade" property="projectGrade">
+			</div>
+		</div>
+
 		<div class="form-group col-xs-11">
 			<label for="projectName"><font
 				class="glyphicon glyphicon-asterisk required"></font>项目名称</label>
@@ -223,6 +232,7 @@ function forSave_pro(){
 	*/
 	var validator=[
               	      {name:'category',vali:'required'},
+					   {name:'projectGrade',vali:'required;length[-20]'},
              	      {name:'projectName',vali:'required;length[-50]'},
              	      {name:'WBSNumber',vali:''},//required;WBS编号改为选填项
              	      {name:'projectIntroduce',vali:'length[-200]'},

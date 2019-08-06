@@ -3,7 +3,7 @@
 
 <mapper namespace="com.sgcc.bg.mapper.StaffWorkbenchMaper">
 
-	<select id="getWorkingHourInfo" resultType="java.util.Map">
+	<!--<select id="getWorkingHourInfo" resultType="java.util.Map">
 		SELECT T.ID,
 		       T.PROJECT_ID,
 		       NVL(P.PROJECT_NAME, T.PROJECT_NAME) AS PROJECT_NAME,
@@ -14,7 +14,10 @@
 		       R.PROCESS_NOTE AS PROCESS_NOTE,
 		       U.HRCODE AS HRCODE,
 		       U.USERALIAS AS PRINCIPAL,
-		       E.HRCODE AS PRO_USER_HRCODE
+		       E.HRCODE AS PRO_USER_HRCODE,
+		       E.EMPNAME AS EMPNAME,
+		       T.WORK_TIME AS WORK_TIME,
+		       T.WORK_TIME_END AS WORK_TIME_END
 		  FROM BG_WORKINGHOUR_INFO T
 		  LEFT JOIN BG_SYS_USER U
 		    ON U.USERNAME = T.APPROVER
@@ -28,13 +31,65 @@
 		    ON E.PROJECT_ID = T.PROJECT_ID
 		   AND E.STATUS = '1'
 		   AND E.ROLE = '1'
-		 WHERE T.WORK_TIME = TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
+		 WHERE (T.WORK_TIME &gt;= TO_DATE(#{dataBegin}, 'yyyy-mm-dd')
+		   		AND T.WORK_TIME_END &lt;= TO_DATE(#{dataEnd}, 'yyyy-mm-dd'))
 		   AND T.WORKER = #{username}
 		   AND T.VALID = 1
-		 ORDER BY T.CREATE_TIME DESC
+		   ORDER BY T.CREATE_TIME DESC
+	</select>-->
+
+	<select id="getWorkingHourInfo" resultType="java.util.Map">
+		SELECT T.ID,
+		T.PROJECT_ID,
+		NVL(P.PROJECT_NAME, T.PROJECT_NAME) AS PROJECT_NAME,
+		NVL(P.CATEGORY, T.CATEGORY) AS CATEGORY,
+		T.JOB_CONTENT,
+		T.WORKING_HOUR,
+		T.STATUS,
+		R.PROCESS_NOTE AS PROCESS_NOTE,
+		U.HRCODE AS HRCODE,
+		U.USERALIAS AS PRINCIPAL,
+		T.WORK_TIME AS WORK_TIME,
+		T.WORK_TIME_END AS WORK_TIME_END,
+		T.WORK_TIME_BEGIN AS WORK_TIME_BEGIN
+		FROM BG_WORKINGHOUR_INFO T
+		LEFT JOIN BG_SYS_USER U
+		ON U.USERNAME = T.APPROVER
+		LEFT JOIN BG_PROJECT_INFO P
+		ON T.PROJECT_ID = P.ID
+		AND P.STATUS = '1'
+		LEFT JOIN BG_PROCESS_RECORD R
+		ON T.PROCESS_ID = R.ID
+		AND R.VALID = 1
+		WHERE (T.WORK_TIME_BEGIN &gt;= TO_DATE(#{dataBegin}, 'yyyy-mm-dd')
+				AND T.WORK_TIME_END &lt;= TO_DATE(#{dataEnd}, 'yyyy-mm-dd'))
+		AND T.WORKER = #{username}
+		AND T.VALID = 1
+		ORDER BY T.CREATE_TIME DESC
 	</select>
+
+	<select id="fillWorkingHour" resultType="java.lang.Double">
+		SELECT nvl(SUM(T.WORKING_HOUR),0)
+			FROM BG_WORKINGHOUR_INFO T
+			WHERE (T.WORK_TIME_BEGIN &gt;= TO_DATE(#{dataBegin}, 'yyyy-mm-dd')
+					AND T.WORK_TIME_END &lt;= TO_DATE(#{dataEnd}, 'yyyy-mm-dd'))
+			AND T.WORKER = #{currentUsername}
+			AND T.VALID = '1'
+	</select>
+	<!--LEFT JOIN BG_SYS_USER U
+	ON U.USERNAME = T.APPROVER
+	LEFT JOIN BG_PROJECT_INFO P
+	ON T.PROJECT_ID = P.ID
+	AND P.STATUS = '1'
+	LEFT JOIN BG_PROCESS_RECORD R
+	ON T.PROCESS_ID = R.ID
+	AND R.VALID = 1
+	LEFT JOIN BG_PROJECT_USER E
+	ON E.PROJECT_ID = T.PROJECT_ID
+	AND E.STATUS = '1'
+	AND E.ROLE = '1'-->
 	
-	<select id="getProjectsByDate" resultType="java.util.Map">
+	<!--<select id="getProjectsByDate" resultType="java.util.Map">
 		SELECT T.CATEGORY,
 		       T.ID,
 		       T.PROJECT_NAME,
@@ -75,7 +130,106 @@
 			 AND T.PROJECT_NUMBER = #{proNumber}
 		   </if>
 		 ORDER BY T.CREATE_DATE DESC
+	</select>-->
+
+	<!--没有结束时间的情况-->
+	<!--<select id="getProjectsByDate" resultType="java.util.Map">
+		SELECT T.CATEGORY,
+		T.ID,
+		T.PROJECT_NAME,
+		T.PROJECT_NUMBER,
+		T.WBS_NUMBER,
+		T1.EMPNAME       AS PRINCIPAL,
+		T1.HRCODE        AS HRCODE
+		FROM BG_PROJECT_INFO T
+		LEFT JOIN BG_PROJECT_USER T1
+		ON T.ID = T1.PROJECT_ID
+		AND T1.STATUS = '1'
+		LEFT JOIN BG_SYS_USER T2
+		ON T1.HRCODE = T2.HRCODE
+		WHERE ((T.CATEGORY IN ('JS', 'KY', 'HX', 'QT') AND
+		T2.USERNAME = #{username} AND
+		(TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &gt;= T1.START_DATE AND
+		TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &lt;= T1.END_DATE))
+		OR
+		(T.CATEGORY IN ('CG', 'BP') AND
+		#{deptId} IN
+		(SELECT D.DEPTID
+		FROM BG_SYS_DEPT D
+		WHERE D.VALID = '1'
+		START WITH D.DEPTID = T.ORGAN_INFO
+		CONNECT BY PRIOR D.DEPTID = D.PDEPTID)))
+		AND (TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &gt;= T.START_DATE AND
+		TO_DATE(#{selectedDate}, 'yyyy-mm-dd') &lt;= T.END_DATE)
+		AND T.STATUS = '1'
+		AND T.PROJECT_STATUS = '1'
+		<if test="proName != null and proName != ''" >
+			AND T.PROJECT_NAME LIKE '%'||#{proName}||'%'
+		</if>
+		<if test="proNumber != null and proNumber != ''" >
+			AND T.PROJECT_NUMBER = #{proNumber}
+		</if>
+		ORDER BY T.CREATE_DATE DESC
+	</select>-->
+	<select id="getProjectsByDate" resultType="java.util.Map">
+		SELECT T.CATEGORY,
+		T.ID,
+		T.PROJECT_NAME,
+		T.PROJECT_NUMBER,
+		T.WBS_NUMBER,
+		T1.EMPNAME       AS PRINCIPAL,
+		T1.HRCODE        AS HRCODE
+		FROM BG_PROJECT_INFO T
+		LEFT JOIN BG_PROJECT_USER T1
+		ON T.ID = T1.PROJECT_ID
+		AND T1.STATUS = '1'
+		LEFT JOIN BG_SYS_USER T2
+		ON T1.HRCODE = T2.HRCODE
+		LEFT JOIN BG_PROJECT_USER T4
+		ON T4.PROJECT_ID = T.ID
+		AND T4.ROLE = '1'
+		AND T4.STATUS = '1'
+		and ( T4.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+		or T4.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+		or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T4.START_DATE and
+		TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T4.END_DATE)
+		or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T4.START_DATE and
+		TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T4.END_DATE))
+		WHERE ((T.CATEGORY IN ('JS', 'KY', 'HX', 'QT') AND
+		T2.USERNAME = #{username} AND
+			( T1.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+			or T1.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+			or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T1.START_DATE and
+				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T1.END_DATE)
+			or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T1.START_DATE and
+				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T1.END_DATE)
+			))
+		OR
+		(T.CATEGORY IN ('CG', 'BP') AND
+		#{deptId} IN
+		(SELECT D.DEPTID
+		FROM BG_SYS_DEPT D
+		WHERE D.VALID = '1'
+		START WITH D.DEPTID = T.ORGAN_INFO
+		CONNECT BY PRIOR D.DEPTID = D.PDEPTID)))
+		AND ( T1.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+			or T1.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+			or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T1.START_DATE and
+				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T1.END_DATE)
+			or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T1.START_DATE and
+				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T1.END_DATE)
+		)
+		AND T.STATUS = '1'
+		AND T.PROJECT_STATUS = '1'
+		<if test="proName != null and proName != ''" >
+			AND T.PROJECT_NAME LIKE '%'||#{proName}||'%'
+		</if>
+		<if test="proNumber != null and proNumber != ''" >
+			AND T.PROJECT_NUMBER = #{proNumber}
+		</if>
+		ORDER BY T.CREATE_DATE DESC
 	</select>
+
 	
 	<select id="getAllProjects" resultType="java.util.Map">
 		SELECT
@@ -114,12 +268,15 @@
 			WORKER,
 			DEPT_ID,
 			LAB_ID,
-			WORK_TIME,
+
 			STATUS,
 			VALID,
 			PROCESS_ID,
 			CREATE_USER,CREATE_TIME,UPDATE_USER,UPDATE_TIME,
-			SRC)
+			SRC,
+			WORK_TIME_END,
+			WORK_TIME_BEGIN,
+			WORK_TIME)
 		VALUES
 			(#{id,jdbcType=VARCHAR}, 
 			#{category,jdbcType=VARCHAR}, 
@@ -131,12 +288,14 @@
 			#{worker,jdbcType=VARCHAR},
 			#{deptId,jdbcType=VARCHAR},
 			#{labId,jdbcType=VARCHAR},
-			#{workTime,jdbcType=DATE},
 			#{status,jdbcType=VARCHAR},
 			#{valid,jdbcType=VARCHAR},
 			#{processId,jdbcType=VARCHAR},
 			#{createUser,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateTime,jdbcType=TIMESTAMP},
-			#{src,jdbcType=VARCHAR})
+			#{src,jdbcType=VARCHAR},
+			#{workTimeEnd,jdbcType=DATE},
+			#{workTimeBegin,jdbcType=DATE},
+			#{workTime,jdbcType=DATE})
 	</insert>
 	
 	<update id="updateWorkHourInfoById" parameterType="com.sgcc.bg.model.WorkHourInfoPo">
@@ -270,7 +429,25 @@
 		   AND t.status = '1'
 	</select>
 
-	<select id="validateSelectedDateAndDeptId"  resultType="int">
+	<select id="getPrincipalByProIdDate" resultType="java.lang.String">
+		SELECT t1.username
+		FROM BG_PROJECT_USER t
+		JOIN BG_SYS_USER t1
+		ON t.hrcode = t1.hrcode
+		WHERE rownum=1
+		AND t.project_id = #{proId}
+		AND t.role = '1'
+		AND t.status = '1'
+		AND( t.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+			or t.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+			or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=t.START_DATE and
+				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= t.END_DATE)
+			or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=t.START_DATE and
+				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= t.END_DATE))
+		ORDER BY T.START_DATE DESC
+	</select>
+
+	<!--<select id="validateSelectedDateAndDeptId"  resultType="int">
 		SELECT COUNT(1)
 		  FROM BG_PROJECT_INFO T
 		  LEFT JOIN BG_PROJECT_USER T1
@@ -295,7 +472,43 @@
 		   AND T.STATUS = '1'
 		   AND T.PROJECT_STATUS = '1'
 		   AND T.ID = #{proId}
-	</select>
+	</select>-->
+
+    <select id="validateSelectedDateAndDeptId"  resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM BG_PROJECT_INFO T
+        LEFT JOIN BG_PROJECT_USER T1
+        ON T.ID = T1.PROJECT_ID
+        AND T1.STATUS = '1'
+        LEFT JOIN BG_SYS_USER T2
+        ON T1.HRCODE = T2.HRCODE
+        WHERE ((T.CATEGORY IN ('JS', 'KY', 'HX', 'QT') AND
+        T2.USERNAME = #{username} AND
+        ( T1.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+            or T1.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+            or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T1.START_DATE and
+            TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T1.END_DATE)
+            or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T1.START_DATE and
+            TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T1.END_DATE)))
+        OR
+        (T.CATEGORY IN ('CG', 'BP') AND
+        #{deptId} IN
+        (SELECT D.DEPTID
+        FROM BG_SYS_DEPT D
+        WHERE D.VALID = '1'
+        START WITH D.DEPTID = T.ORGAN_INFO
+        CONNECT BY PRIOR D.DEPTID = D.PDEPTID)))
+        AND ( T.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+            or T.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+            or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T.START_DATE and
+            TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T.END_DATE)
+            or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T.START_DATE and
+            TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T.END_DATE))
+        AND T.STATUS = '1'
+        AND T.PROJECT_STATUS = '1'
+        AND T.ID = #{proId}
+    </select>
+
 	
 	<select id="validateStaff" resultType="int">
 		SELECT COUNT(1)
@@ -307,7 +520,7 @@
    			AND t1.status = '1'
 	</select>
 	
-	<select id="validateSelectedDate" resultType="int">
+	<select id="validateSelectedDate" resultType="java.lang.Integer">
       SELECT COUNT(1)
 	    FROM BG_PROJECT_INFO T
 	    LEFT JOIN BG_PROJECT_USER T1
@@ -327,6 +540,40 @@
 	     AND T.STATUS = '1'
 	     AND T.PROJECT_STATUS = '1'
 	     AND T.ID =  #{proId}
+	</select>
+
+	<select id="validateSelectedDateScope" resultType="java.lang.Integer">
+		SELECT COUNT(1)
+			FROM BG_PROJECT_INFO T
+			LEFT JOIN BG_PROJECT_USER T1
+			ON T.ID = T1.PROJECT_ID
+			AND T1.STATUS = '1'
+			LEFT JOIN BG_SYS_USER T2
+			ON T1.HRCODE = T2.HRCODE
+			WHERE ((T.CATEGORY IN ('JS', 'KY', 'HX', 'QT') AND
+				T2.USERNAME = #{currentUsername} AND
+				(T1.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+					or T1.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+					or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T1.START_DATE and
+					TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T1.END_DATE)
+					or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T1.START_DATE and
+					TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T1.END_DATE)) AND
+				(T.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+					or T.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+					or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T.START_DATE and
+					TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T.END_DATE)
+					or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T.START_DATE and
+					TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T.END_DATE))) OR
+				(T.CATEGORY IN ('CG', 'BP') AND
+				(T.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+					or T.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+					or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T.START_DATE and
+					TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T.END_DATE)
+					or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T.START_DATE and
+					TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T.END_DATE))))
+			AND T.STATUS = '1'
+			AND T.PROJECT_STATUS = '1'
+			AND T.ID =  #{proId}
 	</select>
 	
 	<select id="validateDeptId" resultType="int">
@@ -386,7 +633,7 @@
 			process_id=#{processId,jdbcType=VARCHAR}
 		WHERE ID=#{id} AND valid=1
 	</update>
-	
+
 	<select id="getTopSubmitType" parameterType="String" resultType="String">
 		select nvl(min(to_number(td.sort_id)),10)
 			from BG_SYS_APPROVAL_USER_R_SUBTYPE t
@@ -490,5 +737,19 @@
 		   and t.valid = 1
 		 order by t.subtype,to_number(t.priority)
 	</select>
-	
+
+	<select id="fillKQWorkingHour" resultType="java.util.Map">
+		SELECT nvl(SUM(v.FULL_TIME),0) AS "fullTime",  nvl(SUM(v.OVER_TIME),0) AS "overTime"
+		FROM  BG_KQ_EMP_VIEW v
+		LEFT JOIN BG_SYS_USER u
+		ON v.EMP_CODE = u.HRCODE
+		WHERE rownum=1
+		AND u.USERNAME=#{currentUsername}
+		and (v.BEGIN_DATE &gt;=  TO_DATE(#{dataBegin}, 'yyyy-mm-dd')
+				and v.END_DATE &lt;=TO_DATE(#{dataEnd}, 'yyyy-mm-dd'))
+		and v.VALID='1'
+		and u.VALID='1'
+		order by CREATE_TIME desc
+	</select>
+
 </mapper>

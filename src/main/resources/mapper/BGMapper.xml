@@ -98,7 +98,7 @@
 			START_DATE,END_DATE,
 			PLAN_HOURS,PROJECT_STATUS,DECOMPOSE,STATUS,
 			CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
-			SRC)
+			SRC,PROJECT_GRADE)
 		VALUES
 			(#{id}, #{projectName,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, 
 			#{projectNumber,jdbcType=VARCHAR},#{WBSNumber,jdbcType=VARCHAR},
@@ -106,7 +106,7 @@
 			#{startDate,jdbcType=DATE},#{endDate,jdbcType=DATE},
 			#{planHours,jdbcType=NUMERIC},#{projectStatus,jdbcType=VARCHAR},#{decompose,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},
 			#{createUser,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateDate,jdbcType=TIMESTAMP},
-			#{src,jdbcType=VARCHAR})
+			#{src,jdbcType=VARCHAR},#{projectGrade,jdbcType=VARCHAR})
 	</insert>
 	
 	<insert id="addProUser"  parameterType="com.sgcc.bg.model.ProjectUserPo">
@@ -137,7 +137,8 @@
 			PLAN_HOURS=#{planHours,jdbcType=NUMERIC},
 			DECOMPOSE=#{decompose,jdbcType=VARCHAR},
 			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
-			UPDATE_DATE=#{updateDate,jdbcType=TIMESTAMP}
+			UPDATE_DATE=#{updateDate,jdbcType=TIMESTAMP},
+			PROJECT_GRADE=#{projectGrade,jdbcType=VARCHAR}
 		WHERE ID=#{id} AND status='1'
 	</update> 
 	
@@ -162,6 +163,7 @@
            T.DECOMPOSE AS "decompose",
            T.STATUS AS "status",
            T.SRC AS "src",
+           T.PROJECT_GRADE AS "projectGrade",
            T.RELATED_PROJECT_ID AS "relProId",
            (SELECT COUNT(DISTINCT T2.HRCODE)
               FROM BG_PROJECT_USER T2
@@ -275,8 +277,6 @@
 		    AND T.HRCODE = R.HRCODE
 		  WHERE T.PROJECT_ID = #{proId}
 		    AND T.STATUS = '1'
-		    and T.VALID = '1'
-		    AND R.VALID = '1'
 		  ORDER BY T.ROLE DESC, T.START_DATE,T.HRCODE
 	</select>
 	

@@ -91,14 +91,14 @@
 			</div>
 			<hr>
 			<div class="form-box">
-				<div class="form-group col-xs-11">
+				<div class="form-group col-xs-5">
 					<label for="category"><font
 						class="glyphicon glyphicon-asterisk required"></font>项目分类</label>
 					<div class="controls">
 						<select name="category" property="category" onchange="typeChange(this)">
 							<options collection="typeList" property="label"
 								labelProperty="value">
-								<option  value="QT" <c:if test="${category=='QT'}">selected="selected"</c:if> >其他</option>
+									<option  value="QT" <c:if test="${category=='QT'}">selected="selected"</c:if> >其他</option>
 								<option  value="KY" <c:if test="${category=='KY'}">selected="selected"</c:if> >科研项目</option>
 								<option value="HX" <c:if test="${category=='HX'}">selected="selected"</c:if> >横向项目</option>
 								<option value="JS" <c:if test="${category=='JS'}">selected="selected"</c:if> >技术服务项目</option>	
@@ -106,6 +106,15 @@
 						</select>
 					</div>
 				</div>
+
+				<div class="form-group col-xs-6">
+					<label for="projectGrade"><font
+							class="glyphicon glyphicon-asterisk required"></font>项目级别</label>
+					<div class="controls bg-white">
+						<input type="text" name="projectGrade" property="projectGrade" value="${projectGrade}">
+					</div>
+				</div>
+
 				<div class="form-group col-xs-11">
 					<label for="projectName"><font
 						class="glyphicon glyphicon-asterisk required"></font>项目名称</label>
@@ -260,6 +269,7 @@
 		*/
 		var validator=[
               	      {name:'category',vali:'required'},
+					  {name:'projectGrade',vali:'required;length[-20]'},
              	      {name:'projectName',vali:'required;length[-50]'},
              	      {name:'WBSNumber',vali:''},//WBS编号不作为必填项校验了
              	      {name:'projectIntroduce',vali:'length[-200]'},

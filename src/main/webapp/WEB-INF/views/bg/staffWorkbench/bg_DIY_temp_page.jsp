@@ -32,6 +32,8 @@
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/common/plugins/bootstrap-datepicker-master/dist/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript"
+	src="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+<script type="text/javascript"
 	src="<%=request.getContextPath()%>/common/plugins/layer/layer.min.js"></script>
 <!--[if lt IE 9>
 	<script src="<%=request.getContextPath()%>/common/plugins/html5shiv/html5shiv.min.js"></script>
@@ -53,7 +55,7 @@
 		</div>
 	</div>
 	<hr>
-	<form class="form-inline bg-white" sytle="width:500px" method="post" target="hidden_frame">
+	<%--<form class="form-inline bg-white" sytle="width:500px" method="post" target="hidden_frame">
 		<!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期： -->
 		<label>日期：</label>
 		<div class="form-group" style="display: inline-block">
@@ -64,7 +66,29 @@
 			<input type="text" readonly style="display: inline-block;width:196px" name="endDate" class="form-control form_date" id="endDate" placeholder="">
 		</div>
 		<input type="hidden" name="proIds" id="selectProIds">
+	</form>--%>
+
+	<form class="form-inline bg-white" sytle="width:500px" method="post" target="hidden_frame">
+		<div class="form-group" style="margin-bottom:0;">
+			<label style="float: left">查询日期：</label>
+			<div class="controls"  data-date-format="yyyy-mm">
+				<div class="input-group date form_date bg-white col-xs-5" id="dateTime" style="float: left;width: 195px">
+					<input  name="startDate" property="startDate" type="text"  id="startDate" class="form-control form_datetime_2 input-sm bg-white" readonly />
+					<span class="input-group-addon">
+						<span class="glyphicon glyphicon-calendar"></span>
+					</span>
+				</div>
+				<div class="floatLeft" style="float:left; width: 20px;margin-left: 10px;">--</div>
+				<div class="input-group date form_date bg-white" id="dateTimeEnd" style="width: 195px">
+					<input  name="endDate" property="endDate" id="endDate" type="text" class="form-control form_datetime_2 input-sm bg-white" readonly />
+					<span class="input-group-addon">
+						<span class="glyphicon glyphicon-calendar"></span>
+					</span>
+				</div>
+			</div>
+		</div>
 	</form>
+
 	<form class="form-inline">
 		<div class="form-group">
 			<label>选择工作任务：</label>
@@ -75,10 +99,38 @@
 		</div>
 	</form>
 	<iframe name='hidden_frame' id="hidden_frame" width="0" height="0" frameborder="0"></iframe>
+
 </body>
 <script type="text/javascript" charset="utf-8">
+    Timeinit();
+    function Timeinit() {
+        // 时间初始化
+        $("#dateTime").datepicker({
+            startView: 'months',  //起始选择范围
+            maxViewMode:'years', //最大选择范围
+            minViewMode:'months', //最小选择范围
+            todayHighlight : true,// 当前时间高亮显示
+            autoclose : 'true',// 选择时间后弹框自动消失
+            format : 'yyyy-mm',// 时间格式
+            language : 'zh-CN',// 汉化
+            //todayBtn:"linked",//显示今天 按钮
+            //clearBtn : true,// 清除按钮，和今天 按钮只能显示一个
+        });
+        $("#dateTimeEnd").datepicker({
+            startView: 'months',  //起始选择范围
+            maxViewMode:'years', //最大选择范围
+            minViewMode:'months', //最小选择范围
+            todayHighlight : true,// 当前时间高亮显示
+            autoclose : 'true',// 选择时间后弹框自动消失
+            format : 'yyyy-mm',// 时间格式
+            language : 'zh-CN',// 汉化
+            //todayBtn:"linked",//显示今天 按钮
+            //clearBtn : true,// 清除按钮，和今天 按钮只能显示一个
+        });
+    }
 
 $(function(){
+
 	$("#selectProject").click(function(){
 		var startDate=$("#startDate").val();
 		var endDate=$("#endDate").val();

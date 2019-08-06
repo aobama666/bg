@@ -2,6 +2,7 @@ package com.sgcc.bg.service.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -229,13 +230,18 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 					String currentUsername=webUtils.getUsername();//当前登录人
 					CommonCurrentUser approverUser=null;
 					CommonCurrentUser worker=null;
+
+					Map<String,String> dateMap = dateBeginEnd(cellValue[1]);
+					String dataBegin = dateMap.get("dateBegin");
+					String dataEnd = dateMap.get("dateEnd");
+
 					boolean isNP = ("常规工作".equals(cellValue[2]) && Rtext.isEmpty(cellValue[3]))?true:false;//判断是否非项目
 					// 对要导入的文件内容进行校验
 					// 填报日期 必填;格式
 					if (cellValue[1] == null || "".equals(cellValue[1])) {
 						errorInfo.append("填报日期不能为空！ ");
 						errorNum.add(1);
-					} else if (!DateUtil.isValidDate(cellValue[1], "yyyy-MM-dd")) {
+					} else if (!DateUtil.isValidDate(cellValue[1], "yyyy-MM-dd") || !DateUtil.isValidDateYearMonth(cellValue[1])) {
 						errorInfo.append("填报日期填写有误！ ");
 						errorNum.add(1);
 					}
@@ -259,7 +265,8 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						}else{
 							proId=bgMapper.getProIdByBgNmuber(cellValue[3]);
 							proMap = bgMapper.getProInfoByProId(proId);
-							principal = SWMapper.getPrincipalByProId(proId);
+							//principal = SWMapper.getPrincipalByProId(proId);
+							principal = SWMapper.getPrincipalByProIdDate(proId,dataBegin,dataEnd);
 							principal = principal==null?"":principal;//如果是项目前期和常规项目则获取不到负责人
 						}
 					}
@@ -345,15 +352,22 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 									errorNum.add(8);
 								}
 							}
-							
 						}
-						
 					}
 					
 					//如果存在wbs/项目编号,且填报人真实存在则再次校验填报日期是否超出范围
 					if(!isNP && !Rtext.isEmpty(proId) && !errorNum.contains(1) && !errorNum.contains(8)){
-						
-						int result=SWMapper.validateSelectedDate(proId,worker.getUserName(),cellValue[1]);
+						/*int result=SWMapper.validateSelectedDate(proId,worker.getUserName(),cellValue[1]);
+						if(result==0){
+							errorInfo.append("填报日期不在项目周期或参与周期内！ ");
+							errorNum.add(1);
+						}*/
+
+						//取月初和月末
+						/*Map<String,String> dateMap = dateBeginEnd(cellValue[1]);
+						String dataBegin = dateMap.get("dateBegin");
+						String dataEnd = dateMap.get("dateEnd");*/
+						int result=SWMapper.validateSelectedDateScope(proId,currentUsername,dataBegin,dataEnd);
 						if(result==0){
 							errorInfo.append("填报日期不在项目周期或参与周期内！ ");
 							errorNum.add(1);
@@ -397,7 +411,21 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							}
 						}
 					}
-					
+
+					//效验累计工时是否超过月度工时
+					if(!errorNum.contains(1) && !errorNum.contains(6)) {
+						Map<String,Object> workingHoursMap = swService.workingHoursMap(cellValue[1]);
+						Double fillSum = (Double) workingHoursMap.get("fillSum");
+						BigDecimal fillSumKQ = (BigDecimal) workingHoursMap.get("fillSumKQ");
+						fillSum+=Double.parseDouble(cellValue[6]);
+						BigDecimal sum = BigDecimal.valueOf(fillSum);
+						int res = sum.compareTo(fillSumKQ);
+						if(res==1){
+							errorInfo.append("填报工时超出月度工时！ ");
+							errorNum.add(6);
+						}
+					}
+
 					// 校验结束，分流数据
 					if ("".equals(errorInfo.toString())) {// 通过校验
 						WorkHourInfoPo wh=new WorkHourInfoPo();
@@ -422,11 +450,18 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 								wh.setProName(proMap.get("projectName"));
 							}
 						}
-						wh.setWorkTime(DateUtil.fomatDate(cellValue[1]));
+
+						/*Map<String,String> dateMap = dateBeginEnd(cellValue[1]);
+						String dataBegin = dateMap.get("dateBegin");
+						String dataEnd = dateMap.get("dateEnd");*/
+						wh.setWorkTimeEnd(DateUtil.fomatDate(dataEnd));
+						wh.setWorkTimeBegin(DateUtil.fomatDate(dataBegin));
+						//wh.setWorkTime(DateUtil.fomatDate(cellValue[1]));
 						wh.setJobContent(cellValue[5]);
 						wh.setWorkHour(Double.parseDouble(cellValue[6]));
 						//获取填报人填报日期时的信息
-						CommonCurrentUser thenWorker=userUtils.getCommonCurrentUserByHrCode(cellValue[8],cellValue[1]);
+						//CommonCurrentUser thenWorker=userUtils.getCommonCurrentUserByHrCode(cellValue[8],cellValue[1]);
+						CommonCurrentUser thenWorker=userUtils.getCommonCurrentUserByUsernameScope(currentUsername,dataBegin,dataEnd);
 						wh.setWorker(thenWorker==null?"":thenWorker.getUserName());
 						wh.setDeptId(thenWorker==null?"":thenWorker.getpDeptId());
 						wh.setLabId(thenWorker==null?"":thenWorker.getDeptId());
@@ -465,7 +500,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 				// 生成错误信息文件
 				Object[][] title = { 
 						 { "序号\r\n（选填）", "SQNUM" ,"nowrap"},
-						 { "填报日期\r\n（必填，格式：YYYY-MM-DD）", "DATE" ,"nowrap"},
+						 { "填报日期\r\n（必填，格式：YYYY-MM）", "DATE" ,"nowrap"},
 						 { "项目类型\r\n（必填）", "CATEGORY","nowrap"},
 						 { "工作任务编号\r\n（常规工作如果没有可不填）", "PROJECT_NUMBER","nowrap" }, 
 						 { "项目名称\r\n（选填）","PROJECT_NAME","nowrap"},
@@ -521,6 +556,17 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 			String proName = Rtext.toStringTrim(map.get("proName"), "");
 			String empName = Rtext.toStringTrim(map.get("empName"), "");
 			String status = Rtext.toStringTrim(map.get("status"), "");
+
+			//开始月月初
+			String[] strStart= startDate.split("-");
+			int yearStart = Integer.parseInt(strStart[0]);
+			int monthStart = Integer.parseInt(strStart[1]);
+			startDate = DateUtil.getFirstDayOfMonth1(yearStart,monthStart);
+			//结束月月末
+			String[] strEnd= endDate.split("-");
+			int yearEnd = Integer.parseInt(strEnd[0]);
+			int monthEnd = Integer.parseInt(strEnd[1]);
+			endDate = DateUtil.getLastDayOfMonth1(yearEnd,monthEnd);
 			//服用页面查询方法，把分页范围调大
 			dataList=searchForWorkHourInfo(
 					startDate, endDate,deptCode,category,proName,empName,status);
@@ -540,7 +586,9 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 		}
 		
 		Object[][] title = { 
-							 { "日期", "WORK_TIME","nowrap"},
+							 //{ "日期", "WORK_TIME","nowrap"},
+							 { "开始日期", "WORK_TIME_BEGIN","nowrap"},
+							 { "结束日期", "WORK_TIME_END","nowrap"},
 							 { "部门（单位）", "DEPT" ,"nowrap"},
 							 { "处室","LAB","nowrap"},
 							 { "人员编号", "HRCODE" ,"nowrap"}, 
@@ -554,5 +602,19 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							};
 		ExportExcelHelper.getExcel(response, "报工管理-员工工时管理-"+DateUtil.getDays(), title, dataList, "normal");
 		return "";
+	}
+
+	private Map<String,String> dateBeginEnd(String selectedDate){
+		Map<String,String> map = new HashMap();
+		String[] str= selectedDate.split("-");
+		int year = Integer.parseInt(str[0]);
+		int month = Integer.parseInt(str[1]);
+		//每月月初
+		String dateBegin = DateUtil.getFirstDayOfMonth1(year,month);
+		//每月月末
+		String dateEnd = DateUtil.getLastDayOfMonth1(year,month);
+		map.put("dateBegin",dateBegin);
+		map.put("dateEnd",dateEnd);
+		return map;
 	}
 }

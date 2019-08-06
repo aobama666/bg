@@ -12,6 +12,8 @@
 		SELECT ROW_NUMBER() OVER(ORDER BY t.work_time,t.create_time DESC) AS RN,
 			   T.ID,
 		       TO_CHAR(T.WORK_TIME, 'yyyy-mm-dd') WORK_TIME,
+		       TO_CHAR(T.WORK_TIME_BEGIN, 'yyyy-mm-dd') WORK_TIME_BEGIN,
+		       TO_CHAR(T.WORK_TIME_END, 'yyyy-mm-dd') WORK_TIME_END,
 		       (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = T.DEPT_ID) AS DEPT,
 		       (SELECT DEPTNAME FROM BG_SYS_DEPT WHERE DEPTID = T.LAB_ID) AS LAB,
 		       U.USERALIAS AS USERNAME,
@@ -65,10 +67,10 @@
                           t.dept_id)
   			</if> -->
 			  <if test="startDate != null and startDate != ''" >
-                   <![CDATA[AND t.work_time >= TO_DATE(#{startDate}, 'yyyy-mm-dd')]]>
+                   <![CDATA[AND t.work_time_begin >= TO_DATE(#{startDate}, 'yyyy-mm-dd')]]>
 			  </if>
 			  <if test="endDate != null and endDate != ''" >
-			  		 <![CDATA[AND t.work_time <= TO_DATE(#{endDate}, 'yyyy-mm-dd')]]>
+			  		 <![CDATA[AND t.work_time_end <= TO_DATE(#{endDate}, 'yyyy-mm-dd')]]>
 			  </if>
               <if test="category != null and category != '' and category != 'CG_NP'" >
                 	AND  DECODE(t.category,'NP',t.category,p.category) = #{category}
@@ -148,6 +150,8 @@
 	<select id="getWorkHourInfoById" parameterType="String" resultType="java.util.Map">
 		SELECT t.id,
          TO_CHAR(t.work_time,'yyyy-mm-dd') as work_time,
+         TO_CHAR(t.work_time_begin,'yyyy-mm-dd') as work_time_begin,
+         TO_CHAR(t.work_time_end,'yyyy-mm-dd') as work_time_end,
          DECODE(t.category,
             'NP',
             t.project_name,
@@ -172,6 +176,8 @@
 	<select id="getSelectedWorkHourInfoById" parameterType="String" resultType="java.util.Map">
 		SELECT 
 			   TO_CHAR(t.work_time, 'yyyy-mm-dd') as work_time,
+			   TO_CHAR(t.work_time_begin, 'yyyy-mm-dd') as work_time_begin,
+			   TO_CHAR(t.work_time_end, 'yyyy-mm-dd') as work_time_end,
 		       (SELECT deptname FROM BG_SYS_DEPT WHERE deptid = t.dept_id) as dept,
 		       (SELECT deptname FROM BG_SYS_DEPT WHERE deptid = t.lab_id) as lab,
 		       r.useralias as username,
@@ -282,7 +288,9 @@
 			VALID,
 			PROCESS_ID,
 			CREATE_USER,CREATE_TIME,UPDATE_USER,UPDATE_TIME,
-			SRC)
+			SRC,
+			WORK_TIME_BEGIN,
+			WORK_TIME_END)
 		VALUES
 			(#{id,jdbcType=VARCHAR}, 
 			#{category,jdbcType=VARCHAR}, 
@@ -299,6 +307,8 @@
 			#{valid,jdbcType=VARCHAR},
 			#{processId,jdbcType=VARCHAR},
 			#{createUser,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateTime,jdbcType=TIMESTAMP},
-			#{src,jdbcType=VARCHAR})
+			#{src,jdbcType=VARCHAR},
+			#{workTimeBegin,jdbcType=DATE},
+			#{workTimeEnd,jdbcType=DATE})
 	</insert>
 </mapper>

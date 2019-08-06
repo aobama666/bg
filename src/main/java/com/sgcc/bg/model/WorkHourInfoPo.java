@@ -29,7 +29,9 @@ public class WorkHourInfoPo implements Serializable{
 	private Date updateTime;
 	//数据来源
 	private String src;
-	
+
+	private Date workTimeEnd;
+	private Date workTimeBegin;
 	public WorkHourInfoPo() {
 		super();
 	}
@@ -194,6 +196,22 @@ public class WorkHourInfoPo implements Serializable{
 		this.src = src;
 	}
 
+	public Date getWorkTimeEnd() {
+		return workTimeEnd;
+	}
+
+	public void setWorkTimeEnd(Date workTimeEnd) {
+		this.workTimeEnd = workTimeEnd;
+	}
+
+	public Date getWorkTimeBegin() {
+		return workTimeBegin;
+	}
+
+	public void setWorkTimeBegin(Date workTimeBegin) {
+		this.workTimeBegin = workTimeBegin;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -221,13 +239,29 @@ public class WorkHourInfoPo implements Serializable{
 
 	@Override
 	public String toString() {
-		return "WorkHourInfoPo [id=" + id + ", category=" + category + ", proId=" + proId + ", processId=" + processId
-				+ ", proName=" + proName + ", jobContent=" + jobContent + ", workHour=" + workHour + ", approver="
-				+ approver + ", worker=" + worker + ", deptId=" + deptId + ", labId=" + labId + ", workTime=" + workTime
-				+ ", status=" + status + ", valid=" + valid + ", create=" + create + ", createUser=" + createUser
-				+ ", createTime=" + createTime + ", updateUser=" + updateUser + ", updateTime=" + updateTime + ", src="
-				+ src + "]";
+		return "WorkHourInfoPo{" +
+				"id='" + id + '\'' +
+				", category='" + category + '\'' +
+				", proId='" + proId + '\'' +
+				", processId='" + processId + '\'' +
+				", proName='" + proName + '\'' +
+				", jobContent='" + jobContent + '\'' +
+				", workHour=" + workHour +
+				", approver='" + approver + '\'' +
+				", worker='" + worker + '\'' +
+				", deptId='" + deptId + '\'' +
+				", labId='" + labId + '\'' +
+				", workTime=" + workTime +
+				", status='" + status + '\'' +
+				", valid='" + valid + '\'' +
+				", create='" + create + '\'' +
+				", createUser='" + createUser + '\'' +
+				", createTime=" + createTime +
+				", updateUser='" + updateUser + '\'' +
+				", updateTime=" + updateTime +
+				", src='" + src + '\'' +
+				", workTimeEnd=" + workTimeEnd +
+				", workTimeBegin=" + workTimeBegin +
+				'}';
 	}
-	
-	
 }

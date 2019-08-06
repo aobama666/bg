@@ -55,9 +55,9 @@ public class StaffWorkbenchController {
 
 	@RequestMapping("/personalFill")
 	public ModelAndView personalFill() {
-		String note = ConfigUtils.getConfig("personalFillNote");
 		Map<String, String> map=new HashMap<String, String>();
-		map.put("note", note);
+		/*String note = ConfigUtils.getConfig("personalFillNote");
+		map.put("note", note);*/
 		//从数据字典获取审核状态
 		String statusJson = dict.getDictDataJsonStr("cstatus100003");
 		map.put("statusJson", statusJson);
@@ -88,6 +88,20 @@ public class StaffWorkbenchController {
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("items", jsonarry);
 		String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd",
+				SerializerFeature.WriteDateUseDateFormat);
+		return jsonStr;
+	}
+
+	/**
+	 * 工时统计（月度工时及已填工时）
+	 * @param selectedDate
+	 * @return
+	 */
+	@RequestMapping("/workingHoursStatistics")
+	@ResponseBody
+	public String workingHoursStatistics(String selectedDate) {
+		Map<String,Object> workingHoursMap = SWService.workingHoursMap(selectedDate);
+		String jsonStr = JSON.toJSONStringWithDateFormat(workingHoursMap, "yyyy-MM-dd",
 				SerializerFeature.WriteDateUseDateFormat);
 		return jsonStr;
 	}
@@ -145,7 +159,7 @@ public class StaffWorkbenchController {
 	/**
 	 * 获取当前员工名下的所有项目信息（在日期范围内有可填报的）
 	 * @param proName
-	 * @param wbsNumber
+	 * @param
 	 * @param startDate
 	 * @param endDate
 	 * @return
@@ -185,6 +199,8 @@ public class StaffWorkbenchController {
 			String workHour=Rtext.toStringTrim(map.get("workHour"), "");
 			String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
 			String whId=Rtext.toStringTrim(map.get("id"), "");//报工记录id
+            String workTimeBegin = Rtext.toStringTrim(map.get("workTimeBegin"),"");
+            String workTimeEnd = Rtext.toStringTrim(map.get("workTimeEnd"),"");
 			CommonCurrentUser approver=userUtils.getCommonCurrentUserByHrCode(hrCode);
 			if(!workHour.isEmpty() && !ParamValidationUtil.isDouble(workHour)){
 				SWLog.info("workHour 工时格式不正确！");
@@ -221,11 +237,12 @@ public class StaffWorkbenchController {
 				wp.setWorkHour(workHour.isEmpty()?null:Rtext.ToDouble(workHour, 0.0));
 				wp.setApprover(approver==null?"":approver.getUserName());
 				//获取报工人指定日期所属部门信息
-				CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(username,selectedDate);
+				CommonCurrentUser user=userUtils.getCommonCurrentUserByUsernameScope(username,workTimeBegin,workTimeEnd);
 				wp.setWorker(username);
 				wp.setDeptId(user==null?"":user.getpDeptId());
 				wp.setLabId(user==null?"":user.getDeptId());
-				wp.setWorkTime(DateUtil.fomatDate(selectedDate));
+				wp.setWorkTimeBegin(DateUtil.fomatDate(workTimeBegin));
+				wp.setWorkTimeEnd(DateUtil.fomatDate(workTimeEnd));
 				wp.setStatus("0");
 				wp.setValid("1");
 				wp.setCreateUser(username);
@@ -303,12 +320,13 @@ public class StaffWorkbenchController {
 				//出错数据不参与计算
 			}
 		}
-		checkResult=SWService.checkWorkHour(selectedDate,totalHours);
+		//验证工作时长方法
+		/*checkResult=SWService.checkWorkHour(selectedDate,totalHours);
 		if (!"".equals(checkResult)) {
 			resultMap.put("result", "fail");
 			resultMap.put("msg", checkResult);
 			return JSON.toJSONString(resultMap);
-		} 
+		} */
 		for (HashMap<String, String> map : list) {
 			String whId=Rtext.toStringTrim(map.get("id"), "");//报工记录id
 			String workHour=Rtext.toStringTrim(map.get("workHour"), "");
@@ -317,6 +335,8 @@ public class StaffWorkbenchController {
 			String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
 			String projectName=Rtext.toStringTrim(map.get("projectName"), "");
 			String proId=Rtext.toStringTrim(map.get("proId"), "");
+            String workTimeBegin = Rtext.toStringTrim(map.get("workTimeBegin"),"");
+            String workTimeEnd = Rtext.toStringTrim(map.get("workTimeEnd"),"");
 			double todayHours;
 			String processId;
 			String bussinessId=(whId.isEmpty()?Rtext.getUUID():whId);
@@ -374,11 +394,12 @@ public class StaffWorkbenchController {
 				wp.setWorkHour(todayHours);
 				wp.setApprover(approverName);
 				//获取报工人指定日期所属部门信息
-				CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(username,selectedDate);
+				CommonCurrentUser user=userUtils.getCommonCurrentUserByUsernameScope(username,workTimeBegin,workTimeEnd);
 				wp.setWorker(username);
 				wp.setDeptId(user==null?"":user.getpDeptId());
 				wp.setLabId(user==null?"":user.getDeptId());
-				wp.setWorkTime(DateUtil.fomatDate(selectedDate));
+				wp.setWorkTimeBegin(DateUtil.fomatDate(workTimeBegin));
+				wp.setWorkTimeEnd(DateUtil.fomatDate(workTimeEnd));
 				wp.setStatus(status);
 				wp.setValid("1");
 				wp.setCreateUser(username);
@@ -497,7 +518,7 @@ public class StaffWorkbenchController {
 	
 	/**
 	 * 解析上传的批量文件
-	 * @param file
+	 * @param
 	 * @param response
 	 * @throws Exception
 	 */
