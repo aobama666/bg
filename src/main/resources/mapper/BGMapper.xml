@@ -142,7 +142,7 @@
 		WHERE ID=#{id} AND status='1'
 	</update> 
 	
-	<delete id="deleteProUsersByProId" parameterType="String">
+	<delete id="deleteProUsersByProId" parameterType="java.lang.String">
 		DELETE FROM BG_PROJECT_USER 
 		WHERE 
 		PROJECT_ID=#{proId}
@@ -207,7 +207,7 @@
 				 AND T.STATUS = '1'
 	</select>
 	
-	<select id="getProPoByProId" parameterType="String" resultType="com.sgcc.bg.model.ProjectInfoPo">
+	<select id="getProPoByProId" parameterType="java.lang.String" resultType="com.sgcc.bg.model.ProjectInfoPo">
 		SELECT
       		t.id as "id",
       		t.project_name as "projectName",
@@ -232,7 +232,7 @@
 		WHERE t.id=#{proId} AND t.status='1'
 	</select>
 
-	<select id="getAllProInfos" parameterType="String" resultType="java.util.Map">
+	<select id="getAllProInfos" parameterType="java.lang.String" resultType="java.util.Map">
 		SELECT
       		t.id as "id",t.project_name as "projectName",t.category as "category",
       		t.project_number as "projectNumber",
@@ -260,7 +260,7 @@
 		ORDER BY t.UPDATE_DATE DESC
 	</select>
 	
-	<select id="getProUsersByProId" parameterType="String" resultType="java.util.Map">
+	<select id="getProUsersByProId" parameterType="java.lang.String" resultType="java.util.Map">
 		 SELECT T.ID,
 		        T.HRCODE,
 		        TO_CHAR(T.START_DATE, 'YYYY-MM-DD') AS START_DATE,
@@ -286,7 +286,7 @@
 		WHERE ID=#{proId} AND status='1'
 	</update>
 	
-	<update id="changeProStatusById"  parameterType="String">
+	<update id="changeProStatusById"  parameterType="java.lang.String">
 		UPDATE BG_PROJECT_INFO 
 		SET PROJECT_STATUS=#{proStatus}
 		WHERE ID=#{proId} AND status='1'
@@ -298,32 +298,32 @@
 		WHERE t.wbs_number=#{wbsNumber} AND t.status='1'
 	</select>
 	
-	<select id="getMaxBgNumber" parameterType="String" resultType="java.lang.String">
+	<select id="getMaxBgNumber" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT COALESCE(MAX(SUBSTR(t.project_number,11)),'0') 
 			FROM BG_PROJECT_INFO t 
 		 WHERE SUBSTR(t.project_number,3,8)=#{currentDateStr} AND t.status='1'
 	</select>
 	
-	<select id="getProIdByWBSNmuber" parameterType="String" resultType="java.lang.String">
+	<select id="getProIdByWBSNmuber" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT t.id FROM BG_PROJECT_INFO t
 			WHERE t.wbs_number=#{wbsNumber,jdbcType=VARCHAR} AND t.status='1'
 	</select>
 	
 	
-	<select id="getProIdByBgNmuber" parameterType="String" resultType="java.lang.String">
+	<select id="getProIdByBgNmuber" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT t.id FROM BG_PROJECT_INFO t
 			WHERE t.project_number=#{projectNumber,jdbcType=VARCHAR} AND t.status='1'
 	</select>
 	
-	<select id="getAllWbsNumbers" parameterType="String" resultType="java.lang.String">
+	<select id="getAllWbsNumbers" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT t.wbs_number FROM BG_PROJECT_INFO t 	WHERE t.status='1'
 	</select>
 	
-	<select id="getAllBgNumbers" parameterType="String" resultType="java.lang.String">
+	<select id="getAllBgNumbers" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT t.project_number FROM BG_PROJECT_INFO t 	WHERE t.status='1'
 	</select>
 	 
-	<update id="updateProInfoField" parameterType="String">
+	<update id="updateProInfoField" parameterType="java.lang.String">
 		UPDATE BG_PROJECT_INFO 
 		SET 
 		<choose>
@@ -338,7 +338,7 @@
 	</update>
 	
 	
-	<select id="getProInfoFieldByProId" parameterType="String" resultType="java.lang.String">
+	<select id="getProInfoFieldByProId" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT 
 		<choose>
 			<when test="field =='start_date' or field == 'end_date'">
@@ -351,15 +351,15 @@
 		FROM BG_PROJECT_INFO  WHERE id=#{proId}
 	</select>
 	
-	<select id="getDeptIdByDeptCode" parameterType="String" resultType="java.lang.String">
+	<select id="getDeptIdByDeptCode" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT deptid FROM BG_SYS_DEPT WHERE deptcode=#{deptCode}
 	</select>
 	
-	<select id="getPrincipalCountByProId" parameterType="String" resultType="java.lang.Integer">
+	<select id="getPrincipalCountByProId" parameterType="java.lang.String" resultType="java.lang.Integer">
 		SELECT COUNT(*) FROM BG_PROJECT_USER t WHERE t.role='1' AND t.status='1' AND t.project_id=#{proId}
 	</select>
 	
-	<select id="getPartyDateByHrcode" parameterType="String" resultType="java.util.Map">
+	<select id="getPartyDateByHrcode" parameterType="java.lang.String" resultType="java.util.Map">
 		SELECT TO_CHAR(t.start_date, 'yyyy-mm-dd')  as "startDate",
       		   TO_CHAR(t.end_date, 'yyyy-mm-dd') as "endDate"
  		 FROM BG_PROJECT_USER t
@@ -369,7 +369,7 @@
  		 AND t.hrcode = #{hrCode}
 	</select>
 	
-	<select id="getPrincipalCodeByProId" parameterType="String" resultType="String">
+	<select id="getPrincipalCodeByProId" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT t.hrcode
   		 FROM BG_PROJECT_USER t
 		WHERE t.status = '1'
@@ -377,8 +377,11 @@
    		 AND t.project_id = #{proId}
 	</select>
 	
-	<select id="getBgWorkerByProId" parameterType="String" resultType="java.util.Map">
-		SELECT U.USERALIAS AS NAME,U.HRCODE, TO_CHAR(T.WORK_TIME, 'yyyy-mm-dd') AS WORK_TIME
+	<select id="getBgWorkerByProId"  resultType="java.util.Map">
+		SELECT U.USERALIAS AS NAME,U.HRCODE,
+				TO_CHAR(T.WORK_TIME, 'yyyy-mm-dd') AS WORK_TIME,
+				TO_CHAR(T.WORK_TIME_BEGIN, 'yyyy-mm-dd') AS WORK_TIME_BEGIN,
+				TO_CHAR(T.WORK_TIME_END, 'yyyy-mm-dd') AS WORK_TIME_END
 		  FROM BG_WORKINGHOUR_INFO T
 		  JOIN BG_SYS_USER U
 		    ON T.WORKER = U.USERNAME
@@ -386,7 +389,7 @@
 		   AND T.VALID = 1
 	</select>
 	
-	<update id="changeEmpRoleByHrCode" parameterType="String">
+	<update id="changeEmpRoleByHrCode" parameterType="java.lang.String">
 		UPDATE BG_PROJECT_USER T
 		   SET T.ROLE = #{role}
 		 WHERE T.PROJECT_ID = #{projectId}

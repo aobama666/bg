@@ -1038,8 +1038,8 @@ public class BGServiceImpl implements IBGService {
 			while(iterator.hasNext()){
 				Map<String, String> workerMap=iterator.next();
 				if(stuffMap.get("hrcode").equals(workerMap.get("HRCODE"))
-						&& DateUtil.compareDate(workerMap.get("WORK_TIME") , stuffMap.get("startDate"))
-						&& DateUtil.compareDate(stuffMap.get("endDate") , workerMap.get("WORK_TIME"))){
+						&& DateUtil.compareDate(workerMap.get("WORK_TIME_BEGIN") , stuffMap.get("startDate"))
+						&& DateUtil.compareDate(stuffMap.get("endDate") , workerMap.get("WORK_TIME_END"))){
 					bgServiceLog.info("updateStuff ：删除成功"+stuffMap.get("hrcode"));
 					iterator.remove();
 				}

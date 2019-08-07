@@ -324,7 +324,7 @@
 		WHERE ID=#{id} AND VALID=1 AND STATUS IN (0,2)
 	</update>
 	
-	<update id="changeWorkHourInfoStatus" parameterType="String">
+	<update id="changeWorkHourInfoStatus" parameterType="java.lang.String">
 		UPDATE BG_WORKINGHOUR_INFO SET status = #{status,jdbcType=VARCHAR}
 			WHERE
 			<if test="id!=null and id!=''">
@@ -333,11 +333,11 @@
 		   	valid=1
 	</update>
 	
-	<select id="getProIdByWBSNumber" parameterType="String" resultType="java.lang.String">
+	<select id="getProIdByWBSNumber" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT id FROM BG_PROJECT_INFO t WHERE t.wbs_number=#{wbsNumber} AND t.status='1'
 	</select>
 	
-	<select id="getPeriodOvertime" parameterType="String" resultType="double">
+	<select id="getPeriodOvertime" parameterType="java.lang.String" resultType="double">
 		SELECT COALESCE(SUM(DECODE(tws.schedule_type,
                    0,
                    DECODE(SIGN(tws.today_hours - 8),
@@ -362,13 +362,13 @@
              ON wh.work_time = ws.schedule_date) tws
 	</select>
 	
-	<select id="getDayType" parameterType="String" resultType="int">
+	<select id="getDayType" parameterType="java.lang.String" resultType="int">
 		SELECT bws.schedule_type
     	 FROM BG_SYS_WORK_SCHEDULE bws
    			 WHERE bws.schedule_date = TO_DATE(#{selectedDate}, 'yyyy-mm-dd')
 	</select>
 	
-	<select id="todaySubmitedWorkHour" parameterType="String" resultType="double">
+	<select id="todaySubmitedWorkHour" parameterType="java.lang.String" resultType="double">
 		SELECT COALESCE(SUM(t.working_hour),0) today_submit_workhour
  			 FROM BG_WORKINGHOUR_INFO t
 				 WHERE t.worker = #{username}
@@ -419,7 +419,7 @@
 		 WHERE id=#{id} AND valid=1
 	</insert>
 	 
-	<select id="getPrincipalByProId" parameterType="String" resultType="String">
+	<select id="getPrincipalByProId" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT t1.username
 		  FROM BG_PROJECT_USER t
 		  JOIN BG_SYS_USER t1
@@ -591,7 +591,7 @@
 		   AND T.ID = #{proId}
 	</select>
 	
-	<select id="getProInfoByProId" parameterType="String" resultType="java.util.Map">
+	<select id="getProInfoByProId" parameterType="java.lang.String" resultType="java.util.Map">
 		SELECT T.ID,
 		       T.PROJECT_NAME,
 		       D.NAME           AS CATEGORY,
@@ -613,15 +613,15 @@
 		   AND ROWNUM = 1
 	</select>
 	
-	<select id="getFieldOfWorkHourById" parameterType="String" resultType="String">
+	<select id="getFieldOfWorkHourById" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT ${field} FROM BG_WORKINGHOUR_INFO t WHERE t.id=#{id} AND t.valid=1
 	</select>
 	
-	<update id="setFieldOfProcessRecordById" parameterType="String">
+	<update id="setFieldOfProcessRecordById" parameterType="java.lang.String">
 		UPDATE BG_PROCESS_RECORD SET ${field} = #{value,jdbcType=VARCHAR} WHERE id=#{processId} AND valid=1
 	</update>
 	
-	<update id="setFieldOfWorkHourById" parameterType="String">
+	<update id="setFieldOfWorkHourById" parameterType="java.lang.String">
 		UPDATE BG_WORKINGHOUR_INFO SET ${field} = #{value,jdbcType=VARCHAR} WHERE id=#{id} AND valid=1
 	</update>
 	
@@ -634,7 +634,7 @@
 		WHERE ID=#{id} AND valid=1
 	</update>
 
-	<select id="getTopSubmitType" parameterType="String" resultType="String">
+	<select id="getTopSubmitType" parameterType="java.lang.String" resultType="java.lang.String">
 		select nvl(min(to_number(td.sort_id)),10)
 			from BG_SYS_APPROVAL_USER_R_SUBTYPE t
 			join BG_SYS_DATADICTIONARY td
@@ -645,7 +645,7 @@
 		 and td.vaild=1
 	</select>
 	
-	<select id="getDefaultApprover" parameterType="String" resultType="java.util.Map">
+	<select id="getDefaultApprover" parameterType="java.lang.String" resultType="java.util.Map">
 		   SELECT *
 			  FROM (SELECT U.HRCODE AS "hrcode", U.USERALIAS AS "name"
 			          FROM BG_SYS_APPROVAL_USER_R_SUBTYPE T
@@ -689,7 +689,7 @@
 			 WHERE ROWNUM = 1
 	</select>
 	
-	<select id="getApproverList" parameterType="String" resultType="java.util.Map">
+	<select id="getApproverList" parameterType="java.lang.String" resultType="java.util.Map">
 		select u.hrcode as "hrcode", u.useralias as "name", p.deptname "deptName"
 		  from BG_SYS_APPROVAL_USER_R_SUBTYPE t
 		  left join BG_SYS_USER u

@@ -361,7 +361,9 @@ function forSubmit(){
 			params["id"] =  $.trim(item.ID);
 			params["hrCode"] =  $.trim(item.HRCODE);
 			params["approver"] =  $.trim(item.APPROVER_USERNAME);
-			params["date"] =  $.trim(item.WORK_TIME);
+			//params["date"] =  $.trim(item.WORK_TIME);
+			params["dateBegin"] =  $.trim(item.WORK_TIME_BEGIN);
+			params["dateEnd"] =  $.trim(item.WORK_TIME_END);
 			params["projectName"] =  $.trim(item.PROJECT_NAME);
 			params["workHour"] =  $.trim(item.WORKING_HOUR);
 			params["jobContent"] =  $.trim(item.JOB_CONTENT);

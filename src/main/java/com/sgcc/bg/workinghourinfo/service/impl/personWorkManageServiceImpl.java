@@ -326,6 +326,7 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 										+ "第"+xhs+"行工时"+(Rtext.isEmpty(workhour)?"未填写！":"格式错误！"));
 								return JSON.toJSONString(rw);
 							}
+
 							//效验累计工时是否超过月度工时
 							Map<String,Object> dateMap = swService.workingHoursMap(worktimeBegin);
 							BigDecimal fillSum = new BigDecimal(String.valueOf(dateMap.get("fillSum")));

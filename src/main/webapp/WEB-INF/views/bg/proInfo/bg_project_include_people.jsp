@@ -268,7 +268,7 @@
         begin=begin.sort();
         over=over.sort();
         for(i=1;i<begin.length;i++){
-            if(begin[i]<over[i-1]){
+            if(begin[i]<=over[i-1]){
                 layer.msg("您填写的时间有交叉，请检查");
                 return;
             }
@@ -319,7 +319,7 @@
                                 sortIndex("mmg");
                             }
                         });
-                        note+=item.NAME+"("+item.WORK_TIME+")、";
+                        note+=item.NAME+"("+item.WORK_TIME_BEGIN+")"+"-"+"("+item.WORK_TIME_END+")、";
                     });
                     parent.layer.msg(note.substr(0,note.length-1)+"已存在报工信息，请核实!");
                 }

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
@@ -215,7 +216,9 @@ public class StaffWorkingHourManageController {
 			String rowNum=Rtext.toStringTrim(map.get("rowNum"), "");
 			String workHour=Rtext.toStringTrim(map.get("workHour"), "");
 			String jobContent=Rtext.toStringTrim(map.get("jobContent"), "");
-			String date=Rtext.toStringTrim(map.get("date"), "");
+			//String date=Rtext.toStringTrim(map.get("date"), "");
+			String dateBegin=Rtext.toStringTrim(map.get("dateBegin"), "");
+			String dateEnd=Rtext.toStringTrim(map.get("dateEnd"), "");
 			String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
 			String projectName=Rtext.toStringTrim(map.get("projectName"), "");
 			String approverUsername=Rtext.toStringTrim(map.get("approver"), "");
@@ -231,10 +234,12 @@ public class StaffWorkingHourManageController {
 				resultMap.put("hint","重复提交！");
 				return JSON.toJSONString(resultMap);
 			}
-			if("".equals(id) || "".equals(workHour) || "".equals(date) || "".equals(hrCode) 
-					|| "".equals(approverUsername)){
-				smLog.info("员工工时管理执行提交的数据有空值： 项目id:"+id+"-工时："+workHour+"-日期："+date+"-员工编号："
-					+hrCode+"-审批人用户名："+approverUsername);
+			/*if("".equals(id) || "".equals(workHour) || "".equals(date) || "".equals(hrCode) || "".equals(approverUsername)){
+				smLog.info("员工工时管理执行提交的数据有空值： 项目id:"+id+"-工时："+workHour+"-日期："+date+"-员工编号："+hrCode+"-审批人用户名："+approverUsername);
+				continue;
+			}*/
+			if("".equals(id) || "".equals(workHour) || "".equals(hrCode) || "".equals(approverUsername)){
+				smLog.info("员工工时管理执行提交的数据有空值： 项目id:"+id+"-工时："+workHour+"-员工编号："+hrCode+"-审批人用户名："+approverUsername);
 				continue;
 			}
 			// || "".equals(jobContent)  +"-工作内容："+jobContent 暂不做工作内容必填校验
@@ -263,6 +268,20 @@ public class StaffWorkingHourManageController {
 				resultMap.put("hint", "工时超标！");
 				return JSON.toJSONString(resultMap);
 			} */
+
+			//效验累计工时是否超过月度工时
+			Map<String,Object> dateMap = SWService.workingHoursMap(dateBegin);
+			BigDecimal fillSum = new BigDecimal(String.valueOf(dateMap.get("fillSum")));
+			BigDecimal fillSumKQ = (BigDecimal)dateMap.get("fillSumKQ");
+			int j = fillSum.compareTo(fillSumKQ);
+			if(j>0){
+				smLog.info("工时超标！");
+				resultMap.put("count", count+"");
+				resultMap.put("rowNum", rowNum);
+				resultMap.put("hint", "工时超标！");
+				return JSON.toJSONString(resultMap);
+			}
+
 			//添加到流程记录表
 			String processId=SWService.addSubmitRecord(id, processUsername);
 			if(approverUsername.equals(user==null?"":user.getUserName())){//如果审核人就是本人，则默认通过

@@ -507,7 +507,8 @@
 								sortIndex();
 							}
 						});
-						note+=item.NAME+"("+item.WORK_TIME+")、";
+						//note+=item.NAME+"("+item.WORK_TIME+")、";
+                        note+=item.NAME+"("+item.WORK_TIME_BEGIN+")"+"-"+"("+item.WORK_TIME_END+")、";
 					});
 					parent.layer.msg(note.substr(0,note.length-1)+"已存在报工信息，请核实!");
 				} 
