@@ -56,6 +56,7 @@
 	<script src="<%=request.getContextPath()%>/common/plugins/pseudo/jquery.pseudo.js"></script>
 <![endif]-->
 
+
 <style type="text/css">
 a,.glyphicon{
 	cursor: pointer;
@@ -90,7 +91,7 @@ td span{
 	<hr>
 	<form class="form-inline">
 		<%--<div class="form-group">
-			 <label>填报日期</label> 
+			 <label>填报日期</label>
 			<span onclick="changeDateByStep(-1)"><span class="glyphicon glyphicon-backward" ></span></span>
 			<div class="input-group date form_date bg-white" style="width: 200px;display:inline-table;vertical-align:middle">
 				<div id="cover" style="width:100%;height:100%;position:absolute;top:0px;left:0px;z-index:999;display: none"></div>
@@ -175,12 +176,26 @@ $(function () {
 function changeByStep(step){
     var dateStr=$("#fillDa").val();
     var date=new Date(dateStr.replace(/-/g,"/"));
-    date.setMonth(date.getMonth()+step);
+    var a = dateStr.split("-");
+    var year = a[0];
+    var mon = Number(a[1])+step;
+	if(mon<10){
+        mon="0"+mon;
+	}
+	if(mon>12){
+        year = Number(year)+step;
+        mon = "0"+1;
+	}else if (mon<1){
+	    year = Number(year)+step;
+	    mon=12;
+	}
+	var n = year+"-"+mon;
+    /*date.setMonth(date.getMonth()+step);
     var m=date.getMonth()+1
 	if(m<10){
         m="0"+m;
 	}
-	var n = date.getFullYear()+"-"+m;
+	var n = date.getFullYear()+"-"+m;*/
     document.getElementById("fillDa").value=n;
     //forSave();
     delayDate=$("#fillDa").val();
@@ -234,10 +249,10 @@ function workingHours() {
 			forSave();
 			delayDate=$("#fillDate").val();
 			if(mmg!=undefined){
-				mmg.load();	
+				mmg.load();
 			}
 		}
-	});		
+	});
 	$(".form_date").datepicker( 'setDates' , new Date() );
 	queryList();
 });*/
@@ -277,19 +292,19 @@ function queryList(load){
 					renderer:function(val,item,rowIndex){
 						val=val==undefined?"":val;
 	            		return '<input type="hidden" property="id" value="'+val+'">';
-	            	}	
+	            	}
 				},
 				{title:'proId', name:'PROJECT_ID', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true,
 					renderer:function(val,item,rowIndex){
 						val=val==undefined?"":val;
 	            		return '<input type="hidden" property="proId" value="'+val+'">';
-	            	}	
+	            	}
 				},
 				{title:'负责人hrcode', name:'HRCODE', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true,
 					renderer:function(val,item,rowIndex){
 						val=val==undefined?"":val;
 	            		return '<input type="hidden" property="hrCode" value="'+val+'">';
-	            	}	
+	            	}
 				},
 				{title:'开始日期', name:'WORK_TIME_BEGIN', width:100, sortable:false, align:'center',
                     renderer:function(val,item,rowIndex){
@@ -344,7 +359,7 @@ function queryList(load){
 	            			val='<span>'+val+'</span><input type="hidden" property="workHour" value="'+val+'">';
 	            		}
 	            		return val;
-	            	}	
+	            	}
 	            },
 	            {titleHtml:'审核人<font class="glyphicon glyphicon-asterisk text-danger"></font>', name:'PRINCIPAL',width:90, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
@@ -357,7 +372,7 @@ function queryList(load){
 	            			val='<span title="'+val+'">'+val+'</span><input type="hidden" property="principal" value="'+val+'">';
 	            		}
 	            		return val;
-	            	}	
+	            	}
 	            },
 	            {title:'状态', name:'STATUS', width:90, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
@@ -511,7 +526,7 @@ function forSave(){
 		layer.msg("您的填写有误，请检查");
 		return;
 	}
-	
+
 	var paramArr =new Array();
 	for(var i=0;i<rows.length;i++){
 		var $row=$(rows[i]);
@@ -519,11 +534,11 @@ function forSave(){
 		$row.find("input[name!='principal']:visible,textarea").each(function(){//审核人员项现在有默认值
 			//当有一个填入了数据并且数据符合保存格式则可保存
 			if($.trim($(this).val())!=""){
-				canSave=true;	
+				canSave=true;
 				return false;
 			}
 		});
-		
+
 		if(!canSave){
 			//如果不符合保存条件（所有input都为空），则删除此条记录
 			var id=$row.find("input[property='id']").val();
@@ -576,7 +591,7 @@ function forAddProJob(){
 		scrollbar:true,
 		skin:'query-box',
 		content:['<%=request.getContextPath()%>/staffWorkbench/proJobSelector?selectedDate='+selectedDate]
-	}); 
+	});
 }
 
 //新增非项目工作
@@ -607,7 +622,7 @@ function forAddNonProJob(){
 		"PRINCIPAL":approverName,
 		"EDITABLE":"true"
 		});
-} 
+}
 
 function forAddApprover(_this){
 	var row=$(_this).parents("tr");
@@ -619,7 +634,7 @@ function forAddApprover(_this){
 		scrollbar:true,
 		skin:'query-box',
 		content:['<%=request.getContextPath()%>/staffWorkbench/approverSelector?rowNum='+rowNum]
-	}); 
+	});
 }
 
 // 删除
@@ -645,7 +660,7 @@ function forDelete(_this,id){
 						}else{
 							layer.msg("删除失败！");
 							mmg.load();
-						}					
+						}
 				},'text');
 			}else{
 				mmg.removeRow(index-1);
@@ -660,20 +675,20 @@ function forDelete(_this,id){
 function forRecall(_this,id){
 	layer.confirm('确认撤回吗？', {icon: 7,title:'提示',shift:-1},
 		function(num){
-			layer.close(num);	
+			layer.close(num);
 			var ran = Math.random()*100000000;
 			var row=$(_this).parents("tr");
 			var index=row.find(".mmg-index").text();
 			$.get("<%=request.getContextPath()%>/staffWorkbench/recallWorkHourInfo?id="+id+"&ran="+ran,
 				function(data){
 					if(data=='success'){
-						
+
 					}else if(data=='examined'){
 						layer.msg("无法撤回已审核信息！");
 					}else{
 						layer.msg("撤回失败！");
 					}
-					mmg.load();					
+					mmg.load();
 			},'text');
 	});
 }
@@ -698,14 +713,14 @@ function forSubmit(){
 		for(var i=0;i<rows.length;i++){
 			var $row=$(rows[i]);
 			var checkResult;
-			
+
 			checkResult =$row.sotoValidate([
 											  {name:'projectName',vali:'length[-50]'},
 	                                   	      {name:'jobContent',vali:'length[-200]'},//required;暂不做必须校验
 	                                   	      {name:'workHour',vali:'required;checkNumberFormat()'},
 	                                   	      {name:'principal',vali:'required;'}
 				                               ]);
-			
+
 			if(!checkResult){
 				isPass=false;
 				continue;
