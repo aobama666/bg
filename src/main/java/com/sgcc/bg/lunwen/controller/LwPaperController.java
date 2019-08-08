@@ -749,11 +749,9 @@ public class LwPaperController {
      */
     @ResponseBody
     @RequestMapping(value = "/paperAddAnnex")
-    public String addAnnex(HttpServletResponse response,HttpServletRequest request) throws Exception{
-        response.setContentType("text/html;charset=utf-8");
-        response.setCharacterEncoding("utf-8");
-//        response.setContentType("text/plain;charset=utf-8");
+    public void addAnnex(HttpServletResponse response,HttpServletRequest request) throws Exception{
         ResultWarp rw = null;
+        response.setContentType("text/html;charset=utf-8");
         String paperUuid = request.getParameter("paperUuid");
         //服务器的保存路径
         String path = request.getSession().getServletContext().getRealPath("")
@@ -783,7 +781,8 @@ public class LwPaperController {
             //附件文件格式不正常
             new File(localPath).delete();
             rw = new ResultWarp(ResultWarp.FAILED ,"附件文件格式不符合条件");
-            return JSON.toJSONString(rw);
+            response.getWriter().print(JSON.toJSONString(rw));
+            return;
         }
 
         //判断该附件是否存在
@@ -792,7 +791,8 @@ public class LwPaperController {
             //附件已存在，删除本地路径附件，返回已存在标识
             new File(localPath).delete();
             rw = new ResultWarp(ResultWarp.FAILED ,"附件已存在，不可重复上传");
-            return JSON.toJSONString(rw);
+            response.getWriter().print(JSON.toJSONString(rw));
+            return;
         }
 
         //重命名本地文件
@@ -827,7 +827,7 @@ public class LwPaperController {
 
         rw = new ResultWarp(ResultWarp.SUCCESS ,"上传附件成功");
         rw.addData("fileUuid",lwFile.getUuid());
-        return JSON.toJSONString(rw);
+        response.getWriter().print(JSON.toJSONString(rw));
     }
 
     /**
@@ -860,15 +860,21 @@ public class LwPaperController {
      */
     @ResponseBody
     @RequestMapping(value = "/btachUpload")
-    public String btachUpload(HttpServletResponse response,HttpServletRequest request){
+    public void btachUpload(HttpServletResponse response,HttpServletRequest request){
         ResultWarp rw = null;
-        response.setContentType("text/javascript;charset=utf-8");
-//        response.setContentType("text/plain;charset=utf-8");
+//            response.setContentType("text/html;charset=utf-8");
+//        response.setContentType("text/javascript;charset=utf-8");
+        response.setContentType("text/plain;charset=utf-8");
         //如果上传zip文件大于100mb，直接驳回，不允许他有这种猖狂的操作
         int fileSize = request.getContentLength();//上传文件大小，单位为B
         if(fileSize > 104857600){
             rw = new ResultWarp(ResultWarp.FAILED ,"上传的zip包大小不得大于100MB");
-            return JSON.toJSONString(rw);
+            try {
+                response.getWriter().print(JSON.toJSONString(rw));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
         }
         //服务器的保存路径
         String path = request.getSession().getServletContext().getRealPath("")
@@ -1004,7 +1010,12 @@ public class LwPaperController {
             rw = new ResultWarp(ResultWarp.FAILED ,"上传附件完成");
             rw.addData("errorMessage",errorMessage);
         }
-        return JSON.toJSONString(rw);
+//        return JSON.toJSONString(rw);
+        try {
+            response.getWriter().print(JSON.toJSONString(rw));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
