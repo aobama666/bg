@@ -60,12 +60,13 @@ roomDetailInfo.messageSubmit= function(approvalUserd){
                 contentType: 'application/json',
                 data: JSON.stringify(specialist),
                 success: function (data) {
-                    layer.alert(data.msg,{icon:1,title:'信息提示'});
-                    parent.layer.close(closeIndex);
+                    if(data.success==='true'){
+                        parent.queryAll.closeAndOpen(data.msg);
+                    }else{
+                        layer.alert(data.msg,{icon:2,title:'信息提示'});
+                    }
                 }
             });
-        },function () {
-            layer.close(index);
         }
     )
 }

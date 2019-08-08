@@ -55,7 +55,7 @@
 </head>
 <body>
 	<div class='content_top'>评分规则</div>
-	<div id="funcBtn" style="float:right;margin-top:10px">
+	<div id="funcBtn" style="float:right;margin-top:10px;display: none">
 		<div class='btn right deleteButton' onclick="rule.downLoadTempLate()" >修改</div>
 		<div class='btn right deleteButton' onclick="rule.downLoadTempLate()" >保存</div>
 	</div>

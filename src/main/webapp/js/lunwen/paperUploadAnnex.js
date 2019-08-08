@@ -26,7 +26,7 @@ $(function(){
 	    }
 	});
     uploadAnnex.btn_type_flag = 0;
-    $(".tableBody").css("height","150px");
+
 });
 
 /*  start  列表查询   */
@@ -34,7 +34,6 @@ uploadAnnex.query = function(){
 	dataItems = new Array();
 	index = 0;
 	$("#datagrid").datagrid("seach");
-    $(".tableBody").css("height","150px");
 }
 /*  end  列表查询  */
 
@@ -64,7 +63,10 @@ uploadAnnex.initDataGrid = function(){
                 {name: '文件格式',style:{width:"50px"}, data: 'FILEEXTNAME'},
                 {name: '文件大小', style:{width:"50px"},data: 'FILESIZE'},
                 {name: '上传时间', style:{width:"120px"},data: 'CREATETIME'}
-            ]
+            ],
+            calculateHeadWidth:function(target){
+                $(".tableBody").css("height","100px");
+            },
         });
         $(".paging").css("display","none");
 }

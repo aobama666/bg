@@ -220,7 +220,7 @@ queryAll.updateEvent = function(){
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;">专家修改 </h4>',
-        area:['85%','50%'],
+        area:['85%','60%'],
         fixed:false,//不固定
         maxmin:true,
         content:url,
@@ -285,10 +285,11 @@ queryAll.updateSubmit = function () {
                 contentType: 'application/json',
                 data: JSON.stringify(specialist),
                 success: function (data) {
-                    layer.alert(data.msg,{icon:1,title:'信息提示'});
-                    roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
-                    var closeIndex = parent.layer.getFrameIndex(window.name);
-                    parent.layer.close(closeIndex);
+                    if(data.success==='true'){
+                        parent.queryAll.closeAndOpen(data.msg);
+                    }else{
+                        layer.alert(data.msg,{icon:2,title:'信息提示'});
+                    }
                 }
             });
         },function () {
@@ -358,7 +359,7 @@ queryAll.addEvent = function (){
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;">专家新增</h4>',
-        area:['85%','50%'],
+        area:['85%','60%'],
         fixed:false,//不固定
         maxmin:true,
         content:url,
@@ -389,3 +390,10 @@ queryAll.messageResign =function(){
     var closeIndex = parent.layer.getFrameIndex(window.name);
     parent.layer.close(closeIndex);
 }
+
+
+/*关闭页面后弹出信息*/
+queryAll.closeAndOpen = function (message) {
+    layer.closeAll();
+    layer.alert(message,{icon:1,title:'信息提示'});
+};

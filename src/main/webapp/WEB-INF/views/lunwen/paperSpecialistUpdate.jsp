@@ -63,7 +63,7 @@
 				<span title = "研究方向"><b class="mustWrite">*</b>研究方向</span>
 			</td>
 			<td class="addInputStyle">
-				<input id="researchDirection" name="researchDirection"  type="text" class="validNull"  value = "${lwSpecialist.researchDirection}"  content="研究方向"  len="100"  title="必填项，中文或英文,字段长度不能超过100，多个研究方向用‘，’隔开"  />
+				<input id="researchDirection" name="researchDirection"   type="text" class="validNull"  value = "${lwSpecialist.researchDirection}"  content="研究方向"  len="100"  title="必填项，中文或英文,字段长度不能超过100，多个研究方向用‘，’隔开"  />
 			</td>
 			<td >
 				<span title = "领域"><b class="mustWrite">*</b>领域</span>
@@ -78,13 +78,13 @@
 				<span title = "联系电话"><b class="mustWrite">*</b>联系电话</span>
 			</td>
 			<td class="addInputStyle">
-				<input id="phone" name="phone"  type="text" class="validNull"  value = "${lwSpecialist.phone}"  content="联系电话"  title="必填项"  />
+				<input id="phone" name="phone"  type="text" class="validNull" len="20"  value = "${lwSpecialist.phone}"  content="联系电话"  title="必填项"  />
 			</td>
 			<td >
 				<span title = "电子邮箱"><b class="mustWrite">*</b>电子邮箱</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="email" name="email"  class="validNull"  value = "${lwSpecialist.email}" content="电子邮箱"  title="必填项  "/>
+				<input type="text"  id="email" name="email"  class="validNull" len="100"  value = "${lwSpecialist.email}" content="电子邮箱"  title="必填项  "/>
 			</td>
 		</tr>
         <tr>

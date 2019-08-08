@@ -190,19 +190,17 @@ public class LwSpecialistController {
     }
 
     /**
-     * 增加专家
-     * @param lwSpecialist
-     * @return
+     * 增加专家————不知道这前辈什么逻辑，把新增和修改放到了一块去，我也懒得动，不过还是把下面注释掉吧，省的找麻烦，这垃圾代码
      */
-    @ResponseBody
-    @RequestMapping(value = "/insertExpert" ,method = RequestMethod.POST)
-    public String insertExpert(LwSpecialist lwSpecialist){
-        int i = lwSpecialistServiceImpl.insertExpert(lwSpecialist);
-        return null;
-    }
+//    @ResponseBody
+//    @RequestMapping(value = "/insertExpert" ,method = RequestMethod.POST)
+//    public String insertExpert(LwSpecialist lwSpecialist){
+//        int i = lwSpecialistServiceImpl.insertExpert(lwSpecialist);
+//        return null;
+//    }
 
     /**
-     * 修改专家
+     * 修改专家——————————————根据有没有uuid判断是新增还是修改
      * @param lwSpecialist
      * @return
      */
@@ -211,15 +209,31 @@ public class LwSpecialistController {
     public String updateExpert(@RequestBody LwSpecialist lwSpecialist){
         ResultWarp rw =  null;
         int i = 0;
+        String email = lwSpecialist.getEmail();
+        String ifEmail = lwSpecialistServiceImpl.ifEmail(email);
         if(lwSpecialist.getUuid()==null || lwSpecialist.getUuid()==""){
+            if(null != ifEmail && !"".equals(ifEmail)){
+                rw = new ResultWarp(ResultWarp.FAILED,"添加失败,邮箱不可重复");
+                return JSON.toJSONString(rw);
+            }
             i = lwSpecialistServiceImpl.insertExpert(lwSpecialist);
+            if(i>0){
+                rw = new ResultWarp(ResultWarp.SUCCESS,"添加成功");
+            }else {
+                rw = new ResultWarp(ResultWarp.FAILED,"添加失败");
+            }
         }else {
+            //如果存在该邮箱，uuid还不等于当前id，就是重复
+            if(null != ifEmail && !"".equals(ifEmail) && !ifEmail.equals(lwSpecialist.getUuid())){
+                rw = new ResultWarp(ResultWarp.FAILED,"修改失败,邮箱不可重复");
+                return JSON.toJSONString(rw);
+            }
             i = lwSpecialistServiceImpl.updateExpert(lwSpecialist);
-        }
-        if(i>0){
-            rw = new ResultWarp(ResultWarp.SUCCESS,"操作成功");
-        }else {
-            rw = new ResultWarp(ResultWarp.FAILED,"操作失败");
+            if(i>0){
+                rw = new ResultWarp(ResultWarp.SUCCESS,"修改成功");
+            }else {
+                rw = new ResultWarp(ResultWarp.FAILED,"修改失败");
+            }
         }
         return JSON.toJSONString(rw);
     }
