@@ -62,7 +62,7 @@
 			<div class='btn right addButton' onclick="queryAll.addEvent()">新增</div>
 			<div class='btn right updateButton' onclick="queryAll.updateEvent()">修改</div>
 			<div class='btn right deleteButton' onclick="queryAll.delEvent()" >删除</div>
-			<div class='btn right downloadButton' onclick="queryAll.downLoadTemp()">下载模板</div>
+			<%--<div class='btn right downloadButton' onclick="queryAll.downLoadTemp()">下载模板</div>--%>
 			<div class='btn right joinButton' onclick="queryAll.joinEvent()">导入</div>
 			<div class='btn right outButton' onclick="queryAll.outEvent()">导出</div>
 			<div class='btn right renewalButton' onclick="queryAll.renewal()" >更换专家</div>

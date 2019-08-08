@@ -92,7 +92,7 @@
 	<div>
 		<!--  新增  修改  删除 功能按钮 -->
 		<div id="funcBtn" style="height: 35px;float:right">
-			<div style="margin-left: 5px;" class='btn right ' onclick="paperList.downLoadTempLate()" >下载模板</div>
+			<%--<div style="margin-left: 5px;" class='btn right ' onclick="paperList.downLoadTempLate()" >下载模板</div>--%>
 			<div style="margin-left: 5px;" class='btn right ' onclick="paperList.batchUploadOperation()" >附件批量导入</div>
 			<div style="margin-left: 5px;" class='btn right ' onclick="paperList.jumpImport()" >导入</div>
 			<div style="margin-left: 5px;" class='btn right ' onclick="paperList.exportExcel()" >导出</div>

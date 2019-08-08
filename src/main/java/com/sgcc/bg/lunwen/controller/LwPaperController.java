@@ -750,7 +750,9 @@ public class LwPaperController {
     @ResponseBody
     @RequestMapping(value = "/paperAddAnnex")
     public String addAnnex(HttpServletResponse response,HttpServletRequest request) throws Exception{
-        response.setContentType("text/plain;charset=utf-8");
+        response.setContentType("text/html;charset=utf-8");
+        response.setCharacterEncoding("utf-8");
+//        response.setContentType("text/plain;charset=utf-8");
         ResultWarp rw = null;
         String paperUuid = request.getParameter("paperUuid");
         //服务器的保存路径
@@ -785,7 +787,7 @@ public class LwPaperController {
         }
 
         //判断该附件是否存在
-        Map<String,Object> lwFileForFileName = lwFileService.findLwFileForFileName(fileNameBefore,fileNameAfter);
+        Map<String,Object> lwFileForFileName = lwFileService.findLwFileForPaperId(paperUuid,fileNameBefore,fileNameAfter);
         if(null!=lwFileForFileName){
             //附件已存在，删除本地路径附件，返回已存在标识
             new File(localPath).delete();
@@ -860,7 +862,8 @@ public class LwPaperController {
     @RequestMapping(value = "/btachUpload")
     public String btachUpload(HttpServletResponse response,HttpServletRequest request){
         ResultWarp rw = null;
-        response.setContentType("text/plain;charset=utf-8");
+        response.setContentType("text/javascript;charset=utf-8");
+//        response.setContentType("text/plain;charset=utf-8");
         //如果上传zip文件大于100mb，直接驳回，不允许他有这种猖狂的操作
         int fileSize = request.getContentLength();//上传文件大小，单位为B
         if(fileSize > 104857600){
@@ -924,8 +927,8 @@ public class LwPaperController {
             }
 
             //判断该附件是否存在
-            Map<String,Object> lwFileForFileName = lwFileService.findLwFileForFileName(fileNameBefore.trim(),fileNameAfter.trim());
-            if(null!=lwFileForFileName){
+            List<Map<String,Object>> lwFileForFileName = lwFileService.findLwFileForFileName(fileNameBefore.trim(),fileNameAfter.trim());
+            if(0!=lwFileForFileName.size()){
                 //附件已存在，删除本地路径附件，返回已存在标识
                 new File(localPath).delete();
                 errorMessageMap = new HashMap<>();

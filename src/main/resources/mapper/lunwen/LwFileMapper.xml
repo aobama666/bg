@@ -92,4 +92,13 @@
         and f.file_ext_name = #{fileExtName}
         and f.valid = #{valid}
     </select>
+
+    <select id="findLwFileForPaperId" resultType="java.util.Map">
+        select *
+          from bg_lw_file
+         where business_id = #{paperId}
+           and file_name = #{fileName}
+           and file_ext_name = #{fileExtName}
+           and valid = #{valid}
+    </select>
 </mapper>

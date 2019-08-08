@@ -33,8 +33,13 @@ public class LwFileServiceImpl implements LwFileService {
     }
 
     @Override
-    public Map<String, Object> findLwFileForFileName(String fileName, String fileExtName) {
+    public List<Map<String, Object>> findLwFileForFileName(String fileName, String fileExtName) {
         return lwFileMapper.findLwFileForFileName(fileName,fileExtName,LwPaperConstant.VALID_YES);
+    }
+
+    @Override
+    public Map<String, Object> findLwFileForPaperId(String paperId, String fileName, String fileExtName) {
+        return lwFileMapper.findLwFileForPaperId(paperId,fileName,fileExtName,LwPaperConstant.VALID_YES);
     }
 
     @Override
