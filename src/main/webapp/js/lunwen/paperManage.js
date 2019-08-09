@@ -464,7 +464,8 @@ paperList.manualMatch = function (id){
                 layer.open({
                     type:2,
                     title:'<h4 style="height:42px;line-height:25px;">专家匹配详情</h4>',
-                    area:['85%','85%'],
+                    // area:['100%','100%'],
+                    area:['95%','85%'],
                     fixed:false,//不固定
                     maxmin:true,
                     content:url,

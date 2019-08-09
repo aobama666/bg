@@ -131,7 +131,7 @@ public class LwPaperController {
         String paperType  = request.getParameter("paperType") == null?"":request.getParameter("paperType");
         String ids = request.getParameter("selectList") == null ?" " : request.getParameter("selectList");
         lwPaperService.selectLwpaperExport(paperName,paperId,year,unit,author,field,allStatus,paperType,ids,response);
-        log.info(getLoginUser()+"exprot data");
+        log.info(getLoginUser()+"--论文管理导出操作");
     }
 
     /**
@@ -418,6 +418,7 @@ public class LwPaperController {
             }
             msg += "未达标";
             rw = new ResultWarp(ResultWarp.SUCCESS,msg);
+            log.info(msg);
             return JSON.toJSONString(rw);
         }
 
@@ -586,8 +587,10 @@ public class LwPaperController {
                 lwPaperService.batchUpdateScoreTableStatus(LwPaperConstant.SCORE_TABLE_ON);
                 lwPaperService.batchUpdateAllStatus(LwPaperConstant.P_A_S_UNRATED);
                 rw = new ResultWarp(ResultWarp.SUCCESS ,"生成打分表成功");
+                log.info(getLoginUser()+"生成打分表成功");
             }else{
                 rw = new ResultWarp(ResultWarp.FAILED ,"生成打分表失败,匹配专家未达标");
+                log.info(getLoginUser()+"生成打分表失败,匹配专家未达标");
             }
         }
         /*  原有按照单个选中生成打分表代码
@@ -630,8 +633,10 @@ public class LwPaperController {
                 lwPaperService.batchUpdateScoreTableStatus(LwPaperConstant.SCORE_TABLE_OFF);
                 lwPaperService.batchUpdateAllStatus(LwPaperConstant.P_A_S_WITHDRAW);
                 rw = new ResultWarp(ResultWarp.SUCCESS ,"撤回打分表成功");
+                log.info(getLoginUser()+"撤回打分表成功");
             }else{
                 rw = new ResultWarp(ResultWarp.FAILED ,"打分期间不能操作该功能");
+                log.info(getLoginUser()+"打分期间不能操作该功能");
             }
         }
         /*  原有按照单个论文撤回打分表代码
@@ -828,6 +833,7 @@ public class LwPaperController {
         rw = new ResultWarp(ResultWarp.SUCCESS ,"上传附件成功");
         rw.addData("fileUuid",lwFile.getUuid());
         response.getWriter().print(JSON.toJSONString(rw));
+        log.info(getLoginUser()+"上传附件成功，"+paperUuid+","+fileName);
     }
 
     /**
@@ -835,12 +841,17 @@ public class LwPaperController {
      */
     @ResponseBody
     @RequestMapping(value = "/paperDelAnnex")
-    public String delAnnex(String uuid,String ftpFilePath){
-        //删除对应路径的ftp文件
-        FtpUtils.deleteFile(ftpFilePath);
-        //删除
-        lwFileService.delLwFile(uuid);
+    public String delAnnex(String uuids){
         ResultWarp rw = null;
+        String[] uuidStr = uuids.split(",");
+        for(String uuid : uuidStr){
+            String ftpFilePath = (String) lwFileService.findFile(uuid).get("FTPFILEPATH");
+            //删除对应路径的ftp文件
+            FtpUtils.deleteFile(ftpFilePath);
+            //删除
+            lwFileService.delLwFile(uuid);
+            log.info(getLoginUser()+"删除附件成功，附件主键："+uuid);
+        }
         rw = new ResultWarp(ResultWarp.SUCCESS ,"删除附件成功");
         return JSON.toJSONString(rw);
     }
@@ -999,6 +1010,7 @@ public class LwPaperController {
             lwFile.setCreateTime(new Date());
             lwFile.setValid(LwPaperConstant.VALID_YES);
             lwFileService.addLwFile(lwFile);
+            log.info(getLoginUser()+"附件批量上传,"+fileName+",paperUuid="+paperUuid);
         }
 
         //删除刚才生成的uuid文件夹
