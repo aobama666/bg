@@ -87,6 +87,7 @@
 				</div>
 			</div>
 		</div>
+		<input type="hidden" name="proIds" id="selectProIds">
 	</form>
 
 	<form class="form-inline">

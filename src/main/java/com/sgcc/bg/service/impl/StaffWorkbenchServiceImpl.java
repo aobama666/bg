@@ -315,7 +315,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 					if (cellValue[1] == null || "".equals(cellValue[1])) {
 						errorInfo.append("填报日期不能为空！ ");
 						errorNum.add(1);
-					} else if (!DateUtil.isValidDate(cellValue[1]) || !DateUtil.isValidDateYearMonth(cellValue[1])) {
+					} else if (!DateUtil.isValidDate(cellValue[1]) && !DateUtil.isValidDateYearMonth(cellValue[1])) {
 						errorInfo.append("填报日期填写有误！ ");
 						errorNum.add(1);
 					}
@@ -498,10 +498,6 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 							}
 						}
 
-						//取月初和月末
-						/*Map<String,String> dateMap = dateBeginEnd(cellValue[1]);
-						String dataBegin = dateMap.get("dateBegin");
-						String dataEnd = dateMap.get("dateEnd");*/
 						wh.setWorkTimeEnd(DateUtil.fomatDate(dataEnd));
 						wh.setWorkTimeBegin(DateUtil.fomatDate(dataBegin));
 						//wh.setWorkTime(DateUtil.fomatDate(dataBegin));
@@ -525,7 +521,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 					} else {// 未通过校验
 						Map<String,Object> map=new HashMap<>();
 						map.put("SQNUM",cellValue[0]);
-						map.put("DATE",cellValue[1]);
+						map.put("DATE",cellValue[1].substring(0,7));
 						map.put("CATEGORY",cellValue[2]);
 						map.put("PROJECT_NUMBER",cellValue[3]);
 						map.put("PROJECT_NAME",cellValue[4]);
@@ -546,7 +542,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 				// 生成错误信息文件
 				Object[][] title = { 
 						 { "序号\r\n（选填）", "SQNUM","nowrap"},
-						 { "填报日期 \r\n（必填，格式：YYYY-MM-DD）", "DATE","nowrap"},
+						 { "填报日期 \r\n（必填，格式：YYYY-MM）", "DATE","nowrap"},
 						 { "项目类型\r\n（必填）", "CATEGORY","nowrap" },
 						 { "工作任务编号\r\n（常规工作如果没有可不填）", "PROJECT_NUMBER","nowrap" }, 
 						 { "项目名称\r\n（选填）","PROJECT_NAME","nowrap"},
