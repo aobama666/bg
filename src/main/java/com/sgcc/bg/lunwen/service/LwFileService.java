@@ -13,7 +13,9 @@ public interface LwFileService {
 
     Map<String,Object> findFile(String uuid);
 
-    Map<String,Object> findLwFileForFileName(String fileName, String fileExtName);
+    List<Map<String,Object>> findLwFileForFileName(String fileName, String fileExtName);
+
+    Map<String,Object> findLwFileForPaperId(String paperId , String fileName, String fileExtName);
 
     List<Map<String, Object>> selectLwFile(String bussinessId, String bussinessTable, String valid);
 }

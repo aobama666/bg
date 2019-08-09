@@ -127,7 +127,7 @@ public class LwPaperConstant {
     /**
      * 附件上传本地临时路径
      */
-    public static final String ANNEX_UPLOAD_LOCAL_PATH = "\\upload\\lunwen\\";
+    public static final String ANNEX_UPLOAD_LOCAL_PATH = "/upload/lunwen/";
 
     /**
      * 允许上传的文件类型

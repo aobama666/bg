@@ -2,6 +2,7 @@ package com.sgcc.bg.lunwen.service;
 
 import com.sgcc.bg.lunwen.bean.LwSpecialist;
 import com.sgcc.bg.lunwen.bean.PaperVO;
+import org.apache.ibatis.annotations.Param;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
@@ -86,4 +87,11 @@ public interface LwSpecialistService {
 
     //修改专家的匹配状态
     int updateMatchStatus(String specialistId,String matchStatus);
+
+    /**
+     * 判断email是否存在，存在返回对应uuid
+     * @param email
+     * @return
+     */
+    String ifEmail(String email);
 }

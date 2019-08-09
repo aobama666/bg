@@ -39,13 +39,13 @@
 				<span title = "专家姓名"><b class="mustWrite">*</b>专家姓名</span>
 			</td>
 			<td class="addInputStyle" style="width: 40%">
-				<input id="name" name="name"  type="text" class="validNull"    content="联系人" len="20"  title="必填项，中文或英文,字段长度不能超过 20"   />
+				<input id="name" name="name"  type="text" class="validNull"    content="专家姓名" len="20"  title="必填项，中文或英文,字段长度不能超过 20"   />
 			</td>
 			<td  style="width: 10%">
 				<span title = "单位名称"><b class="mustWrite">*</b>单位名称</span>
 			</td>
 			<td class="addInputStyle" style="width: 40%">
-				<input type="text"  id="unitName" name="unitName"  class="validNull"  content="单位名称"  title="必填项  "/>
+				<input type="text"  id="unitName" name="unitName"  class="validNull" len="20"  content="单位名称"  title="必填项  "/>
 			</td>
 		</tr>
 
@@ -54,13 +54,13 @@
 				<span title = "单位性质"><b class="mustWrite">*</b>单位性质</span>
 			</td>
 			<td class="addInputStyle">
-				<input id="unitNature" name="unitNature"  type="text" class="validNull"   content="单位性质"  title="必填项"  />
+				<input id="unitNature" name="unitNature"  type="text" class="validNull" len="20"   content="单位性质"  title="必填项"  />
 			</td>
 			<td >
 				<span title = "职称/职务"><b class="mustWrite">*</b>职称/职务</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="position" name="position"  class="validNull" content="职称/职务"  title="必填项  "/>
+				<input type="text"  id="position" name="position" len="20"  class="validNull" content="职称/职务"  title="必填项  "/>
 			</td>
 		</tr>
 
@@ -69,13 +69,13 @@
 				<span title = "研究方向"><b class="mustWrite">*</b>研究方向</span>
 			</td>
 			<td class="addInputStyle">
-				<input id="researchDirection" name="researchDirection"  type="text" class="validNull" content="研究方向"  title="必填项"  />
+				<input id="researchDirection" name="researchDirection"  len="100" type="text" class="validNull" content="研究方向"  title="必填项"  />
 			</td>
 			<td >
 				<span title = "领域"><b class="mustWrite">*</b>领域</span>
 			</td>
 			<td class="addInputStyle">
-				<input id="field" name="field" type="text"  class="validNull"  content="领域"  title="必填项  "/>
+				<input id="field" name="field" type="text" len="20"  class="validNull"  content="领域"  title="必填项  "/>
 			</td>
 		</tr>
 
@@ -84,13 +84,13 @@
 				<span title = "联系电话"><b class="mustWrite">*</b>联系电话</span>
 			</td>
 			<td class="addInputStyle">
-				<input id="phone" name="phone"  type="text" class="validNull"  content="联系电话"  title="必填项"  />
+				<input id="phone" name="phone"  type="text" class="validNull" len="20"  content="联系电话"  title="必填项"  />
 			</td>
 			<td >
 				<span title = "电子邮箱"><b class="mustWrite">*</b>电子邮箱</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="email" name="email"  class="validNull" content="电子邮箱"  title="必填项  "/>
+				<input type="text"  id="email" name="email" len="50"  class="validNull" content="电子邮箱"  title="必填项  "/>
 			</td>
 		</tr>
 		<tr>
@@ -98,7 +98,7 @@
 				<span title = "联系电话"><b class="mustWrite">*</b>详细地址</span>
 			</td>
 			<td class="addInputStyle" colspan="3">
-				<input id="address" name="address"  type="text" class="validNull"  value = "${lwSpecialist.address}"  content="详细地址"  title="必填项"  />
+				<input id="address" name="address"  type="text" class="validNull" len="100"  value = "${lwSpecialist.address}"  content="详细地址"  title="必填项"  />
 			</td>
 		</tr>
 	</table>

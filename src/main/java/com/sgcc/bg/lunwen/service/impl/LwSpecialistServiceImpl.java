@@ -7,6 +7,7 @@ import com.sgcc.bg.lunwen.bean.PaperVO;
 import com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper;
 import com.sgcc.bg.lunwen.mapper.LwSpecialistMapper;
 import com.sgcc.bg.lunwen.service.LwSpecialistService;
+import com.sgcc.bg.lunwen.util.EmailUtil;
 import com.sgcc.bg.model.HRUser;
 import com.sgcc.bg.service.UserService;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -182,7 +183,6 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
             //从数据字典中获取项目类型
             //Map<String,String> dictMap=dict.getDictDataByPcode("category100002");
             //获取所有项目编号存入一个集合
-            List<String> list=lwSpecialistMapper.getEmail();
             String regex = "^([1-9]+0*|[1-9]*\\.[05]|0\\.5)$";
             lwServiceLog.info("项目信息excel表格最后一行： " + rows);
             /* 保存有效的Excel模版列数 */
@@ -223,8 +223,8 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                     if (cellValue[2] == null || cellValue[2] == ""){
                         errorInfo.append("详细地址不能为空！ ");
                         errorNum.add(2);
-                    }else if (cellValue[2].length() > 30){
-                        errorInfo.append("详细地址不能超过30个字！ ");
+                    }else if (cellValue[2].length() > 100){
+                        errorInfo.append("详细地址不能超过100个字！ ");
                         errorNum.add(2);
                     }
 
@@ -255,8 +255,8 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                     if(cellValue[6] == null || cellValue[6] ==""){
                         errorInfo.append("研究方向不能为空！ ");
                         errorNum.add(6);
-                    }else if (cellValue[6].length()>20){
-                        errorInfo.append("研究方向不能超过20个字！ ");
+                    }else if (cellValue[6].length()>100){
+                        errorInfo.append("研究方向不能超过100个字！ ");
                         errorNum.add(6);
                     }
 
@@ -276,19 +276,17 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                         errorNum.add(8);
                     }
 
+                    String ifEmail = lwSpecialistMapper.ifEmail(cellValue[9]);
                     if(cellValue[9] == null || cellValue[9] ==""){
                         errorInfo.append("邮箱不能为空！ ");
                         errorNum.add(9);
-                    }else if (!ParamValidationUtil.eimail(cellValue[9])){
+//                  }else if (!ParamValidationUtil.eimail(cellValue[9])){   //这个校验有问题，@后面有多个点时校验不通过
+                    }else if (!EmailUtil.isEmail(cellValue[9])){
                         errorInfo.append("邮箱格式不对！ ");
                         errorNum.add(9);
-                    }else {
-                        for (String obj : list) {
-                            if (obj.equals(cellValue[9])) {
+                    }else if(null != ifEmail && !"".equals(ifEmail)){
                                 errorInfo.append("该电子邮箱已存在！ ");
                                 errorNum.add(9);
-                            }
-                        }
                     }
                     // 校验结束，分流数据
                     if ("".equals(errorInfo.toString())) {
@@ -312,6 +310,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                         lwSpecialist.setUpdateTime(new Date());
                         lwSpecialist.setValid("1");
                         lwSpecialistList.add(lwSpecialist);
+                        lwSpecialistMapper.insertExpert(lwSpecialist);
                     }else {
                         Map<String,Object> map=new HashMap<>();
                         map.put("id",cellValue[0]);
@@ -368,11 +367,6 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-        }
-        if(!lwSpecialistList.isEmpty()) {
-            for(LwSpecialist lwSpecialist : lwSpecialistList){
-                lwSpecialistMapper.insertExpert(lwSpecialist);
             }
         }
         String[] object = {"成功导入项目信息"+lwSpecialistList.size()+"条，失败"+errorList.size()+"条",errorUUID};
@@ -456,6 +450,11 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
     @Override
     public int updateMatchStatus(String specialistId, String matchStatus) {
         return lwSpecialistMapper.updateMatchStatus(specialistId,matchStatus);
+    }
+
+    @Override
+    public String ifEmail(String email) {
+        return lwSpecialistMapper.ifEmail(email);
     }
 
 

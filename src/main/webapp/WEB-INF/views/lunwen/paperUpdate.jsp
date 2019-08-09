@@ -108,7 +108,7 @@
 			<div id="datagrid"></div>
 		</div>
 
-	<div class="btnContent">
+	<div class="btnContent"  style="margin-top: 5px">
 		<button type="button" class="btn" onclick="paperList.updateEvent()">保存</button>
 		<button type="button" class="btn" onclick="paperList.addClose()">返回</button>
 	</div>
@@ -132,6 +132,7 @@
 	<!-- 本页面所需的js -->
  	<script src="<%=request.getContextPath()%>/js/lunwen/paperManage.js"></script>
 	<script src="<%=request.getContextPath()%>/js/lunwen/paperUploadAnnex.js"></script>
+	<script src="<%=request.getContextPath()%>/js/lunwen/allCheckBox.js"></script>
 </body>
 
 </html>

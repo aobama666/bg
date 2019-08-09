@@ -26,7 +26,7 @@ $(function(){
 	    }
 	});
     uploadAnnex.btn_type_flag = 0;
-    $(".tableBody").css("height","150px");
+
 });
 
 /*  start  列表查询   */
@@ -34,7 +34,6 @@ uploadAnnex.query = function(){
 	dataItems = new Array();
 	index = 0;
 	$("#datagrid").datagrid("seach");
-    $(".tableBody").css("height","150px");
 }
 /*  end  列表查询  */
 
@@ -64,7 +63,10 @@ uploadAnnex.initDataGrid = function(){
                 {name: '文件格式',style:{width:"50px"}, data: 'FILEEXTNAME'},
                 {name: '文件大小', style:{width:"50px"},data: 'FILESIZE'},
                 {name: '上传时间', style:{width:"120px"},data: 'CREATETIME'}
-            ]
+            ],
+            calculateHeadWidth:function(target){
+                $(".tableBody").css("height","100px");
+            },
         });
         $(".paging").css("display","none");
 }
@@ -223,15 +225,20 @@ uploadAnnex.delEvent = function(){
     if(checkedItems.length==0){
         layer.alert('请选择要删除的数据',{icon:0,title:'信息提示'});
         return;
-    }else if(checkedItems.length>1){
-        layer.alert('每次只能删除一条数据',{icon:0,title:'信息提示'});
-        return;
     }
+    var uuids = "";
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length>0) {
+        for (var i = 0; i < checkedItems.length; i++) {
+            uuids += checkedItems[i].UUID + ",";
+        }
+    }
+    uuids = uuids.slice(0,uuids.length-1);
     layer.confirm('确认删除选中数据吗',{
             btn:['确定','取消'],icon:0,title:'删除提示'
         },function () {
             $.ajax({
-                url: "/bg/lwPaper/paperDelAnnex?uuid="+checkedItems[0].UUID+"&ftpFilePath="+checkedItems[0].FTPFILEPATH,//删除
+                url: "/bg/lwPaper/paperDelAnnex?uuids="+uuids,//删除
                 type: "post",
                 dataType:"json",
                 contentType: 'application/json',

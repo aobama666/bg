@@ -46,7 +46,17 @@ public interface LwFileMapper {
      * @param valid
      * @return
      */
-    Map<String,Object> findLwFileForFileName(
+    List<Map<String,Object>> findLwFileForFileName(
+            @Param("fileName") String fileName,
+            @Param("fileExtName") String fileExtName,
+            @Param("valid") String valid
+    );
+
+    /**
+     *  根据论文id，文件名，格式查重
+     */
+    Map<String,Object> findLwFileForPaperId(
+            @Param("paperId") String paperId,
             @Param("fileName") String fileName,
             @Param("fileExtName") String fileExtName,
             @Param("valid") String valid

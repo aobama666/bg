@@ -113,6 +113,13 @@ public interface LwSpecialistMapper {
     List<String> getEmail();
 
     /**
+     * 判断email是否存在，存在返回对应uuid
+     * @param email
+     * @return
+     */
+    String ifEmail(@Param("email") String email);
+
+    /**
      * 获取论文匹配的专家
      * @param uuid
      * @return

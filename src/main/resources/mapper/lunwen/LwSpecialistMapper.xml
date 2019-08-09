@@ -450,6 +450,10 @@
         AND  s.VALID = '1'
         AND e.PAPER_ID = #{uuid,jdbcType=VARCHAR}
     </select>
+
+    <select id="ifEmail" resultType="java.lang.String">
+        select uuid from bg_lw_specialist where email = #{email}
+    </select>
     <!--and e.SPECIALIST_ID in(
     <foreach collection="list" item="list" index="index" separator=",">
         #{list,jdbcType=VARCHAR}
