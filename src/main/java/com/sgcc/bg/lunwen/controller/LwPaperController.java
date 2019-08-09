@@ -841,14 +841,18 @@ public class LwPaperController {
      */
     @ResponseBody
     @RequestMapping(value = "/paperDelAnnex")
-    public String delAnnex(String uuid,String ftpFilePath){
-        //删除对应路径的ftp文件
-        FtpUtils.deleteFile(ftpFilePath);
-        //删除
-        lwFileService.delLwFile(uuid);
+    public String delAnnex(String uuids){
         ResultWarp rw = null;
+        String[] uuidStr = uuids.split(",");
+        for(String uuid : uuidStr){
+            String ftpFilePath = (String) lwFileService.findFile(uuid).get("FTPFILEPATH");
+            //删除对应路径的ftp文件
+            FtpUtils.deleteFile(ftpFilePath);
+            //删除
+            lwFileService.delLwFile(uuid);
+            log.info(getLoginUser()+"删除附件成功，附件主键："+uuid);
+        }
         rw = new ResultWarp(ResultWarp.SUCCESS ,"删除附件成功");
-        log.info(getLoginUser()+"删除附件成功，附件主键："+uuid);
         return JSON.toJSONString(rw);
     }
 

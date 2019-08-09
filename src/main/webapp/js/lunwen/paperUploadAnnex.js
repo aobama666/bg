@@ -225,15 +225,20 @@ uploadAnnex.delEvent = function(){
     if(checkedItems.length==0){
         layer.alert('请选择要删除的数据',{icon:0,title:'信息提示'});
         return;
-    }else if(checkedItems.length>1){
-        layer.alert('每次只能删除一条数据',{icon:0,title:'信息提示'});
-        return;
     }
+    var uuids = "";
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length>0) {
+        for (var i = 0; i < checkedItems.length; i++) {
+            uuids += checkedItems[i].UUID + ",";
+        }
+    }
+    uuids = uuids.slice(0,uuids.length-1);
     layer.confirm('确认删除选中数据吗',{
             btn:['确定','取消'],icon:0,title:'删除提示'
         },function () {
             $.ajax({
-                url: "/bg/lwPaper/paperDelAnnex?uuid="+checkedItems[0].UUID+"&ftpFilePath="+checkedItems[0].FTPFILEPATH,//删除
+                url: "/bg/lwPaper/paperDelAnnex?uuids="+uuids,//删除
                 type: "post",
                 dataType:"json",
                 contentType: 'application/json',
