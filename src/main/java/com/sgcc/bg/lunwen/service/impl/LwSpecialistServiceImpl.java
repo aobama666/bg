@@ -310,6 +310,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                         lwSpecialist.setUpdateTime(new Date());
                         lwSpecialist.setValid("1");
                         lwSpecialistList.add(lwSpecialist);
+                        lwSpecialistMapper.insertExpert(lwSpecialist);
                     }else {
                         Map<String,Object> map=new HashMap<>();
                         map.put("id",cellValue[0]);
@@ -366,11 +367,6 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-        }
-        if(!lwSpecialistList.isEmpty()) {
-            for(LwSpecialist lwSpecialist : lwSpecialistList){
-                lwSpecialistMapper.insertExpert(lwSpecialist);
             }
         }
         String[] object = {"成功导入项目信息"+lwSpecialistList.size()+"条，失败"+errorList.size()+"条",errorUUID};
