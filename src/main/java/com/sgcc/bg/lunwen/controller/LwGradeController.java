@@ -273,6 +273,7 @@ public class LwGradeController {
         }else{
             msg = "修改分数成功";
         }
+        log.info(getLoginUser()+"打分,论文="+paperUuid);
         rw = new ResultWarp(ResultWarp.SUCCESS ,msg);
         return JSON.toJSONString(rw);
     }
@@ -342,5 +343,14 @@ public class LwGradeController {
             rw = new ResultWarp(ResultWarp.FAILED ,"fail");
         }
         return JSON.toJSONString(rw);
+    }
+
+    /**
+     * 获取当前登录用户信息，日志打印使用
+     */
+    public String getLoginUser(){
+        String userName = webUtils.getUsername();
+        HRUser user = userService.getUserByUserName(userName);
+        return "--------------username:"+userName+",userId:"+user.getUserId()+"---";
     }
 }

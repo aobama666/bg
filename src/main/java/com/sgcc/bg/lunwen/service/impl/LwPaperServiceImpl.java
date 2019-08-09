@@ -490,6 +490,7 @@ public class LwPaperServiceImpl implements LwPaperService {
                         lwPaper.setCreateUser(user.getUserId());
                         lwPaperList.add(lwPaper);
                         lwPaperService.addLwPaper(lwPaper);
+                        log.info("导入论文——"+lwPaper.toString());
                     }else {
                         Map<String,Object> map=new HashMap<>();
                         map.put("id",cellValue[0]);
