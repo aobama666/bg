@@ -143,8 +143,9 @@ paperList.addEvent = function (){
                 data: JSON.stringify(paperDetailFormData),
                 success: function (data) {
                     if(data.success=="true"){
-                        $("#uuid").val(data.data.uuid);
-                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                        // $("#uuid").val(data.data.uuid);
+                        // layer.alert(data.msg,{icon:1,title:'信息提示'});
+                        parent.paperList.closeAndOpen(data.msg);
                     }else{
                         layer.alert(data.msg,{icon:2,title:'信息提示'});
                         return;
@@ -217,7 +218,11 @@ paperList.updateEvent = function (){
                 contentType: 'application/json',
                 data: JSON.stringify(paperDetailFormData),
                 success: function (data) {
-                    layer.alert(data.msg,{icon:0,title:'信息提示'});
+                    if(data.success=="true"){
+                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    }else{
+                        layer.alert(data.msg,{icon:2,title:'信息提示'});
+                    }
                 }
             });
         },function () {

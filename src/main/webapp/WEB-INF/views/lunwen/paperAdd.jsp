@@ -18,8 +18,16 @@
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+	<style>
+		.tableBody{
+			height: 120px!important;
+		}
+	</style>
 </head>
 <body>
+
+<h3 style="width: 94%;margin-left: 3%;margin-top: 10px;margin-bottom: 10px">基本信息</h3>
+
 	<table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td style="width: 10%">
@@ -85,9 +93,6 @@
 			<td class="addInputStyle">
 				<input type="text"  id="paperType" name="paperType" value="${paperType}"/>
 			</td>
-		</tr>
-		<tr>
-			<hr/>
 		</tr>
 	</table>
 
