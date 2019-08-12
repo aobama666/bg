@@ -37,7 +37,7 @@
 				FROM BG_PROJECT_USER T4
 				WHERE T4.PROJECT_ID = T1.ID
 				AND T4.STATUS = '1'
-				and T4.Role='1') AS "principal",
+				and T4.ROLE='1') AS "principal",
 		       (SELECT TO_CHAR(WM_CONCAT(DISTINCT T3.EMPNAME))
 		          FROM BG_PROJECT_USER T3
 		         WHERE T3.PROJECT_ID = T1.ID
