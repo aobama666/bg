@@ -19,12 +19,17 @@
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 </head>
+<style>
+	.tableBody{
+		height: 120px!important;
+	}
+</style>
 <body>
 <form action="">
 	<input type = "text" style="display: none" value="" id = "annexUuid" name="annexUuid">
 </form>
 
-
+<h3 style="width: 94%;margin-left: 3%;margin-top: 10px;margin-bottom: 10px">基本信息</h3>
 	<table class="visitOperate tableStyle specialTable" >
 		<tr>
 			<td style="width: 10%">
@@ -82,9 +87,6 @@
 			<td class="addInputStyle">
 				<span class="detailsLeft"> ${DOWNLOADCOUNT}</span>
 			</td>
-		</tr>
-		<tr>
-			<h3 style="width: 94%;margin-left: 3%;margin-top: 2%;margin-bottom: 1%">基本信息</h3>
 		</tr>
 	</table>
 

@@ -172,7 +172,7 @@ public class LwPaperServiceImpl implements LwPaperService {
         Object[][] title = {
                 { "论文题目", "paperName","nowrap" },
                 { "作者", "author","nowrap" },
-                { "单位", "unit","nowrap" },
+                { "作者单位", "unit","nowrap" },
                 { "期刊名称", "journal","nowrap" },
                 { "推荐单位", "recommendUnit","nowrap" },
                 { "被引量", "quoteCount","nowrap" },
@@ -424,10 +424,10 @@ public class LwPaperServiceImpl implements LwPaperService {
                     }
 
                     if(cellValue[3] == null || cellValue[3] ==""){
-                        errorInfo.append("单位不能为空！ ");
+                        errorInfo.append("作者单位不能为空！ ");
                         errorNum.add(3);
                     }else if (cellValue[3].length()>50){
-                        errorInfo.append("单位不能超过50个字！ ");
+                        errorInfo.append("作者单位不能超过50个字！ ");
                         errorNum.add(3);
                     }
 
@@ -516,7 +516,7 @@ public class LwPaperServiceImpl implements LwPaperService {
                         {"序号","id","nowrap"},
                         { "论文题目", "paperName","nowrap" },
                         { "作者", "author","nowrap" },
-                        { "单位", "unit","nowrap" },
+                        { "作者单位", "unit","nowrap" },
                         { "期刊名称","journal","nowrap"},
                         { "推荐单位","recommendUnit","nowrap"},
                         { "被引量","quoteCount","nowrap"},

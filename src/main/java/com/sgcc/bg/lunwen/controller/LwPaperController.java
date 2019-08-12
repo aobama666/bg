@@ -255,6 +255,16 @@ public class LwPaperController {
     public String paperToUpdate(@RequestBody Map<String, Object> paramsMap){
         ResultWarp rw = null;
         LwPaper lwPaper = mapToLwPaper(paramsMap);
+
+        Map<String,Object> lwMap = lwPaperService.findPaper(null,lwPaper.getPaperName());
+        if(null != lwMap){
+            if(!lwMap.get("UUID").equals(lwPaper.getUuid())){
+                log.info(getLoginUser()+"update lwPaper fail,paperName exist,info:"+paramsMap.toString());
+                rw = new ResultWarp(ResultWarp.FAILED ,"修改论文失败，论文题目已存在");
+                return JSON.toJSONString(rw);
+            }
+        }
+
         lwPaper.setUpdateUser(getLoginUserUUID());
         lwPaper.setUpdateTime(new Date());
         lwPaper.setUuid(paramsMap.get("uuid").toString());
