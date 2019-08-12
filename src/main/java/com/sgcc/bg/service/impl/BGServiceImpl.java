@@ -724,8 +724,8 @@ public class BGServiceImpl implements IBGService {
 					//与已存在参与人"+user.getUserAlias()+"日期("+dateMap.get("startDate")+"至"+dateMap.get("endDate")+")重叠!
 					List<Map<String,String>> listPrincipalDate = bgMapper.listPrincipalDate(proId);
 					for (Map<String, String> principalDateMap : listPrincipalDate) {
-						if (DateUtil.fomatDate(cellValue[4]).getTime() >= DateUtil.fomatDate(principalDateMap.get("endDate")).getTime() ||
-								DateUtil.fomatDate(cellValue[5]).getTime() <= DateUtil.fomatDate(principalDateMap.get("startDate")).getTime()) {
+						if (DateUtil.fomatDate(cellValue[4]).getTime() > DateUtil.fomatDate(principalDateMap.get("endDate")).getTime() ||
+								DateUtil.fomatDate(cellValue[5]).getTime() < DateUtil.fomatDate(principalDateMap.get("startDate")).getTime()) {
 							//日期不重叠
 						} else {
 							errorInfo.append("与项目负责人" + principalDateMap.get("empName") + "日期(" + principalDateMap.get("startDate") + "至" + principalDateMap.get("endDate") + ")重叠! ");
