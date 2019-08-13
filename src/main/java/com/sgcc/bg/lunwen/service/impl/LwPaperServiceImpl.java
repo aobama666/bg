@@ -73,6 +73,9 @@ public class LwPaperServiceImpl implements LwPaperService {
         before.append(paperId);
         lwPaper.setPaperId(before.toString());
 
+        //防止匹配因为空格出现的问题
+        lwPaper.setField(lwPaper.getField().trim());
+
         //初始化时间，创建人，各种状态
         lwPaper.setYear(DateUtil.getYear());
         lwPaper.setCreateTime(new Date());
