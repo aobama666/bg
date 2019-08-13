@@ -47,19 +47,13 @@
 	<script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
 
 </head>
-<%--<body style="background-color: white">--%>
-<body>
-<div class="tab" role="tabplanel">
-	<div id="funcBtn" style="width:100%;height: 35px;">
-		<%--<div class="button-box">
-			<button type="button" class="btn btn-danger btn-xs" style="display:none;" id="ErrInfoButton" onclick="downLoadErr(this)"> 专家导入错误信息下载</button>
-			<button type="button" class="btn btn-primary btn-xs" onclick="downLoadTemp()"> 下载模板</button>
-			<button type="button" class="btn btn-success btn-xs" onclick="uploadProFile()"> 确定</button>
-		</div>--%>
-		<div class='btn right addButton' style="display:none;" id="ErrInfoButton" onclick="downLoadErr(this)">专家导入错误信息下载</div>
-		<div class='btn right updateButton' onclick="downLoadTemp()">下载模板</div>
-		<div class='btn right deleteButton'  onclick="uploadProFile()">确定</div>
-		<div><h4>上传Excel</h4></div>
+<body style="background-color: white">
+<div class="page-header-sl">
+	<h5>上传Excel</h5>
+	<div class="button-box">
+		<button type="button" class="btn btn-danger btn-xs" style="display:none;background-color:#c9302c" id="ErrInfoButton" onclick="downLoadErr(this)"> 专家导入错误信息下载</button>
+		<button type="button" class="btn btn-primary btn-xs" onclick="downLoadTemp()"> 下载模板</button>
+		<button type="button" class="btn btn-success btn-xs" onclick="uploadProFile()"> 确定</button>
 	</div>
 </div>
 <hr>

@@ -71,7 +71,7 @@ grade.initDataGrid = function(){
             {name: '专家打分',style:{width:"50px"}, data: 'PAPERUUID',
                 forMat:function(row){
                     var rvalue =  "<a title = '点击查看打分详情' style='width:250px;color: #0080FF' id='"+row.PMEID+"'" +
-                        "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.PMEID+"','"+row.PAPERNAME+"','"+row.PAPERUUID+"','"+row.SCORESTATUSCODE+"')>";
+                        "href = 'javascript:void(0)' onclick = grade.gradeOperation('"+row.PMEID+"','"+row.PAPERUUID+"','"+row.SCORESTATUSCODE+"')>";
                     if(row.SCORE == undefined){
                         rvalue = rvalue + "打分</a>";
                     }else{
@@ -102,10 +102,10 @@ grade.forDetails = function (id){
 
 
 /*弹出打分框 */
-grade.gradeOperation = function (pmeId,paperName,paperUuid,scoreStatus){
+grade.gradeOperation = function (pmeId,paperUuid,scoreStatus){
     debugger
     var url = "/bg/lwGrade/gradeJumpOperation?paperType="+$("#paperType").val()
-        +"&pmeId="+pmeId+"&paperName="+paperName+"&paperUuid="+paperUuid+"&scoreStatus="+scoreStatus;
+        +"&pmeId="+pmeId+"&paperUuid="+paperUuid+"&scoreStatus="+scoreStatus;
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;"> </h4>',

@@ -112,7 +112,7 @@ public class LwGradeController {
      */
     @RequestMapping(value="/gradeJumpOperation", method = RequestMethod.GET)
     public ModelAndView gradeOperation(String paperType,String pmeId
-            ,String paperName,String paperUuid,String scoreStatus){
+            ,String paperUuid,String scoreStatus){
         List<Map<String, String>> paperTypeList = dataDictionaryService.selectDictDataByPcode("paper_type");
         String paperTypeValue = "";
         for(Map<String,String> m : paperTypeList){
@@ -120,6 +120,7 @@ public class LwGradeController {
                 paperTypeValue = m.get("V");
             }
         }
+        String paperName = lwPaperService.findPaper(paperUuid,null).get("PAPERNAME").toString();
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("paperType",paperType);
         mvMap.put("pmeId",pmeId);
