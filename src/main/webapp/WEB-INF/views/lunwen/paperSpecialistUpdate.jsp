@@ -89,10 +89,10 @@
 		</tr>
         <tr>
             <td>
-                <span title = "联系电话"><b class="mustWrite">*</b>详细地址</span>
+                <span title = "详细地址"><b class="mustWrite">*</b>详细地址</span>
             </td>
             <td class="addInputStyle" colspan="3">
-                <input id="address" name="address"  type="text" class="validNull"  value = "${lwSpecialist.address}"  content="详细地址"  len="50"  title="必填项，中文或英文,字段长度不能超过 50"  />
+                <input id="address" name="address"  type="text" class="validNull"  value = "${lwSpecialist.address}"  content="详细地址"  len="100"  title="必填项，中文或英文,字段长度不能超过 50"  />
             </td>
         </tr>
 	</table>
