@@ -19,8 +19,12 @@
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet"/>
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
- 
-	
+
+    <style>
+        .tableBody{
+            height: 120px!important;
+        }
+    </style>
  </head>
 <body>
 	<div class="main_div"></div>

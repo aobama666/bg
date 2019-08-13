@@ -210,7 +210,7 @@ public class LwPaperController {
     public String paperToAdd(@RequestBody Map<String, Object> paramsMap){
         ResultWarp rw = null;
 
-        //验证题目是否唯一，考虑后期做成ajax形式，填完题目后直接验证
+        //验证题目是否唯一
         LwPaper lwPaper = mapToLwPaper(paramsMap);
         Map<String,Object> lwMap = lwPaperService.findPaper(null,lwPaper.getPaperName());
         if(null != lwMap){
@@ -258,7 +258,7 @@ public class LwPaperController {
 
         Map<String,Object> lwMap = lwPaperService.findPaper(null,lwPaper.getPaperName());
         if(null != lwMap){
-            if(!lwMap.get("UUID").equals(lwPaper.getUuid())){
+            if(!lwMap.get("UUID").equals(paramsMap.get("uuid").toString())){
                 log.info(getLoginUser()+"update lwPaper fail,paperName exist,info:"+paramsMap.toString());
                 rw = new ResultWarp(ResultWarp.FAILED ,"修改论文失败，论文题目已存在");
                 return JSON.toJSONString(rw);
@@ -268,6 +268,8 @@ public class LwPaperController {
         lwPaper.setUpdateUser(getLoginUserUUID());
         lwPaper.setUpdateTime(new Date());
         lwPaper.setUuid(paramsMap.get("uuid").toString());
+        //防止匹配因为空格出现的问题
+        lwPaper.setField(lwPaper.getField().trim());
         lwPaperService.updateLwPaper(lwPaper);
         log.info(getLoginUser()+"update lwPaper success,info:"+lwPaper.toString());
         rw = new ResultWarp(ResultWarp.SUCCESS ,"修改论文基本信息成功");

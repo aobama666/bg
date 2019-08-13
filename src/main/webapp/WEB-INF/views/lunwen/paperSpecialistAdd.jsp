@@ -95,7 +95,7 @@
 		</tr>
 		<tr>
 			<td>
-				<span title = "联系电话"><b class="mustWrite">*</b>详细地址</span>
+				<span title = "详细地址"><b class="mustWrite">*</b>详细地址</span>
 			</td>
 			<td class="addInputStyle" colspan="3">
 				<input id="address" name="address"  type="text" class="validNull" len="100"  value = "${lwSpecialist.address}"  content="详细地址"  title="必填项"  />

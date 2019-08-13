@@ -27,6 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -112,7 +113,7 @@ public class LwGradeController {
      */
     @RequestMapping(value="/gradeJumpOperation", method = RequestMethod.GET)
     public ModelAndView gradeOperation(String paperType,String pmeId
-            ,String paperName,String paperUuid,String scoreStatus){
+            ,String paperUuid,String scoreStatus){
         List<Map<String, String>> paperTypeList = dataDictionaryService.selectDictDataByPcode("paper_type");
         String paperTypeValue = "";
         for(Map<String,String> m : paperTypeList){
@@ -120,6 +121,7 @@ public class LwGradeController {
                 paperTypeValue = m.get("V");
             }
         }
+        String paperName = lwPaperService.findPaper(paperUuid,null).get("PAPERNAME").toString();
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("paperType",paperType);
         mvMap.put("pmeId",pmeId);
@@ -162,7 +164,7 @@ public class LwGradeController {
      */
     @ResponseBody
     @RequestMapping(value = "/getTotalScore")
-    public String getTotalScore(HttpServletRequest request, HttpServletResponse response){
+    public void getTotalScore(HttpServletRequest request, HttpServletResponse response){
         response.setContentType("text/plain;charset=utf-8");
         //获取论文关联专家信息表id
         String pmeId = request.getParameter("pmeId");
@@ -216,7 +218,11 @@ public class LwGradeController {
         ResultWarp rw = null;
         rw = new ResultWarp(ResultWarp.SUCCESS ,"计算总分成功");
         rw.addData("totalScore",totalScore);
-        return JSON.toJSONString(rw);
+        try {
+            response.getWriter().print(JSON.toJSONString(rw));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -225,7 +231,7 @@ public class LwGradeController {
      */
     @ResponseBody
     @RequestMapping(value = "/gradeSave")
-    public String gradeSave(HttpServletRequest request,HttpServletResponse response){
+    public void gradeSave(HttpServletRequest request,HttpServletResponse response){
         response.setContentType("text/plain;charset=utf-8");
         //获取论文关联专家信息表id
         String pmeId = request.getParameter("pmeId");
@@ -275,7 +281,11 @@ public class LwGradeController {
         }
         log.info(getLoginUser()+"打分,论文="+paperUuid);
         rw = new ResultWarp(ResultWarp.SUCCESS ,msg);
-        return JSON.toJSONString(rw);
+        try {
+            response.getWriter().print(JSON.toJSONString(rw));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

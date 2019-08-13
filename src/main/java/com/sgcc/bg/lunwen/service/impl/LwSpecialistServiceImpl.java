@@ -212,11 +212,15 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                     StringBuffer errorInfo = new StringBuffer();
                     Set<Integer> errorNum = new HashSet<Integer>();
 
+
                     if(cellValue[1] == null || cellValue[1] == ""){
                         errorInfo.append("专家姓名不能为空！ ");
                         errorNum.add(1);
                     }else if (cellValue[1].length() > 20){
                         errorInfo.append("专家姓名不能超过20个字！ ");
+                        errorNum.add(1);
+                    }else if(!StringUtil.checkNotNoOrC(cellValue[1])){
+                        errorInfo.append("专家姓名中不能有数字！ ");
                         errorNum.add(1);
                     }
 
