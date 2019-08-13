@@ -190,23 +190,15 @@ public class LwSpecialistController {
     }
 
     /**
-     * 增加专家————不知道这前辈什么逻辑，把新增和修改放到了一块去，我也懒得动，不过还是把下面注释掉吧，省的找麻烦，这垃圾代码
-     */
-//    @ResponseBody
-//    @RequestMapping(value = "/insertExpert" ,method = RequestMethod.POST)
-//    public String insertExpert(LwSpecialist lwSpecialist){
-//        int i = lwSpecialistServiceImpl.insertExpert(lwSpecialist);
-//        return null;
-//    }
-
-    /**
-     * 修改专家——————————————根据有没有uuid判断是新增还是修改
+     * 根据有没有uuid判断是新增or修改专家
      * @param lwSpecialist
      * @return
      */
     @ResponseBody
     @RequestMapping(value = "/updateExpert" ,method = RequestMethod.POST)
     public String updateExpert(@RequestBody LwSpecialist lwSpecialist){
+        //防止领域精准匹配时有空格干扰
+        lwSpecialist.setField(lwSpecialist.getField().trim());
         ResultWarp rw =  null;
         int i = 0;
         String email = lwSpecialist.getEmail();
