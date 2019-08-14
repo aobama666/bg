@@ -740,7 +740,7 @@
 
 	<select id="fillKQWorkingHour" resultType="java.util.Map">
 		SELECT nvl(SUM(v.FULL_TIME),0) AS "fullTime",  nvl(SUM(v.OVER_TIME),0) AS "overTime"
-		FROM  BG_KQ_EMP_VIEW v
+		FROM  BG_KQ_EMP_INFO v
 		LEFT JOIN BG_SYS_USER u
 		ON v.EMP_CODE = u.HRCODE
 		WHERE rownum=1

@@ -55,6 +55,9 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	UserUtils userUtils;
 	@Autowired
 	private DataDictionaryService dict;
+
+	//员工考勤工时统计记录 一天为8小时
+	private final static int TIME = 8;
 	
 	private static Logger SWServiceLog =  LoggerFactory.getLogger(StaffWorkbenchServiceImpl.class);
 
@@ -103,7 +106,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		String currentHrcode = commonUser.getSapHrCode();
 		Double fillSum = SWMapper.fillWorkingHour(dataBegin,dataEnd,currentUsername);
 		Map<String,Object> fillSumKQ = SWMapper.fillKQWorkingHour(dataBegin,dataEnd,currentUsername);
-		BigDecimal fullTime = (BigDecimal) fillSumKQ.get("fullTime");
+
+		BigDecimal fullTime = ((BigDecimal) fillSumKQ.get("fullTime")).multiply(BigDecimal.valueOf(TIME));
 		BigDecimal overTime = (BigDecimal) fillSumKQ.get("overTime");
 		Map map = new HashMap();
 		map.put("fillSum",fillSum);

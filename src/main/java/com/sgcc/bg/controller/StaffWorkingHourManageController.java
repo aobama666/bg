@@ -216,9 +216,9 @@ public class StaffWorkingHourManageController {
 			String rowNum=Rtext.toStringTrim(map.get("rowNum"), "");
 			String workHour=Rtext.toStringTrim(map.get("workHour"), "");
 			String jobContent=Rtext.toStringTrim(map.get("jobContent"), "");
-			//String date=Rtext.toStringTrim(map.get("date"), "");
-			String dateBegin=Rtext.toStringTrim(map.get("dateBegin"), "");
-			String dateEnd=Rtext.toStringTrim(map.get("dateEnd"), "");
+			String date=Rtext.toStringTrim(map.get("date"), "");
+			//String dateBegin=Rtext.toStringTrim(map.get("dateBegin"), "");
+			//String dateEnd=Rtext.toStringTrim(map.get("dateEnd"), "");
 			String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
 			String projectName=Rtext.toStringTrim(map.get("projectName"), "");
 			String approverUsername=Rtext.toStringTrim(map.get("approver"), "");
@@ -270,7 +270,7 @@ public class StaffWorkingHourManageController {
 			} */
 
 			//效验累计工时是否超过月度工时
-			Map<String,Object> dateMap = SWService.workingHoursMap(dateBegin);
+			Map<String,Object> dateMap = SWService.workingHoursMap(date);
 			BigDecimal fillSum = new BigDecimal(String.valueOf(dateMap.get("fillSum")));
 			BigDecimal fillSumKQ = (BigDecimal)dateMap.get("fillSumKQ");
 			int j = fillSum.compareTo(fillSumKQ);

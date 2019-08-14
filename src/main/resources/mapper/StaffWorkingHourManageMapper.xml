@@ -90,6 +90,7 @@
               <if test="status != null and status != ''" >
               	AND t.status=#{status}
               </if>
+		order by t.work_time_begin
 	</select>
 	
 	<select id="getItemCount" parameterType="String" resultType="java.lang.Integer">
