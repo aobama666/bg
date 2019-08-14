@@ -212,7 +212,7 @@ queryAll.updateEvent = function(){
         return;
     }
     if(checkedItems[0].matchStatus === '1'){
-        layer.alert("选择的数据无法修改,还有已匹配的论文",{icon:0,title:'信息提示'});
+        layer.alert("该专家已匹配论文信息，不可修改",{icon:0,title:'信息提示'});
         return;
     }
     var uuid = checkedItems[0].uuid;
