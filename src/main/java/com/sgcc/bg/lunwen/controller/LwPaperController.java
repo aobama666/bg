@@ -230,6 +230,22 @@ public class LwPaperController {
         return JSON.toJSONString(rw);
     }
 
+    /**
+     * 判断论文是否有匹配的专家信息
+     */
+    @ResponseBody
+    @RequestMapping("/ifMacthForPaperUuid")
+    public String ifMacthForPaperUuid(String paperId){
+        ResultWarp rw = null;
+        List<String> ifMatchList = lwPaperMatchSpecialistService.ifMatchForPaperId(paperId);
+        if(0 != ifMatchList.size()){
+            rw = new ResultWarp(ResultWarp.FAILED,"该论文已经匹配专家,请移除已匹配的专家");
+        }else{
+            rw = new ResultWarp(ResultWarp.SUCCESS,"无大碍，请放心修改");
+        }
+        return JSON.toJSONString(rw);
+    }
+
 
     /**
      * 跳转至——论文修改

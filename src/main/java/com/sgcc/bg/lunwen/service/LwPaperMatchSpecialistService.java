@@ -61,4 +61,8 @@ public interface LwPaperMatchSpecialistService {
      */
     List<Map<String,Object>> ifExpertScore(String specialistId);
 
+    /**
+     * 判断当前论文是否有匹配的专家
+     */
+    List<String> ifMatchForPaperId(String paperId);
 }
