@@ -188,7 +188,7 @@
 		}
 
         //验证累计工时是否超过月度工时
-        var fillSum = document.getElementById("fillSum").innerHTML;
+        /*var fillSum = document.getElementById("fillSum").innerHTML;
         var fillSumKQ = document.getElementById("fillSumKQ").innerHTML;
         var workHour = $("input[name=workHour]").val();
         var workHourOld = $("input[name=workHourOld]").val();
@@ -196,7 +196,7 @@
         if (fillSumKQ<fillSum){
             layer.msg("填报工时已超出月度工时，请检查");
             return;
-        }
+        }*/
 
 		var params={};
 		params["id"] =  $.trim($("#whId").val());
@@ -246,6 +246,10 @@
             var fillSumKQ = document.getElementById("fillSumKQ").innerHTML;
             var workHour = $("input[name=workHour]").val();
             var workHourOld = $("input[name=workHourOld]").val();
+            if(fillSumKQ == '-'){
+                layer.msg("无月度工时，不可提交");
+                return;
+            }
             fillSum = Number(fillSum)-Number(workHourOld)+Number(workHour);
             if (fillSumKQ<fillSum){
                 layer.msg("填报工时已超出月度工时，请检查");

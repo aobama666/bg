@@ -197,7 +197,7 @@ function changeByStep(step){
 	}
 	var n = date.getFullYear()+"-"+m;*/
     document.getElementById("fillDa").value=n;
-    //forSave();
+    forSave();
     delayDate=$("#fillDa").val();
     workingHours();
     mmg.load();
@@ -350,7 +350,7 @@ function queryList(load){
 	            		return val;
 	            	}
 	            },
-	            {titleHtml:'投入工时(h)<font class="glyphicon glyphicon-asterisk text-danger"></font>', name:'WORKING_HOUR', width:90, sortable:false, align:'center',
+	            {titleHtml:'投入工时(h)<font class="glyphicon glyphicon-asterisk text-danger"></font>', name:'WORKING_HOUR', width:100, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		val=val==undefined?"":val;
 	            		if(item.STATUS=="0" || item.STATUS=="2"){
@@ -501,6 +501,9 @@ function checkNumberFormat(workHour){
 	if($.trim(workHour)!="" && !reg.test(workHour)){
 		result.result = false;
 		result.info = "必须为数字且最小时间单位为0.5h；";
+	}else if (workHour>1000){
+        result.result = false;
+        result.info = "投入工时过长；";
 	}else{
 		result.result = true;
 		result.info = "";
@@ -512,8 +515,8 @@ function checkNumberFormat(workHour){
 function forSave(){
 	var ran = Math.random()*100000000;
 	var rows=$("#mmg tr").has("input:visible,textarea");
-	var fillSum=0;
-	var fillSumKQ = document.getElementById("fillSumKQ").innerHTML;
+	//var fillSum=0;
+	//var fillSumKQ = document.getElementById("fillSumKQ").innerHTML;
     var rowsTb=$("#mmg tr");
 
 	if(rows.length==0){
@@ -555,7 +558,7 @@ function forSave(){
 		});
 		paramArr.push(JSON.stringify(params));
 	}
-	for (var i=0;i<rowsTb.length;i++){
+	/*for (var i=0;i<rowsTb.length;i++){
 	    fillSum+=Number($(rowsTb[i]).find("input[property='workHour']").val())
 	}
 
@@ -565,7 +568,7 @@ function forSave(){
 	if(fillSumKQ<fillSum){
         layer.msg("填报工时已超出月度工时，请检查");
         return;
-	}
+	}*/
 
 	$.ajax({
 		type: 'POST',
@@ -574,7 +577,6 @@ function forSave(){
 		dataType:'text',
 		success : function(data) {
 			layer.msg("成功保存"+data+"条！");
-            workingHours();
 			mmg.load();
 		}
 	});
@@ -649,7 +651,6 @@ function forDelete(_this,id){
 				$.get("<%=request.getContextPath()%>/staffWorkbench/deleteWorkHourInfo?id="+id+"&ran="+ran,
 					function(data){
 						if(data=='success'){
-                            workingHours();
 							mmg.removeRow(index-1);
 							$("#mmg tr").each(function(i){
 								$(this).find(".mmg-index").text(i+1);
@@ -682,7 +683,7 @@ function forRecall(_this,id){
 			$.get("<%=request.getContextPath()%>/staffWorkbench/recallWorkHourInfo?id="+id+"&ran="+ran,
 				function(data){
 					if(data=='success'){
-
+                        workingHours();
 					}else if(data=='examined'){
 						layer.msg("无法撤回已审核信息！");
 					}else{
@@ -693,7 +694,7 @@ function forRecall(_this,id){
 	});
 }
 
-
+/*提交*/
 function forSubmit(){
 	var rows=$(".mmg tr").has("input:visible,textarea");
 	var rowsTb=$(".mmg tr");
@@ -740,6 +741,8 @@ function forSubmit(){
 		}
         if(fillSumKQ=='-'){
             fillSumKQ=0;
+            layer.msg("未录入月度工时不可提交");
+            return;
         }
         if(fillSumKQ<fillSum){
             layer.msg("填报工时已超出月度工时，请检查");
@@ -755,6 +758,7 @@ function forSubmit(){
 			success : function(data) {
 				layer.msg(data.msg);
 				if(data.result=='success'){
+                    workingHours();
 					mmg.load();
 				}
 			}

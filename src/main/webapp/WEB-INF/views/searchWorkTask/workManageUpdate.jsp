@@ -138,11 +138,15 @@ function forSave(){
 			return false;
 		}
 		//验证累计工时是否超过月度工时
+		/*if(fillSumKQ == '-'){
+            layer.msg("无月度工时，不可提交");
+            return;
+		}
 		fillSum = Number(fillSum)-Number(hoursOld)+Number(hours);
 		if (fillSumKQ<fillSum){
             layer.msg("填报工时已超出月度工时，请检查");
             return;
-		}
+		}*/
 		var param = {
 				userName:userName,
 				userCode:userCode,
@@ -170,6 +174,8 @@ function forSave(){
 	}
 	
 }
+
+/*提交*/
 function workCommit(){
 	var userName = $("input[name=userName]").val();
 	var userCode = $("input[name=userCode]").val();
@@ -194,6 +200,10 @@ function workCommit(){
 			return false;
 		}
         //验证累计工时是否超过月度工时
+        if(fillSumKQ == '-'){
+            layer.msg("无月度工时，不可提交");
+            return;
+        }
         fillSum = Number(fillSum)-Number(hoursOld)+Number(hours);
         if (fillSumKQ<fillSum){
             layer.msg("填报工时已超出月度工时，请检查");

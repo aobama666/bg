@@ -197,7 +197,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		String currentDeptId = currentUser==null?"":currentUser.getDeptId();
 		Map<String, String> approverMap=getDefaultApprover();
 
-		while (calendar1.compareTo(calendar2)<0) {
+		while (calendar1.compareTo(calendar2)<=0) {
 			String dataStr=DateUtil.getFormatDateString(calendar1.getTime(),"yyyy-MM");
 
 			//取月初和月末
@@ -465,7 +465,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 					}
 
 					//效验累计工时是否超过月度工时
-					if(!errorNum.contains(1) && !errorNum.contains(6)) {
+					/*if(!errorNum.contains(1) && !errorNum.contains(6)) {
 						Map<String,Object> workingHoursMap = workingHoursMap(cellValue[1]);
 						Double fillSum = (Double) workingHoursMap.get("fillSum");
 						BigDecimal fillSumKQ = (BigDecimal) workingHoursMap.get("fillSumKQ");
@@ -476,7 +476,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 							errorInfo.append("填报工时超出月度工时！ ");
 							errorNum.add(6);
 						}
-					}
+					}*/
 					// 校验结束，分流数据
 					if ("".equals(errorInfo.toString())) {// 通过校验
 						WorkHourInfoPo wh=new WorkHourInfoPo();

@@ -311,7 +311,7 @@ public class StaffWorkbenchController {
 		@SuppressWarnings("rawtypes")
 		List<HashMap> list = JSON.parseArray(jsonStr, HashMap.class);
 		//校验当天以及当月工时是否超出标准
-		for (HashMap<String, String> map : list) {
+		/*for (HashMap<String, String> map : list) {
 			String workHour=map.get("workHour");
 			try {
 				double submitHours=Double.parseDouble(workHour);
@@ -319,7 +319,7 @@ public class StaffWorkbenchController {
 			} catch (Exception e) {
 				//出错数据不参与计算
 			}
-		}
+		}*/
 		//验证工作时长方法
 		/*checkResult=SWService.checkWorkHour(selectedDate,totalHours);
 		if (!"".equals(checkResult)) {

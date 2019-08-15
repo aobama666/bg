@@ -364,9 +364,6 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						}*/
 
 						//取月初和月末
-						/*Map<String,String> dateMap = dateBeginEnd(cellValue[1]);
-						String dataBegin = dateMap.get("dateBegin");
-						String dataEnd = dateMap.get("dateEnd");*/
 						int result=SWMapper.validateSelectedDateScope(proId,currentUsername,dataBegin,dataEnd);
 						if(result==0){
 							errorInfo.append("填报日期不在项目周期或参与周期内！ ");
@@ -413,7 +410,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 					}
 
 					//效验累计工时是否超过月度工时
-					if(!errorNum.contains(1) && !errorNum.contains(6)) {
+					/*if(!errorNum.contains(1) && !errorNum.contains(6)) {
 						Map<String,Object> workingHoursMap = swService.workingHoursMap(cellValue[1]);
 						Double fillSum = (Double) workingHoursMap.get("fillSum");
 						BigDecimal fillSumKQ = (BigDecimal) workingHoursMap.get("fillSumKQ");
@@ -424,7 +421,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 							errorInfo.append("填报工时超出月度工时！ ");
 							errorNum.add(6);
 						}
-					}
+					}*/
 
 					// 校验结束，分流数据
 					if ("".equals(errorInfo.toString())) {// 通过校验

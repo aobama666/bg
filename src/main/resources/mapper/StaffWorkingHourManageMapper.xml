@@ -9,7 +9,8 @@
           			FROM () p
    		<![CDATA[WHERE ROWNUM<=#{end})]]>
 		<![CDATA[WHERE rn>#{start}]]> -->
-		SELECT ROW_NUMBER() OVER(ORDER BY t.work_time,t.create_time DESC) AS RN,
+		/*SELECT ROW_NUMBER() OVER(ORDER BY t.work_time,t.create_time DESC) AS RN,*/
+		SELECT ROW_NUMBER() OVER(ORDER BY t.work_time_begin) AS RN,
 			   T.ID,
 		       TO_CHAR(T.WORK_TIME, 'yyyy-mm-dd') WORK_TIME,
 		       TO_CHAR(T.WORK_TIME_BEGIN, 'yyyy-mm-dd') WORK_TIME_BEGIN,

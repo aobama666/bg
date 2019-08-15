@@ -127,12 +127,22 @@ public class StaffWorkingHourManageController {
 		Map<String, String> workHourInfo = smService.getWorkHourInfoById(whId);
 		String[] work = workHourInfo.get("WORK_TIME_BEGIN").split("-");
 		String workTimeBegin = work[0]+"-"+work[1];
+		String fillSum = null;
+		String fillSumKQ = null;
 		workHourInfo.put("WORK_DATE",workTimeBegin);
 		//查询月度工时及累计工时
 		if(workHourInfo.get("WORK_TIME_BEGIN")!=null && workHourInfo.get("WORK_TIME_BEGIN") != "") {
 			Map<String, Object> workingHoursMap = SWService.workingHoursMap(workHourInfo.get("WORK_TIME_BEGIN"));
-			workHourInfo.put("fillSum", String.valueOf(workingHoursMap.get("fillSum")));
-			workHourInfo.put("fillSumKQ", String.valueOf(workingHoursMap.get("fillSumKQ")));
+			fillSumKQ = String.valueOf(workingHoursMap.get("fillSumKQ"));
+			fillSum= String.valueOf(workingHoursMap.get("fillSum"));
+			if(fillSum.equals("0.0")){
+				fillSum="-";
+			}
+			if (fillSumKQ.equals("0")){
+				fillSumKQ="-";
+			}
+			workHourInfo.put("fillSum", fillSum);
+			workHourInfo.put("fillSumKQ", fillSumKQ);
 		}
 		ModelAndView model = new ModelAndView("bg/staffWorkHourManage/bg_staffWorkHour_update", workHourInfo);
 		return model;
@@ -270,10 +280,11 @@ public class StaffWorkingHourManageController {
 			} */
 
 			//效验累计工时是否超过月度工时
+			Double workhours = Double.valueOf(workHour);
 			Map<String,Object> dateMap = SWService.workingHoursMap(date);
 			BigDecimal fillSum = new BigDecimal(String.valueOf(dateMap.get("fillSum")));
 			BigDecimal fillSumKQ = (BigDecimal)dateMap.get("fillSumKQ");
-			int j = fillSum.compareTo(fillSumKQ);
+			int j = fillSum.add(BigDecimal.valueOf(workhours)).compareTo(fillSumKQ);
 			if(j>0){
 				smLog.info("工时超标！");
 				resultMap.put("count", count+"");

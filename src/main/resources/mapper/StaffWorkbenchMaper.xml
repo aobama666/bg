@@ -75,6 +75,7 @@
 					AND T.WORK_TIME_END &lt;= TO_DATE(#{dataEnd}, 'yyyy-mm-dd'))
 			AND T.WORKER = #{currentUsername}
 			AND T.VALID = '1'
+			AND (T.STATUS = '1' or T.STATUS='3')
 	</select>
 	<!--LEFT JOIN BG_SYS_USER U
 	ON U.USERNAME = T.APPROVER

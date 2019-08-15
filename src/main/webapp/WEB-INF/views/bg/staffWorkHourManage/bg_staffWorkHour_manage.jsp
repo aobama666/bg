@@ -331,6 +331,7 @@ function queryList(load){
 
 }
 
+/*提交*/
 function forSubmit(){
 	var rows=mmg.selectedRows();
 	if(rows.length==0){

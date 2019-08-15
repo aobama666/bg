@@ -331,7 +331,7 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 							Map<String,Object> dateMap = swService.workingHoursMap(worktimeBegin);
 							BigDecimal fillSum = new BigDecimal(String.valueOf(dateMap.get("fillSum")));
 							BigDecimal fillSumKQ = (BigDecimal)dateMap.get("fillSumKQ");
-							int j = fillSum.compareTo(fillSumKQ);
+							int j = fillSum.add(BigDecimal.valueOf(workhours)).compareTo(fillSumKQ);
 							if(j>0){
 								rw = new ResultWarp(ResultWarp.FAILED, "提交成功" + count + "条，第"+xhs+"行工时超标！");
 								return JSON.toJSONString(rw);
