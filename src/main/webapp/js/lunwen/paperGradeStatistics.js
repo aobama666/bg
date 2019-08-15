@@ -55,6 +55,26 @@ queryAll.field = function (field) {
     queryAll.query();
 }
 
+
+/**
+ * 切换年份领域内容变化
+ */
+queryALl.changeYear = function () {
+    //获取当前选中年份
+    var year = "2018";
+    //发起后台请求
+    $.ajax({
+        url:"/bg/gradeStatistics/statisticsSpecialistName?tm="+new Date().getTime(),
+        type:"POST",
+        data:{paperName:paperName,year:year,paperId:paperId,field:field},
+        dataJson:"JSON",
+        async:false,
+        success:function (data) {
+            //修改前台页面内容
+        }
+    });
+}
+
 queryAll.seachHead = function(){
     ran = Math.random()*100000000;
     var year = $("#year").val();

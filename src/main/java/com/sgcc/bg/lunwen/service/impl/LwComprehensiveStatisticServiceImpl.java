@@ -29,13 +29,19 @@ public class LwComprehensiveStatisticServiceImpl implements LwComprehensiveStati
 
     @Override
     public List<Map<String,Object>> year() {
-        List<Map<String,Object>> year = lwPaperMapper.year();
-        if(year.size() == 0){
-            Map<String,Object> yearMap = new HashMap<>();
-            yearMap.put("YEAR",DateUtil.getYear());
-            year.add(yearMap);
+        List<Map<String,Object>> yearList = lwPaperMapper.year();
+        boolean ifNowYear = true;
+        for(Map<String,Object> yearMap : yearList){
+            if(DateUtil.getYear().equals(yearMap.get("YEAR"))){
+                ifNowYear = false;
+            }
         }
-        return year;
+        if(ifNowYear || yearList.size() == 0){
+            Map<String,Object> year = new HashMap<>();
+            year.put("YEAR",DateUtil.getYear());
+            yearList.add(0,year);
+        }
+        return yearList;
     }
 
     @Override
@@ -107,7 +113,7 @@ public class LwComprehensiveStatisticServiceImpl implements LwComprehensiveStati
                 { "加权平均分","weightingFraction","nowrap"},
                 { "去最高最低得分","averageFraction","nowrap"}
         };
-        ExportExcelHelper.getExcel(response, "评分统计"+ DateUtil.getDays(), title, outPaperComprehensiveVO, "normal");
+        ExportExcelHelper.getExcel(response, "综合统计"+ DateUtil.getDays(), title, outPaperComprehensiveVO, "normal");
         return outPaperComprehensiveVO;
     }
 

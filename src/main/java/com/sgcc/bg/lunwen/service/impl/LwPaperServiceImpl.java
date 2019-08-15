@@ -61,7 +61,7 @@ public class LwPaperServiceImpl implements LwPaperService {
             before.append(LwPaperConstant.ZONGSHU);
         }
         //从数据库中查询当前类型的最大值后加1
-        String paperId = lwPaperMapper.maxPaperId(lwPaper.getPaperType());
+        String paperId = lwPaperMapper.maxPaperId(lwPaper.getPaperType(),DateUtil.getYear());
         if(null == paperId || "".equals(paperId)){
             //这个类型的第一批论文
             paperId = "000";
@@ -113,7 +113,7 @@ public class LwPaperServiceImpl implements LwPaperService {
 
     @Override
     public String maxPaperId(String paperType) {
-        return lwPaperMapper.maxPaperId(paperType);
+        return lwPaperMapper.maxPaperId(paperType,DateUtil.getYear());
     }
 
     @Override
@@ -192,18 +192,24 @@ public class LwPaperServiceImpl implements LwPaperService {
     }
 
     @Override
-    public List<Map<String, Object>> fieldList() {
-        List<Map<String, Object>> fieldLsit = lwPaperMapper.fieldList();
+    public List<Map<String, Object>> fieldList(String year) {
+        List<Map<String, Object>> fieldLsit = lwPaperMapper.fieldList(year);
         return fieldLsit;
     }
 
     @Override
     public List<Map<String,Object>> getTableYear() {
         List<Map<String,Object>> yearList = lwPaperMapper.year();
-        if(yearList.size() == 0){
+        boolean ifNowYear = true;
+        for(Map<String,Object> yearMap : yearList){
+            if(DateUtil.getYear().equals(yearMap.get("YEAR"))){
+                ifNowYear = false;
+            }
+        }
+        if(ifNowYear || yearList.size() == 0){
             Map<String,Object> year = new HashMap<>();
             year.put("YEAR",DateUtil.getYear());
-            yearList.add(year);
+            yearList.add(0,year);
         }
         return yearList;
     }
@@ -245,7 +251,7 @@ public class LwPaperServiceImpl implements LwPaperService {
 
     @Override
     public List<Map<String, Object>> matchingPaper() {
-        return lwPaperMapper.matchingPaper(LwPaperConstant.P_A_S_MATCHING,LwPaperConstant.VALID_YES);
+        return lwPaperMapper.matchingPaper(LwPaperConstant.P_A_S_MATCHING,DateUtil.getYear(),LwPaperConstant.VALID_YES);
     }
 
 

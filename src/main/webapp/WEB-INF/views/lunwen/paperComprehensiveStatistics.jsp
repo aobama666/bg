@@ -56,8 +56,8 @@
 			<input type = "text" id = "paperId" name = "paperId" style="width: 100px" class = "inputQuery changeQuery" >
 
 			<!-- 查询按钮  " -->
-			<div style="float:right" id = "queryButton" class = "btn query" onclick = "queryAll.query()">搜索</div>
 			<div class='btn right outButton' onclick="queryAll.outEvent()">导出</div>
+			<div style="float:right" id = "queryButton" class = "btn query" onclick = "queryAll.query()">搜索</div>
 		</form>
 	</div>
 	<!-- end    查询条件 -->

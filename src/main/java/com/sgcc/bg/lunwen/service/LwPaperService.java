@@ -200,7 +200,7 @@ public interface LwPaperService {
      * 查询论文含有的所有领域
      * @return
      */
-    List<Map<String,Object>> fieldList();
+    List<Map<String,Object>> fieldList(String year);
 
 
     /**

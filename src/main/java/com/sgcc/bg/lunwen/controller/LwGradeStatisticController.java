@@ -3,6 +3,7 @@ package com.sgcc.bg.lunwen.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.lunwen.bean.PaperComprehensiveVO;
 import com.sgcc.bg.lunwen.service.LwComprehensiveStatisticService;
@@ -45,7 +46,7 @@ public class LwGradeStatisticController {
      */
     @RequestMapping("/gradeStatistics")
     public String specialist(HttpServletRequest request) {
-        List<Map<String,Object>> fieldLsit = lwPaperServiceImpl.fieldList();
+        List<Map<String,Object>> fieldLsit = lwPaperServiceImpl.fieldList(DateUtil.getYear());
         List<Map<String,Object>> year = lwComprehensiveStatisticServiceImpl.year();
         Map map = new HashMap();
         map.put("fieldList",fieldLsit);
@@ -53,6 +54,18 @@ public class LwGradeStatisticController {
         map.put("size",fieldLsit.size());
         request.setAttribute("map",map);
         return "lunwen/paperGradeStatistics";
+    }
+
+    /**
+     * 按照年份刷新领域标签页内容
+     */
+    @ResponseBody
+    @RequestMapping("/getFields")
+    public void refresh(HttpServletRequest request,String year){
+        List<Map<String,Object>> fieldLsit = lwPaperServiceImpl.fieldList(year);
+        Map map = new HashMap();
+        map.put("fieldList",fieldLsit);
+        request.setAttribute("map",map);
     }
 
     /**
@@ -85,7 +98,7 @@ public class LwGradeStatisticController {
      */
     @ResponseBody
     @RequestMapping("/statistics")
-    public String statistics(String year,String paperName,String paperId,String field,Integer page, Integer limit) {
+    public String statistics(String year,String paperName,String paperId,String field,Integer page, Integer limit,HttpServletRequest request) {
         int start = 0;
         int end = 10;
         if (page != null && limit != null && page > 0 && limit > 0) {
