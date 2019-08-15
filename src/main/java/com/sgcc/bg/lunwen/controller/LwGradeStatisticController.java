@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ResultWarp;
+import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.lunwen.bean.PaperComprehensiveVO;
 import com.sgcc.bg.lunwen.service.LwComprehensiveStatisticService;
 import com.sgcc.bg.lunwen.service.LwGradeStatisticService;
@@ -101,6 +102,11 @@ public class LwGradeStatisticController {
     @ResponseBody
     @RequestMapping("/statistics")
     public String statistics(String year,String paperName,String paperId,String field,Integer page, Integer limit,HttpServletRequest request) {
+        year = Rtext.toStringTrim(year,"");
+        paperName = Rtext.toStringTrim(paperName,"");
+        paperId = Rtext.toStringTrim(paperId,"");
+        field = Rtext.toStringTrim(field,"");
+
         int start = 0;
         int end = 10;
         if (page != null && limit != null && page > 0 && limit > 0) {
