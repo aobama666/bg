@@ -347,7 +347,7 @@ queryAll.renewal = function () {
                     }
                 });
             }else {
-                layer.alert('该专家以有论文进行打分，无法更换',{icon:0,title:'信息提示'});
+                layer.alert('该专家已有论文进行打分，无法更换',{icon:0,title:'信息提示'});
                 return;
             }
         }

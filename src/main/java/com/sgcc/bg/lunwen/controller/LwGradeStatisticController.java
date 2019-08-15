@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,11 +62,12 @@ public class LwGradeStatisticController {
      */
     @ResponseBody
     @RequestMapping("/getFields")
-    public void refresh(HttpServletRequest request,String year){
+    public String refresh(String year) throws IOException {
+        ResultWarp rw = null;
         List<Map<String,Object>> fieldLsit = lwPaperServiceImpl.fieldList(year);
-        Map map = new HashMap();
-        map.put("fieldList",fieldLsit);
-        request.setAttribute("map",map);
+        rw = new ResultWarp(ResultWarp.SUCCESS,"success");
+        rw.addData("fieldList",fieldLsit);
+        return JSON.toJSONString(rw);
     }
 
     /**
