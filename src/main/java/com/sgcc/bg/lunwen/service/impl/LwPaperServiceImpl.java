@@ -413,8 +413,8 @@ public class LwPaperServiceImpl implements LwPaperService {
                     if(cellValue[1] == null || cellValue[1] == ""){
                         errorInfo.append("论文题目不能为空！ ");
                         errorNum.add(1);
-                    }else if (cellValue[1].length() > 50){
-                        errorInfo.append("论文题目不能超过50个字！ ");
+                    }else if (cellValue[1].length() > 200){
+                        errorInfo.append("论文题目不能超过200个字！ ");
                         errorNum.add(1);
                     }else{
                         Map<String,Object> lwMap = lwPaperService.findPaper(null,cellValue[1]);
@@ -427,16 +427,16 @@ public class LwPaperServiceImpl implements LwPaperService {
                     if (cellValue[2] == null || cellValue[2] == ""){
                         errorInfo.append("作者不能为空！ ");
                         errorNum.add(2);
-                    }else if (cellValue[2].length() > 50){
-                        errorInfo.append("作者不能超过50个字！ ");
+                    }else if (cellValue[2].length() > 150){
+                        errorInfo.append("作者不能超过150个字！ ");
                         errorNum.add(2);
                     }
 
                     if(cellValue[3] == null || cellValue[3] ==""){
                         errorInfo.append("作者单位不能为空！ ");
                         errorNum.add(3);
-                    }else if (cellValue[3].length()>50){
-                        errorInfo.append("作者单位不能超过50个字！ ");
+                    }else if (cellValue[3].length()>300){
+                        errorInfo.append("作者单位不能超过300个字！ ");
                         errorNum.add(3);
                     }
 
@@ -494,7 +494,7 @@ public class LwPaperServiceImpl implements LwPaperService {
                         lwPaper.setRecommendUnit(cellValue[5]);
                         lwPaper.setQuoteCount(cellValue[6]);
                         lwPaper.setDownloadCount(cellValue[7]);
-                        lwPaper.setField(cellValue[8]);
+                        lwPaper.setField(cellValue[8].trim());
                         lwPaper.setPaperType(paperType);
                         lwPaper.setCreateUser(user.getUserId());
                         lwPaperList.add(lwPaper);
