@@ -79,4 +79,9 @@ public class LwPaperMatchSpecialistServiceImpl implements LwPaperMatchSpecialist
         return lwPaperMatchSpecialistMapper.ifExpertScore(specialistId,LwPaperConstant.SCORE_STATUS_NO
                 ,DateUtil.getYear(),LwPaperConstant.VALID_YES);
     }
+
+    @Override
+    public List<String> ifMatchForPaperId(String paperId) {
+        return lwPaperMatchSpecialistMapper.ifMatchForPaperId(paperId,LwPaperConstant.VALID_YES);
+    }
 }

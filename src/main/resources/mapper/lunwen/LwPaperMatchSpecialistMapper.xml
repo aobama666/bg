@@ -203,4 +203,9 @@
         and m.score_status != #{scoreStatus}
         and p.uuid = m.paper_id
     </select>
+
+    <select id="ifMatchForPaperId" resultType="java.lang.String">
+        select uuid from bg_lw_paper_match_expert where
+        paper_id = #{paperId} and valid = #{valid}
+    </select>
 </mapper>

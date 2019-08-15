@@ -35,13 +35,13 @@
 			</td>
 			<td style="width: 40%" class="addInputStyle">
 				<input type = "text" style="display: none" id = "uuid"  name="uuid">
-				<input type="text"  id="paperName"  name="paperName"  class="validNull"  len="50"   content="论文题目" title="必填项"/>
+				<input type="text"  id="paperName"  name="paperName"  class="validNull"  len="200"   content="论文题目" title="必填项"/>
 			</td>
 			<td style="width: 10%">
 				<span title = "作者单位"><b class="mustWrite">*</b>作者单位</span>
 			</td>
 			<td style="width: 40%" class="addInputStyle">
-				<input type="text"  id="unit" name="unit"  class="validNull"  content="作者单位"  len="50"  title="必填项  "/>
+				<input type="text"  id="unit" name="unit"  class="validNull"  content="作者单位"  len="300"  title="必填项  "/>
 			</td>
 		</tr>
 		<tr>
@@ -63,7 +63,7 @@
 			<span title = "论文作者"><b class="mustWrite">*</b>论文作者</span>
 		</td>
 		<td class="addInputStyle">
-			<input type="text"  id="author"  name="author"  class="validNull"  len="50"   content="论文作者" title="必填项"/>
+			<input type="text"  id="author"  name="author"  class="validNull"  len="150"   content="论文作者" title="必填项"/>
 		</td>
 		<td>
 			<span title = "期刊名称"><b class="mustWrite">*</b>期刊名称</span>

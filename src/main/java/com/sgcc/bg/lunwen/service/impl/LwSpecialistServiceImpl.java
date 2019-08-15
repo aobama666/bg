@@ -302,7 +302,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                         lwSpecialist.setUnitNature(cellValue[4]);
                         lwSpecialist.setPosition(cellValue[5]);
                         lwSpecialist.setResearchDirection(cellValue[6]);
-                        lwSpecialist.setField(cellValue[7]);
+                        lwSpecialist.setField(cellValue[7].trim());
                         lwSpecialist.setPhone(cellValue[8]);
                         lwSpecialist.setEmail(cellValue[9]);
                         lwSpecialist.setMatchStatus("0");

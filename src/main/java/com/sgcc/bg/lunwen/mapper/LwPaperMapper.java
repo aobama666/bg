@@ -76,7 +76,7 @@ public interface LwPaperMapper {
     /**
      * 查找当前对应类型的最大编号
      */
-    String maxPaperId(@Param("paperType") String paperType);
+    String maxPaperId(@Param("paperType") String paperType,@Param("year") String year);
 
     /**
      * 删除论文信息，逻辑删除，单纯修改有效状态
@@ -200,7 +200,7 @@ public interface LwPaperMapper {
     /**
      * 查询论文含有的所有领域
      */
-    List<Map<String,Object>> fieldList();
+    List<Map<String,Object>> fieldList(@Param("year") String year);
 
     /**
      * 评分统计论文查询
@@ -257,6 +257,7 @@ public interface LwPaperMapper {
      */
     List<Map<String,Object>> matchingPaper(
             @Param("allStatus") String allStatus,
+            @Param("year") String year,
             @Param("valid") String valid
     );
 
