@@ -956,7 +956,7 @@ public class LwPaperController {
             }
 
             //判断该附件是否存在
-            List<Map<String,Object>> lwFileForFileName = lwFileService.findLwFileForFileName(fileNameBefore.trim(),fileNameAfter.trim());
+            List<Map<String,Object>> lwFileForFileName = lwFileService.findLwFileForFileName(fileNameBefore,fileNameAfter);
             if(0!=lwFileForFileName.size()){
                 //附件已存在，删除本地路径附件，返回已存在标识
                 new File(localPath).delete();
