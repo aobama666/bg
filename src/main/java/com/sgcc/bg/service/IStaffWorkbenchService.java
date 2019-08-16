@@ -124,6 +124,12 @@ public interface IStaffWorkbenchService {
 	 * @return 当状态为1审批中的，则返回true
 	 */
 	boolean canExamine(String id);
+	/**
+	 * 判断指定id的记录能否被审核
+	 * @param id
+	 * @return 当状态为1审批中的，则返回true
+	 */
+	boolean canExamined(String id);
 
 	/**
 	 * 为提交操作添加记录

@@ -310,10 +310,6 @@ public class SearchWorkTaskController {
 		Map<String, String> map = new HashMap<>();
 		//type==2是驳回   type==1是确认
 		if("2".equals(type)){
-			/*if(ided.length>1){
-				map.put("msg","只能选择一条");
-				return JSON.toJSONString(map);
-			}*/
 			String reason = request.getParameter("reason")==null?"":request.getParameter("reason");
 			if("".equals(reason)){
 				map.put("msg","驳回原因不能为空");
@@ -338,7 +334,48 @@ public class SearchWorkTaskController {
 			return JSON.toJSONString(map);
 		}
 	}
-	
+	/*
+	 * 审批通过后-驳回
+	 * 工时审核的确认
+	 * 需要修改这条数据的status=1
+	 */
+	@ResponseBody
+	@RequestMapping(value="/confirmExamined")
+	public String confirmExamined(HttpServletRequest request){
+		String type = request.getParameter("type");
+		String ids = request.getParameter("ids");
+		String[] ided = ids.split(",");
+		logger.info("【进行审批操作】："+type);
+		CommonUser userInfo = webUtils.getCommonUser();
+		/* 获取人自编号 */
+		String dealUserName = userInfo.getUserName(); //当前用户名
+		Map<String, String> map = new HashMap<>();
+		//type==2是驳回   type==1是确认
+		if("2".equals(type)){
+			String reason = request.getParameter("reason")==null?"":request.getParameter("reason");
+			if("".equals(reason)){
+				map.put("msg","驳回原因不能为空");
+				return JSON.toJSONString(map);
+			}
+			for(String id:ided){
+				if(swService.canExamined(id)){//判断当前是否为可审批状态
+					String processId=swService.addExamineRecord(id, dealUserName, "3", reason);
+					searchWorkTaskService.confirmExamine(id,type,processId,dealUserName);
+				}
+			}
+			map.put("msg","驳回成功");
+			return JSON.toJSONString(map);
+		}else{
+			for(String id:ided){
+				if(swService.canExamine(id)){//判断当前是否为可审批状态
+					String processId=swService.addExamineRecord(id, dealUserName, "2", "");
+					searchWorkTaskService.confirmExamine(id,type,processId,dealUserName);
+				}
+			}
+			map.put("msg","审批成功");
+			return JSON.toJSONString(map);
+		}
+	}
 	
 	/*
 	 *已审核工时页面 table查询接口
@@ -396,7 +433,9 @@ public class SearchWorkTaskController {
 		valueList = searchWorkTaskService.queryAllExamine(startTime,endTime,projectName,type,userName,userCode,hrName,list);	
 		System.out.println(valueList);
 		Object[][] title = { 
-				 { "日期", "WORK_TIME" }, 
+
+				 { "开始日期", "WORK_TIME_BEGIN" },
+				 { "结束日期", "WORK_TIME_END" },
 				 { "部门（单位）","DEPTNAME"},
 				 { "处室", "LABNAME" },
 				 { "人员编号","HRCODE"}, 

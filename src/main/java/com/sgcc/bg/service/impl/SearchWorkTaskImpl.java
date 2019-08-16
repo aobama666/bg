@@ -43,7 +43,6 @@ public class SearchWorkTaskImpl implements SearchWorkTaskService{
 		long total = page2.getTotal();
 		List<Map<String, String>> list = (List<Map<String, String>>) page2.getResult();
 		Map<String, Object> map = new HashMap<String, Object>();
-		
 		map.put("items", list);
 		map.put("totalCount", total);
 		String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);

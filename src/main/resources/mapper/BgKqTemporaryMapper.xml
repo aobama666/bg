@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.mapper.BgKqTemporaryMapper">
+
+	<insert id="addTemporary"  parameterType="com.sgcc.bg.model.Temporary">
+		INSERT INTO BG_KQ_EMP_TEMPORARY
+			(BEGIN_DATE,
+			 END_DATE,
+			 EMP_CODE,
+			 EMP_NAME,
+			 FULL_TIME,
+			 OVER_TIME,
+			 CREATETIME,
+			 ONCECODE,
+			 STATUS)
+		VALUES
+			(#{beginDate,jdbcType=VARCHAR},
+			 #{endDate,jdbcType=VARCHAR},
+			 #{empCode,jdbcType=VARCHAR},
+		     #{empName,jdbcType=VARCHAR},
+			 #{fullTime,jdbcType=VARCHAR},
+			 #{overTime,jdbcType=VARCHAR},
+		     #{createTime},
+			 #{onceCode,jdbcType=VARCHAR},
+			 #{status,jdbcType=VARCHAR}
+			 )
+	</insert>
+
+    <select id="selectForAll" resultType="java.util.Map">
+        select
+            BEGIN_DATE,
+			 END_DATE,
+			 EMP_CODE,
+			 EMP_NAME,
+			 FULL_TIME,
+			 OVER_TIME,
+			 CREATETIME,
+			 ONCECODE,
+			 STATUS
+		from  BG_KQ_EMP_TEMPORARY
+		where   STATUS='1'
+
+    </select>
+    <update id="updataForStatus"  >
+        UPDATE BG_KQ_EMP_TEMPORARY SET
+        STATUS =#{status}
+        WHERE  STATUS='1' and  ONCECODE=#{oncecode}
+    </update>
+    <delete id="deleteByOneCode"   parameterType="java.lang.String" >
+        DELETE   FROM  BG_KQ_EMP_TEMPORARY   WHERE   STATUS = '0'  AND   ONCECODE= #{oncecode}
+    </delete>
+
+	<insert id="addHistoryInfo"  parameterType="com.sgcc.bg.model.Temporary">
+		INSERT INTO BG_KQ_EMP_HISTORY_INFO
+		(BEGIN_DATE,
+		END_DATE,
+		EMP_CODE,
+		EMP_NAME,
+		FULL_TIME,
+		OVER_TIME,
+		CREATE_TIME
+		 )
+		VALUES
+		(TO_DATE(#{beginDate}, 'yyyy-MM-dd'),
+		 TO_DATE(#{endDate}, 'yyyy-MM-dd'),
+		#{empCode},
+		#{empName},
+		TO_NUMBER(#{fullTime}),
+		TO_NUMBER(#{overTime}),
+		#{createTime}
+		)
+	</insert>
+
+	<delete id="deleteHistoryByOneCode"     >
+		DELETE   FROM  BG_KQ_EMP_HISTORY_INFO   AND   CREATE_TIME= #{createTime}
+	</delete>
+
+
+
+
+
+
+
+
+
+
+
+
+	<insert id="addKqEmpInfo"  parameterType="com.sgcc.bg.model.Temporary">
+		INSERT INTO BG_KQ_EMP_INFO
+		(UUID,
+		BEGIN_DATE,
+		END_DATE,
+		EMP_CODE,
+		EMP_NAME,
+		FULL_TIME,
+		OVER_TIME,
+		CREATE_TIME,
+		VALID
+		 )
+		VALUES
+		(#{onceCode},
+		 TO_DATE(#{beginDate}, 'yyyy-MM-dd'),
+		 TO_DATE(#{endDate}, 'yyyy-MM-dd'),
+		#{empCode},
+		#{empName},
+		TO_NUMBER(#{fullTime}),
+		TO_NUMBER(#{overTime}),
+		#{createTime},
+		#{status}
+		)
+	</insert>
+
+	<update id="updataKqEmpForDate"  >
+		UPDATE BG_KQ_EMP_INFO SET
+		VALID =#{status}
+		WHERE  VALID=#{valid}
+		AND   to_char(BEGIN_DATE,'yyyy-mm-dd') &gt;= #{beginDate}
+		AND   to_char(END_DATE,'yyyy-mm-dd') &gt;= #{endDate}
+	</update>
+
+	<delete id="deleteKqEmpByDate"     >
+		DELETE   FROM  BG_KQ_EMP_INFO
+		WHERE   VALID = #{valid}
+		AND   to_char(BEGIN_DATE,'yyyy-mm-dd') &gt;= #{beginDate}
+		AND   to_char(END_DATE,'yyyy-mm-dd') &gt;= #{endDate}
+	</delete>
+
+
+	<select id="selectForKqInfo" resultType="java.util.Map">
+		select
+		UUID,
+		to_char(BEGIN_DATE,'yyyy-mm-dd')	BEGIN_DATE,
+		to_char(END_DATE,'yyyy-mm-dd')	END_DATE,
+		EMP_CODE,
+		EMP_NAME,
+		FULL_TIME,
+		OVER_TIME,
+		to_char(CREATE_TIME,'yyyy-mm-dd hh24:mi:ss')	CREATE_TIME,
+		VALID
+		from  BG_KQ_EMP_INFO
+		where   VALID='1'
+		<if test="beginDate !=null and beginDate !=''">
+			AND   to_char(BEGIN_DATE,'yyyy-mm-dd') &lt;= #{beginDate}
+		</if>
+		<if test="endDate!=null and endDate !=''">
+			AND   to_char(END_DATE,'yyyy-mm-dd')   &gt;= #{endDate}
+		</if>
+		<if test="empName!=null and empName !=''">
+			and   EMP_NAME =  #{empName}
+		</if>
+		<if test="null != idslist and idslist.size > 0">
+			and    UUID  in
+			<foreach  collection="idslist" item="id" open="("  separator="," close=")">
+				#{id}
+			</foreach>
+		</if>
+
+
+	</select>
+
+
+
+
+
+
+</mapper>
