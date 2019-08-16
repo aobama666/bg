@@ -353,8 +353,9 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 		public String createExcel(String id,String userName,String bpShow,String type,String beginData,String endData, HttpServletResponse response){
 			//构建Excel表头
  
-			 Object[][] title = { 
-					 { "日期", "WORK_TIME" }, 
+			 Object[][] title = {
+					 { "开始日期", "WORK_TIME_BEGIN" },
+					 { "结束日期", "WORK_TIME_END" },
 					 { "类型","CATEGORY"},
 					 { "任务名称","PROJECT_NAME"},
 					 { "工作内容简述","JOB_CONTENT"},

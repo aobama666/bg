@@ -117,6 +117,36 @@ public class BgWebService {
 		String startDate = getStartDate(year, period);
 		String endDate = getEndDate(year, period);
 		String monthName = getMonthName(year, period);
+		//根据年，季，月获取统计报表的最后一天
+		/**
+		 * 获取基本信息
+		 * @param WT_SEASON 期间    Y,S1,S2,S3,S4,M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12
+		 * @param yearName  期间为Y使用：年份  yyyy
+		 * @param startDate 期间为季度使用：S1,S2,S3,S4  开始时间  yyyy-MM-dd
+		 * @param endDate   期间为季度使用：S1,S2,S3,S4   结束时间 yyyy-MM-dd
+		 * @param monthName 期间为月份使用：M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12  yyyy-MM
+		 * @return
+		 */
+		String  newEndData="";
+		if(period.equals("Y")){ newEndData=year+"-12-01"; }
+		else if("S1".equals(period)){newEndData = year +"-03-31";}
+		else if("S2".equals(period)){newEndData = year +"-06-30";}
+		else if("S3".equals(period)){newEndData = year +"-09-30";}
+		else if("S4".equals(period)){newEndData = year +"-12-31";}
+		else if("M1".equals(period)){newEndData = year +"-01-31";}
+		else if("M2".equals(period)){newEndData = year +"-02-29";}
+		else if("M3".equals(period)){newEndData = year +"-03-31";}
+		else if("M4".equals(period)){newEndData = year +"-04-30";}
+		else if("M5".equals(period)){newEndData = year +"-05-31";}
+		else if("M6".equals(period)){newEndData = year +"-06-30";}
+		else if("M7".equals(period)){newEndData = year +"-07-31";}
+		else if("M8".equals(period)){newEndData = year +"-08-31";}
+		else if("M9".equals(period)){newEndData = year +"-09-30";}
+		else if("M10".equals(period)){newEndData = year +"-10-31";}
+		else if("M11".equals(period)){newEndData = year +"-11-30";}
+		else if("M12".equals(period)){newEndData = year +"-12-31";}
+
+
 		log.info("---------[batch:"+batchTime+"]:开始获取基本信息，验证本期间是否记录！");
 		//获取基本信息
 		List<Map<String,Object>> baseDate = bgInterfaceService.getInterfaceBaseData(period, year, startDate, endDate, monthName);

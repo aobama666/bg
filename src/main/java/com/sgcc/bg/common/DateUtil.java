@@ -1,14 +1,9 @@
 package com.sgcc.bg.common;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.text.DateFormat;
+import java.util.*;
 import com.sgcc.bg.workinghourinfo.Utils.DataBean;
 
 public class DateUtil {
@@ -210,8 +205,7 @@ public class DateUtil {
     
     /**
 	 * 校验时间合法
-	 * @param s
-	 * @param format
+	 * @param time
 	 * @return
 	 */
     public static boolean isCheckTime(String time){
@@ -622,12 +616,57 @@ public class DateUtil {
 	        } 
 	        return dates;
 	    }
+
+	//获取本月的开始时间
+	public static Date getBeginDayOfMonth() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(getNowYear(), getNowMonth() - 1, 1);
+
+		return getDayStartTime(calendar.getTime());
+	}
+	//获取本月的结束时间
+	public static Date getEndDayOfMonth() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(getNowYear(), getNowMonth() - 1, 1);
+		int day = calendar.getActualMaximum(5);
+		calendar.set(getNowYear(), getNowMonth() - 1, day);
+		return getDayEndTime(calendar.getTime());
+	}
+	//获取某个日期的开始时间
+	public static Timestamp getDayStartTime(Date d) {
+		Calendar calendar = Calendar.getInstance();
+		if(null != d) calendar.setTime(d);
+		calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),    calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return new Timestamp(calendar.getTimeInMillis());
+	}
+	//获取某个日期的结束时间
+	public static Timestamp getDayEndTime(Date d) {
+		Calendar calendar = Calendar.getInstance();
+		if(null != d) calendar.setTime(d);
+		calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),    calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+		calendar.set(Calendar.MILLISECOND, 999);
+		return new Timestamp(calendar.getTimeInMillis());
+	}
+	//获取今年是哪一年
+	public static Integer getNowYear() {
+		Date date = new Date();
+		GregorianCalendar gc = (GregorianCalendar) Calendar.getInstance();
+		gc.setTime(date);
+		return Integer.valueOf(gc.get(1));
+	}
+	//获取本月是哪一月
+	public static int getNowMonth() {
+		Date date = new Date();
+		GregorianCalendar gc = (GregorianCalendar) Calendar.getInstance();
+		gc.setTime(date);
+		return gc.get(2) + 1;
+	}
 	    public static void main(String[] args) {
-        	String startAt="2017-04-04";
-        	String endAt="2017-04-11";
-        	List<DataBean> list=getDatas(startAt,endAt);
-        	for(DataBean  bean:list){
-        		System.out.println(	bean.getStartData()+"至"+bean.getEndData());
-        	}
+			Date   BeginDate=getBeginDayOfMonth();
+			Date   EndDate=getEndDayOfMonth();
+			String  BeginDates=getFormatDateString(BeginDate,"yyyy-MM-dd");
+			String  EndDates=getFormatDateString(EndDate,"yyyy-MM-dd");
+			System.out.println(BeginDates+"----"+EndDates);
 		}
 }

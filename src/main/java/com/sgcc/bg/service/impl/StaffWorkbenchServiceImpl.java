@@ -127,6 +127,14 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		}
 		return false;
 	}
+	@Override
+	public boolean canExamined(String id){
+		String status=SWMapper.getFieldOfWorkHourById(id, "status");
+		if("3".equals(status)){
+			return true;
+		}
+		return false;
+	}
 	
 	@Override
 	public void changeWorkHourInfoStatus(String id, String status) {
