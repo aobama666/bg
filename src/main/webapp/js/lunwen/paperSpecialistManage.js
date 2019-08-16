@@ -330,7 +330,7 @@ queryAll.renewal = function () {
                 layer.open({
                     type:2,
                     title:'<h4 style="height:42px;line-height:25px;">更换专家 </h4>',
-                    area:['85%','60%'],
+                    area:['85%','80%'],
                     fixed:false,//不固定
                     maxmin:true,
                     content:url,
