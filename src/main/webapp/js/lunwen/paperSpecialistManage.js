@@ -316,25 +316,17 @@ queryAll.renewal = function () {
         layer.alert('该专家已屏蔽，无法更换',{icon:0,title:'信息提示'});
         return;
     }
+    var specialistId = checkedItems[0].uuid;
     $.ajax({
-        url: "/bg/lwGrade/ifExportScore?specialistId="+checkedItems[0].uuid,
+        url: "/bg/lwGrade/ifExportScore?specialistId="+specialistId,
         type: "post",
         contentType: 'application/json',
         success: function (data) {
             if(data.success !== 'true'){
                 layer.alert('该专家所属论文已进行打分操作，无法更换',{icon:0,title:'信息提示'});
                 return;
-            }
-        }
-    });
-    var uuid = checkedItems[0].uuid;
-    $.ajax({
-        type:"GET",
-        url:"/bg/expert/judge?uuid="+uuid,
-        dataType:"json",
-        success:function(data){
-            if(data == true){
-                var url = "/bg/expert/renewalSpecialist?uuid="+uuid;
+            }else{
+                var url = "/bg/expert/renewalSpecialist?uuid="+specialistId;
                 layer.open({
                     type:2,
                     title:'<h4 style="height:42px;line-height:25px;">更换专家 </h4>',
@@ -346,13 +338,13 @@ queryAll.renewal = function () {
                         queryAll.refresh();
                     }
                 });
-            }else {
-                layer.alert('该专家已有论文进行打分，无法更换',{icon:0,title:'信息提示'});
-                return;
             }
         }
     });
+
+
 }
+
 /*专家-新增 */
 queryAll.addEvent = function (){
     var url = "/bg/expert/speciaAdd"

@@ -19,7 +19,7 @@
             b.FIELD AS field,
             b.PHONE AS phone,
             b.EMAIL AS email,
-            b.UPDATE_TIME，
+            b.UPDATE_TIME,
             b.MATCH_STATUS AS matchStatus,
             ROWNUM rown
             FROM BG_LW_SPECIALIST b
@@ -271,7 +271,7 @@
            and p.VALID = '1'
            and e.VALID = '1'
            AND #{end} >= ROWNUM
-            order by e.UPDATE_TIME
+            order by p.year desc
         ) a WHERE a.ROWNO > #{start}
     </select>
 
@@ -453,6 +453,17 @@
 
     <select id="ifEmail" resultType="java.lang.String">
         select uuid from bg_lw_specialist where email = #{email}
+    </select>
+
+    <select id="exportMatchPaperForYear" resultType="com.sgcc.bg.lunwen.bean.PaperVO">
+        select p.paper_name paperName, p.field, p.author
+              ,m.specialist_id specialistId ,p.unit,p.uuid,p.author
+          from bg_lw_paper p, bg_lw_paper_match_expert m
+         where p.uuid = m.paper_id
+           and p.valid = '1'
+           and m.valid = '1'
+           and p.year = #{year}
+           and m.specialist_id = #{specialistId}
     </select>
     <!--and e.SPECIALIST_ID in(
     <foreach collection="list" item="list" index="index" separator=",">

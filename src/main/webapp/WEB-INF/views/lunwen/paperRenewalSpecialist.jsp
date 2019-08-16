@@ -36,31 +36,35 @@
 			text-align: center;
 			background: #d5e7e7;
 		}
+		html{
+			overflow-x: hidden;
+		}
 	</style>
  </head>
 <body>
     <input type = "hidden" value = "${beforeUuid}" id = "beforeUuid" name="beforeUuid">
-	<div style="height: 300px;" class="row">
+	<div style="" class="row">
 		<div class="col-md-1"></div>
-		<div class="col-md-4">
+		<div class="col-md-4" style="height: 200px;!important;">
 			<h4 class="tableTitle">
 				已匹配论文信息
 			</h4>
-				<table class="">
-				<%--<table class="visitLeader tableStyle thTableStyle">--%>
-					<tr style="height: 30px;">
+			<div style="height: 300px;overflow: auto">
+				<table>
+					<tr style="">
 						<th>论文题目</th>
 						<th>领域</th>
 						<th>作者</th>
 					</tr>
 					<c:forEach var="papers" items="${paperMap}">
-						<tr style="height: 30px;">
+						<tr>
 							<td><span>${papers.paperName}</span></td>
 							<td><span>${papers.field}</span></td>
 							<td><span>${papers.author}</span></td>
 						</tr>
 					</c:forEach>
 				</table>
+			</div>
 		</div>
 
 		<div class="col-md-2"></div>
@@ -69,15 +73,16 @@
 			<h4 class="tableTitle">
 				可匹配专家信息
 			</h4>
-				<table class="">
-					<tr style="height: 30px;">
+			<div style="height: 300px;overflow: auto">
+				<table>
+					<tr>
 						<th>选择</th>
 						<th>专家姓名</th>
 						<th>领域</th>
 						<th>研究方向</th>
 					</tr>
 					<c:forEach var="sp" items="${matchingSpecialistList}">
-						<tr style="height: 30px;">
+						<tr>
 							<td><input type="radio" id="uuid" name="uuid" value="${sp.uuid}"></td>
 							<td><span>${sp.name}</span></td>
 							<td><span>${sp.field}</span></td>
@@ -85,6 +90,7 @@
 						</tr>
 					</c:forEach>
 				</table>
+			</div>
 		</div>
 		<div class="col-md-1"></div>
 	</div>

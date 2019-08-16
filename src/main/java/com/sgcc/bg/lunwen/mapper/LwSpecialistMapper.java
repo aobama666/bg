@@ -76,6 +76,13 @@ public interface LwSpecialistMapper {
     List<PaperVO> paperMap(String uuid);
 
     /**
+     * 专家已经匹配的论文信息-更换专家使用
+     */
+    List<PaperVO> exportMatchPaperForYear(
+            @Param("specialistId") String specialistId,
+            @Param("year") String year);
+
+    /**
      * 专家匹配的论文分页
      * @param uuid
      * @param start
