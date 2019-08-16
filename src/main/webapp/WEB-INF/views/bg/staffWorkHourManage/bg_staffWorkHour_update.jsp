@@ -75,31 +75,31 @@
 	<hr>
 	<div class="form-box">
 		<%-- <c:out value="${proUsers}"></c:out> --%>
-		<div class="form-group col-xs-11">
+		<div class="form-group col-xs-12">
 			<label for="empName">人员姓名：</label>
 			<div class="controls">
 				<input type="text" disabled name="empName" property="empName" value="${EMPNAME}">
 			</div>
 		</div>
-		<div class="form-group col-xs-11">
+		<div class="form-group col-xs-12">
 			<label for="hrCode">人员编号：</label>
 			<div class="controls">
 				<input type="text" id="hrCode" disabled name="hrCode" property="hrCode" value="${HRCODE}">
 			</div>
 		</div>
-		<div class="form-group col-xs-11">
+		<div class="form-group col-xs-12">
 			<label for="date">日期：</label>
 			<div class="controls">
-				<input type="text" disabled id="date" name="date" property="date" value="${WORK_TIME}">
+				<input type="text" disabled id="date" name="date" property="date" value="${WORK_DATE}">
 			</div>
 		</div>
-		<div class="form-group col-xs-11">
+		<div class="form-group col-xs-12">
 			<label for="projectName">类型：</label>
 			<div class="controls">
 				<input type="text" disabled name="category" property="category" value="${CATEGORY}">
 			</div>
 		</div>
-		<div class="form-group col-xs-11">
+		<div class="form-group col-xs-12">
 			<label for="projectName">任务名称：</label>
 			<div class="controls">
 				<c:choose>
@@ -112,16 +112,25 @@
 				</c:choose>
 			</div>
 		</div>
-		<div class="form-group col-xs-11">
+		<div class="form-group col-xs-12">
 			<label for="jobContent">工作内容简述：</label>
 			<div class="controls">
 				<textarea name="jobContent" class="" id="jobContent" onblur="checkInput(this)" property="jobContent" style="height:75px">${JOB_CONTENT}</textarea>
 			</div>
 		</div>
-		<div class="form-group col-xs-11">
-			<label for="workHour">投入工时(h)：</label>
-			<div class="controls">
-				<input type="text" id="workHour" name="workHour" onblur="checkInput(this)" property="workHour" value="${WORKING_HOUR}">
+		<div class="form-group col-xs-12">
+			<div style="float: left">
+				<label for="workHour">投入工时(h)：</label>
+				<div class="controls">
+					<input type="text" style="width: 150px" id="workHour" name="workHour" onblur="checkInput(this)" property="workHour" value="${WORKING_HOUR}">
+					<input type="hidden" id="workHourOld" name="workHourOld" property="workHourOld" value="${WORKING_HOUR}">
+				</div>
+			</div>
+			<div style="padding-left: 290px">
+				<span style="line-height: 26px">月度工时/已填报工时（h）：</span>
+				<span id="fillSumKQ">${fillSumKQ}</span>
+				<span>/</span>
+				<span id="fillSum">${fillSum}</span>
 			</div>
 		</div>
 	</div>
@@ -177,6 +186,18 @@
 			layer.msg("您的填写有误，请检查");
 			return;
 		}
+
+        //验证累计工时是否超过月度工时
+        /*var fillSum = document.getElementById("fillSum").innerHTML;
+        var fillSumKQ = document.getElementById("fillSumKQ").innerHTML;
+        var workHour = $("input[name=workHour]").val();
+        var workHourOld = $("input[name=workHourOld]").val();
+        fillSum = Number(fillSum)-Number(workHourOld)+Number(workHour);
+        if (fillSumKQ<fillSum){
+            layer.msg("填报工时已超出月度工时，请检查");
+            return;
+        }*/
+
 		var params={};
 		params["id"] =  $.trim($("#whId").val());
 		params["projectName"] =  $.trim($("#projectName").val());
@@ -219,6 +240,22 @@
 				//layer.msg("您的填写有误，请检查");
 				return;
 			}
+
+            //验证累计工时是否超过月度工时
+            var fillSum = document.getElementById("fillSum").innerHTML;
+            var fillSumKQ = document.getElementById("fillSumKQ").innerHTML;
+            var workHour = $("input[name=workHour]").val();
+            var workHourOld = $("input[name=workHourOld]").val();
+            if(fillSumKQ == '-'){
+                layer.msg("无月度工时，不可提交");
+                return;
+            }
+            fillSum = Number(fillSum)-Number(workHourOld)+Number(workHour);
+            if (fillSumKQ<fillSum){
+                layer.msg("填报工时已超出月度工时，请检查");
+                return;
+            }
+
 			var paramArr =new Array();
 			var params={};
 			params["id"] =  $.trim($("#whId").val());

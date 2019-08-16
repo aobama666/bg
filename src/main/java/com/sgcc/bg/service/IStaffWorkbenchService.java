@@ -17,6 +17,13 @@ public interface IStaffWorkbenchService {
 	List<Map<String, String>> getWorkingHourInfo(String selectedDate);
 
 	/**
+	 * 工时统计（月度工时及已填工时）
+	 * @param selectedDate
+	 * @return
+	 */
+	Map<String,Object> workingHoursMap(String selectedDate);
+
+	/**
 	 *获取当前员工名下的项目信息 条件：1.项目开始日期<=填报日期<=项目结束日期 
 	 *2.如果为项目信息，员工参与开始日期<=填报日期<=参与结束日期
 	 *3.如果为非项目信息，则为本人所属处室或部门下的项目
@@ -163,4 +170,5 @@ public interface IStaffWorkbenchService {
 	 * @return
 	 */
 	String getApproverById(String id);
+
 }

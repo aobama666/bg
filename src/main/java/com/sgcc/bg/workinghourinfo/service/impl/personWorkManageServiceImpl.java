@@ -1,4 +1,5 @@
 package com.sgcc.bg.workinghourinfo.service.impl;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -43,6 +44,7 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 	 	 private IStaffWorkingHourManageService smService;
 	     @Autowired
 	 	 private IStaffWorkbenchService swService;
+
 		   /** 
 			* 个人工时管理-----查询
 	 		* @param 
@@ -58,13 +60,29 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 			 int limit=Integer.parseInt(request.getParameter("limit")); 
 			 Page<?> page=PageHelper.startPage(pageNum,limit); 
 			 String id = request.getParameter("id" ) == null ? "" : request.getParameter("id").toString(); 
-			 String StartData = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); 
-			 String EndData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); 
+			 String StartData = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString();
+			 String EndData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString();
 			 String worker = userName;
 			 String category = request.getParameter("category" ) == null ? "" : request.getParameter("category").toString(); 
 			 String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString(); 
 			 String status = request.getParameter("status" ) == null ? "" : request.getParameter("status").toString(); 
-			 bgworkinghourinfoMapper.selectForbgWorkinghourInfo(id,StartData,EndData,worker,category,projectName,status);   
+
+			 if(StartData!=null && StartData!="" && EndData!=null && EndData!="") {
+				 //取月初和月末
+				 String[] str = StartData.split("-");
+				 int year = Integer.parseInt(str[0]);
+				 int month = Integer.parseInt(str[1]);
+
+				 String[] strEnd = EndData.split("-");
+				 int yearEnd = Integer.parseInt(strEnd[0]);
+				 int monthEnd = Integer.parseInt(strEnd[1]);
+				 //查询开始月初
+				 StartData = DateUtil.getFirstDayOfMonth1(year, month);
+				 //查询结束月末
+				 EndData = DateUtil.getLastDayOfMonth1(yearEnd, monthEnd);
+			 }
+
+			 bgworkinghourinfoMapper.selectForbgWorkinghourInfo(id,StartData,EndData,worker,category,projectName,status);
 			 long total=page.getTotal(); 
 			 @SuppressWarnings("unchecked")
 			    List<Map<String,String>> dataList=(List<Map<String, String>>) page.getResult(); 
@@ -158,11 +176,11 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 				 }	
 				 String checkResult="";
 				 //校验当天工时是否超标
-				 checkResult=smService.checkWorkHour(userName,date,todayHours);
+				 /*checkResult=smService.checkWorkHour(userName,date,todayHours);
 				 if (!"".equals(checkResult)) {
 					  rw = new ResultWarp(ResultWarp.FAILED ,checkResult); 
 					  return JSON.toJSONString(rw);  	 
-				 } 
+				 } */
 				 if(projectName.length()>50){
 						rw = new ResultWarp(ResultWarp.FAILED ,"项目名称超出最大50长度限制！"); 
 						return JSON.toJSONString(rw);  
@@ -297,7 +315,8 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 						String xhs = xhnum[i];
 						List<Map<String, Object>> map = bgworkinghourinfoMapper.selectCheckTime(ids, "", "", "", "");
 						if (!map.isEmpty()) {
-							String worktime = (String) map.get(0).get("WORK_TIME");
+							//String worktime = (String) map.get(0).get("WORK_TIME");
+							String worktimeBegin = (String) map.get(0).get("WORK_TIME_BEGIN");
 							String workhour = Rtext.toStringTrim(map.get(0).get("WORKING_HOUR"), "");
 							double workhours;
 							try {
@@ -307,15 +326,26 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 										+ "第"+xhs+"行工时"+(Rtext.isEmpty(workhour)?"未填写！":"格式错误！"));
 								return JSON.toJSONString(rw);
 							}
-							// 校验当天工时是否超标
-							String checkResult = "";
-							// 校验当天工时是否超标
-							checkResult = smService.checkWorkHour(userName, worktime, workhours);
-			
-							if (!"".equals(checkResult)) {
+
+							//效验累计工时是否超过月度工时
+							Map<String,Object> dateMap = swService.workingHoursMap(worktimeBegin);
+							BigDecimal fillSum = new BigDecimal(String.valueOf(dateMap.get("fillSum")));
+							BigDecimal fillSumKQ = (BigDecimal)dateMap.get("fillSumKQ");
+							int j = fillSum.add(BigDecimal.valueOf(workhours)).compareTo(fillSumKQ);
+							if(j>0){
 								rw = new ResultWarp(ResultWarp.FAILED, "提交成功" + count + "条，第"+xhs+"行工时超标！");
 								return JSON.toJSONString(rw);
 							}
+
+							// 校验当天工时是否超标
+							//String checkResult = "";
+							// 校验当天工时是否超标
+							//checkResult = smService.checkWorkHour(userName, worktime, workhours);
+			
+							/*if (!"".equals(checkResult)) {
+								rw = new ResultWarp(ResultWarp.FAILED, "提交成功" + count + "条，第"+xhs+"行工时超标！");
+								return JSON.toJSONString(rw);
+							}*/
 						}
 						@SuppressWarnings("rawtypes")
 						List<Map> list = bgworkinghourinfoMapper.selectForKilebgWorkinghourInfo(ids);
@@ -362,18 +392,31 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 		   * */ 
 		 @Override 
 		 public void  exportExcelForpersonWorkManage(HttpServletRequest request,HttpServletResponse response){
-				 log.info("[bgWorkinghourInfo]: 个人工时管理" );
-				 CommonUser userInfo = webUtils.getCommonUser();
-				 String userName = userInfo.getUserName();	 
-				 String id = request.getParameter("id" ) == null ? "" : request.getParameter("id").toString(); 
-				 String StartData = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); 
-				 String EndData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); 
-				 String worker = userName;
-				 String category = request.getParameter("category" ) == null ? "" : request.getParameter("category").toString(); 
-				 String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString(); 
-				 String status = request.getParameter("status" ) == null ? "" : request.getParameter("status").toString(); 
-				 createExcelForpersonWorkManage(id,StartData,EndData,worker,category,projectName,status, response);			 
-			 
+			 log.info("[bgWorkinghourInfo]: 个人工时管理" );
+			 CommonUser userInfo = webUtils.getCommonUser();
+			 String userName = userInfo.getUserName();
+			 String id = request.getParameter("id" ) == null ? "" : request.getParameter("id").toString();
+			 String StartData = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString();
+			 String EndData = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString();
+			 String worker = userName;
+			 String category = request.getParameter("category" ) == null ? "" : request.getParameter("category").toString();
+			 String projectName = request.getParameter("projectName" ) == null ? "" : request.getParameter("projectName").toString();
+			 String status = request.getParameter("status" ) == null ? "" : request.getParameter("status").toString();
+			 if(StartData!=null && StartData!="" && EndData!=null && EndData!="") {
+				 //取月初和月末
+				 String[] str = StartData.split("-");
+				 int year = Integer.parseInt(str[0]);
+				 int month = Integer.parseInt(str[1]);
+
+				 String[] strEnd = EndData.split("-");
+				 int yearEnd = Integer.parseInt(strEnd[0]);
+				 int monthEnd = Integer.parseInt(strEnd[1]);
+				 //查询开始月初
+				 StartData = DateUtil.getFirstDayOfMonth1(year, month);
+				 //查询结束月末
+				 EndData = DateUtil.getLastDayOfMonth1(yearEnd, monthEnd);
+			 }
+			 createExcelForpersonWorkManage(id,StartData,EndData,worker,category,projectName,status, response);
 		}
 		/**
 		 * 个人工时管理的导出 
@@ -382,7 +425,9 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 				 String worker,String category,String projectName,String status, HttpServletResponse response){
 				//构建Excel表头
 						 Object[][] title = { 
-								 { "日期", "WORK_TIME" }, 
+								 //{ "日期", "WORK_TIME" },
+								 { "开始日期", "WORK_TIME_BEGIN" },
+								 { "结束日期", "WORK_TIME_END" },
 								 { "类型","CATEGORY"},
 								 { "任务名称","PROJECT_NAME"},
 								 { "工作内容简述","JOB_CONTENT"},

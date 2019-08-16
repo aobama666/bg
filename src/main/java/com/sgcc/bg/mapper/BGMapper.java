@@ -351,4 +351,11 @@ public interface BGMapper {
 	 */
 	public boolean deleteBeforeProById(String[] idsArr);
 
+    /**
+     * 取出该项目所有负责人的开始时间结束时间和姓名
+     * @param proId
+     * @return
+     */
+    List<Map<String,String>> listPrincipalDate(String proId);
+
 }
