@@ -212,7 +212,7 @@ queryAll.updateEvent = function(){
         return;
     }
     if(checkedItems[0].matchStatus === '1'){
-        layer.alert("选择的数据无法修改,还有已匹配的论文",{icon:0,title:'信息提示'});
+        layer.alert("该专家已匹配论文信息，不可修改",{icon:0,title:'信息提示'});
         return;
     }
     var uuid = checkedItems[0].uuid;
@@ -267,7 +267,7 @@ queryAll.updateSubmit = function () {
     }
 
     var email=$("#email").val();
-    var exp =/^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+    var exp =/^([a-zA-Z0-9]+[-_.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[-_.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
     if(!exp.test(email)){
         layer.alert('邮箱格式不正确',{icon:0,title:'信息提示'});
         roomDetailInfo.saveBtnClickFlag = 0;
@@ -316,29 +316,21 @@ queryAll.renewal = function () {
         layer.alert('该专家已屏蔽，无法更换',{icon:0,title:'信息提示'});
         return;
     }
+    var specialistId = checkedItems[0].uuid;
     $.ajax({
-        url: "/bg/lwGrade/ifExportScore?specialistId="+checkedItems[0].uuid,
+        url: "/bg/lwGrade/ifExportScore?specialistId="+specialistId,
         type: "post",
         contentType: 'application/json',
         success: function (data) {
             if(data.success !== 'true'){
                 layer.alert('该专家所属论文已进行打分操作，无法更换',{icon:0,title:'信息提示'});
                 return;
-            }
-        }
-    });
-    var uuid = checkedItems[0].uuid;
-    $.ajax({
-        type:"GET",
-        url:"/bg/expert/judge?uuid="+uuid,
-        dataType:"json",
-        success:function(data){
-            if(data == true){
-                var url = "/bg/expert/renewalSpecialist?uuid="+uuid;
+            }else{
+                var url = "/bg/expert/renewalSpecialist?uuid="+specialistId;
                 layer.open({
                     type:2,
                     title:'<h4 style="height:42px;line-height:25px;">更换专家 </h4>',
-                    area:['85%','60%'],
+                    area:['85%','80%'],
                     fixed:false,//不固定
                     maxmin:true,
                     content:url,
@@ -346,13 +338,13 @@ queryAll.renewal = function () {
                         queryAll.refresh();
                     }
                 });
-            }else {
-                layer.alert('该专家以有论文进行打分，无法更换',{icon:0,title:'信息提示'});
-                return;
             }
         }
     });
+
+
 }
+
 /*专家-新增 */
 queryAll.addEvent = function (){
     var url = "/bg/expert/speciaAdd"

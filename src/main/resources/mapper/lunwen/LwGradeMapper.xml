@@ -62,7 +62,7 @@
                 and p.year = #{year}
             </if>
             <if test="scoreStatus!=null and scoreStatus!=''">
-                and p.score_status = #{scoreStatus}
+                and m.score_status = #{scoreStatus}
             </if>
             <if test="paperType!=null and paperType!=''">
                 and p.paper_type = #{paperType}
@@ -112,7 +112,7 @@
             and p.year = #{year}
         </if>
         <if test="scoreStatus!=null and scoreStatus!=''">
-            and p.score_status = #{scoreStatus}
+            and m.score_status = #{scoreStatus}
         </if>
         <if test="paperType!=null and paperType!=''">
             and p.paper_type = #{paperType}

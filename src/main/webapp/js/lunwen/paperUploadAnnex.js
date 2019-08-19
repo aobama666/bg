@@ -64,9 +64,9 @@ uploadAnnex.initDataGrid = function(){
                 {name: '文件大小', style:{width:"50px"},data: 'FILESIZE'},
                 {name: '上传时间', style:{width:"120px"},data: 'CREATETIME'}
             ],
-            calculateHeadWidth:function(target){
+           /* calculateHeadWidth:function(target){
                 $(".tableBody").css("height","100px");
-            },
+            },*/
         });
         $(".paging").css("display","none");
 }

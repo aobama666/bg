@@ -149,4 +149,9 @@ public interface LwPaperMatchSpecialistMapper {
             @Param("year") String year,
             @Param("valid") String valid
     );
+
+    /**
+     * 判断当前论文是否有匹配操作
+     */
+    List<String> ifMatchForPaperId(@Param("paperId") String paperId,@Param("valid") String valid);
 }

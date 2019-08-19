@@ -18,8 +18,16 @@
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+	<style>
+		.tableBody{
+			height: 120px!important;
+		}
+	</style>
 </head>
 <body>
+
+<h3 style="width: 94%;margin-left: 3%;margin-top: 10px;margin-bottom: 10px">基本信息</h3>
+
 <table class="visitOperate tableStyle specialTable">
 		<tr>
 			<td style="width: 10%">
@@ -27,13 +35,13 @@
 			</td>
 			<td class="addInputStyle" style="width: 40%">
 				<input type = "text" style="display: none" value = "${lwPaper.UUID}"  class="validNull"  id = "uuid" name="uuid">
-				<input type="text"  id="paperName"  name="paperName" value="${lwPaper.PAPERNAME}"  class="validNull"  len="50"   content="论文题目" title="必填项"/>
+				<input type="text"  id="paperName"  name="paperName" value="${lwPaper.PAPERNAME}"  class="validNull"  len="200"   content="论文题目" title="必填项"/>
 			</td>
 			<td style="width: 10%">
 				<span title = "作者单位"><b class="mustWrite">*</b>作者单位</span>
 			</td>
 			<td class="addInputStyle" style="width: 40%">
-				<input type="text"  id="unit" name="unit" value="${lwPaper.UNIT}"  class="validNull"  len="50" content="作者单位"  title="必填项  "/>
+				<input type="text"  id="unit" name="unit" value="${lwPaper.UNIT}"  class="validNull"  len="300" content="作者单位"  title="必填项  "/>
 			</td>
 		</tr>
 		<tr>
@@ -55,7 +63,7 @@
 				<span title = "论文作者"><b class="mustWrite">*</b>论文作者</span>
 			</td>
 			<td class="addInputStyle">
-				<input type="text"  id="author"  name="author" value="${lwPaper.AUTHOR}"  class="validNull"  len="50"   content="论文作者" title="必填项"/>
+				<input type="text"  id="author"  name="author" value="${lwPaper.AUTHOR}"  class="validNull"  len="150"  content="论文作者" title="必填项"/>
 			</td>
 			<td>
 				<span title = "期刊名称"><b class="mustWrite">*</b>期刊名称</span>
@@ -92,9 +100,6 @@
                     </c:forEach>
 				</select>--%>
 			</td>
-		</tr>
-	<tr>
-			<hr/>
 		</tr>
 </table>
 

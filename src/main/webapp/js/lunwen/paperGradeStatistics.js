@@ -14,7 +14,6 @@ var ran;
 
 $(function(){
 
-    // var checkkk = $(".checkli  li:first").html();
     var checkkk = $("#dh_li .checkli  li:first").text();
     $("#dh_li .checkli li:first").attr("class","checkkk");
     document.getElementById("field").value=checkkk;
@@ -26,6 +25,7 @@ $(function(){
         queryAll.query();
     });
 
+    queryAll.ifFiveField();
 
     //点选背景效果
     $("#dh_li .checkli li").click(function () {
@@ -54,6 +54,75 @@ queryAll.field = function (field) {
     document.getElementById("field").value=field;
     queryAll.query();
 }
+
+
+/**
+ * 切换年份领域内容变化
+ */
+queryAll.changeYear = function () {
+    //获取当前选中年份
+    var year = $("#year option:selected").val();
+    //发起后台请求
+    $.ajax({
+        url:"/bg/gradeStatistics/getFields",
+        type:"POST",
+        data:{year:year},
+        dataJson:"JSON",
+        async:false,
+        success:function (data) {
+            //修改前台页面内容
+            var fieldList = data.data.fieldList;
+            var i;
+            var content = "";
+            document.getElementById("refreshField").innerHTML=content;
+            for(i=0;i<fieldList.length;i++){
+                var filed = fieldList[i].FIELD;
+                content = content+
+                    "<div onclick=queryAll.field('"+filed+"')>" +
+                    "<li>"+filed+"</li>" +
+                    "</div>";
+            }
+            document.getElementById("refreshField").innerHTML=content;
+        }
+    });
+
+    var checkkk = $("#dh_li .checkli  li:first").text();
+    $("#dh_li .checkli li:first").attr("class","checkkk");
+    document.getElementById("field").value=checkkk;
+
+    var myclomus = queryAll.seachHead();
+    queryAll.initDataGrid(myclomus);
+
+    var classQuery = $(".changeQuery");
+    $("#queryButton").on("click",function(e){
+        queryAll.query();
+    });
+
+    queryAll.ifFiveField();
+
+    //点选背景效果
+    $("#dh_li .checkli li").click(function () {
+        $("#dh_li .checkli li").removeClass("checkkk");
+        $(this).addClass("checkkk");
+    });
+
+}
+
+//如果超过5个领域自动加左右标签按钮
+queryAll.ifFiveField = function () {
+    var dhli=document.getElementById("dh_li");
+    var a = document.getElementById("a");
+    var b = document.getElementById("b");
+    var c = dhli.getElementsByTagName("li").length;
+    if(c>5){
+        a.style.display="block";
+        b.style.display="block";
+    }else {
+        a.style.display="none";
+        b.style.display="none";
+    }
+}
+
 
 queryAll.seachHead = function(){
     ran = Math.random()*100000000;
@@ -187,7 +256,7 @@ queryAll.outEvent = function () {
         }
         ids = ids.slice(0,ids.length-1);
         $("input[name=selectList]").val(ids);
-        var ran = Math.random()*1000;
+        var field = $("#field").val();
         document.forms[0].action ="/bg/gradeStatistics/outStatisticExcel?field="+field;
         document.forms[0].submit();
     }

@@ -143,8 +143,9 @@ paperList.addEvent = function (){
                 data: JSON.stringify(paperDetailFormData),
                 success: function (data) {
                     if(data.success=="true"){
-                        $("#uuid").val(data.data.uuid);
-                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                        // $("#uuid").val(data.data.uuid);
+                        // layer.alert(data.msg,{icon:1,title:'信息提示'});
+                        parent.paperList.closeAndOpen(data.msg);
                     }else{
                         layer.alert(data.msg,{icon:2,title:'信息提示'});
                         return;
@@ -179,17 +180,33 @@ paperList.updateOperation = function(){
 		var id = dataGrid.getCheckedIds();
 		var status=checkedItems[0].approveState;
 		var url = "/bg/lwPaper/paperJumpUpdate?uuid="+checkedItems[0].UUID;
-		layer.open({
-			type:2,
-			title:'<h4 style="height:42px;line-height:25px;">论文信息修改</h4>',
-			area:['85%','85%'],
-			fixed:false,//不固定
-			maxmin:true,
-			content:url,
-            end: function () {
-                paperList.queryAddPage();
+		//判断是否有匹配上的专家信息
+        $.ajax({
+            url: "/bg/lwPaper/ifMacthForPaperUuid?paperId="+checkedItems[0].UUID,
+            type: "post",
+            dataType:"json",
+            contentType: 'application/json',
+            success: function (data) {
+                debugger
+                if(data.success=="false"){
+                    layer.alert(data.msg,{icon:0,title:'信息提示'});
+                    return;
+                }else{
+                    layer.open({
+                        type:2,
+                        title:'<h4 style="height:42px;line-height:25px;">论文信息修改</h4>',
+                        area:['85%','85%'],
+                        fixed:false,//不固定
+                        maxmin:true,
+                        content:url,
+                        end: function () {
+                            paperList.queryAddPage();
+                        }
+                    });
+                }
             }
-		});
+        });
+
 };
 
 
@@ -217,7 +234,11 @@ paperList.updateEvent = function (){
                 contentType: 'application/json',
                 data: JSON.stringify(paperDetailFormData),
                 success: function (data) {
-                    layer.alert(data.msg,{icon:0,title:'信息提示'});
+                    if(data.success=="true"){
+                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    }else{
+                        layer.alert(data.msg,{icon:2,title:'信息提示'});
+                    }
                 }
             });
         },function () {

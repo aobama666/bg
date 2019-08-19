@@ -3,7 +3,9 @@ package com.sgcc.bg.lunwen.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.ResultWarp;
+import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.lunwen.bean.PaperComprehensiveVO;
 import com.sgcc.bg.lunwen.service.LwComprehensiveStatisticService;
 import com.sgcc.bg.lunwen.service.LwGradeStatisticService;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +48,7 @@ public class LwGradeStatisticController {
      */
     @RequestMapping("/gradeStatistics")
     public String specialist(HttpServletRequest request) {
-        List<Map<String,Object>> fieldLsit = lwPaperServiceImpl.fieldList();
+        List<Map<String,Object>> fieldLsit = lwPaperServiceImpl.fieldList(DateUtil.getYear());
         List<Map<String,Object>> year = lwComprehensiveStatisticServiceImpl.year();
         Map map = new HashMap();
         map.put("fieldList",fieldLsit);
@@ -53,6 +56,19 @@ public class LwGradeStatisticController {
         map.put("size",fieldLsit.size());
         request.setAttribute("map",map);
         return "lunwen/paperGradeStatistics";
+    }
+
+    /**
+     * 按照年份刷新领域标签页内容
+     */
+    @ResponseBody
+    @RequestMapping("/getFields")
+    public String refresh(String year) throws IOException {
+        ResultWarp rw = null;
+        List<Map<String,Object>> fieldLsit = lwPaperServiceImpl.fieldList(year);
+        rw = new ResultWarp(ResultWarp.SUCCESS,"success");
+        rw.addData("fieldList",fieldLsit);
+        return JSON.toJSONString(rw);
     }
 
     /**
@@ -85,7 +101,12 @@ public class LwGradeStatisticController {
      */
     @ResponseBody
     @RequestMapping("/statistics")
-    public String statistics(String year,String paperName,String paperId,String field,Integer page, Integer limit) {
+    public String statistics(String year,String paperName,String paperId,String field,Integer page, Integer limit,HttpServletRequest request) {
+        year = Rtext.toStringTrim(year,"");
+        paperName = Rtext.toStringTrim(paperName,"");
+        paperId = Rtext.toStringTrim(paperId,"");
+        field = Rtext.toStringTrim(field,"");
+
         int start = 0;
         int end = 10;
         if (page != null && limit != null && page > 0 && limit > 0) {

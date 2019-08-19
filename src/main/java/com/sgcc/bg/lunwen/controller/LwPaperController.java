@@ -210,7 +210,7 @@ public class LwPaperController {
     public String paperToAdd(@RequestBody Map<String, Object> paramsMap){
         ResultWarp rw = null;
 
-        //验证题目是否唯一，考虑后期做成ajax形式，填完题目后直接验证
+        //验证题目是否唯一
         LwPaper lwPaper = mapToLwPaper(paramsMap);
         Map<String,Object> lwMap = lwPaperService.findPaper(null,lwPaper.getPaperName());
         if(null != lwMap){
@@ -227,6 +227,22 @@ public class LwPaperController {
         log.info(getLoginUser()+"insert lwPaper success,info:"+lwPaper.toString());
         rw = new ResultWarp(ResultWarp.SUCCESS ,"添加论文基本信息成功");
         rw.addData("uuid",uuid);
+        return JSON.toJSONString(rw);
+    }
+
+    /**
+     * 判断论文是否有匹配的专家信息
+     */
+    @ResponseBody
+    @RequestMapping("/ifMacthForPaperUuid")
+    public String ifMacthForPaperUuid(String paperId){
+        ResultWarp rw = null;
+        List<String> ifMatchList = lwPaperMatchSpecialistService.ifMatchForPaperId(paperId);
+        if(0 != ifMatchList.size()){
+            rw = new ResultWarp(ResultWarp.FAILED,"选择的数据无法修改,已匹配专家");
+        }else{
+            rw = new ResultWarp(ResultWarp.SUCCESS,"无大碍，请放心修改");
+        }
         return JSON.toJSONString(rw);
     }
 
@@ -255,9 +271,21 @@ public class LwPaperController {
     public String paperToUpdate(@RequestBody Map<String, Object> paramsMap){
         ResultWarp rw = null;
         LwPaper lwPaper = mapToLwPaper(paramsMap);
+
+        Map<String,Object> lwMap = lwPaperService.findPaper(null,lwPaper.getPaperName());
+        if(null != lwMap){
+            if(!lwMap.get("UUID").equals(paramsMap.get("uuid").toString())){
+                log.info(getLoginUser()+"update lwPaper fail,paperName exist,info:"+paramsMap.toString());
+                rw = new ResultWarp(ResultWarp.FAILED ,"修改论文失败，论文题目已存在");
+                return JSON.toJSONString(rw);
+            }
+        }
+
         lwPaper.setUpdateUser(getLoginUserUUID());
         lwPaper.setUpdateTime(new Date());
         lwPaper.setUuid(paramsMap.get("uuid").toString());
+        //防止匹配因为空格出现的问题
+        lwPaper.setField(lwPaper.getField().trim());
         lwPaperService.updateLwPaper(lwPaper);
         log.info(getLoginUser()+"update lwPaper success,info:"+lwPaper.toString());
         rw = new ResultWarp(ResultWarp.SUCCESS ,"修改论文基本信息成功");
@@ -944,7 +972,7 @@ public class LwPaperController {
             }
 
             //判断该附件是否存在
-            List<Map<String,Object>> lwFileForFileName = lwFileService.findLwFileForFileName(fileNameBefore.trim(),fileNameAfter.trim());
+            List<Map<String,Object>> lwFileForFileName = lwFileService.findLwFileForFileName(fileNameBefore,fileNameAfter);
             if(0!=lwFileForFileName.size()){
                 //附件已存在，删除本地路径附件，返回已存在标识
                 new File(localPath).delete();

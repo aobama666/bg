@@ -203,6 +203,8 @@
         var isPass=true;
         var roleCount=0;
         var principalCode="";
+        var begin=new Array();
+        var over= new Array();
         for(var i=0;i<rows.length;i++){
             var $row=$(rows[i]);
             //校验数据合法性
@@ -248,6 +250,8 @@
             if(stuff["role"]=="项目负责人"){
                 principalCode=stuff["hrcode"];
                 roleCount++;
+                begin[i]=stuff["startDate"];
+                over[i]=stuff["endDate"];
             }
             jsonStr+=JSON.stringify(stuff)
             if(i<rows.length-1){
@@ -261,8 +265,17 @@
             return;
         }
 
+        begin=begin.sort();
+        over=over.sort();
+        for(i=1;i<begin.length;i++){
+            if(begin[i]<=over[i-1]){
+                layer.msg("您填写的时间有交叉，请检查");
+                return;
+            }
+        }
+
         //校验是否有重复，且负责人是否有且唯一
-        if(roleCount==0){
+        /*if(roleCount==0){
             layer.msg("请选择项目负责人");
             return;
         }else if(roleCount>1){
@@ -274,7 +287,7 @@
         if (arrStr.indexOf(principalCode) != arrStr.lastIndexOf(principalCode)){
             layer.msg("只能选择一名项目负责人");
             return;
-        }
+        }*/
 
         //校验人员+日期是否唯一
         if(nameArr.length>0){
@@ -306,7 +319,7 @@
                                 sortIndex("mmg");
                             }
                         });
-                        note+=item.NAME+"("+item.WORK_TIME+")、";
+                        note+=item.NAME+"("+item.WORK_TIME_BEGIN+")"+"-"+"("+item.WORK_TIME_END+")、";
                     });
                     parent.layer.msg(note.substr(0,note.length-1)+"已存在报工信息，请核实!");
                 }
@@ -317,7 +330,7 @@
         });
     }
 
-    function roleChange(_this){
+    /*function roleChange(_this){
         var role=_this.val();
         var hrCode=_this.parents("tr").find("input[name='hrcode']").val();
         var rows=$("#mmg tr").has("input[value='"+hrCode+"']");
@@ -329,7 +342,7 @@
         rows.each(function(index,row){
             $(row).find("select").val(role);
         });
-    }
+    }*/
 
 
     function checkNumberic(planHours){

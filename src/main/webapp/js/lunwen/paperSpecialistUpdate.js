@@ -4,7 +4,7 @@ roomDetailInfo.saveBtnClickFlag = 0;//保存按钮点击事件
 roomDetailInfo.saveInfoFlag = true;//页面数据保存事件
 var  VisitunitLevelData='';
 
-/*修改保存*/
+/*保存*/
 roomDetailInfo.messageSubmit= function(approvalUserd){
 
     var uuid=$("#uuid").val();
@@ -42,7 +42,7 @@ roomDetailInfo.messageSubmit= function(approvalUserd){
     }
 
     var email=$("#email").val();
-    var exp =/^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+    var exp =/^([a-zA-Z0-9]+[-_.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[-_.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
     if(!exp.test(email)){
         layer.alert('邮箱格式不正确',{icon:0,title:'信息提示'});
         roomDetailInfo.saveBtnClickFlag = 0;

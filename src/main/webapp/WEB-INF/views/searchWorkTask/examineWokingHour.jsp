@@ -32,7 +32,9 @@
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/organ-tree/organ-tree.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/common.js"></script>
-<!--[if lt IE 9>
+	<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+
+	<!--[if lt IE 9>
 	<script src="<%=request.getContextPath() %>/common/plugins/html5shiv/html5shiv.min.js"></script>
 	<script src="<%=request.getContextPath() %>/common/plugins/respond/respond.js"></script>
 	<script src="<%=request.getContextPath() %>/common/plugins/pseudo/jquery.pseudo.js"></script>
@@ -87,7 +89,7 @@
 		<hidden name="uuid" property="uuid"></hidden>
 		<div class="form-group col-xs-5"  style="margin-bottom:0;">
 			<label>查询日期：</label>
-			<div class="controls"  data-date-format="yyyy-mm-dd">
+		<%--	<div class="controls"  data-date-format="yyyy-mm-dd">
 				<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
 					<input name="startTime" property="startTime"  readonly="true" placeholder='开始时间'>
 					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
@@ -95,6 +97,19 @@
 				<div class="floatLeft">--</div>
 				<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
 					<input name="endTime" property="endTime"  readonly="true" placeholder='结束时间'>
+					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+				</div>
+			</div>--%>
+			<div class="controls"  data-date-format="yyyy-mm">
+				<div class="input-group date form_date bg-white" id="startdateTime"　data-date-format="yyyy-mm" >
+					<input id="startTime" name="startTime" property="startTime"   type="hidden"  >
+					<input  id="startTimes" name="startTimes" property="startTimes"  type="text"  class="form-control form_datetime_2 input-sm bg-white"   readonly  />
+					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+				</div>
+				<div class="floatLeft">--</div>
+				<div class="input-group date form_date bg-white" id="enddateTime"　data-date-format="yyyy-mm" >
+					<input id="endTime" name="endTime" property="endTime"  type="hidden"  >
+					<input  id="endTimes" name="endTimes" property="endTimes" type="text"  class="form-control form_datetime_2 input-sm bg-white"  readonly    />
 					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 				</div>
 			</div>
@@ -147,23 +162,121 @@
 var mmg;
 var pn = 1;
 var limit = 30;
+
+function Timeinit() {
+    // 时间初始化
+    $("#startdateTime").datepicker({
+        startView: 'months',  //起始选择范围
+        maxViewMode:'years', //最大选择范围
+        minViewMode:'months', //最小选择范围
+        todayHighlight : true,// 当前时间高亮显示
+        autoclose : 'true',// 选择时间后弹框自动消失
+        format : 'yyyy-mm',// 时间格式
+        language : 'zh-CN',// 汉化
+        // todayBtn:"linked",//显示今天 按钮
+        //clearBtn : true,// 清除按钮，和今天 按钮只能显示一个
+    });
+    $("#enddateTime").datepicker({
+        startView: 'months',  //起始选择范围
+        maxViewMode:'years', //最大选择范围
+        minViewMode:'months', //最小选择范围
+        todayHighlight : true,// 当前时间高亮显示
+        autoclose : 'true',// 选择时间后弹框自动消失
+        format : 'yyyy-mm',// 时间格式
+        language : 'zh-CN',// 汉化
+        // todayBtn:"linked",//显示今天 按钮
+        //clearBtn : true,// 清除按钮，和今天 按钮只能显示一个
+    });
+}
+//获取结束时间的
+function getEndD(endDate) {
+    var   eDate = new Date(endDate);
+    var   date=new Date(eDate.getFullYear(),eDate.getMonth()+1,0);
+    var   days=date.getDate();
+    return days;
+}
+//比较两个时间是否大于一个月，例如20170215--到20170315 是一个月，到20170316是大于一个月
+function getD(sDate, endDate) {
+    debugger
+    var sDate = new Date(sDate);
+    var eDate = new Date(endDate);
+    if (eDate.getFullYear() - sDate.getFullYear() > 1) {//先比较年
+        return true;
+    } else if (eDate.getMonth() - sDate.getMonth() > 1) {//再比较月
+        return true;
+    } else if (eDate.getMonth() - sDate.getMonth() == 1) {
+        if (eDate.getDate() - sDate.getDate() >= 0) {
+            return true;
+        }
+    }else if (eDate.getMonth() - sDate.getMonth() == 0) {
+        var   date=new Date(sDate.getFullYear(),sDate.getMonth()+1,0);
+        var   days=date.getDate();
+        var   numdays=eDate.getDate() - sDate.getDate()+1;
+        if (numdays==days) {
+            return true;
+        }
+    } else if (eDate.getFullYear() - sDate.getFullYear() == 1) {
+        if (eDate.getMonth()+12 - sDate.getMonth() > 1) {
+            return true;
+        }
+        else if (eDate.getDate() - sDate.getDate() >= 1) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 $(function(){
 	init();
 	queryList();
 });
 
 function init(){
-	$(".form_date").datepicker({autoclose:true,todayHighlight:true,language: 'cn',clearBtn:true,orientation:'auto'});
-	var startDate =$("input[name=startTime]").val(common.getMonthFirstDay());
-	var endDate=$("input[name=endTime]").val(common.getMonthEndDay());
+
+    Timeinit();
+    var   date = new Date();
+    var   month=date.getMonth()+1;
+    var months;
+    if(month<10){
+        months="0"+month;
+    }
+    var   newdate=date.getFullYear()+"-"+months;
+    $("#startTimes").val(newdate);
+    $("#endTimes").val(newdate);
+      var startDate =$("input[name=startTime]").val(common.getMonthFirstDay());
+      var endDate=$("input[name=endTime]").val(common.getMonthEndDay());
+    $(".form_date").datepicker({autoclose:true,todayHighlight:true,language: 'cn',clearBtn:true,orientation:'auto'});
+
 }
 function forSearch(){
-	var startDate =$("input[name=startTime]").val();
-	var endDate=$("input[name=endTime]").val();
+
+	// var startDate =$("input[name=startTime]").val();
+	// var endDate=$("input[name=endTime]").val();
+    var  startDate =$("#startTimes").val()+"-01";
+    var  endDate=$("#endTimes").val();
+    var  days=getEndD(endDate);
+    endDate=endDate+"-"+days;
+    if(startDate==""){
+        layer.msg("开始时间不能为空");
+        return ;
+    }
+    if(endDate==""){
+        layer.msg("结束时间不能为空");
+        return ;
+    }
+
     if((new Date(endDate.replace(/-/g,"\/")))<(new Date(startDate.replace(/-/g,"\/")))){
 	   layer.msg("结束时间必须大于开始时间");
 	   return ;
     }
+    var  falg=getD(startDate, endDate);
+    if(!falg){
+        layer.msg("结束时间大等于开始时间的一个月的时间");
+        return ;
+    }
+    $("#startTime").val(startDate);
+    $("#endTime").val(endDate);
 	pn = 1;
 	queryList("reload");
 }
@@ -172,7 +285,9 @@ function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},
+	            // {title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},
+                {title:'开始日期', name:'WORK_TIME_BEGIN', width:100, sortable:false, align:'center'},
+		        {title:'结束日期', name:'WORK_TIME_END', width:100, sortable:false, align:'center'},
 	            {title:'部门（单位）', name:'DEPTNAME', width:100, sortable:false, align:'left'},
 	            {title:'处室', name:'LABNAME', width:100, sortable:false, align:'left'},
 	            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},

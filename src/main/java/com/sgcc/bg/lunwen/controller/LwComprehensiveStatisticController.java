@@ -2,6 +2,7 @@ package com.sgcc.bg.lunwen.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.lunwen.bean.PaperComprehensiveVO;
 import com.sgcc.bg.lunwen.bean.PaperVO;
 import com.sgcc.bg.lunwen.service.LwComprehensiveStatisticService;
@@ -71,6 +72,11 @@ public class LwComprehensiveStatisticController {
         String paperName  = request.getParameter("paperName") == null?"":request.getParameter("paperName");
         String author  = request.getParameter("author") == null?"":request.getParameter("author");
         String paperId  = request.getParameter("paperId") == null?"":request.getParameter("paperId");
+
+        year = Rtext.toStringTrim(year,"");
+        paperName = Rtext.toStringTrim(paperName,"");
+        author = Rtext.toStringTrim(author,"");
+        paperId = Rtext.toStringTrim(paperId,"");
 
         int start = 0;
         int end = 10;

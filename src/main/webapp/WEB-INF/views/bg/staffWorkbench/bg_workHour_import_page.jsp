@@ -106,6 +106,8 @@ function uploadProFile() {
 		document.forms[0].action ="<%=request.getContextPath() %>/staffWorkbench/readWorkHourExcel?&ran="+ran;
 		document.forms[0].submit();
 		loadPage("close");
+
+        //workingHours();
 	}
 }
 

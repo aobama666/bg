@@ -61,7 +61,7 @@ public class LwPaperServiceImpl implements LwPaperService {
             before.append(LwPaperConstant.ZONGSHU);
         }
         //从数据库中查询当前类型的最大值后加1
-        String paperId = lwPaperMapper.maxPaperId(lwPaper.getPaperType());
+        String paperId = lwPaperMapper.maxPaperId(lwPaper.getPaperType(),DateUtil.getYear());
         if(null == paperId || "".equals(paperId)){
             //这个类型的第一批论文
             paperId = "000";
@@ -72,6 +72,9 @@ public class LwPaperServiceImpl implements LwPaperService {
         paperId = String.format("%03d",maxNum);
         before.append(paperId);
         lwPaper.setPaperId(before.toString());
+
+        //防止匹配因为空格出现的问题
+        lwPaper.setField(lwPaper.getField().trim());
 
         //初始化时间，创建人，各种状态
         lwPaper.setYear(DateUtil.getYear());
@@ -110,7 +113,7 @@ public class LwPaperServiceImpl implements LwPaperService {
 
     @Override
     public String maxPaperId(String paperType) {
-        return lwPaperMapper.maxPaperId(paperType);
+        return lwPaperMapper.maxPaperId(paperType,DateUtil.getYear());
     }
 
     @Override
@@ -172,7 +175,7 @@ public class LwPaperServiceImpl implements LwPaperService {
         Object[][] title = {
                 { "论文题目", "paperName","nowrap" },
                 { "作者", "author","nowrap" },
-                { "单位", "unit","nowrap" },
+                { "作者单位", "unit","nowrap" },
                 { "期刊名称", "journal","nowrap" },
                 { "推荐单位", "recommendUnit","nowrap" },
                 { "被引量", "quoteCount","nowrap" },
@@ -189,18 +192,24 @@ public class LwPaperServiceImpl implements LwPaperService {
     }
 
     @Override
-    public List<Map<String, Object>> fieldList() {
-        List<Map<String, Object>> fieldLsit = lwPaperMapper.fieldList();
+    public List<Map<String, Object>> fieldList(String year) {
+        List<Map<String, Object>> fieldLsit = lwPaperMapper.fieldList(year);
         return fieldLsit;
     }
 
     @Override
     public List<Map<String,Object>> getTableYear() {
         List<Map<String,Object>> yearList = lwPaperMapper.year();
-        if(yearList.size() == 0){
+        boolean ifNowYear = true;
+        for(Map<String,Object> yearMap : yearList){
+            if(DateUtil.getYear().equals(yearMap.get("YEAR"))){
+                ifNowYear = false;
+            }
+        }
+        if(ifNowYear || yearList.size() == 0){
             Map<String,Object> year = new HashMap<>();
             year.put("YEAR",DateUtil.getYear());
-            yearList.add(year);
+            yearList.add(0,year);
         }
         return yearList;
     }
@@ -242,7 +251,7 @@ public class LwPaperServiceImpl implements LwPaperService {
 
     @Override
     public List<Map<String, Object>> matchingPaper() {
-        return lwPaperMapper.matchingPaper(LwPaperConstant.P_A_S_MATCHING,LwPaperConstant.VALID_YES);
+        return lwPaperMapper.matchingPaper(LwPaperConstant.P_A_S_MATCHING,DateUtil.getYear(),LwPaperConstant.VALID_YES);
     }
 
 
@@ -404,8 +413,8 @@ public class LwPaperServiceImpl implements LwPaperService {
                     if(cellValue[1] == null || cellValue[1] == ""){
                         errorInfo.append("论文题目不能为空！ ");
                         errorNum.add(1);
-                    }else if (cellValue[1].length() > 50){
-                        errorInfo.append("论文题目不能超过50个字！ ");
+                    }else if (cellValue[1].length() > 200){
+                        errorInfo.append("论文题目不能超过200个字！ ");
                         errorNum.add(1);
                     }else{
                         Map<String,Object> lwMap = lwPaperService.findPaper(null,cellValue[1]);
@@ -418,16 +427,16 @@ public class LwPaperServiceImpl implements LwPaperService {
                     if (cellValue[2] == null || cellValue[2] == ""){
                         errorInfo.append("作者不能为空！ ");
                         errorNum.add(2);
-                    }else if (cellValue[2].length() > 50){
-                        errorInfo.append("作者不能超过50个字！ ");
+                    }else if (cellValue[2].length() > 150){
+                        errorInfo.append("作者不能超过150个字！ ");
                         errorNum.add(2);
                     }
 
                     if(cellValue[3] == null || cellValue[3] ==""){
-                        errorInfo.append("单位不能为空！ ");
+                        errorInfo.append("作者单位不能为空！ ");
                         errorNum.add(3);
-                    }else if (cellValue[3].length()>50){
-                        errorInfo.append("单位不能超过50个字！ ");
+                    }else if (cellValue[3].length()>300){
+                        errorInfo.append("作者单位不能超过300个字！ ");
                         errorNum.add(3);
                     }
 
@@ -485,7 +494,7 @@ public class LwPaperServiceImpl implements LwPaperService {
                         lwPaper.setRecommendUnit(cellValue[5]);
                         lwPaper.setQuoteCount(cellValue[6]);
                         lwPaper.setDownloadCount(cellValue[7]);
-                        lwPaper.setField(cellValue[8]);
+                        lwPaper.setField(cellValue[8].trim());
                         lwPaper.setPaperType(paperType);
                         lwPaper.setCreateUser(user.getUserId());
                         lwPaperList.add(lwPaper);
@@ -516,7 +525,7 @@ public class LwPaperServiceImpl implements LwPaperService {
                         {"序号","id","nowrap"},
                         { "论文题目", "paperName","nowrap" },
                         { "作者", "author","nowrap" },
-                        { "单位", "unit","nowrap" },
+                        { "作者单位", "unit","nowrap" },
                         { "期刊名称","journal","nowrap"},
                         { "推荐单位","recommendUnit","nowrap"},
                         { "被引量","quoteCount","nowrap"},

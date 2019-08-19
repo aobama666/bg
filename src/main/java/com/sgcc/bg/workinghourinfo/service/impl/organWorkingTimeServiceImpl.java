@@ -378,7 +378,7 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		 
 		 //获取权限组织（最末级的组织）
 		 organTreelist = organStuffTreeService.getUserAuthoryOrgan(userName, deptCode);
-		 
+
 		 if(status.equals("0")){
 			 resultMap = selectForHouseManager(organTreelist, type,startDate,endDate,bpShow,dataShow,begin,end);
 		 }else if(status.equals("1")){

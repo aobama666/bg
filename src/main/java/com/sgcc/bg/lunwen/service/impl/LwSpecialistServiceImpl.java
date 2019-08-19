@@ -212,11 +212,15 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                     StringBuffer errorInfo = new StringBuffer();
                     Set<Integer> errorNum = new HashSet<Integer>();
 
+
                     if(cellValue[1] == null || cellValue[1] == ""){
                         errorInfo.append("专家姓名不能为空！ ");
                         errorNum.add(1);
                     }else if (cellValue[1].length() > 20){
                         errorInfo.append("专家姓名不能超过20个字！ ");
+                        errorNum.add(1);
+                    }else if(!StringUtil.checkNotNoOrC(cellValue[1])){
+                        errorInfo.append("专家姓名中不能有数字！ ");
                         errorNum.add(1);
                     }
 
@@ -298,7 +302,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                         lwSpecialist.setUnitNature(cellValue[4]);
                         lwSpecialist.setPosition(cellValue[5]);
                         lwSpecialist.setResearchDirection(cellValue[6]);
-                        lwSpecialist.setField(cellValue[7]);
+                        lwSpecialist.setField(cellValue[7].trim());
                         lwSpecialist.setPhone(cellValue[8]);
                         lwSpecialist.setEmail(cellValue[9]);
                         lwSpecialist.setMatchStatus("0");
@@ -376,8 +380,8 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
     //论文领域同专家领域（精准）、论文领域同专家研究方向（精准）、回避本人、回避本单位，回避已匹配的专家
     @Override
     public Map<String, Object> renewalMap(String uuid) {
-        //专家已匹配的所有论文
-        List<PaperVO> paperMap = lwSpecialistMapper.paperMap(uuid);
+        //专家已匹配的所有论文-----当前年已经匹配的专家
+        List<PaperVO> paperMap = lwSpecialistMapper.exportMatchPaperForYear(uuid,DateUtil.getYear());
         //存本人及已匹配的专家
         Set spUuid = new HashSet();
         //存论文涉及到的本单位

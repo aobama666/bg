@@ -35,7 +35,7 @@
 		<input type="hidden" name="selectList"/>
 
 		<label style="margin-left: 20px">年度</label>
-		<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 100px">
+		<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 100px" onchange="queryAll.changeYear()">
 			<%--<option></option>--%>
 			<c:forEach var ="year" items="${map.year}">
 				<c:forEach var ="years" items="${year}">
@@ -73,7 +73,7 @@
 			</div>
 			<li id="dh_li">
 				<div style="width:1500px;">
-					<ul class="checkli">
+					<ul class="checkli" id="refreshField">
 						<c:forEach var ="fieldList" items="${map.fieldList}">
 							<c:forEach var ="field" items="${fieldList}">
 								<div  onclick="queryAll.field('${field.value}')">
@@ -92,7 +92,6 @@
 		</ul>
 	</div>
 </div>
-<input type="text" id="paperType" name="paperType" style="display: none" value=${map.size}>
 
 <div id="taleInfo"></div>
 <div class="tabbable" >
@@ -132,26 +131,14 @@
 
 </body>
 <script type="text/javascript" charset="utf-8">
-    var demo=document.getElementById("dh_li");
-    var a = document.getElementById("a");
-    var b = document.getElementById("b");
-    var c = $("#paperType").val();
-    if(c>5){
-        a.style.display="block";
-        b.style.display="block";
-        function move_right()
-        {
-            dh_li.scrollLeft+=150;
-        }
-        function move_left()
-        {
-            dh_li.scrollLeft-=150;
-        }
-    }else {
-        a.style.display="none";
-        b.style.display="none";
+    function move_right()
+    {
+        dh_li.scrollLeft+=150;
     }
-
+    function move_left()
+    {
+        dh_li.scrollLeft-=150;
+    }
 </script>
 
 <style>
