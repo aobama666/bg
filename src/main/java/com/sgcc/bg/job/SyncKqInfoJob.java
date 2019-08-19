@@ -18,8 +18,8 @@ public class SyncKqInfoJob {
     public void syncBaseDataForKq(){
         //获取执行同步任务的时间
         logger.info("考勤同步的定时任务开始");
-        Date BeginDate=DateUtil.getBeginDayOfMonth();
-        Date   EndDate=DateUtil.getEndDayOfMonth();
+        Date   BeginDate=DateUtil.getBeginDayOfLastMonth();
+        Date   EndDate=DateUtil.getEndDayOfLastMonth();
         String  BeginDates=DateUtil.getFormatDateString(BeginDate,"yyyy-MM-dd");
         String  EndDates=DateUtil.getFormatDateString(EndDate,"yyyy-MM-dd");
         kqTemporaryService.addTemporary(BeginDates,EndDates);
