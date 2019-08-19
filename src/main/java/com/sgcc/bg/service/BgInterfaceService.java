@@ -13,7 +13,7 @@ public interface BgInterfaceService {
 	 * @param monthName 期间为月份使用：M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12  yyyy-MM
 	 * @return
 	 */
-	public List<Map<String, Object>> getInterfaceBaseInfo(String WT_SEASON,	String yearName,String startDate,String endDate,String monthName);
+	public List<Map<String, Object>> getInterfaceBaseInfo(String WT_SEASON,	String yearName,String startDate,String endDate,String monthName ,String monthEndDay );
 	/**
 	 * 获取按人员统计值
 	 * @param WT_SEASON 期间    Y,S1,S2,S3,S4,M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12
@@ -58,5 +58,8 @@ public interface BgInterfaceService {
 	 * @param monthName 期间为月份使用：M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12  yyyy-MM
 	 * @return
 	 */
-	public List<Map<String, Object>> getInterfaceBaseData(String WT_SEASON,	String yearName,String startDate,String endDate,String monthName);	
+	public List<Map<String, Object>> getInterfaceBaseData(String WT_SEASON,	String yearName,String startDate,String endDate,String monthName );
+
+    public List<Map<String, Object>> selectForProjectUser(String projectId,	String monthEndDay );
+
 }
