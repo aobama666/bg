@@ -645,7 +645,7 @@ public class DateUtil {
 	//获取本月的开始时间
 	public static Date getBeginDayOfMonth() {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(getNowYear(), getNowMonth() - 1, 1);
+		calendar.set(getNowYear(), getNowMonth() -1, 1);
 
 		return getDayStartTime(calendar.getTime());
 	}
@@ -729,17 +729,29 @@ public class DateUtil {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		return sdf.format(cal.getTime());
 	}
-
+	//获取上月的开始时间
+	public static Date getBeginDayOfLastMonth() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(getNowYear(), getNowMonth() - 2, 1);
+		return getDayStartTime(calendar.getTime());
+	}
+	//获取上月的结束时间
+	public static Date getEndDayOfLastMonth() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(getNowYear(), getNowMonth() - 2, 1);
+		int day = calendar.getActualMaximum(5);
+		calendar.set(getNowYear(), getNowMonth() - 2, day);
+		return getDayEndTime(calendar.getTime());
+	}
 
 	    public static void main(String[] args) {
-			Date   BeginDate=getBeginDayOfMonth();
-			Date   EndDate=getEndDayOfMonth();
+			Date   BeginDate=getBeginDayOfLastMonth();
+			Date   EndDate=getEndDayOfLastMonth();
 			String  BeginDates=getFormatDateString(BeginDate,"yyyy-MM-dd");
 			String  EndDates=getFormatDateString(EndDate,"yyyy-MM-dd");
 			System.out.println(BeginDates+"----"+EndDates);
-	    Double a = Double.valueOf(0);
-	    Double b = Double.valueOf(0);
 
-		System.out.println(a+b);
+
+
 		}
 }

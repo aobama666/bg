@@ -89,7 +89,7 @@ public class BgWebService {
 			}
 			if(!value.equals("sBu5jn3AE00IdN12MF")){
 				return returnErrorMessage("系统密钥（SYS_VALUE）填写错误！ SYS_VALUE= "+value);
-			}
+			 }
 			//年份  BG_YEAR
 			year = root.elementTextTrim("BG_YEAR");
 			if(year==null||year.length()==0){
@@ -149,17 +149,36 @@ public class BgWebService {
 
 		log.info("---------[batch:"+batchTime+"]:开始获取基本信息，验证本期间是否记录！");
 		//获取基本信息
-		List<Map<String,Object>> baseDate = bgInterfaceService.getInterfaceBaseData(period, year, startDate, endDate, monthName);
+		List<Map<String,Object>> baseDate = bgInterfaceService.getInterfaceBaseData(period, year, startDate, endDate, monthName );
 		if(baseDate==null||baseDate.size()==0){
 			return returnSucessMessage("本期间没有记录！");
 		}
 		
 		log.info("---------[batch:"+batchTime+"]:开始获取基本信息,包含负责人没有工时数据！");
 		//获取基本信息
-		List<Map<String,Object>> baseInfo = bgInterfaceService.getInterfaceBaseInfo(period, year, startDate, endDate, monthName);
+		List<Map<String,Object>> baseInfo = bgInterfaceService.getInterfaceBaseInfo(period, year, startDate, endDate, monthName ,newEndData);
 		if(baseInfo==null||baseInfo.size()==0){
 			return returnSucessMessage("本期间没有记录,包含负责人没有工时数据！");
 		}
+
+
+		for(Map<String,Object>   base:baseInfo){
+			String  projectid  =String.valueOf(base.get("PROJECT_ID"));
+			List<Map<String,Object>> ProjectUserInfo =	bgInterfaceService.selectForProjectUser(projectid,newEndData);
+			if(ProjectUserInfo.isEmpty()){
+				base.put("PROJECT_LEADER","");
+				base.put("LEADER_USERNAME","");
+			}else {
+				Object project_leaders=ProjectUserInfo.get(1).get("PROJECT_LEADER");
+				Object leader_usernames=ProjectUserInfo.get(1).get("LEADER_USERNAME");
+				base.put("PROJECT_LEADER",project_leaders);
+				base.put("LEADER_USERNAME",leader_usernames);
+			}
+		}
+
+
+
+
 		log.info("---------[batch:"+batchTime+"]:开始获取员工总工时！");
 		//获取员工总工时
 		List<Map<String,Object>> totalBgUser = bgInterfaceService.getInterfaceTotalByUser(period, year, startDate, endDate, monthName);
