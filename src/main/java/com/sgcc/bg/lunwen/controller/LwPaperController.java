@@ -239,7 +239,7 @@ public class LwPaperController {
         ResultWarp rw = null;
         List<String> ifMatchList = lwPaperMatchSpecialistService.ifMatchForPaperId(paperId);
         if(0 != ifMatchList.size()){
-            rw = new ResultWarp(ResultWarp.FAILED,"该论文已经匹配专家,请移除已匹配的专家");
+            rw = new ResultWarp(ResultWarp.FAILED,"选择的数据无法修改,已匹配专家");
         }else{
             rw = new ResultWarp(ResultWarp.SUCCESS,"无大碍，请放心修改");
         }
