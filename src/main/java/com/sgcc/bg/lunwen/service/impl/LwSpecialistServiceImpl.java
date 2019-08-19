@@ -380,8 +380,8 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
     //论文领域同专家领域（精准）、论文领域同专家研究方向（精准）、回避本人、回避本单位，回避已匹配的专家
     @Override
     public Map<String, Object> renewalMap(String uuid) {
-        //专家已匹配的所有论文
-        List<PaperVO> paperMap = lwSpecialistMapper.paperMap(uuid);
+        //专家已匹配的所有论文-----当前年已经匹配的专家
+        List<PaperVO> paperMap = lwSpecialistMapper.exportMatchPaperForYear(uuid,DateUtil.getYear());
         //存本人及已匹配的专家
         Set spUuid = new HashSet();
         //存论文涉及到的本单位

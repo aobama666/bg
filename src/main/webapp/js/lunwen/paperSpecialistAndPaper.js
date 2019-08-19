@@ -16,7 +16,7 @@ $(function(){
 });
 
 
-/* 专家管理-初始化列表界面  */
+/* 专家详情，已匹配论文信息-初始化列表界面  */
 queryAll.initDataGrid = function(){
         var uuid = $("#uuid").val();
 	    $("#datagrid").datagrid({
