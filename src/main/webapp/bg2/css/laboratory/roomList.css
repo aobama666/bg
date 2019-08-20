@@ -1,0 +1,100 @@
+*{margin:0;padding:0}
+html,body{width:100%;height:100%;}
+ul{list-style: none;}
+table a{color:blue;text-decoration: underline;}
+table a:HOVER{color:red;}
+/* start 搜索框鼠标放上去事件 */
+.changeQuery:HOVER{
+	border-color:#A2C1F5 ;
+}
+/* end 搜索框鼠标放上去事件 */
+
+/* start 点击新增弹出选择科技奖励类型选择框 */
+body{
+	padding:0 5px;
+}
+#queryForm{
+	padding-top:10px;
+}
+.content_top {
+    line-height: 60px;
+    background-color: #fff;
+    width: 100%;
+    border-bottom: solid 1px #e3e3e3;
+    text-indent: 20px;
+    font-size: 18px;
+}
+body #hiddenDiv{
+	width:100%;
+	height:100%;
+	background-color: #cbcbcb;
+	opacity:0.5;
+	filter:alpha(opacity = 50);
+	position:absolute;
+	top:0;
+	left:0;
+	display: none;
+}
+/* end  点击新增弹出选择科技奖励类型选择框 */
+
+/* start 奖励类型选择  */
+body div.btn_type_box{
+	background-color:#fff;
+	position: absolute;
+	width: 300px; 			
+	height:400px;
+	left:0;
+	right:0;
+	bottom:0;
+	top:0;
+	margin:auto;
+	display: none;
+}
+/* end  奖励类型选择  */
+
+/* start 弹出框关闭按钮 */
+body div.btn_type_box img{
+	height:15px;
+	width:15px;
+	float:right;
+	margin-top:6px;
+	margin-right:6px;
+}
+body div.btn_type_box img:HOVER{
+	height:17px;
+	width:17px;
+	cursor: pointer;
+}
+/* end 弹出框关闭按钮  */
+
+/* start 六个奖项的按钮  */
+body div.btn_type_box .btn_type{
+	width:60%;
+	height:40px;
+	margin:0 auto;
+	margin-top:15px;
+	background-color: #fefefe;
+	color: #5e5e5e;
+	text-align: center;
+	line-height: 40px;
+	font-size: 16px;
+	font-weight: bold;
+	border:1px solid #8EC6C4;
+	border-radius:4px;
+	-webkit-user-select:none;
+	-moz-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+	cursor: pointer;
+}
+.btn_type_box ul{
+	padding-top:20px;
+}
+body div.btn_type_box .btn_type:HOVER {
+	box-shadow:0 0 10px #4CECDF;
+	background-color: #FaFaFa;
+}
+body div.btn_type_box .btn_type:ACTIVE {
+	background-color: #F7F7F7;
+}
+/* end 六个奖项的按钮  */

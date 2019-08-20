@@ -433,6 +433,11 @@
 		  <artifactId>discovery</artifactId>
 		  <version>0.2</version>
 		</dependency>
+		<dependency>
+		  <groupId>org.codehaus</groupId>
+		  <artifactId>xfire</artifactId>
+		  <version>1.2.6</version>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

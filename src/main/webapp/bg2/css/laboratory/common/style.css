@@ -1,0 +1,122 @@
+html,body{
+    height:100%;
+    width:100%;
+}
+body{
+	padding:0 0px;
+}
+.mainContent{
+    width:100%;
+    height:100%;
+    position:relative;
+    top:0;
+    left:0;
+}
+.content{
+    position: absolute;
+    top:85px;
+    width: 100%;
+    bottom: 10px;
+    overflow-y: auto;
+}
+.content_top{
+    line-height: 60px;
+    background-color: #fff;
+    width:100%;
+    border-bottom: solid 1px #e3e3e3;
+    text-indent: 20px;
+    /* position: absolute; */
+    font-size: 18px;
+    /* top:0; */
+}
+.content_prjIndex{ 
+   background-color: #fff;
+    width:100%;
+    border-bottom: solid 1px #e3e3e3;
+    text-indent: 20px;
+    /* position: absolute; */
+    font-size: 18px;
+    /* top:0; */
+}
+.content_tops{
+	background-color: #fff;
+    width:100%;
+    border-bottom: solid 1px #e3e3e3;
+    font-size: 18px;
+}
+.content_tab{
+    position: absolute;
+    width:100%;
+    top:60px;
+    overflow: hidden;
+}
+.content_tab li{
+    float:left;
+    margin-right: 1px !important;
+    height: 25px;
+}
+.content_tab li a{
+    background: #F3F3F3;
+    cursor: pointer;
+    white-space: nowrap;
+    display: block;
+    height: 25px;
+    color:#666666;
+    line-height:25px;
+    padding-right: 14px;
+    padding-left: 10px;
+}
+.content_tab li a.active{
+    background: #E0E0E0;
+    font-weight: bold;
+    color:#333;
+}
+.content_con{
+
+}
+.resultName{
+	width:400px;text-align:left;display:block;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;cursor:pointer;color: #333;
+}
+.text{
+	color: #2D9592;
+	display:inline-block;
+	float:right;
+	cursor:pointer;
+	text-decoration:underline;
+}
+
+/*閼奉亜鐣炬稊澶庛�冮弽鍏肩壉瀵拷*/
+.dataTable table{
+    border-collapse:collapse;
+    width: 100%;
+}
+.dataTable table thead td{
+    background: #d5e7e6;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+}
+.dataTable table td{
+    text-align: left;
+    padding: 2px 15px;
+    height: 30px;
+    vertical-align: middle;
+    background: #fff;
+    white-space: nowrap;
+    border: 1px solid #eceded;
+}
+.dataTable table td.td_center{
+	text-align: center;
+}
+.dataTable{
+    width:100%;
+    overflow-x: auto;
+}
+.line_30{
+	line-height:30px;
+}
+.sheach label{
+	font-size: 16px;
+	font-family: "瀵邦喛钂嬮梿鍛寸拨";
+	font-weight: normal;
+}

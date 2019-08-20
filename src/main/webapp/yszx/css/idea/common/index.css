@@ -1,0 +1,98 @@
+.bnt{
+    height:28px;
+    line-height:28px;
+    display: inline-block;
+    background-color: #009688;
+    color:#fff;
+    white-space: nowrap;
+    text-align: center;
+    font-size:14px;
+    border:none;
+    border-radius: 2px;
+    cursor: pointer;
+    padding: 1px 6px;
+}
+.btn{
+    padding:5px 12px;
+}
+.bnt:hover{
+    background-color:#017E96 ;
+}
+.bnt,input{
+    font-family: "微软雅黑";
+}
+
+.tableList td{
+    position: relative;
+    padding-right: 5px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+.tableList .aaa>span{
+    width:114px;
+    position: absolute;
+    display: inline-block;
+    left:0;
+    top:10px;
+    padding:3px;
+}
+.tableList .aaa>div>select{
+	width:100%;
+	height:29px;
+	border:solid 1px #019271;
+	outline:none;
+}
+.tableList td .aaa{
+    margin-left:100px;
+}
+.tableList td .aaa>div>input{
+    width:100%;
+    line-height: 25px;
+    height: 29px;
+    font-size: 100%;
+    text-indent: 6px;
+    border:solid 1px #019271;
+    background-color: #efefef;
+    outline: none;
+}
+.tableList td .aaa textarea{
+    width:100%;
+    text-indent: 6px;
+    border:solid 1px #019271;
+    outline: none;
+}
+.tableList{
+    width:100%;
+}
+
+.div_textarea{
+	background-color:#efefef;
+	border: 1px solid #019271;
+	padding-left: 6px;
+	min-height: 120px;
+}
+
+.strongStar{
+	color:red;
+}
+.suggestSave{
+	float:right;
+	margin-top:5px;
+	margin-right:5px;
+}
+.tableList td .aaa>div>.updownFile{
+	width:96%;
+}
+.tableList td .aaa>div>.bnt{
+	width:3%;
+	margin-left:1%;
+}
+.suggestBnt{
+	overflow:hidden;
+}
+.fileBnt{
+	height:35px;
+}
+.fileBnt .bnt{
+	margin:5px;
+}
