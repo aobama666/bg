@@ -310,6 +310,10 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 					String[] xhnum = xh.split(",");
 					int res = 0;
 					int count = 0;
+					StringBuffer sb1 = new StringBuffer();
+					StringBuffer sb2 = new StringBuffer();
+					StringBuffer sb3 = new StringBuffer();
+					StringBuffer sb4 = new StringBuffer();
 					for (int i = 0; i < idnum.length; i++) {
 						String ids = idnum[i];
 						String xhs = xhnum[i];
@@ -331,10 +335,15 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 							Map<String,Object> dateMap = swService.workingHoursMap(worktimeBegin);
 							BigDecimal fillSum = new BigDecimal(String.valueOf(dateMap.get("fillSum")));
 							BigDecimal fillSumKQ = (BigDecimal)dateMap.get("fillSumKQ");
-							int j = fillSum.add(BigDecimal.valueOf(workhours)).compareTo(fillSumKQ);
-							if(j>0){
-								rw = new ResultWarp(ResultWarp.FAILED, "提交成功" + count + "条，第"+xhs+"行工时超标！");
+							if(fillSumKQ.compareTo(BigDecimal.valueOf(0))==0){
+								rw = new ResultWarp(ResultWarp.FAILED, "提交成功" + count + "条，第" + xhs + "行无月度工时，无法提交");
 								return JSON.toJSONString(rw);
+							}else {
+								int j = fillSum.add(BigDecimal.valueOf(workhours)).compareTo(fillSumKQ);
+								if (j > 0) {
+									rw = new ResultWarp(ResultWarp.FAILED, "提交成功" + count + "条，第" + xhs + "行工时超标！");
+									return JSON.toJSONString(rw);
+								}
 							}
 
 							// 校验当天工时是否超标
@@ -377,6 +386,7 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 					 * ,"提交成功"+count+"条,失败"+nocount+"条 。"); }else{ rw = new
 					 * ResultWarp(ResultWarp.SUCCESS ,"提交成功"+count+"条,失败"+nocount+"条 。"); }
 					 */
+
 					rw = new ResultWarp(ResultWarp.SUCCESS, "提交成功" + count + "条,失败" + (idnum.length - count) + "条 。");
 					return JSON.toJSONString(rw);
 				}

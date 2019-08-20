@@ -688,7 +688,7 @@ public class BGServiceImpl implements IBGService {
 						}
 					}*/
 					
-					//校验项目中负责人只能存在一条
+
 					if(!Rtext.isEmpty(proId) && !errorNum.contains(3) && !errorNum.contains(6)){//项目存在，此人存在且角色存在并不冲突
 						//获取当前项目中人员信息
 						List<Map<String, String>> empList=bgMapper.getProUsersByProId(proId);
@@ -722,15 +722,26 @@ public class BGServiceImpl implements IBGService {
 					//验证项目负责人 负责的时间段是否有交叉
 					//取出该项目所有负责人的开始时间和结束时间
 					//与已存在参与人"+user.getUserAlias()+"日期("+dateMap.get("startDate")+"至"+dateMap.get("endDate")+")重叠!
-					List<Map<String,String>> listPrincipalDate = bgMapper.listPrincipalDate(proId);
-					for (Map<String, String> principalDateMap : listPrincipalDate) {
-						if (DateUtil.fomatDate(cellValue[4]).getTime() > DateUtil.fomatDate(principalDateMap.get("endDate")).getTime() ||
-								DateUtil.fomatDate(cellValue[5]).getTime() < DateUtil.fomatDate(principalDateMap.get("startDate")).getTime()) {
-							//日期不重叠
-						} else {
-							errorInfo.append("与项目负责人" + principalDateMap.get("empName") + "日期(" + principalDateMap.get("startDate") + "至" + principalDateMap.get("endDate") + ")重叠! ");
-							errorNum.add(7);
-							break;
+					if(!Rtext.isEmpty(cellValue[4]) && !Rtext.isEmpty(cellValue[5]) && !errorNum.contains(4) && !errorNum.contains(5)) {
+						List<Map<String, String>> listPrincipalDate = bgMapper.listPrincipalDate(proId);
+						for (ProjectUserPo po : userList) {
+							if(po.getProjectId().equals(proId)){
+								Map<String,String> map=new HashMap<>();
+								map.put("startDate", String.valueOf(po.getStartDate()));
+								map.put("endDate", String.valueOf(po.getEndDate()));
+								listPrincipalDate.add(map);
+							}
+						}
+						//验证负责人时间是否重叠和 负责人时间是否贯穿整个项目
+						for (Map<String, String> principalDateMap : listPrincipalDate) {
+							if (DateUtil.fomatDate(cellValue[4]).getTime() > DateUtil.fomatDate(principalDateMap.get("endDate")).getTime() ||
+									DateUtil.fomatDate(cellValue[5]).getTime() < DateUtil.fomatDate(principalDateMap.get("startDate")).getTime()) {
+								//日期不重叠
+							} else {
+								errorInfo.append("与项目负责人" + principalDateMap.get("empName") + "日期(" + principalDateMap.get("startDate") + "至" + principalDateMap.get("endDate") + ")重叠! ");
+								errorNum.add(9);
+								break;
+							}
 						}
 					}
 

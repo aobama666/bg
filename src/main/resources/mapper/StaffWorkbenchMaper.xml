@@ -431,21 +431,22 @@
 	</select>
 
 	<select id="getPrincipalByProIdDate" resultType="java.lang.String">
-		SELECT t1.username
-		FROM BG_PROJECT_USER t
-		JOIN BG_SYS_USER t1
-		ON t.hrcode = t1.hrcode
-		WHERE rownum=1
-		AND t.project_id = #{proId}
-		AND t.role = '1'
-		AND t.status = '1'
-		AND( t.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
-			or t.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
-			or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=t.START_DATE and
-				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= t.END_DATE)
-			or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=t.START_DATE and
-				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= t.END_DATE))
-		ORDER BY T.START_DATE DESC
+		SELECT A.* FROM (
+			SELECT t1.username
+			FROM BG_PROJECT_USER t
+			JOIN BG_SYS_USER t1
+			ON t.hrcode = t1.hrcode
+			WHERE t.project_id = #{proId}
+			AND t.role = '1'
+			AND t.status = '1'
+			AND( t.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+				or t.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+				or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=t.START_DATE and
+					TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= t.END_DATE)
+				or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=t.START_DATE and
+					TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= t.END_DATE))
+			ORDER BY T.END_DATE DESC) A
+		where rownum=1
 	</select>
 
 	<!--<select id="validateSelectedDateAndDeptId"  resultType="int">
@@ -477,37 +478,36 @@
 
     <select id="validateSelectedDateAndDeptId"  resultType="java.lang.Integer">
         SELECT COUNT(1)
-        FROM BG_PROJECT_INFO T
-        LEFT JOIN BG_PROJECT_USER T1
-        ON T.ID = T1.PROJECT_ID
-        AND T1.STATUS = '1'
-        LEFT JOIN BG_SYS_USER T2
-        ON T1.HRCODE = T2.HRCODE
-        WHERE ((T.CATEGORY IN ('JS', 'KY', 'HX', 'QT') AND
-        T2.USERNAME = #{username} AND
-        ( T1.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
-            or T1.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
-            or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T1.START_DATE and
-            TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T1.END_DATE)
-            or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T1.START_DATE and
-            TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T1.END_DATE)))
-        OR
-        (T.CATEGORY IN ('CG', 'BP') AND
-        #{deptId} IN
-        (SELECT D.DEPTID
-        FROM BG_SYS_DEPT D
-        WHERE D.VALID = '1'
-        START WITH D.DEPTID = T.ORGAN_INFO
-        CONNECT BY PRIOR D.DEPTID = D.PDEPTID)))
-        AND ( T.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
-            or T.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
-            or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T.START_DATE and
-            TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T.END_DATE)
-            or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T.START_DATE and
-            TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T.END_DATE))
-        AND T.STATUS = '1'
-        AND T.PROJECT_STATUS = '1'
-        AND T.ID = #{proId}
+       		FROM BG_PROJECT_INFO T
+        	LEFT JOIN BG_PROJECT_USER T1
+        	ON T.ID = T1.PROJECT_ID
+        	AND T1.STATUS = '1'
+        	LEFT JOIN BG_SYS_USER T2
+        	ON T1.HRCODE = T2.HRCODE
+        	WHERE ((T.CATEGORY IN ('JS', 'KY', 'HX', 'QT')
+					AND	T2.USERNAME = #{username}
+					AND	( T1.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+						or T1.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+						or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T1.START_DATE and
+						TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T1.END_DATE)
+						or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T1.START_DATE and
+						TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T1.END_DATE)))
+				OR (T.CATEGORY IN ('CG', 'BP')
+					AND #{deptId} IN
+						(SELECT D.DEPTID
+						FROM BG_SYS_DEPT D
+						WHERE D.VALID = '1'
+						START WITH D.DEPTID = T.ORGAN_INFO
+						CONNECT BY PRIOR D.DEPTID = D.PDEPTID)))
+			AND ( T.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+				or T.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+				or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T.START_DATE and
+				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T.END_DATE)
+				or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T.START_DATE and
+				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T.END_DATE))
+			AND T.STATUS = '1'
+			AND T.PROJECT_STATUS = '1'
+			AND T.ID = #{proId}
     </select>
 
 	
@@ -612,6 +612,37 @@
 		 WHERE T.ID = #{proId}
 		   AND T.STATUS = '1'
 		   AND ROWNUM = 1
+	</select>
+
+
+	<select id="getProInfoByProIdDate" parameterType="java.lang.String" resultType="java.util.Map">
+		SELECT  A.* FROM (
+			SELECT T.ID,
+				T.PROJECT_NAME,
+				D.NAME           AS CATEGORY,
+				T.WBS_NUMBER,
+				T.PROJECT_NUMBER,
+				E.EMPNAME        AS PRINCIPAL,
+				E.HRCODE
+			FROM BG_PROJECT_INFO T
+			LEFT JOIN BG_SYS_DATADICTIONARY D
+			ON T.CATEGORY = D.CODE
+			AND D.VAILD = 1
+			AND D.PCODE = 'category100002'
+			LEFT JOIN BG_PROJECT_USER E
+			ON E.PROJECT_ID = T.ID
+			AND E.STATUS = '1'
+			AND E.ROLE = '1'
+			WHERE T.ID = #{proId}
+			AND ( E.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+				or E.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+				or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=E.START_DATE and
+					TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= E.END_DATE)
+				or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=E.START_DATE and
+					TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= E.END_DATE))
+			AND T.STATUS = '1'
+			ORDER BY E.END_DATE DESC) A
+		where rownum = 1
 	</select>
 	
 	<select id="getFieldOfWorkHourById" parameterType="java.lang.String" resultType="java.lang.String">

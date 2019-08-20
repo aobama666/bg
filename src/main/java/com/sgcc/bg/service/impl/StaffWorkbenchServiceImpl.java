@@ -223,16 +223,19 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 				//校验用户是否有指定项目的提报资格
 				int result=SWMapper.validateSelectedDateAndDeptId(proId,currentUsername,dataBegin,currentDeptId,dataEnd);
 				if(result>0){
-					Map<String, String> proMap=SWMapper.getProInfoByProId(proId);//如果查询的proid相同，则返回上一个map
-					Map<String, String> dataMap=new HashMap<>();
-					dataMap.putAll(proMap);
-					//如果负责人为空或者本人即负责人
-					if(Rtext.isEmpty(proMap.get("HRCODE")) || (currentHrcode).equals(proMap.get("HRCODE"))){
-						dataMap.put("HRCODE",approverMap==null?"":approverMap.get("hrcode"));
-						dataMap.put("PRINCIPAL",approverMap==null?"":approverMap.get("name"));
+					//Map<String, String> proMap=SWMapper.getProInfoByProId(proId);//如果查询的proid相同，则返回上一个map
+					Map<String, String> proMap=SWMapper.getProInfoByProIdDate(proId,dataBegin,dataEnd);//如果查询的proid相同，则返回上一个map
+					if(proMap!=null) {
+						Map<String, String> dataMap = new HashMap<>();
+						dataMap.putAll(proMap);
+						//如果负责人为空或者本人即负责人
+						if (Rtext.isEmpty(proMap.get("HRCODE")) || (currentHrcode).equals(proMap.get("HRCODE"))) {
+							dataMap.put("HRCODE", approverMap == null ? "" : approverMap.get("hrcode"));
+							dataMap.put("PRINCIPAL", approverMap == null ? "" : approverMap.get("name"));
+						}
+						dataMap.put("DATE", dataStr);
+						dataList.add(dataMap);
 					}
-					dataMap.put("DATE",dataStr);
-					dataList.add(dataMap);
 				}
 			}
 			
