@@ -42,7 +42,10 @@ public class BgWebService {
 		String batchTime = sdf.format(new Date());	
 		return batchTime;
 	}
-	
+
+
+
+
 	/**
 	 * 根据人资系统请求参数，返回工时信息
 	 * @param xml
