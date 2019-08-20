@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+ -->
+<mapper namespace="com.sgcc.bg.yszx.mapper.AuthMapper">
+
+	<!--  审批用户的查询部门领导查询查询-->
+    <select id="getApproveUsersByRoleAndDept" resultType="java.util.Map">
+	select 
+		  U.USERID,
+		  U.USERNAME,
+		  U.USERALIAS,
+		  U.HRCODE,
+		  U.HRDEPTNAME,
+		  U.HRDEPTCODE,
+		  U.PHONE,
+          D.DEPTID,
+          D.DEPTNAME,
+          D.DEPTCODE,
+          D.TYPE ,
+          D.PDEPTID ,
+          D2.DEPTID  as PDEPTID,
+          D2.DEPTNAME as PDEPTNAME,
+          D2.DEPTCODE as PDEPTCODE,
+          D2.TYPE as  PTYPE
+		  from bg_sys_user u  
+      LEFT JOIN    BG_SYS_DEPT  D ON   U.HRDEPTCODE=D.DEPTCODE   
+      LEFT JOIN    BG_SYS_DEPT  D2 ON   D2.DEPTID=D.PDEPTID   
+		 where u.valid = 1
+		   and u.state = 0
+		   and exists (select *
+		          from TB_PRIV_USER_R_ROLE r
+		         where r.valid = '1'
+		           and r.role_id = #{roleId}
+		           and r.user_id = u.userid)
+		   and exists (select *
+		          from tb_priv_appr_user_r_dept p
+		         where p.valid = '1'
+		           and p.dept_id = #{deptId}
+		           and p.user_id = u.userid)
+    </select>  
+    
+    <!-- 审批用户的查询归口部门专责和归口部门领导专责的查询-->
+    <select id="getApproveUsersByRole" resultType="java.util.Map">
+	select 
+		  U.USERID,
+		  U.USERNAME,
+		  U.USERALIAS,
+		  U.HRCODE,
+		  U.HRDEPTNAME,
+		  U.HRDEPTCODE,
+		  U.PHONE,
+          D.DEPTID,
+          D.DEPTNAME,
+          D.DEPTCODE,
+          D.TYPE ,
+          D.PDEPTID ,
+          D2.DEPTID  as PDEPTID,
+          D2.DEPTNAME as PDEPTNAME,
+          D2.DEPTCODE as PDEPTCODE,
+          D2.TYPE as  PTYPE
+		  from bg_sys_user u  
+      LEFT JOIN    BG_SYS_DEPT  D ON   U.HRDEPTCODE=D.DEPTCODE   
+      LEFT JOIN    BG_SYS_DEPT  D2 ON   D2.DEPTID=D.PDEPTID   
+		 where u.valid = 1
+		   and u.state = 0
+		   and exists (select *
+		          from TB_PRIV_USER_R_ROLE r
+		         where r.valid = '1'
+		           and r.role_id = #{roleId}
+		           and r.user_id = u.userid)
+    </select>   
+    
+     <!-- 管理用户查询对应的部门信息 -->
+     <select id="getPrivMgrByUserId" resultType="java.util.Map">
+	        select 
+	              T.ID,
+	              T.USER_ID,
+	              T.DEPT_ID,
+                  D.DEPTNAME,
+                  D.TYPE,
+	              T.FUNCTION_TYPE
+		    from  TB_PRIV_MGR_USER_R_DEPT T
+		    INNER JOIN   BG_SYS_DEPT D ON  T.DEPT_ID=D.DEPTID 
+		    where T.VALID= '1'  
+		          and USER_ID = #{userId} 
+		          and FUNCTION_TYPE = #{type} 
+      </select>   
+       
+      <select id="getPrivApprByUserId" resultType="java.util.Map">
+	      select 
+	              T.ID,
+	              T.USER_ID,
+	              T.DEPT_ID,
+                  D.DEPTNAME,
+                  D.TYPE,
+	              T.FUNCTION_TYPE
+		    from  TB_PRIV_APPR_USER_R_DEPT  T
+		    INNER JOIN   BG_SYS_DEPT D ON   T.DEPT_ID=D.DEPTID 
+		    where T.VALID= '1'  
+		          and USER_ID = #{userId} 
+		          and FUNCTION_TYPE = #{type} 
+      </select>   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      <select id="getApproveUsersByDept" resultType="java.util.Map">
+	      select 
+	             ID,
+	             USER_ID,
+	             DEPT_ID,
+	             FUNCTION_TYPE
+		          from TB_PRIV_MGR_USER_R_DEPT 
+		         where VALID= '1'
+		           and DEPT_ID = #{deptId}
+		           and USER_ID = #{userId} 
+		           and FUNCTION_TYPE = #{type} 
+    </select>   
+    
+    
+    <select id="getRuleByNode" resultType="java.util.Map">
+	      select 
+	           APPROVE_ROLE
+		          from TB_WL_RULE 
+		         where VALID= '1' 
+		          and  STATUS='1'
+		          and  FUNCTION_TYPE=#{type}
+		          and NODE = #{node} 
+      </select>   
+      
+       <select id="getAllDept" resultType="java.util.Map">
+	        select 
+	            DEPTID,
+				DEPTNAME,
+				DEPTCODE,
+				PDEPTID,
+				PDEPTNAME,
+				PDEPTCODE,
+				TYPE,
+				SORT_ID
+	         from BG_SYS_DEPT 
+	          where VALID= '1' and  TYPE='1' and  PDEPTCODE='41000001'
+      </select>   
+    
+    
+    
+     
+</mapper>

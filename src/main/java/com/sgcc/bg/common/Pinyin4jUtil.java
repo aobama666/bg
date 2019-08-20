@@ -12,6 +12,9 @@ import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 
 public class Pinyin4jUtil {
+	public static void main(String[] args) {
+		System.out.println(Pinyin4jUtil.converterToSpell("曹英.杰"));
+	}
 	/** 
      * 汉字转换位汉语拼音首字母，英文字符不变，特殊字符丢失 支持多音字，生成方式如（长沙市长:cssc,zssz,zssc,cssz） 
      *  
@@ -95,7 +98,8 @@ public class Pinyin4jUtil {
         // return pinyinName.toString();  
         return parseTheChineseByObject(discountTheChinese(pinyinName.toString()));  
     }  
-  
+     
+
     /** 
      * 去除多音字重复数据 
      *  

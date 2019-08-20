@@ -92,4 +92,42 @@
 		   AND D.TYPE = #{roleType, jdbcType = VARCHAR}
 		   AND T.VALID = 1
     </select>    
+    <!--  根据用户名称获取对象 -->
+    <select id="getUserByUserName" resultType="java.util.Map">
+		select T.USERID,
+		       T.USERNAME,
+		       T.USERALIAS,
+		       T.HRCODE,
+		       T.SEX,
+		       T.EMAIL,
+		       T.MOBILE,
+		       T.CARDID,
+		       to_char(T.BIRTHDAY,'yyyy-MM-dd') BIRTHDAY,
+		       T.HRDEPTCODE,		      
+		       T.STATE,
+		       D.DEPTID
+		  from bg_SYS_USER T
+		  LEFT JOIN bg_SYS_DEPT D
+		    ON T.HRDEPTCODE = D.DEPTCODE
+		 where t.username = #{userName, jdbcType = VARCHAR}
+    </select>    
+    <!--  根据用户ID获取对象 -->
+    <select id="getUserByUserId" resultType="java.util.Map">
+		select T.USERID,
+		       T.USERNAME,
+		       T.USERALIAS,
+		       T.HRCODE,
+		       T.SEX,
+		       T.EMAIL,
+		       T.MOBILE,
+		       T.CARDID,
+		       to_char(T.BIRTHDAY,'yyyy-MM-dd') BIRTHDAY,
+		       T.HRDEPTCODE,		      
+		       T.STATE,
+		       D.DEPTID
+		  from bg_SYS_USER T
+		  LEFT JOIN bg_SYS_DEPT D
+		    ON T.HRDEPTCODE = D.DEPTCODE
+		 where t.USERID = #{userId, jdbcType = VARCHAR}
+    </select>    
 </mapper>
