@@ -171,6 +171,15 @@ public interface StaffWorkbenchMaper {
 	public Map<String, String> getProInfoByProId(@Param("proId")String proId);
 
 	/**
+	 * 根据项目id 和时间 获取项目信息
+	 * @param proId
+	 * @return
+	 */
+	public Map<String, String> getProInfoByProIdDate(@Param("proId")String proId,
+													 @Param("dataBegin")String dataBegin,
+													 @Param("dataEnd")String dataEnd);
+
+	/**
 	 * 工时表中获取指定字段值
 	 * @param id
 	 * @param string

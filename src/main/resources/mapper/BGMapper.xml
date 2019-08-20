@@ -274,7 +274,7 @@
 		   FROM BG_PROJECT_USER T
 		   LEFT JOIN BG_SYNC_EMP_RELATION R
 		     ON T.PROJECT_ID = R.BG_PROJECT_ID
-		    AND T.HRCODE = R.HRCODE
+		    AND T.ID = R.BG_EMP_ID
 		  WHERE T.PROJECT_ID = #{proId}
 		    AND T.STATUS = '1'
 		  ORDER BY T.ROLE DESC, T.START_DATE,T.HRCODE
@@ -652,7 +652,8 @@
 	<select id="listPrincipalDate" resultType="java.util.Map">
 		SELECT TO_CHAR(t.start_date, 'yyyy-mm-dd')  as "startDate"，
 				TO_CHAR(t.end_date, 'yyyy-mm-dd') as "endDate"，
-				t.EMPNAME as "empName"
+				t.EMPNAME as "empName",
+				t.project_id AS "projectId"
 		FROM BG_PROJECT_USER t
 		WHERE
 		t.status = '1'

@@ -169,6 +169,17 @@
         return result;
     }
 
+    //计算相差天数
+    function timeFn(da1,da2) {//di作为一个变量传进来
+        //如果时间格式是正确的，那下面这一步转化时间格式就可以不用了
+        //var dateBegin = new Date(d1.replace(/-/g, "/"));//将-转化为/，使用new Date
+        //var dateEnd = new Date(d2.replace(/-/g, "/"));//将-转化为/，使用new Date
+        //var dateEnd = new Date();//获取当前时间
+        var dateDiff = da2.getTime() - da1.getTime();//时间差的毫秒数
+        var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000));//计算出相差天数
+        return dayDiff;
+    }
+
     function forSave_stuff(){
         var ran = Math.random()*1000000;
         var nameArr=new Array();
@@ -205,6 +216,7 @@
         var principalCode="";
         var begin=new Array();
         var over= new Array();
+        var day =0;
         for(var i=0;i<rows.length;i++){
             var $row=$(rows[i]);
             //校验数据合法性
@@ -221,12 +233,15 @@
                 isPass=false;
                 continue;
             }
+            var _this=$row;
+            var thisStartDate=getDate(_this.find("input[name='startDate']").val());
+            var thisEndDate=getDate(_this.find("input[name='endDate']").val());
             //需要校验唯一值：员工编号+开始时间+结束时间
             for(var j=0;j<i;j++){
                 var _that=$(rows[j]);
-                var _this=$row;
+                /*var _this=$row;
                 var thisStartDate=getDate(_this.find("input[name='startDate']").val());
-                var thisEndDate=getDate(_this.find("input[name='endDate']").val());
+                var thisEndDate=getDate(_this.find("input[name='endDate']").val());*/
                 var thatStartDate=getDate(_that.find("input[name='startDate']").val());
                 var thatEndDate=getDate(_that.find("input[name='endDate']").val());
                 if(_this.find("input[name='hrcode']").val()==_that.find("input[name='hrcode']").val()){
@@ -245,6 +260,7 @@
                     }
                 }
             }
+
             var stuff = $row.sotoCollecter();
             hrcodeArr.push(stuff["hrcode"]);
             if(stuff["role"]=="项目负责人"){
@@ -252,6 +268,8 @@
                 roleCount++;
                 begin[i]=stuff["startDate"];
                 over[i]=stuff["endDate"];
+                day += timeFn(thisStartDate,thisEndDate);
+                day+=1;
             }
             jsonStr+=JSON.stringify(stuff)
             if(i<rows.length-1){
@@ -273,6 +291,17 @@
                 return;
             }
         }
+        //比较整个项目周期是否全部有项目负责人
+        var compare = compareDay(day-1);
+        if(compare==1){
+            layer.msg("项目负责人负责时间不能大于项目周期时间");
+            return;
+        }
+        if(compare==-1){
+            layer.msg("项目负责人负责时间不能小于项目周期时间");
+            return;
+        }
+
 
         //校验是否有重复，且负责人是否有且唯一
         /*if(roleCount==0){
