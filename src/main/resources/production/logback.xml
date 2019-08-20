@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-<!--   <appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+  <appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>/data/logs/bg/all.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <fileNamePattern>/data/logs/bg/all.%d{yyyy-MM-dd}.log</fileNamePattern>
@@ -12,7 +12,7 @@
 
   <appender name="businessLogFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>/mxuploadpath/data/logs/bg/business.log</file>
-    按每小时滚动文件，如果一个小时内达到100M也会滚动文件, 滚动文件将会压缩成zip格式
+    <!-- 按每小时滚动文件，如果一个小时内达到100M也会滚动文件, 滚动文件将会压缩成zip格式 -->
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <fileNamePattern>/mxuploadpath/data/logs/bg/business-%d{yyyy-MM-dd_HH}.%i.zip
       </fileNamePattern>
@@ -21,7 +21,7 @@
         <maxFileSize>100MB</maxFileSize>
       </timeBasedFileNamingAndTriggeringPolicy>
     </rollingPolicy>
-    独立的pattern
+    <!-- 独立的pattern -->
     <encoder>
       <pattern>%d{yyyy-MM-dd HH:mm:ss} %msg%n</pattern>
     </encoder>
@@ -38,7 +38,7 @@
     <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
       <evaluator class="ch.qos.logback.classic.boolex.JaninoEventEvaluator">
         <expression>
-          & encoded as &amp;
+          <!-- & encoded as &amp; -->
           if(level >= WARN) {
           return true;
           }
@@ -49,9 +49,15 @@
       <onMismatch>DENY</onMismatch>
     </filter>
   </appender>
-  
-  	<logger name="com.sgcc.bg" level="DEBUG" />
-	<logger name="com.sgcc.bg.service.impl" level="DEBUG" />
+  	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger %L %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+
+	<logger name="com.sgcc.bg" level="DEBUG" />
 	<logger name="com.sgcc.bg.mapper" level="DEBUG" />
 	<root level="INFO">
 		<appender-ref ref="console" />
@@ -63,21 +69,5 @@
   <root level="INFO">
     <appender-ref ref="rollingFile"/>
     <appender-ref ref="errorFile"/>
-  </root> -->
-  
-  	<jmxConfigurator />
-
-	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger %L %msg%n
-			</pattern>
-		</encoder>
-	</appender>
-
-	<logger name="com.sgcc.newtygl" level="DEBUG" />
-	<logger name="com.sgcc.newtygl.mapper" level="DEBUG" />
-	<logger name="com.sgcc.newtygl.ky.irp.mapper" level="DEBUG" />
-	<root level="INFO">
-		<appender-ref ref="console" />
-	</root>
+  </root>
 </configuration>

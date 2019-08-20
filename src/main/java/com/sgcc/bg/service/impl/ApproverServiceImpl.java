@@ -18,6 +18,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,8 @@ public class ApproverServiceImpl implements ApproverService {
 	
 	@Autowired
 	private UserUtils userUtils;
+	 
+	
 	
 	@Autowired
 	private DataDictionaryService dict;
@@ -47,6 +50,9 @@ public class ApproverServiceImpl implements ApproverService {
 
 	@Override
 	public List<Map<String, Object>> getInfoForShow(String target) {
+		
+		 
+
 		List<Map<String, Object>> result = new ArrayList<>();
 		if("organType".equals(target)){
 			result = approverMapper.getOrganType();

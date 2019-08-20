@@ -19,7 +19,9 @@ public class IIdentityServiceTest {
 	
 	@Test
 	public void testUserLoginAuth() throws Exception { //1 根据用户名和密码验证用户登录
-		User user = identityService.userLoginAuth("epri_chenxi", "000000"); 
+		User user1 = identityService.userLoginAuth("epri_chenxi", "000000"); 
+		
+		List<User> user = identityService.getUsersByLoginCode("epri_liqing"); 
 		System.out.println("user is -----------------------------------------> "+user);
 	}
 	

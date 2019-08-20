@@ -32,7 +32,8 @@
 	<!-- AOP  -->
 	<bean id="DataSourceAspect" class="com.sgcc.bg.common.DataSourceAspect"/>
 	<aop:config>
-		<aop:advisor pointcut="execution(* com.sgcc.bg.mapper.*.*(..))" advice-ref="DataSourceAspect"/>
+		<!-- <aop:advisor pointcut="execution(* com.sgcc.bg.mapper.*.*(..))" advice-ref="DataSourceAspect"/> -->
+		<aop:advisor pointcut="execution(* com.sgcc.bg.**.*mapper.*(..))" advice-ref="DataSourceAspect"/>
 	</aop:config>
 	<!-- 导入Mybatis 配置 -->
 	<import resource="applicationContext-mybatis.xml" />
@@ -53,8 +54,7 @@
 	<context:property-placeholder
 			ignore-resource-not-found="true" location="classpath*:/application.properties" />
 
-	<rabbit:connection-factory id="connectionFactory"
-							   host="${rabbitmq.host}" username="${rabbitmq.username}" password="${rabbitmq.password}" port="${rabbitmq.port}" />
+	<rabbit:connection-factory id="connectionFactory" host="${rabbitmq.host}" username="${rabbitmq.username}" password="${rabbitmq.password}" port="${rabbitmq.port}" />
 
 	<rabbit:admin connection-factory="connectionFactory" />
 

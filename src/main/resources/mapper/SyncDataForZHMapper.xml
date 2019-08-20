@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+ -->
+<mapper namespace="com.sgcc.bg.mapper.SyncDataForZHMapper">
+    <!--
+    "SELECT UUID,ORGAN_ID,PARENT_ID,ORGAN_CODE,ORANG_NAME,PARENT_CODE,BEGIN_DATE,END_DATE,INNER_ORGAN_LEV_CODE," +
+                        "INNER_ORGAN_LEV_NAME,VIRTUAL_FLAG,UPDATE_USER_ID,UPDATE_time,ISENABLE,SJC,ORGAN_TYPE,REMARKS,UPDATE_DAT0E FROM CEPRI_ZYSY_NEW_ORGAN
+    -->
+    <!--获取新增组织添加到中间表-->
+    <insert id="insertTempNewOrgan" parameterType="java.util.Map">
+        INSERT INTO BG_CEPRI_ZYSY_NEW_ORGAN
+          (UUID,
+           ORGAN_ID,
+           PARENT_ID,
+           ORGAN_CODE,
+           ORANG_NAME,
+           PARENT_CODE,
+           BEGIN_DATE,
+           END_DATE,
+           INNER_ORGAN_LEV_CODE,
+           INNER_ORGAN_LEV_NAME,
+           VIRTUAL_FLAG,
+           UPDATE_USER_ID,
+           ISENABLE,
+           SJC,
+           ORGAN_TYPE,
+           REMARKS,
+           UPDATE_DATE,
+           VALID)
+        VALUES
+          (SYS_GUID(),
+           #{ORGAN_ID,jdbcType = VARCHAR},
+           #{PARENT_ID,jdbcType = VARCHAR},
+           #{ORGAN_CODE, jdbcType = VARCHAR},
+           #{ORANG_NAME,jdbcType = VARCHAR},
+           #{PARENT_CODE,jdbcType = VARCHAR},
+           #{BEGIN_DATE, jdbcType = VARCHAR},
+           #{END_DATE, jdbcType = VARCHAR},
+           #{INNER_ORGAN_LEV_CODE,jdbcType = VARCHAR},
+           #{INNER_ORGAN_LEV_NAME,jdbcType = VARCHAR},
+           #{VIRTUAL_FLAG,jdbcType = VARCHAR},
+           #{UPDATE_USER_ID,jdbcType = VARCHAR},
+           #{ISENABLE,jdbcType = VARCHAR} ,
+           #{SJC,jdbcType = VARCHAR} ,
+           #{ORGAN_TYPE,jdbcType = VARCHAR},
+           #{REMARKS,jdbcType = VARCHAR},
+           TO_DATE(#{time}, 'yyyy-MM-dd HH24:MI:SS'),
+           0)
+
+    </insert>
+    <!--删除新增组织中间表中旧的数据-->
+    <delete id="deleteTempByStatus">
+        DELETE FROM BG_CEPRI_ZYSY_NEW_ORGAN  WHERE VALID = '1'
+    </delete>
+    <!--将新添加的新增组织信息状态更改为1-->
+    <update id="updateTempForIsenable">
+        UPDATE BG_CEPRI_ZYSY_NEW_ORGAN  SET VALID = '1'
+    </update>
+    <!--根据新增组织信息跟新部门信息-->
+    <insert id="insertDeptByTempNewOrgan">
+        MERGE INTO BG_SYS_DEPT D
+        USING (SELECT ORGAN_CODE, ORANG_NAME, PARENT_CODE, ORGAN_TYPE, UPDATE_DATE
+                 FROM BG_CEPRI_ZYSY_NEW_ORGAN
+                 WHERE ISENABLE = 1) CR
+        ON (D.SRC = 1 AND D.DEPTCODE = CR.ORGAN_CODE)
+        WHEN MATCHED THEN
+          UPDATE
+             SET D.DEPTNAME    = CR.ORANG_NAME,
+                 D.PDEPTCODE   = CR.PARENT_CODE,
+                 D.TYPE        = CR.ORGAN_TYPE,
+                 D.UPDATE_DATE = CR.UPDATE_DATE
+        WHEN NOT MATCHED THEN
+          INSERT
+            (D.DEPTID, D.DEPTCODE, D.DEPTNAME, D.PDEPTCODE, D.TYPE, SRC)
+          VALUES
+            (SYS_GUID(),
+             CR.ORGAN_CODE,
+             CR.ORANG_NAME,
+             CR.PARENT_CODE,
+             CR.ORGAN_TYPE,
+             1)
+     </insert>
+
+    <!--删除报工系统中多于综合系统的数据-->
+    <update id="deleteNewOrganForBGMore">
+        UPDATE BG_SYS_DEPT SET VALID = 0,UPDATE_DATE= (
+        SELECT UPDATE_DATE FROM BG_CEPRI_ZYSY_NEW_ORGAN WHERE ROWNUM = 1
+        ) WHERE SRC=1 AND DEPTCODE NOT IN (
+         SELECT ORGAN_CODE FROM BG_CEPRI_ZYSY_NEW_ORGAN WHERE ISENABLE = 1
+        )
+    </update>
+    <!--将获取的部门排序信息保存到中间表-->
+    <!--SELECT UUID,ORGAN_CODE,ORGAN_NAME,ORGAN_ORDER,ISENABLE,ORGAN_TYPE FROM CEPRI_DHB_DEPT_ORDER-->
+    <insert id="insertTempDeptSort" parameterType="java.util.Map">
+          INSERT INTO BG_CEPRI_DHB_DEPT_ORDER (
+            UUID,ORGAN_CODE,ORGAN_NAME,ORGAN_ORDER,ISENABLE,ORGAN_TYPE,UPDATE_DATE,VALID
+          )
+          VALUES (
+          SYS_GUID(),
+          #{ORGAN_CODE,jdbcType=VARCHAR},
+          #{ORGAN_NAME,jdbcType=VARCHAR},
+          #{ORGAN_ORDER,jdbcType=VARCHAR},
+          #{ISENABLE,jdbcType = VARCHAR},
+          #{ORGAN_TYPE,jdbcType=VARCHAR},
+          TO_DATE(#{time},'yyyy-MM-dd HH24:MI:SS'),
+          0
+          )
+    </insert>
+    <delete id="deleteTempByStatusForDeptSort">
+        DELETE FROM BG_CEPRI_DHB_DEPT_ORDER WHERE VALID='1'
+    </delete>
+    <update id="updateStatusTempForDeptSort">
+        UPDATE BG_CEPRI_DHB_DEPT_ORDER SET VALID = '1'
+    </update>
+    <!--将部门排序信息更新到部门表-->
+    <insert id="insertDeptByTempDeptSort">
+      MERGE INTO BG_SYS_DEPT D
+      USING (SELECT ORGAN_CODE,ORGAN_NAME,ORGAN_ORDER,ORGAN_TYPE FROM BG_CEPRI_DHB_DEPT_ORDER WHERE ISENABLE = 1) DS
+      ON (D.DEPTCODE=DS.ORGAN_CODE AND D.SRC = 1)
+      WHEN MATCHED THEN
+      UPDATE SET D.SORT_ID = DS.ORGAN_ORDER,D.UPDATE_DATE=SYSDATE WHERE D.SORT_ID != DS.ORGAN_ORDER
+      WHEN NOT MATCHED THEN
+      INSERT (D.DEPTID,D.DEPTCODE,D.DEPTNAME,D.SORT_ID,D.TYPE,SRC)
+      VALUES (SYS_GUID(),DS.ORGAN_CODE,DS.ORGAN_NAME,DS.ORGAN_ORDER,DS.ORGAN_TYPE,1)
+    </insert>
+
+    <!--将处室排序加入到中间表-->
+    <!--SELECT T.PART_CODE,T.PART_NAME,T.PART_ORDER,T.ORGAN_TYPE FROM CEPRI_DHB_PART_ORDER T-->
+    <insert id="insertTempPartSort" parameterType="java.util.Map">
+        INSERT INTO BG_CEPRI_DHB_PART_ORDER (UUID,PART_CODE,PART_NAME,PART_ORDER,ORGAN_TYPE,SJC,UPDATE_DATE,ISENABLE,VALID)
+        VALUES (SYS_GUID(),
+          #{PART_CODE,jdbcType=VARCHAR},
+          #{PART_NAME,jdbcType=VARCHAR},
+          #{PART_ORDER,jdbcType=VARCHAR},
+          #{ORGAN_TYPE,jdbcType=VARCHAR},
+          #{UPDATE_DATE,jdbcType=VARCHAR},
+          TO_DATE(#{time},'yyyy-MM-dd HH24:MI:SS'),
+           #{ISENABLE,jdbcType=VARCHAR},
+           0
+        )
+    </insert>
+    <!--删除处室排序中状态为1的数据-->
+    <delete id="deleteTempByStatusForPartSort">
+        DELETE FROM BG_CEPRI_DHB_PART_ORDER WHERE VALID = 1
+    </delete>
+
+    <!--更新处室排序中的数据状态为1-->
+    <update id="updateTempStasutsForPartSort">
+        UPDATE BG_CEPRI_DHB_PART_ORDER SET VALID = 1
+    </update>
+    <!--根据处室排序中间表更新部门排序信息-->
+    <insert id="insertDeptByTempPartSort">
+        MERGE INTO BG_SYS_DEPT D
+        USING (SELECT PART_CODE,PART_NAME,PART_ORDER,ORGAN_TYPE FROM BG_CEPRI_DHB_PART_ORDER WHERE ISENABLE = 1 ) PS
+        ON (D.DEPTCODE=PS.PART_CODE AND D.SRC =1)
+        WHEN MATCHED THEN
+        UPDATE SET D.SORT_ID = PS.PART_ORDER,D.TYPE = PS.ORGAN_TYPE,D.UPDATE_DATE=SYSDATE WHERE D.SORT_ID!=PS.PART_ORDER
+        WHEN NOT MATCHED THEN
+        INSERT (D.DEPTID,D.DEPTCODE,D.DEPTNAME,D.SORT_ID,D.TYPE,SRC,D.CREATE_USER,D.CREATE_DATE,D.VALID)
+        VALUES (SYS_GUID(),PS.PART_CODE,PS.PART_NAME,PS.PART_ORDER,PS.ORGAN_TYPE,1,'admin',SYSDATE,1)
+    </insert>
+
+    <!--将获取的人员信息排序插入到中间表中-->
+    <!--"SELECT T.EMP_CODE,T.EMP_NAME,T.EMP_ORDER,T.ZHUANZE_DEPT_CODE,T.ZHUANZE_USER_ID,T.ORGAN_CODE FROM CEPRI_DHB_EMP_ORDER T";-->
+    <insert id="insertTempEmpSort" parameterType="java.util.Map">
+        INSERT INTO BG_CEPRI_DHB_EMP_ORDER
+        (UUID,EMP_CODE,EMP_NAME,EMP_ORDER,ZHUANZE_DEPT_CODE,ZHUANZE_USER_ID,ORGAN_CODE,ISENABLE,SJC,UPDATE_DATE,VALID)
+        VALUES (
+          SYS_GUID(),
+          #{EMP_CODE,jdbcType=VARCHAR},
+          #{EMP_NAME,jdbcType=VARCHAR},
+          #{EMP_ORDER,jdbcType=VARCHAR},
+          #{ZHUANZE_DEPT_CODE,jdbcType=VARCHAR},
+          #{ZHUANZE_USER_ID,jdbcType=VARCHAR},
+          #{ORGAN_CODE,jdbcType=VARCHAR},
+          #{ISENABLE,jdbcType=VARCHAR},
+          #{SJC,jdbcType=VARCHAR},
+          TO_DATE(#{time},'yyyy-MM-dd HH24:MI:SS'),
+          0
+        )
+    </insert>
+
+    <delete id="deleteTempByStatusForEmpSort">
+        DELETE FROM BG_CEPRI_DHB_EMP_ORDER WHERE VALID = 1
+    </delete>
+
+    <update id="updateTempByStatusForEmpSort">
+        UPDATE BG_CEPRI_DHB_EMP_ORDER SET VALID = 1
+    </update>
+
+    <insert id="insertUserByTempEmpSort">
+        MERGE INTO BG_SYS_USER U
+        USING (SELECT EMP_CODE,EMP_ORDER,ORGAN_CODE FROM BG_CEPRI_DHB_EMP_ORDER WHERE ISENABLE = 1 ) ES
+        ON (U.HRCODE = ES.EMP_CODE AND SRC=1)
+        WHEN MATCHED THEN
+        UPDATE SET U.SORT_ID = ES.EMP_ORDER , U.HRDEPTCODE=ES.ORGAN_CODE  ,U.UPDATE_DATE = SYSDATE WHERE U.SORT_ID != ES.EMP_ORDER
+    </insert>
+
+    <!--将获取的日历班次插入到中间表中-->
+    <!--SELECT T.BCXX_DATE,T.BCXX_WEEK,T.BC_CODE,T.RBC_CODE,T.IS_HOLIDAY FROM BG_CEPRI_KAOQIN_BCXX T";-->
+    <insert id="insertTempSchedule" parameterType="java.util.Map">
+        INSERT INTO BG_CEPRI_KAOQIN_BCXX (UUID,BCXX_DATE,BCXX_WEEK,BC_CODE,RBC_CODE,IS_HOLIDAY,ISENABLE,SJC,UPDATE_time,VALID)
+        VALUES (
+          SYS_GUID(),
+          #{BCXX_DATE,jdbcType=VARCHAR},
+          #{BCXX_WEEK,jdbcType=VARCHAR},
+          #{BC_CODE,jdbcType=VARCHAR},
+          #{RBC_CODE,jdbcType=VARCHAR},
+          #{IS_HOLIDAY,jdbcType=VARCHAR},
+          #{ISENABLE,jdbcType=VARCHAR},
+          #{UPDATE_time,jdbcType=VARCHAR},
+          TO_DATE(#{time},'yyyy-MM-dd HH24:MI:SS'),
+          0
+        )
+    </insert>
+
+    <delete id="deleteTempByStatusForSchedule">
+         DELETE FROM BG_CEPRI_KAOQIN_BCXX WHERE VALID = 1
+    </delete>
+
+    <update id="updateTempByStatusForSchedule">
+        UPDATE BG_CEPRI_KAOQIN_BCXX SET VALID = 1
+    </update>
+    <!--将日历中间表中的数据更新到日历表中-->
+    <insert id="insertScheduleForTemp">
+        MERGE INTO BG_SYS_WORK_SCHEDULE WS
+        USING BG_CEPRI_KAOQIN_BCXX BC
+        ON (WS.SCHEDULE_DATE =BC.BCXX_DATE)
+        WHEN MATCHED THEN
+        UPDATE SET WS.IS_HOLIDAY = BC.IS_HOLIDAY,WS.SCHEDULE_WEEK = BC.BCXX_WEEK ,WS.UPDATE_time=BC.UPDATE_time
+        WHEN NOT MATCHED THEN
+        INSERT (ID,SCHEDULE_DATE,SCHEDULE_WEEK,SCHEDULE_TYPE,IS_HOLIDAY,VALID,CREATE_time,CREATE_USER)
+        VALUES (
+            SYS_GUID(),
+            BC.BCXX_DATE,
+            BC.BCXX_WEEK,
+            DECODE(BC.RBC_CODE,'RBC001',0,1),
+            BC.IS_HOLIDAY,
+            1,
+            BC.UPDATE_time,
+            'admin'
+        )
+
+    </insert>
+
+    <!--逻辑删除报工系统日历表多余数据-->
+   <!-- /*  MERGE INTO BG_SYS_WORK_SCHEDULE WS
+    USING (SELECT BCXX_DATE,BCXX_WEEK,BC_CODE,RBC_CODE,IS_HOLIDAY,UPDATE_time FROM BG_CEPRI_KAOQIN_BCXX) BC
+    ON (WS.SCHEDULE_DATE!=BC.BCXX_DATE)
+    WHEN MATCHED THEN
+    UPDATE SET WS.VALID = 0*/-->
+    <update id="deleteScheduleForMoreDate">
+        UPDATE BG_SYS_WORK_SCHEDULE WS SET WS.VALID = 0 WHERE WS.SCHEDULE_DATE NOT IN(
+        SELECT BCXX_DATE FROM BG_CEPRI_KAOQIN_BCXX BC
+        )
+    </update>
+    <!--将人事变更关系保存到中间表-->
+    <!--"SELECT T.EMP_CODE,T.BEGIN_DATE,T.END_DATE,T.EMP_PERSON_AREA,T.EMP_PERSON_BTRTL," +
+                        "T.ST_OFFICE_CODE,T.ERP_POST_CODE,T.ST_OFFICE_NAME,T.ST_DEPT_CODE,T.ST_DEPT_NAME,T.ST_OFFICE_ID,T.REMARKS FROM CEPRI_ZYSY_SPECIAL_EMP_INFO T";-->
+    <insert id="insertTempEmpRelaion" parameterType="java.util.Map">
+        INSERT INTO BG_CEPRI_ZYSY_SPECIAL_EMP_INFO(
+        UUID,EMP_CODE,BEGIN_DATE,END_DATE,EMP_PERSON_AREA,EMP_PERSON_BTRTL,ST_OFFICE_CODE,ERP_POST_CODE,ST_OFFICE_NAME,
+        ST_DEPT_CODE,ST_DEPT_NAME,ST_OFFICE_ID,REMARKS,ISENABLE,UPDATE_USER_ID,SJC,UPDATE_DATE,VALID
+        )VALUES (
+         SYS_GUID(),
+         #{EMP_CODE,jdbcType=VARCHAR},
+         #{BEGIN_DATE,jdbcType=VARCHAR},
+         #{END_DATE,jdbcType=VARCHAR},
+         #{EMP_PERSON_AREA,jdbcType=VARCHAR},
+         #{EMP_PERSON_BTRTL,jdbcType=VARCHAR},
+         #{ST_OFFICE_CODE,jdbcType=VARCHAR},
+         #{ERP_POST_CODE,jdbcType=VARCHAR},
+         #{ST_OFFICE_NAME,jdbcType=VARCHAR},
+         #{ST_DEPT_CODE,jdbcType=VARCHAR},
+         #{ST_DEPT_NAME,jdbcType=VARCHAR},
+         #{ST_OFFICE_ID,jdbcType=VARCHAR},
+         #{REMARKS,jdbcType=VARCHAR},
+         #{ISENABLE,jdbcType=VARCHAR},
+         'superadmin',
+         #{UPDATE_DATE,jdbcType=VARCHAR},
+         TO_DATE(#{time},'yyyy-MM-dd HH24:MI:SS'),
+         0
+        )
+    </insert>
+
+    <!--删除中间表状态为1的数据-->
+    <delete id="deleteTempByStatusForEmpRelation">
+         DELETE FROM BG_CEPRI_ZYSY_SPECIAL_EMP_INFO WHERE VALID = 1
+    </delete>
+    <!--更新新增数据为的状态为1-->
+    <update id="updateTempByStatusForEmpRelation">
+         UPDATE BG_CEPRI_ZYSY_SPECIAL_EMP_INFO SET VALID = 1
+    </update>
+    <!--更新用户关系变更表-->
+    <!-- UPDATE SET UD.DEPTID = R.DEPTID ,UD.EXP_START_time = TO_DATE(R.BEGIN_DATE,'yyyy-MM-dd HH24:MI:SS') , UD.EXP_END_time=TO_DATE(R.END_DATE,'yyyy-MM-dd HH24:MI:SS'),UD.UPDATE_DATE = R.UPDATE_DATE WHERE UD.DEPTID != R.DEPTID-->
+    <insert id="insertUserAndDeptRelationByTemp">
+    MERGE INTO BG_SYS_USER_DEPT_RELATION UD
+       USING (SELECT  T.END_DATE,
+                          T.BEGIN_DATE,
+                          U.USERID,
+                          D.DEPTID,
+                          T.UPDATE_DATE
+                FROM BG_CEPRI_ZYSY_SPECIAL_EMP_INFO T
+                LEFT JOIN BG_SYS_USER U
+                  ON T.EMP_CODE = U.HRCODE
+                LEFT JOIN BG_SYS_DEPT D
+                  ON D.DEPTCODE = T.ST_OFFICE_CODE
+               WHERE U.USERID IS NOT NULL
+                 AND D.DEPTID IS NOT NULL) R
+       ON (UD.USERID = R.USERID AND UD.DEPTID = R.DEPTID AND UD.SRC = 1)
+       WHEN MATCHED THEN
+         UPDATE SET UD.UPDATE_DATE = R.UPDATE_DATE
+       WHEN NOT MATCHED THEN
+         INSERT (USERID,DEPTID,VALID,EXP_START_TIME,EXP_END_TIME,CREATE_USER,CREATE_DATE)
+         VALUES (R.USERID,R.DEPTID,1,
+         TO_DATE(R.BEGIN_DATE, 'yyyy-MM-dd HH24:MI:SS'),
+         TO_DATE(R.END_DATE, 'yyyy-MM-dd HH24:MI:SS')
+         ,'admin',R.UPDATE_DATE)
+    </insert>
+
+    <!--将报工多于综合系统的人员关系表删除-->
+    <update id="deleteUaerAndDeptRelationForMore">
+        UPDATE BG_SYS_USER_DEPT_RELATION UD
+           SET UD.VALID       = 0,
+               UD.UPDATE_DATE =
+               (SELECT EMP.UPDATE_DATE
+                  FROM BG_CEPRI_ZYSY_SPECIAL_EMP_INFO EMP
+                 WHERE ROWNUM = 1)
+
+         WHERE (UD.USERID IN (SELECT U.USERID
+                                FROM BG_CEPRI_ZYSY_SPECIAL_EMP_INFO T
+                                LEFT JOIN BG_SYS_USER U
+                                  ON T.EMP_CODE = U.HRCODE
+                                LEFT JOIN BG_SYS_DEPT D
+                                  ON D.DEPTCODE = T.ST_OFFICE_CODE
+                               WHERE U.USERID IS NOT NULL
+                                 AND D.DEPTID IS NOT NULL) AND
+               UD.DEPTID NOT IN (SELECT D.DEPTID
+                                    FROM BG_CEPRI_ZYSY_SPECIAL_EMP_INFO T
+                                    LEFT JOIN BG_SYS_USER U
+                                      ON T.EMP_CODE = U.HRCODE
+                                    LEFT JOIN BG_SYS_DEPT D
+                                      ON D.DEPTCODE = T.ST_OFFICE_CODE
+                                   WHERE U.USERID IS NOT NULL
+                                     AND D.DEPTID IS NOT NULL))
+    </update>
+    <!--将部门类型数据添加到中间表中-->
+    <insert id="insertTempDeptType" parameterType="java.util.Map">
+      INSERT INTO BG_CEPRI_JXGL_ORGAN_TYPE_M
+          (UUID,
+           ORGAN_CODE,
+           ORGAN_TYPE_CODE,
+           ORGAN_TYPE_NAME,
+           ISENABLE,
+           SJC,
+           PARENT_ORGAN_CODE,
+           UPDATE_DATE)
+        VALUES
+          (SYS_GUID(),
+           #{ORGAN_CODE,jdbcType = VARCHAR},
+           #{ORGAN_TYPE_CODE,jdbcType = VARCHAR},
+           #{ORGAN_TYPE_NAME,jdbcType = VARCHAR},
+           #{ISENABLE,jdbcType = VARCHAR},
+           #{SJC,jdbcType= VARCHAR},
+           #{PARENT_ORGAN_CODE,
+           jdbcType = VARCHAR},
+           TO_DATE(#{time}, 'yyyy-MM-dd HH24:MI:SS'))
+    </insert>
+
+    <delete id="deleteTempByStatusForDeptType">
+        DELETE FROM BG_CEPRI_JXGL_ORGAN_TYPE_M WHERE VALID = 1
+    </delete>
+
+    <update id="updateTempByStatusForDeptType">
+        UPDATE BG_CEPRI_JXGL_ORGAN_TYPE_M SET VALID = 1
+    </update>
+    <!--更新部门类型-->
+    <insert id="insertDeptTypeByTemp">
+        MERGE INTO BG_SYS_APPROVAL_DEPT_R_ORGTYPE DO
+        USING (SELECT D.DEPTID, SD.ID
+                 FROM BG_CEPRI_JXGL_ORGAN_TYPE_M T
+                 LEFT JOIN BG_SYS_DEPT D
+                   ON T.ORGAN_CODE = D.DEPTCODE
+                 LEFT JOIN BG_SYS_DATADICTIONARY SD
+                   ON SD.CODE = T.ORGAN_TYPE_CODE
+                WHERE T.ORGAN_TYPE_CODE IN ('OT1', 'OT2', 'OT3')
+                  AND D.VALID = 1
+                  AND D.DEPTID IS NOT NULL) TEM
+        ON (DO.ORGAN_ID = TEM.DEPTID)
+        WHEN MATCHED THEN
+          UPDATE
+             SET DO.ORGAN_TYPE = TEM.ID,
+                 UPDATE_time   = SYSDATE,
+                 UPDATE_USER   = 'admin'
+        WHEN NOT MATCHED THEN
+          INSERT
+            (UUID, ORGAN_ID, ORGAN_TYPE, VALID, CREATE_time, CREATE_USER)
+          VALUES
+            (SYS_GUID(), TEM.DEPTID, TEM.ID, 1, SYSDATE, 'admin')
+    </insert>
+    <!--删除组织关系表中多于综合系统表的相关数据-->
+    <update id="deleteDeptTypeForBGMore">
+        UPDATE BG_SYS_APPROVAL_DEPT_R_ORGTYPE DO
+           SET DO.VALID    = 0,
+               UPDATE_TIME =
+               (SELECT UPDATE_DATE FROM BG_CEPRI_JXGL_ORGAN_TYPE_M WHERE ROWNUM = 1)
+         WHERE DO.ORGAN_ID NOT IN (SELECT D.DEPTID
+                                   FROM BG_CEPRI_JXGL_ORGAN_TYPE_M T
+                                   LEFT JOIN BG_SYS_DEPT D
+                                     ON T.ORGAN_CODE = D.DEPTCODE
+                                   LEFT JOIN BG_SYS_DATADICTIONARY SD
+                                     ON SD.CODE = T.ORGAN_TYPE_CODE
+                                  WHERE T.ORGAN_TYPE_CODE IN ('OT1', 'OT2', 'OT3')
+                                    AND D.VALID = 1
+                                    AND D.DEPTID IS NOT NULL)
+    </update>
+</mapper>
