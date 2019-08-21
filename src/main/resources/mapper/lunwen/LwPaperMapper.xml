@@ -1,0 +1,640 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.lunwen.mapper.LwPaperMapper">
+
+    <!--新增论文信息-->
+    <insert id="addLwPaper">
+      insert into bg_lw_paper
+        (UUID,
+        PAPER_ID,
+        PAPER_NAME,
+        year,
+        UNIT,
+        AUTHOR,
+        JOURNAL,
+        RECOMMEND_UNIT,
+        PAPER_TYPE,
+        QUOTE_COUNT,
+        DOWNLOAD_COUNT,
+        FIELD,
+        SCORE_TABLE_STATUS,
+        SCORE_STATUS,
+        ALL_STATUS,
+        CREATE_USER,
+        CREATE_TIME,
+        VALID)
+      VALUES
+        (#{uuid,jdbcType=VARCHAR},
+        #{paperId,jdbcType=VARCHAR},
+        #{paperName,jdbcType=VARCHAR},
+        #{year,jdbcType=VARCHAR},
+        #{unit,jdbcType=VARCHAR},
+        #{author,jdbcType=VARCHAR},
+        #{journal,jdbcType=VARCHAR},
+        #{recommendUnit,jdbcType=VARCHAR},
+        #{paperType,jdbcType=VARCHAR},
+        #{quoteCount,jdbcType=VARCHAR},
+        #{downloadCount,jdbcType=VARCHAR},
+        #{field,jdbcType=VARCHAR},
+        #{scoreTableStatus,jdbcType=VARCHAR},
+        #{scoreStatus,jdbcType=VARCHAR},
+        #{allStatus,jdbcType=VARCHAR},
+        #{createUser,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{valid,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!--修改论文基本信息-->
+    <update id="updateLwPaper">
+        update bg_lw_paper set
+        PAPER_NAME = #{paperName,jdbcType=VARCHAR},
+        UNIT = #{unit,jdbcType=VARCHAR},
+        AUTHOR = #{author,jdbcType=VARCHAR},
+        JOURNAL = #{journal,jdbcType=VARCHAR},
+        RECOMMEND_UNIT = #{recommendUnit,jdbcType=VARCHAR},
+        PAPER_TYPE = #{paperType,jdbcType=VARCHAR},
+        QUOTE_COUNT = #{quoteCount,jdbcType=VARCHAR},
+        DOWNLOAD_COUNT = #{downloadCount,jdbcType=VARCHAR},
+        FIELD = #{field,jdbcType=VARCHAR},
+        UPDATE_USER = #{updateUser,jdbcType=VARCHAR},
+        UPDATE_TIME = sysdate
+        where UUID = #{uuid}
+    </update>
+
+    <!--修改生成打分表状态-->
+    <update id="updateScoreTableStatus">
+        update bg_lw_paper
+        set  SCORE_TABLE_STATUS  = #{scoreTableStatus}
+        where UUID  = #{uuid}
+    </update>
+
+    <!--修改打分状态-->
+    <update id="updateScoreStatus">
+        update bg_lw_paper
+        set  SCORE_STATUS  = #{scoreStatus}
+        where UUID  = #{uuid}
+    </update>
+
+    <!--修改论文全生命周期状态-->
+    <update id="updateAllStatus">
+        update bg_lw_paper
+        set  ALL_STATUS  = #{allStatus}
+        where UUID  = #{uuid}
+    </update>
+
+    <!--删除某条论文，逻辑删除，单纯修改有效状态-->
+    <update id="delLwPaper">
+        update bg_lw_paper
+        set  VALID  = #{valid}
+        where UUID  = #{uuid}
+    </update>
+
+    <!--修改两个平均分的值,代码中的名称和库中稍有冲突，再修改的话涉及太多，认清就好，多谢体谅-->
+    <update id="updateAverageScore">
+        update bg_lw_paper
+        set  WEIGHTING_FRACTION  = #{averageScore}
+        , AVERAGE_FRACTION = #{highestLowestAverage}
+        where UUID  = #{paperId}
+    </update>
+
+    <update id="batchUpdateAllStatus">
+        update bg_lw_paper set all_status=#{allStatus} where valid = #{valid} and year =#{year}
+    </update>
+
+    <update id="batchUpdateScoreTableStatus">
+        update bg_lw_paper set score_table_status=#{scoreTableStatus} where valid = #{valid} and year =#{year}
+    </update>
+
+    <!--某类型的当前最大编号-->
+    <select id="maxPaperId" resultType="java.lang.String">
+        select MAX(paper_id)  from bg_lw_paper where paper_type = #{paperType} and year = #{year}
+    </select>
+
+    <!--查找某条论文-->
+    <select id="findPaper" resultType="java.util.Map">
+       select  p.uuid               uuid,
+               p.paper_id           paperId,
+               p.paper_name         paperName,
+               p.year,
+               p.unit,
+               p.author,
+               p.journal,
+               p.recommend_unit     recommendUnit,
+               p.paper_type         paperType,
+               p.quote_count        quoteCount,
+               p.download_count     downloadCount,
+               p.field,
+               p.score_status  as scoreStatus,
+               p.score_table_status  as scoreTableStatus,
+               p.all_status  as allStatus,
+               (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='score_status' and vaild=1 and code= p.score_status)  as scoreStatusDetail,
+               (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='score_table_status' and vaild=1 and code= p.score_table_status)  as scoreTableStatusDetail,
+               (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_all_status' and vaild=1 and code= p.all_status)  as allStatusDetail,
+               TO_CHAR(p.create_time, 'YYYY-MM-DD HH24:MI')    createTime,
+               TO_CHAR(p.update_time, 'YYYY-MM-DD HH24:MI')    updateTime,
+               p.valid
+       from bg_lw_paper p
+       where 1=1
+       <if test="uuid != null and uuid != ''">
+          and p.uuid = #{uuid}
+       </if>
+       <if test="paperName != null and paperName != ''">
+          and p.paper_name = #{paperName}
+       </if>
+       <if test="valid !=null and valid != ''">
+          and p.valid = #{valid}
+       </if>
+    </select>
+
+    <!--按条件查询某批论文信息-->
+    <select id="selectLwPaper" resultType="java.util.Map">
+        select * from(
+        select p.*,ROWNUM as r
+        from (select p.uuid,
+            p.paper_id paperId,
+            p.paper_name paperName,
+            p.year,
+            p.unit,
+            p.author,
+            p.journal,
+            p.recommend_unit recommendUnit,
+            p.paper_type paperType,
+            p.quote_count quoteCount,
+            p.download_count downloadCount,
+            p.field,
+            p.score_table_status scoreTableStatus,
+            (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='score_status' and vaild=1 and code= p.score_status)  as scoreStatus,
+            (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_all_status' and vaild=1 and code= p.all_status)  as allStatusContent,
+            p.all_status allStatus,
+            p.create_user createUser,
+            p.update_user updateUser,
+            TO_CHAR(p.create_time, 'YYYY-MM-DD HH24:MI') createTime,
+            TO_CHAR(p.update_time, 'YYYY-MM-DD HH24:MI') updateTime,
+            p.valid,
+            p.WEIGHTING_FRACTION WEIGHTINGFRACTION,
+            p.AVERAGE_FRACTION AVERAGEFRACTION,
+            ROWNUM rown
+            from bg_lw_paper p
+            where 1 = 1
+            <if test="paperName != null and paperName != ''">
+              and p.paper_name = #{paperName}
+            </if>
+            <if test="year != null and year != ''">
+              and p.year = #{year}
+            </if>
+            <if test="paperId != null and paperId != ''">
+              and p.paper_id = #{paperId}
+            </if>
+            <if test="unit != null and unit != ''">
+              and p.unit = #{unit}
+            </if>
+            <if test="author != null and author != ''">
+              and p.author = #{author}
+            </if>
+            <if test="field != null and field != ''">
+              and p.field = #{field}
+            </if>
+            <if test="allStatus != null and allStatus != ''">
+                and p.all_Status = #{allStatus}
+            </if>
+            <if test="paperType != null and paperType != ''">
+                and p.paper_type = #{paperType}
+            </if>
+            and valid = #{valid}
+            order  by p.paper_id desc
+        ) p
+        where  #{pageEnd} >= ROWNUM
+        ) where r > #{pageStart}
+    </select>
+
+    <!--按条件查询某批论文信息总数，为上面那条sql提供总数，以便分页，total-->
+    <select id="selectLwPaperCount" resultType="java.lang.Integer">
+        select count(*)
+        from bg_lw_paper p
+        where 1 = 1
+        <if test="paperName != null and paperName != ''">
+            and p.paper_name = #{paperName}
+        </if>
+        <if test="year != null and year != ''">
+            and p.year = #{year}
+        </if>
+        <if test="paperId != null and paperId != ''">
+            and p.paper_id = #{paperId}
+        </if>
+        <if test="unit != null and unit != ''">
+            and p.unit = #{unit}
+        </if>
+        <if test="author != null and author != ''">
+            and p.author = #{author}
+        </if>
+        <if test="field != null and field != ''">
+            and p.field = #{field}
+        </if>
+        <if test="allStatus != null and allStatus != ''">
+            and p.all_status = #{allStatus}
+        </if>
+        <if test="paperType != null and paperType != ''">
+            and p.paper_type = #{paperType}
+        </if>
+        and p.valid = #{valid}
+    </select>
+
+    <select id="paperComprehensiveVOList" resultType="com.sgcc.bg.lunwen.bean.PaperComprehensiveVO">
+        SELECT * FROM (
+          SELECT a.*,ROWNUM as r FROM (
+            SELECT
+               p.UUID AS uuid,
+               p.PAPER_ID AS  paperId,
+               p.PAPER_NAME AS paperName,
+               p.YEAR AS year,
+               p.UNIT AS unit,
+               p.AUTHOR AS author,
+               p.JOURNAL AS journal,
+               p.RECOMMEND_UNIT AS recommendUnit,
+               p.PAPER_TYPE AS paperType,
+               p.QUOTE_COUNT AS quoteCount,
+               p.DOWNLOAD_COUNT AS downloadCount,
+               p.FIELD AS field,
+               p.SCORE_TABLE_STATUS AS  scoreTableStatus,
+               p.SCORE_STATUS  AS scoreStatus,
+               p.ALL_STATUS AS  allStatus,
+               p.WEIGHTING_FRACTION AS weightingFraction,
+               p.AVERAGE_FRACTION AS averageFraction,
+               ROWNUM rown
+               FROM bg_lw_paper p
+               WHERE p.valid = '1'
+               AND p.ALL_STATUS = '8'
+                    <if test="year != null and year != ''">
+                        and p.YEAR = #{year,jdbcType=VARCHAR}
+                    </if>
+                    <if test="author != null and author !=''">
+                        and p.AUTHOR = #{author,jdbcType=VARCHAR}
+                    </if>
+                    <if test="paperId != null and paperId != ''">
+                        and p.PAPER_ID = #{paperId,jdbcType=VARCHAR}
+                    </if>
+                    <if test="paperName != null and paperName != ''">
+                        and p.PAPER_NAME = #{paperName,jdbcType=VARCHAR}
+                    </if>
+                    ORDER BY P.AVERAGE_FRACTION DESC nulls last) a
+            where #{end} >= ROWNUM )
+        WHERE r > #{start}
+    </select>
+
+    <select id="paperComprehensiveCount" resultType="java.lang.Integer">
+        SELECT COUNT(UUID) FROM bg_lw_paper
+        WHERE valid = '1'
+        AND ALL_STATUS = '8'
+        <if test="year != null and year != ''">
+            and YEAR = #{year,jdbcType=VARCHAR}
+        </if>
+        <if test="author != null and author !=''">
+            and AUTHOR = #{author,jdbcType=VARCHAR}
+        </if>
+        <if test="paperId != null and paperId != ''">
+            and PAPER_ID = #{paperId,jdbcType=VARCHAR}
+        </if>
+        <if test="paperName != null and paperName != ''">
+            and PAPER_NAME = #{paperName,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="outPaperComprehensiveVOAll" resultType="com.sgcc.bg.lunwen.bean.PaperComprehensiveVO">
+        SELECT
+        p.UUID AS uuid,
+        p.PAPER_ID AS  paperId,
+        p.PAPER_NAME AS paperName,
+        p.YEAR AS year,
+        p.UNIT AS unit,
+        p.AUTHOR AS author,
+        p.JOURNAL AS journal,
+        p.RECOMMEND_UNIT AS recommendUnit,
+        p.PAPER_TYPE AS paperType,
+        p.QUOTE_COUNT AS quoteCount,
+        p.DOWNLOAD_COUNT AS downloadCount,
+        p.FIELD AS field,
+        p.SCORE_TABLE_STATUS AS  scoreTableStatus,
+        p.SCORE_STATUS  AS scoreStatus,
+        p.ALL_STATUS AS  allStatus,
+        p.WEIGHTING_FRACTION AS weightingFraction,
+        p.AVERAGE_FRACTION AS averageFraction,
+        ROWNUM AS ROWNO
+        FROM bg_lw_paper p
+        WHERE p.valid = '1'
+        AND p.ALL_STATUS = '8'
+        <if test="year != null and year != ''">
+            and p.YEAR = #{year,jdbcType=VARCHAR}
+        </if>
+        <if test="author != null and author !=''">
+            and p.AUTHOR = #{author,jdbcType=VARCHAR}
+        </if>
+        <if test="paperId != null and paperId != ''">
+            and p.PAPER_ID = #{paperId,jdbcType=VARCHAR}
+        </if>
+        <if test="paperName != null and paperName != ''">
+            and p.PAPER_NAME = #{paperName,jdbcType=VARCHAR}
+        </if>
+        ORDER BY P.AVERAGE_FRACTION DESC nulls last
+    </select>
+
+    <select id="outPaperComprehensiveVOIds" resultType="com.sgcc.bg.lunwen.bean.PaperComprehensiveVO">
+        SELECT
+        p.UUID AS uuid,
+        p.PAPER_ID AS  paperId,
+        p.PAPER_NAME AS paperName,
+        p.YEAR AS year,
+        p.UNIT AS unit,
+        p.AUTHOR AS author,
+        p.JOURNAL AS journal,
+        p.RECOMMEND_UNIT AS recommendUnit,
+        p.PAPER_TYPE AS paperType,
+        p.QUOTE_COUNT AS quoteCount,
+        p.DOWNLOAD_COUNT AS downloadCount,
+        p.FIELD AS field,
+        p.SCORE_TABLE_STATUS AS  scoreTableStatus,
+        p.SCORE_STATUS  AS scoreStatus,
+        p.ALL_STATUS AS  allStatus,
+        p.WEIGHTING_FRACTION AS weightingFraction,
+        p.AVERAGE_FRACTION AS averageFraction,
+        ROWNUM AS ROWNO
+        FROM bg_lw_paper p
+        WHERE p.VALID = '1'
+        AND p.ALL_STATUS = '8'
+        AND p.UUID in (
+        <foreach collection="strings"  item="string" index="index" separator=",">
+            #{string,jdbcType=VARCHAR}
+        </foreach>
+        )
+        ORDER BY P.AVERAGE_FRACTION DESC nulls last
+        </select>
+
+    <select id="selectCheckIdExport" resultType="com.sgcc.bg.lunwen.bean.PaperComprehensiveVO">
+       select  p.uuid               uuid,
+               p.paper_id           paperId,
+               p.paper_name         paperName,
+               p.year,
+               p.unit,
+               p.author,
+               p.journal,
+               p.recommend_unit     recommendUnit,
+               (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_type' and vaild=1 and code= p.paper_type)  as paperType,
+               p.quote_count        quoteCount,
+               p.download_count     downloadCount,
+               p.field,
+               (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='score_status' and vaild=1 and code= p.score_status)  as scoreStatus,
+               p.valid,
+               p.WEIGHTING_FRACTION weightingFraction,
+               p.AVERAGE_FRACTION averageFraction
+       from bg_lw_paper p
+       where 1=1
+       AND p.uuid IN (
+        <foreach collection="uuids" item="uuid" index="index" separator=",">
+            #{uuid}
+        </foreach>
+       )
+    </select>
+
+    <select id="selectLwPaperExport" resultType="com.sgcc.bg.lunwen.bean.PaperComprehensiveVO">
+        select p.uuid,
+            p.paper_id paperId,
+            p.paper_name paperName,
+            p.year,
+            p.unit,
+            p.author,
+            p.journal,
+            p.recommend_unit recommendUnit,
+            (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_type' and vaild=1 and code= p.paper_type)  as paperType,
+            p.quote_count quoteCount,
+            p.download_count downloadCount,
+            p.field,
+            (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_all_status' and vaild=1 and code= p.all_status)  as allStatus,
+        p.WEIGHTING_FRACTION weightingFraction,
+            p.AVERAGE_FRACTION averageFraction
+        from bg_lw_paper p
+        where 1 = 1
+        <if test="paperName != null and paperName != ''">
+            and p.paper_name = #{paperName}
+        </if>
+        <if test="year != null and year != ''">
+            and p.year = #{year}
+        </if>
+        <if test="paperId != null and paperId != ''">
+            and p.paper_id = #{paperId}
+        </if>
+        <if test="unit != null and unit != ''">
+            and p.unit = #{unit}
+        </if>
+        <if test="author != null and author != ''">
+            and p.author = #{author}
+        </if>
+        <if test="field != null and field != ''">
+            and p.field = #{field}
+        </if>
+        <if test="allStatus != null and allStatus != ''">
+            and p.all_status = #{allStatus}
+        </if>
+        <if test="paperType != null and paperType != ''">
+            and p.paper_type = #{paperType}
+        </if>
+        and valid = #{valid}
+        order  by p.paper_id desc
+    </select>
+
+    <select id="selectSpecialistField" resultType="com.sgcc.bg.lunwen.bean.LwSpecialist">
+        select
+            field,
+            research_direction researchDirection,
+            unit_name unitName,
+            name,
+            uuid
+        from bg_lw_specialist where valid = #{valid}
+        <choose>
+            <when test="likeMatch!=null and likeMatch!=''">
+                and (
+                research_direction LIKE '%'||#{field}||'%'
+                )
+            </when>
+            <otherwise>
+                and (
+                research_direction = #{field}
+                or
+                field = #{field}
+                )
+            </otherwise>
+        </choose>
+        <if test="authors != null and authors != ''">
+            and name not in (
+                <foreach collection="authors" item="author" index="index" separator=",">
+                    #{author}
+                </foreach>
+            )
+        </if>
+        <if test="unit != null and unit != ''">
+          and unit_name != #{unit}
+        </if>
+        and match_status != #{matchStatus}
+    </select>
+
+    <select id="year" resultType="java.util.Map">
+        SELECT YEAR FROM  bg_lw_paper GROUP BY YEAR ORDER BY YEAR DESC
+    </select>
+
+    <select id="fieldList" resultType="java.util.Map">
+        SELECT FIELD FROM bg_lw_paper
+        WHERE year = #{year} and VALID = '1'GROUP BY FIELD
+    </select>
+
+
+    <select id="statisticsMap" resultType="java.util.Map">
+        SELECT * FROM (
+            SELECT a.*,ROWNUM as r FROM (
+                SELECT
+                p.UUID AS uuid,
+                p.PAPER_ID AS  paperId,
+                p.PAPER_NAME AS paperName,
+                p.AUTHOR,
+                p.WEIGHTING_FRACTION AS weightingFraction,
+                p.AVERAGE_FRACTION AS averageFraction,
+                ROWNUM rown
+                FROM bg_lw_paper p
+                WHERE p.valid = '1'
+                AND p.ALL_STATUS = '8'
+                <if test="year != null and year != ''">
+                    and p.year = #{year,jdbcType=VARCHAR}
+                </if>
+                <if test="paperName != null and paperName != ''">
+                    and p.paper_name  LIKE '%'||#{paperName,jdbcType=VARCHAR}||'%'
+                </if>
+                <if test="paperId != null and paperId != ''">
+                    and p.paper_id = #{paperId,jdbcType=VARCHAR}
+                </if>
+                <if test="field != null and field != ''">
+                    and p.field = #{field}
+                </if>
+                ORDER BY P.AVERAGE_FRACTION DESC nulls last ) a
+            where #{end} >= ROWNUM )
+        WHERE r > #{start}
+    </select>
+
+    <select id="statisticsCount" resultType="java.lang.Integer">
+        SELECT COUNT(UUID)
+        FROM bg_lw_paper
+        WHERE valid = '1'
+        AND ALL_STATUS = '8'
+        <if test="year != null and year != ''">
+            and year = #{year,jdbcType=VARCHAR}
+        </if>
+        <if test="paperName != null and paperName != ''">
+            and paper_name  LIKE '%'||#{paperName,jdbcType=VARCHAR}||'%'
+        </if>
+        <if test="paperId != null and paperId != ''">
+            and paper_id = #{paperId,jdbcType=VARCHAR}
+        </if>
+        <if test="field != null and field != ''">
+            and field = #{field}
+        </if>
+    </select>
+
+    <select id="statisticsMapExcel" resultType="java.util.Map">
+        SELECT
+        p.UUID AS uuid,
+        p.PAPER_ID AS  paperId,
+        p.PAPER_NAME AS paperName,
+        p.WEIGHTING_FRACTION AS weightingFraction,
+        p.AVERAGE_FRACTION AS averageFraction,
+        ROWNUM AS ROWNO
+        FROM bg_lw_paper p
+        WHERE p.valid = '1'
+        AND p.ALL_STATUS = '8'
+        <if test="year != null and year != ''">
+            and p.year = #{year,jdbcType=VARCHAR}
+        </if>
+        <if test="paperName != null and paperName != ''">
+            and p.paper_name  LIKE '%'||#{paperName,jdbcType=VARCHAR}||'%'
+        </if>
+        <if test="paperId != null and paperId != ''">
+            and p.paper_id = #{paperId,jdbcType=VARCHAR}
+        </if>
+        <if test="field != null and field != ''">
+            and p.field = #{field}
+        </if>
+        ORDER BY P.AVERAGE_FRACTION DESC nulls last
+    </select>
+
+    <select id="statisticsMapIds" resultType="java.util.Map">
+        SELECT
+        UUID AS uuid,
+        PAPER_ID AS  paperId,
+        PAPER_NAME AS paperName,
+        WEIGHTING_FRACTION AS weightingFraction,
+        AVERAGE_FRACTION AS averageFraction
+        FROM bg_lw_paper
+        WHERE VALID = '1'
+        AND UUID in (
+        <foreach collection="uuids"  item="uuid" index="index" separator=",">
+            #{uuid,jdbcType=VARCHAR}
+        </foreach>
+        )
+        ORDER BY AVERAGE_FRACTION DESC nulls last
+    </select>
+
+    <select id="notAnnexPaper" resultType="java.util.Map">
+      select
+      (SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='paper_type' and vaild=#{valid} and code= paper_type)  as paperType,
+      count(*) countNoAnnex
+          from bg_lw_paper
+      where uuid not in (select p.uuid
+                        from bg_lw_file f, bg_lw_paper p
+                       where f.business_id = p.uuid
+                         and f.business_table = #{bussinessTable}
+                         and p.year = #{year}
+                         and p.valid = #{valid}
+                         and f.valid = #{valid})
+      and valid = #{valid}
+      and year = #{year}
+      group by paper_type
+    </select>
+
+    <select id="ifAllMatch" resultType="java.util.Map">
+        select *
+          from bg_lw_paper p
+         where p.all_status != #{matched}
+           and p.all_status != #{withdraw}
+           and p.year = #{year}
+           and p.valid = #{valid}
+    </select>
+
+    <select id="ifAllUnrated" resultType="java.util.Map">
+        select *
+          from bg_lw_paper_match_expert m, bg_lw_paper p
+         where m.paper_id = p.uuid
+           and p.year = #{year}
+           and m.score_status != #{scoreStatus}
+           and p.valid = #{valid}
+           and m.valid = #{valid}
+    </select>
+
+    <select id="maxAllStatus" resultType="java.lang.Integer">
+        select MAX(all_status) from bg_lw_paper where valid = #{valid} and year = #{year}
+    </select>
+
+    <select id="allPaperPrimaryKey" resultType="java.lang.String">
+        select uuid from bg_lw_paper p where  valid = #{valid} and year = #{year}
+    </select>
+
+    <select id="matchingPaper" resultType="java.util.Map">
+        select (SELECT name
+                FROM BG_SYS_DATADICTIONARY
+                WHERE pcode = 'paper_type'
+                      and vaild = #{valid}
+                      and code = paper_type) as paperType,
+               count(*) countMatching
+        from bg_lw_paper
+        where uuid in (select uuid from bg_lw_paper where all_status = #{allStatus}  and year = #{year})
+              and valid = #{valid}
+        group by paper_type
+    </select>
+
+</mapper>
