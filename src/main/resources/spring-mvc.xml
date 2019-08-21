@@ -65,11 +65,13 @@
 
 
 	<bean id="multipartResolver"
-		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		  class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="defaultEncoding" value="UTF-8" />
-		<property name="maxUploadSize" value="32505856" />
+		<property name="maxUploadSize" value="104857600" />
 		<!--
-			上传文件大小限制为31M，31*1024*1024
+			上传文件大小限制为31M，31*1024*1024=32505856
+			2019/07/29由于论文评审批量上传附件功能所需100m以内的文件上传，故修改为100mb
+			100*1024*1024 = 104857600
 		-->
 		<property name="maxInMemorySize" value="4096" />
 	</bean>
