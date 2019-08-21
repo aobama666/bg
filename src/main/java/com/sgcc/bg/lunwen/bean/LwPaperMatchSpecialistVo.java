@@ -6,6 +6,7 @@ public class LwPaperMatchSpecialistVo {
     private String name;
     private String unitName;
     private String field;
+    private String researchDirection;
 
     public String getUuid() {
         return uuid;
@@ -37,5 +38,13 @@ public class LwPaperMatchSpecialistVo {
 
     public void setField(String field) {
         this.field = field;
+    }
+
+    public String getResearchDirection() {
+        return researchDirection;
+    }
+
+    public void setResearchDirection(String researchDirection) {
+        this.researchDirection = researchDirection;
     }
 }

@@ -102,6 +102,7 @@
         select
             s.field,
             s.unit_name unitName,
+            s.research_direction researchDirection,
             s.name,
             m.specialist_id uuid
         from bg_lw_paper_match_expert m , bg_lw_specialist s

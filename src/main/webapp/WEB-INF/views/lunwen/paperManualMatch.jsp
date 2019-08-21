@@ -77,7 +77,7 @@
             {field: 'uuid', title: 'ID',  sort: true,hide:true},
             {field: 'name', title: '专家姓名'},
             {field: 'field', title: '领域'},
-            {field: 'unitName', title: '所在单位'}
+            {field: 'researchDirection', title: '研究方向'}
         ]
 
         //表格配置文件
