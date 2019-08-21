@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.yygl.mapper.YyApplyMapper">
+    <insert id="addApply">
+        insert into bg_yy_apply (uuid,apply_code,dept_id,apply_user_id,use_seal_date,use_seal_phone,
+        item_first_id,item_second_id,use_seal_reason,use_seal_status,create_user,create_time,valid) values
+            (#{uuid},
+            #{applyCode},
+            #{deptId},
+            #{applyUserId},
+            sysdate,
+            #{useSealPhone},
+            #{itemFirstId},
+            #{itemSecondId},
+            #{useSealReason},
+            #{useSealStatus},
+            #{createUser},
+            sysdate,
+            #{valid})
+    </insert>
+
+
+    <update id="updateApply">
+        update bg_yy_apply set
+         apply_code = #{applyCode},
+         dept_id = #{deptId},
+         apply_user_id = #{applyUserId},
+         use_seal_date = sysdate,
+         use_seal_phone = #{useSealPhone},
+         item_first_if = #{itemFirstId},
+         item_second_id = #{itemSecondId},
+         use_seal_reason = #{useSealReason},
+         use_seal_status = #{useSealStatus},
+         update_user = #{updateUser},
+         update_time = sysdate
+        where uuid = #{uuid};
+    </update>
+
+
+    <update id="updateApplyStatus">
+        update bg_yy_apply set use_seal_status = #{useSealStatus} where uuid = #{uuid};
+    </update>
+
+
+    <update id="updateValid">
+        update bg_yy_apply set valid = #{valid} where uuid = #{uuid};
+    </update>
+
+
+    <select id="selectApply" resultType="java.util.Map">
+        select *
+        from (select p.*, ROWNUM as r
+        from (select a.uuid,
+            a.apply_code,
+            a.use_seal_reason,
+            d.deptname,
+            u.useralias,
+            TO_CHAR(a.use_seal_date, 'YYYY-MM-DD') use_seal_date,
+            TO_CHAR(a.create_time, 'YYYY-MM-DD') create_time,
+            s.second_category_name,
+            (select name
+                from bg_sys_datadictionary
+                where pcode = 'use_seal_status'
+                and code = a.use_seal_status) use_seal_status,
+            (select replace(wm_concat(nvl(d.name, k.use_seal_value)),',',';') useSealKind
+              from bg_yy_kind k,
+              (select * from bg_sys_datadictionary d
+                where d.pcode = 'use_seal_kind'
+                and d.vaild = '1') d
+              where k.use_seal_kind_code = d.code(+)
+              and k.apply_id = a.uuid) use_seal_kind
+            from bg_yy_apply a
+            left join bg_sys_dept d
+            on d.deptId = a.dept_id
+            left join bg_sys_user u
+            on a.apply_user_id = u.userid
+            left join bg_yy_item_second s
+            on a.item_second_id = s.uuid
+            where 1=1
+                <if test="applyCode != null and applyCode != ''">
+                  and a.apply_code like '%'||#{applyCode}||'%'
+                </if>
+                <if test="startTime != null and startTime != ''">
+                  and a.create_time &gt;= to_date(#{startTime},'YYYY-MM-DD hh24:mi:ss')
+                </if>
+                <if test="endTime != null and endTime != ''">
+                  and a.create_time &lt;= to_date(#{endTime},'YYYY-MM-DD hh24:mi:ss')
+                </if>
+                <if test="useSealStatus != null and useSealStatus != ''">
+                  and a.use_seal_status = #{useSealStatus}
+                </if>
+                <if test="itemSecondId != null and itemSecondId != ''">
+                  and s.uuid = #{itemSecondId}
+                </if>
+                <if test="useSealReason != null and useSealReason != ''">
+                  and a.use_seal_reason like  '%'||#{useSealReason}||'%'
+                </if>
+            and a.apply_user_id = #{userId}
+            and a.valid = '1'
+        order by a.create_time desc) p
+        where #{pageEnd} >= ROWNUM)
+        where r > #{pageStart}
+
+    </select>
+
+
+    <select id="selectApplyTotal" resultType="java.lang.Integer">
+        select count(*)
+        from bg_yy_apply a
+        left join bg_sys_dept d
+        on d.deptId = a.dept_id
+        left join bg_sys_user u
+        on a.apply_user_id = u.userid
+        left join bg_yy_item_second s
+        on a.item_second_id = s.uuid
+        where 1=1
+        <if test="applyCode != null and applyCode != ''">
+            and a.apply_code like '%'||#{applyCode}||'%'
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and a.create_time &gt;= to_date(#{startTime},'YYYY-MM-DD hh24:mi:ss')
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and a.create_time &lt;= to_date(#{endTime},'YYYY-MM-DD hh24:mi:ss')
+        </if>
+        <if test="useSealStatus != null and useSealStatus != ''">
+            and a.use_seal_status = #{useSealStatus}
+        </if>
+        <if test="itemSecondId != null and itemSecondId != ''">
+            and s.uuid = #{itemSecondId}
+        </if>
+        <if test="useSealReason != null and useSealReason != ''">
+            and a.use_seal_reason like  '%'||#{useSealReason}||'%'
+        </if>
+        and a.apply_user_id = #{userId}
+        and a.valid = '1'
+        order by a.create_time desc
+    </select>
+
+
+    <select id="findApply" resultType="com.sgcc.bg.yygl.pojo.YyApplyVo">
+          select apply_code applyCode,
+           dept_id deptId,
+           apply_user_id applyUserId,
+           use_seal_date useSealDate,
+           use_seal_phone useSealPhone,
+           item_first_id itemFirstId,
+           item_second_id itemSecondId,
+           use_seal_reason useSealReason,
+           use_seal_status useSealStatus,
+           create_user createUser,
+           create_time createTime,
+           update_user updateUser,
+           update_time updateTime
+          from bg_yy_apply
+         where uuid = #{uuid}
+           and valid = '1'
+    </select>
+
+    <select id="selectApplyExport" resultType="com.sgcc.bg.yygl.pojo.YyApplyVo">
+        select a.uuid,
+        a.apply_code applyCode,
+        a.use_seal_reason useSealReason,
+        a.dept_id applyDeptId,
+        d.deptname applyDept,
+        u.useralias applyUser,
+        a.apply_user_id applyUserId,
+        TO_CHAR(a.use_seal_date, 'YYYY-MM-DD') useSealDate,
+        TO_CHAR(a.create_time, 'YYYY-MM-DD') createTime,
+        s.second_category_name useSealItem,
+        (select name
+        from bg_sys_datadictionary
+        where pcode = 'use_seal_status'
+        and code = a.use_seal_status) useSealStatusValue,
+        a.use_seal_status useSealStatus,
+        (select replace(wm_concat(nvl(d.name, k.use_seal_value)),',',';') useSealKind
+        from bg_yy_kind k,
+        (select * from bg_sys_datadictionary d
+        where d.pcode = 'use_seal_kind'
+        and d.vaild = '1') d
+        where k.use_seal_kind_code = d.code(+)
+        and k.apply_id = a.uuid) useSealKind
+        from bg_yy_apply a
+        left join bg_sys_dept d
+        on d.deptId = a.dept_id
+        left join bg_sys_user u
+        on a.apply_user_id = u.userid
+        left join bg_yy_item_second s
+        on a.item_second_id = s.uuid
+        where 1=1
+        <if test="applyCode != null and applyCode != ''">
+            and a.apply_code like '%'||#{applyCode}||'%'
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and a.create_time &gt;= to_date(#{startTime},'YYYY-MM-DD hh24:mi:ss')
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and a.create_time &lt;= to_date(#{endTime},'YYYY-MM-DD hh24:mi:ss')
+        </if>
+        <if test="useSealStatus != null and useSealStatus != ''">
+            and a.use_seal_status = #{useSealStatus}
+        </if>
+        <if test="itemSecondId != null and itemSecondId != ''">
+            and s.uuid = #{itemSecondId}
+        </if>
+        <if test="useSealReason != null and useSealReason != ''">
+            and a.use_seal_reason like  '%'||#{useSealReason}||'%'
+        </if>
+        <if test="uuids != null and uuids != ''">
+            AND a.uuid IN (
+            <foreach collection="uuids" item="uuid" index="index" separator=",">
+                #{uuid}
+            </foreach>
+            )
+        </if>
+        and a.apply_user_id = #{userId}
+        and a.valid = '1'
+        order by a.create_time desc
+    </select>
+
+    <select id="findDayApplyCode" resultType="java.lang.String">
+        select  substr(apply_code,10) from bg_yy_apply where apply_code LIKE #{date}||'%'
+    </select>
+
+    <select id="findDept" resultType="java.util.Map">
+        select t.deptcode,
+               t.deptname,
+               t.deptid,
+               decode(t.type, 2, t.pdeptid, 1, t.deptid) pdeptid,
+               decode(t.type, 2, t.pdeptname, 1, t.deptname) pdeptname
+          from bg_sys_dept t
+         where t.deptcode =
+               (select hrdeptcode from bg_sys_user where userid = #{userId} and valid='1')
+               and t.valid='1'
+    </select>
+
+    <select id="getItemFirst" resultType="java.util.Map">
+        select uuid k,first_category_name v from bg_yy_item_first where valid = '1'
+    </select>
+
+    <select id="getItemSecond" resultType="java.util.Map">
+        select uuid k, second_category_name v
+          from bg_yy_item_second
+         where first_category_id = #{firstCategoryId}
+    </select>
+
+
+</mapper>

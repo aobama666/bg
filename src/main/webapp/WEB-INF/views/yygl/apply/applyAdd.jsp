@@ -1,0 +1,146 @@
+<%@page import="com.sgcc.bg.common.VersionUtils"%>
+<%@page language="java" contentType="text/html; charset=UTF-8"  pageEncoding="UTF-8"%>
+<%@page import="java.util.Map"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
+    <title>用印申请新增</title>
+    <link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
+    <!-- newPage、item.css 页面css-->
+    <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/item.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
+    <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/newPage.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
+    <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/datagrid.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css">
+    <!-- easyuicss -->
+    <link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
+    <!-- 本页面所需css -->
+    <link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        .tableBody{
+            height: 200px!important;
+        }
+    </style>
+</head>
+<body>
+<table class="visitOperate tableStyle specialTable">
+    <tr>
+        <td style="width: 10%">
+            <span title = "用印部门"><b class="mustWrite">*</b>用印部门</span>
+        </td>
+        <td style="width: 40%" class="addInputStyle">
+            <input type = "text" style="display: none" id = "uuid"  name="uuid">
+            <input type = "text" style="display: none" id = "applyDeptId"  name="applyDeptId" value="${deptId}">
+            <input type="text"  id="applyDept"  name="applyDept" readonly value="${deptName}"
+                   class="validNull"  len="50"   content="用印部门" title="必填项"/>
+        </td>
+        <td style="width: 10%">
+            <span title = "用印日期"><b class="mustWrite">*</b>用印日期</span>
+        </td>
+        <td style="width: 40%" class="addInputStyle">
+            <input type="text"  id="useSealDate" name="useSealDate"  class="validNull"  content="用印日期"  len="50"  title="必填项  "/>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 10%">
+            <span title = "用印申请人"><b class="mustWrite">*</b>用印申请人</span>
+        </td>
+        <td style="width: 40%" class="addInputStyle">
+            <input type = "text" style="display: none" id = "applyUserId"  name="applyUserId" value="${userId}">
+            <input type="text"  id="applyUser"  name="applyUser" readonly value="${userName}"
+                   class="validNull"  len="50"   content="用印申请人" title="必填项"/>
+        </td>
+        <td style="width: 10%">
+            <span title = "联系电话"><b class="mustWrite">*</b>联系电话</span>
+        </td>
+        <td style="width: 40%" class="addInputStyle">
+            <input type="text"  id="useSealPhone" name="useSealPhone"  class="validNull"
+                   value="${useSealPhone}" content="联系电话"  len="50"  title="必填项  "/>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 10%">
+            <span title = "用印事项"><b class="mustWrite">*</b>用印事项一级</span>
+        </td>
+        <td style="width: 40%" class="addInputStyle">
+            <%--<input type="text"  id="useSealItem" name="useSealItem"  class="validNull"  content="用印事项"  len="50"  title="必填项  "/>--%>
+            <select id = "useSealItemFirst" name = "useSealItemFirst"  class = "changeQuery changeYear">
+                <option value = "" selected>请选择</option>
+                <c:forEach  var="itemFirst"  items="${itemFirst}">
+                    <option value ="${itemFirst.K}"}> ${itemFirst.V}</option>
+                </c:forEach>
+            </select>
+        </td>
+        <td style="width: 10%">
+            <span title = "用印事项"><b class="mustWrite">*</b>用印事项二级</span>
+        </td>
+        <td style="width: 40%" class="addInputStyle">
+            <select id = "useSealItemSecond" name = "useSealItemSecond"  class = "changeQuery changeYear">
+                    <option value = "" selected>请选择</option>
+                    <c:forEach  var="itemFirst"  items="${itemFirst}">
+                        <option value ="${itemFirst.K}"}> ${itemFirst.V}</option>
+                    </c:forEach>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 10%">
+            <span title = "用印种类"><b class="mustWrite">*</b>用印种类</span>
+        </td>
+        <td style="width: 90%" class="addInputStyle" colspan="3">
+            <input type = "text" style="display: none" id = "useSealKindCode"  name="useSealKindCode">
+            <input type = "text" style="display: none" id = "useSealKindValue"  name="useSealKindValue">
+            <input type="text"  id="useSealKindCodeValue"  name="useSealKindCodeValue"
+                   onclick="applyOperate.checkKind()" content="用印种类" title="必填项"/>
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 10%">
+            <span title = "用印事由"><b class="mustWrite">*</b>用印事由</span>
+        </td>
+        <td style="width: 90%" class="addInputStyle" colspan="3">
+            <input type="text"  id="userSealReason" name="userSealReason"  class="validNull"  content="用印事由"  len="50"  title="必填项  "/>
+        </td>
+    </tr>
+    <%--<tr>
+        <hr/>
+    </tr>--%>
+</table>
+
+<div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 1%">
+    <div style="float: right">
+        <button type="button" class="btn" onclick="uploadAnnex.addOperation()">新增附件</button>
+        <button type="button" class="btn" onclick="uploadAnnex.delEvent()">删除附件</button>
+    </div>
+    <h4>用印材料详情</h4>
+
+    <div id="datagrid"></div>
+</div>
+
+<div class="btnContent">
+    <button type="button" class="btn" onclick="applyOperate.applyAdd()">保存</button>
+    <button type="button" class="btn" onclick="applyOperate.closeIndex()">返回</button>
+</div>
+
+<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
+<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
+<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/locale/easyui-lang-zh_CN.js"></script>
+<script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
+
+<script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>
+
+<script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>  	<!-- 弹框.js  -->
+<!-- 引入datagrid -->
+<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
+<!-- 验证校验公共方法，提示框公共方法 -->
+<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
+<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
+<script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
+
+<!-- 本页面所需的js -->
+<script src="<%=request.getContextPath()%>/js/yygl/apply/applyOperate.js"></script>
+</body>
+</html>
