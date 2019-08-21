@@ -112,6 +112,12 @@ public class DateUtil {
 		}
 	}
 
+	//把date转换为string
+	public static String dateToStr(Date date){
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyy-MM-dd");
+		String dateString = simpleDateFormat.format(date);
+		return dateString;
+	}
 
 
 	public static int getDiffYear(String startTime, String endTime) {
@@ -300,8 +306,8 @@ public class DateUtil {
 
 	/**
 	 * 判断两个日期的大小
-	 * @param date1 日期1
-	 * @param date2 日期2
+	 * @param beginData 日期1
+	 * @param endData 日期2
 	 * @return 
 	 * @throws ParseException
 	 */
@@ -318,8 +324,8 @@ public class DateUtil {
 	}
 	/**
 	 * 判断两个日期的大小
-	 * @param date1 日期1
-	 * @param date2 日期2
+	 * @param beginData 日期1
+	 * @param endData 日期2
 	 * @return 
 	 * @throws ParseException
 	 */
@@ -342,8 +348,8 @@ public class DateUtil {
 	
 	/**
 	 * 判断两个日期的大小
-	 * @param date1 日期1
-	 * @param date2 日期2
+	 * @param beginData 日期1
+	 * @param endData 日期2
 	 * @return 
 	 * @throws ParseException
 	 */
@@ -360,8 +366,7 @@ public class DateUtil {
 	}
 	 /**
    	 * 校验时间合法
-   	 * @param s
-   	 * @param format
+   	 * @param time
    	 * @return
    	 */
        public static String isGetDate(String time){
@@ -378,8 +383,8 @@ public class DateUtil {
        }
 	/**
 	 * 判断一个时间是否在一个时间段中
-	 * @param date1 日期1
-	 * @param date2 日期2
+	 * @param beginTime 日期1
+	 * @param endTime 日期2
 	 * @return 
 	 * @throws ParseException
 	 */
@@ -404,8 +409,8 @@ public class DateUtil {
 	
 	/**
 	 * 判断两个日期的大小
-	 * @param date1 日期1
-	 * @param date2 日期2
+	 * @param beginData 日期1
+	 * @param endData 日期2
 	 * @return 
 	 * @throws ParseException
 	 */
@@ -422,8 +427,8 @@ public class DateUtil {
 	}
 	/**
 	 * 判断一个日期是否在一个时间段内
-	 * @param date1 日期1
-	 * @param date2 日期2
+	 * @param beginData 日期1
+	 * @param endData 日期2
 	 * @return 
 	 * @throws ParseException
 	 */
@@ -484,7 +489,7 @@ public class DateUtil {
 		 * <li>功能描述：时间相减得到分钟数
 		 * @param beginDateStr
 		 * @param endDateStr
-		 * @param time间隔 时间
+		 * @param times 间隔 时间
 		 * @return long
 		 * @author Administrator
 		 */
@@ -745,13 +750,9 @@ public class DateUtil {
 	}
 
 	    public static void main(String[] args) {
-			Date   BeginDate=getBeginDayOfLastMonth();
-			Date   EndDate=getEndDayOfLastMonth();
-			String  BeginDates=getFormatDateString(BeginDate,"yyyy-MM-dd");
-			String  EndDates=getFormatDateString(EndDate,"yyyy-MM-dd");
-			System.out.println(BeginDates+"----"+EndDates);
-
-
-
+			String s = "2019-07-21";
+			String e = "2019-07-31";
+			Long a = getDaySub(s,e);
+			System.out.println(a);
 		}
 }

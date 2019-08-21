@@ -12,7 +12,7 @@ import com.sgcc.bg.model.ProjectInfoPo;
 import com.sgcc.bg.model.ProjectUserPo;
 
 public interface IBGService {
-	
+
 	/**
 	 * 获取所有项目信息到展示页面
 	 * @param proName

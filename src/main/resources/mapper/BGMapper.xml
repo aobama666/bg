@@ -653,13 +653,23 @@
 		SELECT TO_CHAR(t.start_date, 'yyyy-mm-dd')  as "startDate"，
 				TO_CHAR(t.end_date, 'yyyy-mm-dd') as "endDate"，
 				t.EMPNAME as "empName",
-				t.project_id AS "projectId"
+				t.project_id AS "projectId",
+				t.ROLE AS "role"
 		FROM BG_PROJECT_USER t
 		WHERE
 		t.status = '1'
 		AND t.ROLE='1'
 		AND t.project_id = #{proId}
 		order by t.start_date
+	</select>
+
+	<select id="getProjectsInfo" resultType="java.util.Map">
+		SELECT TO_CHAR(START_DATE, 'yyyy-mm-dd')  as "startDate"，
+				TO_CHAR(END_DATE, 'yyyy-mm-dd') as "endDate",
+				PROJECT_NUMBER AS "projectNumber"
+		FROM BG_PROJECT_INFO
+		WHERE ID = #{proId}
+		AND STATUS = '1'
 	</select>
 
 

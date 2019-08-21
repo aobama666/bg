@@ -358,4 +358,10 @@ public interface BGMapper {
      */
     List<Map<String,String>> listPrincipalDate(String proId);
 
+	/**
+	 * 取项目信息
+	 * @param proId
+	 * @return
+	 */
+	Map<String,String> getProjectsInfo(String proId);
 }
