@@ -7,12 +7,15 @@ import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.HRUser;
 import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.UserService;
+import com.sgcc.bg.yygl.bean.YyApply;
+import com.sgcc.bg.yygl.pojo.YyApplyDAO;
 import com.sgcc.bg.yygl.pojo.YyApplyVo;
 import com.sgcc.bg.yygl.service.YyApplyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -124,11 +127,24 @@ public class YyApplyController {
      * 用印种类选择框
      */
     @RequestMapping("/toCheckKind")
-    public ModelAndView toCheckKind(){
+    public ModelAndView toCheckKind(String useSealKindCode,String elseKind){
         //字典现有种类
         List<Map<String, String>> kindList= dataDictionaryService.selectDictDataByPcode("use_seal_kind");
+        //shifouxuanzhong
+        for(Map<String,String> m : kindList){
+            m.put("IF","0");
+            if(useSealKindCode!=null && !"".equals(useSealKindCode)){
+            String[] codes = useSealKindCode.split(",");
+                for(String code : codes){
+                    if(m.get("K").equals(code)){
+                        m.put("IF","1");
+                    }
+                }
+            }
+        }
         ModelAndView mv = new ModelAndView("yygl/apply/checkKind");
         mv.addObject("kindList",kindList);
+        mv.addObject("elseKind",elseKind);
         return mv;
     }
 
@@ -139,9 +155,10 @@ public class YyApplyController {
      */
     @ResponseBody
     @RequestMapping("/applyAdd")
-    public String applyAdd(YyApplyVo yyApplyVo){
+    public String applyAdd(@RequestBody YyApplyVo yyApplyVo){
+        YyApply yyApply = yyApplyVo.toYyApply();
         //保存申请基本信息
-        Integer applyUuid = 0;
+        Integer applyUuid = null;
         //保存申请用印种类
 
         return JSON.toJSONString("");

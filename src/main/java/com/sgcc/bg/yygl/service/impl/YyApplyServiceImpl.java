@@ -7,7 +7,7 @@ import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.HRUser;
 import com.sgcc.bg.service.UserService;
 import com.sgcc.bg.yygl.mapper.YyApplyMapper;
-import com.sgcc.bg.yygl.pojo.YyApplyVo;
+import com.sgcc.bg.yygl.pojo.YyApplyDAO;
 import com.sgcc.bg.yygl.service.YyApplyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,7 +78,7 @@ public class YyApplyServiceImpl implements YyApplyService {
         String userId = getLoginUserUUID();
         String ids = request.getParameter("checkList");
 
-        List<YyApplyVo> list = new ArrayList<>();
+        List<YyApplyDAO> list = new ArrayList<>();
         if(ids == null || ids == "") {
             list = yyApplyMapper.selectApplyExport(applyCode,startTime,endTime,useSealStatus,itemSecondId,useSealReason,userId,null);
         }else {

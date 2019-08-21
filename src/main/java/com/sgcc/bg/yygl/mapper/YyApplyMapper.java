@@ -1,7 +1,7 @@
 package com.sgcc.bg.yygl.mapper;
 
 import com.sgcc.bg.yygl.bean.YyApply;
-import com.sgcc.bg.yygl.pojo.YyApplyVo;
+import com.sgcc.bg.yygl.pojo.YyApplyDAO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -44,7 +44,7 @@ public interface YyApplyMapper {
     /**
      * 按照条件导出
      */
-    List<YyApplyVo> selectApplyExport(
+    List<YyApplyDAO> selectApplyExport(
             @Param("applyCode") String applyCode,
             @Param("startTime") String startTime,
             @Param("endTime") String endTime,
@@ -74,7 +74,7 @@ public interface YyApplyMapper {
     /**
      * 根据编号或者主键查询对应申请详细信息
      */
-    YyApplyVo findApply(@Param("uuid") String uuid, @Param("applyCode") String applyCode);
+    YyApplyDAO findApply(@Param("uuid") String uuid, @Param("applyCode") String applyCode);
 
 
 

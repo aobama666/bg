@@ -86,15 +86,18 @@ apply.changeItemFirst = function () {
         success: function (data) {
             var itemSecond = data.data.itemSecond;
             var checkContent = '';
-            document.getElementById("itemSecondId").innerHTML = checkContent;
+            document.getElementById("selectSecondItem").innerHTML = checkContent;
             var i ;
-            checkContent = "<option selected='selected'>请选择</option>";
+            checkContent = "" +
+                "<select id = 'itemSecondId' name = 'itemSecondId'   class = 'changeQuery changeYear'>" +
+                "<option selected='selected'>请选择</option>";
             for(i=0;i<itemSecond.length;i++){
                 var k = itemSecond[i].K;
                 var v = itemSecond[i].V;
                 checkContent = checkContent+'<option value = "'+k+'">'+v+'</option>';
             }
-            document.getElementById("itemSecondId").innerHTML = checkContent;
+            checkContent = checkContent + '</select>';
+            document.getElementById("selectSecondItem").innerHTML = checkContent;
         }
     });
 }
@@ -107,8 +110,8 @@ apply.toAdd = function () {
     var url = "/bg/yygl/apply/toApplyAdd";
     layer.open({
         type:2,
-        title:'<h4 style="height:42px;line-height:25px;">用印申请新增</h4>',
-        area:['90%','85%'],
+        title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请新增</h4>',
+        area:['90%','80%'],
         fixed:false,//不固定
         maxmin:true,
         content:url,

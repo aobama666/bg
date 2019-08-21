@@ -139,7 +139,7 @@
     </select>
 
 
-    <select id="findApply" resultType="com.sgcc.bg.yygl.pojo.YyApplyVo">
+    <select id="findApply" resultType="com.sgcc.bg.yygl.pojo.YyApplyDAO">
           select apply_code applyCode,
            dept_id deptId,
            apply_user_id applyUserId,
@@ -158,7 +158,7 @@
            and valid = '1'
     </select>
 
-    <select id="selectApplyExport" resultType="com.sgcc.bg.yygl.pojo.YyApplyVo">
+    <select id="selectApplyExport" resultType="com.sgcc.bg.yygl.pojo.YyApplyDAO">
         select a.uuid,
         a.apply_code applyCode,
         a.use_seal_reason useSealReason,

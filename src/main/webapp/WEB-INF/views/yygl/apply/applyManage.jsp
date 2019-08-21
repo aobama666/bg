@@ -69,9 +69,11 @@
         </select>
         <span style="margin-left: 20px"></span>
         <label>用印事项二级：</label>
-        <select id = "itemSecondId" name = "itemSecondId"   class = "changeQuery changeYear">
-            <option value = "" selected>请选择</option>
-        </select>
+        <div id="selectSecondItem" style="display: inline">
+            <select id = "itemSecondId" name = "itemSecondId"   class = "changeQuery changeYear">
+                <option value = "" selected>请选择</option>
+            </select>
+        </div>
 
         <br/>
         <span style="margin-left: 20px"></span>

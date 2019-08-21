@@ -7,7 +7,7 @@ var roomAddInfoCommon = {
 		getFormDataInfo:function(e){
 			var formData = {};
 			if(!e){
-				e = $(".addInputStyle>input,.addInputStyle>select,.addInputStyle>textarea");
+				e = $(".addInputStyle>input,.addInputStyle>select,.addInputStyle>textarea,.addInputStyle>*>input,.addInputStyle>*>select");
 			}
 			for(var a = 0;a<e.length;a++){
 				var ele = $(e[a]);

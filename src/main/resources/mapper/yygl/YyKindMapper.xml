@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.yygl.mapper.YyKindMapper">
+    <insert id="addKind">
+      insert into bg_yy_apply
+      (uuid,
+       apply_id,
+       use_seal_kind_code,
+       use_seal_value,
+       create_user,
+       create_time,
+       valid) value
+      (#{uuid},#{applyId},#{useSealKindCode},#{useSealValue},#{createUser},#{createTime},#{valid})
+    </insert>
+
+    <update id="updateElseKind">
+        update bg_yy_kind
+           set use_seal_value = #{useSealValue}
+         where apply_id = #{applyUuid}
+           and use_seal_kind_code is null
+    </update>
+
+    <delete id="delKind">
+        update bg_yy_kind
+           set valid = '0'
+         where uuid = #{uuid}
+    </delete>
+
+    <select id="getKindCode" resultType="java.lang.Integer">
+        select use_seal_kind_code
+          from bg_yy_kind
+         where valid = '1'
+        and use_seal_value is null
+        and apply_id = #{applyUuid}
+    </select>
+
+    <select id="getKindValue" resultType="java.lang.String">
+        select use_seal_value from bg_yy_kind
+        where valid ='1'
+        and apply_id = #{applyUuid}
+        and use_seal_kind_code is null
+    </select>
+
+</mapper>
