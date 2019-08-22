@@ -66,28 +66,52 @@
 		   AND U.USERNAME = #{userName, jdbcType = VARCHAR}
 		   AND T.VALID = 1
     </select>
-    <!--  获取用户组织权限列表 -->
-    <select id="getUserOrganPrivByUserName" resultType="java.util.Map">
+    <!--  获取用户管理角色列表  新  2019-08 -->
+    <select id="getNewUserRoleByUserName" resultType="java.util.Map">
 		SELECT U.USERID,
 		       U.USERNAME,
 		       U.USERALIAS,
 		       U.HRCODE,
-		       D.DEPTID,
-		       D.DEPTNAME,
-		       D.TYPE,
-		       D.DEPTCODE,
-		       D.PDEPTID,
-		       D.PDEPTNAME,
-		       D.PDEPTCODE
-		  FROM BG_SYS_PRIV_USER_R_ORGAN T
+		       R.ROLE_NAME,
+		       R.ROLE_CODE,
+		       R.ROLE_TYPE,
+		       R.FUNCTION_TYPE,
+		       R.ROLE_STATUS
+		  FROM TB_PRIV_USER_R_ROLE T 
+		 INNER JOIN TB_PRIV_ROLE R
+		    ON R.ID = T.ROLE_ID
+		   AND R.VALID = 1
 		 INNER JOIN BG_SYS_USER U
 		    ON U.USERID = T.USER_ID
-		   AND U.STATE = 0
 		   AND U.VALID = 1
-		 INNER JOIN BG_SYS_DEPT D
-		    ON D.DEPTID = T.ORGAN_ID
-		   AND D.VALID = 1
 		 WHERE 1 = 1
+		   AND U.USERNAME = #{userName, jdbcType = VARCHAR}
+		   AND R.ROLE_STATUS = #{funcType, jdbcType = VARCHAR}
+		   AND R.FUNCTION_TYPE = #{funcName, jdbcType = VARCHAR}
+		   AND T.VALID = 1
+    </select>
+    <!--  获取用户组织权限列表 -->
+    <select id="getUserOrganPrivByUserName" resultType="java.util.Map">
+	    SELECT U.USERID,
+	           U.USERNAME,
+	           U.USERALIAS,
+	           U.HRCODE,
+	           D.DEPTID,
+	           D.DEPTNAME,
+	           D.TYPE,
+	           D.DEPTCODE,
+	           DECODE(D.TYPE,2,D.PDEPTID,1,D.DEPTID) PDEPTID,
+	           DECODE(D.TYPE,2,D.PDEPTNAME,1,D.DEPTNAME) PDEPTNAME,
+	           DECODE(D.TYPE,2,D.PDEPTCODE,1,D.DEPTCODE) PDEPTCODE
+	      FROM BG_SYS_PRIV_USER_R_ORGAN T
+	     INNER JOIN BG_SYS_USER U
+	        ON U.USERID = T.USER_ID
+	       AND U.STATE = 0
+	       AND U.VALID = 1
+	     INNER JOIN BG_SYS_DEPT D
+	        ON D.DEPTID = T.ORGAN_ID
+	       AND D.VALID = 1
+	     WHERE 1 = 1
 		   AND U.USERNAME = #{userName, jdbcType = VARCHAR}
 		   AND D.TYPE = #{roleType, jdbcType = VARCHAR}
 		   AND T.VALID = 1
