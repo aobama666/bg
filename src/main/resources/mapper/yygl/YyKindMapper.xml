@@ -3,15 +3,15 @@
 
 <mapper namespace="com.sgcc.bg.yygl.mapper.YyKindMapper">
     <insert id="addKind">
-      insert into bg_yy_apply
+      insert into bg_yy_kind
       (uuid,
        apply_id,
        use_seal_kind_code,
        use_seal_value,
        create_user,
        create_time,
-       valid) value
-      (#{uuid},#{applyId},#{useSealKindCode},#{useSealValue},#{createUser},#{createTime},#{valid})
+       valid) values
+      (#{uuid},#{applyId},#{useSealKindCode},#{useSealValue},#{createUser},sysdate,'1')
     </insert>
 
     <update id="updateElseKind">

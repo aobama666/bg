@@ -91,12 +91,12 @@
         <span style="margin-left: 20px"></span>
         <label>申请日期：</label>
         <span style="margin-left: 24px"></span>
-        <div class="layui-inline">
-            <input type="text" class="layui-input" id="startTime" name="startTime" style="width: 100px" />
+        <div class="layui-inline" style="width: 6%">
+            <input type="text" class="layui-input" id="startTime" name="startTime" style="width: 100%" />
         </div>
         <label>至</label>
-        <div class="layui-inline">
-            <input type="text" class="layui-input" id="endTime" name="endTime" style="width: 100px"/>
+        <div class="layui-inline" style="width: 6%">
+            <input type="text" class="layui-input" id="endTime" name="endTime" style="width: 100%"/>
         </div>
 
 

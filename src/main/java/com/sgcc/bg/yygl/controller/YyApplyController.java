@@ -11,6 +11,7 @@ import com.sgcc.bg.yygl.bean.YyApply;
 import com.sgcc.bg.yygl.pojo.YyApplyDAO;
 import com.sgcc.bg.yygl.pojo.YyApplyVo;
 import com.sgcc.bg.yygl.service.YyApplyService;
+import com.sgcc.bg.yygl.service.YyKindService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,8 @@ public class YyApplyController {
     private DataDictionaryService dataDictionaryService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private YyKindService yyKindService;
 
 
 
@@ -62,7 +65,7 @@ public class YyApplyController {
 
 
     /**
-     * 根据一级用印事项填充二级用印事项下拉框内容
+     * 根据一级用印事项填充二级用印事项下拉框内容,所谓联动
      */
     @ResponseBody
     @RequestMapping(value = "/secondType")
@@ -90,7 +93,7 @@ public class YyApplyController {
         //查询数据封装
         Map<String, Object> listMap = applyService.selectApply(
                 applyCode,startTime,endTime,useSealStatus,itemSecondId,useSealReason,page,limit,getLoginUserUUID());
-        //反馈data数据
+        //反馈
         Map<String, Object> mvMap = new HashMap<String, Object>();
         mvMap.put("data",listMap);
         mvMap.put("msg", "查询完成！");
@@ -102,16 +105,16 @@ public class YyApplyController {
 
 
     /**
-     * 跳转到新增页面
+     * 跳转至新增页面
      */
     @RequestMapping("/toApplyAdd")
     public ModelAndView toApplyAdd(){
-        //获取并反馈当前用户信息，部门信息
+        //用印事项一级菜单内容
+        List<Map<String,Object>> itemFirst = applyService.getItemFirst();
+        //获取并反馈当前用户信息，部门信息，联系电话
         String userName = webUtils.getUsername();
         HRUser user = userService.getUserByUserName(userName);
         Map<String,Object> dept = applyService.findDept(user.getUserId());
-        //用印事项一级
-        List<Map<String,Object>> itemFirst = applyService.getItemFirst();
         ModelAndView mv = new ModelAndView("yygl/apply/applyAdd");
         mv.addObject("deptName",dept.get("PDEPTNAME"));
         mv.addObject("deptId",dept.get("PDEPTID"));
@@ -124,13 +127,13 @@ public class YyApplyController {
 
 
     /**
-     * 用印种类选择框
+     * 转至用印种类选择框，如果原有输入框有值默认选中对应内容
      */
     @RequestMapping("/toCheckKind")
     public ModelAndView toCheckKind(String useSealKindCode,String elseKind){
         //字典现有种类
         List<Map<String, String>> kindList= dataDictionaryService.selectDictDataByPcode("use_seal_kind");
-        //shifouxuanzhong
+        //如果已经有选中的种类
         for(Map<String,String> m : kindList){
             m.put("IF","0");
             if(useSealKindCode!=null && !"".equals(useSealKindCode)){
@@ -158,10 +161,12 @@ public class YyApplyController {
     public String applyAdd(@RequestBody YyApplyVo yyApplyVo){
         YyApply yyApply = yyApplyVo.toYyApply();
         //保存申请基本信息
-        Integer applyUuid = null;
+        String applyUuid = applyService.applyAdd(yyApply);
         //保存申请用印种类
-
-        return JSON.toJSONString("");
+        yyKindService.kindAdd(applyUuid,yyApplyVo.getUseSealKindCode(),yyApplyVo.getElseKind());
+        //反馈前台
+        ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"保存申请信息成功");
+        return JSON.toJSONString(rw);
     }
 
 
@@ -171,7 +176,11 @@ public class YyApplyController {
      */
     @RequestMapping("/toApplyUpdate")
     public ModelAndView toApplyUpdate(String checkedId){
-        //获取主键对应信息
+        //获取主键对应基本信息
+
+        //获取种类信息
+
+        //反馈前台被修改前的信息
         ModelAndView mv = new ModelAndView("yygl/apply/applyUpdate");
         return mv;
     }
@@ -182,8 +191,37 @@ public class YyApplyController {
      * 跳转到详情页面
      */
     @RequestMapping("/toApplyDetail")
-    public ModelAndView toApplyDetail(){
+    public ModelAndView toApplyDetail(String applyUuid){
+        //用印基本信息
+        YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
+        //附件信息
+
+        //流程图信息
+
+        //审批信息
+
         ModelAndView mv = new ModelAndView("yygl/apply/applyDeatil");
+        mv.addObject("yyApplyDAO",yyApplyDAO);
+        return mv;
+    }
+
+
+
+    /**
+     * 跳转到打印预览页
+     */
+    @RequestMapping("/toPrintPreview")
+    public ModelAndView toPrintPreview(String applyUuid){
+        //用印基本信息
+        YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
+        //附件信息
+
+        //流程图信息
+
+        //审批信息
+
+        ModelAndView mv = new ModelAndView("yygl/apply/printPreview");
+        mv.addObject("yyApplyDAO",yyApplyDAO);
         return mv;
     }
 
@@ -239,12 +277,9 @@ public class YyApplyController {
     @ResponseBody
     @RequestMapping("/del")
     public String del(String checkedContent){
-        //如果有内容
-        //拆分
-        //循环删除
-        //反馈几个能删几个不能删
+        String resultMessage = applyService.applyDel(checkedContent);
         ResultWarp resultWarp = null;
-        resultWarp = new ResultWarp(ResultWarp.SUCCESS,"successOrFail");
+        resultWarp = new ResultWarp(ResultWarp.SUCCESS,resultMessage);
         return JSON.toJSONString(resultWarp);
     }
 

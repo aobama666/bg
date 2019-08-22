@@ -6,6 +6,8 @@ import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.HRUser;
 import com.sgcc.bg.service.UserService;
+import com.sgcc.bg.yygl.bean.YyApply;
+import com.sgcc.bg.yygl.constant.YyApplyConstant;
 import com.sgcc.bg.yygl.mapper.YyApplyMapper;
 import com.sgcc.bg.yygl.pojo.YyApplyDAO;
 import com.sgcc.bg.yygl.service.YyApplyService;
@@ -94,7 +96,7 @@ public class YyApplyServiceImpl implements YyApplyService {
                 { "用印日期", "useSealDate","nowrap" },
                 { "申请日期", "createTime","nowrap" },
                 { "用印事项", "useSealItem","nowrap" },
-                { "用印种类","useSealkind","nowrap"},
+                { "用印种类","useSealKind","nowrap"},
                 { "审批状态","useSealStatusValue","nowrap"},
         };
         ExportExcelHelper.getExcel(response,"用印申请详情-"+ DateUtil.getDays(), title, list, "normal");
@@ -106,13 +108,13 @@ public class YyApplyServiceImpl implements YyApplyService {
         //获取当前库中编号
         List<String> applyCodeList = yyApplyMapper.findDayApplyCode(DateUtil.getDays());
         if(applyCodeList.size() == 0){
-            nextApplyCode = DateUtil.getDays()+"00001";
+            nextApplyCode = DateUtil.getDays()+"-"+"00001";
         }else{
             //转为int数组
             Integer[] applyCodeListI = new Integer[applyCodeList.size()];
             Integer code;
             for(int i = 0; i<applyCodeList.size();i++){
-                code = Integer.getInteger(applyCodeList.get(i));
+                code = Integer.valueOf(applyCodeList.get(i));
                 applyCodeListI[i] = code;
             }
             //排序取得当前最大值
@@ -126,7 +128,7 @@ public class YyApplyServiceImpl implements YyApplyService {
                 }
             }
             code = applyCodeListI[0];
-            nextApplyCode = DateUtil.getDays()+String.format("%05d",code+1);
+            nextApplyCode = DateUtil.getDays()+"-"+String.format("%05d",code+1);
         }
         return nextApplyCode;
     }
@@ -146,6 +148,33 @@ public class YyApplyServiceImpl implements YyApplyService {
         return yyApplyMapper.findDept(userId);
     }
 
+    @Override
+    public String applyAdd(YyApply yyApply) {
+        //主键
+        String uuid = Rtext.getUUID();
+        yyApply.setUuid(uuid);
+        //获取申请编号
+        String applyCode = nextApplyCode();
+        yyApply.setApplyCode(applyCode);
+        yyApply.setCreateUser(getLoginUserUUID());
+        //初始化状态为待提交
+        yyApply.setUseSealStatus(YyApplyConstant.STATUS_DEAL_SUB);
+        //入库
+        yyApplyMapper.addApply(yyApply);
+        //返回主键信息
+        return uuid;
+    }
+
+    @Override
+    public String applyUpdate(YyApply yyApply) {
+        return null;
+    }
+
+    @Override
+    public YyApplyDAO applyDeatil(String applyUuid) {
+        return yyApplyMapper.findApply(applyUuid);
+    }
+
 
     /**
      * 获取当前登录用户主键id
@@ -154,5 +183,20 @@ public class YyApplyServiceImpl implements YyApplyService {
         String userName = webUtils.getUsername();
         HRUser user = userService.getUserByUserName(userName);
         return user.getUserId();
+    }
+
+    @Override
+    public String applyDel(String checkedContent) {
+        //拆分
+        String[] checkedIds = checkedContent.split(",");
+        Integer successNum = 0;
+        Integer failNum = 0;
+        for(String checkedId : checkedIds){
+            yyApplyMapper.applyDel(checkedId,YyApplyConstant.STATUS_DEAL_SUB);
+
+        }
+        //循环删除
+        //反馈几个能删几个不能删
+        return null;
     }
 }

@@ -89,7 +89,7 @@ applyOperate.applyAdd = function () {
                 data: JSON.stringify(paperDetailFormData),
                 success: function (data) {
                     if(data.success=="true"){
-                        parent.paperList.closeAndOpen(data.msg);
+                        parent.apply.closeAndOpen(data.msg);
                     }else{
                         layer.alert(data.msg,{icon:2,title:'信息提示'});
                         return;
@@ -105,6 +105,13 @@ applyOperate.applyAdd = function () {
 applyOperate.applyUpdate = function () {
     //参数校验
 
+    //发送后台请求
+
+}
+
+
+//提交用印申请
+applyOperate.applySubmit = function () {
     //发送后台请求
 
 }
@@ -133,7 +140,7 @@ applyOperate.changeItemFirst = function () {
             document.getElementById("selectSecondItem").innerHTML = checkContent;
             var i ;
             checkContent = "" +
-                "<select id = 'useSealItemSecond' name = 'useSealItemSecond'   class = 'changeQuery changeYear'>" +
+                "<select id = 'useSealItemSecond' name = 'useSealItemSecond' content='用印事项二级' class = 'changeQuery changeYear validNull'>" +
                 "<option value=''>请选择</option>";
             for(i=0;i<itemSecond.length;i++){
                 var k = itemSecond[i].K;

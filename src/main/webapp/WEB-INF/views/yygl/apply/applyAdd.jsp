@@ -74,7 +74,6 @@
             <span title = "用印事项一级"><b class="mustWrite">*</b>用印事项一级</span>
         </td>
         <td style="width: 40%" class="addInputStyle">
-            <%--<input type="text"  id="useSealItem" name="useSealItem"  class="validNull"  content="用印事项"  len="50"  title="必填项  "/>--%>
             <select id = "useSealItemFirst" name = "useSealItemFirst" onchange="applyOperate.changeItemFirst()"
                     content="用印事项一级" class = "changeQuery changeYear validNull">
                 <option value = "">请选择</option>

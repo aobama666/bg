@@ -29,7 +29,7 @@ public class YyApplyDAO {
     //用印事项
     private String useSealItem;
     //用印种类
-    private String useSealkind;
+    private String useSealKind;
     //用印申请状态
     private String useSealStatus;
     //用印申请状态对应内容
@@ -107,12 +107,12 @@ public class YyApplyDAO {
         this.useSealItem = useSealItem;
     }
 
-    public String getUseSealkind() {
-        return useSealkind;
+    public String getUseSealKind() {
+        return useSealKind;
     }
 
-    public void setUseSealkind(String useSealkind) {
-        this.useSealkind = useSealkind;
+    public void setUseSealKind(String useSealKind) {
+        this.useSealKind = useSealKind;
     }
 
     public String getUseSealStatus() {

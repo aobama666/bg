@@ -1,0 +1,11 @@
+2019-08-22 15:57:28,863 [INFO ] com.alibaba.druid.pool.DruidDataSource  - {dataSource-1} inited
+2019-08-22 15:57:29,783 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20000} enter cache
+2019-08-22 15:57:36,700 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20001} enter cache
+2019-08-22 15:57:36,710 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20002} enter cache
+2019-08-22 15:57:39,766 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20003} enter cache
+2019-08-22 15:57:39,766 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20004} enter cache
+2019-08-22 15:57:40,171 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20005} enter cache
+2019-08-22 15:57:40,218 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20006} enter cache
+2019-08-22 15:57:40,223 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20007} enter cache
+2019-08-22 15:57:41,523 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20008} enter cache
+2019-08-22 17:03:58,121 [DEBUG] com.alibaba.druid.pool.PreparedStatementPool  - {conn-10001, pstmt-20009} enter cache

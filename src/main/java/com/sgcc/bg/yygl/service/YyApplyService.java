@@ -1,5 +1,8 @@
 package com.sgcc.bg.yygl.service;
 
+import com.sgcc.bg.yygl.bean.YyApply;
+import com.sgcc.bg.yygl.pojo.YyApplyDAO;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -46,4 +49,33 @@ public interface YyApplyService {
      * 获取用户对应部门信息
      */
     Map<String,Object> findDept(String userId);
+
+
+    /**
+     * 保存
+     */
+    String applyAdd(YyApply yyApply);
+
+
+    /**
+     * 修改
+     */
+    String applyUpdate(YyApply yyApply);
+
+
+    /**
+     * 查看详情
+     */
+    YyApplyDAO applyDeatil(String applyUuid);
+
+
+    /**
+     * 获取登录用户id
+     */
+    String getLoginUserUUID();
+
+    /**
+     * 删除
+     */
+    String applyDel(String checkedContent);
 }

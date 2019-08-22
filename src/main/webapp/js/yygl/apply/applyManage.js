@@ -55,18 +55,19 @@ apply.initDataGrid = function(){
             {name: '申请编号',style:{width:"50px"}, data: 'PAPERNAME',forMat:function(row){
                     return "<a title = '点击查看用印详情' style='color: #0080FF;" +
                         " text-align:left;'id='\"+row.UUID+\"'" +
-                        " href = 'javascript:void(0)' >"+row.APPLY_CODE+"</a>";
+                        " onclick=apply.toDeatil('"+row.UUID+"')>"+row.APPLY_CODE+"</a>";
             }},
             {name: '用印事由',style:{width:"50px"}, data: 'USE_SEAL_REASON'},
             {name: '用印部门',style:{width:"50px"}, data: 'DEPTNAME'},
             {name: '用印申请人',style:{width:"30px"}, data: 'USERALIAS'},
             {name: '用印日期',style:{width:"30px"}, data: 'USE_SEAL_DATE'},
             {name: '申请日期',style:{width:"30px"}, data: 'CREATE_TIME'},
-            {name: '用印事项',style:{width:"30px"}, data: 'SECOND_CATEGORY_NAME'},
+            {name: '用印事项',style:{width:"50px"}, data: 'USESEALITEM'},
             {name: '用印种类',style:{width:"50px"}, data: 'USE_SEAL_KIND'},
             {name: '审批状态',style:{width:"50px"}, data: 'USE_SEAL_STATUS'},
             {name: '用印审批单',style:{width:"50px"}, forMat:function (row) {
-                    return "<a title = '点击查看打印预览' style='color:#0080FF'>打印预览</a>";
+                    return "<a title = '点击查看打印预览' style='color:#0080FF'" +
+                        " onclick=apply.printPreview('"+row.UUID+"')>打印预览</a>";
                 }}
         ]
     });
@@ -90,7 +91,7 @@ apply.changeItemFirst = function () {
             var i ;
             checkContent = "" +
                 "<select id = 'itemSecondId' name = 'itemSecondId'   class = 'changeQuery changeYear'>" +
-                "<option selected='selected'>请选择</option>";
+                "<option value='' selected='selected'>请选择</option>";
             for(i=0;i<itemSecond.length;i++){
                 var k = itemSecond[i].K;
                 var v = itemSecond[i].V;
@@ -140,7 +141,7 @@ apply.toUpdate = function () {
     var url = "/bg/yygl/apply/toApplyUpdate?checkedId="+checkedId;
     layer.open({
         type:2,
-        title:'<h4 style="height:42px;line-height:25px;">用印申请修改</h4>',
+        title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请修改</h4>',
         area:['85%','85%'],
         fixed:false,//不固定
         maxmin:true,
@@ -169,18 +170,31 @@ apply.del = function () {
 /**
  * 用印申请详情弹窗
  */
-apply.toDeatil = function (checkedId) {
-    var url = "/bg/yygl/apply/toApplyDetail?checkedId="+checkedId;
+apply.toDeatil = function (applyUuid) {
+    var url = "/bg/yygl/apply/toApplyDetail?applyUuid="+applyUuid;
     layer.open({
         type:2,
-        title:'<h4 style="height:42px;line-height:25px;">用印申请详情</h4>',
+        title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请详情</h4>',
         area:['85%','85%'],
         fixed:false,//不固定
         maxmin:true,
-        content:url,
-        end: function () {
-            apply.query();
-        }
+        content:url
+    });
+}
+
+
+/**
+ * 打印预览
+ */
+apply.printPreview = function (applyUuid) {
+    var url = "/bg/yygl/apply/toPrintPreview?applyUuid="+applyUuid;
+    layer.open({
+        type:2,
+        title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请单-打印预览</h4>',
+        area:['85%','85%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url
     });
 }
 
@@ -262,6 +276,6 @@ apply.applyExport = function () {
 
 /*关闭页面后弹出信息*/
 apply.closeAndOpen = function (message) {
-    layer.alert(message,{icon:1,title:'信息提示'});
     layer.closeAll();
+    layer.alert(message,{icon:1,title:'信息提示'});
 };

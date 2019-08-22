@@ -74,7 +74,7 @@ public interface YyApplyMapper {
     /**
      * 根据编号或者主键查询对应申请详细信息
      */
-    YyApplyDAO findApply(@Param("uuid") String uuid, @Param("applyCode") String applyCode);
+    YyApplyDAO findApply(@Param("uuid") String uuid);
 
 
 
@@ -102,7 +102,7 @@ public interface YyApplyMapper {
     /**
      * 删除申请
      */
-    Integer updateValid(@Param("uuid") String uuid, @Param("valid") String valid);
+    Integer applyDel(@Param("uuid") String uuid, @Param("useSealStatus") String useSealStatus);
 
 
 
