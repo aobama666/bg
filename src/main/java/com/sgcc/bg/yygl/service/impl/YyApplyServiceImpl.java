@@ -192,7 +192,8 @@ public class YyApplyServiceImpl implements YyApplyService {
         Integer successNum = 0;
         Integer failNum = 0;
         for(String checkedId : checkedIds){
-            yyApplyMapper.applyDel(checkedId,YyApplyConstant.STATUS_DEAL_SUB);
+            int result = yyApplyMapper.applyDel(checkedId,YyApplyConstant.STATUS_DEAL_SUB);
+            //pull
 
         }
         //循环删除
