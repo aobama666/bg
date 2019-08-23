@@ -460,6 +460,11 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
         return lwSpecialistMapper.ifEmail(email);
     }
 
+    @Override
+    public List<Map<String, Object>> fieldList() {
+        return lwSpecialistMapper.fieldList();
+    }
+
 
     /**
      * 计算平均分

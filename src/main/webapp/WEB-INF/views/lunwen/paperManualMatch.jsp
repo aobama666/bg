@@ -95,7 +95,6 @@
             // 获取table标签判断行数，ie8不支持，故抛弃
             // var checkSpecialists = document.getElementsByClassName("layui-table")[1];
             // var checkNums = checkSpecialists.rows.length;
-            debugger;
             if(specialistsIdS.length !== 0){
                 var specialistsIdArray = specialistsIdS.split(',');
                 if(specialistsIdArray.length>7 && specialistsIdArray.length %2 == 0){

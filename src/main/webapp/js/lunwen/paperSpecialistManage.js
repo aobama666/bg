@@ -41,6 +41,32 @@ queryAll.refresh = function(){
     $("#datagrid").datagrid("refresh");
 }
 
+/**
+ * 新增修改基本信息后刷新下拉框内容
+ */
+queryAll.changeFieldList = function () {
+    $.ajax({
+        url: "/bg/expert/changeFieldList",
+        type: "post",
+        dataType:"json",
+        success: function (data) {
+            var fieldList = data;
+            var checkContent = '';
+            document.getElementById("fieldList").innerHTML = checkContent;
+            var i ;
+            checkContent = "" +
+                "<select id = 'field' name = 'field'   class = 'changeQuery changeYear' style='width: 200px'>" +
+                "<option value='' selected='selected'>请选择</option>";
+            for(i=0;i<fieldList.length;i++){
+                var v = fieldList[i].FIELD;
+                checkContent = checkContent+'<option value = "'+v+'">'+v+'</option>';
+            }
+            checkContent = checkContent + '</select>';
+            document.getElementById("fieldList").innerHTML = checkContent;
+        }
+    });
+}
+
 /* 专家管理-初始化列表界面  */
 queryAll.initDataGrid = function(){
 
@@ -226,6 +252,7 @@ queryAll.updateEvent = function(){
         content:url,
         end: function () {
             queryAll.refresh();
+            queryAll.changeFieldList();
         }
     });
 }
@@ -357,6 +384,7 @@ queryAll.addEvent = function (){
         content:url,
         end: function () {
             queryAll.refresh();
+            queryAll.changeFieldList();
         }
     });
 }

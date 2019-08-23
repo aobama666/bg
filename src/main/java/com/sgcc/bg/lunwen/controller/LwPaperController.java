@@ -62,11 +62,25 @@ public class LwPaperController {
     public ModelAndView paperToManage(){
         List<Map<String,Object>> yearList = lwPaperService.getTableYear();
         List<Map<String, String>>   scoreStatusList= dataDictionaryService.selectDictDataByPcode("paper_all_status");
+        List<Map<String,Object>> fieldList = lwPaperService.fieldList(DateUtil.getYear());
         Map<String, Object> mvMap = new HashMap<>();
         mvMap.put("allStatus", scoreStatusList);
         mvMap.put("yearList", yearList);
+        mvMap.put("fieldList",fieldList);
         ModelAndView mv = new ModelAndView("lunwen/paperManage",mvMap);
         return mv;
+    }
+
+    /**
+     * 根据当前年切换查询条件领域下拉框的内容
+     */
+    @ResponseBody
+    @RequestMapping("/changeFieldList")
+    public String changeFieldList(String year){
+        List<Map<String,Object>> fieldList = lwPaperService.fieldList(year);
+        ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"success");
+        rw.addData("fieldList",fieldList);
+        return JSON.toJSONString(fieldList);
     }
 
     /**

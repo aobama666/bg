@@ -483,7 +483,7 @@
 
     <select id="fieldList" resultType="java.util.Map">
         SELECT FIELD FROM bg_lw_paper
-        WHERE year = #{year} and VALID = '1'GROUP BY FIELD
+        WHERE year = #{year} and VALID = '1' GROUP BY FIELD order by field
     </select>
 
 

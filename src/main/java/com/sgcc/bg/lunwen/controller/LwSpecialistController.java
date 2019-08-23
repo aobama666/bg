@@ -40,8 +40,25 @@ public class LwSpecialistController {
 
 
     @RequestMapping("/specialist")
-    public String specialist(HttpServletRequest request) {
-        return "lunwen/paperSpecialistManage";
+    public ModelAndView specialist(HttpServletRequest request) {
+        Map<String,Object> mvMap = new HashMap<>();
+        //专家对应领域现有信息
+        List<Map<String,Object>> fieldList = lwSpecialistServiceImpl.fieldList();
+        mvMap.put("fieldList",fieldList);
+        ModelAndView mv = new ModelAndView("lunwen/paperSpecialistManage",mvMap);
+        return mv;
+    }
+
+    /**
+     * 刷新查询条件领域下拉框的内容
+     */
+    @ResponseBody
+    @RequestMapping("/changeFieldList")
+    public String changeFieldList(){
+        List<Map<String,Object>> fieldList = lwSpecialistServiceImpl.fieldList();
+        ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"success");
+        rw.addData("fieldList",fieldList);
+        return JSON.toJSONString(fieldList);
     }
 
     @RequestMapping("/speciaAdd")
