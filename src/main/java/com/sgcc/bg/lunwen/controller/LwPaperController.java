@@ -472,7 +472,7 @@ public class LwPaperController {
 
 
     /**
-     * 跳转手动匹配页面
+     * 跳转手动匹配页面,如果已生成打分表，查看已匹配专家打分信息
      */
     @RequestMapping(value = "/manualMatchJump")
     public ModelAndView manualMatchJumo(String paperUuid){
@@ -480,6 +480,7 @@ public class LwPaperController {
         String field = lwPaperMap.get("FIELD").toString();
         String unit = lwPaperMap.get("UNIT").toString();
         String author = lwPaperMap.get("AUTHOR").toString();
+        String paperName = lwPaperMap.get("PAPERNAME").toString();
         String[] authors = null;
         if(author.contains(",")){
             authors = author.split(",");
@@ -525,12 +526,18 @@ public class LwPaperController {
         mvMap.put("right", JSON.toJSONString(lwSpList));
         //查看是否生成打分表，生成打分表后不允许再次手动匹配，只能查看匹配专家详情
         String scoreTableStatus = lwPaperMap.get("SCORETABLESTATUS").toString();
+        ModelAndView mv = null;
         if(LwPaperConstant.SCORE_TABLE_OFF.equals(scoreTableStatus)){
+            //未生成打分表
             mvMap.put("scoreTableStatus","off");
+            mv = new ModelAndView("lunwen/paperManualMatch",mvMap);
         }else{
+            //已生成打分表
             mvMap.put("scoreTableStatus","on");
+            mvMap.put("matchSpecialists", matchSpecialists);
+            mvMap.put("paperName", paperName);
+            mv = new ModelAndView("lunwen/paperMatchDetail",mvMap);
         }
-        ModelAndView mv = new ModelAndView("lunwen/paperManualMatch",mvMap);
         return mv;
     }
 
