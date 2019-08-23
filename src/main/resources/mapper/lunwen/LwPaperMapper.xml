@@ -471,8 +471,12 @@
                 </foreach>
             )
         </if>
-        <if test="unit != null and unit != ''">
-          and unit_name != #{unit}
+        <if test="units != null and units != ''">
+            and unit_name not in (
+            <foreach collection="units" item="unit" index="index" separator=",">
+                #{unit}
+            </foreach>
+            )
         </if>
         and match_status != #{matchStatus}
     </select>

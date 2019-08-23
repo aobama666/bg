@@ -31,6 +31,8 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 论文管理控制层
@@ -480,18 +482,12 @@ public class LwPaperController {
         String field = lwPaperMap.get("FIELD").toString();
         String unit = lwPaperMap.get("UNIT").toString();
         String author = lwPaperMap.get("AUTHOR").toString();
-        String paperName = lwPaperMap.get("PAPERNAME").toString();
-        String[] authors = null;
-        if(author.contains(",")){
-            authors = author.split(",");
-        }else if(author.contains("，")){
-            authors = author.split("，");
-        }else{
-            authors = new String[]{author};
-        }
+        String[] authors = lwPaperService.splitStr(author);
+        String[] units = lwPaperService.splitStr(unit);
+
         //根据论文所属领域，查询能够匹配的专家,精准匹配在前，模糊匹配在后
-        List<LwSpecialist> lwSpList = lwPaperService.selectSpecialistField(authors,unit,field);
-        List<LwSpecialist> lwSpListLike = lwPaperService.selectSpecialistFieldLike(authors,unit,field);
+        List<LwSpecialist> lwSpList = lwPaperService.selectSpecialistField(authors,units,field);
+        List<LwSpecialist> lwSpListLike = lwPaperService.selectSpecialistFieldLike(authors,units,field);
         for(LwSpecialist ls : lwSpList){
             String specialistId = ls.getUuid();
             for (LwSpecialist lwSpecialist : lwSpListLike){
@@ -1115,5 +1111,6 @@ public class LwPaperController {
         HRUser user = userService.getUserByUserName(userName);
         return user.getUserId();
     }
+
 
 }
