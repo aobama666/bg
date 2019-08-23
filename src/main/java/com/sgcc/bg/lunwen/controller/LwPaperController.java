@@ -534,8 +534,6 @@ public class LwPaperController {
         }else{
             //已生成打分表
             mvMap.put("scoreTableStatus","on");
-            mvMap.put("matchSpecialists", matchSpecialists);
-            mvMap.put("paperName", paperName);
             mv = new ModelAndView("lunwen/paperMatchDetail",mvMap);
         }
         return mv;

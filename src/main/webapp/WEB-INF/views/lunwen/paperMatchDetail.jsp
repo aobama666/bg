@@ -18,24 +18,7 @@
     <div class="col-lg-2"></div>
     <div class="col-lg-8">
         <h3>已匹配专家信息</h3>
-        <table class="layui-table" style="height: 200px!important;">
-            <thead>
-            <tr>
-                <td>专家姓名</td>
-                <td>领域</td>
-                <td>研究方向</td>
-                <td>打分状态</td>
-            </tr>
-            </thead>
-            <c:forEach var="msl" items="${matchSpecialists}">
-                <tr>
-                    <td>${msl.name}</td>
-                    <td>${msl.field}</td>
-                    <td>${msl.researchDirection}</td>
-                    <td>${msl.scoreStatus}</td>
-                </tr>
-            </c:forEach>
-        </table>
+        <div id="matchDetail"></div>
         <div style="text-align: center">
             <button type="button" class="layui-btn" id="return" onclick="returnButton()">返回</button>
         </div>
@@ -48,9 +31,35 @@
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 <script src="<%=request.getContextPath()%>/js/plugins/layui/html5.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
 <script src="<%=request.getContextPath()%>/js/plugins/layui/respond.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
+<script type="text/html" id="indexTpl">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
 <script>
     function returnButton() {
         parent.layer.closeAll();
     }
+
+    var left = ${left};
+
+    layui.use('table',function () {
+        var table = layui.table;
+        table.render({
+            elem: '#matchDetail',
+            height: 400,
+            limit: 100,
+            data: left,
+            page: false,
+            cols: [[
+                {title: '',width: 50,templet: '#indexTpl'},
+                {field: 'uuid', title: 'ID',  sort: true,hide:true},
+                {field: 'name', title: '专家姓名'},
+                {field: 'field', title: '领域'},
+                {field: 'researchDirection', title: '研究方向'},
+                {field: 'scoreStatus', title: '打分状态'}
+            ]]
+        })
+    });
+
+
 </script>
 </html>
