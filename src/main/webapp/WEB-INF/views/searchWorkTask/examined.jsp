@@ -203,7 +203,7 @@ function getEndD(endDate) {
 }
 //比较两个时间是否大于一个月，例如20170215--到20170315 是一个月，到20170316是大于一个月
 function getD(sDate, endDate) {
-    debugger
+
     var sDate = new Date(sDate);
     var eDate = new Date(endDate);
     if (eDate.getFullYear() - sDate.getFullYear() > 1) {//先比较年
@@ -291,7 +291,7 @@ function queryList(load){
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            // {title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},
 		        {title:'开始日期', name:'WORK_TIME_BEGIN', width:100, sortable:false, align:'center'},
-                {title:'结束日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},
+                {title:'结束日期', name:'WORK_TIME_END', width:100, sortable:false, align:'center'},
 	            {title:'部门（单位）', name:'DEPTNAME', width:100, sortable:false, align:'left'},
 	            {title:'处室', name:'LABNAME', width:100, sortable:false, align:'left'},
 	            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},
@@ -337,7 +337,7 @@ function queryList(load){
 }
 //确认
 function forConfirm(){
-    debugger;
+
 	var selectList = mmg.selectedRows();
 	if(selectList.length>0){
 		var ids = "";

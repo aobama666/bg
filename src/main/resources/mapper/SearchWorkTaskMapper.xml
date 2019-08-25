@@ -58,12 +58,21 @@
 		<if test="type=='CG_NP'">
 			and b.category ='CG'
 		</if>
-		<if test="startTime!=null and startTime!='' ">
+		<if test="startTime!=null and startTime!='' and endTime!=null and endTime!='' ">
+			AND (b.START_DATE between TO_DATE(#{startTime}, 'yyyy-mm-dd') and TO_DATE(#{endTime}, 'yyyy-mm-dd')
+				or b.END_DATE between TO_DATE(#{startTime}, 'yyyy-mm-dd') and TO_DATE(#{endTime}, 'yyyy-mm-dd')
+				or (TO_DATE(#{startTime}, 'yyyy-mm-dd') >=b.START_DATE and
+				TO_DATE(#{endTime}, 'yyyy-mm-dd') &lt;= b.END_DATE)
+				or(TO_DATE(#{startTime}, 'yyyy-mm-dd') &lt;=b.START_DATE and
+				TO_DATE(#{endTime}, 'yyyy-mm-dd') &gt;= b.END_DATE))
+		</if>
+
+		<!--<if test="startTime!=null and startTime!='' ">
 			AND TO_DATE(#{startTime}, 'yyyy-mm-dd') &lt;= b.START_DATE
 		</if>
 		<if test="endTime!=null and endTime!='' ">
 			AND TO_DATE(#{endTime}, 'yyyy-mm-dd') &gt;= b.END_DATE
-		</if>
+		</if>-->
     </select>
     
     <!-- 工时审核查询 table-->

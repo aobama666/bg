@@ -177,7 +177,7 @@ function initTree(){
 	tree = $.fn.zTree.init($("#tree"), setting, getTree());
 }
 function reLoadTree() {
-	debugger;
+
 	var root = '<%=root %>';
 	var queryEmpCode = $.trim($("#queryEmpCode").val());
 	var queryEmpName = $.trim($("#queryEmpName").val());

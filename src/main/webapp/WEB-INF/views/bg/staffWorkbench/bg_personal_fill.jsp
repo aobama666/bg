@@ -109,11 +109,11 @@ td span{
 				<input type="text" name="selectedDate" property="fillDate" class="form-control" id="fillDa" readonly>
 			</div>
 			<span onclick="changeByStep(1)"><span class="glyphicon glyphicon-forward" ></span></span>
-			<label>&nbsp;&nbsp;&nbsp;月度工时/已填报工时（h）：</label>
+			<label style="color: red">&nbsp;&nbsp;&nbsp;月度工时/已填报工时（h）：</label>
 			<label>
-				<span id="fillSumKQ" >${fillSumKQ}</span>
-				<span>/</span>
-				<span id="fillSum">${fillSumKQ}</span>
+				<span style="color: red" id="fillSumKQ" >${fillSumKQ}</span>
+				<span style="color: red">/</span>
+				<span style="color: red" id="fillSum">${fillSumKQ}</span>
 			</label>
 		</div>
 	</form>

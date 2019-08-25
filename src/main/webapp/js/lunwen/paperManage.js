@@ -187,7 +187,7 @@ paperList.updateOperation = function(){
             dataType:"json",
             contentType: 'application/json',
             success: function (data) {
-                debugger
+
                 if(data.success=="false"){
                     layer.alert(data.msg,{icon:0,title:'信息提示'});
                     return;

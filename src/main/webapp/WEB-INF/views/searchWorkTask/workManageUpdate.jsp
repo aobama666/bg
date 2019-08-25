@@ -96,10 +96,10 @@
 			</div>
 		</div>
 		<div style="padding-left: 290px">
-			<span style="line-height: 26px">月度工时/已填报工时（h）：</span>
-			<span id="fillSumKQ" >${fillSumKQ}</span>
-			<span>/</span>
-			<span id="fillSum">${fillSum}</span>
+			<span style="line-height: 26px; color: red">月度工时/已填报工时（h）：</span>
+			<span id="fillSumKQ" style="color: red" >${fillSumKQ}</span>
+			<span style="color: red">/</span>
+			<span id="fillSum" style="color: red">${fillSum}</span>
 		</div>
 	</div>
 	<%--<div class="form-group col-xs-12">

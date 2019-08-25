@@ -265,7 +265,7 @@ function forSearch(){
     var startDate = $("input[name=startDate]").val();
     var endDate = $("input[name=endDate]").val();
     if(startDate>endDate){
-        layer.msg("查询时间范围：结束时间应大于开始时间！");
+        layer.msg("查询时间范围：开始时间晚于结束时间！");
         return;
     }
 

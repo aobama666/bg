@@ -73,7 +73,7 @@ function importEvent(e){
 	$("#excelFile").click;
 }
 function importExcel(){
-	debugger;
+
 	//获取要上传的文件名
 	  var fileName=$("#excelFile").val();
 	  //判断时候选择文件

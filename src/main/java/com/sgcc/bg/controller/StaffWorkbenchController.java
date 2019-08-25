@@ -139,7 +139,7 @@ public class StaffWorkbenchController {
 	 */
 	@RequestMapping("/getProjectsByDate")
 	@ResponseBody
-	public String getProjects(String selectedDate,String proName,String proNumber) {
+	public Map<String,Object> getProjects(String selectedDate,String proName,String proNumber) {
 		proName = Rtext.toStringTrim(proName, "");
 		proNumber = Rtext.toStringTrim(proNumber, "");
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
@@ -153,7 +153,8 @@ public class StaffWorkbenchController {
 		jsonMap.put("items", jsonarry);
 		String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd",
 				SerializerFeature.WriteDateUseDateFormat);
-		return jsonStr;
+		return jsonMap;
+
 	}
 	
 	/**

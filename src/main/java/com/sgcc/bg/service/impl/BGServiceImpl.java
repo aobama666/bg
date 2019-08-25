@@ -165,7 +165,7 @@ public class BGServiceImpl implements IBGService {
 			for(int i=1;i<startDate.length;i++){
 				if(startDate[i] != null && startDate[i] != "") {
 					if (DateUtil.getFormatDate(startDate[i], "yyyy-MM-dd").getTime() < DateUtil.getFormatDate(endDate[i - 1], "yyyy-MM-dd").getTime()) {
-						return "您填写的时间有交叉，请检查";
+						return "项目负责人多个，日期交叉";
 					}
 				}
 			}
@@ -174,10 +174,10 @@ public class BGServiceImpl implements IBGService {
 			if(map!=null){
 				long infoDate = DateUtil.getDaySub(map.get("startDate"),map.get("endDate"))+1;
 				if(sumDate>infoDate){
-					return "项目负责人参与时间不能大于项目周期";
+					return "项目负责人参与时间不能晚于项目周期";
 				}
 				if(sumDate<infoDate){
-					return "项目负责人参与时间不能小于项目周期";
+					return "项目负责人参与时间不能早于项目周期";
 				}
 			}
 
@@ -872,7 +872,7 @@ public class BGServiceImpl implements IBGService {
 				if(map!=null){
 					long infoDate = DateUtil.getDaySub(map.get("startDate"),map.get("endDate"))+1;
 					if(sumDate>infoDate){
-						errorInfo.append("项目编号为"+map.get("projectNumber")+"负责人时间大于项目周期");
+						errorInfo.append("项目编号为"+map.get("projectNumber")+"负责人时间晚于项目周期");
 						errorNum.add(4);
 						errorNum.add(5);
 						for(ProjectUserPo up :projectUserPoList){
@@ -900,7 +900,7 @@ public class BGServiceImpl implements IBGService {
 						}
 					}
 					if(sumDate<infoDate){
-						errorInfo.append("项目编号为"+map.get("projectNumber")+"负责人时间小于项目周期");
+						errorInfo.append("项目编号为"+map.get("projectNumber")+"负责人时间早于项目周期");
 						errorNum.add(4);
 						errorNum.add(5);
 						for(ProjectUserPo up :projectUserPoList){

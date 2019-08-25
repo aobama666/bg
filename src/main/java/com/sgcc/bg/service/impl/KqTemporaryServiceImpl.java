@@ -218,11 +218,22 @@ public class KqTemporaryServiceImpl implements KqTemporaryService {
 		String beginDate = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); //开始时间
 		String endDate = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
 		String empName = request.getParameter("empName" ) == null ? "" : request.getParameter("empName").toString(); //类型
+		String kqTime = request.getParameter("kqTime" ) == null ? "" : request.getParameter("kqTime").toString(); //类型
 		int page=Integer.parseInt(request.getParameter("page"));
 		int limit=Integer.parseInt(request.getParameter("limit"));
 		Page<?> page2 = PageHelper.startPage(page, limit);
 		List<String>  idslist =new  ArrayList<String>();
-		kqTemporaryMapper.selectForKqInfo(beginDate,endDate,empName,idslist);
+		//取月初和月末
+		String[] str= kqTime.split("-");
+		int year = Integer.parseInt(str[0]);
+		int month = Integer.parseInt(str[1]);
+		//每月月初
+		String dateBegin = DateUtil.getFirstDayOfMonth1(year,month);
+		//每月月末
+		String dateEnd = DateUtil.getLastDayOfMonth1(year,month);
+
+
+		kqTemporaryMapper.selectForKqInfo(dateBegin,dateEnd,empName,idslist);
 		long total = page2.getTotal();
 		List<Map<String, String>> list = (List<Map<String, String>>) page2.getResult();
 		Map<String, Object> map = new HashMap<String, Object>();

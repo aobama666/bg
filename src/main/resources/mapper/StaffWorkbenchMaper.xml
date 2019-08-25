@@ -174,45 +174,46 @@
 	</select>-->
 	<select id="getProjectsByDate" resultType="java.util.Map">
 		SELECT T.CATEGORY,
-		T.ID,
-		T.PROJECT_NAME,
-		T.PROJECT_NUMBER,
-		T.WBS_NUMBER,
-		T1.EMPNAME       AS PRINCIPAL,
-		T1.HRCODE        AS HRCODE
+			T.ID,
+			T.PROJECT_NAME,
+			T.PROJECT_NUMBER,
+			T.WBS_NUMBER,
+			T4.EMPNAME       AS PRINCIPAL,
+			T4.HRCODE        AS HRCODE,
+			T1.ROLE AS ROLE
 		FROM BG_PROJECT_INFO T
-		LEFT JOIN BG_PROJECT_USER T1
-		ON T.ID = T1.PROJECT_ID
-		AND T1.STATUS = '1'
-		LEFT JOIN BG_SYS_USER T2
-		ON T1.HRCODE = T2.HRCODE
-		LEFT JOIN BG_PROJECT_USER T4
-		ON T4.PROJECT_ID = T.ID
-		AND T4.ROLE = '1'
-		AND T4.STATUS = '1'
-		and ( T4.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
-		or T4.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
-		or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T4.START_DATE and
-		TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T4.END_DATE)
-		or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T4.START_DATE and
-		TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T4.END_DATE))
+			LEFT JOIN BG_PROJECT_USER T1
+			ON T.ID = T1.PROJECT_ID
+			AND T1.STATUS = '1'
+			LEFT JOIN BG_SYS_USER T2
+			ON T1.HRCODE = T2.HRCODE
+			LEFT JOIN BG_PROJECT_USER T4
+			ON T4.PROJECT_ID = T.ID
+			AND T4.ROLE = '1'
+			AND T4.STATUS = '1'
+			and ( T4.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+				or T4.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+				or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T4.START_DATE and
+				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T4.END_DATE)
+				or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T4.START_DATE and
+				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T4.END_DATE))
 		WHERE ((T.CATEGORY IN ('JS', 'KY', 'HX', 'QT') AND
-		T2.USERNAME = #{username} AND
-			( T1.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
-			or T1.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
-			or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T1.START_DATE and
-				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T1.END_DATE)
-			or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T1.START_DATE and
-				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T1.END_DATE)
-			))
-		OR
-		(T.CATEGORY IN ('CG', 'BP') AND
-		#{deptId} IN
-		(SELECT D.DEPTID
-		FROM BG_SYS_DEPT D
-		WHERE D.VALID = '1'
-		START WITH D.DEPTID = T.ORGAN_INFO
-		CONNECT BY PRIOR D.DEPTID = D.PDEPTID)))
+					T2.USERNAME = #{username} AND
+					( T1.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+					or T1.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+					or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T1.START_DATE and
+						TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T1.END_DATE)
+					or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T1.START_DATE and
+						TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T1.END_DATE)
+					))
+				OR
+					(T.CATEGORY IN ('CG', 'BP') AND
+					#{deptId} IN
+					(SELECT D.DEPTID
+					FROM BG_SYS_DEPT D
+					WHERE D.VALID = '1'
+					START WITH D.DEPTID = T.ORGAN_INFO
+					CONNECT BY PRIOR D.DEPTID = D.PDEPTID)))
 		AND ( T1.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
 			or T1.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
 			or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T1.START_DATE and
@@ -228,7 +229,7 @@
 		<if test="proNumber != null and proNumber != ''" >
 			AND T.PROJECT_NUMBER = #{proNumber}
 		</if>
-		ORDER BY T.CREATE_DATE DESC
+		ORDER BY T1.END_DATE
 	</select>
 
 	

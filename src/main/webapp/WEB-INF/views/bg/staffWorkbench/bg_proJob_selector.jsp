@@ -153,13 +153,26 @@ function forAdd(){
 		var approverHrcode = items[i].HRCODE;
 		var approverName = items[i].PRINCIPAL;
 		var category = items[i].CATEGORY;
+		var role = items[i].ROLE;
 		var editable = "true";
+
+		var id = items[i].ID;
+
 		//新增项目，如果是常规工作和项目前期类型,或者项目负责人为当前登录人，则审核人为按审批层级的默认审核人
-		if('CG,BP'.indexOf(category)!=-1 || approverHrcode==parent.currentUserHrcode){
+		/*if('CG,BP'.indexOf(category)!=-1 || approverHrcode==parent.currentUserHrcode){
 			approverHrcode=parent.approverHrcode;
 			approverName=parent.approverName;
 		}else{
 			editable = "false";
+		}*/
+        if('CG,BP'.indexOf(category)!=-1 ){
+            approverHrcode=parent.approverHrcode;
+            approverName=parent.approverName;
+        }else if (approverHrcode==parent.currentUserHrcode || role == 1) {
+            approverHrcode=parent.approverHrcode;
+            approverName=parent.approverName;
+        }else {
+                editable = "false";
 		}
 		 
 		parent.mmg.addRow({

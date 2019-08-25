@@ -15,27 +15,17 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.sun.org.apache.xerces.internal.xs.StringList;
+import com.sgcc.bg.common.*;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.omg.CORBA.DATA_CONVERSION;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sgcc.bg.common.CommonCurrentUser;
-import com.sgcc.bg.common.CommonUser;
-import com.sgcc.bg.common.DateUtil;
-import com.sgcc.bg.common.ExcelUtil;
-import com.sgcc.bg.common.ExportExcelHelper;
-import com.sgcc.bg.common.FtpUtils;
-import com.sgcc.bg.common.Rtext;
-import com.sgcc.bg.common.UserUtils;
-import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.mapper.BGMapper;
 import com.sgcc.bg.mapper.StaffWorkbenchMaper;
 import com.sgcc.bg.model.ProcessRecordPo;
@@ -57,7 +47,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	private DataDictionaryService dict;
 
 	//员工考勤工时统计记录 一天为8小时
-	private final static int TIME = 8;
+	//private final static int TIME = 8;
+	int TIME = Integer.parseInt(ConfigUtils.getConfig("KQ_everyday_workDate"));
 	
 	private static Logger SWServiceLog =  LoggerFactory.getLogger(StaffWorkbenchServiceImpl.class);
 
@@ -128,11 +119,21 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 
         //去重（查询出符合填报条件的项目信息 如果时间段内有多个负责人会查询出相同的信息  这时去重 ）
 		List<Map<String, String>>  list=SWMapper.getProjectsByDate(dataBegin,username,deptId,proName,proNumber,dataEnd);
-		Set<Map<String,String>> set = new HashSet();
+		List<Map<String,String>> listMap = new ArrayList<>();
+		Set<String> set = new HashSet();
+		Map<String,Map> msp = new HashMap<>();
 		for(Map<String,String> map : list){
-			set.add(map);
+			String id = map.get("ID");
+			//map.remove("ID");
+			msp.put(id,map);
         }
-		List<Map<String,String>> listMap = new ArrayList<>(set);
+        set = msp.keySet();
+        for(String key : set){
+        	Map newMap = msp.get(key);
+        	newMap.put(set,key);
+			listMap.add(newMap);
+		}
+		//List<Map<String,String>> listMap = new ArrayList<>(set);
 		return listMap;
 	}
 

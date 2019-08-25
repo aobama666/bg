@@ -1672,8 +1672,8 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 		Collections.sort(dataList, new Comparator<Map<String, Object>>() {
 			@Override
 			public int compare(Map<String, Object> map1, Map<String, Object> map2) {
-				long time1 = DateUtil.fomatDate(Rtext.toString(map1.get("WORK_TIME"))).getTime();
-				long time2 = DateUtil.fomatDate(Rtext.toString(map2.get("WORK_TIME"))).getTime();
+				long time1 = DateUtil.fomatDate(Rtext.toString(map1.get("WORK_TIME_BEGIN"))).getTime();
+				long time2 = DateUtil.fomatDate(Rtext.toString(map2.get("WORK_TIME_END"))).getTime();
 				return (int) (time1-time2);
 			}
 		});
@@ -1736,12 +1736,14 @@ public class organWorkingTimeServiceImpl implements organWorkingTimeService {
 			String proNumber = Rtext.toString(map.get("PROJECT_NUMBER"));
 			String workDate = Rtext.toString(map.get("WORK_TIME"));
 			String category = Rtext.toString(map.get("CATEGORY"));
-			double workHour = Rtext.ToDouble(map.get("WORKING_HOUR"),0d);	
+			double workHour = Rtext.ToDouble(map.get("WORKING_HOUR"),0d);
+			String workDateBegin = Rtext.toString(map.get("WORK_TIME_BEGIN"));
+			String workDateEnd = Rtext.toString(map.get("WORK_TIME_END"));
 
 			proNumber = "NP".equals(category)?"NP000":proNumber;
 			
-			if(proNumber.isEmpty() || workDate.isEmpty()) continue;
-			String key = proNumber+workDate;
+			if(proNumber.isEmpty() || workDateBegin.isEmpty()) continue;
+			String key = proNumber+workDateBegin;
 			
 			Map<String,Object> dataMap = resultMap.get(key);
 			if(dataMap==null){

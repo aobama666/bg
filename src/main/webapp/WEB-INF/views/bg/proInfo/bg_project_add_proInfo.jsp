@@ -33,7 +33,15 @@
 			<label for="projectGrade"><font
 					class="glyphicon glyphicon-asterisk required"></font>项目级别</label>
 			<div class="controls">
-				<input type="text" name="projectGrade" property="projectGrade">
+				<%--<input type="text" name="projectGrade" property="projectGrade">--%>
+					<select name="projectGrade" property="projectGrade">
+						<options collection="typeList" property="label"
+								 labelProperty="value">
+							<option value="YJ">院级</option>
+							<option value="BMJ">部门级</option>
+							<option value="CSJ">处室级</option>
+						</options>
+					</select>
 			</div>
 		</div>
 

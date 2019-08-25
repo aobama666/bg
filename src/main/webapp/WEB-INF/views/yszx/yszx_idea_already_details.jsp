@@ -322,7 +322,7 @@
     
     
 	 withdrawEvent = function(){
-		 debugger;
+
 			var approveState=$("#approveState").val();
 			if(approveState=="FINISH"){
 				messager.tip("该数据审核通过，不能执行撤回",2000);

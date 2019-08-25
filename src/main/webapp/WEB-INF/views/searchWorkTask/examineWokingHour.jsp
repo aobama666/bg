@@ -197,7 +197,7 @@ function getEndD(endDate) {
 }
 //比较两个时间是否大于一个月，例如20170215--到20170315 是一个月，到20170316是大于一个月
 function getD(sDate, endDate) {
-    debugger
+
     var sDate = new Date(sDate);
     var eDate = new Date(endDate);
     if (eDate.getFullYear() - sDate.getFullYear() > 1) {//先比较年

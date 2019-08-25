@@ -164,7 +164,7 @@
             result.info = "";
         }else{
             result.result = false;
-            result.info = "项目结束时间不能小于项目开始时间；";
+            result.info = "项目开始时间晚于项目结束时间；";
         }
         return result;
     }
@@ -287,18 +287,18 @@
         over=over.sort();
         for(i=1;i<begin.length;i++){
             if(begin[i]<=over[i-1]){
-                layer.msg("您填写的时间有交叉，请检查");
+                layer.msg("项目负责人多个，日期交叉");
                 return;
             }
         }
         //比较整个项目周期是否全部有项目负责人
         var compare = compareDay(day-1);
         if(compare==1){
-            layer.msg("项目负责人负责时间不能大于项目周期时间");
+            layer.msg("项目负责人负责时间不能晚于项目周期时间");
             return;
         }
         if(compare==-1){
-            layer.msg("项目负责人负责时间不能小于项目周期时间");
+            layer.msg("项目负责人负责时间不能早于项目周期时间");
             return;
         }
 

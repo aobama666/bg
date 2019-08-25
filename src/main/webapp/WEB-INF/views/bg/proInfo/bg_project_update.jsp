@@ -108,10 +108,16 @@
 				</div>
 
 				<div class="form-group col-xs-6">
-					<label for="projectGrade"><font
-							class="glyphicon glyphicon-asterisk required"></font>项目级别</label>
+					<label for="projectGrade"><font class="glyphicon glyphicon-asterisk required"></font>项目级别</label>
 					<div class="controls bg-white">
-						<input type="text" name="projectGrade" property="projectGrade" value="${projectGrade}">
+						<%--<input type="text" name="projectGrade" property="projectGrade" value="${projectGrade}">--%>
+						<select name="projectGrade" property="projectGrade">
+							<options collection="typeList" property="label" labelProperty="value">
+								<option  value="YJ" <c:if test="${projectGrade=='YJ'}">selected="selected"</c:if> >院级</option>
+								<option  value="BMJ" <c:if test="${projectGrade=='BMJ'}">selected="selected"</c:if> >部门级</option>
+								<option value="CSJ" <c:if test="${projectGrade=='CSJ'}">selected="selected"</c:if> >处室级</option>
+							</options>
+						</select>
 					</div>
 				</div>
 
@@ -592,7 +598,7 @@
 			result.info = "";
 		}else{
 			result.result = false;
-			result.info = "项目结束时间不能小于项目开始时间；";
+			result.info = "项目开始时间晚于项目结束时间；";
 		}
 		return result;
 	} 
@@ -604,7 +610,7 @@
 			result.info = "";
 		}else{
 			result.result = false;
-			result.info = "项目结束时间不能小于项目开始时间；";
+			result.info = "项目开始时间晚于项目结束时间；";
 		}
 		return result;
 	}  */

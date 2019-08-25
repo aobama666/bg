@@ -152,7 +152,7 @@ function getEndD(endDate) {
 }
 //比较两个时间是否大于一个月，例如20170215--到20170315 是一个月，到20170316是大于一个月
 function getD(sDate, endDate) {
-    debugger
+
     var sDate = new Date(sDate);
     var eDate = new Date(endDate);
     if (eDate.getFullYear() - sDate.getFullYear() > 1) {//先比较年
@@ -189,7 +189,7 @@ function forSearch(){
         layer.msg("开始时间不能为空");
         return ;
     }
-    if(endDate==""){
+    /*if(endDate==""){
         layer.msg("结束时间不能为空");
         return ;
     }
@@ -201,7 +201,7 @@ function forSearch(){
     if(!falg){
         layer.msg("结束时间大等于开始时间的一个月的时间");
         return ;
-    }
+    }*/
     $("#startTime").val(startDate);
     $("#endTime").val(endDate);
 	queryListPro("reload");
@@ -216,7 +216,7 @@ function queryListPro(load){
 	            {title:'开始时间', name:'BEGIN_DATE', width:100, sortable:false, align:'center'},
 	            {title:'结束时间', name:'END_DATE', width:100, sortable:false, align:'center'},
 	            {title:'全勤时长(天)', name:'FULL_TIME', width:150, sortable:false, align:'center'},
-	            {title:'加班时长(天)', name:'OVER_TIME', width:150, sortable:false, align:'center'},
+	            {title:'加班时长(小时)', name:'OVER_TIME', width:150, sortable:false, align:'center'},
         　　　　{title:'同步时间', name:'CREATE_TIME', width:150, sortable:false, align:'center'}
 	    		];
 	var mmGridHeight = $("body").parent().height() - 220;
@@ -253,6 +253,7 @@ function queryListPro(load){
 function forSyncDate(){
     var  startDate =$("#kqTime").val()+"-01";
     var  endDate=$("#kqTime").val();
+    var  kqTime=$("#kqTime").val();
     var  days=getEndD(endDate);
     endDate=endDate+"-"+days;
     layer.confirm('确认同步数据吗?', {icon: 7,title:'提示',shift:-1},function(index){layer.close(index);
@@ -260,7 +261,7 @@ function forSyncDate(){
         $.ajax({
             type: 'POST',
             url:'<%=request.getContextPath()%>/kqInfo/SyncKqData?ran='+ran,
-            data: {startDate:startDate,endDate:endDate},
+            data: {startDate:startDate,endDate:endDate,kqTime:kqTime},
             beforeSend:function(){
                 layer.load();
             },
@@ -268,6 +269,7 @@ function forSyncDate(){
                 if(data.code == "200"){
                     layer.msg(data.msg);
                     layer.closeAll('loading');
+                    queryListPro("reload");
                 }else{
                     layer.msg(data.msg);
                     layer.closeAll('loading');
