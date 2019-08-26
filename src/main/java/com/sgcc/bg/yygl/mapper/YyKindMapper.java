@@ -15,8 +15,8 @@ public interface YyKindMapper {
     //查询当前申请的其他种类内容
     String  getKindValue(@Param("applyUuid") String applyUuid);
 
-    //根据主键信息删除对应种类信息
-    Integer delKind(@Param("uuid") String uuid);
+    //根据申请id和种类编码删除对应信息
+    Integer delKind(@Param("applyUuid") String applyUuid,@Param("useSealKindCode") String useSealKindCode);
 
     //修改对应申请的其他种类内容信息
     Integer updateElseKind(@Param("applyUuid") String applyUuid,

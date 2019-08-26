@@ -15,7 +15,7 @@ public interface YyApplyService {
      * @return 对应内容和数量
      */
     Map<String, Object> selectApply(
-            String applyCode, String startTime, String endTime, String useSealStatus, String itemSecondId, String useSealReason
+            String applyCode, String startTime, String endTime, String useSealStatus,String useSealItemFirst, String itemSecondId, String useSealReason
             , Integer page, Integer limit, String userId
     );
 

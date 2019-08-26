@@ -3,6 +3,10 @@
 var applyOperate = {};
 var dataItems = new Array();
 
+$(function () {
+    applyOperate.setDefaultValue();
+})
+
 /* 日期查询条件 */
 layui.use('laydate',function () {
     var laydate = layui.laydate;
@@ -11,6 +15,14 @@ layui.use('laydate',function () {
         elem: '#useSealDate',
     });
 });
+
+//修改页面-默认选中原有值-用印事项一级二级
+applyOperate.setDefaultValue = function () {
+    var itemFirstIdCode = $("#itemFirstIdCode").val();
+    var itemSecondIdCode = $("#itemSecondIdCode").val();
+    $("#useSealItemFirst").val(itemFirstIdCode);
+    $("#useSealItemSecond").val(itemSecondIdCode);
+}
 
 //弹出用印种类选择框
 applyOperate.checkKind = function () {
@@ -66,7 +78,7 @@ applyOperate.assignment = function (checkCode,checkValue,elseKind) {
 
 //新增用印申请
 applyOperate.applyAdd = function () {
-//验证必填项是否为空
+    //验证必填项是否为空
     var validNull = dataForm.validNullable();
     if(!validNull){
         return;
@@ -89,7 +101,8 @@ applyOperate.applyAdd = function () {
                 data: JSON.stringify(paperDetailFormData),
                 success: function (data) {
                     if(data.success=="true"){
-                        parent.apply.closeAndOpen(data.msg);
+                        document.getElementById("applyAdd").setAttribute("disabled","disabled");
+                        layer.alert(data.msg,{icon:1,title:'信息提示'});
                     }else{
                         layer.alert(data.msg,{icon:2,title:'信息提示'});
                         return;
@@ -103,9 +116,39 @@ applyOperate.applyAdd = function () {
 
 //修改用印申请
 applyOperate.applyUpdate = function () {
-    //参数校验
-
-    //发送后台请求
+    //验证必填项是否为空
+    var validNull = dataForm.validNullable();
+    if(!validNull){
+        return;
+    }
+    //验证字符长度
+    var checkLength = dataForm.checkLength();
+    if(!checkLength){
+        return;
+    }
+    //获取form表单内容
+    var paperDetailFormData = roomAddInfoCommon.getFormDataInfo();
+    layer.confirm('确认保存该数据吗',{
+            btn:['确定','取消'],icon:0,title:'保存提示'
+        },function () {
+            $.ajax({
+                url: "/bg/yygl/apply/applyUpdate",
+                type: "post",
+                dataType:"json",
+                contentType: 'application/json',
+                data: JSON.stringify(paperDetailFormData),
+                success: function (data) {
+                    if(data.success=="true"){
+                        document.getElementById("applyUpdate").setAttribute("disabled","disabled");
+                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    }else{
+                        layer.alert(data.msg,{icon:2,title:'信息提示'});
+                        return;
+                    }
+                }
+            });
+        }
+    )
 
 }
 

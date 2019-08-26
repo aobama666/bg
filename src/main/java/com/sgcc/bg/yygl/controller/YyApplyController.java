@@ -87,12 +87,13 @@ public class YyApplyController {
     @ResponseBody
     @RequestMapping("/selectApply")
     public String selectApply(
-            String applyCode,String startTime,String endTime,String useSealStatus, String itemSecondId,String useSealReason
-            , Integer page, Integer limit
+            String applyCode,String startTime,String endTime,String useSealStatus,String useSealItemFirst
+            , String itemSecondId,String useSealReason, Integer page, Integer limit
     ){
         //查询数据封装
         Map<String, Object> listMap = applyService.selectApply(
-                applyCode,startTime,endTime,useSealStatus,itemSecondId,useSealReason,page,limit,getLoginUserUUID());
+                applyCode,startTime,endTime,useSealStatus,useSealItemFirst,itemSecondId
+                ,useSealReason,page,limit,getLoginUserUUID());
         //反馈
         Map<String, Object> mvMap = new HashMap<String, Object>();
         mvMap.put("data",listMap);
@@ -176,13 +177,49 @@ public class YyApplyController {
      */
     @RequestMapping("/toApplyUpdate")
     public ModelAndView toApplyUpdate(String checkedId){
-        //获取主键对应基本信息
-
+        //获取主键对应原有基本信息
+        YyApplyDAO yyApplyDAO = applyService.applyDeatil(checkedId);
         //获取种类信息
-
-        //反馈前台被修改前的信息
+        String kindCode = yyKindService.getKindCode(checkedId);
+        String KindValue = yyKindService.getKindValue(checkedId);
+        //当前用户信息，部门信息，联系电话
+        String userName = webUtils.getUsername();
+        HRUser user = userService.getUserByUserName(userName);
+        Map<String,Object> dept = applyService.findDept(user.getUserId());
+        //用印事项下拉框信息
+        List<Map<String,Object>> itemFirst = applyService.getItemFirst();
+        List<Map<String,Object>> itemSecond = applyService.getItemSecond(yyApplyDAO.getItemFirstId());
+        //反馈
         ModelAndView mv = new ModelAndView("yygl/apply/applyUpdate");
+        //修改之前的信息
+        mv.addObject("apply",yyApplyDAO);
+        mv.addObject("kindCode",kindCode);
+        mv.addObject("KindValue",KindValue);
+        mv.addObject("itemFirst",itemFirst);
+        mv.addObject("itemSecond",itemSecond);
+        //基础信息
+        mv.addObject("deptName",dept.get("PDEPTNAME"));
+        mv.addObject("deptId",dept.get("PDEPTID"));
+        mv.addObject("userName",user.getUserAlias());
+        mv.addObject("userId",user.getUserId());
         return mv;
+    }
+
+
+    /**
+     * 修改申请
+     */
+    @ResponseBody
+    @RequestMapping("/applyUpdate")
+    public String applyUpdate(@RequestBody YyApplyVo yyApplyVo){
+        YyApply yyApply = yyApplyVo.toYyApply();
+        //保存申请基本信息
+        String applyUuid = applyService.applyUpdate(yyApply);
+        //修改申请用印种类
+        yyKindService.kindUpdate(yyApplyVo.getUuid(),yyApplyVo.getUseSealKindCode(),yyApplyVo.getElseKind());
+        //反馈前台
+        ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"保存申请信息成功");
+        return JSON.toJSONString(rw);
     }
 
 
@@ -215,8 +252,6 @@ public class YyApplyController {
         //用印基本信息
         YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
         //附件信息
-
-        //流程图信息
 
         //审批信息
 

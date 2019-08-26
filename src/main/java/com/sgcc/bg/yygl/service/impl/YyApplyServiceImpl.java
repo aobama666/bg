@@ -16,10 +16,9 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class YyApplyServiceImpl implements YyApplyService {
@@ -33,7 +32,9 @@ public class YyApplyServiceImpl implements YyApplyService {
 
     @Override
     public Map<String, Object> selectApply(
-            String applyCode,String startTime,String endTime,String useSealStatus,String itemSecondId,String useSealReason
+            String applyCode,String startTime,String endTime
+            ,String useSealStatus,String useSealItemFirst
+            ,String itemSecondId,String useSealReason
             ,Integer page, Integer limit,String userId
     ) {
         //查询参数初始化
@@ -58,10 +59,10 @@ public class YyApplyServiceImpl implements YyApplyService {
         }
         //查内容
         List<Map<String,Object>> applyList = yyApplyMapper.selectApply(
-                applyCode,startTime,endTime,useSealStatus,itemSecondId,useSealReason,pageStart,pageEnd,userId
+                applyCode,startTime,endTime,useSealStatus,useSealItemFirst,itemSecondId,useSealReason,pageStart,pageEnd,userId
         );
         //查数量
-        Integer total = yyApplyMapper.selectApplyTotal(applyCode,startTime,endTime,useSealStatus,itemSecondId,useSealReason,userId);
+        Integer total = yyApplyMapper.selectApplyTotal(applyCode,startTime,endTime,useSealStatus,useSealItemFirst,itemSecondId,useSealReason,userId);
         //查询数据封装
         Map<String, Object> listMap = new HashMap<String, Object>();
         listMap.put("data", applyList);
@@ -167,6 +168,8 @@ public class YyApplyServiceImpl implements YyApplyService {
 
     @Override
     public String applyUpdate(YyApply yyApply) {
+        yyApply.setUpdateUser(getLoginUserUUID());
+        yyApplyMapper.updateApply(yyApply);
         return null;
     }
 
@@ -187,17 +190,27 @@ public class YyApplyServiceImpl implements YyApplyService {
 
     @Override
     public String applyDel(String checkedContent) {
-        //拆分
         String[] checkedIds = checkedContent.split(",");
+        //删除一个，或者多个
         Integer successNum = 0;
         Integer failNum = 0;
         for(String checkedId : checkedIds){
             int result = yyApplyMapper.applyDel(checkedId,YyApplyConstant.STATUS_DEAL_SUB);
-            //pull
-
+            if(result==0){
+                failNum ++;
+            }else{
+                successNum ++;
+            }
         }
-        //循环删除
-        //反馈几个能删几个不能删
-        return null;
+        StringBuffer strb = new StringBuffer();
+        strb.append("删除完成");
+        //反馈成功失败次数
+        if(successNum>0){
+            strb.append(",成功"+successNum+"个");
+        }
+        if(failNum>0){
+            strb.append(",失败"+failNum+"个,只能删除待提交的申请!");
+        }
+        return strb.toString();
     }
 }

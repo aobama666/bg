@@ -25,7 +25,7 @@ apply.query = function(){
     var startTime = $("#startTime").val();
     var endTime = $("#endTime").val();
     if(startTime!=='' && startTime!==null && endTime!=='' && endTime!==null && startTime > endTime){
-        layer.msg("申请日期的结束时间不能大于开始时间")
+        layer.msg("申请日期的结束时间不能早于开始时间")
         return;
     }
 
@@ -142,7 +142,7 @@ apply.toUpdate = function () {
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请修改</h4>',
-        area:['85%','85%'],
+        area:['90%','80%'],
         fixed:false,//不固定
         maxmin:true,
         content:url,
@@ -157,12 +157,35 @@ apply.toUpdate = function () {
  * 选中删除
  */
 apply.del = function () {
-    //获取选中框
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
         layer.alert('请选择要操作的数据',{icon:0,title:'信息提示'});
         return;
     }
+    var checkedIds = "";
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length>0) {
+        for (var i = 0; i < checkedItems.length; i++) {
+            checkedIds += checkedItems[i].UUID + ",";
+        }
+    }
+    checkedIds = checkedIds.slice(0,checkedIds.length-1);
+
+    layer.confirm('确定删除选中的申请吗?',{
+            btn:['确定','取消'],icon:0,title:'自动匹配'
+        },function () {
+            $.ajax({
+                url: "/bg/yygl/apply/del?checkedContent="+checkedIds,
+                type: "post",
+                dataType:"json",
+                contentType: 'application/json',
+                success: function (data) {
+                    layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    apply.queryAddPage();
+                }
+            });
+        }
+    )
 }
 
 
@@ -188,14 +211,7 @@ apply.toDeatil = function (applyUuid) {
  */
 apply.printPreview = function (applyUuid) {
     var url = "/bg/yygl/apply/toPrintPreview?applyUuid="+applyUuid;
-    layer.open({
-        type:2,
-        title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请单-打印预览</h4>',
-        area:['85%','85%'],
-        fixed:false,//不固定
-        maxmin:true,
-        content:url
-    });
+    window.open(url);
 }
 
 
@@ -212,7 +228,30 @@ apply.submit = function () {
         layer.alert('最多同时提交五条申请',{icon:0,title:'信息提示'});
         return;
     }
-    var checkedId = checkedItems[0].UUID;
+    var checkedIds = "";
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length>0) {
+        for (var i = 0; i < checkedItems.length; i++) {
+            checkedIds += checkedItems[i].UUID + ",";
+        }
+    }
+    checkedIds = checkedIds.slice(0,checkedIds.length-1);
+
+    layer.confirm('确定提交选中的申请吗?',{
+            btn:['确定','取消'],icon:0,title:'自动匹配'
+        },function () {
+            $.ajax({
+                url: "/bg/yygl/apply/submit?checkedContent="+checkedIds,
+                type: "post",
+                dataType:"json",
+                contentType: 'application/json',
+                success: function (data) {
+                    layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    apply.queryAddPage();
+                }
+            });
+        }
+    )
 }
 
 

@@ -9,7 +9,7 @@
             #{applyCode},
             #{deptId},
             #{applyUserId},
-            sysdate,
+            to_date(#{useSealDate},'yyyy-mm-dd'),
             #{useSealPhone},
             #{itemFirstId},
             #{itemSecondId},
@@ -23,18 +23,14 @@
 
     <update id="updateApply">
         update bg_yy_apply set
-         apply_code = #{applyCode},
-         dept_id = #{deptId},
-         apply_user_id = #{applyUserId},
-         use_seal_date = sysdate,
+         use_seal_date = to_date(#{useSealDate},'yyyy-mm-dd'),
          use_seal_phone = #{useSealPhone},
-         item_first_if = #{itemFirstId},
+         item_first_id = #{itemFirstId},
          item_second_id = #{itemSecondId},
          use_seal_reason = #{useSealReason},
-         use_seal_status = #{useSealStatus},
          update_user = #{updateUser},
          update_time = sysdate
-        where uuid = #{uuid};
+        where uuid = #{uuid}
     </update>
 
 
@@ -92,6 +88,9 @@
                 <if test="useSealStatus != null and useSealStatus != ''">
                   and a.use_seal_status = #{useSealStatus}
                 </if>
+                <if test="useSealItemFirst != null and useSealItemFirst != ''">
+                  and f.uuid = #{useSealItemFirst}
+                </if>
                 <if test="itemSecondId != null and itemSecondId != ''">
                   and s.uuid = #{itemSecondId}
                 </if>
@@ -116,6 +115,8 @@
         on a.apply_user_id = u.userid
         left join bg_yy_item_second s
         on a.item_second_id = s.uuid
+        left join bg_yy_item_first f
+        on a.item_first_id = f.uuid
         where 1=1
         <if test="applyCode != null and applyCode != ''">
             and a.apply_code like '%'||#{applyCode}||'%'
@@ -128,6 +129,9 @@
         </if>
         <if test="useSealStatus != null and useSealStatus != ''">
             and a.use_seal_status = #{useSealStatus}
+        </if>
+        <if test="useSealItemFirst != null and useSealItemFirst != ''">
+            and f.uuid = #{useSealItemFirst}
         </if>
         <if test="itemSecondId != null and itemSecondId != ''">
             and s.uuid = #{itemSecondId}
@@ -158,6 +162,8 @@
                  where pcode = 'use_seal_status'
                    and code = a.use_seal_status) useSealStatusValue,
                a.use_seal_status useSealStatus,
+               a.item_first_id itemFirstId,
+               a.item_second_id itemSecondId,
                (select replace(wm_concat(nvl(d.name, k.use_seal_value)), ',', ';') useSealKind
                   from bg_yy_kind k,
                        (select *

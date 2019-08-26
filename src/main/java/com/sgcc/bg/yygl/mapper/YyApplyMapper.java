@@ -19,6 +19,7 @@ public interface YyApplyMapper {
             @Param("startTime") String startTime,
             @Param("endTime") String endTime,
             @Param("useSealStatus") String useSealStatus,
+            @Param("useSealItemFirst") String useSealItemFirst,
             @Param("itemSecondId") String itemSecondId,
             @Param("useSealReason") String useSealReason,
             @Param("pageStart") Integer pageStart,
@@ -35,6 +36,7 @@ public interface YyApplyMapper {
             @Param("startTime") String startTime,
             @Param("endTime") String endTime,
             @Param("useSealStatus") String useSealStatus,
+            @Param("useSealItemFirst") String useSealItemFirst,
             @Param("itemSecondId") String itemSecondId,
             @Param("useSealReason") String useSealReason,
             @Param("userId") String userId

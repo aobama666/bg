@@ -24,12 +24,18 @@
     <delete id="delKind">
         update bg_yy_kind
            set valid = '0'
-         where uuid = #{uuid}
+         where apply_id = #{applyUuid}
+         <if test="useSealKindCode!=null and useSealKindCode!=''">
+             and use_seal_kind_code = #{useSealKindCode}
+         </if>
+         <if test="useSealKindCode==null">
+             and use_seal_kind_code is null
+         </if>
     </delete>
 
     <select id="getKindCode" resultType="java.lang.Integer">
         select use_seal_kind_code
-          from bg_yy_kind
+        from bg_yy_kind
          where valid = '1'
         and use_seal_value is null
         and apply_id = #{applyUuid}

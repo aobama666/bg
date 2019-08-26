@@ -112,10 +112,10 @@
     <!--  新增  修改  删除 功能按钮 -->
     <div id="funcBtn" style="height: 35px;float:right">
         <div style="margin-left: 5px;" class='btn right ' onclick="apply.applyExport()" >导出</div>
-        <div style="margin-left: 5px;" class='btn right ' onclick="apply.withdraw()" >撤回</div>
         <div style="margin-left: 5px;" class='btn right ' onclick="apply.del()" >删除</div>
         <div style="margin-left: 5px;" class='btn right ' onclick="apply.toUpdate()" >修改</div>
         <div style="margin-left: 5px;" class='btn right ' onclick="apply.toAdd()" >新增</div>
+        <div style="margin-left: 5px;" class='btn right ' onclick="apply.withdraw()" >撤回</div>
         <div style="margin-left: 5px;" class='btn right ' onclick="apply.submit()" >提交</div>
     </div>
 
