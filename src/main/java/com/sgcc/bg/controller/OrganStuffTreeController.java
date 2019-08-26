@@ -32,7 +32,7 @@ public class OrganStuffTreeController {
 	@Autowired
 	private OrganStuffTreeService organStuffTreeService;
 	@Autowired
-	private OrganStuffTreeNewService organStuffTreeNewOService;
+	private OrganStuffTreeNewService organStuffTreeNewService;
 	@Autowired
 	private  WebUtils webUtils;
 	@Autowired
@@ -379,67 +379,9 @@ public class OrganStuffTreeController {
 							                +"type="+type+";"
 							                +"func="+func);	
 		
-		//获取当前用户权限
-		if(limit!=null&&limit.equals("yes")&&func!=null&&limit.length()>0){
-			limit = "'no_privilege'";
-			String userName = webUtils.getUsername();
-			if(userName!=null&&userName.length()>0){
-				String funcName = func;//功能名称
-				String funcType = "0";//功能类型  0 管理类  1 审批类
-				UserPrivilege priv = userUtils.getNewUserOrganPrivilegeByUserName(userName,funcName,funcType);
-				if(priv!=null){
-					String role = priv.getRoleMgrType();//0 部门  1 院  2 处室
-					if(role.indexOf("1")!=-1){
-						limit = "";
-					}else if(role.indexOf("0")!=-1||role.indexOf("2")!=-1){
-						String deptPriv = "";
-						String labPriv = "";
-						if(role.indexOf("MANAGER_DEPT")!=-1){
-							List<Dept> dept = priv.getOrganForDept();
-							if(dept!=null&&dept.size()>0){
-								StringBuffer sb = new StringBuffer();
-								for(Dept obj:dept){
-									sb.append("'").append(obj.getDeptid()).append("',");
-								}
-								deptPriv = sb.toString();
-								deptPriv = deptPriv.substring(0, deptPriv.lastIndexOf(","));
-							}
-						}
-						if(role.indexOf("MANAGER_LAB")!=-1){
-							List<Dept> dept = priv.getOrganForLab();
-							if(dept!=null&&dept.size()>0){
-								StringBuffer sb = new StringBuffer();
-								for(Dept obj:dept){
-									sb.append("'").append(obj.getDeptid()).append("',");
-									sb.append("'").append(obj.getPdeptid()).append("',");
-								}
-								labPriv = sb.toString();
-								labPriv = labPriv.substring(0, labPriv.lastIndexOf(","));
-							}
-						}
-						if(deptPriv.length()>0||labPriv.length()>0){
-							List<Map<String, Object>> tmpList = organStuffTreeService.queryUserOrganPrivilege(root, deptPriv, labPriv);
-	
-							if(tmpList!=null&&tmpList.size()>0){
-								StringBuffer sb = new StringBuffer();
-								for(Map<String, Object> obj:tmpList){
-									sb.append("'").append(obj.get("DEPTID").toString()).append("',");
-								}
-								String tmp = sb.toString();
-								tmp = tmp.substring(0, tmp.lastIndexOf(","));
-								limit = tmp;
-							}
-						}
-
-					}
-				}
-			}
-		}
-		else{
-			limit = "";
-		}
 		//获取组织或组织人员数据列表
-		List<Map<String, Object>> list = organStuffTreeService.queryAllOrganTree(root,level,limit);
+		String userName = webUtils.getUsername();
+		List<Map<String, Object>> list = organStuffTreeNewService.queryAllOrganTree(root,level,limit);
 		//格式化数据
 		List<Map<String, Object>> treelist = new ArrayList<Map<String, Object>>();
 		for(Map<String, Object> k: list){
