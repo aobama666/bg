@@ -36,19 +36,14 @@ public interface OrganStuffTreeNewService {
 	/**
 	 * 查询全量组织树
 	 * @param rootId 组织ID
-	 * @param level 控制显示层级，如 1 显示到院 2 显示到部门 3 显示到科室
-	 * @param limit 控制是否仅显示当前用户所在的部门或单位，如果是，则传入组织编码
+	 * @param level 控制显示层级，如 <=0 显示到院 <=1 显示到部门 <=2 显示到科室
+	 * @param limit 按权限查询，如果是 'yes',按用户部门或单位权限查询  ，否则，查询所有
+	 * @param funcType limit=yes 功能类型   YYGL BGGL
+	 * @param src 数据来源：type=RZ 人资专用 SRC = 1，其他为报工默认 SRC = 0 或 2
 	 * @return
 	 */
-	List<Map<String, Object>> queryAllOrganTree(String rootId,String level,String limit);
-	/**
-	 * 当用户时部门专责 或 处室专责时，获取部门列表
-	 * @param rootId 组织ID
-	 * @param deptPriv 部门id列表  'xx1','xx2'
-	 * @param labPriv 处室id列表  'xx1','xx2'
-	 * @return
-	 */
-	List<Map<String, Object>> queryUserOrganPrivilege(String rootId,String deptPriv,String labPriv);
+	List<Map<String, Object>> queryAllOrganTree(String rootId,String level,String limit/*,String funcType,String src*/);
+	
 	/**
 	 * 获取用户的有权限的组织层级列表
 	 * @param root 起始根节点编码 
