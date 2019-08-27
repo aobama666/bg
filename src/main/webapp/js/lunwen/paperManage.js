@@ -304,6 +304,7 @@ paperList.delEvent = function(){
                     success: function (data) {
                         layer.alert(data.msg,{icon:1,title:'信息提示'});
                         paperList.queryAddPage();
+                        paperList.changeFieldList();
                     }
                 });
             },function () {

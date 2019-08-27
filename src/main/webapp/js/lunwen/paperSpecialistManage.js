@@ -220,6 +220,7 @@ queryAll.delEvent=function(){
                         layer.alert(data.msg,{icon:0,title:'信息提示'});
                     }
                     queryAll.refresh();
+                    queryAll.changeFieldList();
                 }
             });
         },function () {
