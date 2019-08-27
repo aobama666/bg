@@ -35,13 +35,12 @@
 			<div class="controls">
 				<%--<input type="text" name="projectGrade" property="projectGrade">--%>
 					<select name="projectGrade" property="projectGrade">
-						<options collection="typeList" property="label"
-								 labelProperty="value">
-							<option value="YJ">院级</option>
-							<option value="BMJ">部门级</option>
-							<option value="CSJ">处室级</option>
-						</options>
-					</select>
+					<options collection="typeList" property="label" labelProperty="value">
+                        <option value="YJ">院级</option>
+                        <option value="BMJ">部门级</option>
+                        <option value="CSJ">处室级</option>
+                    </options>
+				</select>
 			</div>
 		</div>
 
@@ -134,6 +133,7 @@
 var src = "BG"//项目来源系统 BG,KY.HX
 var srcProId;//项目信息来源系统的项目id
 var isSaved = false;//标记是否项目已被成功保存
+
 
 function initPro(){
 	$("#startDatePicker,#endDatePicker").datepicker({

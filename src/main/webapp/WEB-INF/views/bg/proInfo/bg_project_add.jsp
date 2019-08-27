@@ -68,7 +68,8 @@
 	<input type="hidden" name="currentHrcode" id="currentHrcode" value="${hrcode}"/>
 	<input type="hidden" name="currentDeptName" id="currentDeptName" value="${deptName}"/>
 	<input type="hidden" name="currentDeptCode" id="currentDeptCode" value="${deptCode}"/>
-	
+	<input type="hidden" name="rankMap" id="rankMap" value="${rankMap}"/>
+
 	<ul id="myTab" class="nav nav-tabs">
 		<li class="active"><a href="#proInfo" data-toggle="tab">项目信息</a></li>
 		<li><a href="#people" data-toggle="">参与人员</a></li>
@@ -96,9 +97,9 @@
 		initPro();
 		queryList();
 		queryList_beforePro();
-	}); 
+	});
 
-	
+
 	function checkNumberFormat(planHours){
 		var result = {};
 		var reg=/^([0-9]|[1-9][0-9]{0,7})$/;
