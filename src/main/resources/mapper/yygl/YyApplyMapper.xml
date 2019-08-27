@@ -35,7 +35,7 @@
 
 
     <update id="updateApplyStatus">
-        update bg_yy_apply set use_seal_status = #{useSealStatus} where uuid = #{uuid};
+        update bg_yy_apply set use_seal_status = #{useSealStatus} where uuid = #{uuid}
     </update>
 
 
@@ -59,6 +59,7 @@
                 from bg_sys_datadictionary
                 where pcode = 'use_seal_status'
                 and code = a.use_seal_status) use_seal_status,
+            a.use_seal_status use_seal_status_code,
             (select replace(wm_concat(nvl(d.name, k.use_seal_value)),',',';') useSealKind
               from bg_yy_kind k,
               (select * from bg_sys_datadictionary d

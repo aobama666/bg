@@ -78,4 +78,14 @@ public interface YyApplyService {
      * 删除
      */
     String applyDel(String checkedContent);
+
+    /**
+     * 撤回申请
+     */
+    String withdraw(String applyUuid);
+
+    /**
+     * 提交
+     */
+    String submit(String checkId);
 }

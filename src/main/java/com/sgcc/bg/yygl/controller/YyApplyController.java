@@ -293,15 +293,28 @@ public class YyApplyController {
         return mv;
     }
 
+    /**
+     * 提交申请
+     */
+    @ResponseBody
+    @RequestMapping("/applySubmit")
+    public String applySubmit(String checkedIds){
+        String msg = applyService.submit(checkedIds);
+        ResultWarp resultWarp = null;
+        resultWarp = new ResultWarp(ResultWarp.SUCCESS,msg);
+        return JSON.toJSONString(resultWarp);
+    }
+
 
     /**
      * 撤回
      */
     @ResponseBody
-    @RequestMapping("/withdraw")
-    public String withdraw(){
+    @RequestMapping("/applyWithdraw")
+    public String applyWithdraw(String applyUuid){
+        applyService.withdraw(applyUuid);
         ResultWarp resultWarp = null;
-        resultWarp = new ResultWarp(ResultWarp.SUCCESS,"success");
+        resultWarp = new ResultWarp(ResultWarp.SUCCESS,"撤回申请成功");
         return JSON.toJSONString(resultWarp);
     }
 

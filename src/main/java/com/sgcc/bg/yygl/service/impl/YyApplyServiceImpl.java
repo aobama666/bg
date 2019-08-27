@@ -213,4 +213,47 @@ public class YyApplyServiceImpl implements YyApplyService {
         }
         return strb.toString();
     }
+
+    @Override
+    public String withdraw(String applyUuid) {
+        //撤回对应申请的流程信息
+
+        //修改申请状态
+        yyApplyMapper.updateApplyStatus(applyUuid,YyApplyConstant.STATUS_WITHDRAW.toString());
+        return null;
+    }
+
+    @Override
+    public String submit(String checkId) {
+        String[] applyIdS = checkId.split(",");
+        YyApplyDAO yyApplyDAO = null;
+        String useSealStatus = "";
+        Integer successNum = 0;
+        Integer failNum = 0;
+        for(String applyId : applyIdS){
+            yyApplyDAO = yyApplyMapper.findApply(applyId);
+            useSealStatus = yyApplyDAO.getUseSealStatus();
+            if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_SUB)
+                ||useSealStatus.equals(YyApplyConstant.STATUS_WITHDRAW)
+                ||useSealStatus.equals(YyApplyConstant.STATUS_RETURN)
+            ){
+                successNum ++;
+                //创建该申请的流程信息
+
+                //修改申请状态
+                yyApplyMapper.updateApplyStatus(applyId,YyApplyConstant.STATUS_DEAL_DEPT);
+            }else{
+                failNum ++;
+            }
+        }
+        StringBuffer stb = new StringBuffer();
+        stb.append("提交完成");
+        if(successNum>0){
+            stb.append(",成功"+successNum+"个");
+        }
+        if(failNum>0){
+            stb.append(",失败"+failNum+"个,只能提交待提交、已撤回、被退回状态的申请!");
+        }
+        return stb.toString();
+    }
 }

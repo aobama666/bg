@@ -241,7 +241,7 @@ apply.submit = function () {
             btn:['确定','取消'],icon:0,title:'自动匹配'
         },function () {
             $.ajax({
-                url: "/bg/yygl/apply/submit?checkedContent="+checkedIds,
+                url: "/bg/yygl/apply/applySubmit?checkedIds="+checkedIds,
                 type: "post",
                 dataType:"json",
                 contentType: 'application/json',
@@ -269,13 +269,19 @@ apply.withdraw = function () {
         return;
     }
     var checkedId = checkedItems[0].UUID;
+    var useSealStatus = checkedItems[0].USE_SEAL_STATUS_CODE;
+    if(useSealStatus==='1' || useSealStatus==='2' || useSealStatus==='3'){
+        layer.alert("该数据未提交无需撤回",{icon:2,title:'信息提示'});
+        return;
+    }
     $.ajax({
-        url: "/bg/yygl/apply/withdraw",
+        url: "/bg/yygl/apply/applyWithdraw?applyUuid="+checkedId,
         type: "post",
         dataType:"json",
         data: {'checkedId':checkedId},
         success: function (data) {
-            console.info(data.data);
+            layer.alert(data.msg,{icon:1,title:'信息提示'});
+            apply.queryAddPage();
         }
     });
 }
