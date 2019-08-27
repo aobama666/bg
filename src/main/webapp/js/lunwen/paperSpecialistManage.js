@@ -179,6 +179,7 @@ queryAll.joinEvent = function () {
         content:url,
         end: function () {
             queryAll.query();
+            queryAll.changeFieldList();
         }
     });
 }

@@ -417,6 +417,7 @@ paperList.jumpImport = function (){
         content:url,
         end: function () {
             paperList.query();
+            paperList.changeFieldList();
         }
     });
 };
