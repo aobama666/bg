@@ -9,6 +9,7 @@ import com.sgcc.bg.yygl.service.YyKindService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -50,23 +51,48 @@ public class YyKindServiceImpl implements YyKindService {
 
     @Override
     public Integer kindUpdate(String applyUuid,String kindCode,String elseKind) {
+        //本次修改选择的种类信息
         String[] kindCodeArrayNew = kindCode.split(",");
-        //查看原有编码
+        //库中申请表中对应原有编码
         String kindCodeStr = getKindCode(applyUuid);
-        //替换获取到新的需要添加的编码，旧的编码需要删除的编码
         String[] kindCodeArrayOld   = kindCodeStr.split(",");
-        for(int i=0;i<kindCodeArrayNew.length;i++){
-            for(int j=0;j<kindCodeArrayOld.length;j++){
-                if(kindCodeArrayOld[j].equals(kindCodeArrayNew[i])){
-                    kindCodeArrayNew[i] = null;
-                    kindCodeArrayOld[j] = null;
+
+        //替换获取到新的需要添加的编码，旧的编码需要删除的编码
+        //算法拙劣，如有更方便快捷的方式，请在保留业务基础上做更好的修改
+        List<String> kindCodeAdd = new ArrayList<String>();
+        List<String> kindCodeDel = new ArrayList<String>();
+        boolean ifEqual = true;
+        //获取需要新增的信息
+        for(String n : kindCodeArrayNew){
+            ifEqual = true;
+            for(String o : kindCodeArrayOld){
+                if(n.equals(o)){
+                    ifEqual = false;
+                    break;
                 }
             }
+            if(ifEqual){
+                kindCodeAdd.add(n);
+            }
         }
+        //获取需要删除的信息
+        for(String o : kindCodeArrayOld){
+            for(String n : kindCodeArrayNew){
+                ifEqual = true;
+                if(n.equals(o)){
+                    ifEqual = false;
+                    break;
+                }
+            }
+            if(ifEqual){
+                kindCodeDel.add(o);
+            }
+        }
+
         //插入新的编码
         YyKind yyKind = null;
         String userId = yyApplyService.getLoginUserUUID();
-        for(String kind : kindCodeArrayNew){
+        for(String kind : kindCodeAdd){
             yyKind = new YyKind();
             yyKind.setUuid(Rtext.getUUID());
             yyKind.setApplyId(applyUuid);
@@ -76,9 +102,10 @@ public class YyKindServiceImpl implements YyKindService {
             yyKindMapper.addKind(yyKind);
         }
         //删除旧的编码
-        for(String kind : kindCodeArrayOld){
+        for(String kind : kindCodeDel){
             yyKindMapper.delKind(applyUuid,kind);
         }
+
         //查看原有自定义信息是否一致，如果不一致，逻辑删除，再新增一条
         String kindValue = yyKindMapper.getKindValue(applyUuid);
         if(!elseKind.equals(kindValue)){
