@@ -131,10 +131,10 @@ apply.toUpdate = function () {
     //获取选中框
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        layer.alert('请选择要操作的数据',{icon:0,title:'信息提示'});
+        layer.msg('请选择要操作的数据');
         return;
     }else if(checkedItems.length>1){
-        layer.alert('每次只能修改一条数据',{icon:0,title:'信息提示'});
+        layer.msg('每次只能修改一条数据');
         return;
     }
     var checkedId = checkedItems[0].UUID;
@@ -159,7 +159,7 @@ apply.toUpdate = function () {
 apply.del = function () {
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        layer.alert('请选择要操作的数据',{icon:0,title:'信息提示'});
+        layer.msg('请选择要操作的数据');
         return;
     }
     var checkedIds = "";
@@ -180,7 +180,7 @@ apply.del = function () {
                 dataType:"json",
                 contentType: 'application/json',
                 success: function (data) {
-                    layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    layer.msg(data.msg);
                     apply.queryAddPage();
                 }
             });
@@ -222,10 +222,10 @@ apply.submit = function () {
     //获取选中框
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        layer.alert('请选择要操作的数据',{icon:0,title:'信息提示'});
+        layer.msg('请选择要操作的数据');
         return;
     }else if(checkedItems.length>5){
-        layer.alert('最多同时提交五条申请',{icon:0,title:'信息提示'});
+        layer.msg('最多同时提交五条申请');
         return;
     }
     var checkedIds = "";
@@ -246,7 +246,7 @@ apply.submit = function () {
                 dataType:"json",
                 contentType: 'application/json',
                 success: function (data) {
-                    layer.alert(data.msg,{icon:1,title:'信息提示'});
+                    layer.msg(data.msg);
                     apply.queryAddPage();
                 }
             });
@@ -271,19 +271,24 @@ apply.withdraw = function () {
     var checkedId = checkedItems[0].UUID;
     var useSealStatus = checkedItems[0].USE_SEAL_STATUS_CODE;
     if(useSealStatus==='1' || useSealStatus==='2' || useSealStatus==='3'){
-        layer.alert("该数据未提交无需撤回",{icon:2,title:'信息提示'});
+        layer.msg("该数据未提交无需撤回");
         return;
     }
-    $.ajax({
-        url: "/bg/yygl/apply/applyWithdraw?applyUuid="+checkedId,
-        type: "post",
-        dataType:"json",
-        data: {'checkedId':checkedId},
-        success: function (data) {
-            layer.alert(data.msg,{icon:1,title:'信息提示'});
-            apply.queryAddPage();
-        }
-    });
+
+    layer.confirm('确定撤回选中的申请吗?',{
+        btn:['确定','取消'],icon:0,title:'自动匹配'
+    },function () {
+        $.ajax({
+            url: "/bg/yygl/apply/applyWithdraw?applyUuid="+checkedId,
+            type: "post",
+            dataType:"json",
+            data: {'checkedId':checkedId},
+            success: function (data) {
+                layer.msg(data.msg);
+                apply.queryAddPage();
+            }
+        });
+    })
 }
 
 

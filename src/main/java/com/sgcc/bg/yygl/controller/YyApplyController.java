@@ -167,6 +167,7 @@ public class YyApplyController {
         yyKindService.kindAdd(applyUuid,yyApplyVo.getUseSealKindCode(),yyApplyVo.getElseKind());
         //反馈前台
         ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"保存申请信息成功");
+        rw.addData("applyUuid",applyUuid);
         return JSON.toJSONString(rw);
     }
 
@@ -265,20 +266,9 @@ public class YyApplyController {
     /**
      * 跳转到新增附件页面
      */
-    @RequestMapping("/toAddAnnex")
-    public ModelAndView toAddAnnex(){
-        ModelAndView mv = new ModelAndView("yygl/apply/applyAddAnnex");
-        return mv;
-    }
-
-
-
-    /**
-     * 跳转到修改附件页面
-     */
-    @RequestMapping("/toUpdateAnnex")
-    public ModelAndView toUpdateAnnex(){
-        ModelAndView mv = new ModelAndView("yygl/apply/applyUpdateAnnex");
+    @RequestMapping("/toStuffAdd")
+    public ModelAndView toAddAnnex(String applyUuid){
+        ModelAndView mv = new ModelAndView("yygl/apply/applyStuffAdd");
         return mv;
     }
 

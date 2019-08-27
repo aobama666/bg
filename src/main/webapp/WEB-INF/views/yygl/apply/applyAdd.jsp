@@ -37,7 +37,7 @@
             <span title = "用印部门"><b class="mustWrite">*</b>用印部门</span>
         </td>
         <td style="width: 40%" class="addInputStyle">
-            <input type = "text" style="display: none" id = "uuid"  name="uuid">
+            <input type = "text" style="display: none" id = "applyUuid"  name="applyUuid">
             <input type = "text" style="display: none" id = "applyDeptId"  name="applyDeptId" value="${deptId}">
             <input type="text"  id="applyDept"  name="applyDept" readonly value="${deptName}"
                    class="validNull"  len="50"   content="用印部门" title="必填项"/>
@@ -118,8 +118,8 @@
 
 <div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 1%">
     <div style="float: right">
-        <button type="button" class="btn" onclick="uploadAnnex.addOperation()">新增附件</button>
-        <button type="button" class="btn" onclick="uploadAnnex.delEvent()">删除附件</button>
+        <button type="button" class="btn" onclick="applyOperate.addStuff()">新增</button>
+        <button type="button" class="btn" onclick="applyOperate.delStuff()">删除</button>
     </div>
     <h4>用印材料详情</h4>
 
