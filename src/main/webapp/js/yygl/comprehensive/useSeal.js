@@ -167,32 +167,6 @@ changeItemFirst = function () {
 
 
 
-/*  start 全选、取消全选 */
-$(".check_").change(function(){
-	if(this.checked==true){
-		var checkBoxs=$("input:checkbox[name=oneCheck]");
-		checkBoxs.each(function(i){
-			checkBoxs[i].checked=true;
-		});
-	}else{
-		var checkBoxs=$("input:checkbox[name=oneCheck]");
-			checkBoxs.each(function(i){
-				checkBoxs[i].checked=false;
-		});
-	}
-});
-/*  end 全选、取消全选 */
-
-/* 初始化dataItems */
-roomList.initItems = function(){
-	dataItems = new Array();
-	index = 0;
-}
-/* end 删除方法*/
-roomList.resize=function(){
-	var height=$("body").height()-$(".sheach").height()-$("#funcBtn").height()-65;
-	$("#datagrid>div").css({"height":height});
-}
  
 
 

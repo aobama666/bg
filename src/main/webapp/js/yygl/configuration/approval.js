@@ -38,7 +38,7 @@ roomList.query = function(){
 }
 /*  end  列表查询  */
 
-/* 用印管理-初始化列表界面  */
+/* 用印事项管理-初始化列表界面  */
 roomList.initDataGrid = function(){
 	    $("#datagrid").datagrid({
 		url: "/bg/yyComprehensive/selectForSealInfo",
@@ -56,24 +56,12 @@ roomList.initDataGrid = function(){
                     return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.applyId)+'"/>';
                 }
             },
-            {name: '申请编号',style:{width:"150px"}, data: 'applyCode',forMat:function(row){
-                    return "<a title = '"+row.applyCode+"' style='width:150px;" +
+            {name: '部门', style:{width:"200px"},data: 'userSealReason'},
+            {name: '节点类型', style:{width:"100px"},data: 'secondCategoryName'},
+            {name: '员工账号',style:{width:"200px"},data: 'userSealkindName'   },
+            {name: '员工姓名',style:{width:"150px"}, data: 'deptName'},
+            {name: '用印事项', style:{width:"150px"},data: 'applyUserName'},
 
-                        "white-space: nowrap;" +
-                        "text-overflow: ellipsis;" +
-                        "overflow: hidden;' applyCode = '"+row.applyCode+"'  ,applyId ='"+row.applyId+"' " +
-                        "href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.applyCode+"','"+row.applyId+"')>"+row.applyCode+"</a>";
-
-                }},
-            {name: '用印事由', style:{width:"200px"},data: 'userSealReason'},
-            {name: '用印部门',style:{width:"150px"}, data: 'deptName'},
-            {name: '用印申请人', style:{width:"150px"},data: 'applyUserName'},
-            {name: '用印日期', style:{width:"150px"},data: 'userSealDate'},
-            {name: '用印事项', style:{width:"100px"},data: 'secondCategoryName'},
-            {name: '用印种类',style:{width:"200px"},data: 'userSealkindName'   },
-            {name: '审批状态', style:{width:"150px"},data: 'userSealStatusName' },
-            {name: '申请单位经办', style:{width:"100px"},data: 'applyHandleUserName' },
-            {name: '办公室经办人', style:{width:"100px"},data: 'officeHandleUserName' }
 		]
 	});
 
@@ -105,54 +93,23 @@ changeItemFirst = function () {
     });
 }
 
-
-	
-	/*演示中心管理-查看 */	
-	roomList.forDetails = function (id,applyId){
-		var url = "/bg/yszx/details?id="+id+"&applyId="+applyId;
+		/*用印事项管理-新增 */
+		roomList.approvalForSave = function (){
+			var url = "/bg/yyConfiguration/approvalForSaveIndex";
 			layer.open({
 				type:2,
-				title:'<h4 style="height:42px;line-height:25px;">参观预定详情</h4>',
-				area:['85%','85%'],
-				fixed:false,//不固定
-				maxmin:true,
-				content:url, 
+				title:'<h4 style="height:42px;line-height:25px;">用印事项二级类别新增</h4>',
+				area:['600px','350px'],
+				content:url,
 			});
-	}
-	 
-		
-	/* 用印管理-综合查询导出功能*/
-	roomList.expEvent = function(){
-		 debugger;
-		var $tr = $("#datagrid tr");
-		if($tr.length == 1){
-			alert("没有要导出的数据！");
-		}else{
-			var applyCode = $("#queryForm #applyCode").val();
-			var stateDate = $("#queryForm #stateDate").val();
-			var endDate = $("#queryForm #endDate").val();
-			var itemFirst = $("#queryForm #itemFirst").val();
-			var itemSecond = $("#queryForm #itemSecond").val();
-			var deptId = $("#queryForm #deptId").val();
-            var useSealReason = $("#queryForm #useSealReason").val();
-            var useSealStatus = $("#queryForm #useSealStatus").val();
-			var applyIds = dataGrid.getCheckedIds();
-			$("input[name=applyId]").val(applyIds);
-			var ran = Math.random()*1000;
-			document.forms[0].action ="/bg/yyComprehensive/selectForComprehensiveExl?ran="+ran;
-			document.forms[0].submit();
 		}
-	}
-	 
- 
-	 
-	
-
-
-
-
-
- 
-
-
- 
+		/*用印事项管理-修改 */
+		roomList.approvalForUpdata = function (){
+			var url = "/bg/yyConfiguration/approvalForSaveIndex";
+			layer.open({
+				type:2,
+				title:'<h4 style="height:42px;line-height:25px;">用印事项二级类别修改</h4>',
+				area:['600px','350px'],
+				content:url,
+			});
+		}

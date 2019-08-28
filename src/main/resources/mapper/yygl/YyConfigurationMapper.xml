@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.yygl.mapper.YyConfigurationMapper">
+
+    <!--用印事项查询公共sql-->
+    <sql id="mattersInfo">
+        SELECT   *  FROM (
+        SELECT
+        S.FIRST_CATEGORY_ID   as "firstCategoryId",
+        F.FIRST_CATEGORY_NAME as "firstCategoryName",
+        S.UUID   as "secondCategoryId",
+        S.SECOND_CATEGORY_NAME  as "secondCategoryName",
+        DECODE( S.IF_SIGN,'0','否','1','是')  as "ifSign",
+        (select   wm_concat(NVL(D.DEPTNAME ,''))
+        FROM   BG_YY_ITEM_SECOND_DEPT SD
+        LEFT   JOIN      BG_SYS_DEPT   D  ON    SD.DEPT_ID=D.DEPTID
+        where   SD. VALID ='1'   AND   SD.SECOND_CATEGORY_ID = S.UUID    )  as  "businessDeptName",
+        DECODE(S.IF_LEADER_APPROVE,'0','否','1','是')   as "ifLeaderApprove",
+        S.CREATE_TIME   as  "createTime"
+        FROM   BG_YY_ITEM_SECOND  S
+        LEFT   JOIN      BG_YY_ITEM_FIRST  F  ON    S.FIRST_CATEGORY_ID=F.UUID
+        WHERE   S.VALID='1'  and   S.VALID='1'
+        )  T  where  1=1
+        <if test="mattersMap.itemFirst!= null and mattersMap.itemFirst!= ''">
+            and   T."firstCategoryId"  = #{mattersMap.itemFirst}
+        </if>
+        <if test="mattersMap.itemSecond!= null and mattersMap.itemSecond!= ''">
+            and   T."secondCategoryId" = #{mattersMap.itemSecond}
+        </if>
+        <if test="mattersMap.businessDeptName !=null and mattersMap.businessDeptName!=''">
+            and  T."businessDeptName"  like '%'||#{mattersMap.businessDeptName}||'%'
+        </if>
+        ORDER BY  T."createTime" DESC
+    </sql>
+    <!-- 用印事项的查询-->
+    <select id="selectForMatters" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT  T.*  from(
+        SELECT  TB.* , ROWNUM AS ROWNO  from(
+        <include refid="mattersInfo"/>
+        ) TB  WHERE #{mattersMap.page_end} >= ROWNUM
+        ) T   WHERE T.ROWNO > #{mattersMap.page_start}
+
+    </select>
+    <!-- 综合查询条数-->
+    <select id="selectForMattersNum" resultType="java.lang.String" parameterType="java.util.HashMap" >
+        SELECT    COUNT(1)  AS "countNum"  from(<include refid="mattersInfo"/>)
+    </select>
+
+
+
+</mapper>
