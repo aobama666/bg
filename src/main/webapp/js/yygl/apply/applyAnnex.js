@@ -94,6 +94,6 @@ annex.addStuff = function () {
 
 //删除对应用印材料
 annex.delStuff = function () {
-//重新pull
+//重新push
 
 }
