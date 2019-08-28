@@ -90,6 +90,8 @@ public class LwPaperServiceImpl implements LwPaperService {
 
     @Override
     public Integer updateLwPaper(LwPaper lwPaper) {
+        //防止匹配因为空格出现的问题
+        lwPaper.setField(lwPaper.getField().trim());
         return lwPaperMapper.updateLwPaper(lwPaper);
     }
 

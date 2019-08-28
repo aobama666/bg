@@ -230,6 +230,7 @@ public class LwPaperController {
 
         //验证题目是否唯一
         LwPaper lwPaper = mapToLwPaper(paramsMap);
+        lwPaper.setPaperName(lwPaper.getPaperName().trim());
         Map<String,Object> lwMap = lwPaperService.findPaper(null,lwPaper.getPaperName());
         if(null != lwMap){
             log.info(getLoginUser()+"insert lwPaper fail,paperName exist,info:"+paramsMap.toString());
@@ -289,7 +290,7 @@ public class LwPaperController {
     public String paperToUpdate(@RequestBody Map<String, Object> paramsMap){
         ResultWarp rw = null;
         LwPaper lwPaper = mapToLwPaper(paramsMap);
-
+        lwPaper.setPaperName(lwPaper.getPaperName().trim());
         Map<String,Object> lwMap = lwPaperService.findPaper(null,lwPaper.getPaperName());
         if(null != lwMap){
             if(!lwMap.get("UUID").equals(paramsMap.get("uuid").toString())){
@@ -302,8 +303,6 @@ public class LwPaperController {
         lwPaper.setUpdateUser(getLoginUserUUID());
         lwPaper.setUpdateTime(new Date());
         lwPaper.setUuid(paramsMap.get("uuid").toString());
-        //防止匹配因为空格出现的问题
-        lwPaper.setField(lwPaper.getField().trim());
         lwPaperService.updateLwPaper(lwPaper);
         log.info(getLoginUser()+"update lwPaper success,info:"+lwPaper.toString());
         rw = new ResultWarp(ResultWarp.SUCCESS ,"修改论文基本信息成功");
