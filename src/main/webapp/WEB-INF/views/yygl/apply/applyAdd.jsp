@@ -21,7 +21,7 @@
     <link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" media="all">
     <style type="text/css">
         .tableBody{
-            height: 200px!important;
+            height: 100px!important;
         }
     </style>
 </head>
@@ -37,7 +37,7 @@
             <span title = "用印部门"><b class="mustWrite">*</b>用印部门</span>
         </td>
         <td style="width: 40%" class="addInputStyle">
-            <input type = "text" style="display: none" id = "applyUuid"  name="applyUuid">
+            <input type = "text" style="display: none" id = "uuid"  name="uuid">
             <input type = "text" style="display: none" id = "applyDeptId"  name="applyDeptId" value="${deptId}">
             <input type="text"  id="applyDept"  name="applyDept" readonly value="${deptName}"
                    class="validNull"  len="50"   content="用印部门" title="必填项"/>
@@ -111,19 +111,16 @@
             <input type="text"  id="useSealReason" name="useSealReason"  class="validNull"  content="用印事由"  len="50"  title="必填项  "/>
         </td>
     </tr>
-    <%--<tr>
-        <hr/>
-    </tr>--%>
 </table>
 
 <div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 1%">
-    <div style="float: right">
-        <button type="button" class="btn" onclick="applyOperate.addStuff()">新增</button>
-        <button type="button" class="btn" onclick="applyOperate.delStuff()">删除</button>
+    <h3 style="float: left">用印材料详情</h3>
+    <div style="text-align: right">
+        <button type="button" class="btn" onclick="annex.addStuff()">新增</button>
+        <button type="button" class="btn" onclick="annex.delStuff()">删除</button>
     </div>
-    <h4>用印材料详情</h4>
 
-    <div id="datagrid"></div>
+    <div id="datagrid" style="padding-top: 3px;"></div>
 </div>
 
 
@@ -148,5 +145,6 @@
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
 <script src="<%=request.getContextPath()%>/js/yygl/apply/applyOperate.js"></script>
+<script src="<%=request.getContextPath()%>/js/yygl/apply/applyAnnex.js"></script>
 </body>
 </html>

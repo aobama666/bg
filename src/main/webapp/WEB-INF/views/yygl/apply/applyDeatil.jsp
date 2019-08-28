@@ -25,7 +25,7 @@
     <link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" media="all">
     <style type="text/css">
         .tableBody{
-            height: 200px!important;
+            height: 100px!important;
         }
     </style>
 </head>
@@ -86,8 +86,26 @@
 </table>
 
 <div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 1%">
-    <h4>用印材料详情</h4>
-    <div id="datagrid"></div>
+    <h3 style="float: left">用印材料详情</h3>
+    <div style="text-align: right">
+        <button type="button" class="btn" onclick="annex.addStuff()">新增</button>
+        <button type="button" class="btn" onclick="annex.delStuff()">删除</button>
+    </div>
+
+    <div id="datagrid" style="padding-top: 3px;"></div>
 </div>
+
+<div style="text-align: center">
+<button type="button" class="btn" onclick="returnClose()">返回</button>
+</div>
+
 </body>
+<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
+<script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
+<script src="<%=request.getContextPath()%>/js/yygl/apply/applyAnnex.js"></script>
+<script type="">
+    function returnClose() {
+        parent.layer.closeAll();
+    }
+</script>
 </html>

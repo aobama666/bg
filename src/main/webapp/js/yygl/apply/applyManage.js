@@ -262,10 +262,10 @@ apply.withdraw = function () {
     //获取选中框
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        layer.alert('请选择要操作的数据',{icon:0,title:'信息提示'});
+        layer.msg('请选择要操作的数据');
         return;
     }else if(checkedItems.length>1){
-        layer.alert('每次只能撤回一条数据',{icon:0,title:'信息提示'});
+        layer.msg('每次只能撤回一条数据');
         return;
     }
     var checkedId = checkedItems[0].UUID;
@@ -305,7 +305,6 @@ apply.applyExport = function () {
 
     var $tr = $("#datagrid tr");
     if($tr.length == 1){
-        // layer.alert('没有要导出的数据！',{icon:0,title:'信息提示'});
         layer.msg("没有要导出的数据！");
     }else {
         var ids = "";

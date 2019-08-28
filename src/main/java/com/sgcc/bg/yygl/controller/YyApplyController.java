@@ -262,18 +262,6 @@ public class YyApplyController {
     }
 
 
-
-    /**
-     * 跳转到新增附件页面
-     */
-    @RequestMapping("/toStuffAdd")
-    public ModelAndView toAddAnnex(String applyUuid){
-        ModelAndView mv = new ModelAndView("yygl/apply/applyStuffAdd");
-        return mv;
-    }
-
-
-
     /**
      * 跳转到打印预览页
      */

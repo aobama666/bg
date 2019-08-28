@@ -35,7 +35,7 @@
             <span title = "用印材料"><b class="mustWrite">*</b>用印材料</span>
         </td>
         <td style="width: 80%" class="addInputStyle">
-            <input type = "text" style="display: none" id = "applyUuid"  name="applyUuid">
+            <input type = "text" style="display: none" id = "applyUuid"  name="applyUuid" value="${applyUuid}"/>
             <div class="controls" class="form-control">
                 <input id="useSealFile" type="file" name="useSealFile" class="validNull"  property="file"
                        content="用印材料" title="必填项" style="display:inline-block;">

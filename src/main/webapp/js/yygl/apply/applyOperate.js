@@ -101,7 +101,7 @@ applyOperate.applyAdd = function () {
                 data: JSON.stringify(paperDetailFormData),
                 success: function (data) {
                     if(data.success=="true"){
-                        $("#applyUuid").attr("value",data.data.applyUuid);
+                        $("#uuid").attr("value",data.data.applyUuid);
                         document.getElementById("applyAdd").setAttribute("disabled","disabled");
                         layer.alert(data.msg,{icon:1,title:'信息提示'});
                     }else{
@@ -197,19 +197,3 @@ applyOperate.changeItemFirst = function () {
     });
 }
 
-
-//弹出新增用印材料窗口
-applyOperate.addStuff = function () {
-    var applyUuid = $("#applyUuid").val();
-    var url = "/bg/yygl/apply/toStuffAdd?applyUuid="+applyUuid;
-    layer.open({
-        type:2,
-        title:'<h4 style="font-size: 18px;padding-top: 10px">用印材料新增</h4>',
-        area:['80%','70%'],
-        fixed:false,//不固定
-        maxmin:true,
-        content:url,
-        end: function () {
-        }
-    });
-}

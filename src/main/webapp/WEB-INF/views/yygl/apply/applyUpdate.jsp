@@ -119,13 +119,13 @@
 </table>
 
 <div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 1%">
-    <div style="float: right">
-        <button type="button" class="btn" onclick="uploadAnnex.addOperation()">新增附件</button>
-        <button type="button" class="btn" onclick="uploadAnnex.delEvent()">删除附件</button>
+    <h3 style="float: left">用印材料详情</h3>
+    <div style="text-align: right">
+        <button type="button" class="btn" onclick="annex.addStuff()">新增</button>
+        <button type="button" class="btn" onclick="annex.delStuff()">删除</button>
     </div>
-    <h4>用印材料详情</h4>
 
-    <div id="datagrid"></div>
+    <div id="datagrid" style="padding-top: 3px;"></div>
 </div>
 
 
@@ -150,5 +150,6 @@
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
 <script src="<%=request.getContextPath()%>/js/yygl/apply/applyOperate.js"></script>
+<script src="<%=request.getContextPath()%>/js/yygl/apply/applyAnnex.js"></script>
 </body>
 </html>
