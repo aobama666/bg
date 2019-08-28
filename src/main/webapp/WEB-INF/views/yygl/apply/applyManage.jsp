@@ -69,9 +69,11 @@
         </select>
         <span style="margin-left: 20px"></span>
         <label>用印事项二级：</label>
-        <select id = "itemSecondId" name = "itemSecondId"   class = "changeQuery changeYear">
-            <option value = "" selected>请选择</option>
-        </select>
+        <div id="selectSecondItem" style="display: inline">
+            <select id = "itemSecondId" name = "itemSecondId"   class = "changeQuery changeYear">
+                <option value = "" selected>请选择</option>
+            </select>
+        </div>
 
         <br/>
         <span style="margin-left: 20px"></span>
@@ -89,12 +91,12 @@
         <span style="margin-left: 20px"></span>
         <label>申请日期：</label>
         <span style="margin-left: 24px"></span>
-        <div class="layui-inline">
-            <input type="text" class="layui-input" id="startTime" name="startTime" style="width: 100px" />
+        <div class="layui-inline" style="width: 6%">
+            <input type="text" class="layui-input" id="startTime" name="startTime" style="width: 100%" />
         </div>
         <label>至</label>
-        <div class="layui-inline">
-            <input type="text" class="layui-input" id="endTime" name="endTime" style="width: 100px"/>
+        <div class="layui-inline" style="width: 6%">
+            <input type="text" class="layui-input" id="endTime" name="endTime" style="width: 100%"/>
         </div>
 
 
@@ -110,10 +112,10 @@
     <!--  新增  修改  删除 功能按钮 -->
     <div id="funcBtn" style="height: 35px;float:right">
         <div style="margin-left: 5px;" class='btn right ' onclick="apply.applyExport()" >导出</div>
-        <div style="margin-left: 5px;" class='btn right ' onclick="apply.withdraw()" >撤回</div>
         <div style="margin-left: 5px;" class='btn right ' onclick="apply.del()" >删除</div>
         <div style="margin-left: 5px;" class='btn right ' onclick="apply.toUpdate()" >修改</div>
         <div style="margin-left: 5px;" class='btn right ' onclick="apply.toAdd()" >新增</div>
+        <div style="margin-left: 5px;" class='btn right ' onclick="apply.withdraw()" >撤回</div>
         <div style="margin-left: 5px;" class='btn right ' onclick="apply.submit()" >提交</div>
     </div>
 

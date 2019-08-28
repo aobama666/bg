@@ -1,7 +1,7 @@
 package com.sgcc.bg.yygl.mapper;
 
 import com.sgcc.bg.yygl.bean.YyApply;
-import com.sgcc.bg.yygl.pojo.YyApplyVo;
+import com.sgcc.bg.yygl.pojo.YyApplyDAO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -19,6 +19,7 @@ public interface YyApplyMapper {
             @Param("startTime") String startTime,
             @Param("endTime") String endTime,
             @Param("useSealStatus") String useSealStatus,
+            @Param("useSealItemFirst") String useSealItemFirst,
             @Param("itemSecondId") String itemSecondId,
             @Param("useSealReason") String useSealReason,
             @Param("pageStart") Integer pageStart,
@@ -35,6 +36,7 @@ public interface YyApplyMapper {
             @Param("startTime") String startTime,
             @Param("endTime") String endTime,
             @Param("useSealStatus") String useSealStatus,
+            @Param("useSealItemFirst") String useSealItemFirst,
             @Param("itemSecondId") String itemSecondId,
             @Param("useSealReason") String useSealReason,
             @Param("userId") String userId
@@ -44,7 +46,7 @@ public interface YyApplyMapper {
     /**
      * 按照条件导出
      */
-    List<YyApplyVo> selectApplyExport(
+    List<YyApplyDAO> selectApplyExport(
             @Param("applyCode") String applyCode,
             @Param("startTime") String startTime,
             @Param("endTime") String endTime,
@@ -74,7 +76,7 @@ public interface YyApplyMapper {
     /**
      * 根据编号或者主键查询对应申请详细信息
      */
-    YyApplyVo findApply(@Param("uuid") String uuid, @Param("applyCode") String applyCode);
+    YyApplyDAO findApply(@Param("uuid") String uuid);
 
 
 
@@ -102,7 +104,7 @@ public interface YyApplyMapper {
     /**
      * 删除申请
      */
-    Integer updateValid(@Param("uuid") String uuid, @Param("valid") String valid);
+    Integer applyDel(@Param("uuid") String uuid, @Param("useSealStatus") String useSealStatus);
 
 
 

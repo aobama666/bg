@@ -1,44 +1,48 @@
 package com.sgcc.bg.yygl.pojo;
 
+import com.sgcc.bg.yygl.bean.YyApply;
+
+/**
+ * 前端传值
+ */
 public class YyApplyVo {
 
     //主键
     private String uuid;
-
     //申请编号
     private String applyCode;
-    //用印事由
-    private String useSealReason;
-    //用印部门
-    private String applyDept;
-    //用印部门ID
+    //部门id
     private String applyDeptId;
-    //用印申请人
-    private String applyUser;
-    //用印申请人id
-    private String applyUserId;
-    //用印日期
+    //申请用印日期
     private String useSealDate;
-    //申请日期
-    private String createTime;
+    //申请人
+    private String applyUserId;
     //联系电话
     private String useSealPhone;
-    //用印事项
-    private String useSealItem;
-    //用印种类
-    private String useSealkind;
-    //用印申请状态
-    private String useSealStatus;
-    //用印申请状态对应内容
-    private String useSealStatusValue;
+    //一级事项
+    private String useSealItemFirst;
+    //二级事项
+    private String useSealItemSecond;
+    //用印种类编码数组
+    private String useSealKindCode;
+    //其他种类内容
+    private String elseKind;
+    //用印事由
+    private String useSealReason;
 
-    private String itemFirstId;
-    private String itemSecondId;
-
-    private String createUser;
-    private String updateTime;
-    private String updateUser;
-    private String valid;
+    public YyApply toYyApply(){
+        YyApply y = new YyApply();
+        y.setUuid(getUuid());
+        y.setApplyCode(getApplyCode());
+        y.setDeptId(getApplyDeptId());
+        y.setUseSealDate(getUseSealDate());
+        y.setApplyUserId(getApplyUserId());
+        y.setUseSealPhone(getUseSealPhone());
+        y.setItemFirstId(getUseSealItemFirst());
+        y.setItemSecondId(getUseSealItemSecond());
+        y.setUseSealReason(getUseSealReason());
+        return y;
+    }
 
     public String getUuid() {
         return uuid;
@@ -56,28 +60,12 @@ public class YyApplyVo {
         this.applyCode = applyCode;
     }
 
-    public String getUseSealReason() {
-        return useSealReason;
+    public String getApplyDeptId() {
+        return applyDeptId;
     }
 
-    public void setUseSealReason(String useSealReason) {
-        this.useSealReason = useSealReason;
-    }
-
-    public String getApplyDept() {
-        return applyDept;
-    }
-
-    public void setApplyDept(String applyDept) {
-        this.applyDept = applyDept;
-    }
-
-    public String getApplyUser() {
-        return applyUser;
-    }
-
-    public void setApplyUser(String applyUser) {
-        this.applyUser = applyUser;
+    public void setApplyDeptId(String applyDeptId) {
+        this.applyDeptId = applyDeptId;
     }
 
     public String getUseSealDate() {
@@ -88,54 +76,6 @@ public class YyApplyVo {
         this.useSealDate = useSealDate;
     }
 
-    public String getUseSealPhone() {
-        return useSealPhone;
-    }
-
-    public void setUseSealPhone(String useSealPhone) {
-        this.useSealPhone = useSealPhone;
-    }
-
-    public String getUseSealItem() {
-        return useSealItem;
-    }
-
-    public void setUseSealItem(String useSealItem) {
-        this.useSealItem = useSealItem;
-    }
-
-    public String getUseSealkind() {
-        return useSealkind;
-    }
-
-    public void setUseSealkind(String useSealkind) {
-        this.useSealkind = useSealkind;
-    }
-
-    public String getUseSealStatus() {
-        return useSealStatus;
-    }
-
-    public void setUseSealStatus(String useSealStatus) {
-        this.useSealStatus = useSealStatus;
-    }
-
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getApplyDeptId() {
-        return applyDeptId;
-    }
-
-    public void setApplyDeptId(String applyDeptId) {
-        this.applyDeptId = applyDeptId;
-    }
-
     public String getApplyUserId() {
         return applyUserId;
     }
@@ -144,59 +84,51 @@ public class YyApplyVo {
         this.applyUserId = applyUserId;
     }
 
-    public String getUseSealStatusValue() {
-        return useSealStatusValue;
+    public String getUseSealPhone() {
+        return useSealPhone;
     }
 
-    public void setUseSealStatusValue(String useSealStatusValue) {
-        this.useSealStatusValue = useSealStatusValue;
+    public void setUseSealPhone(String useSealPhone) {
+        this.useSealPhone = useSealPhone;
     }
 
-    public String getItemFirstId() {
-        return itemFirstId;
+    public String getUseSealItemFirst() {
+        return useSealItemFirst;
     }
 
-    public void setItemFirstId(String itemFirstId) {
-        this.itemFirstId = itemFirstId;
+    public void setUseSealItemFirst(String useSealItemFirst) {
+        this.useSealItemFirst = useSealItemFirst;
     }
 
-    public String getItemSecondId() {
-        return itemSecondId;
+    public String getUseSealItemSecond() {
+        return useSealItemSecond;
     }
 
-    public void setItemSecondId(String itemSecondId) {
-        this.itemSecondId = itemSecondId;
+    public void setUseSealItemSecond(String useSealItemSecond) {
+        this.useSealItemSecond = useSealItemSecond;
     }
 
-    public String getCreateUser() {
-        return createUser;
+    public String getUseSealKindCode() {
+        return useSealKindCode;
     }
 
-    public void setCreateUser(String createUser) {
-        this.createUser = createUser;
+    public void setUseSealKindCode(String useSealKindCode) {
+        this.useSealKindCode = useSealKindCode;
     }
 
-    public String getUpdateTime() {
-        return updateTime;
+    public String getElseKind() {
+        return elseKind;
     }
 
-    public void setUpdateTime(String updateTime) {
-        this.updateTime = updateTime;
+    public void setElseKind(String elseKind) {
+        this.elseKind = elseKind;
     }
 
-    public String getUpdateUser() {
-        return updateUser;
+    public String getUseSealReason() {
+        return useSealReason;
     }
 
-    public void setUpdateUser(String updateUser) {
-        this.updateUser = updateUser;
-    }
-
-    public String getValid() {
-        return valid;
-    }
-
-    public void setValid(String valid) {
-        this.valid = valid;
+    public void setUseSealReason(String useSealReason) {
+        this.useSealReason = useSealReason;
     }
 }

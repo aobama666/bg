@@ -25,15 +25,22 @@
     </style>
 </head>
 <body>
+<span style="display: none" id="kindList">${kindList}</span>
 <div id="kindContent" style="padding-left: 60px">
     <c:forEach  var="kindList"  items="${kindList}">
-    <input type="checkbox" value="${kindList.K}" id="kind"/>${kindList.V}<br/>
+        <input type="checkbox" value="${kindList.K},${kindList.V}" name="kind"
+                <c:if test="${kindList.IF=='1'}">checked="checked"</c:if>
+        /> &nbsp; ${kindList.V}<br/>
     </c:forEach>
-    <input type="checkbox" value=""/>其他<input type="text" id="elseKind">
+    <input type="checkbox" value="-1" name="elseCheck"/>&nbsp; 其他<input type="text" id="elseKind" value="${elseKind}">
 </div>
-<div class="btnContent">
-    <button type="button" class="btn" onclick="applyOperate.applyAdd()">保存</button>
-    <button type="button" class="btn" onclick="applyOperate.closeIndex()">返回</button>
+<div class="btnContent" style="margin: 0px;padding-top: 10px">
+    <button type="button" class="btn" onclick="applyOperate.kindSave()">保存</button>
+    <button type="button" class="btn" onclick="applyOperate.returnClose()">返回</button>
 </div>
 </body>
+<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
+<script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
+<script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
+<script src="<%=request.getContextPath()%>/js/yygl/apply/applyOperate.js"></script>
 </html>

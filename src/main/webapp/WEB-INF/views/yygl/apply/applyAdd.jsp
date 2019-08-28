@@ -18,6 +18,7 @@
     <link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
     <!-- 本页面所需css -->
     <link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" media="all">
     <style type="text/css">
         .tableBody{
             height: 200px!important;
@@ -25,13 +26,18 @@
     </style>
 </head>
 <body>
+<div class="tabbable active" style="text-align:right;width: 97%;padding-top: 5px;padding-bottom: 5px;">
+    <button type="button" class="btn" onclick="applyOperate.applySubmit()">提交</button>
+    <button id="applyAdd" type="button" class="btn" onclick="applyOperate.applyAdd()">保存</button>
+    <button type="button" class="btn" onclick="applyOperate.returnClose()">返回</button>
+</div>
 <table class="visitOperate tableStyle specialTable">
     <tr>
         <td style="width: 10%">
             <span title = "用印部门"><b class="mustWrite">*</b>用印部门</span>
         </td>
         <td style="width: 40%" class="addInputStyle">
-            <input type = "text" style="display: none" id = "uuid"  name="uuid">
+            <input type = "text" style="display: none" id = "applyUuid"  name="applyUuid">
             <input type = "text" style="display: none" id = "applyDeptId"  name="applyDeptId" value="${deptId}">
             <input type="text"  id="applyDept"  name="applyDept" readonly value="${deptName}"
                    class="validNull"  len="50"   content="用印部门" title="必填项"/>
@@ -40,7 +46,9 @@
             <span title = "用印日期"><b class="mustWrite">*</b>用印日期</span>
         </td>
         <td style="width: 40%" class="addInputStyle">
-            <input type="text"  id="useSealDate" name="useSealDate"  class="validNull"  content="用印日期"  len="50"  title="必填项  "/>
+            <div class="layui-inline">
+                <input type="text" class="layui-input validNull" content="用印日期"  id="useSealDate" name="useSealDate" />
+            </div>
         </td>
     </tr>
     <tr>
@@ -62,27 +70,26 @@
     </tr>
     <tr>
         <td style="width: 10%">
-            <span title = "用印事项"><b class="mustWrite">*</b>用印事项一级</span>
+            <span title = "用印事项一级"><b class="mustWrite">*</b>用印事项一级</span>
         </td>
         <td style="width: 40%" class="addInputStyle">
-            <%--<input type="text"  id="useSealItem" name="useSealItem"  class="validNull"  content="用印事项"  len="50"  title="必填项  "/>--%>
-            <select id = "useSealItemFirst" name = "useSealItemFirst"  class = "changeQuery changeYear">
-                <option value = "" selected>请选择</option>
+            <select id = "useSealItemFirst" name = "useSealItemFirst" onchange="applyOperate.changeItemFirst()"
+                    content="用印事项一级" class = "changeQuery changeYear validNull">
+                <option value = "">请选择</option>
                 <c:forEach  var="itemFirst"  items="${itemFirst}">
                     <option value ="${itemFirst.K}"}> ${itemFirst.V}</option>
                 </c:forEach>
             </select>
         </td>
         <td style="width: 10%">
-            <span title = "用印事项"><b class="mustWrite">*</b>用印事项二级</span>
+            <span title = "用印事项二级"><b class="mustWrite">*</b>用印事项二级</span>
         </td>
         <td style="width: 40%" class="addInputStyle">
-            <select id = "useSealItemSecond" name = "useSealItemSecond"  class = "changeQuery changeYear">
-                    <option value = "" selected>请选择</option>
-                    <c:forEach  var="itemFirst"  items="${itemFirst}">
-                        <option value ="${itemFirst.K}"}> ${itemFirst.V}</option>
-                    </c:forEach>
-            </select>
+            <div id="selectSecondItem">
+                <select id = "useSealItemSecond" name = "useSealItemSecond" content="用印事项二级" class = "changeQuery changeYear validNull">
+                        <option value = "">请选择</option>
+                </select>
+            </div>
         </td>
     </tr>
     <tr>
@@ -91,8 +98,8 @@
         </td>
         <td style="width: 90%" class="addInputStyle" colspan="3">
             <input type = "text" style="display: none" id = "useSealKindCode"  name="useSealKindCode">
-            <input type = "text" style="display: none" id = "useSealKindValue"  name="useSealKindValue">
-            <input type="text"  id="useSealKindCodeValue"  name="useSealKindCodeValue"
+            <input type = "text" style="display: none" id = "elseKind"  name="elseKind">
+            <input type="text"  id="useSealKindValue"  name="useSealKindValue"  class="validNull"
                    onclick="applyOperate.checkKind()" content="用印种类" title="必填项"/>
         </td>
     </tr>
@@ -101,7 +108,7 @@
             <span title = "用印事由"><b class="mustWrite">*</b>用印事由</span>
         </td>
         <td style="width: 90%" class="addInputStyle" colspan="3">
-            <input type="text"  id="userSealReason" name="userSealReason"  class="validNull"  content="用印事由"  len="50"  title="必填项  "/>
+            <input type="text"  id="useSealReason" name="useSealReason"  class="validNull"  content="用印事由"  len="50"  title="必填项  "/>
         </td>
     </tr>
     <%--<tr>
@@ -111,18 +118,15 @@
 
 <div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 1%">
     <div style="float: right">
-        <button type="button" class="btn" onclick="uploadAnnex.addOperation()">新增附件</button>
-        <button type="button" class="btn" onclick="uploadAnnex.delEvent()">删除附件</button>
+        <button type="button" class="btn" onclick="applyOperate.addStuff()">新增</button>
+        <button type="button" class="btn" onclick="applyOperate.delStuff()">删除</button>
     </div>
     <h4>用印材料详情</h4>
 
     <div id="datagrid"></div>
 </div>
 
-<div class="btnContent">
-    <button type="button" class="btn" onclick="applyOperate.applyAdd()">保存</button>
-    <button type="button" class="btn" onclick="applyOperate.closeIndex()">返回</button>
-</div>
+
 
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
@@ -141,6 +145,8 @@
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 
 <!-- 本页面所需的js -->
+<script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
+<script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
 <script src="<%=request.getContextPath()%>/js/yygl/apply/applyOperate.js"></script>
 </body>
 </html>

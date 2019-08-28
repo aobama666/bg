@@ -22,6 +22,7 @@ import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.Dept;
 import com.sgcc.bg.model.UserPrivilege;
+import com.sgcc.bg.service.OrganStuffTreeNewService;
 import com.sgcc.bg.service.OrganStuffTreeService;
 
 @Controller
@@ -30,6 +31,8 @@ public class OrganStuffTreeController {
 	private Logger logger = Logger.getLogger(OrganStuffTreeController.class);
 	@Autowired
 	private OrganStuffTreeService organStuffTreeService;
+	@Autowired
+	private OrganStuffTreeNewService organStuffTreeNewService;
 	@Autowired
 	private  WebUtils webUtils;
 	@Autowired
@@ -291,6 +294,94 @@ public class OrganStuffTreeController {
 		}
 		//获取组织或组织人员数据列表
 		List<Map<String, Object>> list = organStuffTreeService.queryAllOrganTree(root,level,limit);
+		//格式化数据
+		List<Map<String, Object>> treelist = new ArrayList<Map<String, Object>>();
+		for(Map<String, Object> k: list){
+			Map<String, Object> m = new HashMap<String, Object>();
+			m.put("id", k.get("deptId").toString());
+			m.put("pId", k.get("pdeptId").toString());
+			m.put("organId", k.get("id").toString());
+			m.put("parentId", k.get("parentId").toString());
+			m.put("organCode", k.get("id").toString());
+			m.put("name", k.get("organName").toString());
+			//当前节点是否展开
+			if(k.get("id").toString().equals("41000001")){
+				m.put("open", true);
+			}			
+			else{
+				m.put("open", false);
+			}
+			//当前节点是否包含子节点
+			if(Integer.valueOf(k.get("childNum").toString())>0){
+				m.put("isParent", true);
+			}
+			else{
+				m.put("isParent", false);
+			}
+			//当前节点是否显示选择框（样式） 			
+			m.put("nocheck", false);
+			
+			treelist.add(m);
+		}
+		
+		Map<String, Object> modelMap = new HashMap<String, Object>();
+		modelMap.put("organCode", organCode);
+		modelMap.put("organName", organName);
+		modelMap.put("iframeId", iframeId);
+		modelMap.put("iframe", iframe);
+		modelMap.put("ct", ct);
+		modelMap.put("root", root);
+		modelMap.put("popEvent", popEvent);
+		modelMap.put("treelist",JSON.toJSONString(treelist, SerializerFeature.WriteMapNullValue));
+		ModelAndView model = new ModelAndView("bg/common/organstufftree/organTreePage",modelMap);
+		return model;
+	}
+	
+	/**
+	 * 初始化 组织树
+	 * @return
+	 */
+	@RequestMapping(value = "/initOrganTreeNew", method = RequestMethod.GET)
+	public ModelAndView initOrganTreeNew(HttpServletRequest request){
+		//deptCode 组织编号
+		String organCode = request.getParameter("organCode")==null?"":request.getParameter("organCode").toString();
+		//organName 组织名称
+		String organName = request.getParameter("organName")==null?"":request.getParameter("organName").toString();
+		//iframe  self 作用域：当前窗口   parent 作用域：父类窗口 
+		String iframe = request.getParameter("iframe")==null?"":request.getParameter("iframe").toString();
+		//iframeId  要传值的iframe的id  窗口索引，关闭窗口使用
+		String iframeId = request.getParameter("iframeId")==null?"":request.getParameter("iframeId").toString();
+		//ct      树形节点选择框样式：radio，checkbox
+		String ct = request.getParameter("ct")==null?"":request.getParameter("ct").toString();
+		//root    树形节点id（起始节点id）
+		String root = request.getParameter("root")==null?"":request.getParameter("root").toString();
+		//level   控制显示层级，如 0 显示到院1 显示到部门 2 显示到科室
+		String level = request.getParameter("level")==null?"":request.getParameter("level").toString();
+		//limit   控制是否仅显示当前用户所在的部门或单位，如果是，则传入组织编码   yes 根据用户管理权限查询  no
+		String limit = request.getParameter("limit")==null?"":request.getParameter("limit").toString();
+		//popEvent    自定义触发父层事件  pop 触发上层事件
+		String popEvent = request.getParameter("popEvent")==null?"":request.getParameter("popEvent").toString();
+		//type    数据来源：type=RLZY 人资专用(src=0,1,2)，其他为报工默认(src=0,2)
+		String type = request.getParameter("type")==null?"":request.getParameter("type").toString();
+		//func    功能类型：func=YYGL 用印管理
+		String func = request.getParameter("func")==null?"":request.getParameter("func").toString();
+
+				
+		logger.info("[initOrganTree:in param]:organCode="+organCode+";"
+							                +"organName="+organName+";"
+							                +"iframeId="+iframeId+";"
+							                +"iframe="+iframe+";"
+							                +"root="+root+";"
+							                +"ct="+ct+";"
+							                +"level="+level+";"
+							                +"limit="+limit+";"
+							                +"popEvent="+popEvent+";"
+							                +"type="+type+";"
+							                +"func="+func);	
+		
+		//获取组织或组织人员数据列表
+		String userName = webUtils.getUsername();
+		List<Map<String, Object>> list = organStuffTreeNewService.queryAllOrganTree(root,level,limit);
 		//格式化数据
 		List<Map<String, Object>> treelist = new ArrayList<Map<String, Object>>();
 		for(Map<String, Object> k: list){

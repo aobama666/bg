@@ -25,7 +25,7 @@ apply.query = function(){
     var startTime = $("#startTime").val();
     var endTime = $("#endTime").val();
     if(startTime!=='' && startTime!==null && endTime!=='' && endTime!==null && startTime > endTime){
-        layer.msg("申请日期的结束时间不能大于开始时间")
+        layer.msg("申请日期的结束时间不能早于开始时间")
         return;
     }
 
@@ -55,18 +55,19 @@ apply.initDataGrid = function(){
             {name: '申请编号',style:{width:"50px"}, data: 'PAPERNAME',forMat:function(row){
                     return "<a title = '点击查看用印详情' style='color: #0080FF;" +
                         " text-align:left;'id='\"+row.UUID+\"'" +
-                        " href = 'javascript:void(0)' >"+row.APPLY_CODE+"</a>";
+                        " onclick=apply.toDeatil('"+row.UUID+"')>"+row.APPLY_CODE+"</a>";
             }},
             {name: '用印事由',style:{width:"50px"}, data: 'USE_SEAL_REASON'},
             {name: '用印部门',style:{width:"50px"}, data: 'DEPTNAME'},
             {name: '用印申请人',style:{width:"30px"}, data: 'USERALIAS'},
             {name: '用印日期',style:{width:"30px"}, data: 'USE_SEAL_DATE'},
             {name: '申请日期',style:{width:"30px"}, data: 'CREATE_TIME'},
-            {name: '用印事项',style:{width:"30px"}, data: 'SECOND_CATEGORY_NAME'},
+            {name: '用印事项',style:{width:"50px"}, data: 'USESEALITEM'},
             {name: '用印种类',style:{width:"50px"}, data: 'USE_SEAL_KIND'},
             {name: '审批状态',style:{width:"50px"}, data: 'USE_SEAL_STATUS'},
             {name: '用印审批单',style:{width:"50px"}, forMat:function (row) {
-                    return "<a title = '点击查看打印预览' style='color:#0080FF'>打印预览</a>";
+                    return "<a title = '点击查看打印预览' style='color:#0080FF'" +
+                        " onclick=apply.printPreview('"+row.UUID+"')>打印预览</a>";
                 }}
         ]
     });
@@ -86,15 +87,18 @@ apply.changeItemFirst = function () {
         success: function (data) {
             var itemSecond = data.data.itemSecond;
             var checkContent = '';
-            document.getElementById("itemSecondId").innerHTML = checkContent;
+            document.getElementById("selectSecondItem").innerHTML = checkContent;
             var i ;
-            checkContent = "<option selected='selected'>请选择</option>";
+            checkContent = "" +
+                "<select id = 'itemSecondId' name = 'itemSecondId'   class = 'changeQuery changeYear'>" +
+                "<option value='' selected='selected'>请选择</option>";
             for(i=0;i<itemSecond.length;i++){
                 var k = itemSecond[i].K;
                 var v = itemSecond[i].V;
                 checkContent = checkContent+'<option value = "'+k+'">'+v+'</option>';
             }
-            document.getElementById("itemSecondId").innerHTML = checkContent;
+            checkContent = checkContent + '</select>';
+            document.getElementById("selectSecondItem").innerHTML = checkContent;
         }
     });
 }
@@ -107,8 +111,8 @@ apply.toAdd = function () {
     var url = "/bg/yygl/apply/toApplyAdd";
     layer.open({
         type:2,
-        title:'<h4 style="height:42px;line-height:25px;">用印申请新增</h4>',
-        area:['90%','85%'],
+        title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请新增</h4>',
+        area:['90%','80%'],
         fixed:false,//不固定
         maxmin:true,
         content:url,
@@ -127,18 +131,18 @@ apply.toUpdate = function () {
     //获取选中框
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        layer.alert('请选择要操作的数据',{icon:0,title:'信息提示'});
+        layer.msg('请选择要操作的数据');
         return;
     }else if(checkedItems.length>1){
-        layer.alert('每次只能修改一条数据',{icon:0,title:'信息提示'});
+        layer.msg('每次只能修改一条数据');
         return;
     }
     var checkedId = checkedItems[0].UUID;
     var url = "/bg/yygl/apply/toApplyUpdate?checkedId="+checkedId;
     layer.open({
         type:2,
-        title:'<h4 style="height:42px;line-height:25px;">用印申请修改</h4>',
-        area:['85%','85%'],
+        title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请修改</h4>',
+        area:['90%','80%'],
         fixed:false,//不固定
         maxmin:true,
         content:url,
@@ -153,12 +157,35 @@ apply.toUpdate = function () {
  * 选中删除
  */
 apply.del = function () {
-    //获取选中框
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        layer.alert('请选择要操作的数据',{icon:0,title:'信息提示'});
+        layer.msg('请选择要操作的数据');
         return;
     }
+    var checkedIds = "";
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length>0) {
+        for (var i = 0; i < checkedItems.length; i++) {
+            checkedIds += checkedItems[i].UUID + ",";
+        }
+    }
+    checkedIds = checkedIds.slice(0,checkedIds.length-1);
+
+    layer.confirm('确定删除选中的申请吗?',{
+            btn:['确定','取消'],icon:0,title:'自动匹配'
+        },function () {
+            $.ajax({
+                url: "/bg/yygl/apply/del?checkedContent="+checkedIds,
+                type: "post",
+                dataType:"json",
+                contentType: 'application/json',
+                success: function (data) {
+                    layer.msg(data.msg);
+                    apply.queryAddPage();
+                }
+            });
+        }
+    )
 }
 
 
@@ -166,19 +193,25 @@ apply.del = function () {
 /**
  * 用印申请详情弹窗
  */
-apply.toDeatil = function (checkedId) {
-    var url = "/bg/yygl/apply/toApplyDetail?checkedId="+checkedId;
+apply.toDeatil = function (applyUuid) {
+    var url = "/bg/yygl/apply/toApplyDetail?applyUuid="+applyUuid;
     layer.open({
         type:2,
-        title:'<h4 style="height:42px;line-height:25px;">用印申请详情</h4>',
+        title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请详情</h4>',
         area:['85%','85%'],
         fixed:false,//不固定
         maxmin:true,
-        content:url,
-        end: function () {
-            apply.query();
-        }
+        content:url
     });
+}
+
+
+/**
+ * 打印预览
+ */
+apply.printPreview = function (applyUuid) {
+    var url = "/bg/yygl/apply/toPrintPreview?applyUuid="+applyUuid;
+    window.open(url);
 }
 
 
@@ -189,13 +222,36 @@ apply.submit = function () {
     //获取选中框
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        layer.alert('请选择要操作的数据',{icon:0,title:'信息提示'});
+        layer.msg('请选择要操作的数据');
         return;
     }else if(checkedItems.length>5){
-        layer.alert('最多同时提交五条申请',{icon:0,title:'信息提示'});
+        layer.msg('最多同时提交五条申请');
         return;
     }
-    var checkedId = checkedItems[0].UUID;
+    var checkedIds = "";
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length>0) {
+        for (var i = 0; i < checkedItems.length; i++) {
+            checkedIds += checkedItems[i].UUID + ",";
+        }
+    }
+    checkedIds = checkedIds.slice(0,checkedIds.length-1);
+
+    layer.confirm('确定提交选中的申请吗?',{
+            btn:['确定','取消'],icon:0,title:'自动匹配'
+        },function () {
+            $.ajax({
+                url: "/bg/yygl/apply/applySubmit?checkedIds="+checkedIds,
+                type: "post",
+                dataType:"json",
+                contentType: 'application/json',
+                success: function (data) {
+                    layer.msg(data.msg);
+                    apply.queryAddPage();
+                }
+            });
+        }
+    )
 }
 
 
@@ -213,15 +269,26 @@ apply.withdraw = function () {
         return;
     }
     var checkedId = checkedItems[0].UUID;
-    $.ajax({
-        url: "/bg/yygl/apply/withdraw",
-        type: "post",
-        dataType:"json",
-        data: {'checkedId':checkedId},
-        success: function (data) {
-            console.info(data.data);
-        }
-    });
+    var useSealStatus = checkedItems[0].USE_SEAL_STATUS_CODE;
+    if(useSealStatus==='1' || useSealStatus==='2' || useSealStatus==='3'){
+        layer.msg("该数据未提交无需撤回");
+        return;
+    }
+
+    layer.confirm('确定撤回选中的申请吗?',{
+        btn:['确定','取消'],icon:0,title:'自动匹配'
+    },function () {
+        $.ajax({
+            url: "/bg/yygl/apply/applyWithdraw?applyUuid="+checkedId,
+            type: "post",
+            dataType:"json",
+            data: {'checkedId':checkedId},
+            success: function (data) {
+                layer.msg(data.msg);
+                apply.queryAddPage();
+            }
+        });
+    })
 }
 
 
@@ -259,6 +326,6 @@ apply.applyExport = function () {
 
 /*关闭页面后弹出信息*/
 apply.closeAndOpen = function (message) {
-    layer.alert(message,{icon:1,title:'信息提示'});
     layer.closeAll();
+    layer.alert(message,{icon:1,title:'信息提示'});
 };

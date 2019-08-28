@@ -9,7 +9,7 @@
             #{applyCode},
             #{deptId},
             #{applyUserId},
-            sysdate,
+            to_date(#{useSealDate},'yyyy-mm-dd'),
             #{useSealPhone},
             #{itemFirstId},
             #{itemSecondId},
@@ -17,34 +17,30 @@
             #{useSealStatus},
             #{createUser},
             sysdate,
-            #{valid})
+            '1')
     </insert>
 
 
     <update id="updateApply">
         update bg_yy_apply set
-         apply_code = #{applyCode},
-         dept_id = #{deptId},
-         apply_user_id = #{applyUserId},
-         use_seal_date = sysdate,
+         use_seal_date = to_date(#{useSealDate},'yyyy-mm-dd'),
          use_seal_phone = #{useSealPhone},
-         item_first_if = #{itemFirstId},
+         item_first_id = #{itemFirstId},
          item_second_id = #{itemSecondId},
          use_seal_reason = #{useSealReason},
-         use_seal_status = #{useSealStatus},
          update_user = #{updateUser},
          update_time = sysdate
-        where uuid = #{uuid};
+        where uuid = #{uuid}
     </update>
 
 
     <update id="updateApplyStatus">
-        update bg_yy_apply set use_seal_status = #{useSealStatus} where uuid = #{uuid};
+        update bg_yy_apply set use_seal_status = #{useSealStatus} where uuid = #{uuid}
     </update>
 
 
-    <update id="updateValid">
-        update bg_yy_apply set valid = #{valid} where uuid = #{uuid};
+    <update id="applyDel">
+        update bg_yy_apply set valid ='0' where uuid = #{uuid} and use_seal_status = #{useSealStatus}
     </update>
 
 
@@ -58,18 +54,19 @@
             u.useralias,
             TO_CHAR(a.use_seal_date, 'YYYY-MM-DD') use_seal_date,
             TO_CHAR(a.create_time, 'YYYY-MM-DD') create_time,
-            s.second_category_name,
+            f.first_category_name||'-'||s.second_category_name useSealItem,
             (select name
                 from bg_sys_datadictionary
                 where pcode = 'use_seal_status'
                 and code = a.use_seal_status) use_seal_status,
+            a.use_seal_status use_seal_status_code,
             (select replace(wm_concat(nvl(d.name, k.use_seal_value)),',',';') useSealKind
               from bg_yy_kind k,
               (select * from bg_sys_datadictionary d
                 where d.pcode = 'use_seal_kind'
                 and d.vaild = '1') d
               where k.use_seal_kind_code = d.code(+)
-              and k.apply_id = a.uuid) use_seal_kind
+              and k.apply_id = a.uuid and k.valid='1') use_seal_kind
             from bg_yy_apply a
             left join bg_sys_dept d
             on d.deptId = a.dept_id
@@ -77,6 +74,8 @@
             on a.apply_user_id = u.userid
             left join bg_yy_item_second s
             on a.item_second_id = s.uuid
+            left join bg_yy_item_first f
+            on a.item_first_id = f.uuid
             where 1=1
                 <if test="applyCode != null and applyCode != ''">
                   and a.apply_code like '%'||#{applyCode}||'%'
@@ -89,6 +88,9 @@
                 </if>
                 <if test="useSealStatus != null and useSealStatus != ''">
                   and a.use_seal_status = #{useSealStatus}
+                </if>
+                <if test="useSealItemFirst != null and useSealItemFirst != ''">
+                  and f.uuid = #{useSealItemFirst}
                 </if>
                 <if test="itemSecondId != null and itemSecondId != ''">
                   and s.uuid = #{itemSecondId}
@@ -114,6 +116,8 @@
         on a.apply_user_id = u.userid
         left join bg_yy_item_second s
         on a.item_second_id = s.uuid
+        left join bg_yy_item_first f
+        on a.item_first_id = f.uuid
         where 1=1
         <if test="applyCode != null and applyCode != ''">
             and a.apply_code like '%'||#{applyCode}||'%'
@@ -127,6 +131,9 @@
         <if test="useSealStatus != null and useSealStatus != ''">
             and a.use_seal_status = #{useSealStatus}
         </if>
+        <if test="useSealItemFirst != null and useSealItemFirst != ''">
+            and f.uuid = #{useSealItemFirst}
+        </if>
         <if test="itemSecondId != null and itemSecondId != ''">
             and s.uuid = #{itemSecondId}
         </if>
@@ -139,26 +146,47 @@
     </select>
 
 
-    <select id="findApply" resultType="com.sgcc.bg.yygl.pojo.YyApplyVo">
-          select apply_code applyCode,
-           dept_id deptId,
-           apply_user_id applyUserId,
-           use_seal_date useSealDate,
-           use_seal_phone useSealPhone,
-           item_first_id itemFirstId,
-           item_second_id itemSecondId,
-           use_seal_reason useSealReason,
-           use_seal_status useSealStatus,
-           create_user createUser,
-           create_time createTime,
-           update_user updateUser,
-           update_time updateTime
-          from bg_yy_apply
-         where uuid = #{uuid}
-           and valid = '1'
+    <select id="findApply" resultType="com.sgcc.bg.yygl.pojo.YyApplyDAO">
+          select a.uuid,
+               a.apply_code applyCode,
+               a.use_seal_reason useSealReason,
+               a.dept_id applyDeptId,
+               d.deptname applyDept,
+               u.useralias applyUser,
+               a.apply_user_id applyUserId,
+               a.use_seal_phone useSealPhone,
+               TO_CHAR(a.use_seal_date, 'YYYY-MM-DD') useSealDate,
+               TO_CHAR(a.create_time, 'YYYY-MM-DD') createTime,
+               f.first_category_name||'-'||s.second_category_name useSealItem,
+               (select name
+                  from bg_sys_datadictionary
+                 where pcode = 'use_seal_status'
+                   and code = a.use_seal_status) useSealStatusValue,
+               a.use_seal_status useSealStatus,
+               a.item_first_id itemFirstId,
+               a.item_second_id itemSecondId,
+               (select replace(wm_concat(nvl(d.name, k.use_seal_value)), ',', ';') useSealKind
+                  from bg_yy_kind k,
+                       (select *
+                          from bg_sys_datadictionary d
+                         where d.pcode = 'use_seal_kind'
+                           and d.vaild = '1') d
+                 where k.use_seal_kind_code = d.code(+)
+                   and k.apply_id = a.uuid
+                   and k.valid = '1') useSealKind
+          from bg_yy_apply a
+          left join bg_sys_dept d
+            on d.deptId = a.dept_id
+          left join bg_sys_user u
+            on a.apply_user_id = u.userid
+          left join bg_yy_item_second s
+            on a.item_second_id = s.uuid
+          left join bg_yy_item_first f
+            on a.item_first_id = f.uuid
+         where a.uuid = #{uuid}
     </select>
 
-    <select id="selectApplyExport" resultType="com.sgcc.bg.yygl.pojo.YyApplyVo">
+    <select id="selectApplyExport" resultType="com.sgcc.bg.yygl.pojo.YyApplyDAO">
         select a.uuid,
         a.apply_code applyCode,
         a.use_seal_reason useSealReason,
@@ -168,7 +196,7 @@
         a.apply_user_id applyUserId,
         TO_CHAR(a.use_seal_date, 'YYYY-MM-DD') useSealDate,
         TO_CHAR(a.create_time, 'YYYY-MM-DD') createTime,
-        s.second_category_name useSealItem,
+        f.first_category_name||'-'||s.second_category_name useSealItem,
         (select name
         from bg_sys_datadictionary
         where pcode = 'use_seal_status'
@@ -180,7 +208,7 @@
         where d.pcode = 'use_seal_kind'
         and d.vaild = '1') d
         where k.use_seal_kind_code = d.code(+)
-        and k.apply_id = a.uuid) useSealKind
+        and k.apply_id = a.uuid and k.valid='1') useSealKind
         from bg_yy_apply a
         left join bg_sys_dept d
         on d.deptId = a.dept_id
@@ -188,6 +216,8 @@
         on a.apply_user_id = u.userid
         left join bg_yy_item_second s
         on a.item_second_id = s.uuid
+        left join bg_yy_item_first f
+        on a.item_first_id = f.uuid
         where 1=1
         <if test="applyCode != null and applyCode != ''">
             and a.apply_code like '%'||#{applyCode}||'%'

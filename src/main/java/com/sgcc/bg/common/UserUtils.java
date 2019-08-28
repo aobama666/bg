@@ -286,6 +286,46 @@ public class UserUtils {
 		return userPriv;
 	}
 	/**
+	 * 根据登陆账号 获取用户管理角色列表  获取用户组织权限列表  新 2019-08-21
+	 * @param userName 用户账号
+	 * @param funcName 功能名称
+	 * @param funcType 功能类型  0 管理类  1 审批类
+	 * @return
+	 */
+	public UserPrivilege getNewUserOrganPrivilegeByUserName(String userName,String funcName,String funcType){
+		UserPrivilege userPriv = null;
+		try{
+			List<Map<String,Object>> roleList = userInfoMapper.getNewUserRoleByUserName(userName,funcName,funcType);
+			if(roleList!=null&&roleList.size()>0){
+				userPriv = new UserPrivilege();
+				
+				List<UserRole> userRole = new ArrayList<UserRole>();				
+				
+				userPriv.setUserRole(userRole);
+				
+				for(Map<String,Object> map:roleList){	
+					String roleCode = map.get("ROLE_CODE")==null?"":map.get("ROLE_CODE").toString();
+					String roleName = map.get("ROLE_NAME")==null?"":map.get("ROLE_NAME").toString();
+					String roleType = map.get("ROLE_TYPE")==null?"":map.get("ROLE_TYPE").toString();
+					String roleStatus = map.get("ROLE_STATUS")==null?"":map.get("ROLE_STATUS").toString();
+					String functionType = map.get("FUNCTION_TYPE")==null?"":map.get("FUNCTION_TYPE").toString();
+					
+					UserRole role = new UserRole();
+					role.setRoleCode(roleCode);
+					role.setRoleName(roleName);
+					role.setRoleType(roleType);
+					role.setRoleStatus(roleStatus);
+					role.setFunctionType(functionType);
+					
+					userRole.add(role);
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return userPriv;
+	}
+	/**
 	 * 根据登陆账号 获取用户管理角色列表  获取用户组织权限列表
 	 * @param hrCode 人资编号
 	 * @return
