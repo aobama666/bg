@@ -253,6 +253,15 @@ public class KqTemporaryServiceImpl implements KqTemporaryService {
 		String empName = request.getParameter("empName" ) == null ? "" : request.getParameter("empName").toString(); //类型
 		String idsStr = request.getParameter("selectList")==null?"":request.getParameter("selectList").trim();
 
+		//取月初和月末
+		String[] str= beginDate.split("-");
+		int year = Integer.parseInt(str[0]);
+		int month = Integer.parseInt(str[1]);
+		//每月月初
+		String dateBegin = DateUtil.getFirstDayOfMonth1(year,month);
+		//每月月末
+		String dateEnd = DateUtil.getLastDayOfMonth1(year,month);
+
 		List<String>  idslist =new  ArrayList<String>();
 		if(idsStr!=""){
 			String [] strings=idsStr.split(",");
@@ -263,7 +272,7 @@ public class KqTemporaryServiceImpl implements KqTemporaryService {
 		}
 		//获取Excel数据信息
 		List<Map<String, Object>> valueList = new ArrayList<Map<String,Object>>();
-		valueList=kqTemporaryMapper.selectForKqInfo(beginDate,endDate,empName,idslist);
+		valueList=kqTemporaryMapper.selectForKqInfo(dateBegin,dateEnd,empName,idslist);
 		Object[][] title = {
 				{ "员工姓名", "EMP_NAME" },
 				{ "项目编号","EMP_CODE"},

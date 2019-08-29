@@ -225,17 +225,73 @@ function Timeinit() {
 //获取结束时间的
 function getEndD(endDate) {
     var   eDate = new Date(endDate);
+    alert(endDate);
     var   date=new Date(eDate.getFullYear(),eDate.getMonth()+1,0);
     var   days=date.getDate();
     return days;
 }
 
+//获得开始时间
+function timeBegin (dateStr) {
+    var dateStr=dateStr+"-01";
+    var date=new Date(dateStr.replace(/-/g,"\/"));
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var firstDay=new Date(year,month,1);//这个月的第一天
+    var currentMonth=firstDay.getMonth(); //取得月份数
+    var nextMonthFirstDay=new Date(firstDay.getFullYear(),currentMonth+1,1);//加1获取下个月第一天
+    var dis=nextMonthFirstDay.getTime()-24*60*60*1000;//减去一天就是这个月的最后一天
+    var lastDay=new Date(dis);
+    var time =dateFtt("yyyy-MM-dd",firstDay);//格式化 //这个格式化方法要用你们自己的，也可以用本文已经贴出来的下面的Format
+    var timeEnd=dateFtt("yyyy-MM-dd",lastDay);//格式化
+    return time;
+}
+
+//获得结束时间
+function timeEnd(dateStr) {
+    var dateStr=dateStr+"-01";
+    var date=new Date(dateStr.replace(/-/g,"\/"));
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var firstDay=new Date(year,month,1);//这个月的第一天
+    var currentMonth=firstDay.getMonth(); //取得月份数
+    var nextMonthFirstDay=new Date(firstDay.getFullYear(),currentMonth+1,1);//加1获取下个月第一天
+    var dis=nextMonthFirstDay.getTime()-24*60*60*1000;//减去一天就是这个月的最后一天
+    var lastDay=new Date(dis);
+    var time =dateFtt("yyyy-MM-dd",firstDay);//格式化 //这个格式化方法要用你们自己的，也可以用本文已经贴出来的下面的Format
+    var timeEnd=dateFtt("yyyy-MM-dd",lastDay);//格式化
+    return timeEnd;
+}
+
+function dateFtt(fmt,date)
+{ //author: meizz
+    var o = {
+        "M+" : date.getMonth()+1,     //月份
+        "d+" : date.getDate(),     //日
+        "h+" : date.getHours(),     //小时
+        "m+" : date.getMinutes(),     //分
+        "s+" : date.getSeconds(),     //秒
+        "q+" : Math.floor((date.getMonth()+3)/3), //季度
+        "S" : date.getMilliseconds()    //毫秒
+    };
+    if(/(y+)/.test(fmt))
+        fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));
+    for(var k in o)
+        if(new RegExp("("+ k +")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+    return fmt;
+}
+
+//统计
 function forSearch(){
 	var statics = $("select[name=status]").val();
-    var  startDate =$("#startTimes").val()+"-01";
-    var  endDate=$("#endTimes").val();
-    var  days=getEndD(endDate);
-    endDate=endDate+"-"+days;
+    /*var  startDate =$("#startTimes").val()+"-01";
+    var  endDate=$("#endTimes").val()+"-01";
+    var  days=getEndD(endDate);*/
+
+    var  startDate =timeBegin($("#startTimes").val());
+    var  endDate=timeEnd($("#endTimes").val());
+
     if(startDate==""){
         layer.msg("开始时间不能为空");
         return ;
@@ -248,11 +304,11 @@ function forSearch(){
         layer.msg("结束时间必须大于开始时间");
         return ;
     }
-    var  falg=getD(startDate, endDate);
+    /*var  falg=getD(startDate, endDate);
     if(!falg){
         layer.msg("结束时间大等于开始时间的一个月的时间");
         return ;
-    }
+    }*/
     $("#startTime").val(startDate);
     $("#endTime").val(endDate);
 	if(statics=="0"){

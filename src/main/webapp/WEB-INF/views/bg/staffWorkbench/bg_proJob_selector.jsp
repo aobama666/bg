@@ -134,11 +134,27 @@ function queryList(load){
 	}
 }
 
+function parseDate(dateStr) {
+    var isoExp = /^\s*(\d{4})-(\d\d)-(\d\d)\s*$/;//正则
+    var date = new Date(NaN);
+    var parts = isoExp.exec(dateStr);//正则验证
+    if(parts) {
+        var month = Number(parts[2]);
+        //设置时间
+        date.setFullYear(parts[1], month - 1, parts[3]);
+        //判断是否正确
+        if(month != date.getMonth() + 1) {
+            date.setTime(NaN);
+        }
+    }
+    return date;
+}
+
 function forAdd(){
 	var items = mmg.selectedRows();
 
-    var dateStr=$("#fillDa").val();
-    var date=new Date(dateStr.replace(/-/g,"/"));
+    var dateStr=$("#fillDa").val()+"-01";
+    var date=new Date(dateStr.replace(/-/g,"\/"));
     var year = date.getFullYear();
     var month = date.getMonth();
     var firstDay=new Date(year,month,1);//这个月的第一天

@@ -102,7 +102,7 @@ public class KqController {
 			stringRedisTemplate.expire("KQ_SyncKqData", 60*60, TimeUnit.SECONDS);
 
 			Logger.info("############# 考勤数据同步开始 ##############");
-			res = KqTemporaryService.addTemporary(beginDate, endDate);
+			res = KqTemporaryService.addTemporary(dateBegin, dateEnd);
 			Logger.info("############# 考勤数据同步结束  ##############");
 
 			Logger.info("############# resid记录当前同步结束状态 ##############");

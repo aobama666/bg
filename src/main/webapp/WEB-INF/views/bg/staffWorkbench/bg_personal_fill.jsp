@@ -172,10 +172,26 @@ $(function () {
     queryList();
 })
 
+function parseDate(dateStr) {
+    var isoExp = /^\s*(\d{4})-(\d\d)-(\d\d)\s*$/;//正则
+    var date = new Date(NaN);
+    var parts = isoExp.exec(dateStr);//正则验证
+    if(parts) {
+        var month = Number(parts[2]);
+        //设置时间
+        date.setFullYear(parts[1], month - 1, parts[3]);
+        //判断是否正确
+        if(month != date.getMonth() + 1) {
+            date.setTime(NaN);
+        }
+    }
+    return date;
+}
+
 /*日期方法*/
 function changeByStep(step){
     var dateStr=$("#fillDa").val();
-    var date=new Date(dateStr.replace(/-/g,"/"));
+    //var date=new Date(dateStr.replace(/-/g,"/"));
     var a = dateStr.split("-");
     var year = a[0];
     var mon = Number(a[1])+step;
@@ -600,8 +616,8 @@ function forAddProJob(){
 function forAddNonProJob(){
 	//var edit=currentUserHrcode==approverHrcode?'no':'yes';//非项目，如果默认审核人是本人时，不可编辑
 
-    var dateStr=$("#fillDa").val();
-    var date=new Date(dateStr.replace(/-/g,"/"));
+    var dateStr=$("#fillDa").val()+"-01";
+    var date=new Date(dateStr.replace(/-/g,"\/"));
     var year = date.getFullYear();
     var month = date.getMonth();
     var firstDay=new Date(year,month,1);//这个月的第一天
