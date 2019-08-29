@@ -68,7 +68,7 @@ public class KqController {
 
 
 	/**
-	 * 同步考勤数据
+	 * 同步考勤数据  1：正在同步  0：同步结束
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/SyncKqData" )
@@ -89,7 +89,7 @@ public class KqController {
 		ValueOperations<String, String> value = stringRedisTemplate.opsForValue();
 		String redisData = value.get("KQ_SyncKqData");
 		String res=null;
-		if(null != redisData && redisData != "" && redisData.equals("正在同步")){
+		if(null != redisData && redisData != "" && redisData.equals("1")){
 
 			Map<String, String> map = new HashMap<>();
 			map.put("msg","正在同步考勤数据，请稍后");
@@ -98,7 +98,7 @@ public class KqController {
 		}else {
 
 			Logger.info("############# resid记录当前同步开始状态 ##############");
-			value.set("KQ_SyncKqData", "正在同步");
+			value.set("KQ_SyncKqData", "1");
 			stringRedisTemplate.expire("KQ_SyncKqData", 60*60, TimeUnit.SECONDS);
 
 			Logger.info("############# 考勤数据同步开始 ##############");
@@ -106,7 +106,7 @@ public class KqController {
 			Logger.info("############# 考勤数据同步结束  ##############");
 
 			Logger.info("############# resid记录当前同步结束状态 ##############");
-			value.set("KQ_SyncKqData", "同步结束");
+			value.set("KQ_SyncKqData", "0");
 			stringRedisTemplate.expire("KQ_SyncKqData", 60*60, TimeUnit.SECONDS);
 		}
 

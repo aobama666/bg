@@ -36,7 +36,9 @@ public class KqTemporaryServiceImpl implements KqTemporaryService {
 		Logger.info("############# 参数:beginDate"+ beginDate +"endDate"+endDate+"##############");
 		//String    path="http://10.85.61.208:28233/zhywSi/WorkTimeService/getWorkTime";
 		String    path=ConfigUtils.getConfig("KQ_Organ_serverUrl");
-		String    data="beginDate="+beginDate+"&endDate="+endDate+"&key=f91f33c46f6f49a7be2d7012fef9ac57";
+		String    key=ConfigUtils.getConfig("KQ_Organ_server_key");
+		//String    data="beginDate="+beginDate+"&endDate="+endDate+"&key=f91f33c46f6f49a7be2d7012fef9ac57";
+		String    data="beginDate="+beginDate+"&endDate="+endDate+"&key="+key;
 		String    kqDate=  HttpUtil.interfaceUtil(path,data);
 		Logger.info("############# 返回值 ##############");
 		Map<String ,String>  kqDataMap=gson.fromJson(kqDate,Map.class);
