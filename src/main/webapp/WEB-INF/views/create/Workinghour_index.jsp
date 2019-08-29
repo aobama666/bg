@@ -251,7 +251,7 @@ function forSearch(){
 	   return ;
 	}
 
-	alert(startDate+"---"+endDate);
+	//alert(startDate+"---"+endDate);
 
 
    if((new Date(endDate.replace(/-/g,"\/")))<(new Date(startDate.replace(/-/g,"\/")))){

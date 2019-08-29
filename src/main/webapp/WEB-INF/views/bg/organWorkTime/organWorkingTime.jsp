@@ -285,7 +285,7 @@ function init(){
 //获取结束时间的
 function getEndD(endDate) {
     var   eDate = new Date(endDate);
-    alert(endDate);
+    //alert(endDate);
     var   date=new Date(eDate.getFullYear(),eDate.getMonth()+1,0);
     var   days=date.getDate();
     return days;
