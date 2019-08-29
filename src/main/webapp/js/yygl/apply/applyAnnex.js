@@ -9,8 +9,9 @@ $(function(){
 
 /* 用印申请列表-初始化列表界面  */
 annex.initDataGrid = function(){
+    var applyUuid = $("#uuid").val();
     $("#datagrid").datagrid({
-        url: "/bg/yygl/applyStuff/selectApplyAnnex",
+        url: "/bg/yygl/applyStuff/selectStuff?applyUuid="+applyUuid,
         type: 'POST',
         form: '#queryForm',
         pageSize: 10,
@@ -18,13 +19,13 @@ annex.initDataGrid = function(){
         columns: [
             {name: '选择',style:{width:"20px"}, data: 'id',forMat:function(row){
                     dataItems[index] = row;//将一行数据放在一个list中
-                    return '<input type="checkbox" name="oneCheck" id="oneCheck"  index = "'+(index++)+'"  value="'+(row.UUID)+'"/>';
+                    return '<input type="checkbox" name="oneCheck" id="oneCheck"  index = "'+(index++)+'"  value="'+(row.uuid)+'"/>';
                 }
             },
-            {name: '用印材料',style:{width:"50px"}, data: 'USESEALITEM'},
-            {name: '佐证材料',style:{width:"50px"}, data: 'USE_SEAL_KIND'},
-            {name: '用印文件份数',style:{width:"50px"}, data: 'USE_SEAL_STATUS'},
-            {name: '备注',style:{width:"50px"}, data: 'USE_SEAL_STATUS'}
+            {name: '用印材料',style:{width:"50px"}, data: 'useSealFileName'},
+            {name: '佐证材料',style:{width:"50px"}, data: 'proofFileName'},
+            {name: '用印文件份数',style:{width:"50px"}, data: 'useSealAmount'},
+            {name: '备注',style:{width:"50px"}, data: 'remark'}
         ]
     });
     $(".paging").css("display","none");//隐藏分页信息
@@ -72,15 +73,13 @@ annex.addStuff = function () {
             btn:['确定','取消'],icon:0,title:'保存提示'
         },function () {
             $.ajax({
-                url: "/bg/yygl/applyStuff/applyAdd",
+                url: "/bg/yygl/applyStuff/stuffAdd",
                 type: "post",
                 dataType:"json",
                 contentType: 'application/json',
                 data: JSON.stringify(paperDetailFormData),
                 success: function (data) {
                     if(data.success=="true"){
-                        $("#uuid").attr("value",data.data.applyUuid);
-                        document.getElementById("applyAdd").setAttribute("disabled","disabled");
                         layer.alert(data.msg,{icon:1,title:'信息提示'});
                     }else{
                         layer.alert(data.msg,{icon:2,title:'信息提示'});
@@ -94,6 +93,33 @@ annex.addStuff = function () {
 
 //删除对应用印材料
 annex.delStuff = function () {
-//重新push
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length==0){
+        layer.msg('请选择要操作的数据');
+        return;
+    }
+    var checkedIds = "";
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length>0) {
+        for (var i = 0; i < checkedItems.length; i++) {
+            checkedIds += checkedItems[i].uuid + ",";
+        }
+    }
+    checkedIds = checkedIds.slice(0,checkedIds.length-1);
 
+    layer.confirm('确定删除选中的申请吗?',{
+            btn:['确定','取消'],icon:0,title:'自动匹配'
+        },function () {
+            $.ajax({
+                url: "/bg/yygl/applyStuff/stuffDel?checkedIds="+checkedIds,
+                type: "post",
+                dataType:"json",
+                contentType: 'application/json',
+                success: function (data) {
+                    layer.msg(data.msg);
+                    annex.initDataGrid();
+                }
+            });
+        }
+    )
 }

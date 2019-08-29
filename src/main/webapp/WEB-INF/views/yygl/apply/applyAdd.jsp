@@ -21,7 +21,7 @@
     <link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" media="all">
     <style type="text/css">
         .tableBody{
-            height: 100px!important;
+            height: 120px!important;
         }
     </style>
 </head>
@@ -116,7 +116,7 @@
 <div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 1%">
     <h3 style="float: left">用印材料详情</h3>
     <div style="text-align: right">
-        <button type="button" class="btn" onclick="annex.addStuff()">新增</button>
+        <button type="button" class="btn" onclick="annex.toAddStuff()">新增</button>
         <button type="button" class="btn" onclick="annex.delStuff()">删除</button>
     </div>
 

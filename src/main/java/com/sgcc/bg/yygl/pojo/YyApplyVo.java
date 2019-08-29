@@ -3,7 +3,7 @@ package com.sgcc.bg.yygl.pojo;
 import com.sgcc.bg.yygl.bean.YyApply;
 
 /**
- * 前端传值
+ * 用印申请-前端传值
  */
 public class YyApplyVo {
 

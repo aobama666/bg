@@ -35,7 +35,7 @@
             <span title = "用印材料"><b class="mustWrite">*</b>用印材料</span>
         </td>
         <td style="width: 80%" class="addInputStyle">
-            <input type = "text" style="display: none" id = "applyUuid"  name="applyUuid" value="${applyUuid}"/>
+            <input type = "text" style="display: none" id = "applyId"  name="applyId" value="${applyUuid}"/>
             <div class="controls" class="form-control">
                 <input id="useSealFile" type="file" name="useSealFile" class="validNull"  property="file"
                        content="用印材料" title="必填项" style="display:inline-block;">
@@ -48,7 +48,7 @@
         </td>
         <td style="width: 80%" class="addInputStyle">
             <div class="controls" class="form-control">
-                <input id="proofFile" type="file" name="proofFile" class="validNull"  property="file"
+                <input id="proofFile" type="file" name="proofFile" class=""  property="file"
                        content="佐证材料" title="必填项" style="display:inline-block;">
             </div>
         </td>
@@ -68,11 +68,15 @@
         </td>
         <td style="width: 90%" class="addInputStyle">
             <input type="text"  id="remark"  name="remark"
-                   class="validNull"  len="50"   content="备注" title="必填项"/>
+                   class=""  len="50"   content="备注" title="必填项"/>
         </td>
     </tr>
 
 </table>
+<div style="text-align: center; padding-top: 5px">
+    <button type="button" class="btn" onclick="annex.addStuff()">保存</button>
+    <button type="button" class="btn" onclick="applyOperate.returnClose()">返回</button>
+</div>
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/locale/easyui-lang-zh_CN.js"></script>
@@ -93,5 +97,6 @@
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
 <script src="<%=request.getContextPath()%>/js/yygl/apply/applyOperate.js"></script>
+<script src="<%=request.getContextPath()%>/js/yygl/apply/applyAnnex.js"></script>
 </body>
 </html>
