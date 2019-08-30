@@ -326,5 +326,5 @@ apply.applyExport = function () {
 /*关闭页面后弹出信息*/
 apply.closeAndOpen = function (message) {
     layer.closeAll();
-    layer.alert(message,{icon:1,title:'信息提示'});
+    layer.msg(message);
 };

@@ -49,6 +49,7 @@ annex.toAddStuff = function () {
         maxmin:true,
         content:url,
         end: function () {
+            annex.initDataGrid();
         }
     });
 }
@@ -80,7 +81,7 @@ annex.addStuff = function () {
                 data: JSON.stringify(paperDetailFormData),
                 success: function (data) {
                     if(data.success=="true"){
-                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                        parent.applyOperate.closeAndOpen(data.msg);
                     }else{
                         layer.alert(data.msg,{icon:2,title:'信息提示'});
                         return;

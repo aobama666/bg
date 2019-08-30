@@ -3,6 +3,7 @@ package com.sgcc.bg.yygl.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.ResultWarp;
+import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.yygl.bean.YyApplyAnnex;
 import com.sgcc.bg.yygl.pojo.YyApplyAnnexVo;
 import com.sgcc.bg.yygl.service.YyApplyAnnexService;
@@ -64,13 +65,26 @@ public class YyApplyStuffController {
         YyApplyAnnex yyApplyAnnex = applyAnnexVo.toYyApplyAnnex();
         File useSealFile = applyAnnexVo.getUseSealFile();
         File proofFile = applyAnnexVo.getProofFile();
-        String useSealFileName = useSealFile.getName();
-        String proofFileName = proofFile.getName();
+        String stuffUuid = Rtext.getUUID();
 
-        //获取用印材料基本信息
-        //获取用印材料文件
-        //获取佐证材料文件
-        return "";
+        //上传用印材料，保存用印材料基本信息
+        String useSealFileId = yyApplyAnnexService.fileAdd(stuffUuid,useSealFile);
+
+        //如果选择了佐证材料文件，上传佐证材料，保存佐证材料基本信息
+        String proofFileId = "";
+        if(null != proofFile){
+            proofFileId = yyApplyAnnexService.fileAdd(stuffUuid,proofFile);
+        }
+
+        //保存用印材料基本信息
+        yyApplyAnnex.setUuid(stuffUuid);
+        yyApplyAnnex.setUseSealFileId(useSealFileId);
+        yyApplyAnnex.setProofFileId(proofFileId);
+        yyApplyAnnexService.stuffAdd(yyApplyAnnex);
+
+        //反馈给用户一个令他开心的通知，恭喜你上传材料文件成功!
+        ResultWarp resultWarp = new ResultWarp(ResultWarp.SUCCESS,"保存用印材料信息成功");
+        return JSON.toJSONString(resultWarp);
     }
 
 

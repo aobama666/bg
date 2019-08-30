@@ -28,4 +28,8 @@ public interface YyApplyAnnexMapper {
     List<YyApplyAnnexDAO> selectApplyAnnex(@Param("applyUuid") String applyUuid);
 
 
+    /**
+     * 查询单个用印材料的基本信息
+     */
+    YyApplyAnnex findApplyAnnex(@Param("uuid") String uuid);
 }

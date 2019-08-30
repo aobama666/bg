@@ -7,8 +7,8 @@
     <insert id="addApplyAnnex">
         INSERT INTO BG_YY_APPLY_ANNEX (uuid, APPLY_ID, USE_SEAL_FILE_ID, PROOF_FILE_ID, USE_SEAL_AMOUNT
           , REMARK, CREATE_USER, CREATE_TIME, VALID) VALUES
-          (#{uuid},#{applyId},#{useSealFileId},#{profFileId},
-          #{useSealAmount},#{remark},#{createUser},sysdate,'1');
+          (#{uuid},#{applyId},#{useSealFileId},#{proofFileId},
+          #{useSealAmount},#{remark},#{createUser},sysdate,'1')
     </insert>
 
 
@@ -36,5 +36,17 @@
           a.REMARK                                           remark
         FROM BG_YY_APPLY_ANNEX a
         WHERE a.APPLY_ID = #{applyUuid} AND valid = 1
+    </select>
+
+    <select id="findApplyAnnex" resultType="com.sgcc.bg.yygl.bean.YyApplyAnnex">
+        SELECT
+          uuid,
+          APPLY_ID applyId,
+          use_seal_file_id useSealFileId,
+          PROOF_FILE_ID proofFileId,
+          USE_SEAL_AMOUNT useSealAmount,
+          REMARK
+        FROM BG_YY_APPLY_ANNEX
+        WHERE uuid = 'A8F591FD98AE414EACEEAC262E978DE9'
     </select>
 </mapper>

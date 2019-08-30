@@ -197,3 +197,8 @@ applyOperate.changeItemFirst = function () {
     });
 }
 
+/*关闭页面后弹出信息*/
+applyOperate.closeAndOpen = function (message) {
+    layer.closeAll();
+    layer.msg(message);
+};
