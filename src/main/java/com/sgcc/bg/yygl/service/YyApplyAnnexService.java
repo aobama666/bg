@@ -2,6 +2,7 @@ package com.sgcc.bg.yygl.service;
 
 
 import com.sgcc.bg.yygl.bean.YyApplyAnnex;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.Map;
@@ -26,7 +27,7 @@ public interface YyApplyAnnexService {
     /**
      * 上传ftp文件，保存bg_lw_file对应文件信息，上传用印材料和佐证材料使用
      */
-    String fileAdd(String stuffUuid, File file);
+    String fileAdd(String stuffUuid, String fileName);
 
 
 }

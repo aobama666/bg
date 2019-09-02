@@ -10,6 +10,7 @@ import com.sgcc.bg.yygl.bean.YyApply;
 import com.sgcc.bg.yygl.constant.YyApplyConstant;
 import com.sgcc.bg.yygl.mapper.YyApplyMapper;
 import com.sgcc.bg.yygl.pojo.YyApplyDAO;
+import com.sgcc.bg.yygl.service.YyApplyAnnexService;
 import com.sgcc.bg.yygl.service.YyApplyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class YyApplyServiceImpl implements YyApplyService {
 
     @Autowired
     private YyApplyMapper yyApplyMapper;
+    @Autowired
+    private YyApplyAnnexService yyApplyAnnexServicel;
     @Autowired
     private WebUtils webUtils;
     @Autowired
@@ -195,7 +198,12 @@ public class YyApplyServiceImpl implements YyApplyService {
         Integer successNum = 0;
         Integer failNum = 0;
         for(String checkedId : checkedIds){
+            //删除基本信息
             int result = yyApplyMapper.applyDel(checkedId,YyApplyConstant.STATUS_DEAL_SUB);
+
+            //删除用印材料信息
+            yyApplyAnnexServicel.selectApplyAnnex(checkedId);
+
             if(result==0){
                 failNum ++;
             }else{

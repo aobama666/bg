@@ -32,5 +32,7 @@ public class YyApplyConstant {
     public static final String NODE_LEADER = "4";
     public static final String NODE_ADMIN = "5";
 
+    //附件上传本地临时路径
+    public static final String STUFF_UPLOAD_LOCAL_PATH = "/upload/yygl/";
 
 }

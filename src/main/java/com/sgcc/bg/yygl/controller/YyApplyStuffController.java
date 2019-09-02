@@ -2,22 +2,28 @@ package com.sgcc.bg.yygl.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.sgcc.bg.common.FileDownloadUtil;
 import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.Rtext;
+import com.sgcc.bg.lunwen.util.UploadUtil;
 import com.sgcc.bg.yygl.bean.YyApplyAnnex;
+import com.sgcc.bg.yygl.constant.YyApplyConstant;
 import com.sgcc.bg.yygl.pojo.YyApplyAnnexVo;
 import com.sgcc.bg.yygl.service.YyApplyAnnexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -61,19 +67,26 @@ public class YyApplyStuffController {
      */
     @ResponseBody
     @RequestMapping("/stuffAdd")
-    public String stuffAdd(@RequestBody YyApplyAnnexVo applyAnnexVo){
-        YyApplyAnnex yyApplyAnnex = applyAnnexVo.toYyApplyAnnex();
-        File useSealFile = applyAnnexVo.getUseSealFile();
-        File proofFile = applyAnnexVo.getProofFile();
+    public void stuffAdd(HttpServletResponse response, HttpServletRequest request){
+        response.setContentType("text/html;charset=utf-8");
+        YyApplyAnnex yyApplyAnnex = new YyApplyAnnex();
+        yyApplyAnnex.setApplyId(request.getParameter("applyId"));
+        yyApplyAnnex.setUseSealAmount(request.getParameter("useSealAmount"));
+        yyApplyAnnex.setRemark(request.getParameter("remark"));
         String stuffUuid = Rtext.getUUID();
 
-        //上传用印材料，保存用印材料基本信息
-        String useSealFileId = yyApplyAnnexService.fileAdd(stuffUuid,useSealFile);
+        //上传文件至本地服务
+        List<String> fileNames = UploadUtil.uploadFileForLocalMore(YyApplyConstant.STUFF_UPLOAD_LOCAL_PATH,request);
+
+        //上传用印材料至ftp服务器，保存用印材料基本信息,
+        String useSealFileName = fileNames.get(0);
+        String useSealFileId = yyApplyAnnexService.fileAdd(stuffUuid,useSealFileName);
 
         //如果选择了佐证材料文件，上传佐证材料，保存佐证材料基本信息
         String proofFileId = "";
-        if(null != proofFile){
-            proofFileId = yyApplyAnnexService.fileAdd(stuffUuid,proofFile);
+        if(fileNames.size()>1){
+            String proofFileName = fileNames.get(1);
+            proofFileId = yyApplyAnnexService.fileAdd(stuffUuid,proofFileName);
         }
 
         //保存用印材料基本信息
@@ -82,9 +95,13 @@ public class YyApplyStuffController {
         yyApplyAnnex.setProofFileId(proofFileId);
         yyApplyAnnexService.stuffAdd(yyApplyAnnex);
 
-        //反馈给用户一个令他开心的通知，恭喜你上传材料文件成功!
+        //return给用户一个令人开心的message，恭喜你upload file success!
         ResultWarp resultWarp = new ResultWarp(ResultWarp.SUCCESS,"保存用印材料信息成功");
-        return JSON.toJSONString(resultWarp);
+        try {
+            response.getWriter().print(JSON.toJSONString(resultWarp));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -97,5 +114,21 @@ public class YyApplyStuffController {
         String msg = yyApplyAnnexService.delApplyAnnex(checkedIds);
         ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,msg);
         return JSON.toJSONString(rw);
+    }
+
+
+    /**
+     * 下载对应的材料
+     */
+    @RequestMapping("/downloadStuff")
+    public void downloadStuff(HttpServletRequest request, HttpServletResponse response){
+        String filePath = request.getParameter("filePath");
+        String fileName = request.getParameter("fileName");
+        //从ftp下载文件
+        try {
+            FileDownloadUtil.fileDownloadFromFtpLwAnnex(response, request, filePath, fileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

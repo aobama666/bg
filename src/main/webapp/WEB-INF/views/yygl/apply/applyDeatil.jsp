@@ -86,6 +86,12 @@
     </tr>
 </table>
 
+<form action="">
+    <input type = "text" style="display: none" value="" id = "filePath" name="filePath">
+    <input type = "text" style="display: none" value="" id = "fileName" name="fileName">
+</form>
+
+
 <div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 1%">
     <h3>用印材料详情</h3>
 

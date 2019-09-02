@@ -99,7 +99,7 @@
     </tr>
     <tr>
         <td style="width: 10%">
-            <span title = "用印种类"><b class="mustWrite">*</b>用印种类</span>
+            <span title = "用印种类"><b class="mustWrite">*</b>用印种类</span>`
         </td>
         <td style="width: 90%" class="addInputStyle" colspan="3">
             <input type = "text" style="display: none" id = "useSealKindCode"  name="useSealKindCode" value="${kindCode}">
@@ -117,6 +117,12 @@
         </td>
     </tr>
 </table>
+
+<form action="">
+    <input type = "text" style="display: none" value="" id = "filePath" name="filePath">
+    <input type = "text" style="display: none" value="" id = "fileName" name="fileName">
+</form>
+
 
 <div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 1%">
     <h3 style="float: left">用印材料详情</h3>

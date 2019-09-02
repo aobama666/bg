@@ -47,6 +47,6 @@
           USE_SEAL_AMOUNT useSealAmount,
           REMARK
         FROM BG_YY_APPLY_ANNEX
-        WHERE uuid = 'A8F591FD98AE414EACEEAC262E978DE9'
+        WHERE uuid = #{uuid}
     </select>
 </mapper>

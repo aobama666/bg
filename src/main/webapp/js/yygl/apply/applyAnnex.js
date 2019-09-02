@@ -22,8 +22,16 @@ annex.initDataGrid = function(){
                     return '<input type="checkbox" name="oneCheck" id="oneCheck"  index = "'+(index++)+'"  value="'+(row.uuid)+'"/>';
                 }
             },
-            {name: '用印材料',style:{width:"50px"}, data: 'useSealFileName'},
-            {name: '佐证材料',style:{width:"50px"}, data: 'proofFileName'},
+            {name: '用印材料',style:{width:"50px"}, data: 'useSealFileName',forMat:function(row){
+                    return "<a title = '点击下载附件' style='width:250px;" +
+                        " text-align:left;'id='\"+row.UUID+\"'" +
+                        " href = 'javascript:void(0)' onclick = annex.downloadStuff('"+row.useSealFileName+"','"+row.useSealFileLink+"')>"+row.useSealFileName+"</a>";
+                }},
+            {name: '佐证材料',style:{width:"50px"}, data: 'proofFileName',forMat:function(row){
+                    return "<a title = '点击下载附件' style='width:250px;" +
+                        " text-align:left;'id='\"+row.UUID+\"'" +
+                        " href = 'javascript:void(0)' onclick = annex.downloadStuff('"+row.proofFileName+"','"+row.proofFileLink+"')>"+row.proofFileName+"</a>";
+                }},
             {name: '用印文件份数',style:{width:"50px"}, data: 'useSealAmount'},
             {name: '备注',style:{width:"50px"}, data: 'remark'}
         ]
@@ -32,6 +40,14 @@ annex.initDataGrid = function(){
 }
 
 
+
+//下载选中材料
+annex.downloadStuff = function (fileName,filePath) {
+    $("#filePath").val(filePath);
+    $("#fileName").val(fileName);
+    document.forms[0].action = "/bg/yygl/applyStuff/downloadStuff";
+    document.forms[0].submit();
+}
 
 //弹出新增用印材料窗口
 annex.toAddStuff = function () {
@@ -54,10 +70,11 @@ annex.toAddStuff = function () {
     });
 }
 
+
 /**
- * 保存材料信息
+ * 保存材料信息-ajaxsubmit
  */
-annex.addStuff = function () {
+annex.saveStuff = function() {
     //验证必填项是否为空
     var validNull = dataForm.validNullable();
     if(!validNull){
@@ -68,17 +85,14 @@ annex.addStuff = function () {
     if(!checkLength){
         return;
     }
-    //获取form表单内容
-    var paperDetailFormData = roomAddInfoCommon.getFormDataInfo();
-    layer.confirm('确认保存该数据吗',{
-            btn:['确定','取消'],icon:0,title:'保存提示'
+
+    layer.confirm('确认上传吗',{
+            btn:['确定','取消'],icon:0,title:'上传提示'
         },function () {
-            $.ajax({
+            $("#form17").ajaxSubmit({
                 url: "/bg/yygl/applyStuff/stuffAdd",
                 type: "post",
-                dataType:"json",
-                contentType: 'application/json',
-                data: JSON.stringify(paperDetailFormData),
+                dataType: "json",
                 success: function (data) {
                     if(data.success=="true"){
                         parent.applyOperate.closeAndOpen(data.msg);
@@ -88,6 +102,8 @@ annex.addStuff = function () {
                     }
                 }
             });
+        },function () {
+            layer.close(index);
         }
     )
 }

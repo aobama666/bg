@@ -29,11 +29,13 @@
     <title>用印材料新增</title>
 </head>
 <body>
+<form action="" id="form17" name="form17" enctype="multipart/form-data" method="post">
 <table class="visitOperate tableStyle specialTable">
     <tr>
         <td style="width: 20%">
             <span title = "用印材料"><b class="mustWrite">*</b>用印材料</span>
         </td>
+
         <td style="width: 80%" class="addInputStyle">
             <input type = "text" style="display: none" id = "applyId"  name="applyId" value="${applyUuid}"/>
             <div class="controls" class="form-control">
@@ -71,10 +73,10 @@
                    class=""  len="50"   content="备注" title="必填项"/>
         </td>
     </tr>
-
 </table>
+</form>
 <div style="text-align: center; padding-top: 5px">
-    <button type="button" class="btn" onclick="annex.addStuff()">保存</button>
+    <button type="button" class="btn" onclick="annex.saveStuff()">保存</button>
     <button type="button" class="btn" onclick="applyOperate.returnClose()">返回</button>
 </div>
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
@@ -94,6 +96,11 @@
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 
 <!-- 本页面所需的js -->
+<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/stuff-tree/stuff-tree.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoValidate/sotoValidate.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
+<script src="<%=request.getContextPath()%>/js/plugins/jquery.form.js"></script>
+
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
 <script src="<%=request.getContextPath()%>/js/yygl/apply/applyOperate.js"></script>
