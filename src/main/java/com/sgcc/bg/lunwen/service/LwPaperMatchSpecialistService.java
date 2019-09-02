@@ -2,9 +2,7 @@ package com.sgcc.bg.lunwen.service;
 
 import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
 import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialistVo;
-import org.apache.ibatis.annotations.Param;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,12 +16,12 @@ public interface LwPaperMatchSpecialistService {
     /**
      * 修改打分状态
      */
-    Integer updateScoreStatus(String pmeId,String updateUser,String scoreStatus);
+    Integer updateScoreStatus(String pmeId, String updateUser, String scoreStatus);
 
     /**
      * 修改专家对应某论文打分分数
      */
-    Integer updateScore(String pmeId,String updateUser,String score);
+    Integer updateScore(String pmeId, String updateUser, String score);
 
     /**
      * 获取当前论文下最大的排序数

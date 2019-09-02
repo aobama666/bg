@@ -26,7 +26,7 @@ public interface LwPaperMapper {
      * 修改生成打分表状态
      */
     Integer updateScoreTableStatus(
-            @Param("uuid")String uuid,
+            @Param("uuid") String uuid,
             @Param("scoreTableStatus") String scoreTableStatus
     );
 
@@ -34,15 +34,15 @@ public interface LwPaperMapper {
      * 修改打分状态
      */
     Integer updateScoreStatus(
-            @Param("uuid")String uuid,
-            @Param("scoreStatus")String scoreStatus
+            @Param("uuid") String uuid,
+            @Param("scoreStatus") String scoreStatus
     );
 
     /**
      * 修改论文全生命周期状态
      */
     Integer updateAllStatus(
-            @Param("uuid")String uuid,
+            @Param("uuid") String uuid,
             @Param("allStatus") String allStatus
     );
 
@@ -68,7 +68,7 @@ public interface LwPaperMapper {
      * 查找某条论文信息,或根据题目查重
      */
     Map<String, Object> findPaper(
-            @Param("uuid")String uuid,
+            @Param("uuid") String uuid,
             @Param("paperName") String paperName,
             @Param("valid") String valid
     );
@@ -76,7 +76,7 @@ public interface LwPaperMapper {
     /**
      * 查找当前对应类型的最大编号
      */
-    String maxPaperId(@Param("paperType") String paperType,@Param("year") String year);
+    String maxPaperId(@Param("paperType") String paperType, @Param("year") String year);
 
     /**
      * 删除论文信息，逻辑删除，单纯修改有效状态
@@ -123,11 +123,11 @@ public interface LwPaperMapper {
      * 综合统计论文查询
      */
     List<PaperComprehensiveVO> paperComprehensiveVOList(@Param("year") String year,
-                                                        @Param("paperName")String paperName,
-                                                        @Param("author")String author,
-                                                        @Param("paperId")String paperId,
-                                                        @Param("start")int start,
-                                                        @Param("end")int end);
+                                                        @Param("paperName") String paperName,
+                                                        @Param("author") String author,
+                                                        @Param("paperId") String paperId,
+                                                        @Param("start") int start,
+                                                        @Param("end") int end);
 
     /**
      * 综合统计论文列表count
@@ -183,9 +183,9 @@ public interface LwPaperMapper {
      * 查全部--统计导出
      */
     List<PaperComprehensiveVO> outPaperComprehensiveVOAll(@Param("year") String year,
-                                                          @Param("paperName")String paperName,
-                                                          @Param("author")String author,
-                                                          @Param("paperId")String paperId);
+                                                          @Param("paperName") String paperName,
+                                                          @Param("author") String author,
+                                                          @Param("paperId") String paperId);
 
     /**
      * 根据ids查
@@ -247,9 +247,9 @@ public interface LwPaperMapper {
      * 自动匹配，查看当前没有附件信息的论文
      */
     List<Map<String,Object>> notAnnexPaper(
-      @Param("bussinessTable") String bussinessTable,
-      @Param("year") String year,
-      @Param("valid") String valid
+            @Param("bussinessTable") String bussinessTable,
+            @Param("year") String year,
+            @Param("valid") String valid
     );
 
     /**

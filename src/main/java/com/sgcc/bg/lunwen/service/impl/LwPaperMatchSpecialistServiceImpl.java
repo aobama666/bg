@@ -77,7 +77,7 @@ public class LwPaperMatchSpecialistServiceImpl implements LwPaperMatchSpecialist
     @Override
     public List<Map<String, Object>> ifExpertScore(String specialistId) {
         return lwPaperMatchSpecialistMapper.ifExpertScore(specialistId,LwPaperConstant.SCORE_STATUS_NO
-                ,DateUtil.getYear(),LwPaperConstant.VALID_YES);
+                , DateUtil.getYear(),LwPaperConstant.VALID_YES);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.sgcc.bg.lunwen.bean;
 
-import java.util.Date;
 
 public class PaperVO {
 

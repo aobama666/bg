@@ -15,10 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
-public class LwGradeStatisticServiceImpl implements LwGradeStatisticService{
+public class LwGradeStatisticServiceImpl implements LwGradeStatisticService {
 
     @Autowired
     private LwSpecialistMapper lwSpecialistMapper;
@@ -82,7 +85,7 @@ public class LwGradeStatisticServiceImpl implements LwGradeStatisticService{
             //修改论文全流程状态
             lwPaperMapper.updateAllStatus(uuidStr[i], LwPaperConstant.P_A_S_REVIEW);
             //修改论文关联表打分状态
-            lwPaperMatchSpecialistMapper.updateScoreStatusForPaperId(uuidStr[i],getLoginUserUUID(),LwPaperConstant.SCORE_STATUS_AGAIN);
+            lwPaperMatchSpecialistMapper.updateScoreStatusForPaperId(uuidStr[i],getLoginUserUUID(), LwPaperConstant.SCORE_STATUS_AGAIN);
         }
     }
 

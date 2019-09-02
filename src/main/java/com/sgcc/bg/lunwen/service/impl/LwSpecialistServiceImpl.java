@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -381,7 +380,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
     @Override
     public Map<String, Object> renewalMap(String uuid) {
         //专家已匹配的所有论文-----当前年已经匹配的专家
-        List<PaperVO> paperMap = lwSpecialistMapper.exportMatchPaperForYear(uuid,DateUtil.getYear());
+        List<PaperVO> paperMap = lwSpecialistMapper.exportMatchPaperForYear(uuid, DateUtil.getYear());
         //存本人及已匹配的专家
         Set spUuid = new HashSet();
         //存论文涉及到的本单位

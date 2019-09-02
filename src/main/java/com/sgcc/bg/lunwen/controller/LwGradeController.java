@@ -29,6 +29,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.*;
 
 /**
@@ -268,10 +272,10 @@ public class LwGradeController {
         }
         //修改论文专家关联表打分状态，总分分数
         lwPaperMatchSpecialistService.updateScore(pmeId,userUuid,totalScore);
-        lwPaperMatchSpecialistService.updateScoreStatus(pmeId,userUuid,LwPaperConstant.SCORE_STATUS_SAVE);
+        lwPaperMatchSpecialistService.updateScoreStatus(pmeId,userUuid, LwPaperConstant.SCORE_STATUS_SAVE);
         //修改论文表打分状态，全流程状态
-        lwPaperService.updateScoreStatus(paperUuid,LwPaperConstant.SCORE_STATUS_SAVE);
-        lwPaperService.updateAllStatus(paperUuid,LwPaperConstant.P_A_S_SCORED);
+        lwPaperService.updateScoreStatus(paperUuid, LwPaperConstant.SCORE_STATUS_SAVE);
+        lwPaperService.updateAllStatus(paperUuid, LwPaperConstant.P_A_S_SCORED);
         ResultWarp rw = null;
         String msg = "";
         if(ifSave){

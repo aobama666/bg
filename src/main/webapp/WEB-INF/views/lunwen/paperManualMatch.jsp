@@ -96,6 +96,7 @@
             // var checkSpecialists = document.getElementsByClassName("layui-table")[1];
             // var checkNums = checkSpecialists.rows.length;
 
+
             if(specialistsIdS.length !== 0){
                 var specialistsIdArray = specialistsIdS.split(',');
                 if(specialistsIdArray.length>7 && specialistsIdArray.length %2 == 0){

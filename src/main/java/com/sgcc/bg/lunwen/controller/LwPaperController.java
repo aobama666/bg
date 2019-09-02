@@ -5,7 +5,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.*;
 import com.sgcc.bg.lunwen.bean.*;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
-import com.sgcc.bg.lunwen.mapper.LwPaperMatchSpecialistMapper;
 import com.sgcc.bg.lunwen.service.LwFileService;
 import com.sgcc.bg.lunwen.service.LwPaperMatchSpecialistService;
 import com.sgcc.bg.lunwen.service.LwPaperService;
@@ -26,7 +25,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -504,9 +506,9 @@ public class LwPaperController {
 
         //前台验证是否已经进行过自动匹配操作，如果做过才能访问此方法
         Map<String,Object> mvMap = new HashMap<>();
-        mvMap.put("paperUuid",JSON.toJSONString(paperUuid));
-        mvMap.put("left",JSON.toJSONString(matchSpecialists));
-        mvMap.put("right",JSON.toJSONString(lwSpList));
+        mvMap.put("paperUuid", JSON.toJSONString(paperUuid));
+        mvMap.put("left", JSON.toJSONString(matchSpecialists));
+        mvMap.put("right", JSON.toJSONString(lwSpList));
         //查看是否生成打分表，生成打分表后不允许再次手动匹配，只能查看匹配专家详情
         String scoreTableStatus = lwPaperMap.get("SCORETABLESTATUS").toString();
         if(LwPaperConstant.SCORE_TABLE_OFF.equals(scoreTableStatus)){
@@ -838,7 +840,7 @@ public class LwPaperController {
         //获取文件大小
         String fileLength = String.valueOf(newFtpFile.length());
         //上传至ftp
-        FtpUtils.uploadFile(newFtpFile,FtpUtils.PaperUploadPath);
+        FtpUtils.uploadFile(newFtpFile, FtpUtils.PaperUploadPath);
         //删除原路径文件
         newFtpFile.delete();
 
@@ -1009,7 +1011,7 @@ public class LwPaperController {
             String fileLength = String.valueOf(newFtpFile.length());
             //上传至ftp
             try{
-                FtpUtils.uploadFile(newFtpFile,FtpUtils.PaperUploadPath);
+                FtpUtils.uploadFile(newFtpFile, FtpUtils.PaperUploadPath);
             }catch(Exception e){
                 log.error("ftp操作异常");
                 e.printStackTrace();

@@ -23,12 +23,12 @@ public interface LwSpecialistMapper {
      * @return
      */
     List<LwSpecialist> expertList(@Param("name") String name,
-                                        @Param("researchDirection") String researchDirection,
-                                        @Param("unitName") String unitName,
-                                        @Param("field") String field,
-                                        @Param("matchStatus") String matchStatus,
-                                        @Param("start") int start,
-                                        @Param("end") int end);
+                                  @Param("researchDirection") String researchDirection,
+                                  @Param("unitName") String unitName,
+                                  @Param("field") String field,
+                                  @Param("matchStatus") String matchStatus,
+                                  @Param("start") int start,
+                                  @Param("end") int end);
 
     /**
      * 增加专家
@@ -66,7 +66,7 @@ public interface LwSpecialistMapper {
               @Param("field") String field,
               @Param("matchStatus") String matchStatus);
 
-    int deleteSpecialist(@Param("strings")String[] strings);
+    int deleteSpecialist(@Param("strings") String[] strings);
 
     /**
      * 专家匹配的论文
@@ -108,10 +108,10 @@ public interface LwSpecialistMapper {
      * @return
      */
     List<LwSpecialist> list(@Param("name") String name,
-                                  @Param("researchDirection") String researchDirection,
-                                  @Param("unitName") String unitName,
-                                  @Param("field") String field,
-                                  @Param("matchStatus") String matchStatus);
+                            @Param("researchDirection") String researchDirection,
+                            @Param("unitName") String unitName,
+                            @Param("field") String field,
+                            @Param("matchStatus") String matchStatus);
 
     /**
      * 获取所有的email
@@ -155,7 +155,7 @@ public interface LwSpecialistMapper {
                                               @Param("fieldSet") Set fieldSet);
 
     //修改专家的匹配状态
-    int updateMatchStatus(@Param("beforeUuid") String beforeUuid ,@Param("matchStatus") String matchStatus);
+    int updateMatchStatus(@Param("beforeUuid") String beforeUuid, @Param("matchStatus") String matchStatus);
 
     /**
      * 评分统计专家查询

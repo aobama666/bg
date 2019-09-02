@@ -6,8 +6,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.FileDownloadUtil;
 import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.Rtext;
-import com.sgcc.bg.controller.BgNonProjectController;
-import com.sgcc.bg.controller.StaffWorkbenchController;
 import com.sgcc.bg.lunwen.bean.LwSpecialist;
 import com.sgcc.bg.lunwen.bean.PaperVO;
 import com.sgcc.bg.lunwen.service.LwSpecialistService;
@@ -19,13 +17,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.security.auth.login.Configuration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 

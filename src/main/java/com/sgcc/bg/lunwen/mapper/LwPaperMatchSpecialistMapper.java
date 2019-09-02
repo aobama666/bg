@@ -6,7 +6,6 @@ import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialistVo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -57,9 +56,9 @@ public interface LwPaperMatchSpecialistMapper {
      * 删除匹配信息
      */
     Integer delMatchMessage(
-        @Param("paperId") String paperId,
-        @Param("specialistId") String specialistId,
-        @Param("valid") String valid);
+            @Param("paperId") String paperId,
+            @Param("specialistId") String specialistId,
+            @Param("valid") String valid);
 
     /**
      * 根据论文信息或专家信息查询已经匹配的信息
@@ -153,5 +152,5 @@ public interface LwPaperMatchSpecialistMapper {
     /**
      * 判断当前论文是否有匹配操作
      */
-    List<String> ifMatchForPaperId(@Param("paperId") String paperId,@Param("valid") String valid);
+    List<String> ifMatchForPaperId(@Param("paperId") String paperId, @Param("valid") String valid);
 }

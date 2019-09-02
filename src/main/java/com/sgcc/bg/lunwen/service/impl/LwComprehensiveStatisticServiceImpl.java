@@ -38,7 +38,7 @@ public class LwComprehensiveStatisticServiceImpl implements LwComprehensiveStati
         }
         if(ifNowYear || yearList.size() == 0){
             Map<String,Object> year = new HashMap<>();
-            year.put("YEAR",DateUtil.getYear());
+            year.put("YEAR", DateUtil.getYear());
             yearList.add(0,year);
         }
         return yearList;

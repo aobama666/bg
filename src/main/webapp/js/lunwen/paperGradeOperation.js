@@ -124,6 +124,7 @@ grade.saveGrade = function () {
     var msgTitle = '';
     var msg = '';
 
+
     if(scoreStatus === '0'){
         msgTitle = '保存提示';
         msg = '确认保存该分数信息吗?';

@@ -2,7 +2,6 @@ package com.sgcc.bg.lunwen.service;
 
 import com.sgcc.bg.lunwen.bean.LwPaper;
 import com.sgcc.bg.lunwen.bean.LwSpecialist;
-import org.apache.ibatis.annotations.Param;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
@@ -171,22 +170,22 @@ public interface LwPaperService {
      * @return
      */
     public List<LwPaper> selectLwpaperExport(String paperName,
-                                    String paperId,
-                                    String year,
-                                    String unit,
-                                    String author,
-                                    String field,
-                                    String allStatus,
-                                    String paperType,
-                                    String ids,
-                                    HttpServletResponse response);
+                                             String paperId,
+                                             String year,
+                                             String unit,
+                                             String author,
+                                             String field,
+                                             String allStatus,
+                                             String paperType,
+                                             String ids,
+                                             HttpServletResponse response);
 
     /**
      * 首次，亦或重复自动匹配
      * @param lwPaperMap
      * @return
      */
-    public Integer autoMaticSecond(Map<String,Object> lwPaperMap,String paperUuid);
+    public Integer autoMaticSecond(Map<String, Object> lwPaperMap, String paperUuid);
 
 
     /**
@@ -194,7 +193,7 @@ public interface LwPaperService {
      * @param in
      * @return
      */
-    String[] joinExcel(InputStream in,String paperType);
+    String[] joinExcel(InputStream in, String paperType);
 
     /**
      * 查询论文含有的所有领域
@@ -217,7 +216,7 @@ public interface LwPaperService {
     /**
      * 生成打分表前提条件，判断当年全部论文是否匹配完成
      */
-    List<Map<String,Object>> ifAllMatch(String matched,String withdraw);
+    List<Map<String,Object>> ifAllMatch(String matched, String withdraw);
 
 
     /**

@@ -1,6 +1,5 @@
 package com.sgcc.bg.lunwen.service;
 
-import com.sgcc.bg.lunwen.bean.PaperComprehensiveVO;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -55,5 +54,5 @@ public interface LwGradeStatisticService {
      * @param field
      * @return
      */
-    List<Map<String,Object>> outStatisticExcel(String year, String paperName, String paperId, String field,String ids,HttpServletResponse response);
+    List<Map<String,Object>> outStatisticExcel(String year, String paperName, String paperId, String field, String ids, HttpServletResponse response);
 }

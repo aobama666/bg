@@ -74,6 +74,7 @@ function uploadProFile() {
     if(checkResult){
         loadPage("open");
 
+
         var ran = Math.random()*1000;
         var paperType = ${paperType}
         // var paperType = $("#paperType").val();

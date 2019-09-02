@@ -61,7 +61,7 @@ public class LwPaperServiceImpl implements LwPaperService {
             before.append(LwPaperConstant.ZONGSHU);
         }
         //从数据库中查询当前类型的最大值后加1
-        String paperId = lwPaperMapper.maxPaperId(lwPaper.getPaperType(),DateUtil.getYear());
+        String paperId = lwPaperMapper.maxPaperId(lwPaper.getPaperType(), DateUtil.getYear());
         if(null == paperId || "".equals(paperId)){
             //这个类型的第一批论文
             paperId = "000";
@@ -113,7 +113,7 @@ public class LwPaperServiceImpl implements LwPaperService {
 
     @Override
     public String maxPaperId(String paperType) {
-        return lwPaperMapper.maxPaperId(paperType,DateUtil.getYear());
+        return lwPaperMapper.maxPaperId(paperType, DateUtil.getYear());
     }
 
     @Override
@@ -208,7 +208,7 @@ public class LwPaperServiceImpl implements LwPaperService {
         }
         if(ifNowYear || yearList.size() == 0){
             Map<String,Object> year = new HashMap<>();
-            year.put("YEAR",DateUtil.getYear());
+            year.put("YEAR", DateUtil.getYear());
             yearList.add(0,year);
         }
         return yearList;
@@ -216,27 +216,27 @@ public class LwPaperServiceImpl implements LwPaperService {
 
     @Override
     public List<Map<String,Object>> notAnnexPaper() {
-        return lwPaperMapper.notAnnexPaper(LwPaperConstant.BUSSINESSTABLE,DateUtil.getYear(),LwPaperConstant.VALID_YES);
+        return lwPaperMapper.notAnnexPaper(LwPaperConstant.BUSSINESSTABLE, DateUtil.getYear(),LwPaperConstant.VALID_YES);
     }
 
     @Override
     public List<Map<String, Object>> ifAllMatch(String matched,String withdraw) {
-        return lwPaperMapper.ifAllMatch(matched,withdraw,DateUtil.getYear(),LwPaperConstant.VALID_YES);
+        return lwPaperMapper.ifAllMatch(matched,withdraw, DateUtil.getYear(),LwPaperConstant.VALID_YES);
     }
 
     @Override
     public List<Map<String, Object>> ifAllUnrated() {
-        return lwPaperMapper.ifAllUnrated(LwPaperConstant.SCORE_STATUS_NO,DateUtil.getYear(),LwPaperConstant.VALID_YES);
+        return lwPaperMapper.ifAllUnrated(LwPaperConstant.SCORE_STATUS_NO, DateUtil.getYear(),LwPaperConstant.VALID_YES);
     }
 
     @Override
     public Integer batchUpdateAllStatus(String allStatus) {
-        return lwPaperMapper.batchUpdateAllStatus(allStatus,DateUtil.getYear(),LwPaperConstant.VALID_YES);
+        return lwPaperMapper.batchUpdateAllStatus(allStatus, DateUtil.getYear(),LwPaperConstant.VALID_YES);
     }
 
     @Override
     public Integer batchUpdateScoreTableStatus(String scoreTableStatus) {
-        return lwPaperMapper.batchUpdateScoreTableStatus(scoreTableStatus,DateUtil.getYear(),LwPaperConstant.VALID_YES);
+        return lwPaperMapper.batchUpdateScoreTableStatus(scoreTableStatus, DateUtil.getYear(),LwPaperConstant.VALID_YES);
     }
 
     @Override
@@ -251,7 +251,7 @@ public class LwPaperServiceImpl implements LwPaperService {
 
     @Override
     public List<Map<String, Object>> matchingPaper() {
-        return lwPaperMapper.matchingPaper(LwPaperConstant.P_A_S_MATCHING,DateUtil.getYear(),LwPaperConstant.VALID_YES);
+        return lwPaperMapper.matchingPaper(LwPaperConstant.P_A_S_MATCHING, DateUtil.getYear(),LwPaperConstant.VALID_YES);
     }
 
 

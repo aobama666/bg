@@ -1,19 +1,11 @@
 package com.sgcc.bg.common;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URLEncoder;
+import org.apache.commons.io.FileUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.FileUtils;
+import java.io.*;
+import java.net.URLEncoder;
 
 public class FileDownloadUtil {
 	

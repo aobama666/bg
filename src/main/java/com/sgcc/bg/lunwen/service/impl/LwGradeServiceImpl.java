@@ -2,7 +2,6 @@ package com.sgcc.bg.lunwen.service.impl;
 
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.lunwen.bean.LwGrade;
-import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.mapper.LwGradeMapper;
 import com.sgcc.bg.lunwen.mapper.LwPaperMapper;

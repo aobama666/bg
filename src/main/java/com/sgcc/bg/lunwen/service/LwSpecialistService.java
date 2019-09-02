@@ -2,7 +2,6 @@ package com.sgcc.bg.lunwen.service;
 
 import com.sgcc.bg.lunwen.bean.LwSpecialist;
 import com.sgcc.bg.lunwen.bean.PaperVO;
-import org.apache.ibatis.annotations.Param;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
@@ -54,7 +53,7 @@ public interface LwSpecialistService {
      * @param field
      * @param matchStatus
      */
-    List<LwSpecialist> exportSelectedItems(String name, String researchDirection, String unitName, String field, String matchStatus, String ids,HttpServletResponse response);
+    List<LwSpecialist> exportSelectedItems(String name, String researchDirection, String unitName, String field, String matchStatus, String ids, HttpServletResponse response);
 
     /**
      * 解析上传的批量录入excel表格
@@ -86,7 +85,7 @@ public interface LwSpecialistService {
     int removeShield(String uuid);
 
     //修改专家的匹配状态
-    int updateMatchStatus(String specialistId,String matchStatus);
+    int updateMatchStatus(String specialistId, String matchStatus);
 
     /**
      * 判断email是否存在，存在返回对应uuid
