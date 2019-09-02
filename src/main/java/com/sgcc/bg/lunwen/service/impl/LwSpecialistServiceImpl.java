@@ -219,7 +219,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                         errorInfo.append("专家姓名不能超过20个字！ ");
                         errorNum.add(1);
                     }else if(!StringUtil.checkNotNoOrC(cellValue[1])){
-                        errorInfo.append("专家姓名中不能有数字！ ");
+                        errorInfo.append("专家姓名只能含有中文、英文！ ");
                         errorNum.add(1);
                     }
 
@@ -275,7 +275,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                         errorInfo.append("手机号码不能为空！ ");
                         errorNum.add(8);
                     }else if (!ParamValidationUtil.mobile(cellValue[8])){
-                        errorInfo.append("手机号码不能超过20位！ ");
+                        errorInfo.append("手机号码格式不正确！ ");
                         errorNum.add(8);
                     }
 
@@ -285,7 +285,7 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
                         errorNum.add(9);
 //                  }else if (!ParamValidationUtil.eimail(cellValue[9])){   //这个校验有问题，@后面有多个点时校验不通过
                     }else if (!EmailUtil.isEmail(cellValue[9])){
-                        errorInfo.append("邮箱格式不对！ ");
+                        errorInfo.append("邮箱格式不正确！ ");
                         errorNum.add(9);
                     }else if(null != ifEmail && !"".equals(ifEmail)){
                                 errorInfo.append("该电子邮箱已存在！ ");
@@ -458,6 +458,11 @@ public class LwSpecialistServiceImpl implements LwSpecialistService {
     @Override
     public String ifEmail(String email) {
         return lwSpecialistMapper.ifEmail(email);
+    }
+
+    @Override
+    public List<Map<String, Object>> fieldList() {
+        return lwSpecialistMapper.fieldList();
     }
 
 

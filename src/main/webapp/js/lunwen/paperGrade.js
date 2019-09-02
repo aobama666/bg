@@ -103,7 +103,6 @@ grade.forDetails = function (id){
 
 /*弹出打分框 */
 grade.gradeOperation = function (pmeId,paperUuid,scoreStatus){
-    debugger
     var url = "/bg/lwGrade/gradeJumpOperation?paperType="+$("#paperType").val()
         +"&pmeId="+pmeId+"&paperUuid="+paperUuid+"&scoreStatus="+scoreStatus;
     layer.open({

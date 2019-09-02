@@ -465,6 +465,10 @@
            and p.year = #{year}
            and m.specialist_id = #{specialistId}
     </select>
+
+    <select id="fieldList" resultType="java.util.Map">
+        select field from bg_lw_specialist where VALID = '1'  group by field  order by field
+    </select>
     <!--and e.SPECIALIST_ID in(
     <foreach collection="list" item="list" index="index" separator=",">
         #{list,jdbcType=VARCHAR}
