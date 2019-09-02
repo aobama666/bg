@@ -77,7 +77,7 @@
             {field: 'uuid', title: 'ID',  sort: true,hide:true},
             {field: 'name', title: '专家姓名'},
             {field: 'field', title: '领域'},
-            {field: 'unitName', title: '所在单位'}
+            {field: 'researchDirection', title: '研究方向'}
         ]
 
         //表格配置文件
@@ -95,8 +95,6 @@
             // 获取table标签判断行数，ie8不支持，故抛弃
             // var checkSpecialists = document.getElementsByClassName("layui-table")[1];
             // var checkNums = checkSpecialists.rows.length;
-
-
             if(specialistsIdS.length !== 0){
                 var specialistsIdArray = specialistsIdS.split(',');
                 if(specialistsIdArray.length>7 && specialistsIdArray.length %2 == 0){

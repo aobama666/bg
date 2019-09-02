@@ -184,7 +184,6 @@ uploadAnnex.addBatchEvent = function(){
                 success: function (data) {
                     $("#errorFile").html('');
                     if(data.success === 'true'){
-
                         parent.paperList.closeAndOpen(data.msg);
                     }else{
                         layer.alert(data.msg,{icon:1,title:'信息提示'});

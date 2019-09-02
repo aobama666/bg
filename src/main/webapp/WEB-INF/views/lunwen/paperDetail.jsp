@@ -40,10 +40,10 @@
 				<span class="detailsLeft"> ${PAPERNAME}</span>
 			</td>
 			<td>
-				<span title = "期刊名称">期刊名称</span>
+				<span title = "作者单位">作者单位</span>
 			</td>
 			<td class="addInputStyle">
-				<span class="detailsLeft"> ${JOURNAL}</span>
+				<span class="detailsLeft"> ${UNIT}</span>
 			</td>
 		</tr>
 		<tr>
@@ -54,10 +54,10 @@
 				<span class="detailsLeft"> ${FIELD}</span>
 			</td>
 			<td>
-				<span title = "推荐单位">推荐单位</span>
+				<span title = "被引量">被引量</span>
 			</td>
 			<td class="addInputStyle">
-				<span class="detailsLeft"> ${RECOMMENDUNIT}</span>
+				<span class="detailsLeft"> ${QUOTECOUNT}</span>
 			</td>
 		</tr>
 		<tr>
@@ -68,18 +68,19 @@
 				<span class="detailsLeft"> ${AUTHOR}</span>
 			</td>
 			<td>
-				<span title = "被引量">被引量</span>
+				<span title = "期刊名称">期刊名称</span>
 			</td>
 			<td class="addInputStyle">
-				<span class="detailsLeft"> ${QUOTECOUNT}</span>
+				<span class="detailsLeft"> ${JOURNAL}</span>
 			</td>
 		</tr>
 		<tr>
+
 			<td>
-				<span title = "作者单位">作者单位</span>
+				<span title = "推荐单位">推荐单位</span>
 			</td>
 			<td class="addInputStyle">
-				<span class="detailsLeft"> ${UNIT}</span>
+				<span class="detailsLeft"> ${RECOMMENDUNIT}</span>
 			</td>
 			<td>
 				<span title = "下载量">下载量</span>
