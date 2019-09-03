@@ -1175,14 +1175,12 @@ public class BGServiceImpl implements IBGService {
 		for (Map<String, String> stuffMap : list) {
 			Iterator<Map<String, String>> iterator= workerList.iterator();
 			while(iterator.hasNext()){
-				Map<String, String> workerMap=iterator.next();
-				if(!stuffMap.get("hrcode").isEmpty() && !workerMap.get("HRCODE").isEmpty()) {
-					if (stuffMap.get("hrcode").equals(workerMap.get("HRCODE"))
-							&& DateUtil.compareDate(workerMap.get("WORK_TIME_BEGIN"), stuffMap.get("startDate"))
-							&& DateUtil.compareDate(stuffMap.get("endDate"), workerMap.get("WORK_TIME_END"))) {
-						bgServiceLog.info("updateStuff ：删除成功" + stuffMap.get("hrcode"));
-						iterator.remove();
-					}
+			Map<String, String> workerMap=iterator.next();
+				if (stuffMap.get("hrcode").equals(workerMap.get("HRCODE"))
+						&& DateUtil.compareDate(workerMap.get("WORK_TIME_BEGIN"), stuffMap.get("startDate"))
+						&& DateUtil.compareDate(stuffMap.get("endDate"), workerMap.get("WORK_TIME_END"))) {
+					bgServiceLog.info("updateStuff ：删除成功" + stuffMap.get("hrcode"));
+					iterator.remove();
 				}
 			}
 		}
