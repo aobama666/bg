@@ -171,7 +171,7 @@ public interface LwPaperMapper {
      */
     List<LwSpecialist> selectSpecialistField(
             @Param("authors") String[] authors,
-            @Param("unit") String unit,
+            @Param("units") String[] units,
             @Param("field") String field,
             @Param("valid") String valid,
             @Param("matchStatus") String matchStatus,

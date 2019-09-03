@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class LwPaperServiceImpl implements LwPaperService {
@@ -88,6 +90,8 @@ public class LwPaperServiceImpl implements LwPaperService {
 
     @Override
     public Integer updateLwPaper(LwPaper lwPaper) {
+        //防止匹配因为空格出现的问题
+        lwPaper.setField(lwPaper.getField().trim());
         return lwPaperMapper.updateLwPaper(lwPaper);
     }
 
@@ -130,14 +134,14 @@ public class LwPaperServiceImpl implements LwPaperService {
     }
 
     @Override
-    public List<LwSpecialist> selectSpecialistField(String[] authors, String unit, String field) {
-        return lwPaperMapper.selectSpecialistField(authors,unit,field,
+    public List<LwSpecialist> selectSpecialistField(String[] authors, String[] units, String field) {
+        return lwPaperMapper.selectSpecialistField(authors,units,field,
                 LwPaperConstant.VALID_YES,LwPaperConstant.SPECIALIST_MATCH_SHIELD,null);
     }
 
     @Override
-    public List<LwSpecialist> selectSpecialistFieldLike(String[] authors, String unit, String field) {
-        return lwPaperMapper.selectSpecialistField(authors,unit,field,
+    public List<LwSpecialist> selectSpecialistFieldLike(String[] authors, String[] units, String field) {
+        return lwPaperMapper.selectSpecialistField(authors,units,field,
                 LwPaperConstant.VALID_YES,LwPaperConstant.SPECIALIST_MATCH_SHIELD,"likeMatch");
     }
 
@@ -266,17 +270,11 @@ public class LwPaperServiceImpl implements LwPaperService {
         String field = lwPaperMap.get("FIELD").toString();
         String unit = lwPaperMap.get("UNIT").toString();
         String author = lwPaperMap.get("AUTHOR").toString();
-        String[] authors = null;
-        if(author.contains(",")){
-            authors = author.split(",");
-        }else if(author.contains("，")){
-            authors = author.split("，");
-        }else{
-            authors = new String[]{author};
-        }
+        String[] authors = splitStr(author);
+        String[] units = splitStr(unit);
         //根据论文所属领域，查询能够匹配的专家,精准匹配在前，模糊匹配在后
-        List<LwSpecialist> lwSpList = lwPaperService.selectSpecialistField(authors,unit,field);
-        List<LwSpecialist> lwSpListLike = lwPaperService.selectSpecialistFieldLike(authors,unit,field);
+        List<LwSpecialist> lwSpList = lwPaperService.selectSpecialistField(authors,units,field);
+        List<LwSpecialist> lwSpListLike = lwPaperService.selectSpecialistFieldLike(authors,units,field);
 
         for(LwSpecialist ls : lwSpList){
             String specialistId = ls.getUuid();
@@ -565,6 +563,16 @@ public class LwPaperServiceImpl implements LwPaperService {
         String userName = webUtils.getUsername();
         HRUser user = userService.getUserByUserName(userName);
         return user.getUserId();
+    }
+
+    @Override
+    public String[] splitStr(String str){
+        String regEx = "[,，.。、；;]";
+        Pattern pattern = Pattern.compile(regEx);
+        Matcher m = pattern.matcher(str);
+        str = m.replaceAll(",").trim();
+        String[] strS = str.split(",");
+        return strS;
     }
 
 }

@@ -102,8 +102,14 @@
         select
             s.field,
             s.unit_name unitName,
+            s.research_direction researchDirection,
             s.name,
-            m.specialist_id uuid
+            m.specialist_id uuid,
+            (SELECT name
+            FROM BG_SYS_DATADICTIONARY
+            WHERE pcode = 'score_status'
+            and vaild = 1
+            and code = m.score_status) as scoreStatus
         from bg_lw_paper_match_expert m , bg_lw_specialist s
         where m.specialist_id = s.uuid
         <if test="paperId != null and paperId != ''">

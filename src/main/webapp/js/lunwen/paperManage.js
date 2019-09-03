@@ -39,6 +39,34 @@ paperList.updatePaperType = function(num) {
     paperList.query();
 };
 
+/**
+ * 根据年份切换,新增修改基本信息后,刷新领域下拉框内容
+ */
+paperList.changeFieldList = function () {
+    var year = $("#year").val();
+    $.ajax({
+        url: "/bg/lwPaper/changeFieldList",
+        type: "post",
+        dataType:"json",
+        data: {'year':year},
+        success: function (data) {
+            var fieldList = data;
+            var checkContent = '';
+            document.getElementById("fieldList").innerHTML = checkContent;
+            var i ;
+            checkContent = "" +
+                "<select id = 'field' name = 'field'   class = 'changeQuery changeYear' style='width: 200px'>" +
+                "<option value='' selected='selected'>请选择</option>";
+            for(i=0;i<fieldList.length;i++){
+                var v = fieldList[i].FIELD;
+                checkContent = checkContent+'<option value = "'+v+'">'+v+'</option>';
+            }
+            checkContent = checkContent + '</select>';
+            document.getElementById("fieldList").innerHTML = checkContent;
+        }
+    });
+}
+
 /* 论文管理-初始化列表界面  */
 paperList.initDataGrid = function(){
 	    $("#datagrid").datagrid({
@@ -113,6 +141,7 @@ paperList.addOperation = function (){
         content:url,
         end: function () {
             paperList.query();
+            paperList.changeFieldList();
         }
     });
 };
@@ -187,7 +216,6 @@ paperList.updateOperation = function(){
             dataType:"json",
             contentType: 'application/json',
             success: function (data) {
-                debugger
                 if(data.success=="false"){
                     layer.alert(data.msg,{icon:0,title:'信息提示'});
                     return;
@@ -201,6 +229,7 @@ paperList.updateOperation = function(){
                         content:url,
                         end: function () {
                             paperList.queryAddPage();
+                            paperList.changeFieldList();
                         }
                     });
                 }
@@ -275,6 +304,7 @@ paperList.delEvent = function(){
                     success: function (data) {
                         layer.alert(data.msg,{icon:1,title:'信息提示'});
                         paperList.queryAddPage();
+                        paperList.changeFieldList();
                     }
                 });
             },function () {
@@ -388,6 +418,7 @@ paperList.jumpImport = function (){
         content:url,
         end: function () {
             paperList.query();
+            paperList.changeFieldList();
         }
     });
 };

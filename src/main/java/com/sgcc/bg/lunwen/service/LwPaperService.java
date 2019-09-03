@@ -111,25 +111,25 @@ public interface LwPaperService {
     /**
      * 查询符合论文领域的专家
      * @param authors
-     * @param unit
+     * @param units
      * @param field
      * @return
      */
     List<LwSpecialist> selectSpecialistField(
             String[] authors,
-            String unit,
+            String[] units,
             String field);
 
     /**
      * 查询符合论文领域的专家——模糊匹配专家研究方向
      * @param authors
-     * @param unit
+     * @param units
      * @param field
      * @return
      */
     List<LwSpecialist> selectSpecialistFieldLike(
             String[] authors,
-            String unit,
+            String[] units,
             String field);
 
 
@@ -248,4 +248,9 @@ public interface LwPaperService {
      * 查看匹配未达标的论文数量，按论文类型划分
      */
     List<Map<String,Object>> matchingPaper();
+
+    /**
+     * 分隔作者或者单位，按照特殊字符分隔返回数组
+     */
+    String[] splitStr(String str);
 }

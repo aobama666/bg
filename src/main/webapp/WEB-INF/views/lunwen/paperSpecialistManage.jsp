@@ -39,7 +39,14 @@
 			<input type = "text" id = "researchDirection" name = "researchDirection" style="width: 100px" class = "inputQuery changeQuery" >
 
 			<label style="margin-left: 20px">领域：</label>
-			<input type = "text" id = "field" name = "field" style="width: 100px;" class = "inputQuery changeQuery" >
+			<div id="fieldList" style="display: inline">
+				<select id = "field" name = "field"   class = "changeQuery changeYear" style="width: 200px">
+					<option value = "" selected>请选择</option>
+					<c:forEach  var="fieldList"  items="${fieldList}">
+						<option value ="${fieldList.FIELD}"}> ${fieldList.FIELD}</option>
+					</c:forEach>
+				</select>
+			</div>
 			<br/>
 			<label style="margin-left: 20px">单位名称:</label>
 			<input type = "text" id = "unitName" name = "unitName" style="width: 100px" class = "inputQuery changeQuery" >
