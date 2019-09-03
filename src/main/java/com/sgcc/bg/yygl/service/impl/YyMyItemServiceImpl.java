@@ -36,7 +36,7 @@ public class YyMyItemServiceImpl implements YyMyItemService{
             pageEnd = page*limit;
         }
         //查内容
-        List<YyApplyDAO> applyList = myItemMapper.selectMyItem(applyCode,deptId,useSealUser,null,null,page,limit);
+        List<YyApplyDAO> applyList = myItemMapper.selectMyItem(applyCode,deptId,useSealUser,null,null,pageStart,pageEnd);
         //查数量
         Integer total = myItemMapper.getMyItemNums(applyCode,deptId,useSealUser,null,null);
         //查询数据封装

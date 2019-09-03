@@ -22,8 +22,7 @@ myItem.queryAddPage = function(){
  */
 myItem.initDataGrid = function(){
     $("#datagrid").datagrid({
-        url: "/bg/yygl/apply/selectApply",
-        // url: "/bg/yygl/my_item/selectComingSoon",
+        url: "/bg/yygl/my_item/selectMyItem",
         type: 'POST',
         form: '#queryForm',
         pageSize: 10,
@@ -31,20 +30,20 @@ myItem.initDataGrid = function(){
         columns: [
             {name: '',style:{width:"2px"}, data: 'id',checkbox:true, forMat:function(row){
                     dataItems[index] = row;//将一行数据放在一个list中
-                    return '<input type="checkbox" name="oneCheck" id="oneCheck"  index = "'+(index++)+'"  value="'+(row.UUID)+'"/>';
+                    return '<input type="checkbox" name="oneCheck" id="oneCheck"  index = "'+(index++)+'"  value="'+(row.uuid)+'"/>';
                 }
             },
             {name: '申请编号',style:{width:"50px"}, data: 'PAPERNAME',forMat:function(row){
                     return "<a title = '点击查看用印详情' style='color: #0080FF;" +
                         " text-align:left;'id='\"+row.UUID+\"'" +
-                        " onclick=myItem.toDeatil('"+row.UUID+"')>"+row.APPLY_CODE+"</a>";
+                        " onclick=myItem.toDeatil('"+row.uuid+"')>"+row.applyCode+"</a>";
                 }},
-            {name: '用印事由',style:{width:"50px"}, data: 'USE_SEAL_REASON'},
-            {name: '用印部门',style:{width:"50px"}, data: 'DEPTNAME'},
-            {name: '用印申请人',style:{width:"30px"}, data: 'USERALIAS'},
-            {name: '用印日期',style:{width:"30px"}, data: 'USE_SEAL_DATE'},
-            {name: '用印事项',style:{width:"50px"}, data: 'USESEALITEM'},
-            {name: '用印种类',style:{width:"50px"}, data: 'USE_SEAL_KIND'}
+            {name: '用印事由',style:{width:"50px"}, data: 'useSealReason'},
+            {name: '用印部门',style:{width:"50px"}, data: 'applyDept'},
+            {name: '用印申请人',style:{width:"30px"}, data: 'applyUser'},
+            {name: '用印日期',style:{width:"30px"}, data: 'useSealDate'},
+            {name: '用印事项',style:{width:"50px"}, data: 'createTime'},
+            {name: '用印种类',style:{width:"50px"}, data: 'useSealKind'}
         ]
     });
 }

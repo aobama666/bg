@@ -5,12 +5,12 @@
 
     <sql id="selectMyItemPublic">
         select a.uuid,
-        a.apply_code,
-        a.use_seal_reason,
-        d.deptname,
-        u.useralias,
-        TO_CHAR(a.use_seal_date, 'YYYY-MM-DD') use_seal_date,
-        TO_CHAR(a.create_time, 'YYYY-MM-DD') create_time,
+        a.apply_code applyCode,
+        a.use_seal_reason useSealReason,
+        d.deptname applyDept,
+        u.useralias applyUser,
+        TO_CHAR(a.use_seal_date, 'YYYY-MM-DD')  useSealDate,
+        TO_CHAR(a.create_time, 'YYYY-MM-DD')  createTime,
         f.first_category_name||'-'||s.second_category_name useSealItem,
         (select name
         from bg_sys_datadictionary
@@ -23,7 +23,7 @@
         where d.pcode = 'use_seal_kind'
         and d.vaild = '1') d
         where k.use_seal_kind_code = d.code(+)
-        and k.apply_id = a.uuid and k.valid='1') use_seal_kind
+        and k.apply_id = a.uuid and k.valid='1') useSealKind
         from bg_yy_apply a
         left join bg_sys_dept d on d.deptId = a.dept_id
         left join bg_sys_user u on a.apply_user_id = u.userid
@@ -46,10 +46,10 @@
     <select id="selectMyItem" resultType="com.sgcc.bg.yygl.pojo.YyApplyDAO">
         select *
         from (select p.*, ROWNUM as r
-        from (
-          <include refid="selectMyItemPublic"/>
-        ) p
-        where #{pageEnd} >= ROWNUM)
+            from (
+              <include refid="selectMyItemPublic"/>
+            ) p
+          where #{pageEnd} >= ROWNUM )
         where r > #{pageStart}
     </select>
 

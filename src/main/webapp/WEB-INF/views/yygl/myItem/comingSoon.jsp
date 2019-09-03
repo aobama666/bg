@@ -52,7 +52,7 @@
         <label>用印申请人：</label>
         <input type = "text" id = "useSealUser" name = "useSealUser" style="width: 100px" class = "inputQuery changeQuery" >
 
-        <div style="float:right" id = "queryButton" class = "btn query" onclick = "apply.query()">搜索</div>
+        <div style="float:right" id = "queryButton" class = "btn query" onclick = "myItem.query()">搜索</div>
     </form>
 </div>
 <!-- end    查询条件 -->

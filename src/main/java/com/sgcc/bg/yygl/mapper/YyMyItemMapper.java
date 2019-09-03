@@ -21,8 +21,8 @@ public interface YyMyItemMapper {
             @Param("useSealUser") String useSealUser,
             @Param("ifComingSoon") String ifComingSoon,
             @Param("loginUserId") String loginUserId,
-            @Param("page") Integer page,
-            @Param("limit") Integer limit
+            @Param("pageStart") Integer pageStart,
+            @Param("pageEnd") Integer pageEnd
     );
 
 
