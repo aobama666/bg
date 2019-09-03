@@ -77,7 +77,7 @@
             },
             {titleHtml:'<font class="glyphicon glyphicon-asterisk text-danger"></font>角色', width:120,name:'ROLE',sortable:false, align:'center',
                 renderer:function(val,item,rowIndex){
-                    var text='<div style="display:inline"><select onchange="roleChange($(this))" class="form-control" name="role" property="role" style="text-align:center;padding:6px 2px">'+
+                    var text='<div style="display:inline"><select class="form-control" name="role" property="role" style="text-align:center;padding:6px 2px">'+  /*onchange="roleChange($(this))"*/
                         '<option>项目负责人</option>'+'<option>项目参与人</option>'+
                         '</select></div>';
 

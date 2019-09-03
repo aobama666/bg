@@ -779,7 +779,7 @@
 		setTimeout(resize,200);
 	}
 	
-	function roleChange(_this){
+	/*function roleChange(_this){
 		var role=_this.val();
 		var hrCode=_this.parents("tr").find("input[name='hrcode']").val();
 		var rows=$("#mmg tr").has("input[value='"+hrCode+"']");
@@ -791,7 +791,7 @@
 		rows.each(function(index,row){
 			$(row).find("select").val(role);
 		});
-	}
+	}*/
 	
 	function getDate(dateStr){
 		var reg=new RegExp("\\-","gi");
