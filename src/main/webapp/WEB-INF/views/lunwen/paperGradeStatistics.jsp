@@ -30,7 +30,7 @@
 <!-- start    查询条件 -->
 <div class="sheach">
 	<div class='content_top'>评分统计</div>
-	<form id="queryForm" style="margin-bottom: 10px;">
+	<form id="queryForm" style="margin-bottom: 10px;" method="post">
 
 		<input type="hidden" name="selectList"/>
 
