@@ -1176,7 +1176,7 @@ public class BGServiceImpl implements IBGService {
 			Iterator<Map<String, String>> iterator= workerList.iterator();
 			while(iterator.hasNext()){
 				Map<String, String> workerMap=iterator.next();
-				if(null != stuffMap.get("hrcode")&& null!=workerMap.get("HRCODE")) {
+				if(!stuffMap.get("hrcode").isEmpty() && !workerMap.get("HRCODE").isEmpty()) {
 					if (stuffMap.get("hrcode").equals(workerMap.get("HRCODE"))
 							&& DateUtil.compareDate(workerMap.get("WORK_TIME_BEGIN"), stuffMap.get("startDate"))
 							&& DateUtil.compareDate(stuffMap.get("endDate"), workerMap.get("WORK_TIME_END"))) {
