@@ -11,6 +11,8 @@ import java.util.Map;
 @Mapper
 public interface YyApplyMapper {
 
+
+
     /**
      * 按照条件查询当前所有申请
      */

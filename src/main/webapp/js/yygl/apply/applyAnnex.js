@@ -27,10 +27,16 @@ annex.initDataGrid = function(){
                         " text-align:left;'id='\"+row.UUID+\"'" +
                         " href = 'javascript:void(0)' onclick = annex.downloadStuff('"+row.useSealFileName+"','"+row.useSealFileLink+"')>"+row.useSealFileName+"</a>";
                 }},
-            {name: '佐证材料',style:{width:"50px"}, data: 'proofFileName',forMat:function(row){
-                    return "<a title = '点击下载附件' style='width:250px;" +
-                        " text-align:left;'id='\"+row.UUID+\"'" +
-                        " href = 'javascript:void(0)' onclick = annex.downloadStuff('"+row.proofFileName+"','"+row.proofFileLink+"')>"+row.proofFileName+"</a>";
+            {name: '佐证材料',style:{width:"50px"}, data: 'proofFileName',
+                forMat:function(row){
+                    var rvalue = "<a title = '点击下载附件' style='width:250px;" +
+                        " text-align:left;'id='\"+row.UUID+\"'" ;
+                    if(row.proofFileName == undefined){
+                        rvalue += "></a>";
+                    }else{
+                        rvalue += " href = 'javascript:void(0)' onclick = annex.downloadStuff('"+row.proofFileName+"','"+row.proofFileLink+"')>"+row.proofFileName+"</a>";
+                    }
+                    return rvalue;
                 }},
             {name: '用印文件份数',style:{width:"50px"}, data: 'useSealAmount'},
             {name: '备注',style:{width:"50px"}, data: 'remark'}

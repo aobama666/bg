@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.yygl.mapper.YyMyItemMapper">
+
+    <sql id="selectMyItemPublic">
+        select a.uuid,
+        a.apply_code,
+        a.use_seal_reason,
+        d.deptname,
+        u.useralias,
+        TO_CHAR(a.use_seal_date, 'YYYY-MM-DD') use_seal_date,
+        TO_CHAR(a.create_time, 'YYYY-MM-DD') create_time,
+        f.first_category_name||'-'||s.second_category_name useSealItem,
+        (select name
+        from bg_sys_datadictionary
+        where pcode = 'use_seal_status'
+        and code = a.use_seal_status) use_seal_status,
+        a.use_seal_status use_seal_status_code,
+        (select replace(wm_concat(nvl(d.name, k.use_seal_value)),',',';') useSealKind
+        from bg_yy_kind k,
+        (select * from bg_sys_datadictionary d
+        where d.pcode = 'use_seal_kind'
+        and d.vaild = '1') d
+        where k.use_seal_kind_code = d.code(+)
+        and k.apply_id = a.uuid and k.valid='1') use_seal_kind
+        from bg_yy_apply a
+        left join bg_sys_dept d on d.deptId = a.dept_id
+        left join bg_sys_user u on a.apply_user_id = u.userid
+        left join bg_yy_item_second s on a.item_second_id = s.uuid
+        left join bg_yy_item_first f on a.item_first_id = f.uuid
+        where 1=1
+        <if test="applyCode != null and applyCode != ''">
+            and a.apply_code like '%'||#{applyCode}||'%'
+        </if>
+        <if test="deptId != null and deptId != ''">
+            and a.dept_id = #{deptId}
+        </if>
+        <if test="useSealUser != null and useSealUser != ''">
+            and u.USERALIAS like '%'||#{useSealUser}||'%'
+        </if>
+        and a.valid = '1'
+        order by a.create_time desc
+    </sql>
+
+    <select id="selectMyItem" resultType="com.sgcc.bg.yygl.pojo.YyApplyDAO">
+        select *
+        from (select p.*, ROWNUM as r
+        from (
+          <include refid="selectMyItemPublic"/>
+        ) p
+        where #{pageEnd} >= ROWNUM)
+        where r > #{pageStart}
+    </select>
+
+    <select id="getMyItemNums" resultType="java.lang.Integer">
+        SELECT COUNT(*)  from(<include refid="selectMyItemPublic"/>)
+    </select>
+
+    <select id="getDept" resultType="java.util.Map">
+
+    </select>
+
+</mapper>

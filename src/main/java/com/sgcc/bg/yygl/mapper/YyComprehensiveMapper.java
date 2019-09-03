@@ -34,4 +34,5 @@ public interface YyComprehensiveMapper {
      * 确认用印信息的添加
      */
      int  updateForAffirm(@Param("applyUserId") String applyUserId,@Param("officeUserId") String officeUserId, @Param("applyId") String applyId );
+
 }
