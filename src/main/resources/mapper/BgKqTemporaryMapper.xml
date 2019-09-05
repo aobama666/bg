@@ -117,14 +117,14 @@
 		VALID =#{status}
 		WHERE  VALID=#{valid}
 		AND   to_char(BEGIN_DATE,'yyyy-mm-dd') &gt;= #{beginDate}
-		AND   to_char(END_DATE,'yyyy-mm-dd') &gt;= #{endDate}
+		AND   to_char(END_DATE,'yyyy-mm-dd') &lt;= #{endDate}
 	</update>
 
 	<delete id="deleteKqEmpByDate"     >
 		DELETE   FROM  BG_KQ_EMP_INFO
 		WHERE   VALID = #{valid}
 		AND   to_char(BEGIN_DATE,'yyyy-mm-dd') &gt;= #{beginDate}
-		AND   to_char(END_DATE,'yyyy-mm-dd') &gt;= #{endDate}
+		AND   to_char(END_DATE,'yyyy-mm-dd') &lt;= #{endDate}
 	</delete>
 
 
@@ -142,13 +142,13 @@
 		from  BG_KQ_EMP_INFO
 		where   VALID='1'
 		<if test="beginDate !=null and beginDate !=''">
-			AND   to_char(BEGIN_DATE,'yyyy-mm-dd') &lt;= #{beginDate}
+			AND   to_char(BEGIN_DATE,'yyyy-mm-dd') >= #{beginDate}
 		</if>
 		<if test="endDate!=null and endDate !=''">
-			AND   to_char(END_DATE,'yyyy-mm-dd')   &gt;= #{endDate}
+			AND   to_char(END_DATE,'yyyy-mm-dd')   &lt;= #{endDate}
 		</if>
 		<if test="empName!=null and empName !=''">
-			and   EMP_NAME =  #{empName}
+			and   EMP_NAME LIKE '%'||#{empName}||'%'
 		</if>
 		<if test="null != idslist and idslist.size > 0">
 			and    UUID  in

@@ -174,10 +174,11 @@ public class BGServiceImpl implements IBGService {
 			if(map!=null){
 				long infoDate = DateUtil.getDaySub(map.get("startDate"),map.get("endDate"))+1;
 				if(sumDate>infoDate){
-					return "项目负责人参与时间不能晚于项目周期";
+					//return "项目负责人参与时间不能晚于项目周期";
+					return "负责人参与累计时间大于项目时间";
 				}
 				if(sumDate<infoDate){
-					return "项目负责人参与时间不能早于项目周期";
+					return "负责人参与累计时间小于项目时间";
 				}
 			}
 
@@ -250,6 +251,8 @@ public class BGServiceImpl implements IBGService {
 			Map<String,String> dictMap = new HashMap<>();
 			dictMap.put("技术服务项目" , "JS");
 			dictMap.put("其他" , "QT");
+			//获取级别
+			Map<String,String> rank=dict.getDictDataByPcode("project_rank");
 			
 			wbsCodeSet.addAll(list);
 			bgServiceLog.info("项目信息excel表格最后一行： " + rows);
@@ -414,7 +417,7 @@ public class BGServiceImpl implements IBGService {
 							String value = entry.getValue();
 							if(cellValue[2].equals(value)) pro.setCategory(key);
 						}*/
-						pro.setProjectGrade(cellValue[2]);
+						pro.setProjectGrade(rank.get(cellValue[2]));
 						pro.setCategory(dictMap.get(cellValue[3]));
 						pro.setWBSNumber(cellValue[4]);
 						pro.setProjectIntroduce(cellValue[5]);
@@ -727,6 +730,8 @@ public class BGServiceImpl implements IBGService {
 								Map<String,String> map=new HashMap<>();
 								map.put("ROLE",po.getRole());
 								map.put("HRCODE",po.getHrcode());
+								map.put("startDate",DateUtil.dateToStr(po.getStartDate()));
+								map.put("endDate", DateUtil.dateToStr(po.getEndDate()));
 								empList.add(map);
 							}
 						}
@@ -740,10 +745,21 @@ public class BGServiceImpl implements IBGService {
 							}
 						}else{//此人存在且为参与人时，项目中此人如果已经作为负责人，则不允许添加
 							for (Map<String, String> map : empList) {
-								if(cellValue[3].equals(map.get("HRCODE")) && "1".equals(map.get("ROLE"))){
+								/*if(cellValue[3].equals(map.get("HRCODE")) && "1".equals(map.get("ROLE"))){
 									errorInfo.append("此人为当前项目负责人，请勿重复添加！  ");
 									errorNum.add(6);
 									break;
+								}*/
+								if(cellValue[3].equals(map.get("HRCODE"))) {
+									if (DateUtil.fomatDate(cellValue[4]).getTime() > DateUtil.fomatDate(map.get("endDate")).getTime() ||
+											DateUtil.fomatDate(cellValue[5]).getTime() < DateUtil.fomatDate(map.get("startDate")).getTime()) {
+										//日期不重叠
+									} else {
+										errorInfo.append("此人" + user.getUserAlias() + "日期(" + map.get("startDate") + "至" + map.get("endDate") + ")重叠! ");
+										errorNum.add(4);
+										errorNum.add(5);
+										break;
+									}
 								}
 							}
 						}

@@ -63,7 +63,7 @@
 			<hidden name="uuid" property="uuid"></hidden>
 			<input type="hidden" name="selectList"/>
 			<div class="form-group col-xs-3">
-				<label>员工名称：</label>
+				<label>员工姓名：</label>
 				<div class="controls">
 					<input name="empName" property="empName" >
 				</div>
@@ -84,7 +84,7 @@
 		</form>
 	</div>
 	<div class="query-box-right">
-		<button type="button" class="btn btn-primary btn-xs" onclick="forSearch()">统计</button>
+		<button type="button" class="btn btn-primary btn-xs" onclick="forSearch()">查询</button>
 	</div>
 </div>
 <div>

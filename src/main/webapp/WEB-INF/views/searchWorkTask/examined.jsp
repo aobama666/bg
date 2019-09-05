@@ -311,7 +311,7 @@ function forSearch(){
     //var  days=getEndD(endDate);
     //endDate=endDate+"-"+days;
 
-    debugger;
+
     var startDate =timeBegin($("input[name=startTimes]").val());
     var endDate = timeEnd($("input[name=endTimes]").val());
 

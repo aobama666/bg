@@ -50,6 +50,8 @@
 	src="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmPaginator.js"></script>
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmGrid.js"></script>
+<script type="text/javascript"
+		src="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/locales/bootstrap-datepicker.zh-CN.min.js"></script>
 <!--[if lt IE 9>
 	<script src="<%=request.getContextPath()%>/common/plugins/html5shiv/html5shiv.min.js"></script>
 	<script src="<%=request.getContextPath()%>/common/plugins/respond/respond.js"></script>
@@ -104,9 +106,15 @@ td span{
 		<div class="form-group">
 			<label>填报日期</label>
 			<span onclick="changeByStep(-1)"><span class="glyphicon glyphicon-backward" ></span></span>
-			<div class="gainDate" style="width: 200px;display:inline-table;vertical-align:middle">
+			<%--<div class="gainDate" style="width: 200px;display:inline-table;vertical-align:middle">
 				<div id="cover" style="width:100%;height:100%;position:absolute;top:0px;left:0px;z-index:999;display: none"></div>
 				<input type="text" name="selectedDate" property="fillDate" class="form-control" id="fillDa" readonly>
+			</div>--%>
+			<div class="input-group date form_date bg-white" style="width: 200px;display:inline-table;vertical-align:middle" id="time" <%--onclick="dateTime()"--%> >
+				<input  name="selectedDate" property="fillDate" type="text" id="fillDa" class="form-control form_datetime_2 input-sm bg-white" placeholder='时间'  readonly />
+				<span class="input-group-addon">
+					<span class="glyphicon glyphicon-calendar"></span>
+				</span>
 			</div>
 			<span onclick="changeByStep(1)"><span class="glyphicon glyphicon-forward" ></span></span>
 			<label style="color: red">&nbsp;&nbsp;&nbsp;月度工时/已填报工时（h）：</label>
@@ -162,6 +170,23 @@ function dateFtt(fmt,date)
             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
     return fmt;
 }
+
+function Timeinit() {
+    // 时间初始化
+    $("#time").datepicker({
+        startView: 'months',  //起始选择范围
+        maxViewMode:'years', //最大选择范围
+        minViewMode:'months', //最小选择范围
+        todayHighlight : true,// 当前时间高亮显示
+        autoclose : 'true',// 选择时间后弹框自动消失
+        format : 'yyyy-mm',// 时间格式
+        language : 'zh-CN',// 汉化
+        //todayBtn:"linked",//显示今天 按钮
+        //clearBtn : true,// 清除按钮，和今天 按钮只能显示一个
+    });
+    //$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',limit:'yes',level:'2',checkType:'radio'});
+}
+
 $(function () {
 	var timeDate = new Date();
 	var time = dateFtt("yyyy-MM",timeDate);
@@ -187,6 +212,24 @@ function parseDate(dateStr) {
     }
     return date;
 }
+
+$(function(){
+    Timeinit();
+});
+
+
+$('#fillDa').change(function(){
+    change();
+})
+
+function change() {
+    Timeinit();
+    delayDate=$("#fillDa").val();
+    forSave();
+    workingHours();
+    mmg.load();
+}
+
 
 /*日期方法*/
 function changeByStep(step){

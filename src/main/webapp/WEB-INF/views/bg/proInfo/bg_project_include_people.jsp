@@ -294,11 +294,12 @@
         //比较整个项目周期是否全部有项目负责人
         var compare = compareDay(day-1);
         if(compare==1){
-            layer.msg("项目负责人负责时间不能晚于项目周期时间");
+            //layer.msg("项目负责人负责时间不能晚于项目周期时间");
+            layer.msg("负责人参与累计时间大于项目时间");
             return;
         }
         if(compare==-1){
-            layer.msg("项目负责人负责时间不能早于项目周期时间");
+            layer.msg("负责人参与累计时间小于项目时间");
             return;
         }
 

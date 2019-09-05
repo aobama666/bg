@@ -300,7 +300,8 @@ function queryList(load){
 	            		var dict=${statusJson};
 	            		return dict[val];
 	            	}	
-	            }
+	            },
+        		{title:'审核备注', name:'PROCESS_NOTE', width:100, sortable:false, align:'center'}
 	    		];
 	var mmGridHeight = $("body").parent().height() - 230;
 	mmg = $('#mmg').mmGrid({
