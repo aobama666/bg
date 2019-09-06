@@ -250,7 +250,8 @@
                 layer.msg("无月度工时，不可提交");
                 return;
             }
-            fillSum = Number(fillSum)-Number(workHourOld)+Number(workHour);
+            //fillSum = Number(fillSum)-Number(workHourOld)+Number(workHour);
+            fillSum = Number(fillSum)+Number(workHour)
             if (fillSumKQ<fillSum){
                 layer.msg("填报工时已超出月度工时，请检查");
                 return;

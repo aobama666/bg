@@ -204,7 +204,8 @@ function workCommit(){
             layer.msg("无月度工时，不可提交");
             return;
         }
-        fillSum = Number(fillSum)-Number(hoursOld)+Number(hours);
+        //fillSum = Number(fillSum)-Number(hoursOld)+Number(hours);
+        fillSum = Number(fillSum)+Number(hours);
         if (fillSumKQ<fillSum){
             layer.msg("填报工时已超出月度工时，请检查");
             return;

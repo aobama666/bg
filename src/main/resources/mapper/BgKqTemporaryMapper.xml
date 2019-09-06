@@ -130,28 +130,31 @@
 
 	<select id="selectForKqInfo" resultType="java.util.Map">
 		select
-		UUID,
-		to_char(BEGIN_DATE,'yyyy-mm-dd')	BEGIN_DATE,
-		to_char(END_DATE,'yyyy-mm-dd')	END_DATE,
-		EMP_CODE,
-		EMP_NAME,
-		FULL_TIME,
-		OVER_TIME,
-		to_char(CREATE_TIME,'yyyy-mm-dd hh24:mi:ss')	CREATE_TIME,
-		VALID
-		from  BG_KQ_EMP_INFO
-		where   VALID='1'
+			K.UUID,
+			to_char(K.BEGIN_DATE,'yyyy-mm-dd')	BEGIN_DATE,
+			to_char(K.END_DATE,'yyyy-mm-dd')	END_DATE,
+			K.EMP_CODE,
+			K.EMP_NAME,
+			K.FULL_TIME,
+			K.OVER_TIME,
+			to_char(K.CREATE_TIME,'yyyy-mm-dd hh24:mi:ss')	CREATE_TIME,
+			K.VALID
+		from  BG_KQ_EMP_INFO K
+		left join BG_SYS_USER U
+		ON K.EMP_CODE = U.HRCODE
+		where   K.VALID='1'
+		    AND U.VALID='1'
 		<if test="beginDate !=null and beginDate !=''">
-			AND   to_char(BEGIN_DATE,'yyyy-mm-dd') >= #{beginDate}
+			AND   to_char(K.BEGIN_DATE,'yyyy-mm-dd') >= #{beginDate}
 		</if>
 		<if test="endDate!=null and endDate !=''">
-			AND   to_char(END_DATE,'yyyy-mm-dd')   &lt;= #{endDate}
+			AND   to_char(K.END_DATE,'yyyy-mm-dd')   &lt;= #{endDate}
 		</if>
 		<if test="empName!=null and empName !=''">
-			and   EMP_NAME LIKE '%'||#{empName}||'%'
+			and   K.EMP_NAME LIKE '%'||#{empName}||'%'
 		</if>
 		<if test="null != idslist and idslist.size > 0">
-			and    UUID  in
+			and    K.UUID  in
 			<foreach  collection="idslist" item="id" open="("  separator="," close=")">
 				#{id}
 			</foreach>

@@ -69,6 +69,8 @@
 		LEFT JOIN BG_PROJECT_USER PU2
 		  ON P.ID = PU2.PROJECT_ID
 		 AND PU2.ROLE = '1'
+		 AND PU2.HRCODE = U.HRCODE
+		 AND ROWNUM = 1
 		LEFT JOIN BG_SYS_USER U1
 		  ON U1.HRCODE = PU2.HRCODE
 		 AND ROWNUM = 1
@@ -97,7 +99,8 @@
 			<otherwise>
 				AND 1=2
 			</otherwise>
-		</choose>		
+		</choose>
+
 	</sql>
 
 	<!--  sql语句块  获取基本信息   非项目前期 -->
@@ -113,7 +116,7 @@
 				P.PROJECT_NAME WBS_NAME,
 				NVL(P.CATEGORY,W.CATEGORY) as CATEGORY,
 				NVL(P.PROJECT_NAME, W.PROJECT_NAME) as PROJECT_NAME,
-				PU1.ROLE,
+				PU2.ROLE,
 				DECODE(PU1.ROLE, NULL, NULL, '', NULL, '1', '1', '0', '0') PROJECT_ROLE,
 				U1.HRCODE PROJECT_LEADER,
 				U1.USERALIAS LEADER_USERNAME,
@@ -131,6 +134,8 @@
 		LEFT JOIN BG_PROJECT_USER PU2
 		  ON W.PROJECT_ID = PU2.PROJECT_ID
 		 AND PU2.ROLE = '1'
+		AND PU2.HRCODE = U.HRCODE
+		and rownum=1
 		LEFT JOIN BG_SYS_USER U1
 		  ON U1.HRCODE = PU2.HRCODE
 		 AND ROWNUM = 1
@@ -184,6 +189,7 @@
 				 AND P.STATUS = 1
 				WHERE U.STATUS = 1
 				  AND U.ROLE = '1'
+
 				  AND (EXISTS (   SELECT W.ID
 									FROM BG_WORKINGHOUR_INFO W
 									WHERE 1 = 1									
@@ -311,9 +317,10 @@
 		AND P.STATUS = 1
 		INNER JOIN BG_SYS_USER U2
 		ON U2.HRCODE = U.HRCODE
+
 	</sql>
 	<!-- 获取基本信息 -->
-	<select id="getInterfaceBaseInfo" resultType="java.util.Map">
+		<select id="getInterfaceBaseInfo" resultType="java.util.Map">
 		SELECT DISTINCT M.EMP_CODE,
 		M.PROJECT_ID,
 		M.WT_TYPE,
@@ -409,22 +416,24 @@
 
 	<!-- 获取项目负责人 -->
 	<select id="selectForProjectUser" resultType="java.util.Map">
-		SELECT
-			PU.ID,
-			PU.HRCODE,
-			PU.PROJECT_ID,
-			PU.PROJECT_ID,
-			PU.START_DATE,
-			PU.END_DATE,
-			U1.HRCODE PROJECT_LEADER,
-			U1.USERALIAS LEADER_USERNAME
-		FROM  BG_PROJECT_USER PU
-			LEFT JOIN BG_SYS_USER U1
-		ON U1.HRCODE = PU.HRCODE
-		WHERE   PU.ROLE = '1'  AND  STATUS='1'
-		AND   PU.PROJECT_ID= #{projectId}
-		AND   to_char(PU.START_DATE,'yyyy-mm-dd') &lt;= #{monthEndDay}
-		AND   to_char(PU.END_DATE,'yyyy-mm-dd') &gt;=#{monthEndDay}
+		SELECT  * FROM (
+			SELECT
+				PU.ID,
+				PU.HRCODE,
+				PU.PROJECT_ID,
+				PU.START_DATE,
+				PU.END_DATE,
+				U1.HRCODE PROJECT_LEADER,
+				U1.USERALIAS LEADER_USERNAME
+			FROM  BG_PROJECT_USER PU
+				LEFT JOIN BG_SYS_USER U1
+			ON U1.HRCODE = PU.HRCODE
+			WHERE   PU.ROLE = '1'  AND  STATUS='1'
+			AND   PU.PROJECT_ID= #{projectId}
+			AND   ((to_char(PU.START_DATE,'yyyy-mm-dd') &lt;= #{monthEndDay} AND   to_char(PU.END_DATE,'yyyy-mm-dd') &gt;=#{monthEndDay})
+					or (to_char(PU.START_DATE,'yyyy-mm-dd') &lt;= #{monthEndDay} AND   to_char(PU.END_DATE,'yyyy-mm-dd') &lt;=#{monthEndDay}))
+			order by PU.END_DATE desc)
+		  where ROWNUM = 1
 
 
 	</select>

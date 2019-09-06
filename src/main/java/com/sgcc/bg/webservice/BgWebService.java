@@ -2,10 +2,7 @@ package com.sgcc.bg.webservice;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -163,7 +160,20 @@ public class BgWebService {
 		if(baseInfo==null||baseInfo.size()==0){
 			return returnSucessMessage("本期间没有记录,包含负责人没有工时数据！");
 		}
-
+		/*List<Map<String,Object>> baseInfo = new ArrayList<>();
+		Set<String> set = new HashSet();
+		Map<String,Map> msp = new HashMap<>();
+		for(Map<String,Object> map : baseInfoList){
+			String id = String.valueOf(map.get("PROJECT_ID"));
+			//map.remove("ID");
+			msp.put(id,map);
+		}
+		set = msp.keySet();
+		for(String key : set){
+			Map newMap = msp.get(key);
+			newMap.put(set,key);
+			baseInfo.add(newMap);
+		}*/
 
 		for(Map<String,Object>   base:baseInfo){
 			String  projectid  =String.valueOf(base.get("PROJECT_ID"));
@@ -172,8 +182,8 @@ public class BgWebService {
 				base.put("PROJECT_LEADER","");
 				base.put("LEADER_USERNAME","");
 			}else {
-				Object project_leaders=ProjectUserInfo.get(1).get("PROJECT_LEADER");
-				Object leader_usernames=ProjectUserInfo.get(1).get("LEADER_USERNAME");
+				Object project_leaders=ProjectUserInfo.get(0).get("PROJECT_LEADER");
+				Object leader_usernames=ProjectUserInfo.get(0).get("LEADER_USERNAME");
 				base.put("PROJECT_LEADER",project_leaders);
 				base.put("LEADER_USERNAME",leader_usernames);
 			}
