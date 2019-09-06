@@ -35,4 +35,6 @@ public class YyApplyConstant {
     //附件上传本地临时路径
     public static final String STUFF_UPLOAD_LOCAL_PATH = "/upload/yygl/";
 
+    //规则
+
 }

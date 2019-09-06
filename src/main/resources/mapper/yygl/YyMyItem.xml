@@ -13,17 +13,17 @@
         TO_CHAR(a.create_time, 'YYYY-MM-DD')  createTime,
         f.first_category_name||'-'||s.second_category_name useSealItem,
         (select name
-        from bg_sys_datadictionary
-        where pcode = 'use_seal_status'
-        and code = a.use_seal_status) use_seal_status,
+            from bg_sys_datadictionary
+            where pcode = 'use_seal_status'
+            and code = a.use_seal_status) use_seal_status,
         a.use_seal_status use_seal_status_code,
         (select replace(wm_concat(nvl(d.name, k.use_seal_value)),',',';') useSealKind
-        from bg_yy_kind k,
-        (select * from bg_sys_datadictionary d
-        where d.pcode = 'use_seal_kind'
-        and d.vaild = '1') d
-        where k.use_seal_kind_code = d.code(+)
-        and k.apply_id = a.uuid and k.valid='1') useSealKind
+            from bg_yy_kind k,
+            (select * from bg_sys_datadictionary d
+            where d.pcode = 'use_seal_kind'
+            and d.vaild = '1') d
+            where k.use_seal_kind_code = d.code(+)
+            and k.apply_id = a.uuid and k.valid='1') useSealKind
         from bg_yy_apply a
         left join bg_sys_dept d on d.deptId = a.dept_id
         left join bg_sys_user u on a.apply_user_id = u.userid
@@ -58,7 +58,12 @@
     </select>
 
     <select id="getDept" resultType="java.util.Map">
-
+        SELECT
+          DEPTID   k,
+          DEPTNAME v
+        FROM bg_sys_dept
+        WHERE PDEPTCODE = '90000110' AND VALID = '1' AND src IN (0, 2)
+        ORDER BY SORT_ID
     </select>
 
 </mapper>

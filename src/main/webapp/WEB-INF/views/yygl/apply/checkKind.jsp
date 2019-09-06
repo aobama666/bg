@@ -30,9 +30,9 @@
     <c:forEach  var="kindList"  items="${kindList}">
         <input type="checkbox" value="${kindList.K},${kindList.V}" name="kind"
                 <c:if test="${kindList.IF=='1'}">checked="checked"</c:if>
-        /> &nbsp; ${kindList.V}<br/>
+        /> ${kindList.V}<br/>
     </c:forEach>
-    <input type="checkbox" value="-1" name="elseCheck"/>&nbsp; 其他<input type="text" id="elseKind" value="${elseKind}">
+    <input type="checkbox" value="-1" name="elseCheck"/> 其他 <input type="text" id="elseKind" value="${elseKind}">
 </div>
 <div class="btnContent" style="margin: 0px;padding-top: 10px">
     <button type="button" class="btn" onclick="applyOperate.kindSave()">保存</button>

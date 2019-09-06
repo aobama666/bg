@@ -32,4 +32,9 @@ public interface YyMyItemService {
      * 退回
      */
     String sendBack();
+
+    /**
+     * 获取下拉框内容，部门选项
+     */
+    List<Map<String,Object>> getDeptList();
 }

@@ -45,7 +45,7 @@
         <select id = "deptId" name = "deptId"  class = "changeQuery changeYear" onchange="apply.changeItemFirst()">
             <option value = "" selected>请选择</option>
             <c:forEach  var="dept"  items="${deptList}">
-                <option value ="${deptList.K}"}> ${deptList.V}</option>
+                <option value ="${dept.K}"}> ${dept.V}</option>
             </c:forEach>
         </select>
         <span style="margin-left: 20px"></span>

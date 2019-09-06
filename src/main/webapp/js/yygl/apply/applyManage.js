@@ -215,6 +215,8 @@ apply.printPreview = function (applyUuid) {
 }
 
 
+
+
 /**
  * 提交——用印申请列表
  */
@@ -237,7 +239,20 @@ apply.submit = function () {
     }
     checkedIds = checkedIds.slice(0,checkedIds.length-1);
 
-    layer.confirm('确定提交选中的申请吗?',{
+    var url = "/bg/yygl/apply/toApplyDetail?applyUuid="+applyUuid;
+    layer.open({
+        type:2,
+        title:'<h4 style="font-size: 18px;padding-top: 10px">选择下一环节审批人</h4>',
+        area:['40%','20%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url,
+        end: function () {
+            apply.queryAddPage();
+        }
+    });
+
+    /*layer.confirm('确定提交选中的申请吗?',{
             btn:['确定','取消'],icon:0,title:'自动匹配'
         },function () {
             $.ajax({
@@ -251,7 +266,7 @@ apply.submit = function () {
                 }
             });
         }
-    )
+    )*/
 }
 
 

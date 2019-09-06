@@ -60,4 +60,9 @@ public class YyMyItemServiceImpl implements YyMyItemService{
     public String sendBack() {
         return null;
     }
+
+    @Override
+    public List<Map<String, Object>> getDeptList() {
+        return myItemMapper.getDept();
+    }
 }

@@ -42,10 +42,10 @@
         <input type = "text" id = "applyCode" name = "applyCode" style="width: 100px" class = "inputQuery changeQuery" >
         <span style="margin-left: 20px"></span>
         <label>申请部门：</label>
-        <select id = "useSealItemFirst" name = "useSealItemFirst"  class = "changeQuery changeYear" onchange="apply.changeItemFirst()">
+        <select id = "deptId" name = "deptId"  class = "changeQuery changeYear" onchange="apply.changeItemFirst()">
             <option value = "" selected>请选择</option>
-            <c:forEach  var="itemFirst"  items="${itemFirst}">
-                <option value ="${itemFirst.K}"}> ${itemFirst.V}</option>
+            <c:forEach  var="dept"  items="${deptList}">
+                <option value ="${dept.K}"}> ${dept.V}</option>
             </c:forEach>
         </select>
         <span style="margin-left: 20px"></span>

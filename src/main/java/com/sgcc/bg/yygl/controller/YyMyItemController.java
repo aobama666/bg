@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -25,11 +26,26 @@ public class YyMyItemController {
      */
     @RequestMapping("/toComingSoon")
     public ModelAndView toComingSoon(){
-        ModelAndView mv = new ModelAndView("yygl/myItem/comingSoon");
+        List<Map<String,Object>> deptList = myItemService.getDeptList();
+        Map<String,Object> mvMap = new HashMap<>();
+        mvMap.put("deptList",deptList);
+        ModelAndView mv = new ModelAndView("yygl/myItem/comingSoon",mvMap);
         //准备部门下拉框内容
         return mv;
     }
 
+
+    /**
+     * 跳转到已办列表
+     */
+    @RequestMapping("/toAlreadyDone")
+    public ModelAndView toAlreadyDone(){
+        List<Map<String,Object>> deptList = myItemService.getDeptList();
+        Map<String,Object> mvMap = new HashMap<>();
+        mvMap.put("deptList",deptList);
+        ModelAndView mv = new ModelAndView("yygl/myItem/alreadyDone",mvMap);
+        return mv;
+    }
 
 
     /**
@@ -53,21 +69,15 @@ public class YyMyItemController {
 
 
     /**
-     * 跳转到已办列表
-     */
-    @RequestMapping("/toAlreadyDone")
-    public ModelAndView toAlreadyDone(){
-        ModelAndView mv = new ModelAndView("yygl/myItem/alreadyDone");
-        return mv;
-    }
-
-
-
-    /**
      * 跳转到增加业务主管部门会签
      */
-    public ModelAndView toAddSign(){
-        ModelAndView mv = new ModelAndView("yygl/myItem/addSign");
+    @RequestMapping("/toAddSign")
+    public ModelAndView toAddSign(String checkedId){
+        //根据对应申请id，查询所需内容
+        List<Map<String,Object>> deptList = myItemService.getDeptList();
+        Map<String,Object> mvMap = new HashMap<>();
+        mvMap.put("deptList",deptList);
+        ModelAndView mv = new ModelAndView("yygl/myItem/addSign",mvMap);
         return mv;
     }
 
@@ -76,7 +86,12 @@ public class YyMyItemController {
     /**
      * 增加业务主管部门会签
      */
+    @ResponseBody
+    @RequestMapping("/addSign")
     public String addSign(){
+        //是业务部门触发的操作还是办公室触发的操作
+        //if业务部门，增加会签，发送对应待办
+        //if办公室，增加会签，发送对应待办，流程撤回至业务部门会签
         return "";
     }
 
@@ -85,8 +100,11 @@ public class YyMyItemController {
     /**
      * 跳转同意选择下一个审批人页面
      */
-    public ModelAndView toAgree(){
-        ModelAndView mv = new ModelAndView("yygl/myItem/agree");
+    @RequestMapping("/toAgree")
+    public ModelAndView toAgree(String checkedId){
+        //根据选择申请查询可以提供的下一个审批人信息
+        Map<String,Object> mvMap = new HashMap<>();
+        ModelAndView mv = new ModelAndView("yygl/myItem/agree",mvMap);
         return mv;
     }
 
@@ -95,7 +113,17 @@ public class YyMyItemController {
     /**
      * 同意操作
      */
+    @ResponseBody
+    @RequestMapping("/agree")
     public String agree(){
+        //查看是否属于业务主管部门审批环节
+        //查看所有业务主管部门是否全部审批结束、
+
+
+        //查看是否为办公室审批完毕状态
+        //查看对应事项是否有院领导批准环节
+
+        //如果没有其它意外，直接走同意
         return "";
     }
 
@@ -104,8 +132,12 @@ public class YyMyItemController {
     /**
      * 跳转退回选择下一个审批人页面
      */
-    public ModelAndView toSendBack(){
-        ModelAndView mv = new ModelAndView("yygl/myItem/sendBack");
+    @ResponseBody
+    @RequestMapping("/toSendBack")
+    public ModelAndView toSendBack(String checkedId){
+        //根据所选择申请查询退回人信息
+        Map<String,Object> mvMap = new HashMap<>();
+        ModelAndView mv = new ModelAndView("yygl/myItem/sendBack",mvMap);
         return mv;
     }
 
@@ -114,6 +146,7 @@ public class YyMyItemController {
     /**
      * 退回操作
      */
+    @RequestMapping("/sendBack")
     public String sendBack(){
         return "";
     }

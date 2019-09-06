@@ -41,7 +41,7 @@ public interface YyMyItemMapper {
     /**
      * 申请部门信息，列表查询下拉框使用
      */
-    Map<String,Object> getDept();
+    List<Map<String,Object>> getDept();
 
 
 }

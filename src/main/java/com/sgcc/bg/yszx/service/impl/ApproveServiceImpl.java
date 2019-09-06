@@ -609,7 +609,6 @@ public class ApproveServiceImpl implements ApproveService{
 				returnMessage.setMessage(message);
 				return returnMessage;
 			}
-			
 			//更新当前节点   撤销
 			if("0".equals(approveInfo.getApprove_status())){
 				//当前节点-更新

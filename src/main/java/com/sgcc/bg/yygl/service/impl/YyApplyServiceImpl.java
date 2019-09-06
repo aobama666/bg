@@ -5,7 +5,10 @@ import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.HRUser;
+import com.sgcc.bg.service.ApproverService;
 import com.sgcc.bg.service.UserService;
+import com.sgcc.bg.yszx.bean.ReturnMessage;
+import com.sgcc.bg.yszx.service.ApproveService;
 import com.sgcc.bg.yygl.bean.YyApply;
 import com.sgcc.bg.yygl.constant.YyApplyConstant;
 import com.sgcc.bg.yygl.controller.YyApplyStuffController;
@@ -41,6 +44,10 @@ public class YyApplyServiceImpl implements YyApplyService {
     private WebUtils webUtils;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ApproveService approveService;
+    @Autowired
+    private YyApplyService yyApplyService;
 
     @Override
     public Map<String, Object> selectApply(
@@ -252,6 +259,7 @@ public class YyApplyServiceImpl implements YyApplyService {
         String useSealStatus = "";
         Integer successNum = 0;
         Integer failNum = 0;
+        String loginUserId = yyApplyService.getLoginUserUUID();
         for(String applyId : applyIdS){
             yyApplyDAO = yyApplyMapper.findApply(applyId);
             useSealStatus = yyApplyDAO.getUseSealStatus();
@@ -261,7 +269,12 @@ public class YyApplyServiceImpl implements YyApplyService {
             ){
                 successNum ++;
                 //创建该申请的流程信息
-
+                ReturnMessage returnMessage = approveService.startApprove(false,
+                        "YYGL",
+                        "SUBMIT",
+                        applyId,
+                        "mingliao",
+                        loginUserId);
                 //修改申请状态
                 yyApplyMapper.updateApplyStatus(applyId,YyApplyConstant.STATUS_DEAL_DEPT);
             }else{

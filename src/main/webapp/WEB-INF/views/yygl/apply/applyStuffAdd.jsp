@@ -33,7 +33,7 @@
 <table class="visitOperate tableStyle specialTable">
     <tr>
         <td style="width: 20%">
-            <span title = "用印材料"><b class="mustWrite">*</b>用印材料</span>
+            <span title = "用印材料">用印材料<b class="mustWrite">*</b></span>
         </td>
 
         <td style="width: 80%" class="addInputStyle">
@@ -46,7 +46,7 @@
     </tr>
     <tr>
         <td style="width: 20%">
-            <span title = "佐证材料"><b class="mustWrite">*</b>佐证材料</span>
+            <span title = "佐证材料">佐证材料</span>
         </td>
         <td style="width: 80%" class="addInputStyle">
             <div class="controls" class="form-control">
@@ -57,7 +57,7 @@
     </tr>
     <tr>
         <td style="width: 10%">
-            <span title = "用印文件份数"><b class="mustWrite">*</b>用印文件份数</span>
+            <span title = "用印文件份数">用印文件份数<b class="mustWrite">*</b></span>
         </td>
         <td style="width: 90%" class="addInputStyle">
             <input type="text"  id="useSealAmount"  name="useSealAmount"
@@ -66,7 +66,7 @@
     </tr>
     <tr>
         <td style="width: 10%">
-            <span title = "备注"><b class="mustWrite">*</b>备注</span>
+            <span title = "备注">备注</span>
         </td>
         <td style="width: 90%" class="addInputStyle">
             <input type="text"  id="remark"  name="remark"

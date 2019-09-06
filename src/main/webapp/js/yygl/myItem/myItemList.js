@@ -69,7 +69,28 @@ myItem.toDeatil = function (applyUuid) {
 弹框转到——增加业务主管部门会签
  */
 myItem.toAddSign = function () {
-    
+    //获取选中框
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length==0){
+        layer.msg('请选择要操作的数据');
+        return;
+    }else if(checkedItems.length>1){
+        layer.msg('每次只能修改一条数据');
+        return;
+    }
+    var checkedId = checkedItems[0].UUID;
+    var url = "/bg/yygl/my_item/toAddSign?checkedId="+checkedId;
+    layer.open({
+        type:2,
+        title:'<h4 style="font-size: 18px;padding-top: 10px">增加业务主管部门会签</h4>',
+        area:['70%','60%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url,
+        end: function () {
+            myItem.queryAddPage();
+        }
+    });
 }
 
 
@@ -77,7 +98,28 @@ myItem.toAddSign = function () {
 弹框转到——同意选择下一个审批人
  */
 myItem.toAgree = function () {
-    
+    //获取选中框
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length==0){
+        layer.msg('请选择要操作的数据');
+        return;
+    }else if(checkedItems.length>1){
+        layer.msg('每次只能修改一条数据');
+        return;
+    }
+    var checkedId = checkedItems[0].UUID;
+    var url = "/bg/yygl/my_item/toAgree?checkedId="+checkedId;
+    layer.open({
+        type:2,
+        title:'<h4 style="font-size: 18px;padding-top: 10px">同意并填写审批意见</h4>',
+        area:['70%','50%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url,
+        end: function () {
+            myItem.queryAddPage();
+        }
+    });
 }
 
 
@@ -85,5 +127,26 @@ myItem.toAgree = function () {
 弹框转到——退回选择下一个审批人
  */
 myItem.toSendBack = function () {
-    
+    //获取选中框
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length==0){
+        layer.msg('请选择要操作的数据');
+        return;
+    }else if(checkedItems.length>1){
+        layer.msg('每次只能修改一条数据');
+        return;
+    }
+    var checkedId = checkedItems[0].UUID;
+    var url = "/bg/yygl/my_item/toSendBack?checkedId="+checkedId;
+    layer.open({
+        type:2,
+        title:'<h4 style="font-size: 18px;padding-top: 10px">退回并填写审批意见</h4>',
+        area:['70%','50%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url,
+        end: function () {
+            myItem.queryAddPage();
+        }
+    });
 }
