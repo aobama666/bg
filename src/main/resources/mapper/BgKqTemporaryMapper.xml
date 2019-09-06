@@ -134,7 +134,7 @@
 			to_char(K.BEGIN_DATE,'yyyy-mm-dd')	BEGIN_DATE,
 			to_char(K.END_DATE,'yyyy-mm-dd')	END_DATE,
 			K.EMP_CODE,
-			K.EMP_NAME,
+			U.USERALIAS AS EMP_NAME,
 			K.FULL_TIME,
 			K.OVER_TIME,
 			to_char(K.CREATE_TIME,'yyyy-mm-dd hh24:mi:ss')	CREATE_TIME,
