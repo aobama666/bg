@@ -3,6 +3,11 @@
 
 <mapper namespace="com.sgcc.bg.yygl.mapper.YyConfigurationMapper">
 
+
+
+
+
+
     <!--用印事项查询公共sql-->
     <sql id="mattersInfo">
         SELECT   *  FROM (
@@ -12,11 +17,23 @@
         S.UUID   as "secondCategoryId",
         S.SECOND_CATEGORY_NAME  as "secondCategoryName",
         DECODE( S.IF_SIGN,'0','否','1','是')  as "ifSign",
+        S.IF_SIGN   as  "ifSignCode",
+        TO_CHAR(
         (select   wm_concat(NVL(D.DEPTNAME ,''))
         FROM   BG_YY_ITEM_SECOND_DEPT SD
         LEFT   JOIN      BG_SYS_DEPT   D  ON    SD.DEPT_ID=D.DEPTID
-        where   SD. VALID ='1'   AND   SD.SECOND_CATEGORY_ID = S.UUID    )  as  "businessDeptName",
+        where   SD. VALID ='1'   AND   SD.SECOND_CATEGORY_ID = S.UUID    )
+        ) as  "businessDeptName",
+        TO_CHAR(
+        (select wm_concat (NVL(SD.DEPT_ID, ''))
+        FROM
+        BG_YY_ITEM_SECOND_DEPT SD
+        WHERE SD.VALID = '1'
+        AND SD.SECOND_CATEGORY_ID = S.UUID
+        )
+        )AS "businessDeptCode",
         DECODE(S.IF_LEADER_APPROVE,'0','否','1','是')   as "ifLeaderApprove",
+        S.IF_LEADER_APPROVE   as  "ifLeaderApproveCode",
         S.CREATE_TIME   as  "createTime"
         FROM   BG_YY_ITEM_SECOND  S
         LEFT   JOIN      BG_YY_ITEM_FIRST  F  ON    S.FIRST_CATEGORY_ID=F.UUID
@@ -28,11 +45,21 @@
         <if test="mattersMap.itemSecond!= null and mattersMap.itemSecond!= ''">
             and   T."secondCategoryId" = #{mattersMap.itemSecond}
         </if>
+        <if test="mattersMap.itemSecondName!= null and mattersMap.itemSecondName!= ''">
+            and   T."secondCategoryName" = #{mattersMap.itemSecondName}
+        </if>
+        <if test="mattersMap.uuid!= null and mattersMap.uuid!= ''">
+            and   T."secondCategoryId" != #{mattersMap.uuid}
+        </if>
         <if test="mattersMap.businessDeptName !=null and mattersMap.businessDeptName!=''">
             and  T."businessDeptName"  like '%'||#{mattersMap.businessDeptName}||'%'
         </if>
-        ORDER BY  T."createTime" DESC
+        ORDER BY  T."createTime"  DESC
     </sql>
+
+
+
+
     <!-- 用印事项的查询-->
     <select id="selectForMatters" resultType="java.util.Map" parameterType="java.util.HashMap"  >
         SELECT  T.*  from(
@@ -42,10 +69,307 @@
         ) T   WHERE T.ROWNO > #{mattersMap.page_start}
 
     </select>
-    <!-- 综合查询条数-->
+    <!-- 用印事项的查询条数-->
     <select id="selectForMattersNum" resultType="java.lang.String" parameterType="java.util.HashMap" >
         SELECT    COUNT(1)  AS "countNum"  from(<include refid="mattersInfo"/>)
     </select>
+    <!-- 二级用印事项的查询-->
+    <select id="selectForItemSecond" resultType="java.util.Map" parameterType="java.util.HashMap" >
+        SELECT   *   from(<include refid="mattersInfo"/>)
+    </select>
+
+
+    <!--一级用印事项查询公共sql-->
+    <sql id="itemFirstInfo">
+       SELECT      UUID     as  "firstCategoryId",
+                    FIRST_CATEGORY_NAME as "firstCategoryName",
+                    SORT_NUMBER as "sortNumber",
+                    VALID
+       FROM    BG_YY_ITEM_FIRST
+       WHERE   VALID='1'
+        <if test="FirstInfoMap.itemFirst!= null and FirstInfoMap.itemFirst!= ''">
+            and   UUID = #{FirstInfoMap.itemFirst}
+        </if>
+        <if test="FirstInfoMap.itemFirstName!= null and FirstInfoMap.itemFirstName!= ''">
+            and   FIRST_CATEGORY_NAME = #{FirstInfoMap.itemFirstName}
+        </if>
+        <if test="FirstInfoMap.uuid!= null and FirstInfoMap.uuid!= ''">
+            and   UUID  != #{FirstInfoMap.uuid}
+        </if>
+        ORDER BY SORT_NUMBER DESC
+    </sql>
+    <!-- 一级用印事项的查询-->
+    <select id="selectForItemFirst" resultType="java.util.Map"   parameterType="java.util.HashMap" >
+        SELECT  T.*  from(
+        SELECT  TB.* , ROWNUM AS ROWNO  from(
+               <include refid="itemFirstInfo"/>
+        ) TB  WHERE #{FirstInfoMap.page_end} >= ROWNUM
+        ) T   WHERE T.ROWNO > #{FirstInfoMap.page_start}
+    </select>
+    <!-- 一级用印事项的查询条数-->
+    <select id="selectForItemFirstNum" resultType="java.lang.String" parameterType="java.util.HashMap" >
+        SELECT    COUNT(1)  AS "countNum"  from(<include refid="itemFirstInfo"/>)
+    </select>
+    <!-- 一级用印事项的新增-->
+    <insert id="saveForItemFirstInfo"    parameterType="java.util.HashMap">
+        insert into BG_YY_ITEM_FIRST
+        (UUID,
+         FIRST_CATEGORY_NAME,
+         CREATE_USER,
+         CREATE_TIME,
+         UPDATE_USER,
+         UPDATE_TIME,
+         VALID,
+         SORT_NUMBER
+         ) values
+        (#{itemFirstInfo.uuid},
+        #{itemFirstInfo.itemFirstName},
+        #{itemFirstInfo.createUser},
+        #{itemFirstInfo.createTime},
+        #{itemFirstInfo.updateUser},
+        #{itemFirstInfo.updateTime},
+        #{itemFirstInfo.valid},
+        #{itemFirstInfo.sortNumber}
+        )
+    </insert>
+    <!--一级用印事项的删除-->
+    <update id="deleteForItemFirstInfo" parameterType="java.util.HashMap">
+        update BG_YY_ITEM_FIRST set
+         UPDATE_USER  = #{itemFirstInfo.updateUser},
+         UPDATE_TIME  = #{itemFirstInfo.updateTime},
+         VALID  = #{itemFirstInfo.valid}
+        where VALID='1'    and  UUID = #{itemFirstInfo.uuid}
+    </update>
+    <!--一级用印事项的修改-->
+    <update id="updateForItemFirstInfo" parameterType="java.util.HashMap">
+        update BG_YY_ITEM_FIRST set
+         UPDATE_USER  = #{itemFirstInfo.updateUser},
+         UPDATE_TIME  = #{itemFirstInfo.updateTime},
+         FIRST_CATEGORY_NAME  = #{itemFirstInfo.itemFirstName}
+        where UUID = #{itemFirstInfo.uuid}
+    </update>
+
+
+    <select id="selectForMaxSortNumber" resultType="java.lang.String"  >
+        SELECT   MAX(SORT_NUMBER)   as  "sortnumber"   FROM       BG_YY_ITEM_FIRST
+    </select>
+    <!-- 二级用印事项的新增-->
+    <insert id="saveForItemSecondInfo"    parameterType="java.util.HashMap">
+        insert into BG_YY_ITEM_SECOND
+        (UUID,
+        SECOND_CATEGORY_NAME,
+        FIRST_CATEGORY_ID,
+        IF_SIGN,
+        IF_LEADER_APPROVE,
+        CREATE_USER,
+        CREATE_TIME,
+        UPDATE_USER,
+        UPDATE_TIME,
+        VALID,
+        SORT_NUMBER
+        ) values
+        (#{itemSecondInfo.uuid},
+        #{itemSecondInfo.itemSecondName},
+        #{itemSecondInfo.itemFirstId},
+        #{itemSecondInfo.ifSign},
+        #{itemSecondInfo.ifLeaderApprove},
+        #{itemSecondInfo.createUser},
+        #{itemSecondInfo.createTime},
+        #{itemSecondInfo.updateUser},
+        #{itemSecondInfo.updateTime},
+        #{itemSecondInfo.valid},
+        #{itemSecondInfo.sortNumber}
+        )
+    </insert>
+
+    <select id="selectForSecondMaxSortNumber" resultType="java.lang.String"  >
+        SELECT   MAX(SORT_NUMBER)   as  "sortnumber"   FROM       BG_YY_ITEM_SECOND
+         where FIRST_CATEGORY_ID = #{itemFirstId}
+    </select>
+
+    <!-- 二级用印事项部门的新增-->
+    <insert id="saveForItemSecondDeptInfo"    parameterType="java.util.HashMap">
+        insert into BG_YY_ITEM_SECOND_DEPT
+        (UUID,
+        SECOND_CATEGORY_ID,
+        DEPT_ID,
+        CREATE_USER,
+        CREATE_TIME,
+        UPDATE_USER,
+        UPDATE_TIME,
+        VALID
+        ) values
+        (#{itemSecondDeptInfo.uuid},
+        #{itemSecondDeptInfo.itemSecondId},
+        #{itemSecondDeptInfo.deptId},
+        #{itemSecondDeptInfo.createUser},
+        #{itemSecondDeptInfo.createTime},
+        #{itemSecondDeptInfo.updateUser},
+        #{itemSecondDeptInfo.updateTime},
+        #{itemSecondDeptInfo.valid}
+        )
+    </insert>
+
+
+
+    <!--二级用印事项的删除-->
+    <update id="deleteForItemSecondInfo" parameterType="java.util.HashMap">
+        update BG_YY_ITEM_SECOND set
+        UPDATE_USER  = #{itemSecondInfo.updateUser},
+        UPDATE_TIME  = #{itemSecondInfo.updateTime},
+        VALID  = #{itemSecondInfo.valid}
+        where UUID = #{itemSecondInfo.uuid}
+    </update>
+    <!--二级用印事项的修改-->
+    <update id="updateForItemSecondInfo" parameterType="java.util.HashMap">
+        update BG_YY_ITEM_SECOND set
+        SECOND_CATEGORY_NAME  =  #{itemSecondInfo.itemSecondName},
+        FIRST_CATEGORY_ID  =  #{itemSecondInfo.itemFirstId},
+        IF_SIGN = #{itemSecondInfo.ifSign},
+        IF_LEADER_APPROVE = #{itemSecondInfo.ifLeaderApprove},
+        UPDATE_USER  = #{itemSecondInfo.updateUser},
+        UPDATE_TIME  = #{itemSecondInfo.updateTime}
+        where UUID =  #{itemSecondInfo.uuid}
+    </update>
+    <!--二级用印事项部门的修改-->
+    <update id="updateForItemSecondDeptInfo" parameterType="java.util.HashMap">
+        update BG_YY_ITEM_SECOND_DEPT set
+        UPDATE_USER = #{itemSecondDeptInfo.updateUser},
+        UPDATE_TIME = #{itemSecondDeptInfo.updateTime},
+        VALID  = #{itemSecondDeptInfo.valid}
+        where VALID='1'AND SECOND_CATEGORY_ID =  #{itemSecondDeptInfo.itemSecondId}
+    </update>
+
+    <!--审批人查询公共sql-->
+    <sql id="approvalInfo">
+        SELECT
+        A.UUID   as  "approveId",
+        A.DEPT_ID as "approveDeptId",
+        D.DEPTNAME as "approveDeptName",
+        A.STAFF_ID  as "approveUserId",
+        U.HRCODE   as "approveUserCode",
+        U.USERNAME   as "approveUserName",
+        U.USERALIAS  as "approveUserAlias",
+        A.NODE_TYPE as "approveNodeId",
+        (select name  from bg_sys_datadictionary  where pcode = 'use_seal_status'  and code = A.NODE_TYPE)   as  "approveNodeName",
+        A.ITEM_FIRST_ID   as "itemFirstId",
+        F.FIRST_CATEGORY_NAME as "itemFirstName",
+        A.ITEM_SECOND_ID  as "itemSecondId",
+        S.SECOND_CATEGORY_NAME  as "itemSecondName",
+        F.FIRST_CATEGORY_NAME||'-'||S.SECOND_CATEGORY_NAME   as   "approveItemName"
+        FROM    BG_YY_APPROVE   A
+        LEFT   JOIN      BG_SYS_DEPT  D  ON    A.DEPT_ID=D.DEPTID
+        LEFT   JOIN      BG_SYS_USER  U  ON    A.STAFF_ID=U.USERID
+        LEFT   JOIN      BG_YY_ITEM_FIRST   F  ON   F.UUID   =A.ITEM_FIRST_ID
+        LEFT   JOIN      BG_YY_ITEM_SECOND  S  ON   S.UUID   =A.ITEM_SECOND_ID
+        WHERE   A.VALID='1'
+        <if test="approvalMap.approveDeptId!= null and approvalMap.approveDeptId!= ''">
+            and  A.DEPT_ID = #{approvalMap.approveDeptId}
+        </if>
+        <if test="approvalMap.approveUserName!= null and approvalMap.approveUserName!= ''">
+            and   U.USERNAME   like '%'|| #{approvalMap.approveUserName}||'%'
+        </if>
+        <if test="approvalMap.approveUserAlias!= null and approvalMap.approveUserAlias!= ''">
+            and   U.USERALIAS   like '%'||#{approvalMap.approveUserAlias}||'%'
+        </if>
+        <if test="approvalMap.approveUserId!= null and approvalMap.approveUserId!= ''">
+            and   A.STAFF_ID   like '%'||#{approvalMap.approveUserId}||'%'
+        </if>
+        <if test="approvalMap.itemFirstId!= null and approvalMap.itemFirstId!= ''">
+            and   A.ITEM_FIRST_ID  = #{approvalMap.itemFirstId}
+        </if>
+        <if test="approvalMap.itemSecondId!= null and approvalMap.itemSecondId!= ''">
+            and   A.ITEM_SECOND_ID  = #{approvalMap.itemSecondId}
+        </if>
+        <if test="approvalMap.approveNodeId!= null and approvalMap.approveNodeId!= ''">
+            and     A.NODE_TYPE = #{approvalMap.approveNodeId}
+        </if>
+        <if test="approvalMap.approveId!= null and approvalMap.approveId!= ''">
+            and     A.UUID  = #{approvalMap.approveId}
+        </if>
+        <if test="approvalMap.uuid!= null and approvalMap.uuid!= ''">
+            and     A.UUID  != #{approvalMap.uuid}
+        </if>
+        ORDER BY  A.CREATE_TIME DESC
+    </sql>
+    <!-- 审批人的查询-->
+    <select id="selectForApproval" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT  T.*  from(
+        SELECT  TB.* , ROWNUM AS ROWNO  from(
+        <include refid="approvalInfo"/>
+        ) TB  WHERE #{approvalMap.page_end} >= ROWNUM
+        ) T   WHERE T.ROWNO > #{approvalMap.page_start}
+
+    </select>
+    <!-- 审批人的查询条数-->
+    <select id="selectForApprovalNum" resultType="java.lang.String" parameterType="java.util.HashMap" >
+        SELECT    COUNT(1)  AS "countNum"  from(<include refid="approvalInfo"/>)
+    </select>
+    <!-- 根据ID审批人的查询条数-->
+    <select id="selectForApprovalId" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT   *   from(<include refid="approvalInfo"/>)
+    </select>
+
+
+    <!-- 审批人部门的的查询-->
+    <select id="selectForDeptApproval" resultType="java.util.Map"   >
+      SELECT
+        DISTINCT( A.DEPT_ID)    as "approveDeptId",
+        D.DEPTNAME as "approveDeptName"
+       FROM    BG_YY_APPROVE   A
+       LEFT   JOIN      BG_SYS_DEPT  D  ON    A.DEPT_ID=D.DEPTID
+       WHERE   A.VALID='1'
+    </select>
+
+    <!-- 审批人的新增-->
+    <insert id="saveForApprovalInfo"    parameterType="java.util.HashMap">
+        insert into BG_YY_APPROVE
+        (UUID,
+        DEPT_ID,
+        STAFF_ID,
+        NODE_TYPE,
+        ITEM_FIRST_ID,
+        ITEM_SECOND_ID,
+        CREATE_USER,
+        CREATE_TIME,
+        UPDATE_USER,
+        UPDATE_TIME,
+        VALID
+        ) values
+        (#{approvalMap.uuid},
+        #{approvalMap.approveDeptId},
+        #{approvalMap.approveUserId},
+        #{approvalMap.approveNodeId},
+        #{approvalMap.itemFirstId},
+        #{approvalMap.itemSecondId},
+        #{approvalMap.createUser},
+        #{approvalMap.createTime},
+        #{approvalMap.updateUser},
+        #{approvalMap.updateTime},
+        #{approvalMap.valid}
+        )
+    </insert>
+    <!--审批人的修改-->
+    <update id="updateForApprovalInfo" parameterType="java.util.HashMap">
+        update BG_YY_APPROVE set
+        DEPT_ID  =  #{approvalMap.approveDeptId},
+        STAFF_ID  =  #{approvalMap.approveUserId},
+        NODE_TYPE  =  #{approvalMap.approveNodeId},
+        ITEM_FIRST_ID = #{approvalMap.itemFirstId},
+        ITEM_SECOND_ID = #{approvalMap.itemSecondId},
+        UPDATE_USER  = #{approvalMap.updateUser},
+        UPDATE_TIME  = #{approvalMap.updateTime}
+        where UUID =  #{approvalMap.uuid}
+    </update>
+
+    <!--审批人的删除-->
+    <update id="deleteForApprovalInfo" parameterType="java.util.HashMap">
+        update BG_YY_APPROVE set
+        UPDATE_USER  = #{approvalMap.updateUser},
+        UPDATE_TIME  = #{approvalMap.updateTime},
+        VALID  = #{approvalMap.valid}
+        where VALID='1'AND UUID =  #{approvalMap.uuid}
+    </update>
 
 
 

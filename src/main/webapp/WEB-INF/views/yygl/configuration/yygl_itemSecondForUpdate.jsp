@@ -28,6 +28,7 @@
 <!-- start    查询条件 -->
 
 	<div class='content_top' style="margin-bottom: 10px;line-height: 50px;">用印事项配置</div>
+
 	<table class="visitPerson tableStyle specialTable">
 		<tr>
 			<td>
@@ -36,9 +37,10 @@
 			<td class="addInputStyle">
 
 				<select id="itemFirst"  name = "visitUnitType"  class = "validNull select-person"   content="用印事项一级类别"    title="必填项  "  >
-					<option value=""  selected > </option>
+					<option value=""   > </option>
 					<c:forEach  var="itemFirstList"  items="${itemFirstList}">
-						<option value ="${itemFirstList.K}" title=" ${itemFirstList.V}" > ${itemFirstList.V}</option>
+						<option value ="${itemFirstList.K}"  title=" ${itemFirstList.V}"   ${itemFirstList.K == firstCategoryId ?"selected='selected'":''}     > ${itemFirstList.V} </option>
+
 					</c:forEach>
 				</select>
 			</td>
@@ -49,7 +51,8 @@
 				<span title = "用印事项二级类别">用印事项二级类别</span>
 			</td>
 			<td   class="addInputStyle">
-				<input  id="itemSecondName"   name="itemSecondName"  type="text"   class = "validNull"   len="20"    content="用印事项二级类别"   title="必填项 ,字段长度不能超过 20" />
+				<input type="hidden" name="secondCategoryId" id="secondCategoryId"  value="${secondCategoryId}" >
+				<input  id="itemSecondName"   name="itemSecondName"  type="text"  value="${secondCategoryName}"    class = "validNull"   len="20"    content="用印事项二级类别"   title="必填项 ,字段长度不能超过 20" />
 			</td>
 		</tr>
 		<tr>
@@ -58,8 +61,8 @@
 			</td>
 			<td   class="addInputStyle">
 				<select id="ifsign"  name = "ifsign"  class = "validNull select-person"   content="是否需要会签"    title="必填项  "  >
-					<option value="1"  selected>是</option>
-					<option value="0"  >否</option>
+					<option value="1"  ${ 1== ifSignCode ?"selected='selected'":''}>是</option>
+					<option value="0"  ${ 0== ifSignCode ?"selected='selected'":''}>否</option>
 				</select>
 			</td>
 		</tr>
@@ -69,9 +72,8 @@
 			</td>
 			<td   class="addInputStyle">
 				<div id="organTree" class="input-group organ">
-					<input type="hidden" name="deptId" id="deptId" >
-					<input type="hidden" name="deptCode" id="deptCode" value="${deptCode}">
-					<input type="text" name="deptName" id="deptName" readonly="readonly" value="${deptName}" class = "validNull"  content="业务主管部门" >
+					<input type="hidden" name="deptId" id="deptId"  value="${businessDeptCode}" >
+					<input type="text" name="deptName" id="deptName" readonly="readonly" value="${businessDeptName}" class = "validNull"  content="业务主管部门" >
 					<span class="input-group-addon" style="height: 30px"><span class="glyphicon glyphicon-th-list"></span></span>
 				</div>
 			</td>
@@ -82,8 +84,8 @@
 			</td>
 			<td   class="addInputStyle">
 				<select id="ifLeaderApprove"  name = "ifLeaderApprove"  class = "validNull select-person"   content="是否需要院领导批准"    title="必填项  "  >
-					<option value="1"  selected>是</option>
-					<option value="0"  >否</option>
+					<option value="1"  ${ 1== ifLeaderApproveCode ?"selected='selected'":''}  >是</option>
+					<option value="0"  ${ 0== ifLeaderApproveCode ?"selected='selected'":''}  >否</option>
 				</select>
 			</td>
 		</tr>
@@ -91,7 +93,7 @@
 
 
 	<div class="btnContent" style="  margin: 35px 0 20px;">
-		<button type="button" class="btn" onclick="itemSecondInfo.itemSecondSave()">保存</button>
+		<button type="button" class="btn" onclick="itemSecondInfo.itemSecondUpdate()">修改</button>
 		<button type="button" class="btn" onclick="itemSecondInfo.itemSecondResign()">返回</button>
 	</div>
 

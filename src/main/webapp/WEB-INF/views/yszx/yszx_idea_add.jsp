@@ -199,10 +199,10 @@
 		<div class="btnBox">
 			<div class='btn right AccompanyMessageDel' onclick="delUser(this)" style="margin-bottom: 5px;">删除</div> 
 			<div id='stuffTree' class='btn right AccompanyMessageAdd empName2'   style="padding:0;"  >
-		    	<input type="button" id="popStuffTree"  value="增加" style="background: none;border: none;width:51px;height:30px;line-height:30px;"/>
-		    	<input name="empName" id="empName" type="hidden"/>
-		    	<input name="empCode" id="empCode" type="hidden"/>
-			</div> 
+			<input type="button" id="popStuffTree"  value="增加" style="background: none;border: none;width:51px;height:30px;line-height:30px;"/>
+			<input name="empName" id="empName" type="hidden"/>
+			<input name="empCode" id="empCode" type="hidden"/>
+		</div>
 		</div>
 		<div class="maxBox maxLine">
 			<table class="visitUnitAccompany tableStyle thTableStyle">

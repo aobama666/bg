@@ -28,6 +28,7 @@
 	<div class='content_top'>确定用印</div>
 	<form id="queryForm" style="margin-bottom: 10px;">
 		<input type = "hidden"   id = "applyId" name="applyId">
+		<input type = "hidden"   id = "type" name="type" value="${type}">
 		<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;申请编码：</label>
 		<input type = "text" id = "applyCode" name = "applyCode" style="width: 200px" class = "inputQuery changeQuery" >
 		<label  for="stateDate" class="yearTitle">用印日期：</label>
@@ -81,16 +82,11 @@
 		<div id = "queryButton" class = "btn query" onclick = "roomList.query()" style="margin-left: 20px;">搜索</div> <!-- 原来引用的函数onclick = "roomList.query()" -->
 	</form>
 </div>
-<div class='content_top'   style=" margin-bottom: 10px;">  </div>
+
 <!-- end    onclick="tree()"查询条件 -->
-
 <div class='btn right deleteButton' onclick="roomList.expEvent()" style="white-space: nowrap">导出</div>
+<div    style="line-height: 37px">&nbsp;</div>
 
-
-
-<div   class='content_yygl_top' >确定用印列表</div>
-
-<div class='content_top'   style=" margin-bottom: 10px;">  </div>
 <!-- start 列表展示 -->
 <div class="tabbable" >
 	<div class="tab-content">

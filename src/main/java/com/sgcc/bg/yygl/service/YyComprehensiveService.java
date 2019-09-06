@@ -10,11 +10,19 @@ public interface YyComprehensiveService {
     /**
      * 获取申请单位
      */
+    List<Map<String,Object>> selectForUserId(  String userId);
+    /**
+     * 获取申请单位
+     */
     List<Map<String,Object>> selectForDept(  String userRole);
     /**
      * 获取审批状态
      */
     List<Map<String,Object>> selectForStatus( String userRole);
+    /**
+     * 获取节点类型
+     */
+    List<Map<String,Object>> selectForNodeType();
     /**
      * 综合查询
      */
@@ -30,5 +38,5 @@ public interface YyComprehensiveService {
     /**
      * 确认用印信息的添加
      */
-    int updateForAffirm( String applyUserId,  String officeUserId, String applyId) ;
+    int updateForAffirm( String applyUserId,  String officeUserId, String applyId,String  status) ;
 }

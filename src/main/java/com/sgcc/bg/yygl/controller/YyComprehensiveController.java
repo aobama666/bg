@@ -38,29 +38,25 @@ public class YyComprehensiveController {
 	@Autowired
 	private YyApplyService applyService;
 	private static Logger Logger = LoggerFactory.getLogger(YyComprehensiveController.class);
-
 	/**
 	 * 用印模块---综合查询首页
 	 */
 	@ResponseBody
-	@RequestMapping(value="/comprehensiveIndex")
+	@RequestMapping(value="/comprehensiveIndex",method = RequestMethod.GET)
 	public ModelAndView comprehensiveIndex(HttpServletRequest res){
 		Logger.info("用印管理综合查询首页查询-----开始");
-		Logger.info("根据登录用户查看是印章管理员或综合管理员");
-		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
-		String UserId=  currentUser.getUserId();
-		Logger.info("------------------缺失的业务代码-----------------------");
-		String userRole="2";
-		Logger.info("------------------缺失的业务代码-----------------------");
+	    String 	type="2";
 		Logger.info("------------------用印管理综合查询首页下拉选的查询------------------------");
-		List<Map<String,Object>>      deptInfoList=yyComprehensiveService.selectForDept(userRole);//用印部门
-		List<Map<String,Object>>      statusInfoList=yyComprehensiveService.selectForStatus(userRole);//用印状态
+		List<Map<String,Object>>      deptInfoList=yyComprehensiveService.selectForDept(type);//用印部门
+		List<Map<String,Object>>      statusInfoList=yyComprehensiveService.selectForStatus(type);//用印状态
 		List<Map<String,Object>>      itemFirstList = applyService.getItemFirst();//用印事项一级
 		Logger.info("------------------用印管理综合查询首页下拉选的查询------------------------");
 		Map<String, Object> map = new HashMap<>();
 		map.put("deptInfoList", deptInfoList);//用印部门
 		map.put("statusInfoList", statusInfoList);//用印状态
 		map.put("itemFirstList", itemFirstList);//用印事项一级
+		map.put("type", type);//综合管理员
+		Logger.info("用印管理综合查询首页查询------返回值"+map);
 		ModelAndView model = new ModelAndView("yygl/comprehensive/yygl_comprehensive_info",map);
 		Logger.info("用印管理综合查询首页查询------结束");
 		return model;
@@ -69,24 +65,21 @@ public class YyComprehensiveController {
 	 * 用印模块---确认用印首页
 	 */
 	@ResponseBody
-	@RequestMapping(value="/uselSeal")
-	public ModelAndView uselSeal(HttpServletRequest res){
-		Logger.info("用印管理确认查询首页查询-----开始");
-		Logger.info("根据登录用户查看是印章管理员或综合管理员");
-		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
-		String UserId=  currentUser.getUserId();
-		Logger.info("------------------缺失的业务代码-----------------------");
-		String userRole="1";
-		Logger.info("------------------缺失的业务代码-----------------------");
+	@RequestMapping(value="/uselSealIndex" ,method = RequestMethod.GET)
+	public ModelAndView uselSealIndex(HttpServletRequest res){
+		Logger.info("用印管理确认用印查询首页查询-----开始");
+		String type="1";
 		Logger.info("------------------用印管理综合查询首页下拉选的查询------------------------");
-		List<Map<String,Object>>      deptInfoList=yyComprehensiveService.selectForDept(userRole);
-		List<Map<String,Object>>      statusInfoList=yyComprehensiveService.selectForStatus(userRole);
-		List<Map<String,Object>>      itemFirstList = applyService.getItemFirst();
+		List<Map<String,Object>>      deptInfoList=yyComprehensiveService.selectForDept(type);//用印部门
+		List<Map<String,Object>>      statusInfoList=yyComprehensiveService.selectForStatus(type);//用印状态
+		List<Map<String,Object>>      itemFirstList = applyService.getItemFirst();//用印事项一级
 		Logger.info("------------------用印管理综合查询首页下拉选的查询------------------------");
 		Map<String, Object> map = new HashMap<>();
 		map.put("deptInfoList", deptInfoList);//用印部门
 		map.put("statusInfoList", statusInfoList);//用印状态
 		map.put("itemFirstList", itemFirstList);//用印事项一级
+		map.put("type", type);//印章管理员
+		Logger.info("用印管理确认用印查询首页查询------返回值"+map);
 		ModelAndView model = new ModelAndView("yygl/comprehensive/yygl_useSeal_info",map);
 		Logger.info("用印管理确认用印查询首页查询------结束");
 		return model;
@@ -96,14 +89,16 @@ public class YyComprehensiveController {
 	 * 确认用印弹框
 	 * @return
 	 */
-	@RequestMapping(value = "/affirm", method = RequestMethod.GET)
-	public ModelAndView affirm(String applyId, String applyUserId){
+	@RequestMapping(value = "/affirmIndex", method = RequestMethod.GET)
+	public ModelAndView affirmIndex(String applyId, String applyUserId){
 		Logger.info("用印管理用印弹框页面------开始");
 		Map<String, Object> map = new HashMap<>();
 		map.put("applyId",applyId);
 		map.put("applyUserId",applyUserId);
-		map.put("applyUserName","测试用户");
-		ModelAndView model = new ModelAndView("yygl/comprehensive/yygl_affirm",map);
+		List<Map<String,Object>>  userlist=yyComprehensiveService.selectForUserId(applyUserId);
+		Object applyUserName=userlist.get(0).get("USERALIAS");
+		map.put("applyUserName",applyUserName);
+		ModelAndView model = new ModelAndView("yygl/comprehensive/yygl_affirm_info",map);
 		Logger.info("用印管理用印弹框页面------结束");
 		return model;
 	}
@@ -124,7 +119,10 @@ public class YyComprehensiveController {
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String officeUserId=  currentUser.getUserId();
 		Logger.info("用印管理确定用印------参数：（申请单位经办人）applyUserId:"+applyUserId+"(办公室经办人)officeUserId:"+officeUserId+"(用印UUID)applyId:"+applyId);
-		int  res=yyComprehensiveService.updateForAffirm(applyUserId,officeUserId,applyId);
+		int  res=yyComprehensiveService.updateForAffirm(applyUserId,officeUserId,applyId,"9");
+		Logger.info("用印管理确定用印-----添加流程代码");
+
+		Logger.info("用印管理确定用印-----添加流程代码");
 		if(res==1){
 			Logger.info("用印管理确定用印------添加成功");
 			rw = new ResultWarp(ResultWarp.SUCCESS ,"添加成功");
@@ -133,7 +131,6 @@ public class YyComprehensiveController {
 			rw = new ResultWarp(ResultWarp.FAILED ,"添加失败");
 		}
 		return JSON.toJSONString(rw);
-
 	}
 	/**
 	 * 用印模块-综合查询/确定用印出查询
@@ -151,8 +148,8 @@ public class YyComprehensiveController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/selectForSealInfo")
-	public String selectForSealInfo(String applyCode, String stateDate,  String endDate,  String deptId,String useSealReason,String useSealStatus,String itemFirst,String itemSecond, Integer page, Integer limit){
-		Logger.info("用印模块-综合查询的查询------开始");
+	public String selectForSealInfo(String type, String applyCode, String stateDate,  String endDate,  String deptId,String useSealReason,String useSealStatus,String itemFirst,String itemSecond, Integer page, Integer limit){
+		Logger.info("用印模块-综合查询/确定用印的查询------开始");
 		applyCode= Rtext.toStringTrim(applyCode, ""); //申请编码
 		stateDate=Rtext.toStringTrim(stateDate, ""); //用印开始时间
 		endDate=Rtext.toStringTrim(endDate, "");//用印结束时间
@@ -161,7 +158,7 @@ public class YyComprehensiveController {
 		deptId=Rtext.toStringTrim(deptId, "");//申请单位
 		useSealReason=Rtext.toStringTrim(useSealReason, "");//用印事由
 		useSealStatus=Rtext.toStringTrim(useSealStatus, "");//审批状态
-		Logger.info("用印模块-综合查询的查询------参数");
+		Logger.info("用印模块-综合查询/确定用印的查询------参数");
 		Logger.info("applyCode（申请编码）"+applyCode+"stateDate(用印开始时间)"+stateDate+"endDate(用印结束时间)"+endDate+
 				"itemFirst(用印事项一级)"+itemFirst+"itemSecond(用印事项二级)"+itemSecond+"deptId(申请单位)"+deptId+
 				"useSealReason(用印事由)"+useSealReason+"useSealStatus(审批状态)"+useSealStatus);
@@ -171,9 +168,6 @@ public class YyComprehensiveController {
 			page_start = (page-1)*limit;
 			page_end = page*limit;
 		}
-		Logger.info("------------------缺失的业务代码-----------------------");
-		String userRole="2";
-		Logger.info("------------------缺失的业务代码-----------------------");
 		Map<String, Object> Map = new HashMap<String, Object>();
 		Map.put("applyCode",applyCode);
 		Map.put("startData",stateDate);
@@ -185,8 +179,8 @@ public class YyComprehensiveController {
 		Map.put("useSealStatus",useSealStatus);
 		Map.put("page_start",page_start);
 		Map.put("page_end",page_end);
-		Map.put("userRole",userRole);
-		Logger.info("用印模块-综合查询的查询接口名称------selectForComprehensive");
+		Map.put("userRole",type);
+		Logger.info("用印模块-综合查询/确定用印的查询接口名称------selectForComprehensive");
 	    List<Map<String, Object>>   comprehensiveList=yyComprehensiveService.selectForComprehensive(Map);
 		String   countNum=yyComprehensiveService.selectForComprehensiveNum(Map);
 	    Map<String, Object> jsonMap1 = new HashMap<String, Object>();
@@ -197,19 +191,19 @@ public class YyComprehensiveController {
 		jsonMap.put("msg", "success");
 		jsonMap.put("success", "true");
 		String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
-		Logger.info("用印模块-综合查询的查询------返回值"+jsonStr);
-		Logger.info("用印模块-综合查询的查询------结束");
+		Logger.info("用印模块-综合查询/确定用印的查询------返回值"+jsonStr);
+		Logger.info("用印模块-综合查询/确定用印的查询------结束");
 		return jsonStr;
 	}
 
 	/**
-	 * 用印模块-综合查询的导出
+	 * 用印模块-综合查询/确定用印的导出
 	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/selectForComprehensiveExl")
 	public String selectForComprehensiveExl(HttpServletRequest request,HttpServletResponse response) throws IOException{
-		Logger.info("用印模块-综合查询的导出------开始");
+		Logger.info("用印模块-综合查询/确定用印的导出------开始");
 		String applyCode = request.getParameter("applyCode")==null?"":request.getParameter("applyCode");//申请编码
 		String stateDate = request.getParameter("stateDate")==null?"":request.getParameter("stateDate");//用印开始时间
 		String endDate = request.getParameter("endDate")==null?"":request.getParameter("endDate");//用印结束时间
@@ -219,9 +213,11 @@ public class YyComprehensiveController {
 		String useSealReason = request.getParameter("useSealReason")==null?"":request.getParameter("useSealReason");//用印事由
 		String useSealStatus = request.getParameter("useSealStatus")==null?"":request.getParameter("useSealStatus");//审批状态
 		String ids = request.getParameter("applyId")==null?"":request.getParameter("applyId");
-		Logger.info("------------------缺失的业务代码-----------------------");
-		String userRole="2";
-		Logger.info("------------------缺失的业务代码-----------------------");
+		String type = request.getParameter("type")==null?"":request.getParameter("type");
+		Logger.info("用印模块-综合查询/确定用印的导出------参数");
+		Logger.info("applyCode（申请编码）"+applyCode+"stateDate(用印开始时间)"+stateDate+"endDate(用印结束时间)"+endDate+
+				"itemFirst(用印事项一级)"+itemFirst+"itemSecond(用印事项二级)"+itemSecond+"deptId(申请单位)"+deptId+
+				"useSealReason(用印事由)"+useSealReason+"useSealStatus(审批状态)"+useSealStatus);
 		Map<String, Object> Map = new HashMap<String, Object>();
 		Map.put("applyCode",applyCode);
 		Map.put("startData",stateDate);
@@ -231,7 +227,7 @@ public class YyComprehensiveController {
 		Map.put("deptId",deptId);
 		Map.put("useSealReason",useSealReason);
 		Map.put("useSealStatus",useSealStatus);
-		Map.put("userRole",userRole);
+		Map.put("userRole",type);
 		if(!StringUtils.isEmpty(ids)){
           //拆分id
 			String[] arryids = ids.split(",");
@@ -269,10 +265,6 @@ public class YyComprehensiveController {
 				  valueList.add(comprehensiveMap);
 			  }
 		}
-
-
-
-
         //构建Excel表头
 		LinkedHashMap<String,String> headermap = new LinkedHashMap<>();
 		headermap.put("nums", "序号");
@@ -288,7 +280,13 @@ public class YyComprehensiveController {
 		headermap.put("officeHandleUserName", "办公室经办人");
 		OutputStream os = null;
 		try {
-			String fileName = "用印模块-综合查询";
+			String fileName;
+			if(type.equals("1")){
+				  fileName = "用印模块-确定用印"+DateUtil.getDay();
+			}else {
+				  fileName = "用印模块-综合查询"+DateUtil.getDay();
+			}
+			Logger.info("用印模块-综合查询/确定用印的导出excel名称"+fileName);
 			HSSFWorkbook workbook = newExcelUtil.PaddingExcel(headermap,valueList);
 			response.reset();
 			response.setContentType("application/x-download");
@@ -309,116 +307,10 @@ public class YyComprehensiveController {
 				}
 			}
 		}
+		Logger.info("用印模块-综合查询/确定用印的导出-----结束" );
 		return "";
 	}
-	/**
-	 * 用印模块-用印查询的导出
-	 * @param
-	 * @param
-	 * @return
-	 */
-	@ResponseBody
-	@RequestMapping(value = "/selectForUserSealExl")
-	public String selectForUserSealExl(HttpServletRequest request,HttpServletResponse response) throws IOException{
-		String applyCode = request.getParameter("applyCode")==null?"":request.getParameter("applyCode");//申请编码
-		String stateDate = request.getParameter("stateDate")==null?"":request.getParameter("stateDate");//用印开始时间
-		String endDate = request.getParameter("endDate")==null?"":request.getParameter("endDate");//用印结束时间
-		String itemFirst = request.getParameter("itemFirst")==null?"":request.getParameter("itemFirst");//用印事项一级
-		String itemSecond = request.getParameter("itemSecond")==null?"":request.getParameter("itemSecond");//用印事项二级
-		String deptId = request.getParameter("deptId")==null?"":request.getParameter("deptId");//申请单位
-		String useSealReason = request.getParameter("useSealReason")==null?"":request.getParameter("useSealReason");//用印事由
-		String useSealStatus = request.getParameter("useSealStatus")==null?"":request.getParameter("useSealStatus");//审批状态
-		String ids = request.getParameter("applyId")==null?"":request.getParameter("applyId");
-		Logger.info("------------------缺失的业务代码-----------------------");
-		String userRole="2";
-		Map<String, Object> Map = new HashMap<String, Object>();
-		Map.put("applyCode",applyCode);
-		Map.put("startData",stateDate);
-		Map.put("endData",endDate);
-		Map.put("itemFirst",itemFirst);
-		Map.put("itemSecond",itemSecond);
-		Map.put("deptId",deptId);
-		Map.put("useSealReason",useSealReason);
-		Map.put("useSealStatus",useSealStatus);
-		Map.put("userRole",userRole);
-		if(!StringUtils.isEmpty(ids)){
-			//拆分id
-			String[] arryids = ids.split(",");
-			List<String>  applyIds=new ArrayList<String>();
-			for (String id : arryids) {
-				applyIds.add(id);
-			}
-			Map.put("applyIds",applyIds);
-		}
-		List<Map<String, Object>>   comprehensiveList=yyComprehensiveService.selectForComprehensiveExl(Map);
-		List<Map<String, Object>>   valueList = new ArrayList<Map<String,Object>>();
-		int num=0;
-		if(!comprehensiveList.isEmpty()){
-			for(Map<String, Object> comprehensiveMap :comprehensiveList){
-				num++;
-				comprehensiveMap.put("nums",num);
-				String   userSealkindnames="";
-				try {
-					Object   userSealkindName =comprehensiveMap.get("userSealkindName");
-					String   userSealkindNames=Rtext.toStringTrim(userSealkindName ,"");
 
-					if(userSealkindNames!=""){
-						Clob comprehensiveInfo=(Clob)comprehensiveMap.get("userSealkindName");
-						Reader is=comprehensiveInfo.getCharacterStream();
-						char[] c=new char[(int)comprehensiveInfo.length()];
-						is.read(c);
-						userSealkindnames=new String(c);
-						is.close();
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				comprehensiveMap.put("userSealkindName",userSealkindnames);
-				valueList.add(comprehensiveMap);
-			}
-		}
-
-
-
-
-		//构建Excel表头
-		LinkedHashMap<String,String> headermap = new LinkedHashMap<>();
-		headermap.put("nums", "序号");
-		headermap.put("applyCode", "申请编号");
-		headermap.put("userSealReason", "用印事由");
-		headermap.put("deptName", "申请部门");
-		headermap.put("applyUserName", "用印申请人");
-		headermap.put("userSealDate", "用印日期");
-		headermap.put("secondCategoryName", "用印事项");
-		headermap.put("userSealkindName", "用印种类");
-		headermap.put("userSealStatusName", "审批状态");
-		headermap.put("applyHandleUserName", "申请单位经办");
-		headermap.put("officeHandleUserName", "办公室经办人");
-		OutputStream os = null;
-		try {
-			String fileName = "用印模块-综合查询";
-			HSSFWorkbook workbook = newExcelUtil.PaddingExcel(headermap,valueList);
-			response.reset();
-			response.setContentType("application/x-download");
-			response.setCharacterEncoding("UTF-8");
-			response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName,"utf-8")+".xls");
-			os = response.getOutputStream();
-			workbook.write(os);
-			os.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally{
-			if(os!=null){
-				try {
-					os.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		return "";
-	}
 
 
 

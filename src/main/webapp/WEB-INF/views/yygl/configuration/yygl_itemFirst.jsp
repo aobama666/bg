@@ -19,13 +19,11 @@
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
-
 </head>
 <body>
 <div class="main_div"></div>
 <!-- start    查询条件 -->
 <div class="sheach">
-
 	<form id="queryForm" style="margin-bottom: 10px;">
 		<div style="text-align: center">
 			<label  for="itemFirst" class="yearTitle">一级类别：</label>
@@ -38,8 +36,6 @@
 			<!-- 查询按钮  -->
 			<div id = "queryButton" class = "btn query" onclick = "roomList.query()" style="margin-left: 20px;">搜索</div>
 		</div>
-
-
 	</form>
 </div>
 
@@ -63,10 +59,10 @@
 
 <!-- end 列表展示 -->
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
+<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
+<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/locale/easyui-lang-zh_CN.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
-
 <script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>
-
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>  	<!-- 弹框.js  -->
 <!-- 引入datagrid -->

@@ -17,7 +17,7 @@ $.fn.extend({
 			var popEvent = properties.popEvent == undefined ? "" : properties.popEvent;
 			//自定义触发弹窗对象
 			var bindLayId = properties.bindLayId == "tempAbc123" ? "" : properties.bindLayId;
-			/* 
+			/*
 			 * 如果指定了empCode和empName两个文本框的name,则按照指定的组件获取;
 			 * 否则如果指定empCode和empName的属性,按照属性获取;
 			 * 否则获取可见的的文本框为empName,不可见的文本框为empCode
@@ -60,7 +60,7 @@ $.fn.extend({
 					layer.open(p);
 				}
 			});
-			
+
 		});
 	}
 });

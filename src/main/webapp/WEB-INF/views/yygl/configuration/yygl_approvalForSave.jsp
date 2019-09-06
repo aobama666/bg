@@ -31,12 +31,25 @@
 	<table class="visitPerson tableStyle specialTable">
 		<tr>
 			<td>
+				<span title = "节点类型"> 节点类型</span>
+			</td>
+			<td class="addInputStyle">
+				<select id="approveNodeId"  name = "approveNodeId"  class = "validNull select-person"   content="节点类型"    title="必填项  "   >
+					<option value=""  selected > </option>
+					<c:forEach  var="nodeTypeList"  items="${nodeTypeList}">
+						<option value ="${nodeTypeList.CODE}" title=" ${nodeTypeList.NAME}" > ${nodeTypeList.NAME}</option>
+					</c:forEach>
+				</select>
+			</td>
+
+		</tr>
+		<tr>
+			<td>
 				<span title = "用印事项一级类别"> 用印事项一级类别</span>
 			</td>
 			<td class="addInputStyle">
-
-				<select id="itemFirstList"  name = "visitUnitType"  class = "validNull select-person"   content="用印事项一级类别"    title="必填项  "   onchange="changeItemFirst()" >
-					<option value=""  selected > </option>
+				<select id="itemFirstId"  name = "itemFirstId"  class = "validNull select-person"   content="用印事项一级类别"    title="必填项  "   onchange="changeItemFirst()" >
+					<option value = "">   </option>
 					<c:forEach  var="itemFirstList"  items="${itemFirstList}">
 						<option value ="${itemFirstList.K}" title=" ${itemFirstList.V}" > ${itemFirstList.V}</option>
 					</c:forEach>
@@ -49,50 +62,47 @@
 				<span title = "用印事项二级类别">用印事项二级类别</span>
 			</td>
 			<td   class="addInputStyle">
-				<select id = "itemSecond" name = "itemSecond"   class = "validNull select-person"   content="用印事项二级类别"    title="必填项  "  >
+				<select id = "itemSecondId" name = "itemSecondId"   class = "validNull select-person"   content="用印事项二级类别"    title="必填项  "  >
 					<option value = "">   </option>
 				</select>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<span title = "是否需要会签"> 是否需要会签</span>
+				<span title = "员工姓名"> 员工姓名</span>
 			</td>
 			<td   class="addInputStyle">
-				<select id="ifsign"  name = "ifsign"  class = "validNull select-person"   content="是否需要会签"    title="必填项  "  >
-					<option value="1"  selected>是</option>
-					<option value="0"  >否</option>
-				</select>
+				<div id="stuffTree" class="input-group organ">
+					<input   id="popStuffTree"       name="approveUserAlias"  type="text"   class = "validNull"      content="员工姓名"   title="必填项  "   readonly />
+					<input  id="approveUserCode"   name="approveUserCode"  type="hidden"   class = "validNull"    content="员工姓名"            />
+					<input  id="approveUserId"   name="approveUserId"  type="hidden"   class = "validNull"      content="员工姓名"         />
+					<span class="input-group-addon" style="height: 30px"><span class="glyphicon glyphicon-th-list"></span></span>
+				</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<span title = "业务主管部门"> 业务主管部门</span>
+				<span title = "员工帐户"> 员工帐户</span>
 			</td>
 			<td   class="addInputStyle">
-
-			 <input  id="visitUnitName"   name="visitUnitName"  type="text"   class = "validNull"   len="50"    content="参观单位名称"   title="必填项 ,字段长度不能超过 50" />
+			 <input  id="approveUserName"   name="approveUserName"  type="text"   class = "validNull"      content="员工帐户"  title="必填项  "  readonly    />
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<span title = "是否需要院领导批准"> 是否需要院领导批准</span>
+				<span title = "部门名称">部门名称</span>
 			</td>
 			<td   class="addInputStyle">
-
+				<input  id="approveDeptId"   name="approveDeptId"  type="hidden"     class = "validNull"      content="部门名称"   />
+				<input  id="approveDeptName"   name="approveDeptName"  type="text"   class = "validNull"      content="部门名称"   title="必填项  "  readonly  />
 			</td>
 		</tr>
 	</table>
-<div name="stuffTree" id="stuffTree" class="btn right AccompanyMessageAdd empName2"  style="padding:0;position: absolute;right: 29px;top: 155px;height: 30px;"   >
-	<input type="button" id="popStuffTree"  value="更改" style="background: none;border: none;width:51px;height:30px;line-height:30px;"  />
-	<input name="empName" id="empName" type="hidden"/>
-	<input name="empCode" id="empCode" type="hidden"/>
-</div>
-	<div class="btnContent" style="  margin: 35px 0 20px;">
-		<button type="button" class="btn" onclick="roomDetailInfo.messageSave('')">保存</button>
-		<button type="button" class="btn" onclick="roomDetailInfo.messageResign()">返回</button>
-	</div>
 
+	<div class="btnContent" style="  margin: 35px 0 20px;">
+		<button type="button" class="btn" onclick="approvalInfo.approvalForSave()">保存</button>
+		<button type="button" class="btn" onclick="approvalInfo.approvalForResign()">返回</button>
+	</div>
 	<!-- end参观详情信息-->
     <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script> 
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
@@ -112,8 +122,8 @@
 	<!-- 本页面所需的js -->
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/stuff-tree/stuff-tree1.js"></script>
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/organ-tree/organ-tree.js"></script>
-<!-- 本页面所需的js -->
-<script src="<%=request.getContextPath()%>/js/yygl/comprehensive/approval.js"></script>
+	<!-- 本页面所需的js -->
+	<script src="<%=request.getContextPath()%>/js/yygl/configuration/approvalInfo.js"></script>
 
 </body>
 

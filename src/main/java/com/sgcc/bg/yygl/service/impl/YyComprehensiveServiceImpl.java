@@ -14,6 +14,8 @@ public class YyComprehensiveServiceImpl implements YyComprehensiveService {
     @Autowired
     private  YyComprehensiveMapper   yyComprehensiveMapper;
 
+
+
     @Override
     public List<Map<String, Object>> selectForDept(String userRole) {
         return yyComprehensiveMapper.selectForDept(userRole);
@@ -37,7 +39,15 @@ public class YyComprehensiveServiceImpl implements YyComprehensiveService {
         return yyComprehensiveMapper.selectForComprehensiveExl(applyMap);
     }
     @Override
-    public int updateForAffirm(String applyUserId,  String officeUserId, String applyId) {
-        return yyComprehensiveMapper.updateForAffirm(applyUserId,officeUserId,applyId);
+    public int updateForAffirm(String applyUserId,  String officeUserId, String applyId,String status) {
+        return yyComprehensiveMapper.updateForAffirm(applyUserId,officeUserId,applyId,status);
+    }
+    @Override
+    public List<Map<String, Object>> selectForNodeType() {
+        return yyComprehensiveMapper.selectForNodeType();
+    }
+    @Override
+    public List<Map<String, Object>> selectForUserId(String userId) {
+        return yyComprehensiveMapper.selectForUserId(userId);
     }
 }
