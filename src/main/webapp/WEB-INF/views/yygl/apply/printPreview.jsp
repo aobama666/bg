@@ -13,7 +13,7 @@
     <style media="print">
         @page{
             /*size:210mm 290mm;*/
-            /*margin:0mm auto;*/
+            margin:0mm auto;
         }
 
     </style>
@@ -106,7 +106,7 @@
             var Wsh = new ActiveXObject("WScript.Shell");
             Wsh.RegWrite(HKEY_Path+name,value); // 修改注册表值
         }catch(e) {
-            // alert('需要运行ActiveX对象后，才能进行打印设置。');
+            alert('需要运行ActiveX对象后，才能进行打印设置。');
         }
     }
     function printPreview() {

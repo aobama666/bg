@@ -60,7 +60,8 @@
     <select id="getDept" resultType="java.util.Map">
         SELECT
           DEPTID   k,
-          DEPTNAME v
+          DEPTNAME v,
+          DEPTCODE code
         FROM bg_sys_dept
         WHERE PDEPTCODE = '90000110' AND VALID = '1' AND src IN (0, 2)
         ORDER BY SORT_ID

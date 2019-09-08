@@ -2,13 +2,19 @@ package com.sgcc.bg.yygl.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.sgcc.bg.common.ResultWarp;
+import com.sgcc.bg.service.OrganStuffTreeService;
 import com.sgcc.bg.yygl.service.YyMyItemService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,10 +22,12 @@ import java.util.Map;
 @Controller
 @RequestMapping("/yygl/my_item/")
 public class YyMyItemController {
+    private static Logger log = LoggerFactory.getLogger(YyMyItemController.class);
 
     @Autowired
     private YyMyItemService myItemService;
-
+    @Autowired
+    private OrganStuffTreeService organStuffTreeService;
 
     /**
      * 跳转到待办列表
@@ -74,7 +82,14 @@ public class YyMyItemController {
     @RequestMapping("/toAddSign")
     public ModelAndView toAddSign(String checkedId){
         //根据对应申请id，查询所需内容
+
+        //查询已会签部门
+        //用印事项原有配置会签部门，和审批表中再次添加的会签部门
+
+        //可选择会签部门
         List<Map<String,Object>> deptList = myItemService.getDeptList();
+        //剔除已经选择的会签部门
+
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("deptList",deptList);
         ModelAndView mv = new ModelAndView("yygl/myItem/addSign",mvMap);
@@ -149,6 +164,86 @@ public class YyMyItemController {
     @RequestMapping("/sendBack")
     public String sendBack(){
         return "";
+    }
+
+
+    /**
+     * 增加会签，初始化组织树，
+     * 这个和报工组织树的区别就是直接调用某个部门的组织树，并且不弹出新的页面，在原有页面内容框中做内容填充
+     */
+    @ResponseBody
+    @RequestMapping("/initDeptTree")
+    public String initDeptTree(HttpServletRequest request){
+        //index   窗口名，获取窗口对象用
+        String winName = request.getParameter("winName")==null?"":request.getParameter("winName").toString();
+        //iframe  self 作用域：当前窗口   parent 作用域：父类窗口
+        String iframe = request.getParameter("iframe")==null?"self":request.getParameter("iframe").toString();
+        //ct      树形节点选择框样式：radio，checkbox
+        String ct = request.getParameter("ct")==null?"radio":request.getParameter("ct").toString();
+        //root    树形节点id（起始节点id）
+        String root = request.getParameter("root")==null?"":request.getParameter("root").toString();
+        //popEvent    自定义触发父层事件
+        String popEvent = request.getParameter("popEvent")==null?"":request.getParameter("popEvent").toString();
+
+        log.info("[yygl-initStuffTree:in param]：winName={};iframe={};ct={};root={};popEvent={}"
+                ,winName,iframe,ct,root,popEvent);
+        //获取组织或组织人员数据列表
+        List<Map<String, Object>> list = organStuffTreeService.initUserTree(root);
+
+        //格式化数据
+        List<Map<String, Object>> treelist = formatUserTreeData(list);
+
+        Map<String, Object> modelMap = new HashMap<String, Object>();
+        modelMap.put("winName", winName);
+        modelMap.put("iframe", iframe);
+        modelMap.put("ct", ct);
+        modelMap.put("root", root);
+        modelMap.put("popEvent", popEvent);
+        modelMap.put("treelist",JSON.toJSONString(treelist, SerializerFeature.WriteMapNullValue));
+        ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"init dept tree success");
+        rw.addData("modelMap",modelMap);
+        return JSON.toJSONString(rw);
+    }
+
+    /**
+     * 格式化人员树 {"id": "P41070003","open": false,"organCode": "P41070003","pId": "60000258","name": "杨久蓉","isParent": false,"nocheck": false}
+     * @param list
+     * @return
+     */
+    private List<Map<String, Object>> formatUserTreeData(List<Map<String, Object>> list) {
+        List<Map<String, Object>> treelist = new ArrayList<Map<String, Object>>();
+        for(Map<String, Object> k: list){
+            Map<String, Object> m = new HashMap<String, Object>();
+            m.put("id", k.get("deptId").toString());
+            m.put("pId", k.get("pdeptId").toString());
+            m.put("organId", k.get("id").toString());
+            m.put("parentId", k.get("parentId").toString());
+            m.put("organCode", k.get("id").toString());
+            m.put("name", k.get("organName").toString());
+            //当前节点是否展开
+            if(k.get("id").toString().equals("41000001")){
+                m.put("open", true);
+            }
+            else{
+                m.put("open", false);
+            }
+            //当前节点是否包含子节点
+            if(Integer.valueOf(k.get("childNum").toString())>0){
+                m.put("isParent", true);
+            }
+            else{
+                m.put("isParent", false);
+            }
+            //当前节点是否显示选择框（样式）
+            if("PERSION".equals(k.get("dataType").toString())){
+                m.put("nocheck", false);
+            }
+            else{
+                m.put("nocheck", true);
+            }
+            treelist.add(m);
+        }
+        return treelist;
     }
 
 }
