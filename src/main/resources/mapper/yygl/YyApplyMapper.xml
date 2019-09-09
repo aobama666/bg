@@ -273,6 +273,7 @@
         select uuid k, second_category_name v
           from bg_yy_item_second
          where first_category_id = #{firstCategoryId}
+         and valid = '1'
     </select>
 
 

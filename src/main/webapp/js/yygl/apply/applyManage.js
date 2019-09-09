@@ -215,6 +215,8 @@ apply.printPreview = function (applyUuid) {
 }
 
 
+
+
 /**
  * 提交——用印申请列表
  */
@@ -236,8 +238,28 @@ apply.submit = function () {
         }
     }
     checkedIds = checkedIds.slice(0,checkedIds.length-1);
+    //判断五个申请的事项是否一致
+    for(var i = 0; i <checkedItems.length; i++){
+        if(checkedItems[i].USESEALITEM !== checkedItems[0].USESEALITEM){
+            layer.msg("批量提交时用印事项必须一致");
+            return;
+        }
+    }
 
-    layer.confirm('确定提交选中的申请吗?',{
+    var url = "/bg/yygl/apply/toApplySubmit?checkedIds="+checkedIds;
+    layer.open({
+        type:2,
+        title:'<h4 style="font-size: 18px;padding-top: 10px">选择下一环节审批人</h4>',
+        area:['40%','30%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url,
+        end: function () {
+            apply.queryAddPage();
+        }
+    });
+
+    /*layer.confirm('确定提交选中的申请吗?',{
             btn:['确定','取消'],icon:0,title:'自动匹配'
         },function () {
             $.ajax({
@@ -251,7 +273,7 @@ apply.submit = function () {
                 }
             });
         }
-    )
+    )*/
 }
 
 
@@ -262,10 +284,10 @@ apply.withdraw = function () {
     //获取选中框
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        layer.alert('请选择要操作的数据',{icon:0,title:'信息提示'});
+        layer.msg('请选择要操作的数据');
         return;
     }else if(checkedItems.length>1){
-        layer.alert('每次只能撤回一条数据',{icon:0,title:'信息提示'});
+        layer.msg('每次只能撤回一条数据');
         return;
     }
     var checkedId = checkedItems[0].UUID;
@@ -305,7 +327,6 @@ apply.applyExport = function () {
 
     var $tr = $("#datagrid tr");
     if($tr.length == 1){
-        // layer.alert('没有要导出的数据！',{icon:0,title:'信息提示'});
         layer.msg("没有要导出的数据！");
     }else {
         var ids = "";
@@ -327,5 +348,5 @@ apply.applyExport = function () {
 /*关闭页面后弹出信息*/
 apply.closeAndOpen = function (message) {
     layer.closeAll();
-    layer.alert(message,{icon:1,title:'信息提示'});
+    layer.msg(message);
 };

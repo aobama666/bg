@@ -5,12 +5,21 @@ import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.HRUser;
+import com.sgcc.bg.service.ApproverService;
 import com.sgcc.bg.service.UserService;
+import com.sgcc.bg.yszx.bean.ReturnMessage;
+import com.sgcc.bg.yszx.service.ApproveService;
 import com.sgcc.bg.yygl.bean.YyApply;
 import com.sgcc.bg.yygl.constant.YyApplyConstant;
+import com.sgcc.bg.yygl.controller.YyApplyStuffController;
+import com.sgcc.bg.yygl.mapper.YyApplyAnnexMapper;
 import com.sgcc.bg.yygl.mapper.YyApplyMapper;
+import com.sgcc.bg.yygl.pojo.YyApplyAnnexDAO;
 import com.sgcc.bg.yygl.pojo.YyApplyDAO;
+import com.sgcc.bg.yygl.service.YyApplyAnnexService;
 import com.sgcc.bg.yygl.service.YyApplyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +32,22 @@ import java.util.*;
 @Service
 public class YyApplyServiceImpl implements YyApplyService {
 
+    private static Logger log = LoggerFactory.getLogger(YyApplyStuffController.class);
+
     @Autowired
     private YyApplyMapper yyApplyMapper;
+    @Autowired
+    private YyApplyAnnexMapper applyAnnexMapper;
+    @Autowired
+    private YyApplyAnnexService yyApplyAnnexService;
     @Autowired
     private WebUtils webUtils;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ApproveService approveService;
+    @Autowired
+    private YyApplyService yyApplyService;
 
     @Override
     public Map<String, Object> selectApply(
@@ -190,12 +209,22 @@ public class YyApplyServiceImpl implements YyApplyService {
 
     @Override
     public String applyDel(String checkedContent) {
+        log.info("删除选中用印申请和ftp所属材料信息:{}",checkedContent);
         String[] checkedIds = checkedContent.split(",");
         //删除一个，或者多个
         Integer successNum = 0;
         Integer failNum = 0;
         for(String checkedId : checkedIds){
+            //删除基本信息
             int result = yyApplyMapper.applyDel(checkedId,YyApplyConstant.STATUS_DEAL_SUB);
+
+            //查询对应申请信息的所有用印材料信息
+            List<YyApplyAnnexDAO> annexDAOList = applyAnnexMapper.selectApplyAnnex(checkedId);
+            //删除用印材料信息
+            for(YyApplyAnnexDAO y : annexDAOList){
+                yyApplyAnnexService.delApplyAnnex(y.getUuid());
+            }
+
             if(result==0){
                 failNum ++;
             }else{
@@ -206,10 +235,10 @@ public class YyApplyServiceImpl implements YyApplyService {
         strb.append("删除完成");
         //反馈成功失败次数
         if(successNum>0){
-            strb.append(",成功"+successNum+"个");
+            strb.append(",成功删除"+successNum+"条申请");
         }
         if(failNum>0){
-            strb.append(",失败"+failNum+"个,只能删除待提交的申请!");
+            strb.append(",失败"+failNum+"条,只能删除待提交的申请!");
         }
         return strb.toString();
     }
@@ -230,6 +259,7 @@ public class YyApplyServiceImpl implements YyApplyService {
         String useSealStatus = "";
         Integer successNum = 0;
         Integer failNum = 0;
+        String loginUserId = yyApplyService.getLoginUserUUID();
         for(String applyId : applyIdS){
             yyApplyDAO = yyApplyMapper.findApply(applyId);
             useSealStatus = yyApplyDAO.getUseSealStatus();
@@ -239,7 +269,12 @@ public class YyApplyServiceImpl implements YyApplyService {
             ){
                 successNum ++;
                 //创建该申请的流程信息
-
+                ReturnMessage returnMessage = approveService.startApprove(false,
+                        "YYGL",
+                        "SUBMIT",
+                        applyId,
+                        "mingliao",
+                        loginUserId);
                 //修改申请状态
                 yyApplyMapper.updateApplyStatus(applyId,YyApplyConstant.STATUS_DEAL_DEPT);
             }else{

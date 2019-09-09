@@ -176,4 +176,10 @@ public interface LwSpecialistMapper {
      * @return
      */
     List<Map<String,Object>> SpeciList(@Param("uuid") String uuid);
+
+
+    /**
+     * 查询现有的专家领域，供页面查询下拉框使用
+     */
+    List<Map<String,Object>> fieldList();
 }

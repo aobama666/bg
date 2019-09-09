@@ -21,7 +21,7 @@
     <link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" media="all">
     <style type="text/css">
         .tableBody{
-            height: 200px!important;
+            height: 120px!important;
         }
     </style>
 </head>
@@ -99,7 +99,7 @@
     </tr>
     <tr>
         <td style="width: 10%">
-            <span title = "用印种类"><b class="mustWrite">*</b>用印种类</span>
+            <span title = "用印种类"><b class="mustWrite">*</b>用印种类</span>`
         </td>
         <td style="width: 90%" class="addInputStyle" colspan="3">
             <input type = "text" style="display: none" id = "useSealKindCode"  name="useSealKindCode" value="${kindCode}">
@@ -118,14 +118,20 @@
     </tr>
 </table>
 
-<div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 1%">
-    <div style="float: right">
-        <button type="button" class="btn" onclick="uploadAnnex.addOperation()">新增附件</button>
-        <button type="button" class="btn" onclick="uploadAnnex.delEvent()">删除附件</button>
-    </div>
-    <h4>用印材料详情</h4>
+<form action="">
+    <input type = "text" style="display: none" value="" id = "filePath" name="filePath">
+    <input type = "text" style="display: none" value="" id = "fileName" name="fileName">
+</form>
 
-    <div id="datagrid"></div>
+
+<div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 1%">
+    <h3 style="float: left">用印材料详情</h3>
+    <div style="text-align: right">
+        <button type="button" class="btn" onclick="annex.toAddStuff()">新增</button>
+        <button type="button" class="btn" onclick="annex.delStuff()">删除</button>
+    </div>
+
+    <div id="datagrid" style="padding-top: 3px;"></div>
 </div>
 
 
@@ -150,5 +156,6 @@
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
 <script src="<%=request.getContextPath()%>/js/yygl/apply/applyOperate.js"></script>
+<script src="<%=request.getContextPath()%>/js/yygl/apply/applyAnnex.js"></script>
 </body>
 </html>

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.HRUser;
+import com.sgcc.bg.service.ApproverService;
 import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.UserService;
 import com.sgcc.bg.yygl.bean.YyApply;
@@ -43,6 +44,7 @@ public class YyApplyController {
     private UserService userService;
     @Autowired
     private YyKindService yyKindService;
+
 
 
 
@@ -262,18 +264,6 @@ public class YyApplyController {
     }
 
 
-
-    /**
-     * 跳转到新增附件页面
-     */
-    @RequestMapping("/toStuffAdd")
-    public ModelAndView toAddAnnex(String applyUuid){
-        ModelAndView mv = new ModelAndView("yygl/apply/applyStuffAdd");
-        return mv;
-    }
-
-
-
     /**
      * 跳转到打印预览页
      */
@@ -282,6 +272,21 @@ public class YyApplyController {
         ModelAndView mv = new ModelAndView("yygl/apply/applyManage");
         return mv;
     }
+
+
+    /**
+     * 提交申请选择下一环节审批人
+     */
+    @RequestMapping("/toApplySubmit")
+    public ModelAndView toApplySubmit(String checkedIds){
+        //查询对应申请的部门负责人
+        Map<String,Object> mvMap = new HashMap<>();
+        mvMap.put("checkedIds",checkedIds);
+        ModelAndView mv = new ModelAndView("yygl/apply/applySubmit",mvMap);
+        return mv;
+    }
+
+
 
     /**
      * 提交申请

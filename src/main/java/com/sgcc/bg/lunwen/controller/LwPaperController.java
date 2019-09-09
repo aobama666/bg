@@ -31,29 +31,31 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 论文管理控制层
  */
-@Controller
-@RequestMapping("/lwPaper")
-public class LwPaperController {
-    private static Logger log = LoggerFactory.getLogger(LwPaperController.class);
+    @Controller
+    @RequestMapping("/lwPaper")
+    public class LwPaperController {
+        private static Logger log = LoggerFactory.getLogger(LwPaperController.class);
 
-    @Autowired
-    private WebUtils webUtils;
-    @Autowired
-    private LwPaperService lwPaperService;
-    @Autowired
-    private LwFileService lwFileService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private DataDictionaryService dataDictionaryService;
-    @Autowired
-    private LwPaperMatchSpecialistService lwPaperMatchSpecialistService;
-    @Autowired
-    private LwSpecialistService lwSpecialistService;
+        @Autowired
+        private WebUtils webUtils;
+        @Autowired
+        private LwPaperService lwPaperService;
+        @Autowired
+        private LwFileService lwFileService;
+        @Autowired
+        private UserService userService;
+        @Autowired
+        private DataDictionaryService dataDictionaryService;
+        @Autowired
+        private LwPaperMatchSpecialistService lwPaperMatchSpecialistService;
+        @Autowired
+        private LwSpecialistService lwSpecialistService;
 
     /**
      * 跳转至论文管理
@@ -62,11 +64,25 @@ public class LwPaperController {
     public ModelAndView paperToManage(){
         List<Map<String,Object>> yearList = lwPaperService.getTableYear();
         List<Map<String, String>>   scoreStatusList= dataDictionaryService.selectDictDataByPcode("paper_all_status");
+        List<Map<String,Object>> fieldList = lwPaperService.fieldList(DateUtil.getYear());
         Map<String, Object> mvMap = new HashMap<>();
         mvMap.put("allStatus", scoreStatusList);
         mvMap.put("yearList", yearList);
+        mvMap.put("fieldList",fieldList);
         ModelAndView mv = new ModelAndView("lunwen/paperManage",mvMap);
         return mv;
+    }
+
+    /**
+     * 根据当前年切换查询条件领域下拉框的内容
+     */
+    @ResponseBody
+    @RequestMapping("/changeFieldList")
+    public String changeFieldList(String year){
+        List<Map<String,Object>> fieldList = lwPaperService.fieldList(year);
+        ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"success");
+        rw.addData("fieldList",fieldList);
+        return JSON.toJSONString(fieldList);
     }
 
     /**
@@ -214,6 +230,7 @@ public class LwPaperController {
 
         //验证题目是否唯一
         LwPaper lwPaper = mapToLwPaper(paramsMap);
+        lwPaper.setPaperName(lwPaper.getPaperName().trim());
         Map<String,Object> lwMap = lwPaperService.findPaper(null,lwPaper.getPaperName());
         if(null != lwMap){
             log.info(getLoginUser()+"insert lwPaper fail,paperName exist,info:"+paramsMap.toString());
@@ -273,7 +290,7 @@ public class LwPaperController {
     public String paperToUpdate(@RequestBody Map<String, Object> paramsMap){
         ResultWarp rw = null;
         LwPaper lwPaper = mapToLwPaper(paramsMap);
-
+        lwPaper.setPaperName(lwPaper.getPaperName().trim());
         Map<String,Object> lwMap = lwPaperService.findPaper(null,lwPaper.getPaperName());
         if(null != lwMap){
             if(!lwMap.get("UUID").equals(paramsMap.get("uuid").toString())){
@@ -286,8 +303,6 @@ public class LwPaperController {
         lwPaper.setUpdateUser(getLoginUserUUID());
         lwPaper.setUpdateTime(new Date());
         lwPaper.setUuid(paramsMap.get("uuid").toString());
-        //防止匹配因为空格出现的问题
-        lwPaper.setField(lwPaper.getField().trim());
         lwPaperService.updateLwPaper(lwPaper);
         log.info(getLoginUser()+"update lwPaper success,info:"+lwPaper.toString());
         rw = new ResultWarp(ResultWarp.SUCCESS ,"修改论文基本信息成功");
@@ -458,7 +473,7 @@ public class LwPaperController {
 
 
     /**
-     * 跳转手动匹配页面
+     * 跳转手动匹配页面,如果已生成打分表，查看已匹配专家打分信息
      */
     @RequestMapping(value = "/manualMatchJump")
     public ModelAndView manualMatchJumo(String paperUuid){
@@ -466,17 +481,12 @@ public class LwPaperController {
         String field = lwPaperMap.get("FIELD").toString();
         String unit = lwPaperMap.get("UNIT").toString();
         String author = lwPaperMap.get("AUTHOR").toString();
-        String[] authors = null;
-        if(author.contains(",")){
-            authors = author.split(",");
-        }else if(author.contains("，")){
-            authors = author.split("，");
-        }else{
-            authors = new String[]{author};
-        }
+        String[] authors = lwPaperService.splitStr(author);
+        String[] units = lwPaperService.splitStr(unit);
+
         //根据论文所属领域，查询能够匹配的专家,精准匹配在前，模糊匹配在后
-        List<LwSpecialist> lwSpList = lwPaperService.selectSpecialistField(authors,unit,field);
-        List<LwSpecialist> lwSpListLike = lwPaperService.selectSpecialistFieldLike(authors,unit,field);
+        List<LwSpecialist> lwSpList = lwPaperService.selectSpecialistField(authors,units,field);
+        List<LwSpecialist> lwSpListLike = lwPaperService.selectSpecialistFieldLike(authors,units,field);
         for(LwSpecialist ls : lwSpList){
             String specialistId = ls.getUuid();
             for (LwSpecialist lwSpecialist : lwSpListLike){
@@ -511,12 +521,16 @@ public class LwPaperController {
         mvMap.put("right", JSON.toJSONString(lwSpList));
         //查看是否生成打分表，生成打分表后不允许再次手动匹配，只能查看匹配专家详情
         String scoreTableStatus = lwPaperMap.get("SCORETABLESTATUS").toString();
+        ModelAndView mv = null;
         if(LwPaperConstant.SCORE_TABLE_OFF.equals(scoreTableStatus)){
+            //未生成打分表
             mvMap.put("scoreTableStatus","off");
+            mv = new ModelAndView("lunwen/paperManualMatch",mvMap);
         }else{
+            //已生成打分表
             mvMap.put("scoreTableStatus","on");
+            mv = new ModelAndView("lunwen/paperMatchDetail",mvMap);
         }
-        ModelAndView mv = new ModelAndView("lunwen/paperManualMatch",mvMap);
         return mv;
     }
 
@@ -1096,5 +1110,6 @@ public class LwPaperController {
         HRUser user = userService.getUserByUserName(userName);
         return user.getUserId();
     }
+
 
 }

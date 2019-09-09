@@ -6,4 +6,6 @@
 /.externalToolBuilders/
 /.idea/
 *.iml
+
 /hs_err_pid9936.log
+jxl.log

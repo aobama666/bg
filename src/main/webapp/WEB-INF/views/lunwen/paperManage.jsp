@@ -55,7 +55,7 @@
 		<form id="queryForm" style="margin-bottom: 10px;">
 			<input type="hidden" name="selectList"/>
 					<label for="year" style="margin-left: 20px">年度：</label>
-					<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 90px">
+					<select id = "year" name = "year"   class = "changeQuery changeYear" style="width: 90px" onchange="paperList.changeFieldList()">
 						<%--<option value = "${nowYear}"  selected>${nowYear}</option>--%>
 						<c:forEach  var="yearList"  items="${yearList}">
 							<option value ="${yearList.YEAR}"}> ${yearList.YEAR}</option>
@@ -70,8 +70,15 @@
 					</select>
 					<label>编号：</label>
 					<input type = "text" id = "paperId" name = "paperId" style="width: 100px" class = "inputQuery changeQuery" >
-					<label style="margin-left: 44px">领域：</label>
-					<input type = "text" id = "field" name = "field" style="width: 100px" class = "inputQuery changeQuery" >
+					<label style="margin-left: 44px;margin-right: 4px">领域：</label>
+					<div id="fieldList" style="display: inline">
+						<select id = "field" name = "field"   class = "changeQuery changeYear" style="width: 200px">
+							<option value = "" selected>请选择</option>
+							<c:forEach  var="fieldList"  items="${fieldList}">
+								<option value ="${fieldList.FIELD}"}> ${fieldList.FIELD}</option>
+							</c:forEach>
+						</select>
+					</div>
 			<br/>
 				<label style="margin-left: 20px">论文题目：</label>
 				<input type = "text" id = "paperName" name = "paperName" style="width: 248px" class = "inputQuery changeQuery" >

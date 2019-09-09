@@ -92,13 +92,6 @@
 			</td>
 			<td class="addInputStyle">
 			<input type="text"  id="paperType" name="paperType" value="${lwPaper.PAPERTYPE}"/>
-				<%--<select id="paperType"  name = "paperType"   class = "validNull select-person"   content="论文类型"    title="必填项  "  >
-                    <option value=""  selected >请选择论文类型</option>
-                    <c:forEach  var="paperType"  items="${paperType}">
-                        &lt;%&ndash;<option value ="${paperType.K}"> ${paperType.V}</option>&ndash;%&gt;
-						<option value ="${paperType.K}"   ${paperType.K == lwPaper.PAPERTYPE ?"selected='selected'":''}     > ${paperType.V}</option>
-                    </c:forEach>
-				</select>--%>
 			</td>
 		</tr>
 </table>
