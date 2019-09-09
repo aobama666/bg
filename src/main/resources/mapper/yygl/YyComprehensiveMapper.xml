@@ -2,6 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sgcc.bg.yygl.mapper.YyComprehensiveMapper">
+    <!-- 用户信息的查询-->
+    <select id="selectForUserId" resultType="java.util.Map" >
+        select
+        USERID,HRCODE,USERNAME,USERALIAS
+        from BG_SYS_USER  A
+        WHERE   A.VALID='1'
+        <if test="userId!= null and userId!= ''">
+            AND   A.USERID  =#{userId}
+        </if>
+
+    </select>
+
     <!-- 申请单位的查询-->
     <select id="selectForDept" resultType="java.util.Map" >
          select
@@ -24,7 +36,12 @@
         </if>
         ORDER BY   TO_NUMBER(SORT_ID)
     </select>
-
+    <!-- 节点类型的查询-->
+    <select id="selectForNodeType" resultType="java.util.Map" >
+        select  NAME, CODE
+        from BG_SYS_DATADICTIONARY  where  pcode = 'node_type'     AND  PID='YYGL000003'    and   VAILD='1'
+        ORDER BY   TO_NUMBER(SORT_ID)
+    </select>
 
     <!--参观预定查询公共sql-->
     <sql id="comprehensiveInfo">
@@ -46,15 +63,18 @@
         and k.apply_id = a.uuid and k.valid='1'
         )  as   "userSealkindName",
         A.ITEM_FIRST_ID   as  "itemFirstId",
+        F.FIRST_CATEGORY_NAME  as  "itemFirstName",
         A.ITEM_SECOND_ID  as  "itemSecondId",
         S.SECOND_CATEGORY_NAME   as  "secondCategoryName",
         A.APPLY_HANDLE_USER_ID   as   "applyHandleUserId",
         AU.USERALIAS  as  "applyHandleUserName",
         A.OFFICE_HANDLE_USER_ID   as   "officeHandleUserId",
-        OU.USERALIAS  as "officeHandleUserName"
+        OU.USERALIAS  as "officeHandleUserName",
+        F.FIRST_CATEGORY_NAME||'-'||S.SECOND_CATEGORY_NAME  as   "itemName"
         from bg_yy_apply  A
         LEFT   JOIN      BG_SYS_DEPT  D  ON    A.DEPT_ID=D.DEPTID
         LEFT   JOIN      bg_sys_user  U  ON    A.apply_user_id = U.userid
+        LEFT   JOIN      bg_yy_item_first F   ON A.ITEM_FIRST_ID = F.uuid
         LEFT   JOIN      bg_yy_item_second S   ON A.item_second_id = S.uuid
         LEFT   JOIN      bg_sys_user  AU  ON    A.APPLY_HANDLE_USER_ID = AU.userid
         LEFT   JOIN      bg_sys_user  OU  ON    A.OFFICE_HANDLE_USER_ID = OU.userid
@@ -122,7 +142,12 @@
     <update id="updateForAffirm">
         update BG_YY_APPLY set
          APPLY_HANDLE_USER_ID = #{applyUserId},
-         OFFICE_HANDLE_USER_ID = #{officeUserId}
+         OFFICE_HANDLE_USER_ID = #{officeUserId},
+         USE_SEAL_STATUS = #{status}
         where UUID = #{applyId}
     </update>
+
+
+
+
 </mapper>

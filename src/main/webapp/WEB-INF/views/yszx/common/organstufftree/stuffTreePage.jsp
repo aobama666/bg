@@ -16,7 +16,7 @@
 <head> 
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
-<title>演示中心人员选择树</title>
+<title>人员选择树</title>
 <link rel="stylesheet" type="text/css" href="<%=path %>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css" href="<%=path %>/common/plugins/zTree/css/bootstrapStyle.css">
 
@@ -35,7 +35,7 @@
     position: relative;
     float: left;
     margin-top: -12px;
-    height: 400px;
+    height: 400px !important;
     overflow-y:auto;
 }
 .tree-box li{
@@ -105,7 +105,7 @@ border-color:#00828a;
 </head>
 <body>
 <div class="page-header-sl">
-	<h5> 演示中心人员选择</h5>
+	<h5> 人员选择</h5>
 	<div class="button-box">
 		<button type="button" class="btn btn-success btn-xs" onclick="reLoadTree()"> 查询</button>
 		<button type="button" class="btn btn-primary btn-xs" onclick="selected()"> 确认</button>
@@ -177,7 +177,7 @@ function initTree(){
 	tree = $.fn.zTree.init($("#tree"), setting, getTree());
 }
 function reLoadTree() {
-	debugger;
+
 	var root = '<%=root %>';
 	var queryEmpCode = $.trim($("#queryEmpCode").val());
 	var queryEmpName = $.trim($("#queryEmpName").val());
@@ -219,7 +219,7 @@ function getTree() {
 }
 
 function selected() {
-	debugger;
+
 	var valueArray = tree.getCheckedNodes(true);
 	var codes = "";
 	var texts = "";
@@ -249,15 +249,14 @@ function selected() {
 	if(userIds.length>0){
 		userIds = userIds.substr(0,userIds.length-1);
 	}
-
 	if('parent' == '<%=iframe%>'){
 		<%-- var body = parent.layer.getChildFrame('body','<%=index%>');
 		$(body).find("input[name=<%=empCode%>]").val(codes);
 		$(body).find("input[name=<%=empName%>]").val(texts); --%>
-		var iframWin = parent.document.getElementById('<%=winName%>').contentWindow; 
-		var doc = iframWin.document;
-		$(doc).find("input[name=<%=empCode%>]").val(codes);
-		$(doc).find("input[name=<%=empName%>]").val(texts);
+        var iframWin = parent.document.getElementById('<%=winName%>').contentWindow;
+        var doc = iframWin.document;
+        $(doc).find("input[name=<%=empCode%>]").val(codes);
+        $(doc).find("input[name=<%=empName%>]").val(texts);
 		
 		//返回事件
 		try{

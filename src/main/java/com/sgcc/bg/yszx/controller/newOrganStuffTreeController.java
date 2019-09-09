@@ -324,7 +324,7 @@ public class newOrganStuffTreeController {
 		modelMap.put("root", root);
 		modelMap.put("popEvent", popEvent);
 		modelMap.put("treelist",JSON.toJSONString(treelist, SerializerFeature.WriteMapNullValue));
-		ModelAndView model = new ModelAndView("bg/common/organstufftree/organTreePage",modelMap);
+		ModelAndView model = new ModelAndView("yszx/common/organstufftree/organTreePage",modelMap);
 		return model;
 	}
 }
