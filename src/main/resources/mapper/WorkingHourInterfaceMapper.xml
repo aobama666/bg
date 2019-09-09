@@ -54,7 +54,10 @@
 				U1.HRCODE PROJECT_LEADER,
 				U1.USERALIAS LEADER_USERNAME,
 				NVL(W.WORKING_HOUR,0) WORKING_HOUR,
-				W.APPROVER as APPROVER
+				W.APPROVER as APPROVER,
+                PU1.START_DATE,
+				PU1.END_DATE
+
 		FROM BG_WORKINGHOUR_INFO W
 		LEFT JOIN BG_SYS_USER U
 		  ON U.USERNAME = W.WORKER
@@ -116,12 +119,14 @@
 				P.PROJECT_NAME WBS_NAME,
 				NVL(P.CATEGORY,W.CATEGORY) as CATEGORY,
 				NVL(P.PROJECT_NAME, W.PROJECT_NAME) as PROJECT_NAME,
-				PU2.ROLE,
+				PU1.ROLE,
 				DECODE(PU1.ROLE, NULL, NULL, '', NULL, '1', '1', '0', '0') PROJECT_ROLE,
 				U1.HRCODE PROJECT_LEADER,
 				U1.USERALIAS LEADER_USERNAME,
 				NVL(W.WORKING_HOUR,0) WORKING_HOUR,
-				W.APPROVER as APPROVER
+				W.APPROVER as APPROVER,
+                PU2.START_DATE,
+				PU2.END_DATE
 		FROM BG_WORKINGHOUR_INFO W
 		LEFT JOIN BG_SYS_USER U
 		  ON U.USERNAME = W.WORKER
@@ -180,9 +185,11 @@
 			DECODE(U.ROLE, NULL, NULL, '', NULL, '1', '1', '0', '0') PROJECT_ROLE,
 			U.HRCODE PROJECT_LEADER,
 			U2.USERALIAS LEADER_USERNAME,
-			0 WORKING_HOUR,
-			U2.USERNAME APPROVER
-		FROM (SELECT DISTINCT U.HRCODE, U.PROJECT_ID, U.ROLE
+            0 WORKING_HOUR,
+			U2.USERNAME APPROVER,
+            U.START_DATE,
+			U.END_DATE
+		FROM (SELECT DISTINCT U.HRCODE, U.PROJECT_ID, U.ROLE,U.START_DATE,U.END_DATE
 				FROM BG_PROJECT_USER U
 				INNER JOIN BG_PROJECT_INFO P
 				  ON P.ID = U.PROJECT_ID
@@ -327,7 +334,10 @@
 		M.WBS_CODE,
 		M.WBS_NAME,
 		M.PROJECT_ROLE,
-		M.PROJECT_LEADER
+		M.PROJECT_LEADER,
+        M.ROLE,
+        M.START_DATE,
+		M.END_DATE
 		FROM (<include refid = "queryBaseInfo"/>  UNION ALL <include refid="queryBaseInfoBefore"/>)  M
 		GROUP BY  M.EMP_CODE,
 		M.PROJECT_ID,
@@ -335,12 +345,16 @@
 		M.WBS_CODE,
 		M.WBS_NAME,
 		M.PROJECT_ROLE,
-		M.PROJECT_LEADER
+		M.PROJECT_LEADER,
+        M.ROLE,
+        M.START_DATE,
+		M.END_DATE
 	</select>
 	<!-- 获取员工投入总工时 -->
 	<select id="getInterfaceTotalByUser" resultType="java.util.Map">
 		SELECT M.EMP_CODE,
 		SUM(M.WORKING_HOUR) WORKING_HOUR
+
 		FROM (<include refid = "queryBaseInfo"/>  UNION ALL <include refid="queryBaseInfoBefore"/>) M
 		GROUP BY M.EMP_CODE
 	</select>
@@ -348,10 +362,12 @@
 	<select id="getInterfaceTotalByProj" resultType="java.util.Map">
 		SELECT M.EMP_CODE,
 		M.PROJECT_ID,
-		SUM(M.WORKING_HOUR) WORKING_HOUR
+		SUM(M.WORKING_HOUR) WORKING_HOUR,
+        M.ROLE
 		FROM (<include refid = "queryBaseInfo"/> UNION ALL <include refid="queryBaseInfoBefore"/>) M
 		GROUP BY  M.EMP_CODE,
-		M.PROJECT_ID
+		M.PROJECT_ID,
+        M.ROLE
 	</select>
 	<!-- 记录传输数据 -->
 	<insert id="addInterfaceBspData">
