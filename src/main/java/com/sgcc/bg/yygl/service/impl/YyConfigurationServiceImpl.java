@@ -110,4 +110,8 @@ public class YyConfigurationServiceImpl implements YyConfigurationService {
     public int deleteForApprovalInfo(Map<String, Object> approvalMap) {
         return yyConfigurationMapper.deleteForApprovalInfo(approvalMap);
     }
+    @Override
+    public int deleteForitemFirstId(Map<String, Object> itemFirstId) {
+        return yyConfigurationMapper.deleteForitemFirstId(itemFirstId);
+    }
 }

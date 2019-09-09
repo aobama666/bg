@@ -76,7 +76,7 @@ itemSecondInfo.itemSecondUpdate=function (){
         return;
     }
     var roomDetailFormData = roomAddInfoCommon.getFormDataInfo();
-    $.messager.confirm( "修改提示", "确认修改该数据吗",
+    $.messager.confirm( "修改提示", "确认修改该事项吗？该事项可能已使用，修改请谨慎。",
         function(r){
             if(r){
                 updateForItemSecond(roomDetailFormData);

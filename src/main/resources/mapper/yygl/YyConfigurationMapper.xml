@@ -54,6 +54,9 @@
         <if test="mattersMap.businessDeptName !=null and mattersMap.businessDeptName!=''">
             and  T."businessDeptName"  like '%'||#{mattersMap.businessDeptName}||'%'
         </if>
+        <if test="mattersMap.uuid!= null and mattersMap.uuid!= ''">
+            and   T."secondCategoryId" != #{mattersMap.uuid}
+        </if>
         ORDER BY  T."createTime"  DESC
     </sql>
 
@@ -220,6 +223,17 @@
         VALID  = #{itemSecondInfo.valid}
         where UUID = #{itemSecondInfo.uuid}
     </update>
+
+    <!--根据一级事项ID删除二级用印事项-->
+    <update id="deleteForitemFirstId" parameterType="java.util.HashMap">
+        update BG_YY_ITEM_SECOND set
+        UPDATE_USER  = #{itemSecondInfo.updateUser},
+        UPDATE_TIME  = #{itemSecondInfo.updateTime},
+        VALID  = #{itemSecondInfo.valid}
+        where FIRST_CATEGORY_ID = #{itemSecondInfo.itemFirstId}
+    </update>
+
+
     <!--二级用印事项的修改-->
     <update id="updateForItemSecondInfo" parameterType="java.util.HashMap">
         update BG_YY_ITEM_SECOND set

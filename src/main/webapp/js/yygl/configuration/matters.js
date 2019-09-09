@@ -136,7 +136,7 @@ changeItemFirst = function () {
                 return;
             }
             var secondCategoryId = dataGrid.getCheckedIds();
-            $.messager.confirm( "删除提示", "确认删除该数据吗",
+            $.messager.confirm( "删除提示", "确认删除该事项吗？该事项可能已使用，删除请谨慎。",
                 function(r){
                     if(r){
                         deleteForItemSecond(secondCategoryId);

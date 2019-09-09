@@ -211,7 +211,7 @@ roomList.initDataGrid = function(){
 			}
 		/*用印事项管理-一级类别配置-新增后台接口 */
 		function	deleteForitemFirst(checkedIds){
-            $.messager.confirm( "删除提示", "确认删除选中数据吗",
+            $.messager.confirm( "删除提示", "确认删除选中事项吗？该事项可能已被使用，删除请谨慎。",
             	function(r){
             		if(r){
             			$.ajax({

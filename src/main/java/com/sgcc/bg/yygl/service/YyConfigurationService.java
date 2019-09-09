@@ -34,6 +34,7 @@ public interface YyConfigurationService {
      * 一级用印事项的删除
      */
     int deleteForItemFirstInfo(Map<String ,Object> itemFirstInfo) ;
+
     /**
      * 一级用印事项的修改
      */
@@ -62,6 +63,10 @@ public interface YyConfigurationService {
      *  二级用印事项的删除
      */
     int deleteForItemSecondInfo(  Map<String ,Object> itemSecondInfo);
+    /**
+     *  二级用印事项的删除
+     */
+    int deleteForitemFirstId(  Map<String ,Object> itemFirstId);
     /**
      *  二级用印事项部门的修改/删除
      */
