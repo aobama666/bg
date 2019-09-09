@@ -322,20 +322,18 @@ public class YyConfigurationController {
 		}
 		Logger.info("用印模块-配置模块-一级用印事项配置的修改------查看各名称是否已经存在");
 		Logger.info("用印模块-配置模块-一级用印事项配置的修改------旧需求代码如下：");
-//		Map.put("uuid", checkedIds);
-//		Map.put("updateUser", userId);
-//		Map.put("updateTime", new Date());
-//		int res = yyConfigurationService.updateForItemFirstInfo(Map);
-		Logger.info("用印模块-配置模块-一级用印事项配置的修改------旧需求代码结束");
-		Logger.info("用印模块-配置模块-一级用印事项配置的修改------新需求代码如下：");
+		Map.put("uuid", checkedIds);
 		Map.put("updateUser", userId);
 		Map.put("updateTime", new Date());
-		Map.put("valid", "0");
-		Map.put("uuid", checkedIds);
-		int res = yyConfigurationService.deleteForItemFirstInfo(Map);
-
-
-		Logger.info("用印模块-配置模块-一级用印事项配置的修改------新需求代码结束");
+		int res = yyConfigurationService.updateForItemFirstInfo(Map);
+		Logger.info("用印模块-配置模块-一级用印事项配置的修改------旧需求代码结束");
+//		Logger.info("用印模块-配置模块-一级用印事项配置的修改------新需求代码如下：");
+//		Map.put("updateUser", userId);
+//		Map.put("updateTime", new Date());
+//		Map.put("valid", "0");
+//		Map.put("uuid", checkedIds);
+//		int res = yyConfigurationService.deleteForItemFirstInfo(Map);
+//		Logger.info("用印模块-配置模块-一级用印事项配置的修改------新需求代码结束");
 		if (res != 1) {
 			rw = new ResultWarp(ResultWarp.FAILED, "修改失败");
 		} else {
