@@ -118,6 +118,11 @@ public class YyMyItemController {
     @RequestMapping("/toAgree")
     public ModelAndView toAgree(String checkedId){
         //根据选择申请查询可以提供的下一个审批人信息
+
+        //下一环节是否为业务部门审批
+        //是否有多个部门
+
+
         Map<String,Object> mvMap = new HashMap<>();
         ModelAndView mv = new ModelAndView("yygl/myItem/agree",mvMap);
         return mv;

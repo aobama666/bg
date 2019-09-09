@@ -30,6 +30,14 @@
     </style>
 </head>
 <body>
+<div class="tabbable active" style="text-align:right;width: 97%;padding-top: 5px;padding-bottom: 5px;">
+    <button type="button" class="btn" onclick="returnClose()">返回</button>
+    <button type="button" class="btn" onclick="returnClose()">撤回</button>
+    <button type="button" class="btn" onclick="returnClose()">同意</button>
+    <button type="button" class="btn" onclick="returnClose()">退回</button>
+    <button type="button" class="btn" onclick="returnClose()">增加业务会签</button>
+    <button type="button" class="btn" onclick="returnClose()">确认用印</button>
+</div>
 <table class="visitOperate tableStyle specialTable">
     <tr>
         <td style="width: 10%">
@@ -98,9 +106,7 @@
     <div id="datagrid" style="padding-top: 3px;"></div>
 </div>
 
-<div style="text-align: center">
-<button type="button" class="btn" onclick="returnClose()">返回</button>
-</div>
+
 
 </body>
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>

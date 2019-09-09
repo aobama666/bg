@@ -238,12 +238,19 @@ apply.submit = function () {
         }
     }
     checkedIds = checkedIds.slice(0,checkedIds.length-1);
+    //判断五个申请的事项是否一致
+    for(var i = 0; i <checkedItems.length; i++){
+        if(checkedItems[i].USESEALITEM !== checkedItems[0].USESEALITEM){
+            layer.msg("批量提交时用印事项必须一致");
+            return;
+        }
+    }
 
-    var url = "/bg/yygl/apply/toApplyDetail?applyUuid="+applyUuid;
+    var url = "/bg/yygl/apply/toApplySubmit?checkedIds="+checkedIds;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">选择下一环节审批人</h4>',
-        area:['40%','20%'],
+        area:['40%','30%'],
         fixed:false,//不固定
         maxmin:true,
         content:url,

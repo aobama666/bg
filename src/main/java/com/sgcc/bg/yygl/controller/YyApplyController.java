@@ -279,6 +279,7 @@ public class YyApplyController {
      */
     @RequestMapping("/toApplySubmit")
     public ModelAndView toApplySubmit(String checkedIds){
+        //查询对应申请的部门负责人
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("checkedIds",checkedIds);
         ModelAndView mv = new ModelAndView("yygl/apply/applySubmit",mvMap);
