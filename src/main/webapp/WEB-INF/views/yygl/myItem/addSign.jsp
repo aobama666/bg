@@ -100,8 +100,8 @@
                                     <td class="bg">所在处室</td>
                                 </tr>
                                 <tr>
-                                    <td>张某某</td>
-                                    <td>科技项目处</td>
+                                    <td id="checkUser">张某某</td>
+                                    <td id="checkOffice">科技项目处</td>
                                 </tr>
                             </table>
                     </div>
