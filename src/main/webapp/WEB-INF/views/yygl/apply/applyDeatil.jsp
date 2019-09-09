@@ -16,13 +16,14 @@
     <meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
     <title>用印申请新增</title>
+    <link href="<%=request.getContextPath()%>/css/yygl/liucheng.css" rel="stylesheet" media="all">
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/item.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/newPage.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/datagrid.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css">
     <link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
     <link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
-    <link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" media="all">
+    <%--<link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" media="all">--%>
     <style type="text/css">
         .tableBody{
             height: 120px!important;
@@ -106,15 +107,97 @@
     <div id="datagrid" style="padding-top: 3px;"></div>
 </div>
 
+<div style="padding-top: 10px"></div>
 
+
+<div class="mingliao" style="margin-left: 3%;width: 94%;">
+    <h3>审批流程</h3>
+    <table class="liuchengTable" >
+        <tr>
+            <td>
+                <div class="start green">开始</div>
+            </td>
+            <td colspan="4"></td>
+            <td colspan="4" style="align-text: right;">
+                状态说明:
+                <b class="colorIcon green"></b>已完成
+                <b class="colorIcon yellow"></b>进行中
+                <b class="colorIcon"></b>未开始
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <i class="toDown"></i>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="process " id="1">申请人提交</div>
+            </td>
+            <td>
+                <i class="toRight"></i>
+            </td>
+            <td>
+                <div class="process " id="2">业务主管部门审批</div>
+            </td>
+            <td>
+                <i class="toRight"></i>
+            </td>
+            <td>
+                <div class="process " id="3">党委办公室审批</div>
+            </td>
+            <td>
+                <i class="toRight"></i>
+            </td>
+            <td>
+                <div class="process" id="4">院领导批准</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4"></td>
+            <td style="padding-left: 70px" colspan="2" rowspan="3">
+                <i class="toDownRight"></i>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4"></td>
+            <td>
+                <i class="toDown"></i>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6"></td>
+            <td>
+                <div class="process " style="padding:0px;height:45px;" id="5">印章管理员<br/>确认用印</div>
+            </td>
+            <td>
+                <i class="toRight"></i>
+            </td>
+            <td>
+                <div class="start" id="6">结束</div>
+            </td>
+        </tr>
+    </table>
+</div>
 
 </body>
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
 <script src="<%=request.getContextPath()%>/js/yygl/apply/applyAnnex.js"></script>
-<script type="">
+<script>
     function returnClose() {
         parent.layer.closeAll();
     }
+
+    var x = 6;
+    var i = 1;
+    $('#'+x).addClass('yellow');
+    for(i;i<=x;i++){
+        $("#"+i).addClass('green');
+        $("#"+i).removeClass('yellow');
+    }
+    debugger
+    $('#4').removeClass('yellow');
+    $('#4').removeClass('green');
 </script>
 </html>
