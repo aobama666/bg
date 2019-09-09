@@ -134,16 +134,17 @@
 			to_char(K.BEGIN_DATE,'yyyy-mm-dd')	BEGIN_DATE,
 			to_char(K.END_DATE,'yyyy-mm-dd')	END_DATE,
 			K.EMP_CODE,
-			U.USERALIAS AS EMP_NAME,
+			U.USERALIAS,
+			K.EMP_NAME as name,
+			nvl(U.USERALIAS,K.EMP_NAME) as EMP_NAME,
 			K.FULL_TIME,
 			K.OVER_TIME,
-			to_char(K.CREATE_TIME,'yyyy-mm-dd hh24:mi:ss')	CREATE_TIME,
-			K.VALID
+			to_char(K.CREATE_TIME,'yyyy-mm-dd hh24:mi:ss')	CREATE_TIME
 		from  BG_KQ_EMP_INFO K
 		left join BG_SYS_USER U
 		ON K.EMP_CODE = U.HRCODE
+		and U.VALID='1'
 		where   K.VALID='1'
-		    AND U.VALID='1'
 		<if test="beginDate !=null and beginDate !=''">
 			AND   to_char(K.BEGIN_DATE,'yyyy-mm-dd') >= #{beginDate}
 		</if>
@@ -159,9 +160,21 @@
 				#{id}
 			</foreach>
 		</if>
-
-
+		group by K.UUID,
+				  BEGIN_DATE,
+		          END_DATE ,
+		          K.EMP_CODE,
+		          K.FULL_TIME,
+		          K.OVER_TIME,
+				  U.USERALIAS,
+				  K.EMP_NAME,
+				  CREATE_TIME
 	</select>
+
+	<!--
+	U.USERALIAS AS EMP_NAME,
+	left join BG_SYS_USER U
+	ON K.EMP_CODE = U.HRCODE-->
 
 
 
