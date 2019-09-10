@@ -52,7 +52,7 @@ $.fn.extend({
 						title:"人员选择页面",
 						area:['480px',height+'px'],//555px
 						scrollbar:true,
-						content:[basePath+'/organstufftree/initStuffTree?iframe='
+						content:[basePath+'/organstufftree/initStuffTreeNew?iframe='
 						         +iframe+'&ct='+ct+'&winName='+winName+'&root='+root+'&empCode='
 						         +empCode+'&empName='+empName+'&popEvent='+popEvent
 						         +'&limit='+limit+'&level='+level+'&dataSrc='+dataSrc+'&func='+func+'&show='+show,'no'],

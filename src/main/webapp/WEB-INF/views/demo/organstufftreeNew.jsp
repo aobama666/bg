@@ -15,8 +15,8 @@
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/layer/layer.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/stuff-tree/stuff-tree.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/organ-tree/organ-tree.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/stuff-tree/stuff-treeNew.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/organ-tree/organ-treeNew.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoValidate/sotoValidate.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
 </head>
@@ -118,15 +118,20 @@ $(function(){
 	/*
 		iframe:self 作用域：当前窗口   parent 作用域：父类窗口
 	*/
-	$("#stuffTree").stuffTree({root:'41000001',empCode:'empCode',empName:'empName',iframe:'self',checkType:'radio',popEvent:'pop'});
-	$("#stuffTree2").stuffTree({root:'41000001',empCode:'empCode2',empName:'empName2',iframe:'self',checkType:'checkbox',popEvent:'pop'});
+	$("#stuffTree").stuffTree({root:'41030000',empCode:'empCode',empName:'empName',iframe:'self',checkType:'radio',popEvent:'pop',show:'PART',level:'',limit:'no',func:'',dataSrc:''});
+	$("#stuffTree2").stuffTree({root:'41030000',empCode:'empCode2',empName:'empName2',iframe:'self',checkType:'checkbox',popEvent:'pop',show:'',level:'',limit:'no',func:'',dataSrc:''});
 	//新增按钮
 	$("#stuffTree3").stuffTree({bindLayId:'addStuffTree',root:'41000001',empCode:'empCode3',empName:'empName3',iframe:'self',checkType:'radio',popEvent:'pop'});
 	/*
-		checkType : checkbox 多选  radio 单选
+		checkType : checkbox 多选  radio 单选  //organCode,organName,root,iframe,ct,limit,level,dataSrc,func,show;
+		level:显示数节点   0 分院  1 部门  2 处室
+		limit:'yes' 启用个人权限管理   '' 或  'no' 不启用
+		dataSrc:数据来源：dataSrc=RLZY 人资专用，其他为报工默认
+		func:功能类型：func=YYGL 用印管理
+		show:show=PART 部分显示
 	*/
-	$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio',popEvent:'pop'});
-	$("#organTree2").organTree({root:'41000001',organCode:'deptCode2',organName:'deptName2',iframe:'self',checkType:'checkbox',popEvent:'pop'});
+	$("#organTree").organTree({root:'41030000',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio',popEvent:'pop',show:'PART',level:'',limit:'no',func:'',dataSrc:''});
+	$("#organTree2").organTree({root:'41030000',organCode:'deptCode2',organName:'deptName2',iframe:'self',checkType:'checkbox',popEvent:'pop',show:'',level:'',limit:'no',func:'',dataSrc:''});
 	/*
 		limit:'yes' 启用个人权限管理   '' 或  'no' 不启用
 		level   控制显示层级，如 0 显示到院1 显示到部门 2 显示到科室,为空''时，显示到科室
@@ -179,6 +184,7 @@ function forClose(){
 }
 
 function popEvent(ids,codes,names,pId,level){
+	return;
 	//人员树时：pId,level为空
 	layer.msg("触发父层事件！");
 	alert("回传ids："+ids);
