@@ -31,6 +31,7 @@
     </style>
 </head>
 <body>
+    <h3 style="float: left;margin-left: 3%;">申请编号:${yyApplyDAO.applyCode}</h3>
 <div class="tabbable active" style="text-align:right;width: 97%;padding-top: 5px;padding-bottom: 5px;">
     <button type="button" class="btn" onclick="returnClose()">返回</button>
     <button type="button" class="btn" onclick="returnClose()">撤回</button>
@@ -107,7 +108,7 @@
     <div id="datagrid" style="padding-top: 3px;"></div>
 </div>
 
-<div style="padding-top: 10px"></div>
+<%--<div style="padding-top: 10px"></div>--%>
 
 
 <div class="mingliao" style="margin-left: 3%;width: 94%;">
@@ -185,19 +186,24 @@
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
 <script src="<%=request.getContextPath()%>/js/yygl/apply/applyAnnex.js"></script>
 <script>
+
+    $(function () {
+        var x = 3;
+        var i = 1;
+        //设置正在进行中的
+        $('#'+(x+1)).addClass('yellow');
+        //设置通过的
+        for(i;i<=x;i++){
+            $("#"+i).addClass('green');
+            $("#"+i).removeClass('yellow');
+        }
+        //院领导是否参与本次审批
+
+    });
+
     function returnClose() {
         parent.layer.closeAll();
     }
 
-    var x = 6;
-    var i = 1;
-    $('#'+x).addClass('yellow');
-    for(i;i<=x;i++){
-        $("#"+i).addClass('green');
-        $("#"+i).removeClass('yellow');
-    }
-    debugger
-    $('#4').removeClass('yellow');
-    $('#4').removeClass('green');
 </script>
 </html>

@@ -67,4 +67,32 @@
         ORDER BY SORT_ID
     </select>
 
+    <select id="nextNodeApprove" resultType="java.util.Map">
+        SELECT
+          a.STAFF_ID staffId,
+          u.USERNAME,
+          u.USERALIAS,
+          a.DEPT_ID deptId,
+          d.DEPTNAME,
+          (select name from BG_SYS_DATADICTIONARY where pcode ='node_type' and code = a.NODE_TYPE) NODETYPE
+        FROM BG_YY_APPROVE a
+        LEFT JOIN BG_SYS_DEPT d ON a.DEPT_ID = d.DEPTID
+        LEFT JOIN BG_SYS_USER u ON u.USERID = a.STAFF_ID
+        WHERE a.DEPT_ID = #{deptId} AND a.NODE_TYPE = #{nodeType} AND
+        a.ITEM_SECOND_ID = #{itemSecondId}
+        AND a.VALID = '1' AND d.VALID = '1' AND u.VALID = '1'
+    </select>
+
+    <select id="itemBusinessDept" resultType="java.util.Map">
+        select s.DEPT_ID,d.DEPTNAME from BG_YY_ITEM_SECOND_DEPT s LEFT JOIN BG_SYS_DEPT d ON d.DEPTID = s.DEPT_ID
+        where s.SECOND_CATEGORY_ID=#{itemSecondId} and d.VALID='1' and s.VALID='1'
+    </select>
+
+    <select id="ifSign" resultType="java.lang.String">
+        select IF_SIGN from BG_YY_ITEM_SECOND s where s.uuid=#{itemSecondId} and valid='1'
+    </select>
+
+    <select id="ifLeaderApprove" resultType="java.lang.String">
+        select IF_LEADER_APPROVE from BG_YY_ITEM_SECOND s where s.uuid=#{itemSecondId} and valid='1'
+    </select>
 </mapper>

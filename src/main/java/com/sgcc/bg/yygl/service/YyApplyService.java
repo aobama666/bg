@@ -87,5 +87,10 @@ public interface YyApplyService {
     /**
      * 提交
      */
-    String submit(String checkId);
+    String submit(String checkId,String principalUser);
+
+    /**
+     * 获取部门负责审批人信息
+     */
+    List<Map<String,Object>> getDeptPrincipal(String applyId);
 }

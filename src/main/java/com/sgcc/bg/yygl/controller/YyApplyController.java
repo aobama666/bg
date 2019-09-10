@@ -280,8 +280,11 @@ public class YyApplyController {
     @RequestMapping("/toApplySubmit")
     public ModelAndView toApplySubmit(String checkedIds){
         //查询对应申请的部门负责人
+        String[] applyArray = checkedIds.split(",");
+        List<Map<String,Object>> deptPrincipal = applyService.getDeptPrincipal(applyArray[0]);
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("checkedIds",checkedIds);
+        mvMap.put("deptPrincipal",deptPrincipal);
         ModelAndView mv = new ModelAndView("yygl/apply/applySubmit",mvMap);
         return mv;
     }
@@ -293,8 +296,8 @@ public class YyApplyController {
      */
     @ResponseBody
     @RequestMapping("/applySubmit")
-    public String applySubmit(String checkedIds){
-        String msg = applyService.submit(checkedIds);
+    public String applySubmit(String checkedIds,String principalUser){
+        String msg = applyService.submit(checkedIds,principalUser);
         ResultWarp resultWarp = null;
         resultWarp = new ResultWarp(ResultWarp.SUCCESS,msg);
         return JSON.toJSONString(resultWarp);

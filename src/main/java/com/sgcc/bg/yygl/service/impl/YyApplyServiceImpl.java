@@ -14,6 +14,7 @@ import com.sgcc.bg.yygl.constant.YyApplyConstant;
 import com.sgcc.bg.yygl.controller.YyApplyStuffController;
 import com.sgcc.bg.yygl.mapper.YyApplyAnnexMapper;
 import com.sgcc.bg.yygl.mapper.YyApplyMapper;
+import com.sgcc.bg.yygl.mapper.YyMyItemMapper;
 import com.sgcc.bg.yygl.pojo.YyApplyAnnexDAO;
 import com.sgcc.bg.yygl.pojo.YyApplyDAO;
 import com.sgcc.bg.yygl.service.YyApplyAnnexService;
@@ -38,6 +39,8 @@ public class YyApplyServiceImpl implements YyApplyService {
     private YyApplyMapper yyApplyMapper;
     @Autowired
     private YyApplyAnnexMapper applyAnnexMapper;
+    @Autowired
+    private YyMyItemMapper yyMyItemMapper;
     @Autowired
     private YyApplyAnnexService yyApplyAnnexService;
     @Autowired
@@ -253,7 +256,7 @@ public class YyApplyServiceImpl implements YyApplyService {
     }
 
     @Override
-    public String submit(String checkId) {
+    public String submit(String checkId,String principalUser) {
         String[] applyIdS = checkId.split(",");
         YyApplyDAO yyApplyDAO = null;
         String useSealStatus = "";
@@ -273,7 +276,7 @@ public class YyApplyServiceImpl implements YyApplyService {
                         "YYGL",
                         "SUBMIT",
                         applyId,
-                        "mingliao",
+                        principalUser,
                         loginUserId);
                 //修改申请状态
                 yyApplyMapper.updateApplyStatus(applyId,YyApplyConstant.STATUS_DEAL_DEPT);
@@ -284,11 +287,21 @@ public class YyApplyServiceImpl implements YyApplyService {
         StringBuffer stb = new StringBuffer();
         stb.append("提交完成");
         if(successNum>0){
-            stb.append(",成功"+successNum+"个");
+            stb.append(",成功提交"+successNum+"条申请");
         }
         if(failNum>0){
-            stb.append(",失败"+failNum+"个,只能提交待提交、已撤回、被退回状态的申请!");
+            stb.append(","+failNum+"条申请提交失败,只能提交待提交、已撤回、被退回状态的申请!");
         }
         return stb.toString();
+    }
+
+    @Override
+    public List<Map<String, Object>> getDeptPrincipal(String applyId) {
+        YyApplyDAO yyApplyDAO = yyApplyMapper.findApply(applyId);
+        String loginId = getLoginUserUUID();
+        Map<String,Object> deptMap = yyApplyMapper.findDept(loginId);
+        String deptId = deptMap.get("PDEPTID").toString();
+        List<Map<String,Object>> deptPrincipal = yyMyItemMapper.nextNodeApprove(deptId,YyApplyConstant.NODE_DEPT,yyApplyDAO.getItemSecondId());
+        return deptPrincipal;
     }
 }

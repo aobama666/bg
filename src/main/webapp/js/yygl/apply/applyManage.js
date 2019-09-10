@@ -138,6 +138,12 @@ apply.toUpdate = function () {
         return;
     }
     var checkedId = checkedItems[0].UUID;
+    var status = checkedItems[0].USE_SEAL_STATUS_CODE;
+    if('1'!==status && '2'!==status && '3'!==status){
+        //如果是未提交，已撤回，被退回的状态，可以进行修改操作，否则提示“当前申请处于审批流程,不可修改”
+        layer.msg("当前申请处于审批流程中,不可修改");
+        return;
+    }
     var url = "/bg/yygl/apply/toApplyUpdate?checkedId="+checkedId;
     layer.open({
         type:2,
@@ -259,21 +265,6 @@ apply.submit = function () {
         }
     });
 
-    /*layer.confirm('确定提交选中的申请吗?',{
-            btn:['确定','取消'],icon:0,title:'自动匹配'
-        },function () {
-            $.ajax({
-                url: "/bg/yygl/apply/applySubmit?checkedIds="+checkedIds,
-                type: "post",
-                dataType:"json",
-                contentType: 'application/json',
-                success: function (data) {
-                    layer.msg(data.msg);
-                    apply.queryAddPage();
-                }
-            });
-        }
-    )*/
 }
 
 
