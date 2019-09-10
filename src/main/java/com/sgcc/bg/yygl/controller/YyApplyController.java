@@ -234,14 +234,25 @@ public class YyApplyController {
     public ModelAndView toApplyDetail(String applyUuid){
         //用印基本信息
         YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
-        //附件信息
 
-        //流程图信息
+        //审批流程信息
 
-        //审批信息
+        //按钮组展示信息
+        //申请人-撤回按钮
+        String applyUser = "1";
+        //印章管理员-确认用印按钮
+        String sealAdmin = "1";
+        //审批人-同意退回按钮
+        String approveUser = "1";
+        //业务部门负责人，办公室负责人-增加业务会签按钮
+        String businessOrOffice = "1";
 
         ModelAndView mv = new ModelAndView("yygl/apply/applyDeatil");
         mv.addObject("yyApplyDAO",yyApplyDAO);
+        mv.addObject("applyUser",applyUser);
+        mv.addObject("sealAdmin",sealAdmin);
+        mv.addObject("approveUser",approveUser);
+        mv.addObject("businessOrOffice",businessOrOffice);
         return mv;
     }
 
@@ -254,7 +265,6 @@ public class YyApplyController {
     public ModelAndView toPrintPreview(String applyUuid){
         //用印基本信息
         YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
-        //附件信息
 
         //审批信息
 

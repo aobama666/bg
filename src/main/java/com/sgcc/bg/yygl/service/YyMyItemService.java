@@ -1,6 +1,7 @@
 package com.sgcc.bg.yygl.service;
 
 import com.sgcc.bg.yygl.pojo.YyApplyAnnexDAO;
+import com.sgcc.bg.yygl.pojo.YyApplyDAO;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,16 @@ public interface YyMyItemService {
     String agree();
 
     /**
+     * 同意，下一环节审批人信息，业务部门
+     */
+    List<Map<String,Object>> nextApproveBusiness(YyApplyDAO yyApplyDAO);
+
+    /**
+     * 同意，下一环节审批人信息，其他环节
+     */
+    List<Map<String,Object>> nextApprove(YyApplyDAO yyApplyDAO);
+
+    /**
      * 退回
      */
     String sendBack();
@@ -37,4 +48,9 @@ public interface YyMyItemService {
      * 获取下拉框内容，部门选项
      */
     List<Map<String,Object>> getDeptList();
+
+    /**
+     * 根据登陆用户名称查询对应处室信息
+     */
+    Map<String,Object> findDeptForUserName(String userName);
 }

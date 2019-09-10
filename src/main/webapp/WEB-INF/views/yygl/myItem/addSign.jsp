@@ -31,6 +31,7 @@
 
     <!-- 本页面所需css -->
     <link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" media="all">
     <style type="text/css">
         .bg{
             background: #d5e7e7;
@@ -59,15 +60,15 @@
     </style>
 </head>
 <body>
-    <div style="padding-left: 15%;padding-right: 15%;padding-top: 10px;">
+    <div style="padding-left: 5%;padding-right: 5%;padding-top: 10px;">
         <table style="width: 100%">
             <tr>
                 <td class="bg" width="30%">已流转业务主管部门</td>
-                <td>中国电科院财务资产部</td>
+                <td style="text-align: left">&nbsp;&nbsp;&nbsp;中国电科院财务资产部</td>
             </tr>
             <tr>
                 <td class="bg"  width="30%">请选择会签部门</td>
-                <td>
+                <td class="addInputStyle">
                     <select id = "signDept" name = "signDept" onchange="sign.changeDept()"
                             content="会签部门" class = "changeQuery changeYear validNull">
                         <option value = "">请选择</option>
@@ -79,18 +80,18 @@
             </tr>
         </table>
         <div style="padding-top: 10px;"></div>
-        <div class="row">
+        <div class="layui-row">
 
-            <div class="col-md-5">
+            <div class="layui-col-md5">
                 <span style="font-size: 17px">请选择会签部门负责人:</span>
-                <div style="border: solid 1px black;height: 250px;">
+                <div style="border: solid 1px black;height: 250px;" onclick="sign.clickUser()">
                     <div class="tree-box">
                         <ul id="tree" class="ztree"></ul>
                     </div>
                 </div>
             </div>
-            <div class="col-md-2"></div>
-            <div class="col-md-5">
+            <div class="layui-col-md2">&nbsp;</div>
+            <div class="layui-col-md5">
                 <span style="font-size: 17px">选择结果</span>
                 <div style="border: solid 1px black;height: 250px;">
                     <div style="padding: 2px 2px 2px 2px">
@@ -100,8 +101,8 @@
                                     <td class="bg">所在处室</td>
                                 </tr>
                                 <tr>
-                                    <td id="checkUser">张某某</td>
-                                    <td id="checkOffice">科技项目处</td>
+                                    <td id="checkUser"></td>
+                                    <td id="checkOffice"></td>
                                 </tr>
                             </table>
                     </div>
@@ -113,6 +114,7 @@
             <button type="button" class="btn" onclick="sign.returnClose()">取消</button>
         </div>
     </div>
+<input style="display: none;" type="text" id="userId"/>
 <input style="display: none" id="treelist" type="text"/>
 <input style="display: none" id="ct" type="text"/>
 <%--<input style="display: none" id="root" type="text"/>--%>
@@ -122,7 +124,8 @@
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
-
+<script src="<%=request.getContextPath()%>/js/plugins/layui/html5.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
+<script src="<%=request.getContextPath()%>/js/plugins/layui/respond.min.js"></script><!-- 兼容ie8的layui栅栏样式 -->
 <!-- 本页面所需的js -->
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>

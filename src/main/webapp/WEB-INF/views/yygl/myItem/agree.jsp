@@ -64,13 +64,13 @@
         <tr>
             <td class="bg">审批意见</td>
             <td colspan="3">
-                <textarea rows="" cols="">同意</textarea>
+                <textarea  style="height: 100%;width: 100%;text-align: center">同意</textarea>
             </td>
         </tr>
     </table>
     <div style="text-align: center;padding-top: 20px">
-        <button type="button" class="btn" onclick="">确认</button>
-        <button type="button" class="btn" onclick="">取消</button>
+        <button type="button" class="btn" onclick="approve.agree()">确认</button>
+        <button type="button" class="btn" onclick="approve.returnClose()">取消</button>
     </div>
 </div>
 </body>
@@ -93,4 +93,5 @@
 <!-- 本页面所需的js -->
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
+<script src="<%=request.getContextPath()%>/js/yygl/myItem/approveOperate.js"></script>
 </html>

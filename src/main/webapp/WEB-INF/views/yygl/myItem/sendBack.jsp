@@ -47,30 +47,31 @@
         </tr>
         <tr>
             <td><input type="radio"/></td>
-            <td>EPRI_LMM</td>
-            <td>李某某</td>
-            <td>业务主管部门负责人审批</td>
-            <td>科技部</td>
+            <td>${applyUser}</td>
+            <td>${applyUserName}</td>
+            <td>用印申请人</td>
+            <td>${applyDept}</td>
         </tr>
     </table>
     <div style="padding-top: 20px"></div>
     <table class="agree" style="width: 100%">
         <tr>
             <td class="bg">审批人</td>
-            <td>张某某</td>
+            <td id="approveUser">${loginUserName}</td>
             <td class="bg">审批时间</td>
-            <td>2019-09-05 13:22:23</td>
+            <td id="approveTime">${nowDate}</td>
         </tr>
         <tr>
             <td class="bg">审批意见</td>
             <td colspan="3">
-                <textarea rows="" cols="">拒绝</textarea>
+                <textarea style="height: 100%;width: 100%;text-align: center">拒绝</textarea>
             </td>
         </tr>
     </table>
+    <input type="text" value="${applyUserId}" style="display: none;"/>
     <div style="text-align: center;padding-top: 20px">
-        <button type="button" class="btn" onclick="">确认</button>
-        <button type="button" class="btn" onclick="">取消</button>
+        <button type="button" class="btn" onclick="approve.sendBack()">确认</button>
+        <button type="button" class="btn" onclick="approve.returnClose()">取消</button>
     </div>
 </div>
 </body>
@@ -93,4 +94,5 @@
 <!-- 本页面所需的js -->
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
+<script src="<%=request.getContextPath()%>/js/yygl/myItem/approveOperate.js"></script>
 </html>

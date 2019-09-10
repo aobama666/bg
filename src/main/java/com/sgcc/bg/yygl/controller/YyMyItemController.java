@@ -3,7 +3,13 @@ package com.sgcc.bg.yygl.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.ResultWarp;
+import com.sgcc.bg.model.HRUser;
 import com.sgcc.bg.service.OrganStuffTreeService;
+import com.sgcc.bg.service.UserService;
+import com.sgcc.bg.yygl.bean.YyApply;
+import com.sgcc.bg.yygl.constant.YyApplyConstant;
+import com.sgcc.bg.yygl.pojo.YyApplyDAO;
+import com.sgcc.bg.yygl.service.YyApplyService;
 import com.sgcc.bg.yygl.service.YyMyItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping("/yygl/my_item/")
@@ -28,6 +32,10 @@ public class YyMyItemController {
     private YyMyItemService myItemService;
     @Autowired
     private OrganStuffTreeService organStuffTreeService;
+    @Autowired
+    private YyApplyService yyApplyService;
+    @Autowired
+    private UserService userService;
 
     /**
      * 跳转到待办列表
@@ -62,9 +70,9 @@ public class YyMyItemController {
      */
     @ResponseBody
     @RequestMapping("/selectMyItem")
-    public String selectComingSoon(String applyCode,String deptId,String useSealUser, Integer page, Integer limit){
+    public String selectComingSoon(String applyCode,String deptId,String useSealUser,String ifComingSoon,Integer page, Integer limit){
         //查询
-        Map<String,Object>  listMap = myItemService.selectMyItem(applyCode,deptId,useSealUser,null,page,limit);
+        Map<String,Object>  listMap = myItemService.selectMyItem(applyCode,deptId,useSealUser,ifComingSoon,page,limit);
         //反馈
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("data",listMap);
@@ -81,15 +89,10 @@ public class YyMyItemController {
      */
     @RequestMapping("/toAddSign")
     public ModelAndView toAddSign(String checkedId){
-        //根据对应申请id，查询所需内容
-
-        //查询已会签部门
-        //用印事项原有配置会签部门，和审批表中再次添加的会签部门
-
         //可选择会签部门
         List<Map<String,Object>> deptList = myItemService.getDeptList();
-        //剔除已经选择的会签部门
-
+        //目前没有做剔除操作
+        //如果需要剔除有两点，1.原有事项配置的业务部门2.后期增加会签在审批表中的审批人所在部门
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("deptList",deptList);
         ModelAndView mv = new ModelAndView("yygl/myItem/addSign",mvMap);
@@ -103,8 +106,9 @@ public class YyMyItemController {
      */
     @ResponseBody
     @RequestMapping("/addSign")
-    public String addSign(){
-        //是业务部门触发的操作还是办公室触发的操作
+    public String addSign(String applyUuid,String userId){
+        //根据当前申请状态，判断是业务部门触发的操作还是办公室触发的操作
+
         //if业务部门，增加会签，发送对应待办
         //if办公室，增加会签，发送对应待办，流程撤回至业务部门会签
         return "";
@@ -117,13 +121,22 @@ public class YyMyItemController {
      */
     @RequestMapping("/toAgree")
     public ModelAndView toAgree(String checkedId){
-        //根据选择申请查询可以提供的下一个审批人信息
-
-        //下一环节是否为业务部门审批
-        //是否有多个部门
-
-
+        //判断一下审批状态
+        YyApplyDAO apply = yyApplyService.applyDeatil(checkedId);
+        String useSealStatus = apply.getUseSealStatus();
+        List<Map<String,Object>> nextApprove = new ArrayList<>();
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
+            //如果属于待业务主管部门审批
+            nextApprove = nextApprove;
+            //是否有多个部门
+            //多个部门如何展示
+            //多个部门如何确定
+        }else{
+            //根据选择申请查询可以提供的下一环节审批人信息
+            nextApprove = nextApprove;
+        }
         Map<String,Object> mvMap = new HashMap<>();
+        mvMap.put("nextApprove",nextApprove);
         ModelAndView mv = new ModelAndView("yygl/myItem/agree",mvMap);
         return mv;
     }
@@ -135,15 +148,27 @@ public class YyMyItemController {
      */
     @ResponseBody
     @RequestMapping("/agree")
-    public String agree(){
-        //查看是否属于业务主管部门审批环节
-        //查看所有业务主管部门是否全部审批结束、
+    public String agree(String applyUuid,String approveOpinion){
+        //判断一下审批状态
+        YyApplyDAO apply = yyApplyService.applyDeatil(applyUuid);
+        String useSealStatus = apply.getUseSealStatus();
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
+            //如果属于待业务主管部门审批
+
+            //查看所有业务主管部门是否全部审批结束、
+
+        }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
+            //如果属于待办公室审批
+
+            //判断是否需要院领导批准
+
+        }else{
+            //如果没有其它意外，直接走同意
+
+        }
 
 
-        //查看是否为办公室审批完毕状态
-        //查看对应事项是否有院领导批准环节
 
-        //如果没有其它意外，直接走同意
         return "";
     }
 
@@ -156,7 +181,22 @@ public class YyMyItemController {
     @RequestMapping("/toSendBack")
     public ModelAndView toSendBack(String checkedId){
         //根据所选择申请查询退回人信息
+        YyApplyDAO apply = yyApplyService.applyDeatil(checkedId);
+        Date date = new Date();
+        SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String nowDate = sd.format(date);
+
+        HRUser approveUser = userService.getUserByUserId(apply.getApplyUserId());
+        HRUser loginUser = userService.getUserByUserId(yyApplyService.getLoginUserUUID());
+        Map<String,Object> deptMap = yyApplyService.findDept(approveUser.getUserId());
+
         Map<String,Object> mvMap = new HashMap<>();
+        mvMap.put("applyUserId",apply.getApplyUserId());
+        mvMap.put("applyUser",approveUser.getUserName());
+        mvMap.put("applyDept",deptMap.get("PDEPTNAME"));
+        mvMap.put("applyUserName",approveUser.getUserAlias());
+        mvMap.put("loginUserName",loginUser.getUserAlias());
+        mvMap.put("nowDate",nowDate);
         ModelAndView mv = new ModelAndView("yygl/myItem/sendBack",mvMap);
         return mv;
     }
@@ -170,6 +210,21 @@ public class YyMyItemController {
     public String sendBack(){
         return "";
     }
+
+
+
+    /**
+     * 增加会签中，选择对应人员后查询对应处室信息
+     */
+    @ResponseBody
+    @RequestMapping("/changeUserMessage")
+    public String changeUserMessage(String userName){
+        Map<String,Object> user = myItemService.findDeptForUserName(userName);
+        ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"success");
+        rw.addData("user",user);
+        return JSON.toJSONString(rw);
+    }
+
 
 
     /**
@@ -211,6 +266,7 @@ public class YyMyItemController {
     }
 
     /**
+     * 复制于人员树controller部分，具体流程未深究
      * 格式化人员树 {"id": "P41070003","open": false,"organCode": "P41070003","pId": "60000258","name": "杨久蓉","isParent": false,"nocheck": false}
      * @param list
      * @return

@@ -59,7 +59,7 @@ public interface YyMyItemMapper {
     /**
      * 事项对应部门
      */
-    Map<String,Object> itemBusinessDept(@Param("itemSecondId") String itemSecondId);
+    List<Map<String,Object>> itemBusinessDept(@Param("itemSecondId") String itemSecondId);
 
 
     /**
@@ -72,5 +72,11 @@ public interface YyMyItemMapper {
      * 是否需要院领导批准
      */
     String ifLeaderApprove(@Param("itemSecondId") String itemSecondId);
+
+
+    /**
+     * 根据登陆用户名获取处室信息
+     */
+    Map<String,Object> findDeptForUserName(@Param("userName") String userName);
 
 }

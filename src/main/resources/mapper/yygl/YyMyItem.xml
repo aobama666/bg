@@ -29,6 +29,10 @@
         left join bg_sys_user u on a.apply_user_id = u.userid
         left join bg_yy_item_second s on a.item_second_id = s.uuid
         left join bg_yy_item_first f on a.item_first_id = f.uuid
+        left JOIN TB_WL_BUSINESS_R_APPLY b on a.UUID = b.BUSINESS_ID
+        LEFT JOIN TB_WL_APPLY wa on wa.ID = b.APPLY_ID
+        LEFT JOIN  TB_WL_APPROVE p on wa.id = p.APPLY_ID
+        LEFT JOIN TB_WL_AUDIT_USER wau on wau.APPROVE_ID = p.ID
         where 1=1
         <if test="applyCode != null and applyCode != ''">
             and a.apply_code like '%'||#{applyCode}||'%'
@@ -39,7 +43,10 @@
         <if test="useSealUser != null and useSealUser != ''">
             and u.USERALIAS like '%'||#{useSealUser}||'%'
         </if>
+        and p.AUDIT_FLAG = #{ifComingSoon}
+        and wau.APPROVE_USER = #{loginUserId}
         and a.valid = '1'
+        and wau.valid = '1'
         order by a.create_time desc
     </sql>
 
@@ -94,5 +101,9 @@
 
     <select id="ifLeaderApprove" resultType="java.lang.String">
         select IF_LEADER_APPROVE from BG_YY_ITEM_SECOND s where s.uuid=#{itemSecondId} and valid='1'
+    </select>
+
+    <select id="findDeptForUserName" resultType="java.util.Map">
+        select USERID,USERNAME,USERALIAS,HRDEPTNAME from BG_SYS_USER where username = #{userName} and VALID='1'
     </select>
 </mapper>

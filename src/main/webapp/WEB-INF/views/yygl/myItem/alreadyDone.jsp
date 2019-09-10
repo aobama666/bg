@@ -36,6 +36,8 @@
     <div class='content_top'>已办事项</div>
 
     <form id="queryForm" style="margin-bottom: 10px;">
+        <%--是否待办，已办属性值为0--%>
+        <input id="ifComingSoon" name="ifComingSoon" style="display: none;" value="0"/>
         <input type="hidden" name="checkList"/>
         <span style="margin-left: 20px"></span>
         <label>申请单号：</label>

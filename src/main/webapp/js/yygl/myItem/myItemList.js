@@ -78,12 +78,12 @@ myItem.toAddSign = function () {
         layer.msg('每次只能修改一条数据');
         return;
     }
-    var checkedId = checkedItems[0].UUID;
+    var checkedId = checkedItems[0].uuid;
     var url = "/bg/yygl/my_item/toAddSign?checkedId="+checkedId;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">增加业务主管部门会签</h4>',
-        area:['70%','60%'],
+        area:['90%','60%'],
         fixed:false,//不固定
         maxmin:true,
         content:url,
@@ -136,7 +136,7 @@ myItem.toSendBack = function () {
         layer.msg('每次只能修改一条数据');
         return;
     }
-    var checkedId = checkedItems[0].UUID;
+    var checkedId = checkedItems[0].uuid;
     var url = "/bg/yygl/my_item/toSendBack?checkedId="+checkedId;
     layer.open({
         type:2,
