@@ -70,7 +70,7 @@
 			</div>
 
 			<div class="form-group col-xs-5" style="margin-bottom:0;">
-				<label>统计日期：</label>
+				<label>查询日期：</label>
 				<div class="controls"  data-date-format="yyyy-mm">
 					<div class="input-group date form_date bg-white" id="KqdateTime"　data-date-format="yyyy-mm" >
 						<input id="startTime" name="startTime" property="startTime"   type="hidden"  >
