@@ -64,7 +64,7 @@
         <tr>
             <td class="bg">审批意见</td>
             <td colspan="3">
-                <textarea style="height: 100%;width: 100%;text-align: center">拒绝</textarea>
+                <textarea style="height: 100%;width: 100%;resize:vertical">拒绝</textarea>
             </td>
         </tr>
     </table>

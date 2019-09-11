@@ -6,6 +6,7 @@ import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.model.HRUser;
 import com.sgcc.bg.service.OrganStuffTreeService;
 import com.sgcc.bg.service.UserService;
+import com.sgcc.bg.yszx.service.ApproveService;
 import com.sgcc.bg.yygl.bean.YyApply;
 import com.sgcc.bg.yygl.constant.YyApplyConstant;
 import com.sgcc.bg.yygl.pojo.YyApplyDAO;
@@ -36,6 +37,8 @@ public class YyMyItemController {
     private YyApplyService yyApplyService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ApproveService approveService;
 
     /**
      * 跳转到待办列表
@@ -83,6 +86,25 @@ public class YyMyItemController {
     }
 
 
+    /**
+     * 判断当前申请状态是否能够进行增加会签操作
+     * 只有处于待业务部门审批、待办公室审批两个环节才能进行此操作
+     */
+    @ResponseBody
+    @RequestMapping("/ifAddSign")
+    public String ifAddSign(String checkedId){
+        ResultWarp rw;
+        YyApplyDAO apply = yyApplyService.applyDeatil(checkedId);
+        String useSealStatus = apply.getUseSealStatus();
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)
+            ||useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
+            rw = new ResultWarp(ResultWarp.SUCCESS,"success");
+        }else{
+            rw = new ResultWarp(ResultWarp.FAILED,"fail");
+        }
+        return JSON.toJSONString(rw);
+    }
+
 
     /**
      * 跳转到增加业务主管部门会签
@@ -125,18 +147,24 @@ public class YyMyItemController {
         YyApplyDAO apply = yyApplyService.applyDeatil(checkedId);
         String useSealStatus = apply.getUseSealStatus();
         List<Map<String,Object>> nextApprove = new ArrayList<>();
-        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
-            //如果属于待业务主管部门审批
-            nextApprove = nextApprove;
-            //是否有多个部门
-            //多个部门如何展示
-            //多个部门如何确定
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_DEPT)){
+            //如果下一环节属于待业务主管部门审批，也就是当前为申请部门负责人审批
+            nextApprove = myItemService.nextApproveBusiness(apply);
         }else{
             //根据选择申请查询可以提供的下一环节审批人信息
-            nextApprove = nextApprove;
+            nextApprove = myItemService.nextApprove(apply);
         }
+        //审批时间，审批操作人
+        Date date = new Date();
+        SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String nowDate = sd.format(date);
+        HRUser loginUser = userService.getUserByUserId(yyApplyService.getLoginUserUUID());
+        String approveUser = loginUser.getUserAlias();
+
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("nextApprove",nextApprove);
+        mvMap.put("nowDate",nowDate);
+        mvMap.put("approveUser",approveUser);
         ModelAndView mv = new ModelAndView("yygl/myItem/agree",mvMap);
         return mv;
     }
@@ -148,14 +176,18 @@ public class YyMyItemController {
      */
     @ResponseBody
     @RequestMapping("/agree")
-    public String agree(String applyUuid,String approveOpinion){
-        //判断一下审批状态
+    public String agree(String applyUuid,String auditUserId,String approveOpinion){
+        //用印申请状态
         YyApplyDAO apply = yyApplyService.applyDeatil(applyUuid);
         String useSealStatus = apply.getUseSealStatus();
+        //审批记录id
+        String approveId = myItemService.getApproveId(applyUuid);
+        //操作人id
+        String loginUserId = yyApplyService.getLoginUserUUID();
         if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
-            //如果属于待业务主管部门审批
+            //下一环节如果属于待业务主管部门审批
 
-            //查看所有业务主管部门是否全部审批结束、
+            //查看所有业务主管部门是否全部审批结束
 
         }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
             //如果属于待办公室审批
@@ -163,13 +195,16 @@ public class YyMyItemController {
             //判断是否需要院领导批准
 
         }else{
-            //如果没有其它意外，直接走同意
-
+            //申请部门负责人审批、院领导批准、印章管理人员确认用印
+            approveService.sendApprove(false,
+                    approveId,
+                    YyApplyConstant.APPROVE_RESULT_AGREE,
+                    approveOpinion,
+                    auditUserId,
+                    loginUserId);
         }
-
-
-
-        return "";
+        ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"审批完成");
+        return JSON.toJSONString(rw);
     }
 
 

@@ -106,4 +106,15 @@
     <select id="findDeptForUserName" resultType="java.util.Map">
         select USERID,USERNAME,USERALIAS,HRDEPTNAME from BG_SYS_USER where username = #{userName} and VALID='1'
     </select>
+
+    <select id="getApproveId" resultType="java.lang.String">
+        SELECT APPROVE_ID
+        FROM (
+          SELECT
+            a.approve_id,
+            max(r.CREATE_TIME)
+          FROM TB_WL_APPLY a LEFT JOIN TB_WL_BUSINESS_R_APPLY r ON a.id = r.APPLY_ID
+          WHERE r.BUSINESS_ID = #{useSealApplyId}
+          GROUP BY a.APPROVE_ID)
+    </select>
 </mapper>

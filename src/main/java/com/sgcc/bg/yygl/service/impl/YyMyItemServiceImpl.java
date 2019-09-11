@@ -1,6 +1,7 @@
 package com.sgcc.bg.yygl.service.impl;
 
 import com.sgcc.bg.common.Rtext;
+import com.sgcc.bg.yygl.bean.YyApply;
 import com.sgcc.bg.yygl.constant.YyApplyConstant;
 import com.sgcc.bg.yygl.mapper.YyMyItemMapper;
 import com.sgcc.bg.yygl.pojo.YyApplyDAO;
@@ -63,12 +64,13 @@ public class YyMyItemServiceImpl implements YyMyItemService{
 
     @Override
     public List<Map<String, Object>> nextApproveBusiness(YyApplyDAO yyApplyDAO) {
-        List<Map<String,Object>> itemBusinessDept = myItemMapper.itemBusinessDept(yyApplyDAO.getItemSecondId());
         String deptId = "";
+        String itemSecondId = yyApplyDAO.getItemSecondId();
+        List<Map<String,Object>> itemBusinessDept = myItemMapper.itemBusinessDept(itemSecondId);
         List<Map<String, Object>> nextNodeApprove = new ArrayList<>();
         for(Map<String,Object> ibd : itemBusinessDept){
             deptId = ibd.get("DEPT_ID").toString();
-            List<Map<String, Object>> nextNodeApproveFor = myItemMapper.nextNodeApprove(deptId,YyApplyConstant.NODE_BUSSINESS,yyApplyDAO.getItemSecondId());
+            List<Map<String, Object>> nextNodeApproveFor = myItemMapper.nextNodeApprove(deptId,YyApplyConstant.NODE_BUSSINESS,itemSecondId);
             nextNodeApprove.addAll(nextNodeApproveFor);
         }
         return nextNodeApprove;
@@ -76,8 +78,27 @@ public class YyMyItemServiceImpl implements YyMyItemService{
 
     @Override
     public List<Map<String, Object>> nextApprove(YyApplyDAO yyApplyDAO) {
-
-        return null;
+        String useSealStatus = yyApplyDAO.getUseSealStatus();
+        String itemSecondId = yyApplyDAO.getItemSecondId();
+        List<Map<String,Object>> nextNodeApprove = null;
+        //如果属于待申请部门审批,查询的时候需要加上对应的部门信息
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_DEPT)){
+            nextNodeApprove = myItemMapper.nextNodeApprove(yyApplyDAO.getApplyDeptId(),
+                    YyApplyConstant.NODE_DEPT,itemSecondId);
+        }else{
+            //根据对应申请状态，获取对应审批节点
+            //包含状态有：办公室负责人、院领导负责人、印章管理员负责人
+            String nodeType = "";
+            if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
+                nodeType = YyApplyConstant.NODE_OFFICE;
+            }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_LEADER)){
+                nodeType = YyApplyConstant.NODE_LEADER;
+            }else if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_USER_SEAL)){
+                nodeType = YyApplyConstant.NODE_ADMIN;
+            }
+            nextNodeApprove = myItemMapper.nextNodeApprove(null,nodeType,itemSecondId);
+        }
+        return nextNodeApprove;
     }
 
     @Override
@@ -95,5 +116,10 @@ public class YyMyItemServiceImpl implements YyMyItemService{
     @Override
     public Map<String, Object> findDeptForUserName(String userName) {
         return myItemMapper.findDeptForUserName(userName);
+    }
+
+    @Override
+    public String getApproveId(String useSealApplyId) {
+        return myItemMapper.getApproveId(useSealApplyId);
     }
 }

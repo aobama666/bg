@@ -67,5 +67,23 @@ public interface ApproveService {
 	  * @return
 	  */
 	 public WLApproveRule getApproveRuleByNodeName(String functionType,String nodeName,String status,String condition);
-	 
+
+	/**
+	 * 用印管理，部门负责人——>业务会签
+	 * 发送多条待办，这里需要创建多个审批记录吗，明天需要问一下
+	 */
+
+	/**
+	 * 业务会签————>办公室
+	 * 每个人通过后会选择一个办公室负责人信息，要保留下来
+	 * 是否全部通过，全部通过后发送多条待办信息
+	 */
+
+	/**
+	 * 办公室————>院领导or印章管理员
+	 * 只要有一个办公室审批通过就能到下一环节
+	 * 判断是否需要院领导签字，添加一个参数，是否跳过，如果不需要批准直接跳过
+	 */
+
+
 }

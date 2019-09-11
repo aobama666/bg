@@ -1,8 +1,6 @@
 package com.sgcc.bg.yygl.service;
 
-import com.sgcc.bg.yygl.pojo.YyApplyAnnexDAO;
 import com.sgcc.bg.yygl.pojo.YyApplyDAO;
-
 import java.util.List;
 import java.util.Map;
 
@@ -53,4 +51,9 @@ public interface YyMyItemService {
      * 根据登陆用户名称查询对应处室信息
      */
     Map<String,Object> findDeptForUserName(String userName);
+
+    /**
+     * 根据用印申请id，查询当前流程审批id
+     */
+    String getApproveId(String useSealApplyId);
 }

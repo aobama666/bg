@@ -79,4 +79,9 @@ public interface YyMyItemMapper {
      */
     Map<String,Object> findDeptForUserName(@Param("userName") String userName);
 
+
+    /**
+     * 根据用印申请id，查询当前流程审批id
+     */
+    String getApproveId(@Param("useSealApplyId") String useSealApplyId);
 }

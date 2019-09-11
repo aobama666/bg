@@ -45,26 +45,29 @@
             <td class="bg">审批角色</td>
             <td class="bg">部门</td>
         </tr>
-        <tr>
-            <td><input type="radio"/></td>
-            <td>EPRI_LMM</td>
-            <td>李某某</td>
-            <td>业务主管部门负责人审批</td>
-            <td>科技部</td>
-        </tr>
+        <%--目前是部门负责人审批的角度，需要添加业务部门会签的界面--%>
+        <c:forEach var="next" items="${nextApprove}">
+            <tr>
+                <td><input type="radio" name="staffId" id="staffId" value="${next.STAFFID}"/></td>
+                <td>${next.USERNAME}</td>
+                <td>${next.USERALIAS}</td>
+                <td>${next.NODETYPE}</td>
+                <td>${next.DEPTNAME}</td>
+            </tr>
+        </c:forEach>
     </table>
     <div style="padding-top: 20px"></div>
     <table class="agree" style="width: 100%">
         <tr>
             <td class="bg">审批人</td>
-            <td>张某某</td>
+            <td>${approveUser}</td>
             <td class="bg">审批时间</td>
-            <td>2019-09-05 13:22:23</td>
+            <td>${nowDate}</td>
         </tr>
         <tr>
             <td class="bg">审批意见</td>
             <td colspan="3">
-                <textarea  style="height: 100%;width: 100%;text-align: center">同意</textarea>
+                <textarea  style="height: 100%;width: 100%;resize:vertical">同意</textarea>
             </td>
         </tr>
     </table>

@@ -35,6 +35,16 @@ public class YyApplyConstant {
     //附件上传本地临时路径
     public static final String STUFF_UPLOAD_LOCAL_PATH = "/upload/yygl/";
 
-    //规则
+    //用印流程规则
+    public static final String RULE_SUBMIT ="SUBMIT";
+    public static final String RULE_APPLY_DEPT = "APPLY_DEPT_APPROVE";
+    public static final String RULE_BUSINESS_DEPT = "BUSINESS_DEPT_APPROVE";
+    public static final String RULE_OFFICE = "OFFICE_APPROVE";
+    public static final String RULE_LEADER = "LEADER_APPROVE";
+    public static final String RULE_CONFIRMED_USE = "CONFIRMED_USE_SEAL";
+
+    //审批结果
+    public static final String APPROVE_RESULT_AGREE = "1";
+    public static final String APPROVE_RESULT_REFUSE = "0";
 
 }
