@@ -52,7 +52,7 @@ public interface YyConfigurationService {
      */
     int saveForItemSecondDeptInfo(Map<String ,Object> itemSecondDeptInfo) ;
     /**
-     * 用印事项部门的查询
+     * 二级用印事项的查询不加分页
      */
     List<Map<String, Object>> selectForItemSecond(Map<String, Object> mattersMap) ;
     /**
@@ -66,7 +66,7 @@ public interface YyConfigurationService {
     /**
      *  二级用印事项的删除
      */
-    int deleteForitemFirstId(  Map<String ,Object> itemFirstId);
+    int deleteForitemFirstId(  Map<String ,Object> itemSecondMap);
     /**
      *  二级用印事项部门的修改/删除
      */

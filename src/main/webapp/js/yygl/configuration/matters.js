@@ -86,6 +86,9 @@ changeItemFirst = function () {
     });
 }
 
+　　　　　　
+
+
 		/*事项配置管理-一级类别配置 */
 		roomList.mattersForItemFirst = function (){
 			var url = "/bg/yyConfiguration/itemFirstIndex";

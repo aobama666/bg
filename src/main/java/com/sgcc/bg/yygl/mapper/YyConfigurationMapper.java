@@ -65,13 +65,16 @@ public interface YyConfigurationMapper {
      */
     int deleteForItemSecondInfo(@Param("itemSecondInfo") Map<String ,Object> itemSecondInfo);
     /**
-     *  二级用印事项的删除
+     *  根据一级事项删除二级事项
      */
-    int deleteForitemFirstId(@Param("itemFirstId") Map<String ,Object> itemFirstId);
+    int deleteForitemFirstId(@Param("itemSecondInfo") Map<String ,Object> itemSecondInfo);
     /**
      *  二级用印事项部门的修改/删除
      */
     int updateForItemSecondDeptInfo(@Param("itemSecondDeptInfo") Map<String ,Object> itemSecondDeptInfo);
+
+
+
     /**
      *  审批人的查询
      */

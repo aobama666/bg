@@ -60,7 +60,7 @@ roomList.initDataGrid = function(){
             {name: '节点类型', style:{width:"100px"},data: 'approveNodeName'},
             {name: '员工账号',style:{width:"200px"},data: 'approveUserName'   },
             {name: '员工姓名',style:{width:"150px"}, data: 'approveUserAlias'},
-            {name: '用印事项', style:{width:"150px"},data: 'approveItemName'},
+            {name: '用印事项', style:{width:"150px"},data: 'itemSecondName'},
 
 		]
 	});

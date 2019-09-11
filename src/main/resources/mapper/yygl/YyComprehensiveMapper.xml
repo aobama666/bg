@@ -146,8 +146,21 @@
          USE_SEAL_STATUS = #{status}
         where UUID = #{applyId}
     </update>
-
-
-
+    <!--事项的查询-->
+    <select id="selectForItemList" resultType="java.util.Map"   >
+         SELECT
+          UUID as "id",
+          FIRST_CATEGORY_NAME as "name",
+          VALID   as "pId",
+          FIRST_CATEGORY_NAME as "t"
+          from BG_YY_ITEM_FIRST   where  VALID='1'
+            union all
+          SELECT
+           UUID as "id",
+           SECOND_CATEGORY_NAME as "name",
+           FIRST_CATEGORY_ID   as "pId",
+           SECOND_CATEGORY_NAME as "t"
+         from BG_YY_ITEM_SECOND   where  VALID='1'
+    </select>
 
 </mapper>
