@@ -149,11 +149,10 @@ public class YyConfigurationController {
 	 * @return
 	 */
 	@RequestMapping(value = "approvalForUpdateIndex", method = RequestMethod.GET)
-	public ModelAndView approvalForUpdateIndex(String id) {
+	public ModelAndView approvalForUpdateIndex(String approveId) {
 		Logger.info("申请人配置修改弹框页面------开始");
-
 		Map<String, Object> apprivalMap = new HashMap<String, Object>();
-		apprivalMap.put("approveId", id);
+		apprivalMap.put("approveId", approveId);
 		List<Map<String, Object>> approvalList = yyConfigurationService.selectForApprovalId(apprivalMap);
 		Map<String, Object> map = approvalList.get(0);
 		List<Map<String, Object>> itemFirstList = applyService.getItemFirst();//用印事项一级

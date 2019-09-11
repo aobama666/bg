@@ -6,7 +6,6 @@ $(function(){
     $("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'parent',empCode:'empCode',empName:'empName',checkType:'radio',popEvent:'pop'});
 });
 function popEvent(ids,codes,names,pId,level){
-
     $("#popStuffTree").val(names);
     $("#approveUserName").val(ids);
     $("#approveUserCode").val(codes);

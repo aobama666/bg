@@ -93,7 +93,18 @@ changeItemFirst = function () {
         }
     });
 }
-
+		/*用印管理-事项弹框 */
+		roomList.forItemInfo = function (){
+			var url = "/bg/yyComprehensive/itemIndex";
+			layer.open({
+				type:2,
+				title:'<h4 style="height:42px;line-height:47px;">用印事项</h4>',
+				area:['300px','300px'],
+				fixed:false,//不固定
+				maxmin:true,
+				content:url,
+			});
+		}
 
 		/*审批人管理-新增 */
 		roomList.approvalForSave = function (){
@@ -105,9 +116,18 @@ changeItemFirst = function () {
 				content:url,
 			});
 		}
-		/*审批人管理-新增 */
+		/*审批人管理-修改 */
 		roomList.approvalForUpdata = function (){
-			var url = "/bg/yyConfiguration/approvalForUpdateIndex";
+            var checkedItems = dataGrid.getCheckedItems(dataItems);
+            if(checkedItems.length==0){
+                messager.tip("请选择要的数据",1000);
+                return;
+            }else if(checkedItems.length>1){
+                messager.tip("每次只能一条数据",2000);
+                return;
+            }
+            var approveId=checkedItems[0].approveId;
+			var url = "/bg/yyConfiguration/approvalForUpdateIndex?approveId="+approveId;
 			layer.open({
 				type:2,
 				title:'<h4 style="height:42px;line-height:25px;">用印事项二级类别修改</h4>',
