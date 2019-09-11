@@ -18,10 +18,6 @@
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath()%>/css/ztree/demo.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath()%>/css/ztree/zTreeStyle/zTreeStyle.css" rel="stylesheet" type="text/css">
-	<script src="<%=request.getContextPath()%>/js/ztree/jquery-1.4.4.min.js"></script>
-	<script src="<%=request.getContextPath()%>/js/ztree/jquery.ztree.core.js"></script>
 </head>
 <body>
 	<div class="main_div"></div>
@@ -50,14 +46,16 @@
 				   content="用印结束日期"
 				   style="width:150px;"
 			/>
-			<label  for="itemFirst" class="yearTitle">用印事项：</label>
-			<%--<select id = "itemFirst" name = "itemFirst"  title="用印事项一级"  class = "changeQuery userlevel" style="width: 240px"  onchange="changeItemFirst()"   >--%>
+			<label  for="itemName" class="yearTitle">用印事项：</label>
+			<input type = "text" id = "itemName" name = "itemName" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"  onclick="roomList.forItemInfo()" >
+			<input type = "hidden" id = "itemSecond" name = "itemSecond" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"   >
+			<input type = "hidden" id = "itemFirst" name = "itemFirst" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"    >
+		<%--<select id = "itemFirst" name = "itemFirst"  title="用印事项一级"  class = "changeQuery userlevel" style="width: 240px"  onchange="changeItemFirst()"   >--%>
 				<%--<option value = "">   </option>--%>
 				<%--<c:forEach  var="itemFirstList"  items="${itemFirstList}">--%>
 					        <%--<option value ="${itemFirstList.K}" title=" ${itemFirstList.V}" > ${itemFirstList.V}</option>--%>
 				<%--</c:forEach>--%>
 			<%--</select>--%>
-			<input type = "itemFirst" id = "itemFirst" name = "itemFirst" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"  onclick="roomList.forItemInfo()" >
 			<%--<label  for="itemSecond" class="yearTitle">用印事项二级：</label>--%>
 			<%--<select id = "itemSecond" name = "itemSecond" title="用印事项二级"   class = "changeQuery userlevel" style="width: 240px">--%>
 				<%--<option value = "">   </option>--%>
@@ -100,22 +98,29 @@
 	    </div>
     </div>
 	<!-- end 列表展示 -->
-    <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
-    <script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
-    <script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>
- 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>  	<!-- 弹框.js  -->
+	<!-- end参观详情信息-->
+	<script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/locale/easyui-lang-zh_CN.js"></script>
 
+	<script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>  <!-- IE支持 JSON格式   -->
+	<script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>    <!-- 弹框.js  -->
+	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
 
-	<!-- 引入datagrid -->
+	<!-- 引入日期选择框 -->
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
-    <!-- 验证校验公共方法，提示框公共方法 -->
+	<!-- 验证校验公共方法，提示框公共方法 -->
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
-
 	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
-
+	<script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
+	<!-- 本页面所需的js -->
+	<script src="<%=request.getContextPath()%>/yszx/js/plugins/stuff-tree/stuff-tree1.js"></script>
+	<script src="<%=request.getContextPath()%>/yszx/js/plugins/organ-tree/organ-tree.js"></script>
 	<!-- 本页面所需的js -->
  	<script src="<%=request.getContextPath()%>/js/yygl/comprehensive/comprehensive.js"></script>
+
+
 
 
 </body>

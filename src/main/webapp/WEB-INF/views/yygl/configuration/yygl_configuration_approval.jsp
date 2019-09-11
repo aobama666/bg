@@ -36,24 +36,28 @@
 					<option value ="${DeptApprovalList.approveDeptId}" title=" ${DeptApprovalList.approveDeptName}" > ${DeptApprovalList.approveDeptName}</option>
 				</c:forEach>
 			</select>
-			<label  for="approveUserName" class="yearTitle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 员工账号：</label>
+			<label  for="approveUserName" class="yearTitle"> 员工账号：</label>
 			<input type = "text" id = "approveUserName" name = "approveUserName" style="width: 237px" class = "inputQuery changeQuery" >
 
 			<label  for="approveUserAlias" class="yearTitle">员工名称：</label>
 			<input type = "text" id = "approveUserAlias" name = "approveUserAlias" style="width: 237px" class = "inputQuery changeQuery" >
 			<br>
+			<label  for="itemName" class="yearTitle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用印事项：</label>
+			<input type = "text" id = "itemName" name = "itemName" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"  onclick="roomList.forItemInfo()" >
+			<input type = "hidden" id = "itemSecond" name = "itemSecond" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"   >
+			<input type = "hidden" id = "itemFirst" name = "itemFirst" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"    >
 
-			<label  for="itemFirstId" class="yearTitle">用印事项一级：</label>
-			<select id = "itemFirstId" name = "itemFirstId"   class = "changeQuery userlevel" style="width: 240px"  onchange="changeItemFirst()" >
-				<option value = "">   </option>
-				<c:forEach  var="itemFirstList"  items="${itemFirstList}">
-					<option value ="${itemFirstList.K}" title=" ${itemFirstList.V}" > ${itemFirstList.V}</option>
-				</c:forEach>
-			</select>
-			<label  for="itemSecondId" class="yearTitle">用印事项二级：</label>
-			<select id = "itemSecondId" name = "itemSecondId"   class = "changeQuery userlevel" style="width: 240px">
-				<option value = "">   </option>
-			</select>
+			<%--<label  for="itemFirstId" class="yearTitle">用印事项一级：</label>--%>
+			<%--<select id = "itemFirstId" name = "itemFirstId"   class = "changeQuery userlevel" style="width: 240px"  onchange="changeItemFirst()" >--%>
+				<%--<option value = "">   </option>--%>
+				<%--<c:forEach  var="itemFirstList"  items="${itemFirstList}">--%>
+					<%--<option value ="${itemFirstList.K}" title=" ${itemFirstList.V}" > ${itemFirstList.V}</option>--%>
+				<%--</c:forEach>--%>
+			<%--</select>--%>
+			<%--<label  for="itemSecondId" class="yearTitle">用印事项二级：</label>--%>
+			<%--<select id = "itemSecondId" name = "itemSecondId"   class = "changeQuery userlevel" style="width: 240px">--%>
+				<%--<option value = "">   </option>--%>
+			<%--</select>--%>
 			<label  for="approveNodeId" class="yearTitle"> 节点类型：</label>
 			<select id = "approveNodeId" name = "approveNodeId"   class = "changeQuery userlevel" style="width: 240px">
 				<option value = "">   </option>

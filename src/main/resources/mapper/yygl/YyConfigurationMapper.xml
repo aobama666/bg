@@ -270,7 +270,7 @@
         U.USERNAME   as "approveUserName",
         U.USERALIAS  as "approveUserAlias",
         A.NODE_TYPE as "approveNodeId",
-        (select name  from bg_sys_datadictionary  where pcode = 'use_seal_status'  and code = A.NODE_TYPE)   as  "approveNodeName",
+        (select name  from bg_sys_datadictionary  where pcode = 'node_type'  and code = A.NODE_TYPE)   as  "approveNodeName",
         A.ITEM_FIRST_ID   as "itemFirstId",
         F.FIRST_CATEGORY_NAME as "itemFirstName",
         A.ITEM_SECOND_ID  as "itemSecondId",
