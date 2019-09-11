@@ -49,17 +49,22 @@
 			   content="参观结束时间"
 			   style="width:150px;"
 		/>
-		<label  for="itemFirst" class="yearTitle">用印事项一级：</label>
-		<select id = "itemFirst" name = "itemFirst"   class = "changeQuery userlevel" style="width: 240px"  onchange="changeItemFirst()">
-			<option value = "">   </option>
-			<c:forEach  var="itemFirstList"  items="${itemFirstList}">
-				<option value ="${itemFirstList.K}" title=" ${itemFirstList.V}" > ${itemFirstList.V}</option>
-			</c:forEach>
-		</select>
-		<label  for="itemSecond" class="yearTitle">用印事项二级：</label>
-		<select id = "itemSecond" name = "itemSecond"   class = "changeQuery userlevel" style="width: 240px">
-			<option value = "">   </option>
-		</select>
+		<label  for="itemName" class="yearTitle">用印事项：</label>
+		<input type = "text" id = "itemName" name = "itemName" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"  onclick="roomList.forItemInfo()" >
+		<input type = "hidden" id = "itemSecond" name = "itemSecond" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"   >
+		<input type = "hidden" id = "itemFirst" name = "itemFirst" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"    >
+
+		<%--<label  for="itemFirst" class="yearTitle">用印事项一级：</label>--%>
+		<%--<select id = "itemFirst" name = "itemFirst"   class = "changeQuery userlevel" style="width: 240px"  onchange="changeItemFirst()">--%>
+			<%--<option value = "">   </option>--%>
+			<%--<c:forEach  var="itemFirstList"  items="${itemFirstList}">--%>
+				<%--<option value ="${itemFirstList.K}" title=" ${itemFirstList.V}" > ${itemFirstList.V}</option>--%>
+			<%--</c:forEach>--%>
+		<%--</select>--%>
+		<%--<label  for="itemSecond" class="yearTitle">用印事项二级：</label>--%>
+		<%--<select id = "itemSecond" name = "itemSecond"   class = "changeQuery userlevel" style="width: 240px">--%>
+			<%--<option value = "">   </option>--%>
+		<%--</select>--%>
 		</br>
 		<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;申请单位：</label>
 		<select id="deptId"  name = "deptId"  class = "changeQuery userlevel" style="width: 200px;margin-left: 0px" >
@@ -71,7 +76,7 @@
 		</select>
 		<label style="margin-left:20px;">用印事由：</label>
 		<input type = "text" id = "useSealReason" name = "useSealReason" style="width: 323px;" class = "inputQuery changeQuery" >
-		<label  for="useSealStatus" class="yearTitle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;审批状态：</label>
+		<label  for="useSealStatus" class="yearTitle"> 审批状态：</label>
 		<select id = "useSealStatus" name = "useSealStatus"   class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
 			<option value = "">   </option>
 			<c:forEach  var="statusInfo"  items="${statusInfoList}">

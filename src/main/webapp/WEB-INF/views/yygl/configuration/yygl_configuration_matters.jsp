@@ -25,17 +25,22 @@
 	<div class="sheach">
 		<div class='content_top'>用印事项配置</div>
 		<form id="queryForm" style="margin-bottom: 10px;">
-			<label  for="itemFirst" class="yearTitle">用印事项一级：</label>
-			<select id = "itemFirst" name = "itemFirst"   class = "changeQuery userlevel" style="width: 240px"  onchange="changeItemFirst()">
-				<option value = "">   </option>
-				<c:forEach  var="itemFirstList"  items="${itemFirstList}">
-					        <option value ="${itemFirstList.K}" title=" ${itemFirstList.V}" > ${itemFirstList.V}</option>
-				</c:forEach>
-			</select>
-			<label  for="itemSecond" class="yearTitle">用印事项二级：</label>
-			<select id = "itemSecond" name = "itemSecond"   class = "changeQuery userlevel" style="width: 240px">
-				<option value = "">   </option>
-			</select>
+			<label  for="itemName" class="yearTitle">用印事项：</label>
+			<input type = "text" id = "itemName" name = "itemName" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"  onclick="roomList.forItemInfo()" >
+			<input type = "hidden" id = "itemSecond" name = "itemSecond" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"   >
+			<input type = "hidden" id = "itemFirst" name = "itemFirst" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"    >
+
+			<%--<label  for="itemFirst" class="yearTitle">用印事项一级：</label>--%>
+			<%--<select id = "itemFirst" name = "itemFirst"   class = "changeQuery userlevel" style="width: 240px"  onchange="changeItemFirst()">--%>
+				<%--<option value = "">   </option>--%>
+				<%--<c:forEach  var="itemFirstList"  items="${itemFirstList}">--%>
+					        <%--<option value ="${itemFirstList.K}" title=" ${itemFirstList.V}" > ${itemFirstList.V}</option>--%>
+				<%--</c:forEach>--%>
+			<%--</select>--%>
+			<%--<label  for="itemSecond" class="yearTitle">用印事项二级：</label>--%>
+			<%--<select id = "itemSecond" name = "itemSecond"   class = "changeQuery userlevel" style="width: 240px">--%>
+				<%--<option value = "">   </option>--%>
+			<%--</select>--%>
 			<input type = "hidden"   id = "applyId" name="applyId">
 			<label  for="businessDeptName" class="yearTitle"> 业务主管部门：</label>
 			<input type = "text" id = "businessDeptName" name = "businessDeptName" style="width: 200px" class = "inputQuery changeQuery" >

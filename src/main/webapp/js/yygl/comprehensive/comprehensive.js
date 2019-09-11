@@ -32,6 +32,8 @@ $(function(){
 	roomList.btn_type_flag = 0;
 });
 
+
+
 /*  start  列表查询  */
 roomList.query = function(){
     /* 检索条件的验证 */

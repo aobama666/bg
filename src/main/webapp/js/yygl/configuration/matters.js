@@ -86,7 +86,18 @@ changeItemFirst = function () {
     });
 }
 
-　　　　　　
+		/*用印管理-事项弹框 */
+		roomList.forItemInfo = function (){
+			var url = "/bg/yyComprehensive/itemIndex";
+			layer.open({
+				type:2,
+				title:'<h4 style="height:42px;line-height:47px;">用印事项</h4>',
+				area:['300px','300px'],
+				fixed:false,//不固定
+				maxmin:true,
+				content:url,
+			});
+		}
 
 
 		/*事项配置管理-一级类别配置 */

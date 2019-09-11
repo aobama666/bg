@@ -78,7 +78,7 @@
         LEFT   JOIN      bg_yy_item_second S   ON A.item_second_id = S.uuid
         LEFT   JOIN      bg_sys_user  AU  ON    A.APPLY_HANDLE_USER_ID = AU.userid
         LEFT   JOIN      bg_sys_user  OU  ON    A.OFFICE_HANDLE_USER_ID = OU.userid
-        WHERE   A.VALID='1'  and   D.VALID='1'  and  U.VALID='1'   AND S.VALID='1'
+        WHERE   A.VALID='1'
         <if test="applyMap.applyCode!=null and applyMap.applyCode!=''">
             and A.APPLY_CODE  like '%'||#{applyMap.applyCode}||'%'
         </if>
