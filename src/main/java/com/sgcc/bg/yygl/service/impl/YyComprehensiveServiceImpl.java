@@ -42,6 +42,12 @@ public class YyComprehensiveServiceImpl implements YyComprehensiveService {
     public int updateForAffirm(String applyUserId,  String officeUserId, String applyId,String status) {
         return yyComprehensiveMapper.updateForAffirm(applyUserId,officeUserId,applyId,status);
     }
+
+    @Override
+    public List<Map<String, String>> selectForItemList() {
+        return yyComprehensiveMapper.selectForItemList();
+    }
+
     @Override
     public List<Map<String, Object>> selectForNodeType() {
         return yyComprehensiveMapper.selectForNodeType();

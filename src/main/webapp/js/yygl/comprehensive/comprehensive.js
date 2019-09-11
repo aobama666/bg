@@ -71,7 +71,7 @@ roomList.initDataGrid = function(){
             {name: '用印部门',style:{width:"150px"}, data: 'deptName'},
             {name: '用印申请人', style:{width:"150px"},data: 'applyUserName'},
             {name: '用印日期', style:{width:"150px"},data: 'userSealDate'},
-            {name: '用印事项', style:{width:"200px"},data: 'itemName'},
+            {name: '用印事项', style:{width:"200px"},data: 'secondCategoryName'},
             {name: '用印种类',style:{width:"200px"},data: 'userSealkindName'   },
             {name: '审批状态', style:{width:"150px"},data: 'userSealStatusName' },
             {name: '申请单位经办', style:{width:"100px"},data: 'applyHandleUserName' },
@@ -117,6 +117,25 @@ changeItemFirst = function () {
 				content:url, 
 			});
 	}
+        /*用印管理-事项弹框 */
+        roomList.forItemInfo = function (){
+            var url = "/bg/yyComprehensive/itemIndex";
+            layer.open({
+                type:2,
+                title:'<h4 style="height:42px;line-height:47px;">用印事项</h4>',
+                area:['300px','300px'],
+                fixed:false,//不固定
+                maxmin:true,
+                content:url,
+            });
+        }
+
+
+
+
+
+
+
 	/* 用印管理-综合查询导出功能*/
 	roomList.expEvent = function(){
 		 debugger;

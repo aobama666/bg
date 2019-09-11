@@ -40,4 +40,8 @@ public interface YyComprehensiveMapper {
      * 确认用印信息的添加
      */
      int  updateForAffirm(@Param("applyUserId") String applyUserId,@Param("officeUserId") String officeUserId, @Param("applyId") String applyId , @Param("status") String status);
+    /**
+     * 事项的查询树
+     */
+    List<Map<String,String>> selectForItemList();
 }

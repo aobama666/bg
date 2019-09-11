@@ -315,25 +315,16 @@ public class YyConfigurationController {
 		Map<String, Object> Map = new HashMap<String, Object>();
 		Logger.info("用印模块-配置模块-一级用印事项配置的修改------查看各名称是否已经存在");
 		Map.put("itemFirstName", itemFirstName);
+		Map.put("uuid", checkedIds);
 		String  itemFirstNum=yyConfigurationService.selectForItemFirstNum(Map);
 		if(Integer.parseInt(itemFirstNum)>0){
 			rw = new ResultWarp(ResultWarp.FAILED, "该一级类别名称已经存在，请重新命名");
 			return JSON.toJSONString(rw);
 		}
 		Logger.info("用印模块-配置模块-一级用印事项配置的修改------查看各名称是否已经存在");
-		Logger.info("用印模块-配置模块-一级用印事项配置的修改------旧需求代码如下：");
-		Map.put("uuid", checkedIds);
 		Map.put("updateUser", userId);
 		Map.put("updateTime", new Date());
 		int res = yyConfigurationService.updateForItemFirstInfo(Map);
-		Logger.info("用印模块-配置模块-一级用印事项配置的修改------旧需求代码结束");
-//		Logger.info("用印模块-配置模块-一级用印事项配置的修改------新需求代码如下：");
-//		Map.put("updateUser", userId);
-//		Map.put("updateTime", new Date());
-//		Map.put("valid", "0");
-//		Map.put("uuid", checkedIds);
-//		int res = yyConfigurationService.deleteForItemFirstInfo(Map);
-//		Logger.info("用印模块-配置模块-一级用印事项配置的修改------新需求代码结束");
 		if (res != 1) {
 			rw = new ResultWarp(ResultWarp.FAILED, "修改失败");
 		} else {
@@ -343,6 +334,38 @@ public class YyConfigurationController {
 		Logger.info("用印模块-配置模块-一级用印事项配置的修改------结束");
 		return JSON.toJSONString(rw);
 	}
+
+
+
+	/**
+	 * 一级事项节点下是否存在二级节点或该一级事项节点已经使用
+	 *
+	 * @param itemFirstIds 一级事项ID
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/findForitemFirstInfo")
+	public String findForitemFirstInfo(String itemFirstIds) {
+		ResultWarp rw = null;
+		Logger.info("用印模块-配置模块-一级用印事项配置的删除------查看该一级事项是否使用");
+		Map<String, Object> ComprehensiveMap = new HashMap<String, Object>();
+		ComprehensiveMap.put("itemFirst" ,itemFirstIds);
+		String   countNum=yyComprehensiveService.selectForComprehensiveNum(ComprehensiveMap);
+		if (Integer.parseInt(countNum)>0) {
+			rw = new ResultWarp(ResultWarp.FAILED, "该一级事项在已经使用，是否继续删除？");
+			return JSON.toJSONString(rw);
+		}
+		Logger.info("用印模块-配置模块-一级用印事项配置的删除------查看该一级事项下是否存在二级事项");
+		List<Map<String, Object>> itemSecondList = applyService.getItemSecond(itemFirstIds);
+		if (!itemSecondList.isEmpty()) {
+			rw = new ResultWarp(ResultWarp.FAILED, "该一级事项下存在二级事项，是否继续删除？");
+			return JSON.toJSONString(rw);
+		}
+		rw = new ResultWarp(ResultWarp.SUCCESS, "确认删除选中事项吗？删除请谨慎。");
+		return JSON.toJSONString(rw);
+	}
+
+
 
 
 	/**
@@ -360,41 +383,49 @@ public class YyConfigurationController {
 			rw = new ResultWarp(ResultWarp.FAILED, "请选择删除的数据");
 			return JSON.toJSONString(rw);
 		}
-		Logger.info("用印模块-配置模块-一级用印事项配置的删除---参数（一级事项ID）itemFirstIds"+itemFirstIds);
-		Logger.info("用印模块-配置模块-一级用印事项配置的删除---旧需求代码如下：");
-//		Logger.info("用印模块-配置模块-一级用印事项配置的删除------查看该一级事项是否使用");
-//		Map<String, Object> ComprehensiveMap = new HashMap<String, Object>();
-//		ComprehensiveMap.put("itemFirst" ,itemFirstIds);
-//		String   countNum=yyComprehensiveService.selectForComprehensiveNum(ComprehensiveMap);
-//		if (Integer.parseInt(countNum)>0) {
-//			rw = new ResultWarp(ResultWarp.FAILED, "该一级事项在已经使用，不能删除");
-//			return JSON.toJSONString(rw);
-//		}
-//		Logger.info("用印模块-配置模块-一级用印事项配置的删除------查看该一级事项下是否存在二级事项");
-//		List<Map<String, Object>> itemSecondList = applyService.getItemSecond(itemFirstIds);
-//		if (!itemSecondList.isEmpty()) {
-//			rw = new ResultWarp(ResultWarp.FAILED, "该一级事项下存在二级事项，不能删除");
-//			return JSON.toJSONString(rw);
-//		}
-		Logger.info("用印模块-配置模块-一级用印事项配置的删除---旧需求代码结束");
-		Logger.info("用印模块-配置模块-一级用印事项配置的删除---新需求代码如下：");
-		Map<String, Object> Map = new HashMap<String, Object>();
 		CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String userId = currentUser.getUserId();
+		Logger.info("用印模块-配置模块-一级用印事项配置的删除---参数（一级事项ID）itemFirstIds"+itemFirstIds);
+		Logger.info("用印模块-配置模块-一级用印事项配置下二级事项部门的删除-开始");
+		Map<String, Object> mattersMap = new HashMap<String, Object>();
+		mattersMap.put("itemFirst",itemFirstIds);
+		List<Map<String, Object>>   secondCategoryList=yyConfigurationService.selectForItemSecond(mattersMap);
+		if(!secondCategoryList.isEmpty()){
+			for (Map<String, Object> secondCategorymap:secondCategoryList){
+				Object   secondCategoryId= secondCategorymap.get("secondCategoryId");
+				Map<String, Object> deptMap = new HashMap<String, Object>();
+				deptMap.put("itemSecondId", secondCategoryId);
+				deptMap.put("valid", "0");
+				deptMap.put("updateUser", userId);
+				deptMap.put("updateTime", new Date());
+				yyConfigurationService.updateForItemSecondDeptInfo(deptMap);
+			}
+		}
+		Logger.info("用印模块-配置模块-一级用印事项配置下二级事项部门的删除-结束");
+		Logger.info("用印模块-配置模块-一级用印事项配置下二级事项的删除-开始");
+		List<Map<String, Object>> itemSecondList = applyService.getItemSecond(itemFirstIds);
+		if (!itemSecondList.isEmpty()) {
+			Map<String, Object> itemSecondMap = new HashMap<String, Object>();
+			itemSecondMap.put("itemFirstId", itemFirstIds);
+			itemSecondMap.put("updateUser", userId);
+			itemSecondMap.put("updateTime", new Date());
+			itemSecondMap.put("valid", "0");
+			yyConfigurationService.deleteForitemFirstId(itemSecondMap);
+		}
+		Logger.info("用印模块-配置模块-一级用印事项配置下二级事项的删除-结束");
+
+		Logger.info("用印模块-配置模块-一级用印事项配置的删除-开始");
+		Map<String, Object> Map = new HashMap<String, Object>();
+
 		Map.put("updateUser", userId);
 		Map.put("updateTime", new Date());
 		Map.put("valid", "0");
 		Map.put("uuid", itemFirstIds);
 		int res = yyConfigurationService.deleteForItemFirstInfo(Map);
-		
-		Map<String, Object> itemFirstMap = new HashMap<String, Object>();
-		itemFirstMap.put("itemFirstId", itemFirstIds);
-		Map.put("updateUser", userId);
-		Map.put("updateTime", new Date());
-		Map.put("valid", "0");
-		yyConfigurationService.deleteForitemFirstId(itemFirstMap);
+		Logger.info("用印模块-配置模块-一级用印事项配置的删除-结束");
 
-		Logger.info("用印模块-配置模块-一级用印事项配置的删除---新需求代码结束");
+
+
 
 		if (res != 1) {
 			rw = new ResultWarp(ResultWarp.FAILED, " 删除失败");
@@ -511,28 +542,15 @@ public class YyConfigurationController {
 			rw = new ResultWarp(ResultWarp.FAILED, "该一级事项下二级事项名称已经存在，请重新名称");
 			return JSON.toJSONString(rw);
 		}
-        Logger.info("用印模块-配置模块-二级用印事项配置的修改------旧需求代码如下：");
-//        Map.put("uuid", secondCategoryId);
-//		Map.put("itemFirstId", itemFirst);
-//		Map.put("ifSign", ifsign);
-//		Map.put("ifLeaderApprove", ifLeaderApprove);
-//		Map.put("updateUser", userId);
-//		Map.put("updateTime", new Date());
-//		int res = yyConfigurationService.updateForItemSecondInfo(Map);
-//		Map<String, Object> deptMap = new HashMap<String, Object>();
-//		deptMap.put("itemSecondId", secondCategoryId);
-//		deptMap.put("valid", "0");
-//		deptMap.put("updateUser", userId);
-//		deptMap.put("updateTime", new Date());
-//		yyConfigurationService.updateForItemSecondDeptInfo(deptMap);
-        Logger.info("用印模块-配置模块-二级用印事项配置的修改--------------------");
-        Logger.info("用印模块-配置模块-二级用印事项配置的修改------新需求代码如下：");
+        Logger.info("用印模块-配置模块-二级用印事项配置的修改------开始：");
         Logger.info("用印模块-配置模块-二级用印事项配置的删除接口---代码如下：");
         Map.put("updateUser", userId);
         Map.put("updateTime", new Date());
         Map.put("valid", "0");
         yyConfigurationService.deleteForItemSecondInfo(Map);
         Logger.info("用印模块-配置模块-二级用印事项配置的删除接口---代码结束");
+
+
         Logger.info("用印模块-配置模块-二级用印事项部门配置的删除接口---代码如下：");
         Map<String, Object> deptMap = new HashMap<String, Object>();
         deptMap.put("itemSecondId", secondCategoryId);
@@ -541,6 +559,8 @@ public class YyConfigurationController {
         deptMap.put("updateTime", new Date());
         yyConfigurationService.updateForItemSecondDeptInfo(deptMap);
         Logger.info("用印模块-配置模块-二级用印事部门项配置的删除接口---代码结束");
+
+
         Logger.info("用印模块-配置模块-二级用印事项配置的新增接口---代码如下：");
         Map<String, Object> newMap = new HashMap<String, Object>();
         String uuid = Rtext.getUUID();
@@ -836,8 +856,17 @@ public class YyConfigurationController {
 	@RequestMapping(value = "/deptInfo")
 	public String deptInfo(String  approveUserCode) {
 		CommonCurrentUser	currentUser=userUtils.getCommonCurrentUserByHrCode(approveUserCode);
-		String  deptName=currentUser.getDeptName();
-		String  deptId=currentUser.getDeptId();
+		String  deptName="";
+		String  deptId="";
+		String  type=currentUser.getType();
+		if(type.equals("1")){
+					   deptName=currentUser.getDeptName();
+		                deptId=currentUser.getDeptId();
+		}else{
+			  deptName=currentUser.getpDeptName();
+			   deptId=currentUser.getpDeptId();
+		}
+
 		ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"success");
 		rw.addData("deptName",deptName);
 		rw.addData("deptId",deptId);

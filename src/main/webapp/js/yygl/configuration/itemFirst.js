@@ -160,6 +160,7 @@ roomList.initDataGrid = function(){
 			itemFirsthtml +='<span title = "将用印事项一级类别">将用印事项一级类别:</span>';
 			itemFirsthtml +='</h4>';
 			itemFirsthtml +='</div>';
+
 			itemFirsthtml +='<div class="maxBox" style="text-align: center;    margin-top: 20px;">';
 			itemFirsthtml +='<input type = "text"   style="width: 240px" class = "inputQuery changeQuery"  value="'+firstCategoryName+'" readonly> ';
 			itemFirsthtml +='</div>';
@@ -207,11 +208,28 @@ roomList.initDataGrid = function(){
                     return;
                 }
 				var checkedIds = dataGrid.getCheckedIds();
-                deleteForitemFirst(checkedIds);
+                findForitemFirstInfo(checkedIds)
+
 			}
-		/*用印事项管理-一级类别配置-新增后台接口 */
-		function	deleteForitemFirst(checkedIds){
-            $.messager.confirm( "删除提示", "确认删除选中事项吗？该事项可能已被使用，删除请谨慎。",
+
+        /*用印事项管理-一级类别配置-删除查看该一级事项下是否存在二级事项或该事项已经使用 */
+        function findForitemFirstInfo(checkedIds){
+            $.ajax({
+                url: "/bg/yyConfiguration/findForitemFirstInfo?itemFirstIds="+checkedIds,//删除
+                type: "post",
+                dataType:"json",
+                contentType: 'application/json',
+                //data: JSON.stringify({"itemFirstIds":checkedIds }),
+                async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
+                success: function (data) {
+                    var  msgInfo=data.msg;
+                    deleteForitemFirst(checkedIds,msgInfo);
+                }
+            });
+		}
+		/*用印事项管理-一级类别配置-删除后台接口 */
+		function	deleteForitemFirst(checkedIds,msgInfo){
+            $.messager.confirm( "删除提示",  msgInfo ,
             	function(r){
             		if(r){
             			$.ajax({

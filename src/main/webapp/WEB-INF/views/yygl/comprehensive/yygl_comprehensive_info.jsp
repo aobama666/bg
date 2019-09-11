@@ -13,12 +13,15 @@
 	<!-- newPage、item.css 页面css-->
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/item.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/newPage.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
-    <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/datagrid.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css">   
+    <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/datagrid.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css">
 	<!-- easyuicss -->
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
-
+	<link href="<%=request.getContextPath()%>/css/ztree/demo.css" rel="stylesheet" type="text/css">
+	<link href="<%=request.getContextPath()%>/css/ztree/zTreeStyle/zTreeStyle.css" rel="stylesheet" type="text/css">
+	<script src="<%=request.getContextPath()%>/js/ztree/jquery-1.4.4.min.js"></script>
+	<script src="<%=request.getContextPath()%>/js/ztree/jquery.ztree.core.js"></script>
 </head>
 <body>
 	<div class="main_div"></div>
@@ -47,20 +50,21 @@
 				   content="用印结束日期"
 				   style="width:150px;"
 			/>
-			<label  for="itemFirst" class="yearTitle">用印事项一级：</label>
-			<select id = "itemFirst" name = "itemFirst"  title="用印事项一级"  class = "changeQuery userlevel" style="width: 240px"  onchange="changeItemFirst()">
-				<option value = "">   </option>
-				<c:forEach  var="itemFirstList"  items="${itemFirstList}">
-					        <option value ="${itemFirstList.K}" title=" ${itemFirstList.V}" > ${itemFirstList.V}</option>
-				</c:forEach>
-			</select>
-			<label  for="itemSecond" class="yearTitle">用印事项二级：</label>
-			<select id = "itemSecond" name = "itemSecond" title="用印事项二级"   class = "changeQuery userlevel" style="width: 240px">
-				<option value = "">   </option>
-			</select>
+			<label  for="itemFirst" class="yearTitle">用印事项：</label>
+			<%--<select id = "itemFirst" name = "itemFirst"  title="用印事项一级"  class = "changeQuery userlevel" style="width: 240px"  onchange="changeItemFirst()"   >--%>
+				<%--<option value = "">   </option>--%>
+				<%--<c:forEach  var="itemFirstList"  items="${itemFirstList}">--%>
+					        <%--<option value ="${itemFirstList.K}" title=" ${itemFirstList.V}" > ${itemFirstList.V}</option>--%>
+				<%--</c:forEach>--%>
+			<%--</select>--%>
+			<input type = "itemFirst" id = "itemFirst" name = "itemFirst" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"  onclick="roomList.forItemInfo()" >
+			<%--<label  for="itemSecond" class="yearTitle">用印事项二级：</label>--%>
+			<%--<select id = "itemSecond" name = "itemSecond" title="用印事项二级"   class = "changeQuery userlevel" style="width: 240px">--%>
+				<%--<option value = "">   </option>--%>
+			<%--</select>--%>
 			</br>
-			<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;申请单位：</label>
-			<select id="deptId"  name = "deptId"  title="申请单位" class = "changeQuery userlevel" style="width: 200px;margin-left: 0px" >
+			<label >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;申请单位：</label>
+			<select id="deptId"  name = "deptId"  title="申请单位" class = "changeQuery userlevel" style="width: 200px;margin-left: 0px"  >
 						<option value=""  ></option>
 				<c:forEach  var="deptInfo"  items="${deptInfoList}">
 					<option value ="${deptInfo.DEPT_ID}" title=" ${deptInfo.DEPTNAME}" > ${deptInfo.DEPTNAME}</option>
@@ -69,7 +73,7 @@
 			        	</select>
 			<label style="margin-left:20px;">用印事由：</label>
 			<input type = "text" id = "useSealReason" title="用印事由" name = "useSealReason" style="width: 323px;" class = "inputQuery changeQuery" >
-			<label  for="useSealStatus" class="yearTitle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;审批状态：</label>
+			<label  for="useSealStatus" class="yearTitle"> 审批状态：</label>
 			<select id = "useSealStatus" name = "useSealStatus" title="审批状态"    class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
 				<option value = "">   </option>
 				<c:forEach  var="statusInfo"  items="${statusInfoList}">
@@ -96,11 +100,13 @@
 	    </div>
     </div>
 	<!-- end 列表展示 -->
-    <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script> 
+    <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
     <script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>
  	<script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
-	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>  	<!-- 弹框.js  --> 
+	<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>  	<!-- 弹框.js  -->
+
+
 	<!-- 引入datagrid -->
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
     <!-- 验证校验公共方法，提示框公共方法 -->
@@ -110,5 +116,7 @@
 
 	<!-- 本页面所需的js -->
  	<script src="<%=request.getContextPath()%>/js/yygl/comprehensive/comprehensive.js"></script>
+
+
 </body>
 </html>

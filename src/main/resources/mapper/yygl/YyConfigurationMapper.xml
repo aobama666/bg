@@ -101,6 +101,7 @@
         </if>
         ORDER BY SORT_NUMBER DESC
     </sql>
+
     <!-- 一级用印事项的查询-->
     <select id="selectForItemFirst" resultType="java.util.Map"   parameterType="java.util.HashMap" >
         SELECT  T.*  from(
@@ -230,7 +231,7 @@
         UPDATE_USER  = #{itemSecondInfo.updateUser},
         UPDATE_TIME  = #{itemSecondInfo.updateTime},
         VALID  = #{itemSecondInfo.valid}
-        where FIRST_CATEGORY_ID = #{itemSecondInfo.itemFirstId}
+        where VALID='1' AND  FIRST_CATEGORY_ID = #{itemSecondInfo.itemFirstId}
     </update>
 
 
@@ -253,6 +254,10 @@
         VALID  = #{itemSecondDeptInfo.valid}
         where VALID='1'AND SECOND_CATEGORY_ID =  #{itemSecondDeptInfo.itemSecondId}
     </update>
+
+
+
+
 
     <!--审批人查询公共sql-->
     <sql id="approvalInfo">

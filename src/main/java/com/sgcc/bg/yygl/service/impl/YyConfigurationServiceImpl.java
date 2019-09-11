@@ -1,8 +1,8 @@
 package com.sgcc.bg.yygl.service.impl;
 
-import com.sgcc.bg.yygl.mapper.YyComprehensiveMapper;
+
 import com.sgcc.bg.yygl.mapper.YyConfigurationMapper;
-import com.sgcc.bg.yygl.service.YyComprehensiveService;
+
 import com.sgcc.bg.yygl.service.YyConfigurationService;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +111,7 @@ public class YyConfigurationServiceImpl implements YyConfigurationService {
         return yyConfigurationMapper.deleteForApprovalInfo(approvalMap);
     }
     @Override
-    public int deleteForitemFirstId(Map<String, Object> itemFirstId) {
-        return yyConfigurationMapper.deleteForitemFirstId(itemFirstId);
+    public int deleteForitemFirstId(Map<String, Object> itemSecondMap) {
+        return yyConfigurationMapper.deleteForitemFirstId(itemSecondMap);
     }
 }
