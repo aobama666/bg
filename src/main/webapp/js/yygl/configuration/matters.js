@@ -46,7 +46,7 @@ roomList.initDataGrid = function(){
 		tablepage:$(".tablepage"),//分页组件
 		columns: [
             {name: '序号',style:{width:"50px"}, data: 'ROWNO'},
-            {name: '选择',style:{width:"20px"}, data: 'secondCategoryId',  forMat:function(row){
+            {name: '选择',style:{width:"25px"}, data: 'secondCategoryId',  forMat:function(row){
                     dataItems[index] = row;//将一行数据放在一个list中
                     return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.secondCategoryId)+'"/>';
                 }
@@ -55,7 +55,7 @@ roomList.initDataGrid = function(){
             {name: '二级类别', style:{width:"150px"},data: 'secondCategoryName'},
             {name: '是否需要会签',style:{width:"100px"},data: 'ifSign'   },
             {name: '业务主管部门',style:{width:"200px"}, data: 'businessDeptName'},
-            {name: '是否需要院领导批准', style:{width:"100px"},data: 'ifLeaderApprove'},
+            {name: '是否需要院领导批准', style:{width:"100px"},data: 'ifLeaderApprove'}
 		]
 	});
 }
@@ -86,18 +86,18 @@ changeItemFirst = function () {
     });
 }
 
-		/*用印管理-事项弹框 */
-		roomList.forItemInfo = function (){
-			var url = "/bg/yyComprehensive/itemIndex";
-			layer.open({
-				type:2,
-				title:'<h4 style="height:42px;line-height:47px;">用印事项</h4>',
-				area:['300px','300px'],
-				fixed:false,//不固定
-				maxmin:true,
-				content:url,
-			});
-		}
+/*用印管理-事项弹框 */
+roomList.forItemInfo = function (){
+    var url = "/bg/yyComprehensive/itemIndex";
+    layer.open({
+        type:2,
+        title:'<h4 style="height:42px;line-height:27px;">用印事项</h4>',
+        area:['300px','350px'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url,
+    });
+}
 
 
 		/*事项配置管理-一级类别配置 */

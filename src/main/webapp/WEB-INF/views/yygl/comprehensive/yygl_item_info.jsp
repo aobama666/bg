@@ -16,10 +16,96 @@
 	<script src="<%=request.getContextPath()%>/js/ztree/jquery.ztree.core.js"></script>
 	<script src="<%=request.getContextPath()%>/yszx/js/json2.js"></script>
 	<script src="<%=request.getContextPath()%>/js/yygl/comprehensive/item.js"></script>
+
+	<style type="text/css">
+		.tree-box {
+			border: 1px solid #1b9974;
+			background: #ffffff;
+			width: 100%;
+			border-radius: 5px;
+			position: relative;
+			float: left;
+			margin-top: -10px;
+			height: 407px !important;
+			overflow-y:auto;
+		}
+		.tree-box li{
+			padding: 3px 4px;
+		}
+		._box {
+			border: 1px solid #1b9974;
+			background: #ffffff;
+			padding: 7px 10px;
+			width: 100%;
+			border-top-left-radius: 5px;
+			border-top-right-radius: 5px;
+			position: relative;
+			margin-top: -10px;
+			height: 38px;
+		}
+		._box input {
+			height: 22px;
+			padding: 1px 5px;
+		}
+		._box label {
+			font-size: 12px;
+			font-weight: normal;
+			margin-top: 4px;
+			float: left;
+			width: 68px;
+			text-align: right;
+		}
+		._box .controls {
+			margin-left: 71px;
+		}
+
+		body {
+			background-color:#D5E7E7;
+			padding:15px;
+		}
+		h5 {
+			margin: 2px 0;
+			color:#0a433a;
+			font-weight:bold;
+		}
+		hr {
+			color:#ffffff;
+			background-color:#ffffff;
+			border-color:#ffffff;
+		}
+		.page-header-sl {
+			margin: 5px 0 7px 0;
+			height: 10px;
+		}
+
+		.page-header-sl h5{
+			float: left;
+		}
+		.button-box {
+			float: right;
+		}
+		.btn{
+			background-color:#2D9592;
+			border-color:#2D9592;
+		}
+		.btn:hover{
+			background-color:#00828a;
+			border-color:#00828a;
+		}
+
+
+	</style>
 </head>
 <body>
+		<div class="page-header-sl" style="height: 32px;">
+			<h5> 用印事项</h5>
+			<div class="button-box">
+				 <button type="button" class="btn btn-warning btn-xs" onclick="clearChecked()"> 清空</button>
+			</div>
+		</div>
+
      <input type='hidden' name='itemList' id='itemList' value='${itemList}'>
-	<div  style="margin-left: 74px;margin-top: 13px">
+	 <div class="tree-box" style="width: 270px;height: 241px !important">
 		<div id="treeDemo" class="ztree"></div>
 	</div>
 </body>

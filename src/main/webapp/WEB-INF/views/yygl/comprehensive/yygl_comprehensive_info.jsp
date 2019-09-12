@@ -47,9 +47,14 @@
 				   style="width:150px;"
 			/>
 			<label  for="itemName" class="yearTitle">用印事项：</label>
-			<input type = "text" id = "itemName" name = "itemName" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"  onclick="roomList.forItemInfo()" >
-			<input type = "hidden" id = "itemSecond" name = "itemSecond" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"   >
-			<input type = "hidden" id = "itemFirst" name = "itemFirst" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"    >
+
+				<input readonly="readonly" type = "text" id = "itemName" name = "itemName" style="  width: 239px"   class = "inputQuery changeQuery"   title="用印事项"  onclick="roomList.forItemInfo()"  >
+				<input type = "hidden" id = "itemSecond" name = "itemSecond"   class = "inputQuery changeQuery"   title="用印事项"   >
+				<input type = "hidden" id = "itemFirst" name = "itemFirst"   class = "inputQuery changeQuery"   title="用印事项"    >
+
+
+
+
 		<%--<select id = "itemFirst" name = "itemFirst"  title="用印事项一级"  class = "changeQuery userlevel" style="width: 240px"  onchange="changeItemFirst()"   >--%>
 				<%--<option value = "">   </option>--%>
 				<%--<c:forEach  var="itemFirstList"  items="${itemFirstList}">--%>

@@ -44,8 +44,8 @@
 			<br>
 			<label  for="itemName" class="yearTitle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用印事项：</label>
 			<input type = "text" id = "itemName" name = "itemName" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"  onclick="roomList.forItemInfo()" >
-			<input type = "hidden" id = "itemSecond" name = "itemSecond" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"   >
-			<input type = "hidden" id = "itemFirst" name = "itemFirst" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"    >
+			<input type = "hidden" id = "itemSecond" name = "itemSecondId"   class = "inputQuery changeQuery"   title="用印事项"   >
+			<input type = "hidden" id = "itemFirst" name = "itemFirstId"   class = "inputQuery changeQuery"   title="用印事项"    >
 
 			<%--<label  for="itemFirstId" class="yearTitle">用印事项一级：</label>--%>
 			<%--<select id = "itemFirstId" name = "itemFirstId"   class = "changeQuery userlevel" style="width: 240px"  onchange="changeItemFirst()" >--%>

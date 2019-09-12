@@ -51,7 +51,7 @@ roomList.initDataGrid = function(){
 
 		columns: [
             {name: '序号',style:{width:"50px"}, data: 'ROWNO'},
-            {name: '选择',style:{width:"50px"}, data: 'approveId',  forMat:function(row){
+            {name: '选择',style:{width:"25px"}, data: 'approveId',  forMat:function(row){
                     dataItems[index] = row;//将一行数据放在一个list中
                     return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.approveId)+'"/>';
                 }
@@ -60,7 +60,7 @@ roomList.initDataGrid = function(){
             {name: '节点类型', style:{width:"100px"},data: 'approveNodeName'},
             {name: '员工账号',style:{width:"200px"},data: 'approveUserName'   },
             {name: '员工姓名',style:{width:"150px"}, data: 'approveUserAlias'},
-            {name: '用印事项', style:{width:"150px"},data: 'itemSecondName'},
+            {name: '用印事项', style:{width:"150px"},data: 'itemSecondName'}
 
 		]
 	});
@@ -71,7 +71,7 @@ roomList.initDataGrid = function(){
  * 级联变动二级用印事项内容
  */
 changeItemFirst = function () {
-	debugger;
+
     var firstCategoryId = $("#itemFirstId option:selected").val();
     $.ajax({
         url: "/bg/yygl/apply/secondType",
@@ -93,18 +93,18 @@ changeItemFirst = function () {
         }
     });
 }
-		/*用印管理-事项弹框 */
-		roomList.forItemInfo = function (){
-			var url = "/bg/yyComprehensive/itemIndex";
-			layer.open({
-				type:2,
-				title:'<h4 style="height:42px;line-height:47px;">用印事项</h4>',
-				area:['300px','300px'],
-				fixed:false,//不固定
-				maxmin:true,
-				content:url,
-			});
-		}
+/*用印管理-事项弹框 */
+roomList.forItemInfo = function (){
+    var url = "/bg/yyComprehensive/itemIndex";
+    layer.open({
+        type:2,
+        title:'<h4 style="height:42px;line-height:27px;">用印事项</h4>',
+        area:['300px','350px'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url,
+    });
+}
 
 		/*审批人管理-新增 */
 		roomList.approvalForSave = function (){
