@@ -147,9 +147,13 @@ public class YyMyItemController {
         YyApplyDAO apply = yyApplyService.applyDeatil(checkedId);
         String useSealStatus = apply.getUseSealStatus();
         List<Map<String,Object>> nextApprove = new ArrayList<>();
+        String deptNum = "";
         if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_DEPT)){
             //如果下一环节属于待业务主管部门审批，也就是当前为申请部门负责人审批
             nextApprove = myItemService.nextApproveBusiness(apply);
+            Map<String,Object> deptNumMap = nextApprove.get(nextApprove.size()-1);
+            deptNum = deptNumMap.get("deptNum").toString();
+            nextApprove.remove(nextApprove.size()-1);
         }else{
             //根据选择申请查询可以提供的下一环节审批人信息
             nextApprove = myItemService.nextApprove(apply);
@@ -165,6 +169,7 @@ public class YyMyItemController {
         mvMap.put("nextApprove",nextApprove);
         mvMap.put("nowDate",nowDate);
         mvMap.put("approveUser",approveUser);
+        mvMap.put("deptNum",deptNum);
         ModelAndView mv = new ModelAndView("yygl/myItem/agree",mvMap);
         return mv;
     }
@@ -184,16 +189,14 @@ public class YyMyItemController {
         String approveId = myItemService.getApproveId(applyUuid);
         //操作人id
         String loginUserId = yyApplyService.getLoginUserUUID();
-        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
-            //下一环节如果属于待业务主管部门审批
-
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_DEPT)){
+            //如果属于申请部门负责人审批
+        }else if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
+            //如果属于待业务主管部门审批
             //查看所有业务主管部门是否全部审批结束
-
         }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
             //如果属于待办公室审批
-
             //判断是否需要院领导批准
-
         }else{
             //申请部门负责人审批、院领导批准、印章管理人员确认用印
             approveService.sendApprove(false,

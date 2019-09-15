@@ -48,7 +48,7 @@
         <%--目前是部门负责人审批的角度，需要添加业务部门会签的界面--%>
         <c:forEach var="next" items="${nextApprove}">
             <tr>
-                <td><input type="radio" name="staffId" id="staffId" value="${next.STAFFID}"/></td>
+                <td><input type="radio" name="${next.radioId}" id="${next.radioId}" value="${next.STAFFID}" checked/></td>
                 <td>${next.USERNAME}</td>
                 <td>${next.USERALIAS}</td>
                 <td>${next.NODETYPE}</td>

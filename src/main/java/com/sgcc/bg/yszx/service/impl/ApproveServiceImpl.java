@@ -1013,7 +1013,8 @@ public class ApproveServiceImpl implements ApproveService{
     		auditTitle = "【用印申请】";
 			YyApplyDAO yyApplyDAO = yyApplyMapper.findApply(bussinessId);
 			HRUser hrUser = userService.getUserByUserId(yyApplyDAO.getApplyUserId());
-			String dept = hrUser.getUserDeptName();
+			Map<String,Object> deptMap = yyApplyMapper.findDept(yyApplyDAO.getApplyUserId());
+			String dept = deptMap.get("PDEPTNAME").toString();
 			String userName = hrUser.getUserAlias();
 			String applyCode = yyApplyDAO.getApplyCode();
 			auditTitle += dept;

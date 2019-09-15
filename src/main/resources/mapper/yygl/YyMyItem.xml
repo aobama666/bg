@@ -115,6 +115,8 @@
             max(r.CREATE_TIME)
           FROM TB_WL_APPLY a LEFT JOIN TB_WL_BUSINESS_R_APPLY r ON a.id = r.APPLY_ID
           WHERE r.BUSINESS_ID = #{useSealApplyId}
+          and a.VALID='1'
+          and r.VALID='1'
           GROUP BY a.APPROVE_ID)
     </select>
 </mapper>

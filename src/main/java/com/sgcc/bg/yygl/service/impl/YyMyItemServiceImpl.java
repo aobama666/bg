@@ -7,6 +7,7 @@ import com.sgcc.bg.yygl.mapper.YyMyItemMapper;
 import com.sgcc.bg.yygl.pojo.YyApplyDAO;
 import com.sgcc.bg.yygl.service.YyApplyService;
 import com.sgcc.bg.yygl.service.YyMyItemService;
+import freemarker.ext.beans.HashAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,11 +69,19 @@ public class YyMyItemServiceImpl implements YyMyItemService{
         String itemSecondId = yyApplyDAO.getItemSecondId();
         List<Map<String,Object>> itemBusinessDept = myItemMapper.itemBusinessDept(itemSecondId);
         List<Map<String, Object>> nextNodeApprove = new ArrayList<>();
+        Integer radioId = 1;
         for(Map<String,Object> ibd : itemBusinessDept){
             deptId = ibd.get("DEPT_ID").toString();
             List<Map<String, Object>> nextNodeApproveFor = myItemMapper.nextNodeApprove(deptId,YyApplyConstant.NODE_BUSSINESS,itemSecondId);
+            for(Map<String,Object> m : nextNodeApproveFor) {
+                m.put("radioId","staffId"+radioId);
+            }
             nextNodeApprove.addAll(nextNodeApproveFor);
+            radioId++;
         }
+        Map<String,Object> deptNums = new HashMap<>();
+        deptNums.put("deptNum",radioId);
+        nextNodeApprove.add(deptNums);
         return nextNodeApprove;
     }
 
@@ -97,6 +106,9 @@ public class YyMyItemServiceImpl implements YyMyItemService{
                 nodeType = YyApplyConstant.NODE_ADMIN;
             }
             nextNodeApprove = myItemMapper.nextNodeApprove(null,nodeType,itemSecondId);
+        }
+        for (Map<String,Object> m : nextNodeApprove){
+            m.put("radio","staffId1");
         }
         return nextNodeApprove;
     }

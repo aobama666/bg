@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.process.mapper.ProcessBaseMapper">
+
+
+    <insert id="addApply">
+        INSERT INTO TB_WL_APPLY (
+          id, FUNCTION_TYPE, APPLY_STATUS, APPROVE_ID, REMARK,
+          VALID, CREATE_USER, CREATE_TIME)
+        VALUES (
+            #{id},#{functionType},#{appltStatus},#{approveId},#{remark},'1',sysdate
+        )
+    </insert>
+
+    <insert id="addBusinessRApply">
+        insert into TB_WL_BUSINESS_R_APPLY(
+        id,BUSINESS_ID,APPLY_ID,REMARK,VALID,CREATE_USER,CREATE_TIME
+        ) values (
+        #{id},#{businessId},#{applyId},#{remark},'1',#{createUser},sysdate
+        )
+    </insert>
+    <insert id="addAuditUser">
+        insert into TB_WL_AUDIT_USER(
+        id,APPROVE_ID,APPROVE_EXPAND_ID,APPROVE_USER,VALID,CREATE_USER,CREATE_TIME
+        )VALUES (
+            #{id},#{approveId},#{approveExpandId},#{approveUser},'1',#{createUser},sysdate
+        )
+    </insert>
+
+    <insert id="addApprove">
+        INSERT INTO TB_WL_APPROVE (
+          id, APPLY_ID, NEXT_APPROVE_ID, APPROVE_NODE
+          , APPROVE_STATUS, APPROVE_RESULT, APPROVE_REMARK, APPROVE_STEP
+          , APPROVE_DATE, VALID, create_user, CREATE_TIME
+        ) VALUES (#{id},#{applyId},#{nextApproveId},#{approveNode},#{approveStatus}
+        ,#{approveResult},#{approveRemark},#{approveStep},#{approveDate}
+        ,'1',#{createUser},sysdate)
+    </insert>
+
+    <insert id="addApproveExpand">
+
+    </insert>
+
+    <update id="updateApply">
+        update TB_WL_APPLY set apply_status = #{appltStatus}
+        ,approve_id = #{approveId}
+        ,update_user = #{updateUser}
+        ,update_time = sysdate
+        where id = #{id}
+    </update>
+
+    <update id="updateAuditUser">
+        update TB_WL_AUDIT_USER set VALID='0'
+        where APPROVE_USER = #{approveUser}
+        AND approve_id = #{approveId}
+        and approve_expand_id = #{approveExpandId}
+    </update>
+
+    <update id="updateApprove">
+        update TB_WL_APPROVE set approve_user=#{approveUser}
+        ,approve_status=#{approveStatus}
+        ,approve_result=#{approveResult}
+        ,approve_remark=#{approveRemark}
+        ,approve_date=sysdate
+        ,audit_flag=#{auditFlag}
+        ,approve_node=#{approveNode}
+          where id = #{id}
+    </update>
+
+    <update id="updateApproveExpand">
+
+    </update>
+
+    <select id="selectAuditUserForApprove" resultType="com.sgcc.bg.process.model.PbAuditUser">
+        SELECT
+          id,
+          APPROVE_ID   approveId,
+          APPROVE_USER approveUser,
+          APPROVE_EXPAND_ID
+        FROM TB_WL_AUDIT_USER
+        where APPROVE_ID = #{approveId}
+    </select>
+
+    <select id="selectRule" resultType="com.sgcc.bg.process.model.PbRule">
+        SELECT
+          r.id,
+          r.node,
+          r.NEXT_NODE_ID  nextNodeId,
+          r.status,
+          r.condition,
+          r.FUNCTION_TYPE functionType,
+          r.SORT_ID       sortId,
+          r.APPROVE_ROLE  approveRole,
+          r.remark,
+          r.IF_EXPAND
+        FROM TB_WL_RULE r, (SELECT
+                              node,
+                              FUNCTION_TYPE
+                            FROM tb_wl_rule
+                            WHERE ID = #{ruleId}) t
+        WHERE r.NODE = t.NODE AND r.FUNCTION_TYPE = t.FUNCTION_TYPE
+              <if test="status!=null and status!=''">
+                AND r.STATUS = #{status}
+              </if>
+              <if test="condition!=null and condition!=''">
+                AND r.CONDITION #{condition}
+              </if>
+    </select>
+
+    <select id="ifExpand" resultType="java.lang.String">
+        select IF_EXPAND from TB_WL_RULE where ID=#{id};
+    </select>
+
+    <select id="selectApproveForId" resultType="com.sgcc.bg.process.model.PbApprove">
+        SELECT
+          id,
+          APPLY_ID        applyId,
+          NEXT_APPROVE_ID nextApproveId,
+          APPROVE_NODE    approveNode,
+          APPROVE_USER    approveUser,
+          APPROVE_STATUS  approveStatus,
+          APPROVE_RESULT  approveResult,
+          APPROVE_REMARK  approveRemark,
+          APPROVE_STEP    approveStep,
+          APPROVE_DATE    approveDate,
+          AUDIT_FLAG      auditFlag
+        FROM TB_WL_APPROVE
+        WHERE VALID = '1' AND id = #{id}
+    </select>
+
+    <select id="selectApproveExpandForId" resultType="com.sgcc.bg.process.model.PbApproveExpand">
+
+    </select>
+
+    <select id="getApproveIdForBusinessId" resultType="java.lang.String">
+        SELECT APPROVE_ID
+        FROM (
+          SELECT
+            a.approve_id,
+            max(r.CREATE_TIME)
+          FROM TB_WL_APPLY a LEFT JOIN TB_WL_BUSINESS_R_APPLY r ON a.id = r.APPLY_ID
+          WHERE r.BUSINESS_ID = #{businessId}
+          and a.VALID='1'
+          and r.VALID='1'
+          GROUP BY a.APPROVE_ID)
+    </select>
+
+
+</mapper>
