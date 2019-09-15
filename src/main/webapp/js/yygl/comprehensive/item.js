@@ -25,10 +25,12 @@ $(function(){
         return (treeNode.click != false);
     }
     function onClick(event, treeId, treeNode, clickFlag) {
+        debugger
          var pid=treeNode.pId;
          if(pid==null){
              parent.$("#itemName").val(treeNode.name);
              parent.$("#itemFirst").val(treeNode.id);
+             parent.$("#itemSecond").val("");
          }else{
              parent.$("#itemName").val(treeNode.name);
              parent.$("#itemFirst").val(treeNode.pId);
@@ -43,6 +45,13 @@ $(function(){
         $.fn.zTree.init($("#treeDemo"), setting, zNodes);
     });
 });
+function clearChecked(){
+    parent.$("#itemName").val("");
+    parent.$("#itemFirst").val("");
+    parent.$("#itemSecond").val("");
+    var closeIndex = parent.layer.getFrameIndex(window.name);
+    parent.layer.close(closeIndex);
+}
 
 
 

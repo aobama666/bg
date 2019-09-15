@@ -28,6 +28,7 @@ function popEvent(ids,codes,names,pId,level){
  * 级联变动二级用印事项内容
  */
 changeItemFirst = function () {
+    debugger;
     var firstCategoryId = $("#itemFirstId option:selected").val();
     $.ajax({
         url: "/bg/yygl/apply/secondType",
