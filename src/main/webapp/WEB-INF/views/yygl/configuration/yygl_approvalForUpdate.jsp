@@ -28,14 +28,15 @@
 <!-- start    查询条件 -->
 
 	<div class='content_top' style="margin-bottom: 10px;line-height: 50px;">申请人配置</div>
-	<table class="visitPerson tableStyle specialTable">
+    <div class="contentBox">
+	<table class="approvalInfo tableStyle specialTable">
 		<tr>
 			<td>
 				<span title = "节点类型"> 节点类型</span>
 			</td>
 			<td class="addInputStyle">
 				<input  id="approveId"   name="approveId"  type="hidden"        value="${approveId}"     />
-
+				<input  id="hideItemSecondId"   name="hideItemSecondId"  type="hidden"  value="${itemSecondId}"     />
 				<select id="approveNodeId"  name = "approveNodeId"  class = "validNull select-person"   content="节点类型"    title="必填项  "   >
 					<option value=""  selected > </option>
 					<c:forEach  var="nodeTypeList"  items="${nodeTypeList}">
@@ -50,8 +51,8 @@
 				<span title = "用印事项一级类别"> 用印事项一级类别</span>
 			</td>
 			<td class="addInputStyle">
-				<select id="itemFirstId"  name = "itemFirstId"  class = "validNull select-person"   content="用印事项一级类别"    title="必填项  "   onchange="newchangeItemFirst()"  >
-					<option value = "">   </option>itemSecondId
+				<select id="itemFirstId"  name = "itemFirstId"  class = "validNull select-person"   content="用印事项一级类别"    title="必填项  "   onchange="approvalInfo.changeItemFirstUpdate(this)"  >
+					<option value = "">   </option>
 					<c:forEach  var="itemFirstList"  items="${itemFirstList}">
 						<option value ="${itemFirstList.K}" title=" ${itemFirstList.V}"  ${itemFirstList.K == itemFirstId ?"selected='selected'":''}  > ${itemFirstList.V}</option>
 					</c:forEach>
@@ -64,10 +65,9 @@
 				<span title = "用印事项二级类别">用印事项二级类别</span>
 			</td>
 			<td   class="addInputStyle">
-				<input  id="hideItemSecondId"   name="hideItemSecondId"  type="hidden"  value="${itemSecondId}"     />
 				<select id = "itemSecondId" name = "itemSecondId"   class = "validNull select-person"   content="用印事项二级类别"    title="必填项  "  >
-					<option value = "">   </option>
 				</select>
+
 			</td>
 		</tr>
 		<tr>
@@ -88,7 +88,7 @@
 				<span title = "员工帐户"> 员工帐户</span>
 			</td>
 			<td   class="addInputStyle">
-			 <input  id="approveUserName"   name="approveUserName"  type="text"   class = "validNull"      content="员工帐户"  title="必填项  "  readonly   value="${approveUserName}"  />
+				<input  id="approveUserName"   name="approveUserName"  type="text"   class = "validNull"      content="员工帐户"  title="必填项  "  readonly   value="${approveUserName}"  />
 			</td>
 		</tr>
 		<tr>
@@ -101,6 +101,9 @@
 			</td>
 		</tr>
 	</table>
+
+	</div>
+
 
 	<div class="btnContent" style="  margin: 35px 0 20px;">
 		<button type="button" class="btn" onclick="approvalInfo.approvalForUpdate()">修改</button>
