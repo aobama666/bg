@@ -68,8 +68,10 @@ public class ProcessServiceImpl implements ProcessService {
             boolean ifExpandAllApprove = ifExpandAllApprove(approveId);
             if(!ifExpandAllApprove){
                 //最后一个审批通过的人触发对审批表的操作,如果没有全部审批通过，本环节结束，下面的流程就不用走了
-                return true;
+                return false;
             }
+
+
         }
 
         /**

@@ -62,6 +62,11 @@ public interface YyApplyService {
      */
     String applyUpdate(YyApply yyApply);
 
+    /**
+     * 修改申请状态
+     */
+    Integer updateApplyStatus(String uuid,String useSealStatus);
+
 
     /**
      * 查看详情

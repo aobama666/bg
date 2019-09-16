@@ -52,4 +52,9 @@ public interface YyMyItemService {
      */
     Map<String,Object> findDeptForUserName(String userName);
 
+    /**
+     * 是否需要院领导批准
+     */
+    boolean ifLeaderApprove(String itemSecondId);
+
 }

@@ -196,6 +196,11 @@ public class YyApplyServiceImpl implements YyApplyService {
     }
 
     @Override
+    public Integer updateApplyStatus(String uuid, String useSealStatus) {
+        return yyApplyMapper.updateApplyStatus(uuid,useSealStatus);
+    }
+
+    @Override
     public YyApplyDAO applyDeatil(String applyUuid) {
         return yyApplyMapper.findApply(applyUuid);
     }

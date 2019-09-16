@@ -131,7 +131,7 @@
                 AND r.STATUS = #{status}
               </if>
               <if test="condition!=null and condition!=''">
-                AND r.CONDITION #{condition}
+                AND r.CONDITION = #{condition}
               </if>
     </select>
 

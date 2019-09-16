@@ -7,13 +7,15 @@ var approve = {};
 同意
  */
 approve.agree =function () {
-    debugger;
     var deptNum = $("#deptNum").val();
-    var toDoerId = $('#staffId1').val();
-    var i =2;
-    for(i;i<=deptNum;i++){
-        var staffId = $("#staffId"+i).val()
-        toDoerId = toDoerId+','+staffId;
+    var toDoerId = $("input[name='staffId1']:checked").val();
+    if(deptNum>1){
+        var i =2;
+        for(i;i<=deptNum;i++){
+            var snapName = 'staffId'+i;
+            var staffId = $("input[name='"+snapName+"']:checked").val();
+            toDoerId = toDoerId+','+staffId;
+        }
     }
     var applyUuid = $('#applyUuid').val();
     var approveOpinion = $('#approveOpinion').val();

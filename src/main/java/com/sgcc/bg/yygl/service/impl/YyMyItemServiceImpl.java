@@ -90,25 +90,23 @@ public class YyMyItemServiceImpl implements YyMyItemService{
         String useSealStatus = yyApplyDAO.getUseSealStatus();
         String itemSecondId = yyApplyDAO.getItemSecondId();
         List<Map<String,Object>> nextNodeApprove = null;
-        //如果属于待申请部门审批,查询的时候需要加上对应的部门信息
-        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_DEPT)){
-            nextNodeApprove = myItemMapper.nextNodeApprove(yyApplyDAO.getApplyDeptId(),
-                    YyApplyConstant.NODE_DEPT,itemSecondId);
-        }else{
-            //根据对应申请状态，获取对应审批节点
-            //包含状态有：办公室负责人、院领导负责人、印章管理员负责人
-            String nodeType = "";
-            if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
+        //根据对应申请状态，获取对应审批节点
+        //包含状态有：业务部门负责人、办公室负责人、院领导负责人
+        String nodeType = "";
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
                 nodeType = YyApplyConstant.NODE_OFFICE;
-            }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_LEADER)){
-                nodeType = YyApplyConstant.NODE_LEADER;
-            }else if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_USER_SEAL)){
+        }else if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
+                if(ifLeaderApprove(yyApplyDAO.getItemSecondId())){
+                    nodeType = YyApplyConstant.NODE_LEADER;
+                }else{
+                    nodeType = YyApplyConstant.NODE_ADMIN;
+                }
+        }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_LEADER)){
                 nodeType = YyApplyConstant.NODE_ADMIN;
-            }
-            nextNodeApprove = myItemMapper.nextNodeApprove(null,nodeType,itemSecondId);
         }
+        nextNodeApprove = myItemMapper.nextNodeApprove(null,nodeType,itemSecondId);
         for (Map<String,Object> m : nextNodeApprove){
-            m.put("radio","staffId1");
+            m.put("radioId","staffId1");
         }
         return nextNodeApprove;
     }
@@ -128,6 +126,15 @@ public class YyMyItemServiceImpl implements YyMyItemService{
     @Override
     public Map<String, Object> findDeptForUserName(String userName) {
         return myItemMapper.findDeptForUserName(userName);
+    }
+
+    @Override
+    public boolean ifLeaderApprove(String itemSecondId) {
+        String if_leader_approve = myItemMapper.ifLeaderApprove(itemSecondId);
+        if(if_leader_approve.equals(YyApplyConstant.LEADER_APPROVE_NEED)){
+            return true;
+        }
+        return false;
     }
 
 }

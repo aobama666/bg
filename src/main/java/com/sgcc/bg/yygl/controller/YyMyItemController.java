@@ -160,6 +160,7 @@ public class YyMyItemController {
         }else{
             //根据选择申请查询可以提供的下一环节审批人信息
             nextApprove = myItemService.nextApprove(apply);
+            deptNum = "1";
         }
         //审批时间，审批操作人
         Date date = new Date();
@@ -190,27 +191,46 @@ public class YyMyItemController {
         YyApplyDAO apply = yyApplyService.applyDeatil(applyUuid);
         String useSealStatus = apply.getUseSealStatus();
         String approveUserId = yyApplyService.getLoginUserUUID();
+        //待办标题
         StringBuilder sbTitle = new StringBuilder();
         sbTitle.append("【用印申请】");
         sbTitle.append(apply.getApplyDept());
         sbTitle.append(apply.getApplyUser());
         sbTitle.append(apply.getApplyCode());
         String auditTitle = sbTitle.toString();
+        //待办链接
         String auditUrl = "/../../bg/yygl/my_item/toComingSoon";
-        /**
-         * 每个环节审批都要加方法，根据当前状态，获取下一个要改的状态
-         */
+        //下一环节状态
+        String useSealStatusUpdate = "";
+
+        // 根据当前状态，获取下一个要改的状态
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_DEPT)){
+            useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_BUSINESS;
+        }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
+            useSealStatusUpdate =YyApplyConstant.STATUS_DEAL_OFFICE;
+        }else if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_LEADER)){
+            useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_USER_SEAL;
+        }
+
+        //执行审批流程
+        boolean processResult;
         if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
             //如果属于待办公室审批,判断是否需要院领导批准
-            if(1==1){
+            if(myItemService.ifLeaderApprove(apply.getItemSecondId())){
                 //需要
-                processService.processApprove(applyUuid,"1",approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
+                useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_LEADER;
+                processResult = processService.processApprove(applyUuid,"1",approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
             }else{
                 //不需要
-                processService.processApprove(applyUuid,"2",approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
+                useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_USER_SEAL;
+                processResult = processService.processApprove(applyUuid,"2",approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
             }
         }else{
-            processService.processApprove(applyUuid,null,approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
+            processResult = processService.processApprove(applyUuid,null,approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
+        }
+        //如果流程正常到下一环节，修改当前审批状态
+        if(processResult){
+            yyApplyService.updateApplyStatus(applyUuid,useSealStatusUpdate);
         }
         ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"审批完成");
         return JSON.toJSONString(rw);

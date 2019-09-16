@@ -85,7 +85,11 @@
         FROM BG_YY_APPROVE a
         LEFT JOIN BG_SYS_DEPT d ON a.DEPT_ID = d.DEPTID
         LEFT JOIN BG_SYS_USER u ON u.USERID = a.STAFF_ID
-        WHERE a.DEPT_ID = #{deptId} AND a.NODE_TYPE = #{nodeType} AND
+        WHERE 1=1
+        <if test="deptId!=null and deptId!=''">
+          AND a.DEPT_ID = #{deptId}
+        </if>
+        AND a.NODE_TYPE = #{nodeType} AND
         a.ITEM_SECOND_ID = #{itemSecondId}
         AND a.VALID = '1' AND d.VALID = '1' AND u.VALID = '1'
     </select>

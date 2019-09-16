@@ -47,4 +47,7 @@ public class YyApplyConstant {
     public static final String APPROVE_RESULT_AGREE = "1";
     public static final String APPROVE_RESULT_REFUSE = "0";
 
+    //是否需要院领导批准
+    public static final String LEADER_APPROVE_NEED = "1";
+
 }
