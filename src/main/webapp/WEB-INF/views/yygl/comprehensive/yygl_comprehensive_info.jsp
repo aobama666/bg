@@ -18,6 +18,7 @@
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+
 </head>
 <body>
 	<div class="main_div"></div>
@@ -47,10 +48,13 @@
 				   style="width:150px;"
 			/>
 			<label  for="itemName" class="yearTitle">用印事项：</label>
-
-				<input readonly="readonly" type = "text" id = "itemName" name = "itemName" style="  width: 239px"   class = "inputQuery changeQuery"   title="用印事项"  onclick="roomList.forItemInfo()"  >
+				<input readonly="true" type = "text" id = "itemName" name = "itemName" style="  width: 239px"   class = "inputQuery changeQuery"   title="用印事项"   onclick="roomList.forItemInfo()"  >
+				<span class="input-itemName-addon"  onclick="roomList.forItemInfo()" ><span class="glyphicon glyphicon-th-list"></span></span>
 				<input type = "hidden" id = "itemSecond" name = "itemSecond"   class = "inputQuery changeQuery"   title="用印事项"   >
 				<input type = "hidden" id = "itemFirst" name = "itemFirst"   class = "inputQuery changeQuery"   title="用印事项"    >
+
+
+
 
 
 

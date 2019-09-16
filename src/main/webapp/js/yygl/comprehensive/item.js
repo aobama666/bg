@@ -25,7 +25,6 @@ $(function(){
         return (treeNode.click != false);
     }
     function onClick(event, treeId, treeNode, clickFlag) {
-        debugger
          var pid=treeNode.pId;
          if(pid==null){
              parent.$("#itemName").val(treeNode.name);
