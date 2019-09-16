@@ -28,7 +28,8 @@
 <!-- start    查询条件 -->
 
 	<div class='content_top' style="margin-bottom: 10px;line-height: 50px;">申请人配置</div>
-	<table class="visitPerson tableStyle specialTable">
+    <div class="contentBox">
+	<table class="approvalInfo tableStyle specialTable">
 		<tr>
 			<td>
 				<span title = "节点类型"> 节点类型</span>
@@ -48,14 +49,13 @@
 				<span title = "用印事项一级类别"> 用印事项一级类别</span>
 			</td>
 			<td class="addInputStyle">
-				<select id="itemFirstId"  name = "itemFirstId"  class = "validNull select-person"   content="用印事项一级类别"    title="必填项  "   onchange="changeItemFirst()" >
+				<select id="itemFirstId"  name = "itemFirstId"  class = "validNull select-person"   content="用印事项一级类别"    title="必填项  "   onchange="approvalInfo.changeItemFirst(this)" >
 					<option value = "">   </option>
 					<c:forEach  var="itemFirstList"  items="${itemFirstList}">
 						<option value ="${itemFirstList.K}" title=" ${itemFirstList.V}" > ${itemFirstList.V}</option>
 					</c:forEach>
 				</select>
 			</td>
-
 		</tr>
 		<tr>
 			<td>
@@ -63,7 +63,7 @@
 			</td>
 			<td   class="addInputStyle">
 				<select id = "itemSecondId" name = "itemSecondId"   class = "validNull select-person"   content="用印事项二级类别"    title="必填项  "  >
-					<option value = "">   </option>
+
 				</select>
 			</td>
 		</tr>
@@ -98,7 +98,7 @@
 			</td>
 		</tr>
 	</table>
-
+	</div>
 	<div class="btnContent" style="  margin: 35px 0 20px;">
 		<button type="button" class="btn" onclick="approvalInfo.approvalForSave()">保存</button>
 		<button type="button" class="btn" onclick="approvalInfo.approvalForResign()">返回</button>

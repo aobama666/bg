@@ -6,9 +6,9 @@ roomList.btn_type_flag = 0;
 $(function(){
     /* 需求无说明，默认为空
      $("#stateDate").val(getMonthFirstDay());//用印开始时间
-     $("#endDate").val(getMonthEndDay());//用印结束时间
-    */
+     $("#endDate").val(getMonthEndDay());//用印结束时间*/
    roomList.initDataGrid();
+
    /* 输入框的change事件，在输入过程中自动查询  */
 	$(".changeQuery").change(function(e){
 		roomList.query();
@@ -19,6 +19,7 @@ $(function(){
 			roomList.query();
 		}
 	});
+
 
 	//回车键出发搜索按钮
 	$("body").keydown(function () {
@@ -67,7 +68,7 @@ roomList.initDataGrid = function(){
                         "white-space: nowrap;" +
                         "text-overflow: ellipsis;" +
                         "overflow: hidden;' applyCode = '"+row.applyCode+"'  ,applyId ='"+row.applyId+"' " +
-                        "href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.applyCode+"','"+row.applyId+"')>"+row.applyCode+"</a>";
+                        "href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.applyId+"')>"+row.applyCode+"</a>";
                 }},
             {name: '用印事由', style:{width:"200px"}, data: 'userSealReason'   },
             {name: '用印部门',style:{width:"150px"}, data: 'deptName'},
@@ -107,18 +108,24 @@ changeItemFirst = function () {
         }
     });
 }
-	/*用印管理-查看 */
-	roomList.forDetails = function (id,applyId){
-		var url = "/bg/yszx/details?id="+id+"&applyId="+applyId;
-			layer.open({
-				type:2,
-				title:'<h4 style="height:42px;line-height:25px;">参观预定详情</h4>',
-				area:['85%','85%'],
-				fixed:false,//不固定
-				maxmin:true,
-				content:url, 
-			});
-	}
+
+        /**
+         * 用印申请详情弹窗
+         */
+        roomList.forDetails = function (applyUuid) {
+            var url = "/bg/yygl/apply/toApplyDetail?applyUuid="+applyUuid;
+            layer.open({
+                type:2,
+                title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请详情</h4>',
+                area:['85%','85%'],
+                fixed:false,//不固定
+                maxmin:true,
+                content:url
+            });
+        }
+
+
+
         /*用印管理-事项弹框 */
         roomList.forItemInfo = function (){
             var url = "/bg/yyComprehensive/itemIndex";

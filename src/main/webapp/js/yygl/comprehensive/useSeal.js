@@ -65,7 +65,7 @@ roomList.initDataGrid = function(){
 				  		"white-space: nowrap;" +
 				  		"text-overflow: ellipsis;" +
 				  		"overflow: hidden;' applyCode = '"+row.applyCode+"'  ,applyId ='"+row.applyId+"'     " +
-				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.applyCode+"','"+row.applyId+"')>"+row.applyCode+"</a>";
+				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.applyId+"')>"+row.applyCode+"</a>";
 		  }},
 		  {name: '用印事由', style:{width:"200px"},data: 'userSealReason'},
 		  {name: '用印部门',style:{width:"150px"}, data: 'deptName'},
@@ -119,18 +119,20 @@ changeItemFirst = function () {
     });
 }
 
-	/*用印管理-详情页面的查询 */
-	roomList.forDetails = function (id,applyId){
-		var url = "/bg/yszx/details?id="+id+"&applyId="+applyId;
-			layer.open({
-				type:2,
-				title:'<h4 style="height:42px;line-height:25px;">确认用印</h4>',
-				area:['85%','85%'],
-				fixed:false,//不固定
-				maxmin:true,
-				content:url,
-			});
-	}
+/**
+ * 用印申请详情弹窗
+ */
+roomList.forDetails = function (applyUuid) {
+    var url = "/bg/yygl/apply/toApplyDetail?applyUuid="+applyUuid;
+    layer.open({
+        type:2,
+        title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请详情</h4>',
+        area:['85%','85%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url
+    });
+}
 
 		/* 用印管理-确认用印*/
 		roomList.agreeSeal = function(applyCode,applyId,applyUserName,applyUserId){

@@ -2,7 +2,7 @@ var approvalInfo = {};
 approvalInfo.saveBtnClickFlag = 0;//保存按钮点击事件
 approvalInfo.saveInfoFlag = true;//页面数据保存事件
 $(function(){
-    newchangeItemFirst()
+    approvalInfo.changeItemFirstUpdate();
     $("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'parent',empCode:'empCode',empName:'empName',checkType:'radio',popEvent:'pop'});
 });
 function popEvent(ids,codes,names,pId,level){
@@ -27,59 +27,57 @@ function popEvent(ids,codes,names,pId,level){
 /**
  * 级联变动二级用印事项内容
  */
-changeItemFirst = function () {
-    debugger;
+approvalInfo.changeItemFirst = function (obj) {
     var firstCategoryId = $("#itemFirstId option:selected").val();
+    $(obj).parents(".contentBox").find("#itemSecondId").empty();
     $.ajax({
         url: "/bg/yygl/apply/secondType",
         type: "post",
         dataType:"json",
+        async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
         data: {'firstCategoryId':firstCategoryId},
         success: function (data) {
             var itemSecond = data.data.itemSecond;
             var checkContent = '';
-            document.getElementById("itemSecondId").innerHTML = checkContent;
-            var i ;
-            checkContent = "<option selected='selected'></option>";
-            for(i=0;i<itemSecond.length;i++){
-                var k = itemSecond[i].K;
-                var v = itemSecond[i].V;
-                checkContent = checkContent+'<option value = "'+k+'">'+v+'</option>';
+            checkContent += '<option value=""  ></option>';
+            for(var i=0;i<itemSecond.length;i++){
+                checkContent += '<option value="' + itemSecond[i].K + '">' + itemSecond[i].V + '</option>';
             }
-            document.getElementById("itemSecondId").innerHTML = checkContent;
+            $("#itemSecondId").append(checkContent)
         }
     });
+
 }
 /**
  * 联变动二级用印事项内容
  */
-newchangeItemFirst = function () {
+approvalInfo.changeItemFirstUpdate = function (obj) {
+    $(obj).parents(".contentBox").find("#itemSecondIds").empty();
     var  itemSecondId=  $("#hideItemSecondId").val() ;
     var firstCategoryId = $("#itemFirstId option:selected").val();
+    var checkContent = '';
     $.ajax({
         url: "/bg/yygl/apply/secondType",
         type: "post",
         dataType:"json",
+        async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
         data: {'firstCategoryId':firstCategoryId},
         success: function (data) {
+           // document.getElementById("itemSecondIds").innerHTML = checkContent;
+          //  $(obj).parents(".contentBox").find("#itemSecondId").append(checkContent);
             var itemSecond = data.data.itemSecond;
-            var checkContent = '';
-            document.getElementById("itemSecondId").innerHTML = checkContent;
-            var i ;
-            checkContent = "<option selected='selected'></option>";
-            for(i=0;i<itemSecond.length;i++){
-                var k = itemSecond[i].K;
-                var v = itemSecond[i].V;
-                if(k==itemSecondId){
-                    checkContent = checkContent+'<option value = "'+k+'" selected>'+v+'</option>';
+            checkContent += '<option value=""  ></option>';
+            for(var i=0;i<itemSecond.length;i++){
+                if(itemSecond[i].K==itemSecondId){
+                    checkContent += '<option  selected  value="' + itemSecond[i].K + '">' + itemSecond[i].V + '</option>';
                 }else {
-                    checkContent = checkContent+'<option value = "'+k+'">'+v+'</option>';
+                    checkContent += '<option value="' + itemSecond[i].K + '">' + itemSecond[i].V + '</option>';
                 }
 
             }
-            document.getElementById("itemSecondId").innerHTML = checkContent;
         }
     });
+     $("#itemSecondId").append(checkContent)
 }
 approvalInfo.approvalForSave =function () {
     /* 验证必填项   */

@@ -42,8 +42,9 @@
 			<label  for="approveUserAlias" class="yearTitle">员工名称：</label>
 			<input type = "text" id = "approveUserAlias" name = "approveUserAlias" style="width: 237px" class = "inputQuery changeQuery" >
 			<br>
-			<label  for="itemName" class="yearTitle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用印事项：</label>
+			<label  for="itemName" class="yearTitle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 用印事项：</label>
 			<input type = "text" id = "itemName" name = "itemName" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"  onclick="roomList.forItemInfo()" >
+			<span class="input-itemName-addon"  onclick="roomList.forItemInfo()" ><span class="glyphicon glyphicon-th-list"></span></span>
 			<input type = "hidden" id = "itemSecond" name = "itemSecondId"   class = "inputQuery changeQuery"   title="用印事项"   >
 			<input type = "hidden" id = "itemFirst" name = "itemFirstId"   class = "inputQuery changeQuery"   title="用印事项"    >
 
