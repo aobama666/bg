@@ -31,4 +31,27 @@ public class ProcessBaseConstant {
     //否
     public final static String AUDIT_FLAG_NO = "0";
 
+
+    /**
+     * 待办发送参数标识
+     */
+    //审批标识
+    public final static String PRECESS_APPROVE = "1";
+    //扩展标识
+    public final static String PRECESS_EXPAND = "2";
+
+
+    /**
+     * 待办队列名称
+     */
+    public final static String ROUTING_KEY = "QUEUE_TYGLPT_APP";
+
+    /**
+     * 待办操作名称
+     */
+    //新增待办
+    public final static String OPERATE_INSERT = "insertTask";
+    //完成待办
+    public final static String OPERATE_DONE = "doneTask";
+
 }

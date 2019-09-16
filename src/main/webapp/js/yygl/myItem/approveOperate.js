@@ -7,13 +7,20 @@ var approve = {};
 同意
  */
 approve.agree =function () {
-    var applyId;
-    var applyUserId;
-    var approveOpinion;
+    debugger;
+    var deptNum = $("#deptNum").val();
+    var toDoerId = $('#staffId1').val();
+    var i =2;
+    for(i;i<=deptNum;i++){
+        var staffId = $("#staffId"+i).val()
+        toDoerId = toDoerId+','+staffId;
+    }
+    var applyUuid = $('#applyUuid').val();
+    var approveOpinion = $('#approveOpinion').val();
     $.ajax({
         url: "/bg/yygl/my_item/agree",
         type: "post",
-        data: {"applyId":applyId,"applyUserId":applyUserId,"approveOpinion":approveOpinion},
+        data: {"applyUuid":applyUuid,"approveOpinion":approveOpinion,"toDoerId":toDoerId},
         success: function (data) {
             layer.msg(data.msg);
         }

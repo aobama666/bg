@@ -65,19 +65,19 @@ public class YyMyItemServiceImpl implements YyMyItemService{
 
     @Override
     public List<Map<String, Object>> nextApproveBusiness(YyApplyDAO yyApplyDAO) {
-        String deptId = "";
+        String deptId;
         String itemSecondId = yyApplyDAO.getItemSecondId();
         List<Map<String,Object>> itemBusinessDept = myItemMapper.itemBusinessDept(itemSecondId);
         List<Map<String, Object>> nextNodeApprove = new ArrayList<>();
-        Integer radioId = 1;
+        Integer radioId = 0;
         for(Map<String,Object> ibd : itemBusinessDept){
+            radioId++;
             deptId = ibd.get("DEPT_ID").toString();
             List<Map<String, Object>> nextNodeApproveFor = myItemMapper.nextNodeApprove(deptId,YyApplyConstant.NODE_BUSSINESS,itemSecondId);
             for(Map<String,Object> m : nextNodeApproveFor) {
                 m.put("radioId","staffId"+radioId);
             }
             nextNodeApprove.addAll(nextNodeApproveFor);
-            radioId++;
         }
         Map<String,Object> deptNums = new HashMap<>();
         deptNums.put("deptNum",radioId);
@@ -130,8 +130,4 @@ public class YyMyItemServiceImpl implements YyMyItemService{
         return myItemMapper.findDeptForUserName(userName);
     }
 
-    @Override
-    public String getApproveId(String useSealApplyId) {
-        return myItemMapper.getApproveId(useSealApplyId);
-    }
 }

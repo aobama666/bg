@@ -67,7 +67,7 @@
         <tr>
             <td class="bg">审批意见</td>
             <td colspan="3">
-                <textarea  style="height: 100%;width: 100%;resize:vertical">同意</textarea>
+                <textarea id="approveOpinion" style="height: 100%;width: 100%;resize:vertical">同意</textarea>
             </td>
         </tr>
     </table>
@@ -75,6 +75,8 @@
         <button type="button" class="btn" onclick="approve.agree()">确认</button>
         <button type="button" class="btn" onclick="approve.returnClose()">取消</button>
     </div>
+    <input type="text" id="deptNum" value="${deptNum}" style="display: none"/>
+    <input type="text" id="applyUuid" value="${applyUuid}" style="display: none"/>
 </div>
 </body>
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>

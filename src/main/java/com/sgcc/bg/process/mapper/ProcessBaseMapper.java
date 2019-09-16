@@ -41,6 +41,11 @@ public interface ProcessBaseMapper {
     //修改对应审批id,或对应审批扩展id待办用户信息为失效
     Integer updateAuditUser(PbAuditUser pbAuditUser);
 
+    //修改对应审批id除参数外其他用户的有效状态改为无效
+    Integer updateAuditUserForUser(
+            @Param("approveId") String approveId,
+            @Param("approveUser") String approveUser);
+
     //查询对应审批id待办用户信息
     List<PbAuditUser> selectAuditUserForApprove(@Param("approveId") String approveId);
 
@@ -53,8 +58,14 @@ public interface ProcessBaseMapper {
                       @Param("status") String status,
                       @Param("condition") String condition);
 
+    //根据主键信息查询对应规则
+    PbRule selectRuleForId(@Param("id") String id);
+
     //判断对应规则是否使用扩展表
     String ifExpand(@Param("id") String id);
+
+    //根据规则定义业务类型，查询字典表中对应业务模块名称
+    String getAuditCatalog(@Param("functionType") String functionType);
 
 
     /**
@@ -77,10 +88,21 @@ public interface ProcessBaseMapper {
     Integer addApproveExpand(PbApproveExpand pbApprove);
 
     //修改审批扩展记录信息
-    Integer updateApproveExpand(PbApproveExpand pbApprove);
+    Integer updateApproveExpand(
+            @Param("approveResult") String approveResult,
+            @Param("approveRemark") String approveRemark,
+            @Param("auditFlag") String auditFlag,
+            @Param("updateUser") String updateUser,
+            @Param("approveId") String approveId,
+            @Param("approveUser") String approveUser
+    );
 
-    //根据主键查询对应审批扩展信息
-    PbApproveExpand selectApproveExpandForId(@Param("id") String id);
+    //查询对应审批id的所有扩展信息是否待办，也就是是否审批
+    List<String> selectExpandIfAudit(@Param("approveId") String approveId);
+
+    //根据审批id和审批用户获取扩展id
+    String getExpandId(@Param("approveId") String approveId,
+                       @Param("approveUser") String approveUser);
 
 
 }

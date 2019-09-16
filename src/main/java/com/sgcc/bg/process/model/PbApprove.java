@@ -8,7 +8,7 @@ import java.util.Date;
 public class PbApprove {
     private String id;
     private String applyId;
-    private String nextApprove_id;
+    private String nextApproveId;
     private String approveNode;
     private String approveUser;
     private String approveStatus;
@@ -39,12 +39,12 @@ public class PbApprove {
         this.applyId = applyId;
     }
 
-    public String getNextApprove_id() {
-        return nextApprove_id;
+    public String getNextApproveId() {
+        return nextApproveId;
     }
 
-    public void setNextApprove_id(String nextApprove_id) {
-        this.nextApprove_id = nextApprove_id;
+    public void setNextApproveId(String nextApproveId) {
+        this.nextApproveId = nextApproveId;
     }
 
     public String getApproveNode() {

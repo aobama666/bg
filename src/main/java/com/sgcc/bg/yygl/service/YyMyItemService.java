@@ -52,8 +52,4 @@ public interface YyMyItemService {
      */
     Map<String,Object> findDeptForUserName(String userName);
 
-    /**
-     * 根据用印申请id，查询当前流程审批id
-     */
-    String getApproveId(String useSealApplyId);
 }

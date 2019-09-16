@@ -11,7 +11,7 @@ public class PbApproveExpand {
     private String approveUser;
     private String approveResult;
     private String approveRemark;
-    private String audit_flag;
+    private String auditFlag;
     private String createUser;
     private Date createTime;
     private String updateUser;
@@ -60,12 +60,12 @@ public class PbApproveExpand {
         this.approveRemark = approveRemark;
     }
 
-    public String getAudit_flag() {
-        return audit_flag;
+    public String getAuditFlag() {
+        return auditFlag;
     }
 
-    public void setAudit_flag(String audit_flag) {
-        this.audit_flag = audit_flag;
+    public void setAuditFlag(String auditFlag) {
+        this.auditFlag = auditFlag;
     }
 
     public String getCreateUser() {

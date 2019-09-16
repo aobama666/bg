@@ -13,7 +13,7 @@ public class PbApply {
     private Date applyTime;
     private String functionType;
     private String applyStatus;
-    private String approve_id;
+    private String approveId;
     private String remark;
     private String valid;
     private String createUser;
@@ -77,12 +77,12 @@ public class PbApply {
         this.applyStatus = applyStatus;
     }
 
-    public String getApprove_id() {
-        return approve_id;
+    public String getApproveId() {
+        return approveId;
     }
 
-    public void setApprove_id(String approve_id) {
-        this.approve_id = approve_id;
+    public void setApproveId(String approveId) {
+        this.approveId = approveId;
     }
 
     public String getRemark() {
