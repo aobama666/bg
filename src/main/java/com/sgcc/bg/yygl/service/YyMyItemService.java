@@ -57,4 +57,9 @@ public interface YyMyItemService {
      */
     boolean ifLeaderApprove(String itemSecondId);
 
+    /**
+     * 确认用印,执行申请的确认用印流程，修改对应申请的状态为已完成
+     */
+    boolean completeUseSeal(String applyUuid);
+
 }

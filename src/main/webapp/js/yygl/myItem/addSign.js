@@ -12,7 +12,8 @@ $(function(){
 增加业务部门会签，也就是确认按钮
  */
 sign.addSign = function () {
-    var userId = $("#checkUser").val();
+    debugger
+    var userId = $("#userId").val();
     if(userId==='' || userId===undefined){
         layer.msg("请选择业务会签部门下的审批人");
     }

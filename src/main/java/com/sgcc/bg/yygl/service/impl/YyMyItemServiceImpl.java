@@ -1,6 +1,7 @@
 package com.sgcc.bg.yygl.service.impl;
 
 import com.sgcc.bg.common.Rtext;
+import com.sgcc.bg.process.service.ProcessService;
 import com.sgcc.bg.yygl.bean.YyApply;
 import com.sgcc.bg.yygl.constant.YyApplyConstant;
 import com.sgcc.bg.yygl.mapper.YyMyItemMapper;
@@ -24,6 +25,8 @@ public class YyMyItemServiceImpl implements YyMyItemService{
     private YyApplyService yyApplyService;
     @Autowired
     private YyMyItemMapper myItemMapper;
+    @Autowired
+    private ProcessService processService;
 
     @Override
     public Map<String,Object> selectMyItem(String applyCode,
@@ -135,6 +138,17 @@ public class YyMyItemServiceImpl implements YyMyItemService{
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean completeUseSeal(String applyUuid) {
+        String approveUserId = yyApplyService.getLoginUserUUID();
+        //执行确认用印流程
+        processService.processApprove(applyUuid,null,"确认用印",approveUserId
+        ,null,null,null);
+        //修改对应申请的状态
+        yyApplyService.updateApplyStatus(applyUuid,YyApplyConstant.STATUS_USED_SEAL);
+        return true;
     }
 
 }

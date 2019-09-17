@@ -85,7 +85,7 @@ myItem.toAddSign = function () {
         type: "post",
         data: {"checkedId":checkedId},
         success: function (data) {
-            if(data.success === 'SUCCESS'){
+            if(data.success === 'true'){
                 var url = "/bg/yygl/my_item/toAddSign?checkedId="+checkedId;
                 layer.open({
                     type:2,

@@ -171,7 +171,7 @@ public class YyMyItemController {
      */
     @RequestMapping("/toAgree")
     public ModelAndView toAgree(String checkedId){
-        //判断一下审批状态
+        //获取审批状态，获取下一环节待办人内容
         YyApplyDAO apply = yyApplyService.applyDeatil(checkedId);
         String useSealStatus = apply.getUseSealStatus();
         List<Map<String,Object>> nextApprove;
@@ -187,6 +187,7 @@ public class YyMyItemController {
             nextApprove = myItemService.nextApprove(apply);
             deptNum = "1";
         }
+
         //审批时间，审批操作人
         Date date = new Date();
         SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -194,12 +195,25 @@ public class YyMyItemController {
         HRUser loginUser = userService.getUserByUserId(yyApplyService.getLoginUserUUID());
         String approveUser = loginUser.getUserAlias();
 
+        //下一环节是否印章管理员
+        String useSealAdmin = "";
+        boolean ifLeader = myItemService.ifLeaderApprove(apply.getItemSecondId());
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
+            if(!ifLeader){
+                useSealAdmin = "2";
+            }
+        }else if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_LEADER)){
+            useSealAdmin = "2";
+        }
+
+        //前台传参
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("nextApprove",nextApprove);
         mvMap.put("nowDate",nowDate);
         mvMap.put("approveUser",approveUser);
         mvMap.put("deptNum",deptNum);
         mvMap.put("applyUuid",checkedId);
+        mvMap.put("useSealAdmin",useSealAdmin);
         ModelAndView mv = new ModelAndView("yygl/myItem/agree",mvMap);
         return mv;
     }
@@ -235,6 +249,11 @@ public class YyMyItemController {
             useSealStatusUpdate =YyApplyConstant.STATUS_DEAL_OFFICE;
         }else if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_LEADER)){
             useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_USER_SEAL;
+        }
+
+        //如果下一环节是印章管理员，不传递待办人
+        if(toDoerId.equals("")){
+            toDoerId = null;
         }
 
         //执行审批流程

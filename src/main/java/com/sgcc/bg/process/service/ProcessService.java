@@ -14,9 +14,9 @@ public interface ProcessService {
      * @param condition     判断条件
      * @param approveRemark 审批意见
      * @param approveUserId 审批人
-     * @param toDoerId      待办人，可多个，中间逗号隔开
-     * @param auditTitle    待办标题
-     * @param auditUrl      待办url
+     * @param toDoerId      待办人，可多个，中间逗号隔开，（可为空，不添加待办用户信息，不发送待办）
+     * @param auditTitle    待办标题，（可为空，不添加待办用户信息，不发送待办）
+     * @param auditUrl      待办url，（可为空，不添加待办用户信息，不发送待办）
      */
     boolean processApprove(
             String businessId,
@@ -34,7 +34,7 @@ public interface ProcessService {
     boolean refuse();
 
     /**
-     * 为某个审批添加审批人，条件是当前环节下，额外添加，审批条件是多人必须全部通过，请调用者注意条件环境
+     * 为某个审批添加审批人，条件是当前环节下，额外添加，审批条件是多个人必须全部通过，请调用者注意条件环境
      * @param businessId    业务id
      * @param toDoerId      待办人，可多个，中间逗号隔开
      * @param auditTitle    待办标题
