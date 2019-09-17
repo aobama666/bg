@@ -3,6 +3,7 @@ package com.sgcc.bg.yygl.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.*;
+import com.sgcc.bg.yygl.constant.YyApplyConstant;
 import com.sgcc.bg.yygl.service.YyApplyService;
 import com.sgcc.bg.yygl.service.YyComprehensiveService;
 import java.io.IOException;
@@ -14,6 +15,8 @@ import java.sql.SQLException;
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.sgcc.bg.yygl.service.YyMyItemService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
@@ -37,6 +40,8 @@ public class YyComprehensiveController {
 	private YyComprehensiveService yyComprehensiveService;
 	@Autowired
 	private YyApplyService applyService;
+	@Autowired
+	private YyMyItemService yyMyItemService;
 	private static Logger Logger = LoggerFactory.getLogger(YyComprehensiveController.class);
 	/**
 	 * 用印模块---事项弹窗框
@@ -138,9 +143,9 @@ public class YyComprehensiveController {
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String officeUserId=  currentUser.getUserId();
 		Logger.info("用印管理确定用印------参数：（申请单位经办人）applyUserId:"+applyUserId+"(办公室经办人)officeUserId:"+officeUserId+"(用印UUID)applyId:"+applyId);
-		int  res=yyComprehensiveService.updateForAffirm(applyUserId,officeUserId,applyId,"9");
+		int  res=yyComprehensiveService.updateForAffirm(applyUserId,officeUserId,applyId, YyApplyConstant.STATUS_USED_SEAL);
 		Logger.info("用印管理确定用印-----添加流程代码");
-
+		yyMyItemService.completeUseSeal(applyId);
 		Logger.info("用印管理确定用印-----添加流程代码");
 		if(res==1){
 			Logger.info("用印管理确定用印------添加成功");

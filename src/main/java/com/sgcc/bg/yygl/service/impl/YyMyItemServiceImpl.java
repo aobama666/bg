@@ -146,8 +146,6 @@ public class YyMyItemServiceImpl implements YyMyItemService{
         //执行确认用印流程
         processService.processApprove(applyUuid,null,"确认用印",approveUserId
         ,null,null,null);
-        //修改对应申请的状态
-        yyApplyService.updateApplyStatus(applyUuid,YyApplyConstant.STATUS_USED_SEAL);
         return true;
     }
 
