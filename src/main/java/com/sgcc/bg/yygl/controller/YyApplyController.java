@@ -13,6 +13,7 @@ import com.sgcc.bg.yygl.pojo.YyApplyDAO;
 import com.sgcc.bg.yygl.pojo.YyApplyVo;
 import com.sgcc.bg.yygl.service.YyApplyService;
 import com.sgcc.bg.yygl.service.YyKindService;
+import com.sgcc.bg.yygl.service.YyMyItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,8 @@ public class YyApplyController {
     private UserService userService;
     @Autowired
     private YyKindService yyKindService;
+    @Autowired
+    private YyMyItemService yyMyItemService;
 
 
 
@@ -235,7 +238,18 @@ public class YyApplyController {
         //用印基本信息
         YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
 
+        //流程图状态信息
+        String useSealStatus = yyApplyDAO.getUseSealStatus();
+        boolean ifLeaderApprove = yyMyItemService.ifLeaderApprove(yyApplyDAO.getItemSecondId());
+        String leaderApprove;
+        if(ifLeaderApprove){
+            leaderApprove = "1";
+        }else{
+            leaderApprove = "2";
+        }
+
         //审批流程信息
+
 
         //按钮组展示信息
         //申请人-撤回按钮
@@ -253,6 +267,8 @@ public class YyApplyController {
         mv.addObject("sealAdmin",sealAdmin);
         mv.addObject("approveUser",approveUser);
         mv.addObject("businessOrOffice",businessOrOffice);
+        mv.addObject("leaderApprove",leaderApprove);
+        mv.addObject("useSealStatus",useSealStatus);
         return mv;
     }
 

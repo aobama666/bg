@@ -109,6 +109,7 @@
                 </div>
             </div>
         </div>
+        <input type="text" id="applyUuid" value="${applyUuid}" style="display: none;"/>
         <div style="text-align: center;padding-top: 20px">
             <button type="button" class="btn" onclick="sign.addSign()">确认</button>
             <button type="button" class="btn" onclick="sign.returnClose()">取消</button>

@@ -70,8 +70,6 @@ public class ProcessServiceImpl implements ProcessService {
                 //最后一个审批通过的人触发对审批表的操作,如果没有全部审批通过，本环节结束，下面的流程就不用走了
                 return false;
             }
-
-
         }
 
         /**
@@ -92,28 +90,8 @@ public class ProcessServiceImpl implements ProcessService {
         PbApproveExpand pbApproveExpand;
         PbAuditUser pbAuditUser;
         if(if_expand_next){
-            for(String userId : toDoerIdStr){
-                //扩展表
-                pbApproveExpand = new PbApproveExpand();
-                String pbApproveExpandUuid = Rtext.getUUID();
-                pbApproveExpand.setUuid(pbApproveExpandUuid);
-                pbApproveExpand.setApproveId(approveIdAdd);
-                pbApproveExpand.setApproveUser(userId);
-                pbApproveExpand.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_YES);
-                pbApproveExpand.setCreateUser(approveUserId);
-                pbMapper.addApproveExpand(pbApproveExpand);
-                //待办用户表
-                pbAuditUser = new PbAuditUser();
-                String pbAuditUserId = Rtext.getUUID();
-                pbAuditUser.setId(pbAuditUserId);
-                pbAuditUser.setApproveId(approveIdAdd);
-                pbAuditUser.setApproveExpandId(pbApproveExpandUuid);
-                pbAuditUser.setApproveUser(userId);
-                pbAuditUser.setCreateUser(approveUserId);
-                pbMapper.addAuditUser(pbAuditUser);
-                //发送待办_扩展表格式_多人多条
-                sendUpcoming(applyId,pbApproveExpandUuid,ProcessBaseConstant.PRECESS_EXPAND,userId,auditUrl,auditCatalog,auditTitle);
-            }
+            //调用封装方法，新增审批扩展信息，新增待办信息，发送待办
+            approveExpandPackage(applyId,approveIdAdd,toDoerId,approveUserId,auditUrl,auditCatalog,auditTitle);
         }else{
             for(String userId : toDoerIdStr){
                 //审批表单独新增待办用户表信息
@@ -128,7 +106,6 @@ public class ProcessServiceImpl implements ProcessService {
             //发送待办,一条多人
             sendUpcoming(applyId,approveIdAdd,ProcessBaseConstant.PRECESS_APPROVE,toDoerId,auditUrl,auditCatalog,auditTitle);
         }
-
 
         /**
          * 修改本环节审批信息和申请信息
@@ -170,6 +147,25 @@ public class ProcessServiceImpl implements ProcessService {
 
         //按照参数配置，判断是否给下一环节人员发送待办
         return false;
+    }
+
+    @Override
+    public boolean addApproveExpand(String businessId, String toDoerId, String auditTitle, String auditUrl,String operator) {
+        //获取基本信息
+        //获取当前审批id
+        String approveId = pbMapper.getApproveIdForBusinessId(businessId);
+        //本环节审批信息
+        PbApprove pbApprove = pbMapper.selectApproveForId(approveId);
+        //获取当前申请id
+        String applyId = pbApprove.getApplyId();
+        //本环节规则信息
+        PbRule pbRule = pbMapper.selectRuleForId(pbApprove.getApproveNode());
+        //auditCatalog信息
+        String auditCatalog = pbMapper.getAuditCatalog(pbRule.getFunctionType());
+
+        //调用封装方法，新增审批扩展信息，新增待办信息，发送待办
+        approveExpandPackage(applyId,approveId,toDoerId,operator,auditUrl,auditCatalog,auditTitle);
+        return true;
     }
 
     @Override
@@ -245,5 +241,45 @@ public class ProcessServiceImpl implements ProcessService {
             }
         }
         return true;
+    }
+
+    /**
+     * 共有方法调用的添加审批扩展信息封装--新增扩展信息、新增待办信息、发送多人多条待办
+     * @param applyId       申请id
+     * @param approveId     审批id
+     * @param toDoerId      待办人，可为多个，中间英文逗号隔开
+     * @param operator      操作人
+     * @param auditUrl      待办url
+     * @param auditCatalog  待办catalog
+     * @param auditTitle    待办标题
+     */
+    public boolean approveExpandPackage(String applyId,String approveId,String toDoerId,String operator,String auditUrl,String auditCatalog,String auditTitle){
+        String[] toDoerIdStr = toDoerId.split(",");
+        PbApproveExpand pbApproveExpand;
+        PbAuditUser pbAuditUser;
+        for(String userId:toDoerIdStr){
+            // 添加扩展信息
+            pbApproveExpand = new PbApproveExpand();
+            String pbApproveExpandUuid = Rtext.getUUID();
+            pbApproveExpand.setUuid(pbApproveExpandUuid);
+            pbApproveExpand.setApproveId(approveId);
+            pbApproveExpand.setApproveUser(userId);
+            pbApproveExpand.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_YES);
+            pbApproveExpand.setCreateUser(operator);
+            pbMapper.addApproveExpand(pbApproveExpand);
+
+            //待办用户表
+            pbAuditUser = new PbAuditUser();
+            String pbAuditUserId = Rtext.getUUID();
+            pbAuditUser.setId(pbAuditUserId);
+            pbAuditUser.setApproveId(approveId);
+            pbAuditUser.setApproveExpandId(pbApproveExpandUuid);
+            pbAuditUser.setApproveUser(userId);
+            pbAuditUser.setCreateUser(operator);
+            pbMapper.addAuditUser(pbAuditUser);
+            //发送待办_扩展表格式_多人多条
+            sendUpcoming(applyId,pbApproveExpandUuid,ProcessBaseConstant.PRECESS_EXPAND,userId,auditUrl,auditCatalog,auditTitle);
+        }
+        return false;
     }
 }

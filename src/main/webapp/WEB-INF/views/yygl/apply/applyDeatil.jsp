@@ -133,25 +133,25 @@
         </tr>
         <tr>
             <td>
-                <div class="process " id="1">申请人提交</div>
+                <div class="process " id="3">申请人提交</div>
             </td>
             <td>
                 <i class="toRight"></i>
             </td>
             <td>
-                <div class="process " id="2">业务主管部门审批</div>
+                <div class="process " id="4">业务主管部门审批</div>
             </td>
             <td>
                 <i class="toRight"></i>
             </td>
             <td>
-                <div class="process " id="3">党委办公室审批</div>
+                <div class="process " id="5">党委办公室审批</div>
             </td>
             <td>
                 <i class="toRight"></i>
             </td>
             <td>
-                <div class="process" id="4">院领导批准</div>
+                <div class="process" id="6">院领导批准</div>
             </td>
         </tr>
         <tr>
@@ -169,13 +169,13 @@
         <tr>
             <td colspan="6"></td>
             <td>
-                <div class="process " style="padding:0px;height:45px;" id="5">印章管理员<br/>确认用印</div>
+                <div class="process " style="padding:0px;height:45px;" id="7">印章管理员<br/>确认用印</div>
             </td>
             <td>
                 <i class="toRight"></i>
             </td>
             <td>
-                <div class="start" id="6">结束</div>
+                <div class="start" id="99">结束</div>
             </td>
         </tr>
     </table>
@@ -188,17 +188,26 @@
 <script>
 
     $(function () {
-        var x = 3;
+        debugger
+        var useSealStatus = ${useSealStatus};
+        var x = useSealStatus-1;
         var i = 1;
         //设置正在进行中的
-        $('#'+(x+1)).addClass('yellow');
+        $('#'+(x)).addClass('yellow');
         //设置通过的
-        for(i;i<=x;i++){
+        for(i;i<x;i++){
             $("#"+i).addClass('green');
             $("#"+i).removeClass('yellow');
         }
         //院领导是否参与本次审批
-
+        var leaderApprove = ${leaderApprove};
+        if(leaderApprove===2){
+            $('#6').removeClass('yellow');
+            $('#6').removeClass('green');
+        }
+        if(useSealStatus===9){
+            $("#99").addClass('green');
+        }
     });
 
     function returnClose() {

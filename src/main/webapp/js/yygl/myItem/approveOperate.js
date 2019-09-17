@@ -24,7 +24,7 @@ approve.agree =function () {
         type: "post",
         data: {"applyUuid":applyUuid,"approveOpinion":approveOpinion,"toDoerId":toDoerId},
         success: function (data) {
-            layer.msg(data.msg);
+            parent.myItem.closeAndOpen(data.msg);
         }
     });
 }

@@ -50,4 +50,12 @@ public class YyApplyConstant {
     //是否需要院领导批准
     public static final String LEADER_APPROVE_NEED = "1";
 
+    //流程中，办公室负责人不同的下一环节
+    //院领导批准
+    public static final String PROCESS_CONDITION_LEADER = "1";
+    //印章管理员
+    public static final String PROCESS_CONDITION_ADMIN = "2";
+    //业务部门审批
+    public static final String PROCESS_CONDITION_BUSINESS = "3";
+
 }

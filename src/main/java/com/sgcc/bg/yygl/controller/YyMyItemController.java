@@ -120,6 +120,7 @@ public class YyMyItemController {
         //如果需要剔除有两点，1.原有事项配置的业务部门2.后期增加会签在审批表中的审批人所在部门
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("deptList",deptList);
+        mvMap.put("applyUuid",checkedId);
         ModelAndView mv = new ModelAndView("yygl/myItem/addSign",mvMap);
         return mv;
     }
@@ -133,10 +134,32 @@ public class YyMyItemController {
     @RequestMapping("/addSign")
     public String addSign(String applyUuid,String userId){
         //根据当前申请状态，判断是业务部门触发的操作还是办公室触发的操作
-
-        //if业务部门，增加会签，发送对应待办
-        //if办公室，增加会签，发送对应待办，流程下一环节至业务部门会签
-        return "";
+        YyApplyDAO apply = yyApplyService.applyDeatil(applyUuid);
+        String useSealStatus = apply.getUseSealStatus();
+        String loginUserId = yyApplyService.getLoginUserUUID();
+        //待办标题
+        StringBuilder sbTitle = new StringBuilder();
+        sbTitle.append("【用印申请】");
+        sbTitle.append(apply.getApplyDept());
+        sbTitle.append(apply.getApplyUser());
+        sbTitle.append(apply.getApplyCode());
+        String auditTitle = sbTitle.toString();
+        //待办链接
+        String auditUrl = "/../../bg/yygl/my_item/toComingSoon";
+        ResultWarp rw;
+        String result ="";
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
+            //if业务部门，在本环节，增加待办人，发送对应待办
+            processService.addApproveExpand(applyUuid,userId,auditTitle,auditUrl,loginUserId);
+            result = "增加会签成功";
+        }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
+            //if办公室，走流程，切换到业务部门会签环节，发送对应待办
+            processService.processApprove(applyUuid,YyApplyConstant.PROCESS_CONDITION_BUSINESS
+                    ,"增加会签",loginUserId,userId,auditTitle,auditUrl);
+            result = "增加会签成功，切换到业务部门会签环节";
+        }
+        rw = new ResultWarp(ResultWarp.SUCCESS,result);
+        return JSON.toJSONString(rw);
     }
 
 
@@ -219,11 +242,13 @@ public class YyMyItemController {
             if(myItemService.ifLeaderApprove(apply.getItemSecondId())){
                 //需要
                 useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_LEADER;
-                processResult = processService.processApprove(applyUuid,"1",approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
+                processResult = processService.processApprove(applyUuid,YyApplyConstant.PROCESS_CONDITION_LEADER
+                        ,approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
             }else{
                 //不需要
                 useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_USER_SEAL;
-                processResult = processService.processApprove(applyUuid,"2",approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
+                processResult = processService.processApprove(applyUuid,YyApplyConstant.PROCESS_CONDITION_ADMIN
+                        ,approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
             }
         }else{
             processResult = processService.processApprove(applyUuid,null,approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);

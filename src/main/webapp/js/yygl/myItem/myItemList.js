@@ -80,12 +80,12 @@ myItem.toAddSign = function () {
     }
     var checkedId = checkedItems[0].uuid;
 
-    /*$.ajax({
+    $.ajax({
         url: "/bg/yygl/my_item/ifAddSign",
         type: "post",
         data: {"checkedId":checkedId},
         success: function (data) {
-            if(data.success === 'SUCCESS'){*/
+            if(data.success === 'SUCCESS'){
                 var url = "/bg/yygl/my_item/toAddSign?checkedId="+checkedId;
                 layer.open({
                     type:2,
@@ -98,11 +98,11 @@ myItem.toAddSign = function () {
                         myItem.queryAddPage();
                     }
                 });
-            /*}else{
-                layer.msg("选择申请对应环节没有该权限");
+            }else{
+                layer.msg("当前没有此权限");
             }
         }
-    });*/
+    });
 
 }
 
@@ -162,4 +162,9 @@ myItem.toSendBack = function () {
             myItem.queryAddPage();
         }
     });
+}
+
+myItem.closeAndOpen = function (message) {
+    layer.closeAll();
+    layer.msg(message);
 }

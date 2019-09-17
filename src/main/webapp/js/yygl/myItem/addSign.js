@@ -12,8 +12,19 @@ $(function(){
 增加业务部门会签，也就是确认按钮
  */
 sign.addSign = function () {
-    var userId = $("#userId").val();
-
+    var userId = $("#checkUser").val();
+    if(userId==='' || userId===undefined){
+        layer.msg("请选择业务会签部门下的审批人");
+    }
+    var applyUuid = $("#applyUuid").val();
+    $.ajax({
+        url: "/bg/yygl/my_item/addSign",
+        type: "post",
+        data: {"applyUuid":applyUuid,"userId":userId},
+        success: function (data) {
+            parent.myItem.closeAndOpen(data.msg);
+        }
+    });
 }
 
 /**

@@ -34,6 +34,22 @@ public interface ProcessService {
     boolean refuse();
 
     /**
+     * 为某个审批添加审批人，条件是当前环节下，额外添加，审批条件是多人必须全部通过，请调用者注意条件环境
+     * @param businessId    业务id
+     * @param toDoerId      待办人，可多个，中间逗号隔开
+     * @param auditTitle    待办标题
+     * @param auditUrl      待办url
+     * @param operator      操作人
+     */
+    boolean addApproveExpand(
+            String businessId,
+            String toDoerId,
+            String auditTitle,
+            String auditUrl,
+            String operator
+    );
+
+    /**
      * 申请人发起撤回
      */
     boolean withdraw();
@@ -43,6 +59,7 @@ public interface ProcessService {
      * @param flowId        申请id
      * @param taskId        审批id OR 审批扩展id
      * @param precessId     标识，是审批id还是审批扩展id
+     * @param userId        用户id
      * @param auditUrl      待办URL
      * @param auditCatalog  功能名称
      * @param auditTitle    待办标题
@@ -59,6 +76,10 @@ public interface ProcessService {
 
     /**
      * 完成待办
+     * @param flowId        申请id
+     * @param taskId        审批id OR 审批扩展id
+     * @param precessId     标识，是审批id还是审批扩展id
+     * @param userId        用户id
      */
     boolean completeUpcoming(String flowId,
                              String taskId,
