@@ -133,7 +133,13 @@
         </tr>
         <tr>
             <td>
-                <div class="process " id="3">申请人提交</div>
+                <div class="process " id="0">申请人提交</div>
+            </td>
+            <td>
+                <i class="toRight"></i>
+            </td>
+            <td>
+                <div class="process " id="3">申请部门审批</div>
             </td>
             <td>
                 <i class="toRight"></i>
@@ -155,19 +161,19 @@
             </td>
         </tr>
         <tr>
-            <td colspan="4"></td>
+            <td colspan="6"></td>
             <td style="padding-left: 70px" colspan="2" rowspan="3">
                 <i class="toDownRight"></i>
             </td>
         </tr>
         <tr>
-            <td colspan="4"></td>
+            <td colspan="6"></td>
             <td>
                 <i class="toDown"></i>
             </td>
         </tr>
         <tr>
-            <td colspan="6"></td>
+            <td colspan="8"></td>
             <td>
                 <div class="process " style="padding:0px;height:45px;" id="7">印章管理员<br/>确认用印</div>
             </td>
@@ -191,7 +197,7 @@
         debugger
         var useSealStatus = ${useSealStatus};
         var x = useSealStatus-1;
-        var i = 1;
+        var i = 0;
         //设置正在进行中的
         $('#'+(x)).addClass('yellow');
         //设置通过的

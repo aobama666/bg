@@ -156,6 +156,8 @@ public class YyMyItemController {
             //if办公室，走流程，切换到业务部门会签环节，发送对应待办
             processService.processApprove(applyUuid,YyApplyConstant.PROCESS_CONDITION_BUSINESS
                     ,"增加会签",loginUserId,userId,auditTitle,auditUrl);
+            //修改本条申请状态
+            yyApplyService.updateApplyStatus(applyUuid,YyApplyConstant.STATUS_DEAL_BUSINESS);
             result = "增加会签成功，切换到业务部门会签环节";
         }
         rw = new ResultWarp(ResultWarp.SUCCESS,result);
