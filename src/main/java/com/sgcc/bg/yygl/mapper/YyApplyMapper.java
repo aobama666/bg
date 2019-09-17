@@ -124,4 +124,10 @@ public interface YyApplyMapper {
     Map<String,Object> findDept(@Param("userId") String userId);
 
 
+    /**
+     * 审批记录
+     */
+    List<Map<String,Object>> approveAnnal(@Param("applyId") String applyId);
+
+
 }

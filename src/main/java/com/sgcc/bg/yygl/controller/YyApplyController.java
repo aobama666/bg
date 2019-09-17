@@ -249,7 +249,7 @@ public class YyApplyController {
         }
 
         //审批流程信息
-
+        List<Map<String, Object>> approveAnnal = applyService.approveAnnal(applyUuid);
 
         //按钮组展示信息
         //申请人-撤回按钮
@@ -269,6 +269,7 @@ public class YyApplyController {
         mv.addObject("businessOrOffice",businessOrOffice);
         mv.addObject("leaderApprove",leaderApprove);
         mv.addObject("useSealStatus",useSealStatus);
+        mv.addObject("approveAnnal",approveAnnal);
         return mv;
     }
 

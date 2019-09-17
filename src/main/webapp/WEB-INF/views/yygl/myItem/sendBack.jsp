@@ -64,11 +64,12 @@
         <tr>
             <td class="bg">审批意见</td>
             <td colspan="3">
-                <textarea style="height: 100%;width: 100%;resize:vertical">拒绝</textarea>
+                <textarea id="approveRemark" style="height: 100%;width: 100%;resize:vertical">拒绝</textarea>
             </td>
         </tr>
     </table>
-    <input type="text" value="${applyUserId}" style="display: none;"/>
+    <input type="text" id="applyUserId" value="${applyUserId}" style="display: none;"/>
+    <input type="text" id="applyId" value="${applyId}" style="display: none;"/>
     <div style="text-align: center;padding-top: 20px">
         <button type="button" class="btn" onclick="approve.sendBack()">确认</button>
         <button type="button" class="btn" onclick="approve.returnClose()">取消</button>

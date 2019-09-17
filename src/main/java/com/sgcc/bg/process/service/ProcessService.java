@@ -31,7 +31,11 @@ public interface ProcessService {
     /**
      * 拒绝，流程结束，退回至申请人
      */
-    boolean refuse();
+    boolean refuse(
+            String businessId,
+            String approveRemark,
+            String approveUserId
+    );
 
     /**
      * 为某个审批添加审批人，条件是当前环节下，额外添加，审批条件是多个人必须全部通过，请调用者注意条件环境

@@ -307,6 +307,7 @@ public class YyMyItemController {
         mvMap.put("applyUserName",approveUser.getUserAlias());
         mvMap.put("loginUserName",loginUser.getUserAlias());
         mvMap.put("nowDate",nowDate);
+        mvMap.put("applyId",checkedId);
         ModelAndView mv = new ModelAndView("yygl/myItem/sendBack",mvMap);
         return mv;
     }
@@ -316,9 +317,16 @@ public class YyMyItemController {
     /**
      * 退回操作
      */
+    @ResponseBody
     @RequestMapping("/sendBack")
-    public String sendBack(){
-        return "";
+    public String sendBack(String applyId,String approveRemark){
+        String loginUserId = yyApplyService.getLoginUserUUID();
+        //走审批退回操作
+        processService.refuse(applyId,approveRemark,loginUserId);
+        //修改当前申请状态为已退回
+        yyApplyService.updateApplyStatus(applyId,YyApplyConstant.STATUS_RETURN);
+        ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"已拒绝当前申请");
+        return JSON.toJSONString(rw);
     }
 
 

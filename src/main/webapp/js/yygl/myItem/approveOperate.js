@@ -40,7 +40,17 @@ approve.agree =function () {
 退回
  */
 approve.sendBack = function () {
-    alert("审核完成，已拒绝");
+    var applyId = $("#applyId").val();
+    var approveRemark = $("#approveRemark").val();
+    $.ajax({
+        url: "/bg/yygl/my_item/sendBack",
+        type: "post",
+        data: {"applyId":applyId,"approveRemark":approveRemark},
+        success: function (data) {
+            parent.myItem.closeAndOpen(data.msg);
+        }
+    });
+
 }
 
 

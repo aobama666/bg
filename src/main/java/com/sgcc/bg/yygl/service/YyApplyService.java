@@ -98,4 +98,9 @@ public interface YyApplyService {
      * 获取部门负责审批人信息
      */
     List<Map<String,Object>> getDeptPrincipal(String applyId);
+
+    /**
+     * 审批记录
+     */
+    List<Map<String,Object>> approveAnnal(String applyId);
 }

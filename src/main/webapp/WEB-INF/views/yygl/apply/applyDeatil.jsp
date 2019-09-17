@@ -23,6 +23,7 @@
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/datagrid.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css">
     <link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
     <link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/css/yygl/agree.css" rel="stylesheet" media="all">
     <%--<link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" media="all">--%>
     <style type="text/css">
         .tableBody{
@@ -184,6 +185,32 @@
                 <div class="start" id="99">结束</div>
             </td>
         </tr>
+    </table>
+</div>
+
+
+<div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 30px;margin-bottom: 30px">
+    <table class="agree" style="width: 100%">
+        <tr>
+            <td class="bg">审批人姓名</td>
+            <td class="bg">审批部门/单位</td>
+            <td class="bg">审批意见</td>
+            <td class="bg">审批时间</td>
+            <td class="bg">下一环节审批人角色</td>
+            <td class="bg">下一环节审批人姓名</td>
+            <td class="bg">下一环节审批人联系方式</td>
+        </tr>
+        <c:forEach var="a" items="${approveAnnal}" >
+            <tr>
+                <td>${a.USERALIAS}</td>
+                <td>${a.DEPTNAME}</td>
+                <td>${a.APPROVE_REMARK}</td>
+                <td>${a.APPROVE_DATE}</td>
+                <td>${a.APPROVE_NODE}</td>
+                <td>${a.NEXT_USERALIAS}</td>
+                <td>${a.NEXT_PHONE}</td>
+            </tr>
+        </c:forEach>
     </table>
 </div>
 

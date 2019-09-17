@@ -104,5 +104,11 @@ public interface ProcessBaseMapper {
     String getExpandId(@Param("approveId") String approveId,
                        @Param("approveUser") String approveUser);
 
+    //查询当前扩展表未完成的待办审批
+    List<String> undoneApproveExpand(@Param("approveId") String approveId);
+
+    //修改当前审批id对应扩展表中的未完成待办为已办
+    Integer updateUndoneApproveExpand(@Param("approveId") String approveId
+            ,@Param("updateUser") String updateUser);
 
 }

@@ -98,6 +98,15 @@
         where APPROVE_ID=#{approveId} and APPROVE_USER!=#{approveUser}
     </update>
 
+    <update id="updateUndoneApproveExpand">
+        UPDATE TB_WL_APPROVE_EXPAND
+        SET AUDIT_FLAG = '0'
+        WHERE AUDIT_FLAG = '1'
+        AND APPROVE_ID = #{approveId}
+        AND update_user = #{updateUser}
+        AND update_time = sysdate
+    </update>
+
     <select id="selectAuditUserForApprove" resultType="com.sgcc.bg.process.model.PbAuditUser">
         SELECT
           id,
@@ -204,6 +213,10 @@
         FROM TB_WL_APPROVE_EXPAND
         WHERE approve_id = #{approveId} AND APPROVE_USER = #{approveUser}
         AND valid='1'
+    </select>
+
+    <select id="undoneApproveExpand" resultType="java.lang.String">
+        select uuid from TB_WL_APPROVE_EXPAND where AUDIT_FLAG='1' and APPROVE_ID = #{approveId}
     </select>
 
 

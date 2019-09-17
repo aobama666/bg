@@ -309,4 +309,9 @@ public class YyApplyServiceImpl implements YyApplyService {
         List<Map<String,Object>> deptPrincipal = yyMyItemMapper.nextNodeApprove(deptId,YyApplyConstant.NODE_DEPT,yyApplyDAO.getItemSecondId());
         return deptPrincipal;
     }
+
+    @Override
+    public List<Map<String, Object>> approveAnnal(String applyId) {
+        return yyApplyMapper.approveAnnal(applyId);
+    }
 }

@@ -194,10 +194,7 @@ applyOperate.applySubmit = function () {
         data: {'principalUser':principalUser,'checkedIds':checkedIds},
         success: function (data) {
             if(data.success=="true"){
-                applyOperate.closeAndOpen(data.msg);
-            }else{
-                layer.alert(data.msg,{icon:2,title:'信息提示'});
-                return;
+                parent.apply.closeAndOpen(data.msg);
             }
         }
     });
