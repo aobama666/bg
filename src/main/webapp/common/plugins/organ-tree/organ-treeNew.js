@@ -41,7 +41,7 @@ $.fn.extend({
 						title:"组织机构选择页面",
 						area:['480px',height+'px'],//520px
 						scrollbar:true,
-						content:[basePath+'/organstufftree/initOrganTree?root='
+						content:[basePath+'/organstufftree/initOrganTreeNew?root='
 						         +root+'&ct='+ct+'&level='+level+'&organCode='
 						         +organCode+'&organName='+organName+'&limit='+limit
 						         +'&popEvent='+popEvent+'&iframeId='+iframeId+'&iframe='+iframe+'&dataSrc='+dataSrc+'&func='+func+'&show='+show,'no'],

@@ -276,5 +276,97 @@
          and valid = '1'
     </select>
 
+    <select id="approveAnnal" resultType="java.util.Map">
+        SELECT F.SRC,
+               F.ID,
+               F.NEXT_APPROVE_ID,
+               U.USERALIAS,
+               DECODE(D.TYPE, 1, D.DEPTNAME, D.PDEPTNAME) DEPTNAME,
+               F.APPROVE_REMARK,
+               TO_CHAR(F.APPROVE_DATE, 'yyyy-MM-dd HH24:mi:ss') APPROVE_DATE,
+               DECODE(RU.NODE, 'FINISH', '结束', DR.NAME) APPROVE_NODE,
+               TO_CHAR((SELECT wm_concat(BSU.USERALIAS)
+                         FROM TB_WL_AUDIT_USER AU
+                         JOIN BG_SYS_USER BSU
+                           ON BSU.USERID = AU.APPROVE_USER
+                        WHERE AU.APPROVE_ID = F.NEXT_APPROVE_ID
+                          AND BSU.VALID = 1)) NEXT_USERALIAS,
+               TO_CHAR((SELECT wm_concat(BSU.PHONE)
+                         FROM TB_WL_AUDIT_USER AU
+                         JOIN BG_SYS_USER BSU
+                           ON BSU.USERID = AU.APPROVE_USER
+                        WHERE AU.APPROVE_ID = F.NEXT_APPROVE_ID
+                          AND BSU.VALID = 1)) NEXT_PHONE
+          FROM (select 'APP' SRC,
+                       AP.ID,
+                       AP.NEXT_APPROVE_ID,
+                       AP.APPROVE_USER,
+                       AP.APPROVE_REMARK,
+                       AP.APPROVE_DATE,
+                       AP.APPLY_ID
+                  from tb_wl_approve ap
+                 where ap.valid = '1'
+                   AND AP.APPROVE_STATUS = '1'
+                   and ap.apply_id =
+                       (select r.apply_id
+                          from tb_wl_business_r_apply r
+                         where r.valid = '1'
+                           and r.business_id = #{applyId}
+                           and r.create_time =
+                               (select max(r1.create_time) create_time
+                                  from tb_wl_business_r_apply r1
+                                 where r1.valid = '1'
+                                   and r1.business_id =
+                                       #{applyId}))
+                   and not exists (select uuid
+                          from tb_wl_approve_expand ae
+                         where ae.approve_id = ap.id)
+                union all
+                select 'APE' SRC,
+                       AP.ID,
+                       AP.NEXT_APPROVE_ID,
+                       ape.APPROVE_USER,
+                       ape.APPROVE_REMARK,
+                       APE.APPROVE_DATE,
+                       AP.APPLY_ID
+                  from tb_wl_approve_expand ape
+                  LEFT JOIN tb_wl_approve AP
+                    ON AP.ID = APE.APPROVE_ID
+                 where ape.valid = '1'
+                   AND AP.VALID = '1'
+                   and ape.approve_id in
+                       (select ap.id
+                          from tb_wl_approve ap
+                         where ap.valid = '1'
+                           and ap.apply_id =
+                               (select r.apply_id
+                                  from tb_wl_business_r_apply r
+                                 where r.valid = '1'
+                                   and r.business_id =
+                                       #{applyId}
+                                   and r.create_time =
+                                       (select max(r1.create_time) create_time
+                                          from tb_wl_business_r_apply r1
+                                         where r1.valid = '1'
+                                           and r1.business_id =
+                                               #{applyId})))) F
+          LEFT JOIN BG_SYS_USER U
+            ON F.APPROVE_USER = U.USERID
+          LEFT JOIN BG_SYS_DEPT D
+            ON u.hrdeptcode = d.deptcode
+          LEFT JOIN TB_WL_APPROVE NX_AP
+            ON NX_AP.ID = F.NEXT_APPROVE_ID
+          LEFT JOIN TB_WL_RULE RU
+            ON RU.ID = NX_AP.APPROVE_NODE
+          LEFT JOIN BG_SYS_DATADICTIONARY DR
+            ON DR.CODE = RU.NODE
+           AND DR.PCODE = 'pb_yygl_status'
+         WHERE U.VALID = 1
+           AND D.VALID = 1
+           AND RU.VALID = '1'
+           AND DR.VAILD = 1
+           AND NX_AP.VALID = '1'
+        ORDER BY F.APPROVE_DATE
+    </select>
 
 </mapper>

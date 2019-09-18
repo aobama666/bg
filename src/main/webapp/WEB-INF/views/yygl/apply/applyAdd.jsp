@@ -27,7 +27,7 @@
 </head>
 <body>
 <div class="tabbable active" style="text-align:right;width: 97%;padding-top: 5px;padding-bottom: 5px;">
-    <button type="button" class="btn" onclick="applyOperate.applySubmit()">提交</button>
+    <button type="button" class="btn" onclick="applyOperate.toSubmit()">提交</button>
     <button id="applyAdd" type="button" class="btn" onclick="applyOperate.applyAdd()">保存</button>
     <button type="button" class="btn" onclick="applyOperate.returnClose()">返回</button>
 </div>

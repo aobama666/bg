@@ -62,6 +62,11 @@ public interface YyApplyService {
      */
     String applyUpdate(YyApply yyApply);
 
+    /**
+     * 修改申请状态
+     */
+    Integer updateApplyStatus(String uuid,String useSealStatus);
+
 
     /**
      * 查看详情
@@ -87,5 +92,15 @@ public interface YyApplyService {
     /**
      * 提交
      */
-    String submit(String checkId);
+    String submit(String checkId,String principalUser);
+
+    /**
+     * 获取部门负责审批人信息
+     */
+    List<Map<String,Object>> getDeptPrincipal(String applyId);
+
+    /**
+     * 审批记录
+     */
+    List<Map<String,Object>> approveAnnal(String applyId);
 }

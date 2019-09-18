@@ -27,51 +27,65 @@
     <link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" media="all">
     <link href="<%=request.getContextPath()%>/css/yygl/agree.css" rel="stylesheet" media="all">
+    <style type="text/css">
+        .nextApproveUserDiv{
+            display: none;
+        }
+    </style>
 </head>
 <body>
 <div style="padding-left: 15%;padding-right: 15%">
-    <div>
-        <div class="content-tag">
-            选择下一环节审批人
+    <div id="nextApproveUserDiv">
+        <div>
+            <div class="content-tag">
+                选择下一环节审批人
+            </div>
+            <div class="content-tag-line"></div>
         </div>
-        <div class="content-tag-line"></div>
+        <div  style="height: 10px"></div>
+        <table class="agree" style="width: 100%">
+            <tr>
+                <td class="bg">选择</td>
+                <td class="bg">用户账号</td>
+                <td class="bg">用户名称</td>
+                <td class="bg">审批角色</td>
+                <td class="bg">部门</td>
+            </tr>
+            <%--目前是部门负责人审批的角度，需要添加业务部门会签的界面--%>
+            <c:forEach var="next" items="${nextApprove}">
+                <tr>
+                    <td><input type="radio" name="${next.radioId}" id="${next.radioId}" value="${next.STAFFID}" checked/></td>
+                    <td>${next.USERNAME}</td>
+                    <td>${next.USERALIAS}</td>
+                    <td>${next.NODETYPE}</td>
+                    <td>${next.DEPTNAME}</td>
+                </tr>
+            </c:forEach>
+        </table>
     </div>
-    <div  style="height: 10px"></div>
-    <table class="agree" style="width: 100%">
-        <tr>
-            <td class="bg">选择</td>
-            <td class="bg">用户账号</td>
-            <td class="bg">用户名称</td>
-            <td class="bg">审批角色</td>
-            <td class="bg">部门</td>
-        </tr>
-        <tr>
-            <td><input type="radio"/></td>
-            <td>EPRI_LMM</td>
-            <td>李某某</td>
-            <td>业务主管部门负责人审批</td>
-            <td>科技部</td>
-        </tr>
-    </table>
     <div style="padding-top: 20px"></div>
     <table class="agree" style="width: 100%">
         <tr>
             <td class="bg">审批人</td>
-            <td>张某某</td>
+            <td>${approveUser}</td>
             <td class="bg">审批时间</td>
-            <td>2019-09-05 13:22:23</td>
+            <td>${nowDate}</td>
         </tr>
         <tr>
             <td class="bg">审批意见</td>
             <td colspan="3">
-                <textarea rows="" cols="">同意</textarea>
+                <textarea id="approveOpinion" style="height: 100%;width: 100%;resize:vertical">同意</textarea>
             </td>
         </tr>
     </table>
     <div style="text-align: center;padding-top: 20px">
-        <button type="button" class="btn" onclick="">确认</button>
-        <button type="button" class="btn" onclick="">取消</button>
+        <button type="button" class="btn" onclick="approve.agree()">确认</button>
+        <button type="button" class="btn" onclick="approve.returnClose()">取消</button>
     </div>
+    <input type="text" id="deptNum" value="${deptNum}" style="display: none"/>
+    <input type="text" id="applyUuid" value="${applyUuid}" style="display: none"/>
+    <input type="text" id="useSealAdmin" value="${useSealAdmin}" style="display: none"/>
+
 </div>
 </body>
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
@@ -93,4 +107,14 @@
 <!-- 本页面所需的js -->
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
+<script src="<%=request.getContextPath()%>/js/yygl/myItem/approveOperate.js"></script>
+
+<script>
+    $(function () {
+        var useSealAdmin = $("#useSealAdmin").val();
+        if(useSealAdmin==='2'){
+            $("#nextApproveUserDiv").addClass("nextApproveUserDiv");
+        }
+    })
+</script>
 </html>

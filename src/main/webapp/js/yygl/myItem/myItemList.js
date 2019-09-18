@@ -78,19 +78,32 @@ myItem.toAddSign = function () {
         layer.msg('每次只能修改一条数据');
         return;
     }
-    var checkedId = checkedItems[0].UUID;
-    var url = "/bg/yygl/my_item/toAddSign?checkedId="+checkedId;
-    layer.open({
-        type:2,
-        title:'<h4 style="font-size: 18px;padding-top: 10px">增加业务主管部门会签</h4>',
-        area:['70%','60%'],
-        fixed:false,//不固定
-        maxmin:true,
-        content:url,
-        end: function () {
-            myItem.queryAddPage();
+    var checkedId = checkedItems[0].uuid;
+
+    $.ajax({
+        url: "/bg/yygl/my_item/ifAddSign",
+        type: "post",
+        data: {"checkedId":checkedId},
+        success: function (data) {
+            if(data.success === 'true'){
+                var url = "/bg/yygl/my_item/toAddSign?checkedId="+checkedId;
+                layer.open({
+                    type:2,
+                    title:'<h4 style="font-size: 18px;padding-top: 10px">增加业务主管部门会签</h4>',
+                    area:['90%','60%'],
+                    fixed:false,//不固定
+                    maxmin:true,
+                    content:url,
+                    end: function () {
+                        myItem.queryAddPage();
+                    }
+                });
+            }else{
+                layer.msg("当前没有此权限");
+            }
         }
     });
+
 }
 
 
@@ -107,7 +120,7 @@ myItem.toAgree = function () {
         layer.msg('每次只能修改一条数据');
         return;
     }
-    var checkedId = checkedItems[0].UUID;
+    var checkedId = checkedItems[0].uuid;
     var url = "/bg/yygl/my_item/toAgree?checkedId="+checkedId;
     layer.open({
         type:2,
@@ -136,7 +149,7 @@ myItem.toSendBack = function () {
         layer.msg('每次只能修改一条数据');
         return;
     }
-    var checkedId = checkedItems[0].UUID;
+    var checkedId = checkedItems[0].uuid;
     var url = "/bg/yygl/my_item/toSendBack?checkedId="+checkedId;
     layer.open({
         type:2,
@@ -149,4 +162,9 @@ myItem.toSendBack = function () {
             myItem.queryAddPage();
         }
     });
+}
+
+myItem.closeAndOpen = function (message) {
+    layer.closeAll();
+    layer.msg(message);
 }

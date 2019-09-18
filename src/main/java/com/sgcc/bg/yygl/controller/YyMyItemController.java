@@ -3,7 +3,15 @@ package com.sgcc.bg.yygl.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.ResultWarp;
+import com.sgcc.bg.model.HRUser;
+import com.sgcc.bg.process.service.ProcessService;
 import com.sgcc.bg.service.OrganStuffTreeService;
+import com.sgcc.bg.service.UserService;
+import com.sgcc.bg.yszx.service.ApproveService;
+import com.sgcc.bg.yygl.bean.YyApply;
+import com.sgcc.bg.yygl.constant.YyApplyConstant;
+import com.sgcc.bg.yygl.pojo.YyApplyDAO;
+import com.sgcc.bg.yygl.service.YyApplyService;
 import com.sgcc.bg.yygl.service.YyMyItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping("/yygl/my_item/")
@@ -28,6 +34,14 @@ public class YyMyItemController {
     private YyMyItemService myItemService;
     @Autowired
     private OrganStuffTreeService organStuffTreeService;
+    @Autowired
+    private YyApplyService yyApplyService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ApproveService approveService;
+    @Autowired
+    private ProcessService processService;
 
     /**
      * 跳转到待办列表
@@ -62,9 +76,9 @@ public class YyMyItemController {
      */
     @ResponseBody
     @RequestMapping("/selectMyItem")
-    public String selectComingSoon(String applyCode,String deptId,String useSealUser, Integer page, Integer limit){
+    public String selectComingSoon(String applyCode,String deptId,String useSealUser,String ifComingSoon,Integer page, Integer limit){
         //查询
-        Map<String,Object>  listMap = myItemService.selectMyItem(applyCode,deptId,useSealUser,null,page,limit);
+        Map<String,Object>  listMap = myItemService.selectMyItem(applyCode,deptId,useSealUser,ifComingSoon,page,limit);
         //反馈
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("data",listMap);
@@ -75,23 +89,38 @@ public class YyMyItemController {
     }
 
 
+    /**
+     * 判断当前申请状态是否能够进行增加会签操作
+     * 只有处于待业务部门审批、待办公室审批两个环节才能进行此操作
+     */
+    @ResponseBody
+    @RequestMapping("/ifAddSign")
+    public String ifAddSign(String checkedId){
+        ResultWarp rw;
+        YyApplyDAO apply = yyApplyService.applyDeatil(checkedId);
+        String useSealStatus = apply.getUseSealStatus();
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)
+            ||useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
+            rw = new ResultWarp(ResultWarp.SUCCESS,"success");
+        }else{
+            rw = new ResultWarp(ResultWarp.FAILED,"fail");
+        }
+        return JSON.toJSONString(rw);
+    }
+
 
     /**
      * 跳转到增加业务主管部门会签
      */
     @RequestMapping("/toAddSign")
     public ModelAndView toAddSign(String checkedId){
-        //根据对应申请id，查询所需内容
-
-        //查询已会签部门
-        //用印事项原有配置会签部门，和审批表中再次添加的会签部门
-
         //可选择会签部门
         List<Map<String,Object>> deptList = myItemService.getDeptList();
-        //剔除已经选择的会签部门
-
+        //目前没有做剔除操作
+        //如果需要剔除有两点，1.原有事项配置的业务部门2.后期增加会签在审批表中的审批人所在部门
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("deptList",deptList);
+        mvMap.put("applyUuid",checkedId);
         ModelAndView mv = new ModelAndView("yygl/myItem/addSign",mvMap);
         return mv;
     }
@@ -103,11 +132,36 @@ public class YyMyItemController {
      */
     @ResponseBody
     @RequestMapping("/addSign")
-    public String addSign(){
-        //是业务部门触发的操作还是办公室触发的操作
-        //if业务部门，增加会签，发送对应待办
-        //if办公室，增加会签，发送对应待办，流程撤回至业务部门会签
-        return "";
+    public String addSign(String applyUuid,String userId){
+        //根据当前申请状态，判断是业务部门触发的操作还是办公室触发的操作
+        YyApplyDAO apply = yyApplyService.applyDeatil(applyUuid);
+        String useSealStatus = apply.getUseSealStatus();
+        String loginUserId = yyApplyService.getLoginUserUUID();
+        //待办标题
+        StringBuilder sbTitle = new StringBuilder();
+        sbTitle.append("【用印申请】");
+        sbTitle.append(apply.getApplyDept());
+        sbTitle.append(apply.getApplyUser());
+        sbTitle.append(apply.getApplyCode());
+        String auditTitle = sbTitle.toString();
+        //待办链接
+        String auditUrl = "/../../bg/yygl/my_item/toComingSoon";
+        ResultWarp rw;
+        String result ="";
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
+            //if业务部门，在本环节，增加待办人，发送对应待办
+            processService.addApproveExpand(applyUuid,userId,auditTitle,auditUrl,loginUserId);
+            result = "增加会签成功";
+        }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
+            //if办公室，走流程，切换到业务部门会签环节，发送对应待办
+            processService.processApprove(applyUuid,YyApplyConstant.PROCESS_CONDITION_BUSINESS
+                    ,"增加会签",loginUserId,userId,auditTitle,auditUrl);
+            //修改本条申请状态
+            yyApplyService.updateApplyStatus(applyUuid,YyApplyConstant.STATUS_DEAL_BUSINESS);
+            result = "增加会签成功，切换到业务部门会签环节";
+        }
+        rw = new ResultWarp(ResultWarp.SUCCESS,result);
+        return JSON.toJSONString(rw);
     }
 
 
@@ -117,13 +171,49 @@ public class YyMyItemController {
      */
     @RequestMapping("/toAgree")
     public ModelAndView toAgree(String checkedId){
-        //根据选择申请查询可以提供的下一个审批人信息
+        //获取审批状态，获取下一环节待办人内容
+        YyApplyDAO apply = yyApplyService.applyDeatil(checkedId);
+        String useSealStatus = apply.getUseSealStatus();
+        List<Map<String,Object>> nextApprove;
+        String deptNum = "";
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_DEPT)){
+            //如果下一环节属于待业务主管部门审批，也就是当前为申请部门负责人审批
+            nextApprove = myItemService.nextApproveBusiness(apply);
+            Map<String,Object> deptNumMap = nextApprove.get(nextApprove.size()-1);
+            deptNum = deptNumMap.get("deptNum").toString();
+            nextApprove.remove(nextApprove.size()-1);
+        }else{
+            //根据选择申请查询可以提供的下一环节审批人信息
+            nextApprove = myItemService.nextApprove(apply);
+            deptNum = "1";
+        }
 
-        //下一环节是否为业务部门审批
-        //是否有多个部门
+        //审批时间，审批操作人
+        Date date = new Date();
+        SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String nowDate = sd.format(date);
+        HRUser loginUser = userService.getUserByUserId(yyApplyService.getLoginUserUUID());
+        String approveUser = loginUser.getUserAlias();
 
+        //下一环节是否印章管理员
+        String useSealAdmin = "";
+        boolean ifLeader = myItemService.ifLeaderApprove(apply.getItemSecondId());
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
+            if(!ifLeader){
+                useSealAdmin = "2";
+            }
+        }else if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_LEADER)){
+            useSealAdmin = "2";
+        }
 
+        //前台传参
         Map<String,Object> mvMap = new HashMap<>();
+        mvMap.put("nextApprove",nextApprove);
+        mvMap.put("nowDate",nowDate);
+        mvMap.put("approveUser",approveUser);
+        mvMap.put("deptNum",deptNum);
+        mvMap.put("applyUuid",checkedId);
+        mvMap.put("useSealAdmin",useSealAdmin);
         ModelAndView mv = new ModelAndView("yygl/myItem/agree",mvMap);
         return mv;
     }
@@ -135,16 +225,61 @@ public class YyMyItemController {
      */
     @ResponseBody
     @RequestMapping("/agree")
-    public String agree(){
-        //查看是否属于业务主管部门审批环节
-        //查看所有业务主管部门是否全部审批结束、
+    public String agree(String applyUuid,String toDoerId,String approveOpinion){
+        //用印申请状态
+        YyApplyDAO apply = yyApplyService.applyDeatil(applyUuid);
+        String useSealStatus = apply.getUseSealStatus();
+        String approveUserId = yyApplyService.getLoginUserUUID();
+        //待办标题
+        StringBuilder sbTitle = new StringBuilder();
+        sbTitle.append("【用印申请】");
+        sbTitle.append(apply.getApplyDept());
+        sbTitle.append(apply.getApplyUser());
+        sbTitle.append(apply.getApplyCode());
+        String auditTitle = sbTitle.toString();
+        //待办链接
+        String auditUrl = "/../../bg/yygl/my_item/toComingSoon";
+        //下一环节状态
+        String useSealStatusUpdate = "";
 
+        // 根据当前状态，获取下一个要改的状态
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_DEPT)){
+            useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_BUSINESS;
+        }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
+            useSealStatusUpdate =YyApplyConstant.STATUS_DEAL_OFFICE;
+        }else if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_LEADER)){
+            useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_USER_SEAL;
+        }
 
-        //查看是否为办公室审批完毕状态
-        //查看对应事项是否有院领导批准环节
+        //如果下一环节是印章管理员，不传递待办人
+        if(toDoerId.equals("")){
+            toDoerId = null;
+        }
 
-        //如果没有其它意外，直接走同意
-        return "";
+        //执行审批流程
+        boolean processResult;
+        if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
+            //如果属于待办公室审批,判断是否需要院领导批准
+            if(myItemService.ifLeaderApprove(apply.getItemSecondId())){
+                //需要
+                useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_LEADER;
+                processResult = processService.processApprove(applyUuid,YyApplyConstant.PROCESS_CONDITION_LEADER
+                        ,approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
+            }else{
+                //不需要
+                useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_USER_SEAL;
+                processResult = processService.processApprove(applyUuid,YyApplyConstant.PROCESS_CONDITION_ADMIN
+                        ,approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
+            }
+        }else{
+            processResult = processService.processApprove(applyUuid,null,approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
+        }
+        //如果流程正常到下一环节，修改当前审批状态
+        if(processResult){
+            yyApplyService.updateApplyStatus(applyUuid,useSealStatusUpdate);
+        }
+        ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"审批完成");
+        return JSON.toJSONString(rw);
     }
 
 
@@ -156,7 +291,23 @@ public class YyMyItemController {
     @RequestMapping("/toSendBack")
     public ModelAndView toSendBack(String checkedId){
         //根据所选择申请查询退回人信息
+        YyApplyDAO apply = yyApplyService.applyDeatil(checkedId);
+        Date date = new Date();
+        SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String nowDate = sd.format(date);
+
+        HRUser approveUser = userService.getUserByUserId(apply.getApplyUserId());
+        HRUser loginUser = userService.getUserByUserId(yyApplyService.getLoginUserUUID());
+        Map<String,Object> deptMap = yyApplyService.findDept(approveUser.getUserId());
+
         Map<String,Object> mvMap = new HashMap<>();
+        mvMap.put("applyUserId",apply.getApplyUserId());
+        mvMap.put("applyUser",approveUser.getUserName());
+        mvMap.put("applyDept",deptMap.get("PDEPTNAME"));
+        mvMap.put("applyUserName",approveUser.getUserAlias());
+        mvMap.put("loginUserName",loginUser.getUserAlias());
+        mvMap.put("nowDate",nowDate);
+        mvMap.put("applyId",checkedId);
         ModelAndView mv = new ModelAndView("yygl/myItem/sendBack",mvMap);
         return mv;
     }
@@ -166,10 +317,32 @@ public class YyMyItemController {
     /**
      * 退回操作
      */
+    @ResponseBody
     @RequestMapping("/sendBack")
-    public String sendBack(){
-        return "";
+    public String sendBack(String applyId,String approveRemark){
+        String loginUserId = yyApplyService.getLoginUserUUID();
+        //走审批退回操作
+        processService.refuse(applyId,approveRemark,loginUserId);
+        //修改当前申请状态为已退回
+        yyApplyService.updateApplyStatus(applyId,YyApplyConstant.STATUS_RETURN);
+        ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"已拒绝当前申请");
+        return JSON.toJSONString(rw);
     }
+
+
+
+    /**
+     * 增加会签中，选择对应人员后查询对应处室信息
+     */
+    @ResponseBody
+    @RequestMapping("/changeUserMessage")
+    public String changeUserMessage(String userName){
+        Map<String,Object> user = myItemService.findDeptForUserName(userName);
+        ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"success");
+        rw.addData("user",user);
+        return JSON.toJSONString(rw);
+    }
+
 
 
     /**
@@ -211,6 +384,7 @@ public class YyMyItemController {
     }
 
     /**
+     * 复制于人员树controller部分，具体流程未深究
      * 格式化人员树 {"id": "P41070003","open": false,"organCode": "P41070003","pId": "60000258","name": "杨久蓉","isParent": false,"nocheck": false}
      * @param list
      * @return

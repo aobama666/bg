@@ -13,6 +13,7 @@ import com.sgcc.bg.yygl.pojo.YyApplyDAO;
 import com.sgcc.bg.yygl.pojo.YyApplyVo;
 import com.sgcc.bg.yygl.service.YyApplyService;
 import com.sgcc.bg.yygl.service.YyKindService;
+import com.sgcc.bg.yygl.service.YyMyItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,8 @@ public class YyApplyController {
     private UserService userService;
     @Autowired
     private YyKindService yyKindService;
+    @Autowired
+    private YyMyItemService yyMyItemService;
 
 
 
@@ -234,14 +237,39 @@ public class YyApplyController {
     public ModelAndView toApplyDetail(String applyUuid){
         //用印基本信息
         YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
-        //附件信息
 
-        //流程图信息
+        //流程图状态信息
+        String useSealStatus = yyApplyDAO.getUseSealStatus();
+        boolean ifLeaderApprove = yyMyItemService.ifLeaderApprove(yyApplyDAO.getItemSecondId());
+        String leaderApprove;
+        if(ifLeaderApprove){
+            leaderApprove = "1";
+        }else{
+            leaderApprove = "2";
+        }
 
-        //审批信息
+        //审批流程信息
+        List<Map<String, Object>> approveAnnal = applyService.approveAnnal(applyUuid);
+
+        //按钮组展示信息
+        //申请人-撤回按钮
+        String applyUser = "1";
+        //印章管理员-确认用印按钮
+        String sealAdmin = "1";
+        //审批人-同意退回按钮
+        String approveUser = "1";
+        //业务部门负责人，办公室负责人-增加业务会签按钮
+        String businessOrOffice = "1";
 
         ModelAndView mv = new ModelAndView("yygl/apply/applyDeatil");
         mv.addObject("yyApplyDAO",yyApplyDAO);
+        mv.addObject("applyUser",applyUser);
+        mv.addObject("sealAdmin",sealAdmin);
+        mv.addObject("approveUser",approveUser);
+        mv.addObject("businessOrOffice",businessOrOffice);
+        mv.addObject("leaderApprove",leaderApprove);
+        mv.addObject("useSealStatus",useSealStatus);
+        mv.addObject("approveAnnal",approveAnnal);
         return mv;
     }
 
@@ -254,7 +282,6 @@ public class YyApplyController {
     public ModelAndView toPrintPreview(String applyUuid){
         //用印基本信息
         YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
-        //附件信息
 
         //审批信息
 
@@ -280,8 +307,11 @@ public class YyApplyController {
     @RequestMapping("/toApplySubmit")
     public ModelAndView toApplySubmit(String checkedIds){
         //查询对应申请的部门负责人
+        String[] applyArray = checkedIds.split(",");
+        List<Map<String,Object>> deptPrincipal = applyService.getDeptPrincipal(applyArray[0]);
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("checkedIds",checkedIds);
+        mvMap.put("deptPrincipal",deptPrincipal);
         ModelAndView mv = new ModelAndView("yygl/apply/applySubmit",mvMap);
         return mv;
     }
@@ -293,8 +323,8 @@ public class YyApplyController {
      */
     @ResponseBody
     @RequestMapping("/applySubmit")
-    public String applySubmit(String checkedIds){
-        String msg = applyService.submit(checkedIds);
+    public String applySubmit(String checkedIds,String principalUser){
+        String msg = applyService.submit(checkedIds,principalUser);
         ResultWarp resultWarp = null;
         resultWarp = new ResultWarp(ResultWarp.SUCCESS,msg);
         return JSON.toJSONString(resultWarp);

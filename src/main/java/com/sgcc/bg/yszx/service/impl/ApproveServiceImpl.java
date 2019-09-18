@@ -9,6 +9,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.sgcc.bg.yygl.mapper.YyApplyMapper;
+import com.sgcc.bg.yygl.mapper.YyMyItemMapper;
+import com.sgcc.bg.yygl.pojo.YyApplyDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -44,6 +47,8 @@ public class ApproveServiceImpl implements ApproveService{
     private RabbitTemplate rabbitTemplate;//发送待办
 	@Autowired
     private UserService userService;
+	@Autowired
+	private YyApplyMapper yyApplyMapper;
 	 
 	//bussinessId 主ID   auditUserId 审批人    operatorId  当前提交人
 	public ReturnMessage startApprove(boolean isUseRole,String functionType, String nodeName, String bussinessId, String auditUserId,String operatorId) {
@@ -1003,7 +1008,19 @@ public class ApproveServiceImpl implements ApproveService{
     		Map<String, Object> ideaInfoMap = ideaServcie.selectForId(bussinessId);
     		
     		auditTitle = ideaInfoMap.get("applyNumber")==null?"":"【演示中心参观预定申请】"+ideaInfoMap.get("applyNumber").toString();
-        }        
+        }
+        if("YYGL".equals(functionType)){
+    		auditTitle = "【用印申请】";
+			YyApplyDAO yyApplyDAO = yyApplyMapper.findApply(bussinessId);
+			HRUser hrUser = userService.getUserByUserId(yyApplyDAO.getApplyUserId());
+			Map<String,Object> deptMap = yyApplyMapper.findDept(yyApplyDAO.getApplyUserId());
+			String dept = deptMap.get("PDEPTNAME").toString();
+			String userName = hrUser.getUserAlias();
+			String applyCode = yyApplyDAO.getApplyCode();
+			auditTitle += dept;
+			auditTitle += userName;
+			auditTitle += applyCode;
+		}
         return auditTitle;
     }
     

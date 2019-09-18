@@ -36,21 +36,23 @@
     <div class='content_top'>待办事项</div>
 
     <form id="queryForm" style="margin-bottom: 10px;">
-        <input type="hidden" name="checkList"/>
-        <span style="margin-left: 20px"></span>
-        <label>申请单号：</label>
-        <input type = "text" id = "applyCode" name = "applyCode" style="width: 100px" class = "inputQuery changeQuery" >
-        <span style="margin-left: 20px"></span>
-        <label>申请部门：</label>
-        <select id = "deptId" name = "deptId"  class = "changeQuery changeYear" onchange="apply.changeItemFirst()">
-            <option value = "" selected>请选择</option>
-            <c:forEach  var="dept"  items="${deptList}">
-                <option value ="${dept.K}"}> ${dept.V}</option>
-            </c:forEach>
-        </select>
-        <span style="margin-left: 20px"></span>
-        <label>用印申请人：</label>
-        <input type = "text" id = "useSealUser" name = "useSealUser" style="width: 100px" class = "inputQuery changeQuery" >
+                <%--是否待办，待办属性值为1--%>
+                <input id="ifComingSoon" name="ifComingSoon" style="display: none;" value="1"/>
+                <input type="hidden" name="checkList"/>
+                <span style="margin-left: 20px"></span>
+                <label>申请单号：</label>
+                <input type = "text" id = "applyCode" name = "applyCode" style="width: 100px" class = "inputQuery changeQuery" >
+                <span style="margin-left: 20px"></span>
+                <label>申请部门：</label>
+                <select id = "deptId" name = "deptId"  class = "changeQuery changeYear" onchange="apply.changeItemFirst()">
+                    <option value = "" selected>请选择</option>
+                    <c:forEach  var="dept"  items="${deptList}">
+                        <option value ="${dept.K}"}> ${dept.V}</option>
+                    </c:forEach>
+                </select>
+                <span style="margin-left: 20px"></span>
+                <label>用印申请人：</label>
+                <input type = "text" id = "useSealUser" name = "useSealUser" style="width: 100px" class = "inputQuery changeQuery" >
 
         <div style="float:right" id = "queryButton" class = "btn query" onclick = "myItem.query()">搜索</div>
     </form>

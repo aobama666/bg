@@ -23,6 +23,7 @@
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/datagrid.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css">
     <link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
     <link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath()%>/css/yygl/agree.css" rel="stylesheet" media="all">
     <%--<link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" media="all">--%>
     <style type="text/css">
         .tableBody{
@@ -31,6 +32,7 @@
     </style>
 </head>
 <body>
+    <h3 style="float: left;margin-left: 3%;">申请编号:${yyApplyDAO.applyCode}</h3>
 <div class="tabbable active" style="text-align:right;width: 97%;padding-top: 5px;padding-bottom: 5px;">
     <button type="button" class="btn" onclick="returnClose()">返回</button>
     <button type="button" class="btn" onclick="returnClose()">撤回</button>
@@ -107,7 +109,7 @@
     <div id="datagrid" style="padding-top: 3px;"></div>
 </div>
 
-<div style="padding-top: 10px"></div>
+<%--<div style="padding-top: 10px"></div>--%>
 
 
 <div class="mingliao" style="margin-left: 3%;width: 94%;">
@@ -132,51 +134,83 @@
         </tr>
         <tr>
             <td>
-                <div class="process " id="1">申请人提交</div>
+                <div class="process " id="0">申请人提交</div>
             </td>
             <td>
                 <i class="toRight"></i>
             </td>
             <td>
-                <div class="process " id="2">业务主管部门审批</div>
+                <div class="process " id="3">申请部门审批</div>
             </td>
             <td>
                 <i class="toRight"></i>
             </td>
             <td>
-                <div class="process " id="3">党委办公室审批</div>
+                <div class="process " id="4">业务主管部门审批</div>
             </td>
             <td>
                 <i class="toRight"></i>
             </td>
             <td>
-                <div class="process" id="4">院领导批准</div>
+                <div class="process " id="5">党委办公室审批</div>
+            </td>
+            <td>
+                <i class="toRight"></i>
+            </td>
+            <td>
+                <div class="process" id="6">院领导批准</div>
             </td>
         </tr>
         <tr>
-            <td colspan="4"></td>
+            <td colspan="6"></td>
             <td style="padding-left: 70px" colspan="2" rowspan="3">
                 <i class="toDownRight"></i>
             </td>
         </tr>
         <tr>
-            <td colspan="4"></td>
+            <td colspan="6"></td>
             <td>
                 <i class="toDown"></i>
             </td>
         </tr>
         <tr>
-            <td colspan="6"></td>
+            <td colspan="8"></td>
             <td>
-                <div class="process " style="padding:0px;height:45px;" id="5">印章管理员<br/>确认用印</div>
+                <div class="process " style="padding:0px;height:45px;" id="7">印章管理员<br/>确认用印</div>
             </td>
             <td>
                 <i class="toRight"></i>
             </td>
             <td>
-                <div class="start" id="6">结束</div>
+                <div class="start" id="99">结束</div>
             </td>
         </tr>
+    </table>
+</div>
+
+
+<div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 30px;margin-bottom: 30px">
+    <table class="agree" style="width: 100%">
+        <tr>
+            <td class="bg">审批人姓名</td>
+            <td class="bg">审批部门/单位</td>
+            <td class="bg">审批意见</td>
+            <td class="bg">审批时间</td>
+            <td class="bg">下一环节审批人角色</td>
+            <td class="bg">下一环节审批人姓名</td>
+            <td class="bg">下一环节审批人联系方式</td>
+        </tr>
+        <c:forEach var="a" items="${approveAnnal}" >
+            <tr>
+                <td>${a.USERALIAS}</td>
+                <td>${a.DEPTNAME}</td>
+                <td>${a.APPROVE_REMARK}</td>
+                <td>${a.APPROVE_DATE}</td>
+                <td>${a.APPROVE_NODE}</td>
+                <td>${a.NEXT_USERALIAS}</td>
+                <td>${a.NEXT_PHONE}</td>
+            </tr>
+        </c:forEach>
     </table>
 </div>
 
@@ -185,19 +219,33 @@
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
 <script src="<%=request.getContextPath()%>/js/yygl/apply/applyAnnex.js"></script>
 <script>
+
+    $(function () {
+        debugger
+        var useSealStatus = ${useSealStatus};
+        var x = useSealStatus-1;
+        var i = 0;
+        //设置正在进行中的
+        $('#'+(x)).addClass('yellow');
+        //设置通过的
+        for(i;i<x;i++){
+            $("#"+i).addClass('green');
+            $("#"+i).removeClass('yellow');
+        }
+        //院领导是否参与本次审批
+        var leaderApprove = ${leaderApprove};
+        if(leaderApprove===2){
+            $('#6').removeClass('yellow');
+            $('#6').removeClass('green');
+        }
+        if(useSealStatus===9){
+            $("#99").addClass('green');
+        }
+    });
+
     function returnClose() {
         parent.layer.closeAll();
     }
 
-    var x = 6;
-    var i = 1;
-    $('#'+x).addClass('yellow');
-    for(i;i<=x;i++){
-        $("#"+i).addClass('green');
-        $("#"+i).removeClass('yellow');
-    }
-    debugger
-    $('#4').removeClass('yellow');
-    $('#4').removeClass('green');
 </script>
 </html>

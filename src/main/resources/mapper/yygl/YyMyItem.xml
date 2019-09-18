@@ -29,6 +29,10 @@
         left join bg_sys_user u on a.apply_user_id = u.userid
         left join bg_yy_item_second s on a.item_second_id = s.uuid
         left join bg_yy_item_first f on a.item_first_id = f.uuid
+        left JOIN TB_WL_BUSINESS_R_APPLY b on a.UUID = b.BUSINESS_ID
+        LEFT JOIN TB_WL_APPLY wa on wa.ID = b.APPLY_ID
+        LEFT JOIN  TB_WL_APPROVE p on wa.id = p.APPLY_ID
+        LEFT JOIN TB_WL_AUDIT_USER wau on wau.APPROVE_ID = p.ID
         where 1=1
         <if test="applyCode != null and applyCode != ''">
             and a.apply_code like '%'||#{applyCode}||'%'
@@ -39,7 +43,10 @@
         <if test="useSealUser != null and useSealUser != ''">
             and u.USERALIAS like '%'||#{useSealUser}||'%'
         </if>
+        and p.AUDIT_FLAG = #{ifComingSoon}
+        and wau.APPROVE_USER = #{loginUserId}
         and a.valid = '1'
+        and wau.valid = '1'
         order by a.create_time desc
     </sql>
 
@@ -65,6 +72,43 @@
         FROM bg_sys_dept
         WHERE PDEPTCODE = '90000110' AND VALID = '1' AND src IN (0, 2)
         ORDER BY SORT_ID
+    </select>
+
+    <select id="nextNodeApprove" resultType="java.util.Map">
+        SELECT
+          a.STAFF_ID staffId,
+          u.USERNAME,
+          u.USERALIAS,
+          a.DEPT_ID deptId,
+          d.DEPTNAME,
+          (select name from BG_SYS_DATADICTIONARY where pcode ='node_type' and code = a.NODE_TYPE) NODETYPE
+        FROM BG_YY_APPROVE a
+        LEFT JOIN BG_SYS_DEPT d ON a.DEPT_ID = d.DEPTID
+        LEFT JOIN BG_SYS_USER u ON u.USERID = a.STAFF_ID
+        WHERE 1=1
+        <if test="deptId!=null and deptId!=''">
+          AND a.DEPT_ID = #{deptId}
+        </if>
+        AND a.NODE_TYPE = #{nodeType} AND
+        a.ITEM_SECOND_ID = #{itemSecondId}
+        AND a.VALID = '1' AND d.VALID = '1' AND u.VALID = '1'
+    </select>
+
+    <select id="itemBusinessDept" resultType="java.util.Map">
+        select s.DEPT_ID,d.DEPTNAME from BG_YY_ITEM_SECOND_DEPT s LEFT JOIN BG_SYS_DEPT d ON d.DEPTID = s.DEPT_ID
+        where s.SECOND_CATEGORY_ID=#{itemSecondId} and d.VALID='1' and s.VALID='1'
+    </select>
+
+    <select id="ifSign" resultType="java.lang.String">
+        select IF_SIGN from BG_YY_ITEM_SECOND s where s.uuid=#{itemSecondId} and valid='1'
+    </select>
+
+    <select id="ifLeaderApprove" resultType="java.lang.String">
+        select IF_LEADER_APPROVE from BG_YY_ITEM_SECOND s where s.uuid=#{itemSecondId} and valid='1'
+    </select>
+
+    <select id="findDeptForUserName" resultType="java.util.Map">
+        select USERID,USERNAME,USERALIAS,HRDEPTNAME from BG_SYS_USER where username = #{userName} and VALID='1'
     </select>
 
 </mapper>

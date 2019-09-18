@@ -99,6 +99,7 @@
     </table>
 </div>
 <script>
+    //控件设定必须再浏览器使用
     var HKEY_Path = "HKEY_CURRENT_USER\\Software\\Microsoft\\Internet Explorer\\PageSetup\\"; // 定义注册表位置
     // name的值可为header（页眉），footer（页脚），margin_bottom（下边距margin_left（左边距），margin_right（右边距），margin_top（上边距）。
     function PageSetup(name,value) {
@@ -106,15 +107,12 @@
             var Wsh = new ActiveXObject("WScript.Shell");
             Wsh.RegWrite(HKEY_Path+name,value); // 修改注册表值
         }catch(e) {
-            alert('需要运行ActiveX对象后，才能进行打印设置。');
+            // alert('需要运行ActiveX对象后，才能进行打印设置。');
         }
     }
     function printPreview() {
         PageSetup("footer","");
         PageSetup("header","");
-        // PageSetup("margin_top","5");
-        // PageSetup("margin_left","5");
-        // PageSetup("margin_right","5");
         window.print();
     }
     function printPreview2() {

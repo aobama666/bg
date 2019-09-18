@@ -24,38 +24,8 @@ public class OrganStuffTreeNewServiceImpl implements OrganStuffTreeNewService{
 	@Autowired
 	private  UserUtils userUtils;
 	
-	public List<Map<String, Object>> initUserTree(String rootId){
-		List<Map<String, Object>> list = organStuffTreeMapper.initUserTree(rootId);
-		
-		List<Map<String, Object>> treeList = formatTreeData(list);
-		return treeList;
-	}
-
-	public List<Map<String, Object>> queryUserTreeByUser(String rootId, String empCode, String empName) {
-		List<Map<String, Object>> list = organStuffTreeMapper.getUserTreeByUser(rootId, empCode, empName);
-		
-		List<Map<String, Object>> treeList = formatTreeData(list);
-		return treeList;
-	}
-
-	public List<Map<String, Object>> queryUserTreeByOrgan(String organId) {
-		List<Map<String, Object>> list = organStuffTreeMapper.getUserTreeByOrgan(organId);
-		
-		List<Map<String, Object>> treeList = formatTreeData(list);
-		return treeList;
-	}
-    
-	public List<Map<String, Object>> getyszxForUserTreeByOrgan(String organId) {
-		List<Map<String, Object>> list = organStuffTreeMapper.getyszxForUserTreeByOrgan(organId);
-		List<Map<String, Object>> treeList = formatTreeData(list);
-		return treeList;
-	}
-	
-	
-	
-	
-	public List<Map<String, Object>> queryAllOrganTree(String rootId,String level,String limit) {
-		List<Map<String, Object>> list = organStuffTreeMapper.getAllOrganTree(rootId,level,limit);
+	public List<Map<String, Object>> queryAllOrganTree(String rootId,String level,String limit,String funcType,String dataSrc,String userName,String show) {
+		List<Map<String, Object>> list = organStuffTreeMapper.getAllOrganTree(rootId,level,limit,funcType,dataSrc,userName,show);
 		
 		List<Map<String, Object>> treeList = formatTreeData(list);
 		return treeList;
@@ -75,7 +45,7 @@ public class OrganStuffTreeNewServiceImpl implements OrganStuffTreeNewService{
 			String childNum = obj.get("CHILD_NUM")==null?"":obj.get("CHILD_NUM").toString();
 			String dataType = obj.get("DATATYPE")==null?"":obj.get("DATATYPE").toString();
 			String parentName = obj.get("PDEPTNAME")==null?"":obj.get("PDEPTNAME").toString();
-			System.out.println(userId);
+//			System.out.println(userId);
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("userId", userId);
 			map.put("deptId", deptId);
@@ -91,6 +61,52 @@ public class OrganStuffTreeNewServiceImpl implements OrganStuffTreeNewService{
 		}
 		return treeList;
 	}
+	
+	public List<Map<String, Object>> initUserTree(String rootId,String level,String limit,String funcType,String dataSrc,String userName,String show){
+		List<Map<String, Object>> list = organStuffTreeMapper.initUserTree(rootId,level,limit,funcType,dataSrc,userName,show);
+		
+		List<Map<String, Object>> treeList = formatTreeData(list);
+		return treeList;
+	}
+	
+	public List<Map<String, Object>> queryUserTreeByOrgan(String organId,String level,String limit,String funcType,String dataSrc,String userName,String show){
+		List<Map<String, Object>> list = organStuffTreeMapper.getUserTreeByOrgan(organId,level,limit,funcType,dataSrc,userName,show);
+		
+		List<Map<String, Object>> treeList = formatTreeData(list);
+		return treeList;
+	}
+	
+	public List<Map<String, Object>> queryUserTreeByUser(String rootId, String empCode, String empName,String level,String limit,String funcType,String dataSrc,String userName,String show){
+		List<Map<String, Object>> list = organStuffTreeMapper.getUserTreeByUser(rootId, empCode, empName,level,limit,funcType,dataSrc,userName,show);
+		
+		List<Map<String, Object>> treeList = formatTreeData(list);
+		return treeList;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+
+	
+    
+	public List<Map<String, Object>> getyszxForUserTreeByOrgan(String organId) {
+		List<Map<String, Object>> list = organStuffTreeMapper.getyszxForUserTreeByOrgan(organId);
+		List<Map<String, Object>> treeList = formatTreeData(list);
+		return treeList;
+	}
+	
+	
+	
+	
+	
 
 	public List<Map<String, Object>> queryUserOrganPrivilege(String rootId, String deptPriv, String labPriv) {
 		List<Map<String, Object>> list = organStuffTreeMapper.getUserOrganPrivilege(rootId, deptPriv, labPriv);
@@ -162,8 +178,9 @@ public class OrganStuffTreeNewServiceImpl implements OrganStuffTreeNewService{
 			level = "2";
 		}
 		//获取组织或组织人员数据列表
-		List<Map<String, Object>> list = queryAllOrganTree(root,level,limit);
-		return list;
+//		List<Map<String, Object>> list = queryAllOrganTree(root,level,limit);
+//		return list;
+		return null;
 	}
 	
 	//新增获取权限接口接口

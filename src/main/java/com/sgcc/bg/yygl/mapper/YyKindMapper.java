@@ -3,10 +3,11 @@ package com.sgcc.bg.yygl.mapper;
 import com.sgcc.bg.yygl.bean.YyKind;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Mapper
+@Repository
 public interface YyKindMapper {
 
     //查询当前申请拥有的种类编码

@@ -154,10 +154,50 @@ applyOperate.applyUpdate = function () {
 }
 
 
+
+/**
+ * 提交——新增修改页面
+ */
+applyOperate.toSubmit = function () {
+    //获取申请id
+    var checkedIds = $("#uuid").val();
+    if('' === checkedIds || undefined === checkedIds){
+        layer.msg("请保存基本信息后再提交");
+        return;
+    }
+    var url = "/bg/yygl/apply/toApplySubmit?checkedIds="+checkedIds;
+    layer.open({
+        type:2,
+        title:'<h4 style="font-size: 18px;padding-top: 10px">选择下一环节审批人</h4>',
+        area:['40%','50%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url
+    });
+
+}
+
 //提交用印申请
 applyOperate.applySubmit = function () {
     //发送后台请求
-
+    debugger
+    var principalUser = $("input[name='principal']:checked").val();
+    var checkedIds = $("#checkedIds").val();
+    if(principalUser==='' || principalUser === undefined){
+        layer.msg("请选择下一环节审批人！");
+        return;
+    }
+    $.ajax({
+        url: "/bg/yygl/apply/applySubmit",
+        type: "post",
+        dataType:"json",
+        data: {'principalUser':principalUser,'checkedIds':checkedIds},
+        success: function (data) {
+            if(data.success=="true"){
+                parent.apply.closeAndOpen(data.msg);
+            }
+        }
+    });
 }
 
 
