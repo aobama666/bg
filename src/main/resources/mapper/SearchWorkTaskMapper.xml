@@ -25,7 +25,7 @@
            to_char(F.START_DATE, 'yyyy-MM-dd') as personStart,
 	       to_char(F.END_DATE, 'yyyy-MM-dd') as personEnd,
 	       b.UPDATE_USER,
-	       (select t4.useralias
+	       (select TO_CHAR(WM_CONCAT(DISTINCT t4.useralias))
 	          from BG_PROJECT_USER t3
 	          JOIN BG_SYS_USER t4
 	            ON t3.hrcode = t4.hrcode
@@ -37,11 +37,7 @@
 	       F.PLANHOURS
 	  from BG_PROJECT_INFO b
 	  LEFT JOIN BG_PROJECT_USER F ON F.PROJECT_ID = b.id
-	 where <!-- b.ID in
-	       (select t.PROJECT_ID from BG_PROJECT_USER t where t.HRCODE = #{hrCode})
-	       or 
-       and  F.HRCODE = #{hrCode} -->
-          1 = 1
+	 where   1 = 1
        and b.status = '1'
        and  ((b.CATEGORY IN ('JS', 'KY', 'HX', 'QT') AND
 		       F.HRCODE = #{hrCode})
@@ -62,18 +58,21 @@
 		<if test="type=='CG_NP'">
 			and b.category ='CG'
 		</if>
-		<!-- <if test="startTime!=null and startTime!='' and endTime!=null and endTime!=''">
-			and (TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss') BETWEEN F.START_DATE and F.END_DATE
-			or  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss') BETWEEN F.START_DATE and F.END_DATE
-			or (to_char(F.START_DATE,'yyyy-mm-dd') &gt;= #{startTime}  and to_char(F.END_DATE,'yyyy-mm-dd') &lt;= #{endTime}
-			))
-		</if> -->
-		<if test="startTime!=null and startTime!='' ">
+		<if test="startTime!=null and startTime!='' and endTime!=null and endTime!='' ">
+			AND (b.START_DATE between TO_DATE(#{startTime}, 'yyyy-mm-dd') and TO_DATE(#{endTime}, 'yyyy-mm-dd')
+				or b.END_DATE between TO_DATE(#{startTime}, 'yyyy-mm-dd') and TO_DATE(#{endTime}, 'yyyy-mm-dd')
+				or (TO_DATE(#{startTime}, 'yyyy-mm-dd') >=b.START_DATE and
+				TO_DATE(#{endTime}, 'yyyy-mm-dd') &lt;= b.END_DATE)
+				or(TO_DATE(#{startTime}, 'yyyy-mm-dd') &lt;=b.START_DATE and
+				TO_DATE(#{endTime}, 'yyyy-mm-dd') &gt;= b.END_DATE))
+		</if>
+
+		<!--<if test="startTime!=null and startTime!='' ">
 			AND TO_DATE(#{startTime}, 'yyyy-mm-dd') &lt;= b.START_DATE
 		</if>
 		<if test="endTime!=null and endTime!='' ">
 			AND TO_DATE(#{endTime}, 'yyyy-mm-dd') &gt;= b.END_DATE
-		</if>
+		</if>-->
     </select>
     
     <!-- 工时审核查询 table-->
@@ -101,7 +100,9 @@
 			T.HRCODE,
 			TO_CHAR (b.CREATE_TIME, 'yyyy-MM-dd') AS CREATE_TIME,
 			TO_CHAR (b.UPDATE_TIME, 'yyyy-MM-dd') AS UPDATE_TIME,
-			TO_CHAR (b.WORK_TIME, 'yyyy-MM-dd') AS WORK_TIME
+		    TO_CHAR (b.WORK_TIME, 'yyyy-MM-dd') AS WORK_TIME,
+		    TO_CHAR (b.WORK_TIME_END, 'yyyy-MM-dd') AS WORK_TIME_END,
+		    TO_CHAR (b.WORK_TIME_BEGIN, 'yyyy-MM-dd') AS WORK_TIME_BEGIN
 		FROM
 			BG_WORKINGHOUR_INFO b
 		LEFT JOIN BG_PROJECT_INFO p ON p.ID=b.PROJECT_ID
@@ -111,10 +112,10 @@
   	  	WHERE
       		b.VALID = 1 and b.STATUS = '1' and b.approver=#{hrCode}
 		<if test="startTime!=null and startTime!=''">
-			<![CDATA[and b.WORK_TIME >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
+			<![CDATA[and b.WORK_TIME_BEGIN >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
 		<if test="endTime!=null and endTime!=''">
-			<![CDATA[and b.WORK_TIME <=  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
+			<![CDATA[and b.WORK_TIME_END <=  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
 		<if test="projectName!=null and projectName!=''">
 			and NVL(p.PROJECT_NAME, b.PROJECT_NAME)  like '%'||#{projectName}||'%'
@@ -159,7 +160,9 @@
 	      R.PROCESS_NOTE,
 	      TO_CHAR (b.CREATE_TIME, 'yyyy-MM-dd') AS CREATE_TIME,
 	      TO_CHAR (b.UPDATE_TIME, 'yyyy-MM-dd') AS UPDATE_TIME,
-	      TO_CHAR (b.WORK_TIME, 'yyyy-MM-dd') AS WORK_TIME
+	      TO_CHAR (b.WORK_TIME, 'yyyy-MM-dd') AS WORK_TIME,
+		  TO_CHAR (b.WORK_TIME_END, 'yyyy-MM-dd') AS WORK_TIME_END,
+		  TO_CHAR (b.WORK_TIME_BEGIN, 'yyyy-MM-dd') AS WORK_TIME_BEGIN
    		 FROM
      	 BG_WORKINGHOUR_INFO b
 		    LEFT JOIN BG_PROJECT_INFO p ON p.ID=b.PROJECT_ID
@@ -170,10 +173,10 @@
     	WHERE
      	 b.VALID = 1 and b.approver= #{hrName} and  (b.status = '2' or  b.status = '3')
 		<if test="startTime!=null and startTime!=''">
-			<![CDATA[and b.WORK_TIME >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
+			<![CDATA[and b.WORK_TIME_BEGIN >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
 		<if test="endTime!=null and endTime!=''">
-			<![CDATA[and b.WORK_TIME <=  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
+			<![CDATA[and b.WORK_TIME_END <=  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
 		<if test="projectName!=null and projectName!=''">
 			and  NVL(p.PROJECT_NAME, b.PROJECT_NAME)  like '%'||#{projectName}||'%'
@@ -220,7 +223,9 @@
 			(SELECT name FROM BG_SYS_DATADICTIONARY  WHERE pcode='cstatus100003' and vaild=1 and code=b.STATUS) as PROSTATUS,
 			TO_CHAR (b.CREATE_TIME, 'yyyy-MM-dd') AS CREATE_TIME,
 			TO_CHAR (b.UPDATE_TIME, 'yyyy-MM-dd') AS UPDATE_TIME,
-			TO_CHAR (b.WORK_TIME, 'yyyy-MM-dd') AS WORK_TIME
+			TO_CHAR (b.WORK_TIME, 'yyyy-MM-dd') AS WORK_TIME,
+		    TO_CHAR (b.WORK_TIME_END, 'yyyy-MM-dd') AS WORK_TIME_END,
+		    TO_CHAR (b.WORK_TIME_BEGIN, 'yyyy-MM-dd') AS WORK_TIME_BEGIN
 		FROM
 			BG_WORKINGHOUR_INFO b
 		LEFT JOIN BG_PROJECT_INFO p ON p.ID=b.PROJECT_ID
@@ -231,10 +236,10 @@
 		WHERE
 			b.VALID = 1 and b.approver = #{hrName} and (b.status = '2' or  b.status = '3')
 		<if test="startTime!=null and startTime!=''">
-			<![CDATA[and b.WORK_TIME >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
+			<![CDATA[and b.WORK_TIME_BEGIN >=  TO_DATE(#{startTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
 		<if test="endTime!=null and endTime!=''">
-			<![CDATA[and b.WORK_TIME <=  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
+			<![CDATA[and b.WORK_TIME_END <=  TO_DATE(#{endTime}, 'yyyy-mm-dd hh24:mi:ss')]]>
 		</if>
 		<if test="projectName!=null and projectName!=''">
 			and NVL(p.PROJECT_NAME, b.PROJECT_NAME)  like '%'||#{projectName}||'%'

@@ -32,7 +32,9 @@
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/organ-tree/organ-tree.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/common.js"></script>
-<!--[if lt IE 9>
+	<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+
+	<!--[if lt IE 9>
 	<script src="<%=request.getContextPath() %>/common/plugins/html5shiv/html5shiv.min.js"></script>
 	<script src="<%=request.getContextPath() %>/common/plugins/respond/respond.js"></script>
 	<script src="<%=request.getContextPath() %>/common/plugins/pseudo/jquery.pseudo.js"></script>
@@ -48,14 +50,40 @@
 		width:10%;
 		text-align:center;
 	}
+	.layui-layer-title{
+		background-color: #8FE6C6;
+	}
+	.buttonHead{
+		height:35px;
+	}
+	.buttonHead .btn{
+		float:right;
+		margin:5px 10px 0 0;
+	}
+	.contentHead label,textarea{
+		float:left;
+	}
+	.contentHead label{
+		width:80px;
+		text-align:center;
+	}
+	.contentHead textarea
+	{
+		width: 228px;
+		height: 114px;
+	}
+
+
 </style>
 </head>
 <body>
 <div class="page-header-sl">
 	<h5>已审核信息查询</h5>
 	<div class="button-box">
+		<button type="button" class="btn btn-success btn-xs" onclick="reject()"> 驳回</button>
 		<button type="button" class="btn btn-info btn-xs" onclick="forConfirm()"> 导出</button>
-	</div>
+
+    </div>
 </div>
 <hr>
 <div class="query-box">
@@ -65,7 +93,7 @@
 		<input type="hidden" name="selectList"/>
 		<div class="form-group col-xs-5" style="margin-bottom:0;">
 			<label>查询日期：</label>
-			<div class="controls"  data-date-format="yyyy-mm-dd">
+			<%--<div class="controls"  data-date-format="yyyy-mm-dd">
 				<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
 					<input name="startTime" property="startTime"  readonly="true" placeholder='开始时间'>
 					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
@@ -73,6 +101,19 @@
 				<div class="floatLeft">--</div>
 				<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
 					<input name="endTime" property="endTime"  readonly="true" placeholder='结束时间'>
+					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+				</div>
+			</div>--%>
+			<div class="controls"  data-date-format="yyyy-mm">
+				<div class="input-group date form_date bg-white" id="startdateTime"　data-date-format="yyyy-mm" >
+					<input id="startTime" name="startTime" property="startTime"   type="hidden"  >
+					<input  id="startTimes" name="startTimes" property="startTimes"  type="text"  class="form-control form_datetime_2 input-sm bg-white"   readonly  />
+					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+				</div>
+				<div class="floatLeft">--</div>
+				<div class="input-group date form_date bg-white" id="enddateTime"　data-date-format="yyyy-mm" >
+					<input id="endTime" name="endTime" property="endTime"  type="hidden"  >
+					<input  id="endTimes" name="endTimes" property="endTimes" type="text"  class="form-control form_datetime_2 input-sm bg-white"  readonly    />
 					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 				</div>
 			</div>
@@ -127,21 +168,174 @@ $("input[name=endTime]").val(common.getMonthEndDay());
 var mmg;
 var pn = 1;
 var limit = 30;
+
+function Timeinit() {
+    // 时间初始化
+    $("#startdateTime").datepicker({
+        startView: 'months',  //起始选择范围
+        maxViewMode:'years', //最大选择范围
+        minViewMode:'months', //最小选择范围
+        todayHighlight : true,// 当前时间高亮显示
+        autoclose : 'true',// 选择时间后弹框自动消失
+        format : 'yyyy-mm',// 时间格式
+        language : 'zh-CN',// 汉化
+        // todayBtn:"linked",//显示今天 按钮
+        //clearBtn : true,// 清除按钮，和今天 按钮只能显示一个
+    });
+    $("#enddateTime").datepicker({
+        startView: 'months',  //起始选择范围
+        maxViewMode:'years', //最大选择范围
+        minViewMode:'months', //最小选择范围
+        todayHighlight : true,// 当前时间高亮显示
+        autoclose : 'true',// 选择时间后弹框自动消失
+        format : 'yyyy-mm',// 时间格式
+        language : 'zh-CN',// 汉化
+        // todayBtn:"linked",//显示今天 按钮
+        //clearBtn : true,// 清除按钮，和今天 按钮只能显示一个
+    });
+}
+//获取结束时间的
+function getEndD(endDate) {
+    var   eDate = new Date(endDate);
+    var   date=new Date(eDate.getFullYear(),eDate.getMonth()+1,0);
+    var   days=date.getDate();
+    return days;
+}
+//比较两个时间是否大于一个月，例如20170215--到20170315 是一个月，到20170316是大于一个月
+function getD(sDate, endDate) {
+
+    var sDate = new Date(sDate);
+    var eDate = new Date(endDate);
+    if (eDate.getFullYear() - sDate.getFullYear() > 1) {//先比较年
+        return true;
+    } else if (eDate.getMonth() - sDate.getMonth() > 1) {//再比较月
+        return true;
+    } else if (eDate.getMonth() - sDate.getMonth() == 1) {
+        if (eDate.getDate() - sDate.getDate() >= 0) {
+            return true;
+        }
+    }else if (eDate.getMonth() - sDate.getMonth() == 0) {
+        var   date=new Date(sDate.getFullYear(),sDate.getMonth()+1,0);
+        var   days=date.getDate();
+        var   numdays=eDate.getDate() - sDate.getDate()+1;
+        if (numdays==days) {
+            return true;
+        }
+    } else if (eDate.getFullYear() - sDate.getFullYear() == 1) {
+        if (eDate.getMonth()+12 - sDate.getMonth() > 1) {
+            return true;
+        }
+        else if (eDate.getDate() - sDate.getDate() >= 1) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
 $(function(){
 	init();
 	queryList();
 });
 
 function init(){
+    Timeinit();
+    var   date = new Date();
+    var   month=date.getMonth()+1;
+    var months;
+    if(month<10){
+        months="0"+month;
+    }
+    var   newdate=date.getFullYear()+"-"+months;
+    $("#startTimes").val(newdate);
+    $("#endTimes").val(newdate);
+
 	$(".form_date").datepicker({autoclose:true,todayHighlight:true,clearBtn:true,language: 'cn',orientation:'auto'});
 }
+
+//获得开始时间
+function timeBegin (dateStr) {
+    var dateStr=dateStr+"-01";
+    var date=new Date(dateStr.replace(/-/g,"\/"));
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var firstDay=new Date(year,month,1);//这个月的第一天
+    var currentMonth=firstDay.getMonth(); //取得月份数
+    var nextMonthFirstDay=new Date(firstDay.getFullYear(),currentMonth+1,1);//加1获取下个月第一天
+    var dis=nextMonthFirstDay.getTime()-24*60*60*1000;//减去一天就是这个月的最后一天
+    var lastDay=new Date(dis);
+    var time =dateFtt("yyyy-MM-dd",firstDay);//格式化 //这个格式化方法要用你们自己的，也可以用本文已经贴出来的下面的Format
+    var timeEnd=dateFtt("yyyy-MM-dd",lastDay);//格式化
+    return time;
+}
+
+//获得结束时间
+function timeEnd(dateStr) {
+    var dateStr=dateStr+"-01";
+    var date=new Date(dateStr.replace(/-/g,"\/"));
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var firstDay=new Date(year,month,1);//这个月的第一天
+    var currentMonth=firstDay.getMonth(); //取得月份数
+    var nextMonthFirstDay=new Date(firstDay.getFullYear(),currentMonth+1,1);//加1获取下个月第一天
+    var dis=nextMonthFirstDay.getTime()-24*60*60*1000;//减去一天就是这个月的最后一天
+    var lastDay=new Date(dis);
+    var time =dateFtt("yyyy-MM-dd",firstDay);//格式化 //这个格式化方法要用你们自己的，也可以用本文已经贴出来的下面的Format
+    var timeEnd=dateFtt("yyyy-MM-dd",lastDay);//格式化
+    return timeEnd;
+}
+
+function dateFtt(fmt,date)
+{ //author: meizz
+    var o = {
+        "M+" : date.getMonth()+1,     //月份
+        "d+" : date.getDate(),     //日
+        "h+" : date.getHours(),     //小时
+        "m+" : date.getMinutes(),     //分
+        "s+" : date.getSeconds(),     //秒
+        "q+" : Math.floor((date.getMonth()+3)/3), //季度
+        "S" : date.getMilliseconds()    //毫秒
+    };
+    if(/(y+)/.test(fmt))
+        fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));
+    for(var k in o)
+        if(new RegExp("("+ k +")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+    return fmt;
+}
+
 function forSearch(){
-	var startDate =$("input[name=startTime]").val();
-	var endDate=$("input[name=endTime]").val();
-    if((new Date(endDate.replace(/-/g,"\/")))<(new Date(startDate.replace(/-/g,"\/")))){
-	   layer.msg("结束时间必须大于开始时间");
-	   return ;
+	// var startDate =$("input[name=startTime]").val();
+	// var endDate=$("input[name=endTime]").val();
+    //var  days=getEndD(endDate);
+    //endDate=endDate+"-"+days;
+
+
+    var startDate =timeBegin($("input[name=startTimes]").val());
+    var endDate = timeEnd($("input[name=endTimes]").val());
+
+    if(startDate==""){
+        layer.msg("开始时间不能为空");
+        return ;
     }
+    if(endDate==""){
+        layer.msg("结束时间不能为空");
+        return ;
+    }
+
+    if((new Date(endDate.replace(/-/g,"\/")))<(new Date(startDate.replace(/-/g,"\/")))){
+        layer.msg("结束时间必须大于开始时间");
+        return ;
+    }
+    /*var  falg=getD(startDate, endDate);
+    if(!falg){
+        layer.msg("结束时间大等于开始时间的一个月的时间");
+        return ;
+    }*/
+    $("#startTime").val(startDate);
+    $("#endTime").val(endDate);
+
 	pn = 1;
 	queryList("reload");
 }
@@ -150,7 +344,9 @@ function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},
+	            // {title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},
+		        {title:'开始日期', name:'WORK_TIME_BEGIN', width:100, sortable:false, align:'center'},
+                {title:'结束日期', name:'WORK_TIME_END', width:100, sortable:false, align:'center'},
 	            {title:'部门（单位）', name:'DEPTNAME', width:100, sortable:false, align:'left'},
 	            {title:'处室', name:'LABNAME', width:100, sortable:false, align:'left'},
 	            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},
@@ -196,6 +392,7 @@ function queryList(load){
 }
 //确认
 function forConfirm(){
+
 	var selectList = mmg.selectedRows();
 	if(selectList.length>0){
 		var ids = "";
@@ -216,6 +413,70 @@ function forConfirm(){
 		document.forms[0].submit();
 	}
 }
+//驳回
+function reject(){
+    var selectList = mmg.selectedRows();
+    if(selectList.length==0){
+        layer.msg("至少选择一条");
+        return false;
+    }
+    if(selectList.length>1){
+        layer.msg("每次驳回一条数据");
+        return false;
+    }
+    debugger
+    var status="";
+    for(var i=0;i<selectList.length;i++){
+        status = selectList[i].STATUS;
+        if(status=='2'){
+            layer.msg("该条数据已驳回");
+            return false;
+        }
+    }
+    index = layer.open({
+        type:1,
+        title:"审核备注",
+        area:['320px', '230px'],
+        resize:false,
+        scrollbar:false,
+        content:'<div class="buttonHead"><button class="reject btn btn-success btn-xs">确认</button></div><div class="contentHead"><label>驳回原因：<span style="color:#f00">(不超过200个字)*</span></label><textarea class="reason">驳回</textarea></div>',
+        end: function(){
+            queryList("reload");
+        }
+    });
+}
+$("body").on("click",".reject",function(){
+    var ids="";
+    var selectList = mmg.selectedRows();
+    var reason = $(".reason").val();
+    if(reason!=""){
+        if(reason.length>200){
+            layer.msg("驳回原因不超过200个字");
+            return false;
+        }
+    }else{
+        layer.msg("驳回原因不能为空");
+        return false;
+    }
+
+
+
+
+    for(var i=0;i<selectList.length;i++){
+        ids += selectList[i].ID+",";
+    }
+
+    ids = ids.slice(0,ids.length-1);
+    common.getAjax("<%=request.getContextPath()%>/searchWorkTask/confirmExamined","post",{"type":"2","ids":ids,"reason":reason},
+        function(data){
+            layer.close(index);
+            layer.msg(data.msg);
+        },function(err){
+            alert(err);;
+        })
+})
+
+
 
 </script>
 </html>

@@ -33,11 +33,11 @@
 		          FROM BG_PROJECT_USER T2
 		         WHERE T2.PROJECT_ID = T1.ID
 		           AND T2.STATUS = '1') AS "amount",
-		       (SELECT T3.EMPNAME
-		          FROM BG_PROJECT_USER T3
-		         WHERE T3.PROJECT_ID = T1.ID
-		           AND T3.ROLE = '1'
-		           AND T3.STATUS = '1') AS "principal",
+		       (SELECT TO_CHAR(WM_CONCAT(DISTINCT T4.EMPNAME))
+				FROM BG_PROJECT_USER T4
+				WHERE T4.PROJECT_ID = T1.ID
+				AND T4.STATUS = '1'
+				and T4.ROLE='1') AS "principal",
 		       (SELECT TO_CHAR(WM_CONCAT(DISTINCT T3.EMPNAME))
 		          FROM BG_PROJECT_USER T3
 		         WHERE T3.PROJECT_ID = T1.ID
@@ -64,6 +64,11 @@
 		  </if>
 		  AND T1.status='1'
 	</select>
+	<!--SELECT T3.EMPNAME
+	FROM BG_PROJECT_USER T3
+	WHERE T3.PROJECT_ID = T1.ID
+	AND T3.ROLE = '1'
+	AND T3.STATUS = '1') AS "principal",-->
 	
 	<!-- <select id="getProjectCount" parameterType="String" resultType="java.lang.Integer">
 		SELECT COUNT(*)
@@ -93,7 +98,7 @@
 			START_DATE,END_DATE,
 			PLAN_HOURS,PROJECT_STATUS,DECOMPOSE,STATUS,
 			CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,
-			SRC)
+			SRC,PROJECT_GRADE)
 		VALUES
 			(#{id}, #{projectName,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, 
 			#{projectNumber,jdbcType=VARCHAR},#{WBSNumber,jdbcType=VARCHAR},
@@ -101,7 +106,7 @@
 			#{startDate,jdbcType=DATE},#{endDate,jdbcType=DATE},
 			#{planHours,jdbcType=NUMERIC},#{projectStatus,jdbcType=VARCHAR},#{decompose,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},
 			#{createUser,jdbcType=VARCHAR},#{createDate,jdbcType=TIMESTAMP},#{updateUser,jdbcType=VARCHAR},#{updateDate,jdbcType=TIMESTAMP},
-			#{src,jdbcType=VARCHAR})
+			#{src,jdbcType=VARCHAR},#{projectGrade,jdbcType=VARCHAR})
 	</insert>
 	
 	<insert id="addProUser"  parameterType="com.sgcc.bg.model.ProjectUserPo">
@@ -132,11 +137,12 @@
 			PLAN_HOURS=#{planHours,jdbcType=NUMERIC},
 			DECOMPOSE=#{decompose,jdbcType=VARCHAR},
 			UPDATE_USER=#{updateUser,jdbcType=VARCHAR},
-			UPDATE_DATE=#{updateDate,jdbcType=TIMESTAMP}
+			UPDATE_DATE=#{updateDate,jdbcType=TIMESTAMP},
+			PROJECT_GRADE=#{projectGrade,jdbcType=VARCHAR}
 		WHERE ID=#{id} AND status='1'
 	</update> 
 	
-	<delete id="deleteProUsersByProId" parameterType="String">
+	<delete id="deleteProUsersByProId" parameterType="java.lang.String">
 		DELETE FROM BG_PROJECT_USER 
 		WHERE 
 		PROJECT_ID=#{proId}
@@ -144,50 +150,64 @@
 	
 	<select id="getProInfoByProId" resultType="map">
 		SELECT T.ID AS "id",
-		       T.PROJECT_NAME AS "projectName",
-		       T.CATEGORY AS "category",
-		       T.PROJECT_NUMBER AS "projectNumber",
-		       T.WBS_NUMBER AS "WBSNumber",
-		       T.PROJECT_INTRODUCE AS "projectIntroduce",
-		       T.ORGAN_INFO AS "organInfo",
-		       TO_CHAR(T.START_DATE, 'yyyy-mm-dd') AS "startDate",
-		       TO_CHAR(T.END_DATE, 'yyyy-mm-dd') AS "endDate",
-		       T.PLAN_HOURS AS "planHours",
-		       T.PROJECT_STATUS AS "projectStatus",
-		       T.DECOMPOSE AS "decompose",
-		       T.STATUS AS "status",
-		       T.SRC AS "src",
-		       T.RELATED_PROJECT_ID AS "relProId",
-		       (SELECT COUNT(DISTINCT T2.HRCODE)
-		          FROM BG_PROJECT_USER T2
-		         WHERE T2.PROJECT_ID = T.ID
-		           AND T2.STATUS = '1') AS "amount",
-		       U.USERALIAS AS "principal",
-		       U.USERNAME AS "username",
-		       (SELECT TO_CHAR(WM_CONCAT(DISTINCT T3.EMPNAME))
-		          FROM BG_PROJECT_USER T3
-		         WHERE T3.PROJECT_ID = T.ID
-		           AND T3.STATUS = '1') AS "empName",
-		       D.DEPTNAME AS "deptName",
-		       D.DEPTCODE AS "deptCode",
-		       SIGN((SELECT COUNT(1)
-		              FROM BG_PROJECT_INFO
-		             WHERE RELATED_PROJECT_ID = T.ID)) AS "isRelated"
-		  FROM BG_PROJECT_INFO T
-		  LEFT JOIN BG_SYS_DEPT D
-		    ON T.ORGAN_INFO = D.DEPTID
-		   AND D.VALID = '1'
-		  LEFT JOIN BG_PROJECT_USER E
-		    ON T.ID = E.PROJECT_ID
-		   AND E.ROLE = '1'
-		   AND E.STATUS = '1'
-		  LEFT JOIN BG_SYS_USER U
-		    ON E.HRCODE = U.HRCODE
-		 WHERE T.ID = #{proId}
-		   AND T.STATUS = '1'
+           T.PROJECT_NAME AS "projectName",
+           T.CATEGORY AS "category",
+           T.PROJECT_NUMBER AS "projectNumber",
+           T.WBS_NUMBER AS "WBSNumber",
+           T.PROJECT_INTRODUCE AS "projectIntroduce",
+           T.ORGAN_INFO AS "organInfo",
+           TO_CHAR(T.START_DATE, 'yyyy-mm-dd') AS "startDate",
+           TO_CHAR(T.END_DATE, 'yyyy-mm-dd') AS "endDate",
+           T.PLAN_HOURS AS "planHours",
+           T.PROJECT_STATUS AS "projectStatus",
+           T.DECOMPOSE AS "decompose",
+           T.STATUS AS "status",
+           T.SRC AS "src",
+           T.PROJECT_GRADE AS "projectGrade",
+           T.RELATED_PROJECT_ID AS "relProId",
+           (SELECT COUNT(DISTINCT T2.HRCODE)
+              FROM BG_PROJECT_USER T2
+             WHERE T2.PROJECT_ID = T.ID
+               AND T2.STATUS = '1') AS "amount",
+
+			(SELECT TO_CHAR(WM_CONCAT(DISTINCT T4.EMPNAME))
+				 FROM BG_PROJECT_USER T4
+				 LEFT JOIN BG_SYS_USER U2
+				 ON   T4.HRCODE = U2.HRCODE
+				 WHERE T4.PROJECT_ID = T.ID
+				 AND T4.STATUS = '1'
+				 and T4.Role='1') AS "principal",
+
+			(SELECT TO_CHAR(WM_CONCAT(DISTINCT U3.USERNAME))
+				FROM BG_PROJECT_USER T5
+				LEFT JOIN BG_SYS_USER U3
+				ON   T5.HRCODE = U3.HRCODE
+				WHERE T5.PROJECT_ID = T.ID
+				AND T5.STATUS = '1'
+				and T5.Role='1') AS "username",
+
+           (SELECT TO_CHAR(WM_CONCAT(DISTINCT T3.EMPNAME))
+              FROM BG_PROJECT_USER T3
+             WHERE T3.PROJECT_ID = T.ID
+               AND T3.STATUS = '1') AS "empName",
+           D.DEPTNAME AS "deptName",
+           D.DEPTCODE AS "deptCode",
+           SIGN((SELECT COUNT(1)
+                  FROM BG_PROJECT_INFO
+                 WHERE RELATED_PROJECT_ID = T.ID)) AS "isRelated"
+				FROM BG_PROJECT_INFO T
+				LEFT JOIN BG_SYS_DEPT D
+					ON T.ORGAN_INFO = D.DEPTID
+				 AND D.VALID = '1'
+				LEFT JOIN BG_PROJECT_USER E
+					ON T.ID = E.PROJECT_ID
+				 AND E.ROLE = '1'
+				 AND E.STATUS = '1'
+			 WHERE rownum = 1 and T.ID = #{proId}
+				 AND T.STATUS = '1'
 	</select>
 	
-	<select id="getProPoByProId" parameterType="String" resultType="com.sgcc.bg.model.ProjectInfoPo">
+	<select id="getProPoByProId" parameterType="java.lang.String" resultType="com.sgcc.bg.model.ProjectInfoPo">
 		SELECT
       		t.id as "id",
       		t.project_name as "projectName",
@@ -212,7 +232,7 @@
 		WHERE t.id=#{proId} AND t.status='1'
 	</select>
 
-	<select id="getAllProInfos" parameterType="String" resultType="java.util.Map">
+	<select id="getAllProInfos" parameterType="java.lang.String" resultType="java.util.Map">
 		SELECT
       		t.id as "id",t.project_name as "projectName",t.category as "category",
       		t.project_number as "projectNumber",
@@ -240,7 +260,7 @@
 		ORDER BY t.UPDATE_DATE DESC
 	</select>
 	
-	<select id="getProUsersByProId" parameterType="String" resultType="java.util.Map">
+	<select id="getProUsersByProId" parameterType="java.lang.String" resultType="java.util.Map">
 		 SELECT T.ID,
 		        T.HRCODE,
 		        TO_CHAR(T.START_DATE, 'YYYY-MM-DD') AS START_DATE,
@@ -254,10 +274,10 @@
 		   FROM BG_PROJECT_USER T
 		   LEFT JOIN BG_SYNC_EMP_RELATION R
 		     ON T.PROJECT_ID = R.BG_PROJECT_ID
-		    AND T.HRCODE = R.HRCODE
+		    AND T.ID = R.BG_EMP_ID
 		  WHERE T.PROJECT_ID = #{proId}
 		    AND T.STATUS = '1'
-		  ORDER BY T.ROLE DESC, T.HRCODE, T.START_DATE
+		  ORDER BY T.ROLE DESC, T.HRCODE,T.START_DATE
 	</select>
 	
 	<update id="deleteProjectByProId">
@@ -266,7 +286,7 @@
 		WHERE ID=#{proId} AND status='1'
 	</update>
 	
-	<update id="changeProStatusById"  parameterType="String">
+	<update id="changeProStatusById"  parameterType="java.lang.String">
 		UPDATE BG_PROJECT_INFO 
 		SET PROJECT_STATUS=#{proStatus}
 		WHERE ID=#{proId} AND status='1'
@@ -278,32 +298,32 @@
 		WHERE t.wbs_number=#{wbsNumber} AND t.status='1'
 	</select>
 	
-	<select id="getMaxBgNumber" parameterType="String" resultType="java.lang.String">
+	<select id="getMaxBgNumber" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT COALESCE(MAX(SUBSTR(t.project_number,11)),'0') 
 			FROM BG_PROJECT_INFO t 
 		 WHERE SUBSTR(t.project_number,3,8)=#{currentDateStr} AND t.status='1'
 	</select>
 	
-	<select id="getProIdByWBSNmuber" parameterType="String" resultType="java.lang.String">
+	<select id="getProIdByWBSNmuber" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT t.id FROM BG_PROJECT_INFO t
 			WHERE t.wbs_number=#{wbsNumber,jdbcType=VARCHAR} AND t.status='1'
 	</select>
 	
 	
-	<select id="getProIdByBgNmuber" parameterType="String" resultType="java.lang.String">
+	<select id="getProIdByBgNmuber" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT t.id FROM BG_PROJECT_INFO t
 			WHERE t.project_number=#{projectNumber,jdbcType=VARCHAR} AND t.status='1'
 	</select>
 	
-	<select id="getAllWbsNumbers" parameterType="String" resultType="java.lang.String">
+	<select id="getAllWbsNumbers" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT t.wbs_number FROM BG_PROJECT_INFO t 	WHERE t.status='1'
 	</select>
 	
-	<select id="getAllBgNumbers" parameterType="String" resultType="java.lang.String">
+	<select id="getAllBgNumbers" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT t.project_number FROM BG_PROJECT_INFO t 	WHERE t.status='1'
 	</select>
 	 
-	<update id="updateProInfoField" parameterType="String">
+	<update id="updateProInfoField" parameterType="java.lang.String">
 		UPDATE BG_PROJECT_INFO 
 		SET 
 		<choose>
@@ -318,7 +338,7 @@
 	</update>
 	
 	
-	<select id="getProInfoFieldByProId" parameterType="String" resultType="java.lang.String">
+	<select id="getProInfoFieldByProId" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT 
 		<choose>
 			<when test="field =='start_date' or field == 'end_date'">
@@ -331,15 +351,15 @@
 		FROM BG_PROJECT_INFO  WHERE id=#{proId}
 	</select>
 	
-	<select id="getDeptIdByDeptCode" parameterType="String" resultType="java.lang.String">
+	<select id="getDeptIdByDeptCode" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT deptid FROM BG_SYS_DEPT WHERE deptcode=#{deptCode}
 	</select>
 	
-	<select id="getPrincipalCountByProId" parameterType="String" resultType="java.lang.Integer">
+	<select id="getPrincipalCountByProId" parameterType="java.lang.String" resultType="java.lang.Integer">
 		SELECT COUNT(*) FROM BG_PROJECT_USER t WHERE t.role='1' AND t.status='1' AND t.project_id=#{proId}
 	</select>
 	
-	<select id="getPartyDateByHrcode" parameterType="String" resultType="java.util.Map">
+	<select id="getPartyDateByHrcode" parameterType="java.lang.String" resultType="java.util.Map">
 		SELECT TO_CHAR(t.start_date, 'yyyy-mm-dd')  as "startDate",
       		   TO_CHAR(t.end_date, 'yyyy-mm-dd') as "endDate"
  		 FROM BG_PROJECT_USER t
@@ -349,7 +369,7 @@
  		 AND t.hrcode = #{hrCode}
 	</select>
 	
-	<select id="getPrincipalCodeByProId" parameterType="String" resultType="String">
+	<select id="getPrincipalCodeByProId" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT t.hrcode
   		 FROM BG_PROJECT_USER t
 		WHERE t.status = '1'
@@ -357,8 +377,11 @@
    		 AND t.project_id = #{proId}
 	</select>
 	
-	<select id="getBgWorkerByProId" parameterType="String" resultType="java.util.Map">
-		SELECT U.USERALIAS AS NAME,U.HRCODE, TO_CHAR(T.WORK_TIME, 'yyyy-mm-dd') AS WORK_TIME
+	<select id="getBgWorkerByProId"  resultType="java.util.Map">
+		SELECT U.USERALIAS AS NAME,U.HRCODE,
+				TO_CHAR(T.WORK_TIME, 'yyyy-mm-dd') AS WORK_TIME,
+				TO_CHAR(T.WORK_TIME_BEGIN, 'yyyy-mm-dd') AS WORK_TIME_BEGIN,
+				TO_CHAR(T.WORK_TIME_END, 'yyyy-mm-dd') AS WORK_TIME_END
 		  FROM BG_WORKINGHOUR_INFO T
 		  JOIN BG_SYS_USER U
 		    ON T.WORKER = U.USERNAME
@@ -366,7 +389,7 @@
 		   AND T.VALID = 1
 	</select>
 	
-	<update id="changeEmpRoleByHrCode" parameterType="String">
+	<update id="changeEmpRoleByHrCode" parameterType="java.lang.String">
 		UPDATE BG_PROJECT_USER T
 		   SET T.ROLE = #{role}
 		 WHERE T.PROJECT_ID = #{projectId}
@@ -596,7 +619,7 @@
 			 AND T.PROJECT_NAME LIKE '%'||#{proName}||'%'
 	     </if>
 	</select>
-	
+
 	<update id="deleteBeforeProById">
 		 UPDATE BG_PROJECT_INFO T
 		     SET T.RELATED_PROJECT_ID = NULL
@@ -605,5 +628,49 @@
 		        #{id} 
 		   </foreach>
 	</update>
-	
+
+	<!--<select id="listPrincipalStartDate" resultType="java.lang.String">
+		SELECT TO_CHAR(t.start_date, 'yyyy-mm-dd')  as "startDate"
+		FROM BG_PROJECT_USER t
+		WHERE
+		t.status = '1'
+		AND t.ROLE='1'
+		AND t.project_id = #{proId}
+		order by t.start_date
+	</select>-->
+
+	<!--<select id="listPrincipalEndDate" resultType="java.lang.String">
+		SELECT TO_CHAR(t.end_date, 'yyyy-mm-dd') as "endDate"
+ 		 FROM BG_PROJECT_USER t
+ 		WHERE
+ 		 t.status = '1'
+ 		 AND t.ROLE='1'
+ 		 AND t.project_id = #{proId}
+ 		 order by t.end_date
+	</select>-->
+
+	<select id="listPrincipalDate" resultType="java.util.Map">
+		SELECT TO_CHAR(t.start_date, 'yyyy-mm-dd')  as "startDate"，
+				TO_CHAR(t.end_date, 'yyyy-mm-dd') as "endDate"，
+				t.EMPNAME as "empName",
+				t.project_id AS "projectId",
+				t.ROLE AS "role"
+		FROM BG_PROJECT_USER t
+		WHERE
+		t.status = '1'
+		AND t.ROLE='1'
+		AND t.project_id = #{proId}
+		order by t.start_date
+	</select>
+
+	<select id="getProjectsInfo" resultType="java.util.Map">
+		SELECT TO_CHAR(START_DATE, 'yyyy-mm-dd')  as "startDate"，
+				TO_CHAR(END_DATE, 'yyyy-mm-dd') as "endDate",
+				PROJECT_NUMBER AS "projectNumber"
+		FROM BG_PROJECT_INFO
+		WHERE ID = #{proId}
+		AND STATUS = '1'
+	</select>
+
+
 </mapper>

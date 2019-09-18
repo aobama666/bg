@@ -246,7 +246,7 @@ roomDetailInfo.messageResign =function(){
 }
 /* 保存信息库信息 */
 roomDetailInfo.messageSave= function(approvalUserd){
-	   debugger;
+
 	   /* 主ID  */
 	    var id=$("#id").val();
 	    var approveId=$("#wlApproveId").val();

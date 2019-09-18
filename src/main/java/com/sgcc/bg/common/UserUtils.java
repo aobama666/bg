@@ -98,7 +98,53 @@ public class UserUtils {
 		CommonCurrentUser user = getCommonCurrentUserByUsernameOrHrCode(username, null, "userName",curDate);
 		return user;
 	}
-	
+
+	/**
+	 * 根据用户名获取用户最新信息
+	 * @param username 用户名
+	 * @param  beginDate 开始时间
+	 * @return
+	 */
+	public CommonCurrentUser getCommonCurrentUserByUsernameScope(String username,String beginDate,String endDate){
+		CommonCurrentUser user = getCommonCurrentUserByUsernameOrHrCodeScope(username, null, "userName",beginDate,endDate);
+		return user;
+	}
+
+	/**
+	 * 根据用户名或人资编号获取用户特定时间（时间段）信息
+	 * @param userName 用户名
+	 * @param hrCode  人资编号
+	 * @param type  userName  hrCode
+	 * @param
+	 * @return
+	 */
+	private CommonCurrentUser getCommonCurrentUserByUsernameOrHrCodeScope(String userName,String hrCode,String type,String beginDate,String endDate){
+		CommonCurrentUser user = null;
+		try{
+			if(beginDate==null||beginDate.length()==0 || endDate==null || endDate.length()==0){
+				return null;
+			}
+
+			if(!DateUtil.isValidDate(beginDate, "yyyy-MM-dd")){
+				return null;
+			}
+			if(!DateUtil.isValidDate(endDate, "yyyy-MM-dd")){
+				return null;
+			}
+
+			Map<String,Object> userMap = null;
+			if(type.equals("userName")){
+				userMap = userInfoMapper.getCommonCurrentUserByUsernameOrHrCodeScope(userName, null, "userName",beginDate,endDate);
+			}else if(type.equals("hrCode")){
+				userMap = userInfoMapper.getCommonCurrentUserByUsernameOrHrCodeScope(null, hrCode, "hrCode",beginDate,endDate);
+			}
+			user = formatCurrentUser(userMap);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return user;
+	}
+
 	/**
 	 * 根据用户名或人资编号获取用户特定时间信息
 	 * @param userName 用户名
@@ -197,7 +243,7 @@ public class UserUtils {
 	}
 	/**
 	 * 根据登陆账号 获取用户管理角色列表  获取用户组织权限列表
-	 * @param hrCode 人资编号
+	 * @param
 	 * @return
 	 */
 	public UserPrivilege getUserOrganPrivilegeByUserName(String userName){
@@ -287,7 +333,7 @@ public class UserUtils {
 	}
 	/**
 	 * 根据登陆账号 获取用户管理角色列表  获取用户组织权限列表
-	 * @param hrCode 人资编号
+	 * @param
 	 * @return
 	 */
 	public UserPrivilege getUserOrganPrivilegeByUserNames(String userName){

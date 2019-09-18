@@ -2,6 +2,8 @@ package com.sgcc.bg.service.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,6 +15,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.sgcc.bg.common.*;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -23,15 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sgcc.bg.common.CommonCurrentUser;
-import com.sgcc.bg.common.CommonUser;
-import com.sgcc.bg.common.DateUtil;
-import com.sgcc.bg.common.ExcelUtil;
-import com.sgcc.bg.common.ExportExcelHelper;
-import com.sgcc.bg.common.FtpUtils;
-import com.sgcc.bg.common.Rtext;
-import com.sgcc.bg.common.UserUtils;
-import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.mapper.BGMapper;
 import com.sgcc.bg.mapper.StaffWorkbenchMaper;
 import com.sgcc.bg.model.ProcessRecordPo;
@@ -51,19 +45,28 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	UserUtils userUtils;
 	@Autowired
 	private DataDictionaryService dict;
+
+	//员工考勤工时统计记录 一天为8小时
+	//private final static int TIME = 8;
+	int TIME = Integer.parseInt(ConfigUtils.getConfig("KQ_everyday_workDate"));
 	
 	private static Logger SWServiceLog =  LoggerFactory.getLogger(StaffWorkbenchServiceImpl.class);
 
 	@Override
 	public List<Map<String, String>> getWorkingHourInfo(String selectedDate) {
-		if(Rtext.isEmpty(selectedDate)){
+		/*if(Rtext.isEmpty(selectedDate)){
 			selectedDate=DateUtil.getFormatDateString(new Date(),"yyyy-MM-dd");
-		}
-		
+		}*/
+
+		//取月初和月末
+		Map<String,String> dateMap = dateBeginEnd(selectedDate);
+		String dataBegin = dateMap.get("dateBegin");
+		String dataEnd = dateMap.get("dateEnd");
+
 		CommonUser commonUser = webUtils.getCommonUser();
 		String currentUsername = commonUser.getUserName();
 		String currentHrcode = commonUser.getSapHrCode();
-		List<Map<String, String>>  list=SWMapper.getWorkingHourInfo(selectedDate,currentUsername);
+		List<Map<String, String>>  list=SWMapper.getWorkingHourInfo(dataBegin,dataEnd,currentUsername);
 		//获取默认审核人
 		Map<String, String> approver = getDefaultApprover();
 		String approverHrcode = approver==null?"":approver.get("hrcode");
@@ -83,12 +86,55 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	}
 
 	@Override
+	public Map<String, Object> workingHoursMap(String selectedDate) {
+		//取月初和月末
+		Map<String,String> dateMap = dateBeginEnd(selectedDate);
+		String dataBegin = dateMap.get("dateBegin");
+		String dataEnd = dateMap.get("dateEnd");
+
+		CommonUser commonUser = webUtils.getCommonUser();
+		String currentUsername = commonUser.getUserName();
+		String currentHrcode = commonUser.getSapHrCode();
+		Double fillSum = SWMapper.fillWorkingHour(dataBegin,dataEnd,currentUsername);
+		Map<String,Object> fillSumKQ = SWMapper.fillKQWorkingHour(dataBegin,dataEnd,currentUsername);
+
+		BigDecimal fullTime = ((BigDecimal) fillSumKQ.get("fullTime")).multiply(BigDecimal.valueOf(TIME));
+		BigDecimal overTime = (BigDecimal) fillSumKQ.get("overTime");
+		Map map = new HashMap();
+		map.put("fillSum",fillSum);
+		map.put("fillSumKQ",fullTime.add(overTime));
+		return map;
+	}
+
+	@Override
 	public List<Map<String, String>> getProjectsByDate(String selectedDate,String proName,String proNumber) {
 		String username = webUtils.getUsername();
 		CommonCurrentUser user = userUtils.getCommonCurrentUserByUsername(username);
 		String deptId = user==null?"":user.getDeptId();
-		List<Map<String, String>>  list=SWMapper.getProjectsByDate(selectedDate,username,deptId,proName,proNumber);
-		return list;
+
+		//取月初和月末
+		Map<String,String> dateMap = dateBeginEnd(selectedDate);
+		String dataBegin = dateMap.get("dateBegin");
+		String dataEnd = dateMap.get("dateEnd");
+
+        //去重（查询出符合填报条件的项目信息 如果时间段内有多个负责人会查询出相同的信息  这时去重 ）
+		List<Map<String, String>>  list=SWMapper.getProjectsByDate(dataBegin,username,deptId,proName,proNumber,dataEnd);
+		List<Map<String,String>> listMap = new ArrayList<>();
+		Set<String> set = new HashSet();
+		Map<String,Map> msp = new HashMap<>();
+		for(Map<String,String> map : list){
+			String id = map.get("ID");
+			//map.remove("ID");
+			msp.put(id,map);
+        }
+        set = msp.keySet();
+        for(String key : set){
+        	Map newMap = msp.get(key);
+        	newMap.put(set,key);
+			listMap.add(newMap);
+		}
+		//List<Map<String,String>> listMap = new ArrayList<>(set);
+		return listMap;
 	}
 
 	@Override
@@ -127,6 +173,14 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		}
 		return false;
 	}
+	@Override
+	public boolean canExamined(String id){
+		String status=SWMapper.getFieldOfWorkHourById(id, "status");
+		if("3".equals(status)){
+			return true;
+		}
+		return false;
+	}
 	
 	@Override
 	public void changeWorkHourInfoStatus(String id, String status) {
@@ -143,8 +197,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		List<Map<String, String>> dataList=new ArrayList<Map<String, String>>();
 		Calendar calendar1 = Calendar.getInstance();// 开始日期
 		Calendar calendar2 = Calendar.getInstance();// 结束的日期
-		calendar1.setTime(DateUtil.fomatDate(startDate));
-		calendar2.setTime(DateUtil.fomatDate(endDate));
+		calendar1.setTime(DateUtil.fomatDateMonth(startDate));
+		calendar2.setTime(DateUtil.fomatDateMonth(endDate));
 		String[] ids=proIds.split(",");
 		String currentUsername = webUtils.getUsername();
 		CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByUsername(currentUsername);
@@ -153,36 +207,43 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		Map<String, String> approverMap=getDefaultApprover();
 
 		while (calendar1.compareTo(calendar2)<=0) {
-			String dataStr=DateUtil.getFormatDateString(calendar1.getTime(),"yyyy-MM-dd");
-			
+			String dataStr=DateUtil.getFormatDateString(calendar1.getTime(),"yyyy-MM");
+
+			//取月初和月末
+			Map<String,String> dateMap = dateBeginEnd(dataStr);
+			String dataBegin = dateMap.get("dateBegin");
+			String dataEnd = dateMap.get("dateEnd");
+
 			//过滤掉节假日
-			int dayType=SWMapper.getDayType(dataStr);
-			SWServiceLog.info(dataStr+" 类型： "+dayType);
+			//int dayType=SWMapper.getDayType(dataStr);
+			//SWServiceLog.info(dataStr+" 类型： "+dayType);
 			
-			if(dayType==0){
-				for (int i = 0; i < ids.length; i++) {
-					String proId=ids[i];
-					//校验用户是否有指定项目的提报资格
-					int result=SWMapper.validateSelectedDateAndDeptId(proId,currentUsername,dataStr,currentDeptId);
-					if(result>0){
-						Map<String, String> proMap=SWMapper.getProInfoByProId(proId);//如果查询的proid相同，则返回上一个map
-						Map<String, String> dataMap=new HashMap<>();
+			//if(dayType==0){
+			for (int i = 0; i < ids.length; i++) {
+				String proId=ids[i];
+				//校验用户是否有指定项目的提报资格
+				int result=SWMapper.validateSelectedDateAndDeptId(proId,currentUsername,dataBegin,currentDeptId,dataEnd);
+				if(result>0){
+					//Map<String, String> proMap=SWMapper.getProInfoByProId(proId);//如果查询的proid相同，则返回上一个map
+					Map<String, String> proMap=SWMapper.getProInfoByProIdDate(proId,dataBegin,dataEnd);//如果查询的proid相同，则返回上一个map
+					if(proMap!=null) {
+						Map<String, String> dataMap = new HashMap<>();
 						dataMap.putAll(proMap);
 						//如果负责人为空或者本人即负责人
-						if(Rtext.isEmpty(proMap.get("HRCODE")) || (currentHrcode).equals(proMap.get("HRCODE"))){
-							dataMap.put("HRCODE",approverMap==null?"":approverMap.get("hrcode"));
-							dataMap.put("PRINCIPAL",approverMap==null?"":approverMap.get("name"));
+						if (Rtext.isEmpty(proMap.get("HRCODE")) || (currentHrcode).equals(proMap.get("HRCODE"))) {
+							dataMap.put("HRCODE", approverMap == null ? "" : approverMap.get("hrcode"));
+							dataMap.put("PRINCIPAL", approverMap == null ? "" : approverMap.get("name"));
 						}
-						dataMap.put("DATE",dataStr);
+						dataMap.put("DATE", dataStr);
 						dataList.add(dataMap);
 					}
 				}
 			}
 			
-			calendar1.add(Calendar.DATE, 1);// 把日期往后增加一天
+			calendar1.add(Calendar.MONTH, 1);// 把日期往后增加一天
 		}
 		Object[][] title = { 
-							 { "填报日期\r\n（必填，格式：YYYY-MM-DD）", "DATE","nowrap"},
+							 { "填报日期\r\n（必填，格式：YYYY-MM）", "DATE","nowrap"},
 							 { "类型\r\n（必填）", "CATEGORY" ,"nowrap"},
 							 { "任务编号\r\n（项目工作必填，非项目工作不填）", "PROJECT_NUMBER" ,"nowrap"}, 
 							 { "任务名称\r\n（选填）","PROJECT_NAME","nowrap"},
@@ -256,6 +317,12 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 					String currentUserId = currentUser==null?"":currentUser.getUserId();//当前登录人的id
 					String currentDeptId = currentUser==null?"":currentUser.getDeptId();//当前登录人所处处室（部门）id
 					CommonCurrentUser approverUser=null;
+
+					//取月初和月末
+					Map<String,String> dateMap = dateBeginEnd(cellValue[1]);
+					String dataBegin = dateMap.get("dateBegin");
+					String dataEnd = dateMap.get("dateEnd");
+
 					boolean isNP = ("常规工作".equals(cellValue[2]) && Rtext.isEmpty(cellValue[3]))?true:false;//判断是否非项目
 					
 					//获取当前登录人
@@ -264,7 +331,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 					if (cellValue[1] == null || "".equals(cellValue[1])) {
 						errorInfo.append("填报日期不能为空！ ");
 						errorNum.add(1);
-					} else if (!DateUtil.isValidDate(cellValue[1])) {
+					} else if (!DateUtil.isValidDate(cellValue[1]) && !DateUtil.isValidDateYearMonth(cellValue[1])) {
 						errorInfo.append("填报日期填写有误！ ");
 						errorNum.add(1);
 					}
@@ -288,7 +355,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 						}else{
 							proId=bgMapper.getProIdByBgNmuber(cellValue[3]);
 							proMap = bgMapper.getProInfoByProId(proId);
-							principal = SWMapper.getPrincipalByProId(proId);
+							//principal = SWMapper.getPrincipalByProId(proId);
+							principal = SWMapper.getPrincipalByProIdDate(proId,dataBegin,dataEnd);
 							principal = principal==null?"":principal;//如果是项目前期和常规项目则获取不到负责人
 						}
 					}
@@ -329,10 +397,15 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 							}
 						}
 						
-						
 						//如果项目存在则再校验填报日期是否超出范围
 						if(!errorNum.contains(1)){
-							int result=SWMapper.validateSelectedDate(proId,currentUsername,cellValue[1]);
+							//取月初和月末
+							/*Map<String,String> dateMap = dateBeginEnd(cellValue[1]);
+							String dataBegin = dateMap.get("dateBegin");
+							String dataEnd = dateMap.get("dateEnd");*/
+
+							int result=SWMapper.validateSelectedDateScope(proId,currentUsername,dataBegin,dataEnd);
+							//int result=SWMapper.validateSelectedDate(proId,currentUsername,cellValue[1]);
 							if(result==0){
 								errorInfo.append("填报日期不在项目周期或参与周期内！ ");
 								errorNum.add(1);
@@ -402,8 +475,20 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 							}
 						}
 					}
-					
-					
+
+					//效验累计工时是否超过月度工时
+					/*if(!errorNum.contains(1) && !errorNum.contains(6)) {
+						Map<String,Object> workingHoursMap = workingHoursMap(cellValue[1]);
+						Double fillSum = (Double) workingHoursMap.get("fillSum");
+						BigDecimal fillSumKQ = (BigDecimal) workingHoursMap.get("fillSumKQ");
+						fillSum+=Double.parseDouble(cellValue[6]);
+						BigDecimal sum = BigDecimal.valueOf(fillSum);
+						int res = sum.compareTo(fillSumKQ);
+						if(res==1){
+							errorInfo.append("填报工时超出月度工时！ ");
+							errorNum.add(6);
+						}
+					}*/
 					// 校验结束，分流数据
 					if ("".equals(errorInfo.toString())) {// 通过校验
 						WorkHourInfoPo wh=new WorkHourInfoPo();
@@ -428,12 +513,16 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 								wh.setProName(proMap.get("projectName"));
 							}
 						}
-						wh.setWorkTime(DateUtil.fomatDate(cellValue[1]));
+
+						wh.setWorkTimeEnd(DateUtil.fomatDate(dataEnd));
+						wh.setWorkTimeBegin(DateUtil.fomatDate(dataBegin));
+						//wh.setWorkTime(DateUtil.fomatDate(dataBegin));
 						wh.setJobContent(cellValue[5]);
 						wh.setWorkHour(Double.parseDouble(cellValue[6]));
 						wh.setWorker(currentUsername);
 						//获取填报人填报日期时的信息
-						CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(currentUsername,cellValue[1]);
+						//CommonCurrentUser user=userUtils.getCommonCurrentUserByUsername(currentUsername,cellValue[1]);
+						CommonCurrentUser user=userUtils.getCommonCurrentUserByUsernameScope(currentUsername,dataBegin,dataEnd);
 						wh.setDeptId(user==null?"":user.getpDeptId());
 						wh.setLabId(user==null?"":user.getDeptId());
 						wh.setStatus("0");
@@ -448,7 +537,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 					} else {// 未通过校验
 						Map<String,Object> map=new HashMap<>();
 						map.put("SQNUM",cellValue[0]);
-						map.put("DATE",cellValue[1]);
+						map.put("DATE",cellValue[1].substring(0,7));
 						map.put("CATEGORY",cellValue[2]);
 						map.put("PROJECT_NUMBER",cellValue[3]);
 						map.put("PROJECT_NAME",cellValue[4]);
@@ -469,7 +558,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 				// 生成错误信息文件
 				Object[][] title = { 
 						 { "序号\r\n（选填）", "SQNUM","nowrap"},
-						 { "填报日期 \r\n（必填，格式：YYYY-MM-DD）", "DATE","nowrap"},
+						 { "填报日期 \r\n（必填，格式：YYYY-MM）", "DATE","nowrap"},
 						 { "项目类型\r\n（必填）", "CATEGORY","nowrap" },
 						 { "工作任务编号\r\n（常规工作如果没有可不填）", "PROJECT_NUMBER","nowrap" }, 
 						 { "项目名称\r\n（选填）","PROJECT_NAME","nowrap"},
@@ -559,8 +648,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 		
 		Calendar calendar1 = Calendar.getInstance();// 开始日期
 		Calendar calendar2 = Calendar.getInstance();// 结束的日期
-		calendar1.setTime(DateUtil.fomatDate(startDate));
-		calendar2.setTime(DateUtil.fomatDate(endDate));
+		calendar1.setTime(DateUtil.fomatDateMonth(startDate));
+		calendar2.setTime(DateUtil.fomatDateMonth(endDate));
 		
 		String username=webUtils.getUsername();
 		CommonCurrentUser user = userUtils.getCommonCurrentUserByUsername(username);
@@ -585,16 +674,25 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 //		}
 		Set<String> proNumberSet = new HashSet<>();
 		while (calendar1.compareTo(calendar2)<=0) {
-			String dataStr=DateUtil.getFormatDateString(calendar1.getTime(),"yyyy-MM-dd");
+			String dataStr=DateUtil.getFormatDateString(calendar1.getTime(),"yyyy-MM");
+			String dataStrEnd=DateUtil.getFormatDateString(calendar2.getTime(),"yyyy-MM");
+
+			//取开始时间月初
+			Map<String,String> dateMapBegin = dateBeginEnd(dataStr);
+			String dataBegin = dateMapBegin.get("dateBegin");
+			//取结束时间月末
+			Map<String,String> dateMapEnd = dateBeginEnd(dataStrEnd);
+			String dataEnd = dateMapEnd.get("dateEnd");
+			//String dataEnd = dateMap.get("dateEnd");
 
 			//获取指定日期下可填报的项目信息
-			List<Map<String, String>> availableProjects = SWMapper.getProjectsByDate(dataStr, username, deptId , proName, proNumber);
+			List<Map<String, String>> availableProjects = SWMapper.getProjectsByDate(dataBegin, username, deptId , proName, proNumber,dataEnd);
 			
 			for (Map<String, String> map : availableProjects) {
 				if(proNumberSet.add(map.get("PROJECT_NUMBER"))) dataList.add(map);
 			}
 			
-			calendar1.add(Calendar.DATE, 1);// 把日期往后增加一天
+			calendar1.add(Calendar.MONTH, 1);// 把日期往后增加一天
 		}
 		
 		return dataList;
@@ -726,5 +824,24 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	@Override
 	public String getApproverById(String id) {
 		return SWMapper.getFieldOfWorkHourById(id, "approver");
+	}
+
+	/**
+	 * 取一个月的月初和月末
+	 * @param selectedDate
+	 * @return
+	 */
+	private Map<String,String> dateBeginEnd(String selectedDate){
+		Map<String,String> map = new HashMap();
+		String[] str= selectedDate.split("-");
+		int year = Integer.parseInt(str[0]);
+		int month = Integer.parseInt(str[1]);
+		//每月月初
+		String dateBegin = DateUtil.getFirstDayOfMonth1(year,month);
+		//每月月末
+		String dateEnd = DateUtil.getLastDayOfMonth1(year,month);
+		map.put("dateBegin",dateBegin);
+		map.put("dateEnd",dateEnd);
+		return map;
 	}
 }

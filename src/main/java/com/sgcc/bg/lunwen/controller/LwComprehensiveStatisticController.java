@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.lunwen.bean.PaperComprehensiveVO;
+import com.sgcc.bg.lunwen.bean.PaperVO;
 import com.sgcc.bg.lunwen.service.LwComprehensiveStatisticService;
 import com.sgcc.bg.lunwen.service.LwPaperService;
 import org.slf4j.Logger;

@@ -128,7 +128,7 @@ roomList.initDataGrid = function(){
 	/* 演示中心管理-导出功能*/
  
 	roomList.expEvent = function(){
-		 debugger;
+
 		var $tr = $("#datagrid tr");
 		if($tr.length == 1){
 			alert("没有要导出的数据！");

@@ -14,19 +14,31 @@ import com.sgcc.bg.model.WorkHourInfoPo;
 public interface StaffWorkbenchMaper {
 	/**
 	 * 根据所选日期获取工时当天工时信息
-	 * @param selectedDate
+	 * @param dataBegin
 	 * @param username 
 	 */
 	public List<Map<String,String>> getWorkingHourInfo(
-			@Param("selectedDate")String selectedDate, 
+			@Param("dataBegin")String dataBegin,
+			@Param("dataEnd")String dataEnd,
 			@Param("username")String username);
+
+	/**
+	 * 统计填报工时
+	 * @param dataBegin
+	 * @param dataEnd
+	 * @param currentUsername
+	 * @return
+	 */
+	Double fillWorkingHour(@Param("dataBegin")String dataBegin,
+						@Param("dataEnd")String dataEnd,
+						@Param("currentUsername") String currentUsername);
 
 	/**
 	 * 获取当前员工名下的项目信息
 	 * 条件：1.项目开始日期<=填报日期<=项目结束日期
 	 * 	    2.如果为项目信息，员工参与开始日期<=填报日期<=参与结束日期
 	 * 		3.如果为非项目信息，则为本人所属处室或部门下的项目
-	 * @param selectedDate
+	 * @param dataBegin
 	 * @param username
 	 * @param deptId
 	 * @param proName
@@ -34,11 +46,12 @@ public interface StaffWorkbenchMaper {
 	 * @return
 	 */
 	public List<Map<String, String>> getProjectsByDate(
-			@Param("selectedDate")String selectedDate, 
+			@Param("dataBegin")String dataBegin,
 			@Param("username")String username,
 			@Param("deptId")String deptId,
 			@Param("proName")String proName,
-			@Param("proNumber")String proNumber);
+			@Param("proNumber")String proNumber,
+			@Param("dataEnd")String dataEnd);
 	
 
 	/**
@@ -120,6 +133,15 @@ public interface StaffWorkbenchMaper {
 	public String getPrincipalByProId(@Param("proId")String proId);
 
 	/**
+	 * 根据项目id获取某时间段的项目负责人
+	 * @param proId
+	 * @return
+	 */
+	String getPrincipalByProIdDate(@Param("proId") String proId,
+								   @Param("dataBegin") String dataBegin,
+								   @Param("dataEnd") String dataEnd);
+
+	/**
 	 * 验证用户对该项目是否具有填报权限
 	 * @param proId 项目id
 	 * @param username 用户名
@@ -130,8 +152,9 @@ public interface StaffWorkbenchMaper {
 	public int validateSelectedDateAndDeptId(
 			@Param("proId") String proId, 
 			@Param("username")String username,
-			@Param("selectedDate")String selectedDate,
-			@Param("deptId")String deptId);
+			@Param("dataBegin")String dataBegin,
+			@Param("deptId")String deptId,
+			@Param("dataEnd")String dataEnd);
 
 	/**
 	 * 获取登录人名下所有项目
@@ -146,6 +169,15 @@ public interface StaffWorkbenchMaper {
 	 * @return
 	 */
 	public Map<String, String> getProInfoByProId(@Param("proId")String proId);
+
+	/**
+	 * 根据项目id 和时间 获取项目信息
+	 * @param proId
+	 * @return
+	 */
+	public Map<String, String> getProInfoByProIdDate(@Param("proId")String proId,
+													 @Param("dataBegin")String dataBegin,
+													 @Param("dataEnd")String dataEnd);
 
 	/**
 	 * 工时表中获取指定字段值
@@ -243,5 +275,29 @@ public interface StaffWorkbenchMaper {
 			@Param("proId")String proId,
 			@Param("username")String username,
 			@Param("selectedDate")String selectedDate);
+
+	/**
+	 * 根据时间范围验证导入工时时间是否在 负责项目时间段
+	 * @param proId
+	 * @param currentUsername
+	 * @param dataBegin
+	 * @param dataEnd
+	 * @return
+	 */
+	int validateSelectedDateScope(@Param("proId") String proId,
+								  @Param("currentUsername") String currentUsername,
+								  @Param("dataBegin") String dataBegin,
+								  @Param("dataEnd") String dataEnd);
+
+    /**
+     *
+     * @param dataBegin
+     * @param dataEnd
+     * @param currentUsername
+     * @return
+     */
+    Map<String,Object> fillKQWorkingHour(@Param("dataBegin") String dataBegin,
+                                         @Param("dataEnd") String dataEnd,
+                                         @Param("currentUsername") String currentUsername);
 
 }

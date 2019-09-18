@@ -2,10 +2,7 @@ package com.sgcc.bg.webservice;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,7 +39,10 @@ public class BgWebService {
 		String batchTime = sdf.format(new Date());	
 		return batchTime;
 	}
-	
+
+
+
+
 	/**
 	 * 根据人资系统请求参数，返回工时信息
 	 * @param xml
@@ -89,7 +89,7 @@ public class BgWebService {
 			}
 			if(!value.equals("sBu5jn3AE00IdN12MF")){
 				return returnErrorMessage("系统密钥（SYS_VALUE）填写错误！ SYS_VALUE= "+value);
-			}
+			 }
 			//年份  BG_YEAR
 			year = root.elementTextTrim("BG_YEAR");
 			if(year==null||year.length()==0){
@@ -117,29 +117,93 @@ public class BgWebService {
 		String startDate = getStartDate(year, period);
 		String endDate = getEndDate(year, period);
 		String monthName = getMonthName(year, period);
+		//根据年，季，月获取统计报表的最后一天
+		/**
+		 * 获取基本信息
+		 * @param WT_SEASON 期间    Y,S1,S2,S3,S4,M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12
+		 * @param yearName  期间为Y使用：年份  yyyy
+		 * @param startDate 期间为季度使用：S1,S2,S3,S4  开始时间  yyyy-MM-dd
+		 * @param endDate   期间为季度使用：S1,S2,S3,S4   结束时间 yyyy-MM-dd
+		 * @param monthName 期间为月份使用：M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12  yyyy-MM
+		 * @return
+		 */
+		String  newEndData="";
+		if(period.equals("Y")){ newEndData=year+"-12-01"; }
+		else if("S1".equals(period)){newEndData = year +"-03-31";}
+		else if("S2".equals(period)){newEndData = year +"-06-30";}
+		else if("S3".equals(period)){newEndData = year +"-09-30";}
+		else if("S4".equals(period)){newEndData = year +"-12-31";}
+		else if("M1".equals(period)){newEndData = year +"-01-31";}
+		else if("M2".equals(period)){newEndData = year +"-02-29";}
+		else if("M3".equals(period)){newEndData = year +"-03-31";}
+		else if("M4".equals(period)){newEndData = year +"-04-30";}
+		else if("M5".equals(period)){newEndData = year +"-05-31";}
+		else if("M6".equals(period)){newEndData = year +"-06-30";}
+		else if("M7".equals(period)){newEndData = year +"-07-31";}
+		else if("M8".equals(period)){newEndData = year +"-08-31";}
+		else if("M9".equals(period)){newEndData = year +"-09-30";}
+		else if("M10".equals(period)){newEndData = year +"-10-31";}
+		else if("M11".equals(period)){newEndData = year +"-11-30";}
+		else if("M12".equals(period)){newEndData = year +"-12-31";}
+
+
 		log.info("---------[batch:"+batchTime+"]:开始获取基本信息，验证本期间是否记录！");
 		//获取基本信息
-		List<Map<String,Object>> baseDate = bgInterfaceService.getInterfaceBaseData(period, year, startDate, endDate, monthName);
+		List<Map<String,Object>> baseDate = bgInterfaceService.getInterfaceBaseData(period, year, startDate, endDate, monthName );
 		if(baseDate==null||baseDate.size()==0){
 			return returnSucessMessage("本期间没有记录！");
 		}
 		
 		log.info("---------[batch:"+batchTime+"]:开始获取基本信息,包含负责人没有工时数据！");
 		//获取基本信息
-		List<Map<String,Object>> baseInfo = bgInterfaceService.getInterfaceBaseInfo(period, year, startDate, endDate, monthName);
+		List<Map<String,Object>> baseInfo = bgInterfaceService.getInterfaceBaseInfo(period, year, startDate, endDate, monthName ,newEndData);
 		if(baseInfo==null||baseInfo.size()==0){
 			return returnSucessMessage("本期间没有记录,包含负责人没有工时数据！");
 		}
+		/*List<Map<String,Object>> baseInfo = new ArrayList<>();
+		Set<String> set = new HashSet();
+		Map<String,Map> msp = new HashMap<>();
+		for(Map<String,Object> map : baseInfoList){
+			String id = String.valueOf(map.get("PROJECT_ID"));
+			//map.remove("ID");
+			msp.put(id,map);
+		}
+		set = msp.keySet();
+		for(String key : set){
+			Map newMap = msp.get(key);
+			newMap.put(set,key);
+			baseInfo.add(newMap);
+		}*/
+
+		for(Map<String,Object>   base:baseInfo){
+			String  projectid  =String.valueOf(base.get("PROJECT_ID"));
+			List<Map<String,Object>> ProjectUserInfo =	bgInterfaceService.selectForProjectUser(projectid,newEndData);
+			if(ProjectUserInfo.isEmpty()){
+				base.put("PROJECT_LEADER","");
+				base.put("LEADER_USERNAME","");
+			}else {
+				Object project_leaders=ProjectUserInfo.get(0).get("PROJECT_LEADER");
+				Object leader_usernames=ProjectUserInfo.get(0).get("LEADER_USERNAME");
+				base.put("PROJECT_LEADER",project_leaders);
+				base.put("LEADER_USERNAME",leader_usernames);
+			}
+		}
+
+
+
+
 		log.info("---------[batch:"+batchTime+"]:开始获取员工总工时！");
 		//获取员工总工时
 		List<Map<String,Object>> totalBgUser = bgInterfaceService.getInterfaceTotalByUser(period, year, startDate, endDate, monthName);
 		if(totalBgUser!=null&&totalBgUser.size()>0){
 			for(Map<String,Object> m:baseInfo){
 				String hrcode = m.get("EMP_CODE")==null?null:m.get("EMP_CODE").toString();
+				String role = m.get("ROLE")==null?null:m.get("ROLE").toString();
 				if(hrcode!=null){
 					for(Map<String,Object> n:totalBgUser){
 						String hr = n.get("EMP_CODE")==null?null:n.get("EMP_CODE").toString();
-						if(hr!=null&&hr.equals(hrcode)){
+						String ro = n.get("ROLE")==null?null:n.get("ROLE").toString();
+						if(hr!=null&&hr.equals(hrcode) && ro!=null && ro.equals(role)){
 							String hour = n.get("WORKING_HOUR")==null?"0":n.get("WORKING_HOUR").toString();
 							m.put("TOTAL_INPUT_TIME", hour);
 						}
@@ -155,11 +219,13 @@ public class BgWebService {
 			for(Map<String,Object> m:baseInfo){
 				String hrcode = m.get("EMP_CODE")==null?null:m.get("EMP_CODE").toString();
 				String project = m.get("PROJECT_ID")==null?null:m.get("PROJECT_ID").toString();
+				String role = m.get("ROLE")==null?null:m.get("ROLE").toString();
 				if(hrcode!=null){
 					for(Map<String,Object> n:totalBgProj){
 						String hr = n.get("EMP_CODE")==null?null:n.get("EMP_CODE").toString();
 						String proj = n.get("PROJECT_ID")==null?null:n.get("PROJECT_ID").toString();
-						if(hr!=null&&hr.equals(hrcode)&&proj!=null&&proj.equals(project)){
+						String ro = n.get("ROLE")==null?null:n.get("ROLE").toString();
+						if(hr!=null&&hr.equals(hrcode)&&proj!=null&&proj.equals(project) && ro!=null && ro.equals(role)){
 							String hour = n.get("WORKING_HOUR")==null?"0":n.get("WORKING_HOUR").toString();
 							m.put("INPUT_TIME", hour);
 							break;
@@ -185,6 +251,94 @@ public class BgWebService {
 		}
 		log.info("---------[batch:"+batchTime+"]:生成返回数据！");
 
+		List<Map<String,Object>> baseInfoList = new ArrayList<>();
+		List<Map<String,Object>> list2 = new ArrayList<>();
+		/*for(Map<String,Object> m:baseInfo){
+			String projectId = m.get("PROJECT_ID")==null?null:m.get("PROJECT_ID").toString();
+			String userCode = m.get("EMP_CODE")==null?null:m.get("EMP_CODE").toString();
+			String start = m.get("START_DATE")==null?null:m.get("START_DATE").toString();
+			String end = m.get("END_DATE")==null?null:m.get("END_DATE").toString();
+
+			for(Map<String,Object> n:baseInfo){
+				String proId = n.get("PROJECT_ID")==null?null:n.get("PROJECT_ID").toString();
+				String uCode = n.get("EMP_CODE")==null?null:n.get("EMP_CODE").toString();
+				String sta = n.get("START_DATE")==null?null:n.get("START_DATE").toString();
+				String e = n.get("END_DATE")==null?null:n.get("END_DATE").toString();
+				if(projectId!=null && proId!=null && projectId.equals(proId) && userCode.equals(uCode)){
+					if(start!=null && sta!=null) {
+						int i = start.compareTo(sta);
+						if (i < 0) {
+							m = n;
+						}
+					}
+				}
+				if(projectId!=null && proId!=null && projectId.equals(proId) && userCode.equals(uCode)){
+					if(end!=null && e!=null){
+						int q = end.compareTo(newEndData);
+						int w = e.compareTo(newEndData);
+						int a = end.compareTo(e);
+						if(q<0 && w<0 && a<0){
+							m=n;
+						}else {
+							list2.add(n);
+						}
+					}
+				}
+			}
+			baseInfoList.add(m);
+		}
+		List<Map<String,Object>> list = new ArrayList<>();*/
+
+		for(int i=0;i<baseInfo.size();i++){
+			Map<String,Object> m = baseInfo.get(i);
+			String projectId = m.get("PROJECT_ID")==null?null:m.get("PROJECT_ID").toString();
+			String userCode = m.get("EMP_CODE")==null?null:m.get("EMP_CODE").toString();
+			String start = m.get("START_DATE")==null?null:m.get("START_DATE").toString();
+			String end = m.get("END_DATE")==null?null:m.get("END_DATE").toString();
+			for(int j=i+1;j<baseInfo.size();j++){
+				Map<String,Object> n = baseInfo.get(j);
+				String proId = n.get("PROJECT_ID")==null?null:n.get("PROJECT_ID").toString();
+				String uCode = n.get("EMP_CODE")==null?null:n.get("EMP_CODE").toString();
+				String sta = n.get("START_DATE")==null?null:n.get("START_DATE").toString();
+				String e = n.get("END_DATE")==null?null:n.get("END_DATE").toString();
+				if(projectId!=null && proId!=null && projectId.equals(proId) && userCode.equals(uCode)){
+					if(end!=null && e!=null){
+						int q = end.compareTo(newEndData);
+						int q2 = start.compareTo(newEndData);
+						int w = e.compareTo(newEndData);
+						int w2 = sta.compareTo(newEndData);
+						int a = end.compareTo(e);
+						if(w>=0 && w2<0  && a<0){
+							m=n;
+						}else {
+							list2.add(n);
+						}
+					}
+				}
+			}
+			baseInfoList.add(m);
+		}
+
+		for(int i=0;i<baseInfo.size();i++){
+			String projectId = baseInfo.get(i).get("PROJECT_ID")==null?null: baseInfo.get(i).get("PROJECT_ID").toString();
+			String userCode =  baseInfo.get(i).get("EMP_CODE")==null?null: baseInfo.get(i).get("EMP_CODE").toString();
+			String role =  baseInfo.get(i).get("ROLE")==null?null: baseInfo.get(i).get("ROLE").toString();
+			for(int j=i+1;j<baseInfo.size();j++){
+				String proId = baseInfo.get(j).get("PROJECT_ID")==null?null:baseInfo.get(j).get("PROJECT_ID").toString();
+				String uCode = baseInfo.get(j).get("EMP_CODE")==null?null:baseInfo.get(j).get("EMP_CODE").toString();
+				String ro = baseInfo.get(j).get("ROLE")==null?null:baseInfo.get(j).get("ROLE").toString();
+				if(projectId!=null && proId!=null && ro!=null && role!=null && projectId.equals(proId) && userCode.equals(uCode) &&role.equals(ro) ){
+					list2.add(baseInfoList.get(i));
+					break;
+				}
+			}
+		}
+
+		for(Map<String,Object> map :list2){
+			baseInfoList.remove(map);
+		}
+
+
 		//生成返回数据
 		StringBuffer sb = new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -194,7 +348,7 @@ public class BgWebService {
 		sb.append("<MESSAGE>").append("").append("</MESSAGE>");
 		sb.append("</RESULT>");
 		sb.append("<ITEMS>");
-		for(Map<String,Object> m:baseInfo){
+		for(Map<String,Object> m:baseInfoList){
 			
 			String WT_YEAR = year;
 			String WT_SEASON = period;
@@ -228,7 +382,7 @@ public class BgWebService {
 		log.info("---------[batch:"+batchTime+"]:生成保存接口数据！");
 
 		//保存接口数据
-		for(Map<String,Object> m:baseInfo){
+		for(Map<String,Object> m:baseInfoList){
 			String WT_YEAR = year;
 			String WT_SEASON = period;
 			String EMP_CODE = m.get("EMP_CODE")==null?"":m.get("EMP_CODE").toString();

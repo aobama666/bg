@@ -24,6 +24,7 @@
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmGrid.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmPaginator.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/locales/bootstrap-datepicker.zh-CN.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/layer/layer.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/organ-tree/organ-tree.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/stuff-tree/stuff-tree.js"></script>
@@ -77,51 +78,65 @@
 <div class="query-box">
 	<div class="query-box-left">
 		<form name="queryBox" action="" style="width:100%;padding-left:10px"  method="post">
-		<hidden name="uuid" property="uuid"></hidden>
-		<input type="hidden" name="selectList"/>
-		<div class="form-group col-xs-6" style="margin-bottom:0;">
-			<label>查询日期：</label>
-			<div class="controls"  data-date-format="yyyy-mm-dd">
-				<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
-					<input name="startTime" property="startTime"  readonly="true" placeholder='开始时间'>
-					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+			<hidden name="uuid" property="uuid"></hidden>
+			<input type="hidden" name="selectList"/>
+			<div class="form-group col-xs-6" style="margin-bottom:0;">
+				<label>查询日期：</label>
+				<%--<div class="controls"  data-date-format="yyyy-mm-dd">
+					<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
+						<input name="startTime" property="startTime"  readonly="true" placeholder='开始时间'>
+						<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+					</div>
+					<div class="floatLeft">--</div>
+					<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
+						<input name="endTime" property="endTime"  readonly="true" placeholder='结束时间'>
+						<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+					</div>
+				</div>--%>
+				<div class="controls"  data-date-format="yyyy-mm">
+					<div class="input-group date form_date bg-white" id="dateTime">
+						<input  name="startTime" property="startTime" type="text" class="form-control form_datetime_2 input-sm bg-white" readonly />
+						<span class="input-group-addon">
+							<span class="glyphicon glyphicon-calendar"></span>
+						</span>
+					</div>
+					<div class="floatLeft">--</div>
+					<div class="input-group date form_date bg-white" id="dateTimeEnd">
+						<input  name="endTime" property="endTime" type="text" class="form-control form_datetime_2 input-sm bg-white" readonly />
+						<span class="input-group-addon">
+							<span class="glyphicon glyphicon-calendar"></span>
+						</span>
+					</div>
 				</div>
-				<div class="floatLeft">--</div>
-				<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
-					<input name="endTime" property="endTime"  readonly="true" placeholder='结束时间'>
-					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+			</div>
+			<div class="form-group col-xs-5">
+				<label>类型：</label>
+				<div class="controls"  data-date-format="yyyy-mm-dd">
+					<select name="category">
+						<option></option>
+						<c:forEach var ="dict" items="${categoryMap}">
+							<option value=${dict.key}>${dict.value}</option>
+						</c:forEach>
+					</select>
 				</div>
 			</div>
-		</div>
-		
-		<div class="form-group col-xs-5">
-			<label>类型：</label>
-			<div class="controls"  data-date-format="yyyy-mm-dd">
-				<select name="category">
-					<option></option>
-					<c:forEach var ="dict" items="${categoryMap}">
-						<option value=${dict.key}>${dict.value}</option>
-					</c:forEach>
-				</select>
+			<div class="form-group col-xs-6">
+				<label>任务名称：</label>
+				<div class="controls">
+					<input name="projectName" property="projectName" >
+				</div>
 			</div>
-		</div>
-		<div class="form-group col-xs-6">
-			<label>任务名称：</label>
-			<div class="controls">
-				<input name="projectName" property="projectName" >
+			<div class="form-group col-xs-5">
+				<label>状态：</label>
+				<div class="controls"  data-date-format="yyyy-mm-dd">
+					<select name="status">
+						<option></option>
+						<c:forEach var ="dict" items="${statusMap}">
+							<option value=${dict.key}>${dict.value}</option>
+						</c:forEach>
+					</select>
+				</div>
 			</div>
-		</div>
-		<div class="form-group col-xs-5">
-			<label>状态：</label>
-			<div class="controls"  data-date-format="yyyy-mm-dd">
-				<select name="status">
-					<option></option>
-					<c:forEach var ="dict" items="${statusMap}">
-						<option value=${dict.key}>${dict.value}</option>
-					</c:forEach>
-				</select>
-			</div>
-		</div>
 		</form>
 	</div>
 	<div class="query-box-right">
@@ -137,10 +152,52 @@
 	<div id="pg" style="text-align:right;"></div>
 </div>
 </body>
-<script type="text/javascript">
-var data=new Date();
- 
 
+
+
+<script type="text/javascript">
+
+    var date = new Date();
+    var startYear = date.getFullYear();
+    var startMonth=date.getMonth()+1>=10?(date.getMonth()+1):"0"+(date.getMonth()+1);
+    var endMonth=date.getMonth()+2>=10?(date.getMonth()+2):"0"+(date.getMonth()+2);
+    var endYear = startYear;
+    if(endMonth==13){
+        yearEnd = parseInt(startYear)+1;
+        endMonth="0"+1;
+	}
+    var start = startYear+"-"+startMonth;
+    var end = endYear+"-"+endMonth;
+    $("input[name=startTime]").val(start);
+    $("input[name=endTime]").val(start);
+
+    function Timeinit() {
+        // 时间初始化
+        $("#dateTime").datepicker({
+            startView: 'months',  //起始选择范围
+            maxViewMode:'years', //最大选择范围
+            minViewMode:'months', //最小选择范围
+            todayHighlight : true,// 当前时间高亮显示
+            autoclose : 'true',// 选择时间后弹框自动消失
+            format : 'yyyy-mm',// 时间格式
+            language : 'zh-CN',// 汉化
+			//todayBtn:"linked",//显示今天 按钮
+            //clearBtn : true,// 清除按钮，和今天 按钮只能显示一个
+        });
+        $("#dateTimeEnd").datepicker({
+            startView: 'months',  //起始选择范围
+            maxViewMode:'years', //最大选择范围
+            minViewMode:'months', //最小选择范围
+            todayHighlight : true,// 当前时间高亮显示
+            autoclose : 'true',// 选择时间后弹框自动消失
+            format : 'yyyy-mm',// 时间格式
+            language : 'zh-CN',// 汉化
+            //todayBtn:"linked",//显示今天 按钮
+            //clearBtn : true,// 清除按钮，和今天 按钮只能显示一个
+        });
+    }
+
+/*var data=new Date();
 var year=data.getFullYear()
 var month=data.getMonth()+1>=10?(data.getMonth()+1):"0"+(data.getMonth()+1);
 var day=data.getDate()>=10?(data.getDate()):"0"+(data.getDate());
@@ -171,20 +228,30 @@ function getWeek(n){
 	date = now.getDate();
 	var s = year +"-"+(month<10?('0'+month):month)+"-"+(date<10?('0'+date):date);
 	return s;
-}
+}*/
+
 var mmg;
 var pn = 1;
 var limit = 30;
 $(function(){
-	init();
+	//init();
+    Timeinit();
 	queryList();
 });
 
-function init(){
+/*function init(){
 	$(".form_date").datepicker({autoclose:true,language: 'cn',todayHighlight:true ,orientation:'auto'});
 	$("#stuffTree").stuffTree({root:'41000001',empCode:'empCode',empName:'empName',iframe:'parent'});
-}
+}*/
 function forSearch(){
+
+    var startTime = $("input[name=startTime]").val();
+    var endTime = $("input[name=endTime]").val();
+    if(startTime>endTime){
+        layer.msg("查询时间范围：开始时间晚于结束时间！");
+        return;
+	}
+
 	pn = 1;
 	queryList("reload");
 }
@@ -193,7 +260,9 @@ function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},
+	            /*{title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},*/
+	            {title:'开始日期', name:'WORK_TIME_BEGIN', width:100, sortable:false, align:'center'},
+	            {title:'结束日期', name:'WORK_TIME_END', width:100, sortable:false, align:'center'},
 	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center'},
 	            {title:'任务名称', name:'PROJECT_NAME', width:100, sortable:false, align:'left'},
 	            {title:'工作内容简述', name:'JOB_CONTENT', width:100, sortable:false, align:'left'},
@@ -209,9 +278,9 @@ function queryList(load){
 	            		if(row.STATUS==1){
 	            			return "<span class='backManage' id='"+row.ID+"'>撤回</span>"
 	            		}else if(row.STATUS==0){
-	            			return "<span class='updateManage' id='"+row.ID+"'>修改</span>"
+	            			return "<span class='updateManage' id='"+row.ID+"' date='"+row.WORK_TIME_BEGIN+"'>修改</span>"
 	            		}else if(row.STATUS==2){
-	            			return "<span class='updateManage' id='"+row.ID+"'>修改</span>"
+	            			return "<span class='updateManage' id='"+row.ID+"' date='"+row.WORK_TIME_BEGIN+"'>修改</span>"
 	            		}else{
 	            			return ""
 	            		}
@@ -303,12 +372,13 @@ function workCommit(){
 }
 $("#mmg").on("click",".updateManage",function(){ 
 	var id=$(this).attr("id");
+    delayDate = $(this).attr("date");
 	layer.open({
 		type:2,
 		title:"修改",
 		area:['620px', '460px'],
 		scrollbar:false,
-		content:['/bg/searchWorkTask/workManageUpdate?id='+id,'no'],
+		content:['/bg/searchWorkTask/workManageUpdate?id='+id+'&selectedDate='+delayDate,'no'],
 	 	end:function(){
 	 		mmg.load();
 	 	}
