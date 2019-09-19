@@ -93,7 +93,7 @@ td span{
 	<hr>
 	<form class="form-inline">
 		<%--<div class="form-group">
-			 <label>填报日期</label>
+			 <label>填报月度</label>
 			<span onclick="changeDateByStep(-1)"><span class="glyphicon glyphicon-backward" ></span></span>
 			<div class="input-group date form_date bg-white" style="width: 200px;display:inline-table;vertical-align:middle">
 				<div id="cover" style="width:100%;height:100%;position:absolute;top:0px;left:0px;z-index:999;display: none"></div>
@@ -104,7 +104,7 @@ td span{
 			<span onclick="changeDateByStep(1)"><span class="glyphicon glyphicon-forward" ></span></span>
 		</div>--%>
 		<div class="form-group">
-			<label>填报日期</label>
+			<label>填报月度</label>
 			<span onclick="changeByStep(-1)"><span class="glyphicon glyphicon-backward" ></span></span>
 			<%--<div class="gainDate" style="width: 200px;display:inline-table;vertical-align:middle">
 				<div id="cover" style="width:100%;height:100%;position:absolute;top:0px;left:0px;z-index:999;display: none"></div>

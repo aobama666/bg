@@ -95,14 +95,14 @@
 			</div>--%>
 			<div class="controls"  data-date-format="yyyy-mm">
 				<div class="input-group date form_date bg-white" id="startdateTime"　data-date-format="yyyy-mm" >
-					 <input id="startDate" name="startTime" property="startTime"   type="hidden"  >
-					<input  id="startTimes" name="startTimes" property="startTimes"  type="text"  class="form-control form_datetime_2 input-sm bg-white"   readonly  />
+					 <%--<input id="startDate" name="startTime" property="startTime"   type="hidden"  >--%>
+					<input  id="startTime" name="startTime" property="startTime"  type="text"  class="form-control form_datetime_2 input-sm bg-white"   readonly  />
 					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 				</div>
 				<div class="floatLeft">--</div>
 				<div class="input-group date form_date bg-white" id="enddateTime"　data-date-format="yyyy-mm" >
-					<input id="endDate" name="endTime" property="endTime"  type="hidden"  >
-					<input  id="endTimes" name="endTimes" property="endTimes" type="text"  class="form-control form_datetime_2 input-sm bg-white"  readonly    />
+					<%--<input id="endDate" name="endTime" property="endTime"  type="hidden"  >--%>
+					<input  id="endTime" name="endTime" property="endTime" type="text"  class="form-control form_datetime_2 input-sm bg-white"  readonly    />
 					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 				</div>
 			</div>
@@ -135,28 +135,28 @@
 var mmg;
 var pn = 1;
 var limit = 30;
+
+var date = new Date();
+var startYear = date.getFullYear();
+var startMonth=date.getMonth()+1>=10?(date.getMonth()+1):"0"+(date.getMonth()+1);
+var endMonth=date.getMonth()+2>=10?(date.getMonth()+2):"0"+(date.getMonth()+2);
+var endYear = startYear;
+if(endMonth==13){
+    yearEnd = parseInt(startYear)+1;
+    endMonth="0"+1;
+}
+var start = startYear+"-"+startMonth;
+var end = endYear+"-"+endMonth;
+$("input[name=startTime]").val(start);
+$("input[name=endTime]").val(start);
+
 $(function(){
-	init();
+	//init();
+    Timeinit();
 	queryList();
 });
 
-function init(){
-    Timeinit();
-    var   date = new Date();
-    var   month=date.getMonth()+1;
-    var months;
-    if(month<10){
-        months="0"+month;
-	}
-    var   newdate=date.getFullYear()+"-"+months;
-    $("#startTimes").val(newdate);
-    $("#endTimes").val(newdate);
-	$(".form_date").datepicker({autoclose:true,todayHighlight:true,language: 'cn' ,orientation:'auto'});
-}
 function Timeinit() {
-
-
-
     // 时间初始化
     $("#startdateTime").datepicker({
         startView: 'months',  //起始选择范围
@@ -234,14 +234,8 @@ function dateFtt(fmt,date)
 }
 
 function forSearch(){
-	var startDate =$("#startTimes").val()+"-01";
-	/*var endDate=$("#endTimes").val()+"-01";
-    var  days=getEndD(endDate);
-    endDate=endDate+"-"+days;*/
-
-    var startDate =timeBegin($("#startTimes").val());
-    var endDate=timeEnd($("#endTimes").val());
-
+    var startDate = $("input[name=startTime]").val();
+    var endDate = $("input[name=endTime]").val();
 	if(startDate==""){
 		layer.msg("开始时间不能为空");
 		return ;
@@ -251,22 +245,11 @@ function forSearch(){
 	   return ;
 	}
 
-	//alert(startDate+"---"+endDate);
-
-
    if((new Date(endDate.replace(/-/g,"\/")))<(new Date(startDate.replace(/-/g,"\/")))){
 	   layer.msg("结束时间必须大于开始时间");
 	   return ;
    }
-   /* var  falg=getD(startDate, endDate);
-   alert(falg);
-    if(!falg){
-        layer.msg("结束时间大等于开始时间的一个月的时间");
-        return ;
-    }*/
 	pn = 1;
-     $("#startDate").val(startDate);
-     $("#endDate").val(endDate);
 	queryList("reload");
 }
 //获取结束时间的
@@ -465,10 +448,10 @@ function forConfirm(){
 	$("input[name=uuid]").val("");
 }
  
-$(function(){
-    $("#startDate").val(common.getMonthFirstDay());
-	$("#endDate").val( common.getMonthEndDay());
-})
+/*$(function(){
+    $("#startTime").val(common.getMonthFirstDay());
+	$("#endTime").val( common.getMonthEndDay());
+})*/
 
 
 </script>

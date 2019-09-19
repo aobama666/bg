@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -235,6 +236,35 @@ public class SearchWorkTaskController {
 		String type = request.getParameter("type")==null?"":request.getParameter("type").trim();
 		String userName = request.getParameter("userName")==null?"":request.getParameter("userName").trim();
 		String userCode = request.getParameter("userCode")==null?"":request.getParameter("userCode").trim();
+
+		if(startTime==""){
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("status", 201);
+			map.put("res", "开始时间不能为空");
+			String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+			return jsonStr;
+		}
+		if(endTime==""){
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("status", 201);
+			map.put("res", "结束时间不能为空");
+			String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+			return jsonStr;
+		}
+
+		//取月初和月末
+		String[] str = startTime.split("-");
+		int year = Integer.parseInt(str[0]);
+		int month = Integer.parseInt(str[1]);
+
+		String[] strEnd = endTime.split("-");
+		int yearEnd = Integer.parseInt(strEnd[0]);
+		int monthEnd = Integer.parseInt(strEnd[1]);
+		//查询开始月初
+		startTime = DateUtil.getFirstDayOfMonth1(year, month);
+		//查询结束月末
+		endTime = DateUtil.getLastDayOfMonth1(yearEnd, monthEnd);
+
 		/* 首先获取当前登录人的信息 userInfo*/
 		CommonUser userInfo = webUtils.getCommonUser();
 		/* 获取当前登陆人的账号 */

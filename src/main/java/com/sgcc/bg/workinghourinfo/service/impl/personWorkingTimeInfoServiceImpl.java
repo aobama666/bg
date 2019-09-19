@@ -107,6 +107,20 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 				  String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
 				  return jsonStr; 
 			 }
+
+			//取月初和月末
+			String[] str = beginData.split("-");
+			int year = Integer.parseInt(str[0]);
+			int month = Integer.parseInt(str[1]);
+
+			String[] strEnd = endData.split("-");
+			int yearEnd = Integer.parseInt(strEnd[0]);
+			int monthEnd = Integer.parseInt(strEnd[1]);
+			//查询开始月初
+			beginData = DateUtil.getFirstDayOfMonth1(year, month);
+			//查询结束月末
+			endData = DateUtil.getLastDayOfMonth1(yearEnd, monthEnd);
+
 			 /**--------------根据类型分割开始时间和结束时间-----------------------**/
 			 List<Map<String, Object>> maplist=Statistics(userName,type,bpShow,beginData,endData);
 			 /**-----------------------分页----------------------------------**/

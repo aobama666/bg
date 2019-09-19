@@ -237,12 +237,12 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 
 					boolean isNP = ("常规工作".equals(cellValue[2]) && Rtext.isEmpty(cellValue[3]))?true:false;//判断是否非项目
 					// 对要导入的文件内容进行校验
-					// 填报日期 必填;格式
+					// 填报月度 必填;格式
 					if (cellValue[1] == null || "".equals(cellValue[1])) {
-						errorInfo.append("填报日期不能为空！ ");
+						errorInfo.append("填报月度不能为空！ ");
 						errorNum.add(1);
 					} else if (!DateUtil.isValidDate(cellValue[1], "yyyy-MM-dd") && !DateUtil.isValidDateYearMonth(cellValue[1])) {
-						errorInfo.append("填报日期填写有误！ ");
+						errorInfo.append("填报月度填写有误！ ");
 						errorNum.add(1);
 					}
 					// 项目类型校验 必填
@@ -355,7 +355,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						}
 					}
 					
-					//如果存在wbs/项目编号,且填报人真实存在则再次校验填报日期是否超出范围
+					//如果存在wbs/项目编号,且填报人真实存在则再次校验填报月度是否超出范围
 					if(!isNP && !Rtext.isEmpty(proId) && !errorNum.contains(1) && !errorNum.contains(8)){
 						/*int result=SWMapper.validateSelectedDate(proId,worker.getUserName(),cellValue[1]);
 						if(result==0){
@@ -366,7 +366,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 						//取月初和月末
 						int result=SWMapper.validateSelectedDateScope(proId,currentUsername,dataBegin,dataEnd);
 						if(result==0){
-							errorInfo.append("填报日期不在项目周期或参与周期内！ ");
+							errorInfo.append("填报月度不在项目周期或参与周期内！ ");
 							errorNum.add(1);
 						}
 					}
@@ -494,7 +494,7 @@ public class StaffWorkingHourManageServiceImpl implements IStaffWorkingHourManag
 				// 生成错误信息文件
 				Object[][] title = { 
 						 { "序号\r\n（选填）", "SQNUM" ,"nowrap"},
-						 { "填报日期\r\n（必填，格式：YYYY-MM）", "DATE" ,"nowrap"},
+						 { "填报月度\r\n（必填，格式：YYYY-MM）", "DATE" ,"nowrap"},
 						 { "项目类型\r\n（必填）", "CATEGORY","nowrap"},
 						 { "工作任务编号\r\n（常规工作如果没有可不填）", "PROJECT_NUMBER","nowrap" }, 
 						 { "项目名称\r\n（选填）","PROJECT_NAME","nowrap"},
