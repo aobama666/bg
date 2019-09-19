@@ -58,4 +58,12 @@ public class YyApplyConstant {
     //业务部门审批
     public static final String PROCESS_CONDITION_BUSINESS = "3";
 
+    /**
+     * 待办同意功能，是否发送待办
+     */
+    //发送待办
+    public final static String SEND_AUDIT_YES = "1";
+    //不发送待办
+    public final static String SEND_AUDIT_NO = "0";
+
 }

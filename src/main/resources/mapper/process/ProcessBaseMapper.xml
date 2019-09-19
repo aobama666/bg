@@ -219,5 +219,22 @@
         select uuid from TB_WL_APPROVE_EXPAND where AUDIT_FLAG='1' and APPROVE_ID = #{approveId}
     </select>
 
+    <select id="selectRuleForNode" resultType="com.sgcc.bg.process.model.PbRule">
+      SELECT
+          r.id,
+          r.node,
+          r.NEXT_NODE_ID  nextNodeId,
+          r.status,
+          r.condition,
+          r.FUNCTION_TYPE functionType,
+          r.SORT_ID       sortId,
+          r.APPROVE_ROLE  approveRole,
+          r.remark,
+          r.IF_EXPAND ifExpand
+      FROM TB_WL_RULE r
+      WHERE function_type = #{functionType}
+      AND node = #{nodeName}
+    </select>
+
 
 </mapper>

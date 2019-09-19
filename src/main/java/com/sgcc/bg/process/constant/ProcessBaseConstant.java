@@ -12,6 +12,12 @@ public class ProcessBaseConstant {
     public final static String RESULT_AGREE = "1";
     //拒绝
     public final static String RESULT_REFUSE = "0";
+    //撤回
+    public final static String RESULT_WITHDRAW = "2";
+    //提交
+    public final static String RESULT_SUBMIT = "3";
+    //撤销
+    public final static String RESULT_CANCEL = "4";
 
 
     /**
@@ -64,5 +70,14 @@ public class ProcessBaseConstant {
     public final static String OPERATE_DONE = "doneTask";
     //撤销待办
     public final static String OPERATE_REVOKE = "revokeTask";
+
+
+    /**
+     * 同意功能，是否发送待办
+     */
+    //发送待办
+    public final static String SEND_AUDIT_YES = "1";
+    //不发送待办
+    public final static String SEND_AUDIT_NO = "0";
 
 }

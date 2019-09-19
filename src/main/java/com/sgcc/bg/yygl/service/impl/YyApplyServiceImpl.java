@@ -5,6 +5,7 @@ import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.HRUser;
+import com.sgcc.bg.process.service.ProcessService;
 import com.sgcc.bg.service.ApproverService;
 import com.sgcc.bg.service.UserService;
 import com.sgcc.bg.yszx.bean.ReturnMessage;
@@ -51,6 +52,8 @@ public class YyApplyServiceImpl implements YyApplyService {
     private ApproveService approveService;
     @Autowired
     private YyApplyService yyApplyService;
+    @Autowired
+    private ProcessService processService;
 
     @Override
     public Map<String, Object> selectApply(
@@ -254,7 +257,7 @@ public class YyApplyServiceImpl implements YyApplyService {
     @Override
     public String withdraw(String applyUuid) {
         //撤回对应申请的流程信息
-
+        processService.withdraw(applyUuid,"YYGL","WITHDRAW","申请人撤回",getLoginUserUUID());
         //修改申请状态
         yyApplyMapper.updateApplyStatus(applyUuid,YyApplyConstant.STATUS_WITHDRAW.toString());
         return null;

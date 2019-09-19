@@ -146,7 +146,7 @@ public class YyMyItemServiceImpl implements YyMyItemService{
         String approveUserId = yyApplyService.getLoginUserUUID();
         //执行确认用印流程
         processService.processApprove(applyUuid,null,"确认用印",approveUserId
-        ,null,null,null);
+        ,null,null,null,YyApplyConstant.SEND_AUDIT_NO);
         return true;
     }
 

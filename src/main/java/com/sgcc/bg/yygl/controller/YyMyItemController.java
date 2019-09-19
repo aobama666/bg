@@ -155,7 +155,7 @@ public class YyMyItemController {
         }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
             //if办公室，走流程，切换到业务部门会签环节，发送对应待办
             processService.processApprove(applyUuid,YyApplyConstant.PROCESS_CONDITION_BUSINESS
-                    ,"增加会签",loginUserId,userId,auditTitle,auditUrl);
+                    ,"增加会签",loginUserId,userId,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_YES);
             //修改本条申请状态
             yyApplyService.updateApplyStatus(applyUuid,YyApplyConstant.STATUS_DEAL_BUSINESS);
             result = "增加会签成功，切换到业务部门会签环节";
@@ -264,15 +264,16 @@ public class YyMyItemController {
                 //需要
                 useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_LEADER;
                 processResult = processService.processApprove(applyUuid,YyApplyConstant.PROCESS_CONDITION_LEADER
-                        ,approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
+                        ,approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_YES);
             }else{
                 //不需要
                 useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_USER_SEAL;
                 processResult = processService.processApprove(applyUuid,YyApplyConstant.PROCESS_CONDITION_ADMIN
-                        ,approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
+                        ,approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_NO);
             }
         }else{
-            processResult = processService.processApprove(applyUuid,null,approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl);
+            processResult = processService.processApprove(applyUuid,null,approveOpinion,approveUserId
+                    ,toDoerId,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_YES);
         }
         //如果流程正常到下一环节，修改当前审批状态
         if(processResult){

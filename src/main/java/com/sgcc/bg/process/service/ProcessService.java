@@ -17,6 +17,8 @@ public interface ProcessService {
      * @param toDoerId      待办人，可多个，中间逗号隔开，（可为空，不添加待办用户信息，不发送待办）
      * @param auditTitle    待办标题，（可为空，不添加待办用户信息，不发送待办）
      * @param auditUrl      待办url，（可为空，不添加待办用户信息，不发送待办）
+     * @param sendAudit     是否发送待办  1发送 0不发送  (不发送待办但是待办人信息在待办用户表中)
+     *                      （涉及扩展表必须发送待办，如果想给指定人不发，就先都发送，然后撤回指定人的，调用下面的方法）
      */
     boolean processApprove(
             String businessId,
@@ -25,7 +27,8 @@ public interface ProcessService {
             String approveUserId,
             String toDoerId,
             String auditTitle,
-            String auditUrl
+            String auditUrl,
+            String sendAudit
     );
 
     /**
@@ -58,6 +61,9 @@ public interface ProcessService {
      */
     boolean withdraw(
             String businessId,
+            String functionType,
+            String nodeName,
+            String approveRemark,
             String operator
     );
 
@@ -105,4 +111,10 @@ public interface ProcessService {
                            String taskId,
                            String precessId
     );
+
+
+    /**
+     * 撤销某人的待办
+     */
+    boolean cancelUpcomingForUserId(String businessId,String userId);
 }

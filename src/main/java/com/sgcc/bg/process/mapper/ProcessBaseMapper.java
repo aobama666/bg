@@ -53,10 +53,14 @@ public interface ProcessBaseMapper {
     /**
      *  规则表
      */
-    //根据条件查询对应规则信息
+    //根据条件查询对应规则信息,规则id，同意拒绝状态，附加判断条件
     PbRule selectRule(@Param("ruleId") String ruleId,
                       @Param("status") String status,
                       @Param("condition") String condition);
+
+    //根据业务名称和节点名称查询对应规则，只适用于 提交，撤回 等不会重复节点名称的规则
+    PbRule selectRuleForNode(@Param("nodeName") String nodeName,
+                             @Param("functionType") String functionType);
 
     //根据主键信息查询对应规则
     PbRule selectRuleForId(@Param("id") String id);
