@@ -37,39 +37,29 @@
 			<td class="addInputStyle">
 				<input  id="approveId"   name="approveId"  type="hidden"        value="${approveId}"     />
 				<input  id="hideItemSecondId"   name="hideItemSecondId"  type="hidden"  value="${itemSecondId}"     />
-				<select id="approveNodeId"  name = "approveNodeId"  class = "validNull select-person"   content="节点类型"    title="必填项  "   >
+				<select id="approveNodeId"  name = "approveNodeId"  class = "validNull select-person"   content="节点类型"    title="必填项  " onchange="approvalInfo.onchangeForItemName()"  >
 					<option value=""  selected > </option>
 					<c:forEach  var="nodeTypeList"  items="${nodeTypeList}">
 						<option value ="${nodeTypeList.CODE}" title=" ${nodeTypeList.NAME}" ${nodeTypeList.CODE == approveNodeId ?"selected='selected'":''} > ${nodeTypeList.NAME}</option>
 					</c:forEach>
 				</select>
 			</td>
-
 		</tr>
-		<tr>
-			<td>
-				<span title = "用印事项一级类别"> 用印事项一级类别</span>
-			</td>
-			<td class="addInputStyle">
-				<select id="itemFirstId"  name = "itemFirstId"  class = "validNull select-person"   content="用印事项一级类别"    title="必填项  "   onchange="approvalInfo.changeItemFirstUpdate(this)"  >
-					<option value = "">   </option>
-					<c:forEach  var="itemFirstList"  items="${itemFirstList}">
-						<option value ="${itemFirstList.K}" title=" ${itemFirstList.V}"  ${itemFirstList.K == itemFirstId ?"selected='selected'":''}  > ${itemFirstList.V}</option>
-					</c:forEach>
-				</select>
-			</td>
 
-		</tr>
-		<tr>
+		<tr  id="itemNameInfo">
 			<td>
-				<span title = "用印事项二级类别">用印事项二级类别</span>
+				<span title = "用印事项"> 用印事项</span>
 			</td>
 			<td   class="addInputStyle">
-				<select id = "itemSecondId" name = "itemSecondId"   class = "validNull select-person"   content="用印事项二级类别"    title="必填项  "  >
-				</select>
-
+				<div  class="input-group organ"   onclick="approvalInfo.forItemInfo()">
+					<input   id="itemName"       name="itemName"  type="text"    value="${itemSecondName}"    content="用印事项二级名称"   title="必填项  "   readonly />
+					<input  id="itemFirst"   name="itemFirst"  type="hidden"           content="用印事项一级ID"            />
+					<input  id="itemSecond"   name="itemSecond"  type="hidden"             content="用印事项二级ID"         />
+					<span class="input-group-addon" style="height: 30px"><span class="glyphicon glyphicon-th-list"></span></span>
+				</div>
 			</td>
 		</tr>
+
 		<tr>
 			<td>
 				<span title = "员工姓名"> 员工姓名</span>

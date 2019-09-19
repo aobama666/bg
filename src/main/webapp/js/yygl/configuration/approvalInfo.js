@@ -3,6 +3,7 @@ approvalInfo.saveBtnClickFlag = 0;//保存按钮点击事件
 approvalInfo.saveInfoFlag = true;//页面数据保存事件
 $(function(){
     approvalInfo.changeItemFirstUpdate();
+    approvalInfo.onchangeForItemName();
     $("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'parent',empCode:'empCode',empName:'empName',checkType:'radio',popEvent:'pop'});
 });
 function popEvent(ids,codes,names,pId,level){
@@ -92,16 +93,49 @@ approvalInfo.approvalForSave =function () {
         itemSecondInfo.saveBtnClickFlag = 0;
         return;
     }
+    var  itemFirst=$("#itemFirst").val();
+    var  itemSecond=$("#itemSecond").val();
+    var  approveNodeId=$("#approveNodeId").val();
+    if(approveNodeId=="2"||approveNodeId=="4"){
+        if(itemFirst==""){
+            messager.tip("请选择用印事项",1000);
+            return;
+        }
+        if(itemSecond==""){
+            messager.tip("请选择二级用印事项",1000);
+            return;
+        }
+    }
     var roomDetailFormData = roomAddInfoCommon.getFormDataInfo();
     $.messager.confirm( "保存提示", "确认保存该数据吗",
         function(r){
             if(r){
-               saveForApprival(roomDetailFormData);
+                saveForApprival(roomDetailFormData);
             }
         }
     );
 }
-
+/*用印管理-事项弹框 */
+approvalInfo.forItemInfo = function (){
+    var url = "/bg/yyComprehensive/itemIndex";
+    layer.open({
+        type:2,
+        title:'<h4 style="height:42px;line-height:27px;">用印事项</h4>',
+        area:['300px','350px'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url,
+    });
+}
+approvalInfo.onchangeForItemName = function () {
+       debugger
+       var    approveNodeId= $("#approveNodeId").val();
+       if(approveNodeId=="2"||approveNodeId=="4"){
+          $('#itemNameInfo').css("display","table-row");
+       }else {
+           $('#itemNameInfo').css("display","none");
+       }
+}
 function saveForApprival(roomDetailFormData) {
     $.ajax({
         url: "/bg/yyConfiguration/saveForApproval",
@@ -136,6 +170,19 @@ approvalInfo.approvalForUpdate =function () {
     if(!checkLength){
         itemSecondInfo.saveBtnClickFlag = 0;
         return;
+    }
+    var  itemFirst=$("#itemFirst").val();
+    var  itemSecond=$("#itemSecond").val();
+    var  approveNodeId=$("#approveNodeId").val();
+    if(approveNodeId=="2"||approveNodeId=="4"){
+        if(itemFirst==""){
+            messager.tip("请选择用印事项",1000);
+            return;
+        }
+        if(itemSecond==""){
+            messager.tip("请选择二级用印事项",1000);
+            return;
+        }
     }
     var roomDetailFormData = roomAddInfoCommon.getFormDataInfo();
     $.messager.confirm( "修改提示", "确认修改该数据吗",
