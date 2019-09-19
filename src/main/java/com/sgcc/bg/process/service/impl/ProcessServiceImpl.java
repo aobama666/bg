@@ -81,7 +81,7 @@ public class ProcessServiceImpl implements ProcessService {
         pbApproveAdd.setId(approveIdAdd);
         pbApproveAdd.setApplyId(applyId);
         pbApproveAdd.setApproveNode(pbRule.getNextNodeId());
-        pbApproveAdd.setApproveStatus(ProcessBaseConstant.RESULT_AGREE);
+        pbApproveAdd.setApproveStatus(ProcessBaseConstant.APPROVE_NO);
         pbApproveAdd.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_YES);
         pbApproveAdd.setCreateUser(approveUserId);
         pbMapper.addApprove(pbApproveAdd);
@@ -123,7 +123,7 @@ public class ProcessServiceImpl implements ProcessService {
         //更新审批表信息
         PbApprove pbApproveUpdate = new PbApprove();
         pbApproveUpdate.setApproveUser(approveUserId);
-        pbApproveUpdate.setApproveStatus(ProcessBaseConstant.RESULT_AGREE);
+        pbApproveUpdate.setApproveStatus(ProcessBaseConstant.APPROVE_YES);
         pbApproveUpdate.setApproveRemark(approveRemark);
         pbApproveUpdate.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_NO);
         pbApproveUpdate.setApproveNode(pbRule.getId());
@@ -134,7 +134,7 @@ public class ProcessServiceImpl implements ProcessService {
         if(!if_expand){//如果不属于审批扩展表
             //完成当前待办信息
             completeUpcoming(applyId,approveId,ProcessBaseConstant.PRECESS_APPROVE,approveUserId);
-            // 除此之外的本审批id对应的待办用户置为无效状态
+            // 除此之外的本审批id对应的待办用户置为无效状态，避免其他用户显示已办消息
             pbMapper.updateAuditUserForUser(approveId,approveUserId);
         }
         return true;
@@ -154,33 +154,55 @@ public class ProcessServiceImpl implements ProcessService {
         PbRule pbRule = pbMapper.selectRule(pbApprove.getApproveNode(),ProcessBaseConstant.RESULT_REFUSE, null);
         //本环节规则是否对应扩展表标识
         boolean if_expand = pbRule.getIfExpand().equals(ProcessBaseConstant.RULE_EXPAND_YES);
+        //如果属于扩展表
         if(if_expand){
+            //修改当前人员对应状态
+            pbMapper.updateApproveExpand(ProcessBaseConstant.RESULT_REFUSE,approveRemark
+                    ,ProcessBaseConstant.AUDIT_FLAG_NO,approveUserId,approveId,approveUserId);
+            //根据审批id和审批用户获取对应扩展id
+            String approveExpandId = pbMapper.getExpandId(approveId,approveUserId);
+            //完成当前待办
+            completeUpcoming(applyId,approveExpandId,ProcessBaseConstant.PRECESS_EXPAND,approveUserId);
+
             //获取当前待办状态为待办的审批扩展信息，
             List<String> undoneApproveExpand = pbMapper.undoneApproveExpand(approveId);
-            //循环完成对应待办
+            //循环撤销其他人员的待办
             for(String expandId : undoneApproveExpand){
-                completeUpcoming(applyId,expandId,ProcessBaseConstant.PRECESS_EXPAND,approveUserId);
+                cancelUpcoming(applyId,expandId,ProcessBaseConstant.PRECESS_EXPAND);
             }
-            //如果有对应审批扩展信息，修改当前为待办的待办状态为已办
+            //如果有其他的对应审批扩展信息，修改当前为待办的待办状态为已办
             pbMapper.updateUndoneApproveExpand(approveId,approveUserId);
         }
+
+        //添加下一环节的审批信息
+        PbApprove pbApproveAdd = new PbApprove();
+        String approveIdAdd = Rtext.getUUID();
+        pbApproveAdd.setId(approveIdAdd);
+        pbApproveAdd.setApplyId(applyId);
+        pbApproveAdd.setApproveNode(pbRule.getNextNodeId());
+        pbApproveAdd.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_NO);
+        pbApproveAdd.setCreateUser(approveUserId);
+        pbMapper.addApprove(pbApproveAdd);
+
         //修改当前审批表信息
         PbApprove pbApproveUpdate = new PbApprove();
         pbApproveUpdate.setApproveUser(approveUserId);
-        pbApproveUpdate.setApproveStatus(ProcessBaseConstant.RESULT_REFUSE);
+        pbApproveUpdate.setApproveStatus(ProcessBaseConstant.APPROVE_YES);
         pbApproveUpdate.setApproveRemark(approveRemark);
         pbApproveUpdate.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_NO);
         pbApproveUpdate.setApproveNode(pbRule.getId());
-        pbApproveUpdate.setApproveResult(ProcessBaseConstant.RESULT_AGREE);
+        pbApproveUpdate.setApproveResult(ProcessBaseConstant.RESULT_REFUSE);
         pbApproveUpdate.setId(approveId);
-        pbApproveUpdate.setNextApproveId("");
+        pbApproveUpdate.setNextApproveId(approveIdAdd);
         pbMapper.updateApprove(pbApproveUpdate);
 
+        //如果不属于审批扩展表,完成当前待办信息
         if(!if_expand){
-            //如果不属于审批扩展表,完成当前待办信息
             completeUpcoming(applyId,approveId,ProcessBaseConstant.PRECESS_APPROVE,approveUserId);
+            // 除此之外的本审批id对应的待办用户置为无效状态,避免其他用户显示已办消息
+            pbMapper.updateAuditUserForUser(approveId,approveUserId);
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -203,7 +225,8 @@ public class ProcessServiceImpl implements ProcessService {
     }
 
     @Override
-    public boolean withdraw() {
+    public boolean withdraw(String businessId, String operator) {
+
         return false;
     }
 
@@ -218,9 +241,9 @@ public class ProcessServiceImpl implements ProcessService {
         String routingKey = ProcessBaseConstant.ROUTING_KEY;
         String operate = ProcessBaseConstant.OPERATE_INSERT;
         JSONObject jsonObject = new JSONObject(10);
-        jsonObject.put("flowid", flowId);
-        jsonObject.put("precessid", precessId);
-        jsonObject.put("taskid", taskId);
+        jsonObject.put("flowId", flowId);
+        jsonObject.put("precessId", precessId);
+        jsonObject.put("taskId", taskId);
         jsonObject.put("contentType", "2");
         jsonObject.put("remarkFlag", "0");
         jsonObject.put("auditOrigin", "tygl");
@@ -229,10 +252,12 @@ public class ProcessServiceImpl implements ProcessService {
         jsonObject.put("auditFlag", new BigDecimal(1));
         jsonObject.put("auditCatalog", auditCatalog);
         jsonObject.put("auditTitle", auditTitle);
-        jsonObject.put("userid", userId);
+        jsonObject.put("userId", userId);
         jsonObject.put("content", auditUrl);
         jsonObject.put("operate", operate);
+        jsonObject.put("isBatch", "0");
         String sendMessage = jsonObject.toJSONString();
+        //想看这些参数啥意思去看待办rabbit接入API
         log.info("流程模块发送待办(insertTask):{}" ,sendMessage);
         rabbitTemplate.convertAndSend(routingKey, sendMessage);
         return true;
@@ -246,19 +271,38 @@ public class ProcessServiceImpl implements ProcessService {
         String routingKey = ProcessBaseConstant.ROUTING_KEY;
         String operate = ProcessBaseConstant.OPERATE_DONE;
         JSONObject jsonObject = new JSONObject(10);
-        jsonObject.put("flowid", flowId);
-        jsonObject.put("precessid", precessId);
-        jsonObject.put("taskid", taskId);
+        jsonObject.put("flowId", flowId);
+        jsonObject.put("precessId", precessId);
+        jsonObject.put("taskId", taskId);
         jsonObject.put("auditOrigin", "tygl");
         jsonObject.put("key", "DOTRl5HgPHQ2iz2iCy");
         jsonObject.put("auditDealOrigin", "1");//流程处理系统（1业务系统 2统一管理支撑平台）
         jsonObject.put("type", "1");//流程处理类型（1流程审批 2流程删除，默认为1）
         jsonObject.put("auditResult", "1");//审批结果（1通过 2拒绝）
         jsonObject.put("auditRemark", "");
-        jsonObject.put("userid", userId);
+        jsonObject.put("userId", userId);
         jsonObject.put("operate", operate);
         String sendMessage = jsonObject.toJSONString();
+        //想看这些参数啥意思去看待办rabbit接入API
         log.info("流程模块完成待办(doneTask):{}",sendMessage);
+        rabbitTemplate.convertAndSend(routingKey, sendMessage);
+        return true;
+    }
+
+    @Override
+    public boolean cancelUpcoming(String flowId, String taskId, String precessId) {
+        String routingKey = ProcessBaseConstant.ROUTING_KEY;
+        String operate = ProcessBaseConstant.OPERATE_REVOKE;
+        JSONObject jsonObject = new JSONObject(10);
+        jsonObject.put("flowId",flowId);
+        jsonObject.put("precessId",precessId);
+        jsonObject.put("taskId",taskId);
+        jsonObject.put("auditOrigin","tygl");
+        jsonObject.put("key",routingKey);
+        jsonObject.put("operate",operate);
+        String sendMessage = jsonObject.toJSONString();
+        //想看这些参数啥意思去看待办rabbit接入API
+        log.info("流程模块撤回待办(revokeTask):{}",sendMessage);
         rabbitTemplate.convertAndSend(routingKey, sendMessage);
         return true;
     }
@@ -278,7 +322,7 @@ public class ProcessServiceImpl implements ProcessService {
     }
 
     /**
-     * 共有方法调用的添加审批扩展信息封装--新增扩展信息、新增待办信息、发送多人多条待办
+     * 共有方法   添加审批扩展信息封装--新增扩展信息、新增待办信息、发送多人多条待办
      * @param applyId       申请id
      * @param approveId     审批id
      * @param toDoerId      待办人，可为多个，中间英文逗号隔开
@@ -311,9 +355,10 @@ public class ProcessServiceImpl implements ProcessService {
             pbAuditUser.setApproveUser(userId);
             pbAuditUser.setCreateUser(operator);
             pbMapper.addAuditUser(pbAuditUser);
+
             //发送待办_扩展表格式_多人多条
             sendUpcoming(applyId,pbApproveExpandUuid,ProcessBaseConstant.PRECESS_EXPAND,userId,auditUrl,auditCatalog,auditTitle);
         }
-        return false;
+        return true;
     }
 }

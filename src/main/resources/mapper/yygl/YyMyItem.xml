@@ -89,8 +89,10 @@
         <if test="deptId!=null and deptId!=''">
           AND a.DEPT_ID = #{deptId}
         </if>
-        AND a.NODE_TYPE = #{nodeType} AND
-        a.ITEM_SECOND_ID = #{itemSecondId}
+        AND a.NODE_TYPE = #{nodeType}
+        <if test="itemSecondId!=null and itemSecondId!=''">
+          AND a.ITEM_SECOND_ID = #{itemSecondId}
+        </if>
         AND a.VALID = '1' AND d.VALID = '1' AND u.VALID = '1'
     </select>
 

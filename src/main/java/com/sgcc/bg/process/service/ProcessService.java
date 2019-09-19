@@ -56,7 +56,10 @@ public interface ProcessService {
     /**
      * 申请人发起撤回
      */
-    boolean withdraw();
+    boolean withdraw(
+            String businessId,
+            String operator
+    );
 
     /**
      * 发送待办
@@ -89,5 +92,17 @@ public interface ProcessService {
                              String taskId,
                              String precessId,
                              String userId
+    );
+
+
+    /**
+     * 撤销待办
+     * @param flowId        申请id
+     * @param taskId        审批id OR 审批扩展id
+     * @param precessId     标识，是审批id还是审批扩展id
+     */
+    boolean cancelUpcoming(String flowId,
+                           String taskId,
+                           String precessId
     );
 }

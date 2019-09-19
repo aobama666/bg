@@ -27,7 +27,7 @@ public class YyApplyConstant {
 
     //节点类型:部门主管、业务主管、办公室、院领导、印章管理员
     public static final String NODE_DEPT = "1";
-    public static final String NODE_BUSSINESS = "2";
+    public static final String NODE_BUSINESS = "2";
     public static final String NODE_OFFICE = "3";
     public static final String NODE_LEADER = "4";
     public static final String NODE_ADMIN = "5";
@@ -50,7 +50,7 @@ public class YyApplyConstant {
     //是否需要院领导批准
     public static final String LEADER_APPROVE_NEED = "1";
 
-    //流程中，办公室负责人不同的下一环节
+    //流程中，办公室负责人不同的操作对应不同的下一环节
     //院领导批准
     public static final String PROCESS_CONDITION_LEADER = "1";
     //印章管理员

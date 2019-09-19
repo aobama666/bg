@@ -306,7 +306,7 @@ public class YyApplyServiceImpl implements YyApplyService {
         String loginId = getLoginUserUUID();
         Map<String,Object> deptMap = yyApplyMapper.findDept(loginId);
         String deptId = deptMap.get("PDEPTID").toString();
-        List<Map<String,Object>> deptPrincipal = yyMyItemMapper.nextNodeApprove(deptId,YyApplyConstant.NODE_DEPT,yyApplyDAO.getItemSecondId());
+        List<Map<String,Object>> deptPrincipal = yyMyItemMapper.nextNodeApprove(deptId,YyApplyConstant.NODE_DEPT,null);
         return deptPrincipal;
     }
 

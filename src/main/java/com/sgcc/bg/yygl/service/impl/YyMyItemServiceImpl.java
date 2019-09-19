@@ -76,7 +76,7 @@ public class YyMyItemServiceImpl implements YyMyItemService{
         for(Map<String,Object> ibd : itemBusinessDept){
             radioId++;
             deptId = ibd.get("DEPT_ID").toString();
-            List<Map<String, Object>> nextNodeApproveFor = myItemMapper.nextNodeApprove(deptId,YyApplyConstant.NODE_BUSSINESS,itemSecondId);
+            List<Map<String, Object>> nextNodeApproveFor = myItemMapper.nextNodeApprove(deptId,YyApplyConstant.NODE_BUSINESS,itemSecondId);
             for(Map<String,Object> m : nextNodeApproveFor) {
                 m.put("radioId","staffId"+radioId);
             }
@@ -91,7 +91,7 @@ public class YyMyItemServiceImpl implements YyMyItemService{
     @Override
     public List<Map<String, Object>> nextApprove(YyApplyDAO yyApplyDAO) {
         String useSealStatus = yyApplyDAO.getUseSealStatus();
-        String itemSecondId = yyApplyDAO.getItemSecondId();
+        String itemSecondId = null;
         List<Map<String,Object>> nextNodeApprove = null;
         //根据对应申请状态，获取对应审批节点
         //包含状态有：业务部门负责人、办公室负责人、院领导负责人
@@ -101,6 +101,7 @@ public class YyMyItemServiceImpl implements YyMyItemService{
         }else if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
                 if(ifLeaderApprove(yyApplyDAO.getItemSecondId())){
                     nodeType = YyApplyConstant.NODE_LEADER;
+                    itemSecondId = yyApplyDAO.getItemSecondId();
                 }else{
                     nodeType = YyApplyConstant.NODE_ADMIN;
                 }

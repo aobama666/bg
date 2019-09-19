@@ -24,6 +24,15 @@ public class ProcessBaseConstant {
 
 
     /**
+     * 是否审批
+     */
+    //已审批
+    public final static String APPROVE_YES = "1";
+    //未审批
+    public final static String APPROVE_NO = "0";
+
+
+    /**
      * 是否待办
      */
     //是
@@ -53,5 +62,7 @@ public class ProcessBaseConstant {
     public final static String OPERATE_INSERT = "insertTask";
     //完成待办
     public final static String OPERATE_DONE = "doneTask";
+    //撤销待办
+    public final static String OPERATE_REVOKE = "revokeTask";
 
 }

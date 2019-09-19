@@ -167,15 +167,15 @@
 
     <select id="getApproveIdForBusinessId" resultType="java.lang.String">
         SELECT APPROVE_ID
-        FROM (
-          SELECT
-            a.approve_id,
-            max(r.CREATE_TIME)
-          FROM TB_WL_APPLY a LEFT JOIN TB_WL_BUSINESS_R_APPLY r ON a.id = r.APPLY_ID
-          WHERE r.BUSINESS_ID = #{businessId}
-          and a.VALID='1'
-          and r.VALID='1'
-          GROUP BY a.APPROVE_ID)
+        FROM TB_WL_APPLY
+        WHERE ID = (SELECT apply_id
+                    FROM TB_WL_BUSINESS_R_APPLY
+                    WHERE BUSINESS_ID = #{businessId} AND CREATE_TIME = (SELECT max(CREATE_TIME)
+                                                                                              FROM TB_WL_BUSINESS_R_APPLY
+                                                                                              WHERE BUSINESS_ID = #{businessId}
+                                                                                                    AND VALID = '1')
+                          AND VALID = '1')
+        AND VALID = '1'
     </select>
 
     <select id="selectExpandIfAudit" resultType="java.lang.String">
