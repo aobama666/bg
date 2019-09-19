@@ -281,9 +281,13 @@ public class YyConfigurationController {
 		Map.put("updateUser", userId);
 		Map.put("updateTime", new Date());
 		Map.put("valid", "1");
-		int sortNumber = Integer.parseInt(SortNumber);
-		sortNumber++;
-		Map.put("sortNumber", sortNumber);
+		if(SortNumber==null){
+			Map.put("sortNumber", "1");
+		}else{
+			int sortNumber = Integer.parseInt(SortNumber);
+			sortNumber++;
+			Map.put("sortNumber", sortNumber);
+		}
 		int res = yyConfigurationService.saveForItemFirstInfo(Map);
 		if (res != 1) {
 			rw = new ResultWarp(ResultWarp.FAILED, "新增失败");
@@ -724,8 +728,8 @@ public class YyConfigurationController {
         Logger.info("用印模块-配置模块-审批人配置的添加------开始");
         ResultWarp rw = null;
         String approveNodeId = paramsMap.get("approveNodeId") == null ? "" : paramsMap.get("approveNodeId").toString();//节点类型
-        String itemFirstId = paramsMap.get("itemFirstId") == null ? "" : paramsMap.get("itemFirstId").toString();//用印事项一级类别
-        String itemSecondId = paramsMap.get("itemSecondId") == null ? "" : paramsMap.get("itemSecondId").toString();//用印事项二级类别
+        String itemFirstId = paramsMap.get("itemFirst") == null ? "" : paramsMap.get("itemFirst").toString();//用印事项一级类别
+        String itemSecondId = paramsMap.get("itemSecond") == null ? "" : paramsMap.get("itemSecond").toString();//用印事项二级类别
         String approveUserId = paramsMap.get("approveUserId") == null ? "" : paramsMap.get("approveUserId").toString();//员工ID
         String approveDeptId = paramsMap.get("approveDeptId") == null ? "" : paramsMap.get("approveDeptId").toString();//部门ID
 
@@ -775,8 +779,8 @@ public class YyConfigurationController {
 		ResultWarp rw = null;
 		String approveId = paramsMap.get("approveId") == null ? "" : paramsMap.get("approveId").toString();//主id
 		String approveNodeId = paramsMap.get("approveNodeId") == null ? "" : paramsMap.get("approveNodeId").toString();//节点类型
-		String itemFirstId = paramsMap.get("itemFirstId") == null ? "" : paramsMap.get("itemFirstId").toString();//用印事项一级类别
-		String itemSecondId = paramsMap.get("itemSecondId") == null ? "" : paramsMap.get("itemSecondId").toString();//用印事项二级类别
+		String itemFirstId = paramsMap.get("itemFirst") == null ? "" : paramsMap.get("itemFirst").toString();//用印事项一级类别
+		String itemSecondId = paramsMap.get("itemSecond") == null ? "" : paramsMap.get("itemSecond").toString();//用印事项二级类别
 		String approveUserId = paramsMap.get("approveUserId") == null ? "" : paramsMap.get("approveUserId").toString();//员工ID
 		String approveDeptId = paramsMap.get("approveDeptId") == null ? "" : paramsMap.get("approveDeptId").toString();//部门ID
 

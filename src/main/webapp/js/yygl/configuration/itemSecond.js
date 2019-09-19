@@ -2,8 +2,25 @@ var itemSecondInfo = {};
 itemSecondInfo.saveBtnClickFlag = 0;//保存按钮点击事件
 itemSecondInfo.saveInfoFlag = true;//页面数据保存事件
 $(function(){
+    itemSecondInfo.onchangeForIfsign("");
     $("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'parent',checkType:'checkbox', popEvent:'pop' });
 });
+
+
+
+itemSecondInfo.onchangeForIfsign=function (deptIds) {
+    var ifsignhtml = '';
+    var  reg=RegExp(/,/);
+    if(deptIds!=""){
+        var  flag  = reg.test(deptIds);
+        if(flag){
+            ifsignhtml += '<option value="1" selected>是</option>';
+        }else{
+            ifsignhtml += '<option value="0" selected>否</option>';
+        }
+    }
+    $("#ifsign").append(ifsignhtml)
+}
 
 function popEvent(ids,codes,names,pId,level){
     //人员树时：pId,level为空
@@ -13,6 +30,7 @@ function popEvent(ids,codes,names,pId,level){
     // alert("回传names："+names);
     // alert("回传pId："+pId);
     // alert("回传level："+level);
+    itemSecondInfo.onchangeForIfsign(ids);
 }
 
 //保存

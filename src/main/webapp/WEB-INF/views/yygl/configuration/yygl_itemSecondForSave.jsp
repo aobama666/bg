@@ -57,9 +57,8 @@
 				<span title = "是否需要会签"> 是否需要会签</span>
 			</td>
 			<td   class="addInputStyle">
-				<select id="ifsign"  name = "ifsign"  class = "validNull select-person"   content="是否需要会签"    title="必填项  "  >
-					<option value="1"  selected>是</option>
-					<option value="0"  >否</option>
+				<select id="ifsign"  name = "ifsign"  class = "validNull select-person"   content="是否需要会签"    title="必填项  "   disabled="disabled">
+
 				</select>
 			</td>
 		</tr>
@@ -68,10 +67,10 @@
 				<span title = "业务主管部门"> 业务主管部门</span>
 			</td>
 			<td   class="addInputStyle">
-				<div id="organTree" class="input-group organ">
-					<input type="hidden" name="deptId" id="deptId" >
+				<div id="organTree" class="input-group organ"    >
+					<input type="hidden" name="deptId" id="deptId"   >
 					<input type="hidden" name="deptCode" id="deptCode" value="${deptCode}">
-					<input type="text" name="deptName" id="deptName" readonly="readonly" value="${deptName}" class = "validNull"  content="业务主管部门" >
+					<input type="text" name="deptName" id="deptName" readonly="readonly" value="${deptName}" class = "validNull"  content="业务主管部门"   >
 					<span class="input-group-addon" style="height: 30px"><span class="glyphicon glyphicon-th-list"></span></span>
 				</div>
 			</td>
