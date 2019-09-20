@@ -15,7 +15,7 @@ public class PbApprove {
     private String approveResult;
     private String approveRemark;
     private String approveStep;
-    private String approveDate;
+    private Date approveDate;
     private String auditFlag;
     private String valid;
     private String createUser;
@@ -95,11 +95,11 @@ public class PbApprove {
         this.approveStep = approveStep;
     }
 
-    public String getApproveDate() {
+    public Date getApproveDate() {
         return approveDate;
     }
 
-    public void setApproveDate(String approveDate) {
+    public void setApproveDate(Date approveDate) {
         this.approveDate = approveDate;
     }
 

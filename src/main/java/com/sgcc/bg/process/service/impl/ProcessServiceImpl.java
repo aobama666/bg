@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -84,6 +85,7 @@ public class ProcessServiceImpl implements ProcessService {
         pbApproveAdd.setApproveNode(pbRule.getNextNodeId());
         pbApproveAdd.setApproveStatus(ProcessBaseConstant.APPROVE_NO);
         pbApproveAdd.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_YES);
+        pbApproveAdd.setApproveStep(getApproveStep(applyId));
         pbApproveAdd.setCreateUser(approveUserId);
         pbMapper.addApprove(pbApproveAdd);
         // 如果下一环节对应审批扩展，新增对应扩展信息，顺带新增待办用户表信息,发送待办
@@ -133,6 +135,7 @@ public class ProcessServiceImpl implements ProcessService {
         pbApproveUpdate.setApproveResult(ProcessBaseConstant.RESULT_AGREE);
         pbApproveUpdate.setId(approveId);
         pbApproveUpdate.setNextApproveId(approveIdAdd);
+        pbApproveUpdate.setApproveDate(new Date());
         pbMapper.updateApprove(pbApproveUpdate);
         if(!if_expand){//如果不属于审批扩展表
             //完成当前待办信息
@@ -185,6 +188,7 @@ public class ProcessServiceImpl implements ProcessService {
         pbApproveAdd.setApproveNode(pbRule.getNextNodeId());
         pbApproveAdd.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_NO);
         pbApproveAdd.setCreateUser(approveUserId);
+        pbApproveAdd.setApproveStep(getApproveStep(applyId));
         pbMapper.addApprove(pbApproveAdd);
 
         //修改当前审批表信息
@@ -197,6 +201,7 @@ public class ProcessServiceImpl implements ProcessService {
         pbApproveUpdate.setApproveResult(ProcessBaseConstant.RESULT_REFUSE);
         pbApproveUpdate.setId(approveId);
         pbApproveUpdate.setNextApproveId(approveIdAdd);
+        pbApproveUpdate.setApproveDate(new Date());
         pbMapper.updateApprove(pbApproveUpdate);
 
         //如果不属于审批扩展表,完成当前待办信息
@@ -239,8 +244,7 @@ public class ProcessServiceImpl implements ProcessService {
         PbRule pbRule = pbMapper.selectRule(pbApprove.getApproveNode(),ProcessBaseConstant.RESULT_AGREE, null);
         //本环节规则是否对应扩展表标识
         boolean if_expand = pbRule.getIfExpand().equals(ProcessBaseConstant.RULE_EXPAND_YES);
-        //如果属于扩展表
-        if(if_expand){
+        if(if_expand){//如果属于扩展表
             //获取当前待办状态为待办的审批扩展信息，
             List<String> undoneApproveExpand = pbMapper.undoneApproveExpand(approveId);
             //循环撤销其他人员的待办
@@ -249,39 +253,60 @@ public class ProcessServiceImpl implements ProcessService {
             }
             //如果有其他的对应审批扩展信息，修改当前为待办的待办状态为已办
             pbMapper.updateUndoneApproveExpand(approveId,operator);
-        }
-
-        //撤回环节规则信息
-        PbRule pbRuleWithdraw = pbMapper.selectRuleForNode(nodeName,functionType);
-
-        //添加下一环节的审批信息
-        PbApprove pbApproveAdd = new PbApprove();
-        String approveIdAdd = Rtext.getUUID();
-        pbApproveAdd.setId(approveIdAdd);
-        pbApproveAdd.setApplyId(applyId);
-        pbApproveAdd.setApproveNode(pbRuleWithdraw.getNextNodeId());
-        pbApproveAdd.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_NO);
-        pbApproveAdd.setCreateUser(operator);
-        pbMapper.addApprove(pbApproveAdd);
-
-        //修改当前审批表信息
-        PbApprove pbApproveUpdate = new PbApprove();
-        pbApproveUpdate.setApproveUser(operator);
-        pbApproveUpdate.setApproveStatus(ProcessBaseConstant.APPROVE_YES);
-        pbApproveUpdate.setApproveRemark(approveRemark);
-        pbApproveUpdate.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_NO);
-        pbApproveUpdate.setApproveNode(pbRuleWithdraw.getId());
-        pbApproveUpdate.setApproveResult(ProcessBaseConstant.RESULT_WITHDRAW);
-        pbApproveUpdate.setId(approveId);
-        pbApproveUpdate.setNextApproveId(approveIdAdd);
-        pbMapper.updateApprove(pbApproveUpdate);
-
-        //如果不属于审批扩展表,撤销当前待办信息
-        if(!if_expand){
+        }else{//如果不属于审批扩展表,撤销当前待办信息
             cancelUpcoming(applyId,approveId,ProcessBaseConstant.PRECESS_APPROVE);
             // 将本待办的对应待办用户置为无效
             pbMapper.updateAuditUserForUser(approveId,operator);
         }
+
+        //撤回环节规则信息
+        PbRule pbRuleWithdraw = pbMapper.selectRuleForNode(nodeName,functionType);
+        //撤回的流程主键信息
+        String approveIdAdd = Rtext.getUUID();
+        //撤回之后的下一条流程主键信息
+        String approveIdAddNext = Rtext.getUUID();
+
+        //修改当前审批表信息
+        PbApprove pbApproveUpdate = new PbApprove();
+        pbApproveUpdate.setApproveStatus(ProcessBaseConstant.APPROVE_YES);
+        pbApproveUpdate.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_NO);
+        pbApproveUpdate.setApproveNode(pbRule.getId());
+        pbApproveUpdate.setId(approveId);
+        pbApproveUpdate.setNextApproveId(approveIdAdd);
+        pbMapper.updateApprove(pbApproveUpdate);
+
+        //添加撤回待办流程信息
+        PbApprove pbApproveWithdraw = new PbApprove();
+        pbApproveWithdraw.setId(approveIdAdd);
+        pbApproveWithdraw.setApplyId(applyId);
+        pbApproveWithdraw.setApproveNode(pbRuleWithdraw.getId());
+        pbApproveWithdraw.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_NO);
+        pbApproveWithdraw.setApproveStep(getApproveStep(applyId));
+        pbApproveWithdraw.setCreateUser(operator);
+        pbMapper.addApprove(pbApproveWithdraw);
+        //修改撤回待办流程信息
+        pbApproveWithdraw = new PbApprove();
+        pbApproveWithdraw.setApproveUser(operator);
+        pbApproveWithdraw.setApproveStatus(ProcessBaseConstant.APPROVE_YES);
+        pbApproveWithdraw.setApproveRemark(approveRemark);
+        pbApproveWithdraw.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_NO);
+        pbApproveWithdraw.setApproveNode(pbRuleWithdraw.getId());
+        pbApproveWithdraw.setApproveResult(ProcessBaseConstant.RESULT_WITHDRAW);
+        pbApproveWithdraw.setId(approveIdAdd);
+        pbApproveWithdraw.setNextApproveId(approveIdAddNext);
+        pbApproveWithdraw.setApproveDate(new Date());
+        pbMapper.updateApprove(pbApproveWithdraw);
+
+        //添加撤回待办之后的流程信息
+        PbApprove pbApproveNext = new PbApprove();
+        pbApproveNext.setId(approveIdAddNext);
+        pbApproveNext.setApplyId(applyId);
+        pbApproveNext.setApproveNode(pbRuleWithdraw.getNextNodeId());
+        pbApproveNext.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_NO);
+        pbApproveNext.setApproveStep(getApproveStep(applyId));
+        pbApproveNext.setCreateUser(operator);
+        pbMapper.addApprove(pbApproveNext);
+
         return true;
     }
 
@@ -438,6 +463,7 @@ public class ProcessServiceImpl implements ProcessService {
             pbApproveExpand.setApproveUser(userId);
             pbApproveExpand.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_YES);
             pbApproveExpand.setCreateUser(operator);
+            pbApproveExpand.setApproveStep(getApproveStep(applyId));
             pbMapper.addApproveExpand(pbApproveExpand);
 
             //待办用户表
@@ -454,5 +480,17 @@ public class ProcessServiceImpl implements ProcessService {
             sendUpcoming(applyId,pbApproveExpandUuid,ProcessBaseConstant.PRECESS_EXPAND,userId,auditUrl,auditCatalog,auditTitle);
         }
         return true;
+    }
+
+
+    /**
+     * 共有方法————获取对应申请当前审批最大排序值
+     * @param applyId    申请id
+     */
+    public String getApproveStep(String applyId){
+        String maxStep = pbMapper.maxApproveStep(applyId);
+        Integer approveStep = Integer.valueOf(maxStep);
+        approveStep = approveStep + 1;
+        return String.valueOf(approveStep);
     }
 }

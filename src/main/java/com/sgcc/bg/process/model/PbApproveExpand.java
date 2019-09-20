@@ -12,6 +12,7 @@ public class PbApproveExpand {
     private String approveResult;
     private String approveRemark;
     private String auditFlag;
+    private String approveStep;
     private String createUser;
     private Date createTime;
     private String updateUser;
@@ -114,5 +115,13 @@ public class PbApproveExpand {
 
     public void setApproveDate(Date approveDate) {
         this.approveDate = approveDate;
+    }
+
+    public String getApproveStep() {
+        return approveStep;
+    }
+
+    public void setApproveStep(String approveStep) {
+        this.approveStep = approveStep;
     }
 }

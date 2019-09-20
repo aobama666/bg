@@ -38,15 +38,15 @@
 
     <insert id="addApprove">
         INSERT INTO TB_WL_APPROVE (
-          id, APPLY_ID, APPROVE_NODE, AUDIT_FLAG, VALID, create_user, CREATE_TIME
-        ) VALUES (#{id},#{applyId},#{approveNode},#{auditFlag},'1',#{createUser},sysdate)
+          id, APPLY_ID, APPROVE_NODE, AUDIT_FLAG, APPROVE_STEP, VALID, create_user, CREATE_TIME
+        ) VALUES (#{id},#{applyId},#{approveNode},#{auditFlag},#{approveStep},'1',#{createUser},sysdate)
     </insert>
 
     <insert id="addApproveExpand">
         insert into TB_WL_APPROVE_EXPAND (
-        uuid,APPROVE_ID,APPROVE_USER,AUDIT_FLAG,CREATE_USER,CREATE_TIME,VALID
+        uuid,APPROVE_ID,APPROVE_USER,AUDIT_FLAG,APPROVE_STEP,CREATE_USER,CREATE_TIME,VALID
         ) VALUES (
-            #{uuid},#{approveId},#{approveUser},#{auditFlag},#{createUser},sysdate,'1'
+            #{uuid},#{approveId},#{approveUser},#{auditFlag},#{approveStep},#{createUser},sysdate,'1'
         )
     </insert>
 
@@ -70,11 +70,20 @@
     </update>
 
     <update id="updateApprove">
-        update TB_WL_APPROVE set approve_user=#{approveUser}
-        ,approve_status=#{approveStatus}
-        ,approve_result=#{approveResult}
-        ,approve_remark=#{approveRemark}
-        ,approve_date=sysdate
+        update TB_WL_APPROVE set
+        approve_status=#{approveStatus}
+        <if test="approveResult!=null and approveResult!=''">
+          ,approve_result=#{approveResult}
+        </if>
+        <if test="approveUser!=null and approveUser!=''">
+          ,approve_user=#{approveUser}
+        </if>
+        <if test="approveRemark!=null and approveRemark!=''">
+          ,approve_remark=#{approveRemark}
+        </if>
+        <if test="approveDate!=null">
+          ,approve_date=#{approveDate}
+        </if>
         ,audit_flag=#{auditFlag}
         ,approve_node=#{approveNode}
         ,next_approve_id=#{nextApproveId}
@@ -120,28 +129,34 @@
 
     <select id="selectRule" resultType="com.sgcc.bg.process.model.PbRule">
         SELECT
-          r.id,
-          r.node,
-          r.NEXT_NODE_ID  nextNodeId,
-          r.status,
-          r.condition,
-          r.FUNCTION_TYPE functionType,
-          r.SORT_ID       sortId,
-          r.APPROVE_ROLE  approveRole,
-          r.remark,
-          r.IF_EXPAND ifExpand
+        id,
+        node,
+        NEXT_NODE_ID  nextNodeId,
+        status,
+        condition,
+        FUNCTION_TYPE functionType,
+        SORT_ID       sortId,
+        APPROVE_ROLE  approveRole,
+        remark,
+        IF_EXPAND     ifExpand
+        FROM (
+        SELECT
+        r.*,
+        ROWNUM
         FROM TB_WL_RULE r, (SELECT
-                              node,
-                              FUNCTION_TYPE
-                            FROM tb_wl_rule
-                            WHERE ID = #{ruleId}) t
-        WHERE r.NODE = t.NODE AND r.FUNCTION_TYPE = t.FUNCTION_TYPE
-              <if test="status!=null and status!=''">
+        node,
+        FUNCTION_TYPE
+        FROM tb_wl_rule
+        WHERE ID = #{ruleId}) t
+        WHERE r.NODE = t.NODE AND r.FUNCTION_TYPE = t.FUNCTION_TYPE AND r.STATUS = '1'
+            <if test="status!=null and status!=''">
                 AND r.STATUS = #{status}
-              </if>
-              <if test="condition!=null and condition!=''">
+            </if>
+            <if test="condition!=null and condition!=''">
                 AND r.CONDITION = #{condition}
-              </if>
+            </if>
+        )
+        WHERE ROWNUM = 1
     </select>
 
     <select id="ifExpand" resultType="java.lang.String">
@@ -234,6 +249,10 @@
       FROM TB_WL_RULE r
       WHERE function_type = #{functionType}
       AND node = #{nodeName}
+    </select>
+
+    <select id="maxApproveStep" resultType="java.lang.String">
+        select max(TO_NUMBER(APPROVE_STEP)) from TB_WL_APPROVE where APPLY_ID=#{applyId}
     </select>
 
 

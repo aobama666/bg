@@ -54,6 +54,7 @@ public interface ProcessBaseMapper {
      *  规则表
      */
     //根据条件查询对应规则信息,规则id，同意拒绝状态，附加判断条件
+    //不想加条件时，如果有多个，只显示第一个
     PbRule selectRule(@Param("ruleId") String ruleId,
                       @Param("status") String status,
                       @Param("condition") String condition);
@@ -83,6 +84,9 @@ public interface ProcessBaseMapper {
 
     //根据主键查询对应审批信息
     PbApprove selectApproveForId(@Param("id") String id);
+
+    //获取当前申请最大的排序值，为下一条排序做准备
+    String maxApproveStep(@Param("applyId") String applyId);
 
 
     /**
