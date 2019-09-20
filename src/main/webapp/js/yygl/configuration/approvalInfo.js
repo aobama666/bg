@@ -81,6 +81,7 @@ approvalInfo.changeItemFirstUpdate = function (obj) {
      $("#itemSecondId").append(checkContent)
 }
 approvalInfo.approvalForSave =function () {
+
     /* 验证必填项   */
     var validNull = dataForm.validNullable();
     if(!validNull){
@@ -93,6 +94,7 @@ approvalInfo.approvalForSave =function () {
         itemSecondInfo.saveBtnClickFlag = 0;
         return;
     }
+    debugger
     var  itemFirst=$("#itemFirst").val();
     var  itemSecond=$("#itemSecond").val();
     var  approveNodeId=$("#approveNodeId").val();
@@ -100,6 +102,16 @@ approvalInfo.approvalForSave =function () {
         if(itemFirst==""){
             messager.tip("请选择用印事项",1000);
             return;
+        }
+        if(approveNodeId=="2"){
+          var   businessDeptInfo = approvalInfo.selectForitemSecond(itemSecond);
+          var   businessDeptCode=  businessDeptInfo.businessDeptCode;
+          var   businessDeptName=  businessDeptInfo.businessDeptName;
+          var   approveDeptId=$("#approveDeptId").val();
+              if(!businessDeptCode.match(approveDeptId)){
+                  messager.tip("请选择"+businessDeptName+"的人员",1000);
+                  return;
+              }
         }
         if(itemSecond==""){
             messager.tip("请选择二级用印事项",1000);
@@ -128,13 +140,31 @@ approvalInfo.forItemInfo = function (){
     });
 }
 approvalInfo.onchangeForItemName = function () {
-       debugger
        var    approveNodeId= $("#approveNodeId").val();
        if(approveNodeId=="2"||approveNodeId=="4"){
           $('#itemNameInfo').css("display","table-row");
        }else {
            $('#itemNameInfo').css("display","none");
        }
+}
+approvalInfo.selectForitemSecond =function (itemSecondId) {
+    var businessDeptInfo="";
+    $.ajax({
+        url: "/bg/yyComprehensive/selectForitemSecond",
+        type: "post",
+        dataType:"json",
+        contentType: 'application/json',
+         async:false,
+        data: JSON.stringify({'itemSecond':itemSecondId}),
+        success: function (data) {
+            if(data.success=="true"){
+                businessDeptInfo=data.data;
+            }else{
+                businessDeptInfo="";
+            }
+        }
+    });
+    return   businessDeptInfo;
 }
 function saveForApprival(roomDetailFormData) {
     $.ajax({

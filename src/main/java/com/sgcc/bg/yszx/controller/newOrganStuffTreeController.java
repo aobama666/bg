@@ -215,7 +215,9 @@ public class newOrganStuffTreeController {
 		String limit = request.getParameter("limit")==null?"":request.getParameter("limit").toString();
 		//popEvent    自定义触发父层事件
 		String popEvent = request.getParameter("popEvent")==null?"":request.getParameter("popEvent").toString();
-				
+		//popEvent    是否可选
+		String isNocheck = request.getParameter("isNocheck")==null?"":request.getParameter("isNocheck").toString();
+
 		logger.info("[initOrganTree:in param]:organCode="+organCode+";"
 							                +"organName="+organName+";"
 							                +"iframeId="+iframeId+";"
@@ -323,6 +325,7 @@ public class newOrganStuffTreeController {
 		modelMap.put("ct", ct);
 		modelMap.put("root", root);
 		modelMap.put("popEvent", popEvent);
+		modelMap.put("isNocheck", isNocheck);
 		modelMap.put("treelist",JSON.toJSONString(treelist, SerializerFeature.WriteMapNullValue));
 		ModelAndView model = new ModelAndView("yszx/common/organstufftree/organTreePage",modelMap);
 		return model;

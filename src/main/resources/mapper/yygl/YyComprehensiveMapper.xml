@@ -13,6 +13,27 @@
         </if>
 
     </select>
+    <!-- 部门信息的查询-->
+    <select id="selectForDeptCode" resultType="java.util.Map" >
+        SELECT
+        DEPTID,DEPTNAME,DEPTCODE,PDEPTCODE,TYPE
+        FROM BG_SYS_DEPT
+        WHERE   VALID='1'
+        <if test="deptCode!= null and deptCode!= ''">
+            AND   PDEPTCODE  =#{deptCode}
+        </if>
+        UNION  ALL
+        SELECT
+        DEPTID,DEPTNAME,DEPTCODE,PDEPTCODE,TYPE
+        FROM BG_SYS_DEPT
+        WHERE   VALID='1'
+        <if test="deptCode!= null and deptCode!= ''">
+        AND   DEPTCODE  =#{deptCode}
+        </if>
+    </select>
+
+
+
 
     <!-- 申请单位的查询-->
     <select id="selectForDept" resultType="java.util.Map" >

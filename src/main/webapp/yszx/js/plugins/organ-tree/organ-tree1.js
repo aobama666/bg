@@ -2,12 +2,13 @@ $.fn.extend({
 	organTree:function (properties) {
 		return this.each(function () {
 			var organBox = $(this);
-			var organCode,organName,root,iframe,ct,limit,level;
+			var organCode,organName,root,iframe,ct,limit,level,isNocheck;
 			root = properties.root;
 			level = properties.level == undefined ? "" : properties.level;
 			iframe = properties.iframe == undefined ? "self" : properties.iframe;
 			ct = properties.checkType == undefined ? "radio" : properties.checkType;
 			limit = properties.limit == undefined ? "" : properties.limit;
+            isNocheck = properties.isNocheck == undefined ? "" : properties.isNocheck;
 			//limit yes 根据用户管理权限查询  no
 			//自定义触发父层事件
 			var popEvent = properties.popEvent == undefined ? "" : properties.popEvent;
@@ -38,9 +39,9 @@ $.fn.extend({
 						scrollbar:true,
 						content:[basePath+'/newOrganstufftree/initOrganTree?root='
 						         +root+'&ct='+ct+'&level='+level+'&organCode='
-						         +organCode+'&organName='+organName+'&limit='+limit
+						         +organCode+'&organName='+organName+'&limit='+limit+'&isNocheck='+isNocheck
 						         +'&popEvent='+popEvent+'&iframeId='+iframeId+'&iframe='+iframe,'no'],
-						success: function(layero, index){//弹窗加载完毕后，调整人员组织树的高度不被遮挡
+						success: function(layero, index){    //弹窗加载完毕后，调整人员组织树的高度不被遮挡
 					    	var iframes = layero.find("iframe");
 					    	var stuffPage = iframes[0].contentWindow.document;
 					    	$(stuffPage).find('.tree-box').height(height-110);

@@ -9,6 +9,7 @@
 	String ct = request.getAttribute("ct").toString();
 	String iframeId = request.getAttribute("iframeId").toString();
 	String iframe = request.getAttribute("iframe").toString();
+	String isNocheck = request.getAttribute("isNocheck").toString();
 %>
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -114,6 +115,8 @@ hr {
 	<div class="button-box">
 		<button type="button" class="btn btn-success btn-xs" onclick="selected()"> 确认</button>
 		<button type="button" class="btn btn-warning btn-xs" onclick="clearChecked()"> 清空</button>
+		<%--<a  id="nocheckTrue"  href="#" class="btn btn-warning btn-xs" onclick="return false;">隐藏</a>--%>
+		<%--<a  id="nocheckFalse" href="#" class="btn btn-warning btn-xs" onclick="return false;">显示</a>--%>
 	</div>
 </div>
 <hr>
@@ -130,6 +133,7 @@ $(function(){
 			},
 			check: {
 				enable: true,
+                nocheckInherit:true,
 				chkStyle: "<%=ct%>",
 				chkboxType: {"Y": "", "N": ""},
 				radioType: "all"
@@ -146,8 +150,35 @@ $(function(){
 				
 			}
 		};
-
 	tree = $.fn.zTree.init($("#organTree"), setting, getTree());
+    $("#nocheckTrue").bind("click",{nocheck:true},nocheckNode);
+    $("#nocheckFalse").bind("click",{nocheck:false},nocheckNode);
+    var isNocheck = '<%=isNocheck%>';
+    if(isNocheck!=""){
+        var zTree=$.fn.zTree.getZTreeObj("organTree")
+        var nodesSys=zTree.getNodes();
+        var nodesSysAll=zTree.transformToArray(nodesSys);
+        for(var i=0;i<nodesSysAll.length;i++){
+            var  id=nodesSysAll[i].id;
+            if(isNocheck.match(id)){
+                nodesSysAll[i].nocheck=true;
+                zTree.updateNode(nodesSysAll[i]);
+            }
+		}
+	}
+     function  nocheckNode(e) {
+		var zTree=$.fn.zTree.getZTreeObj("organTree")
+		 nocheck=e.data.nocheck,
+         nodes   =zTree.getSelectedNodes();
+		 if(nodes.length==0){
+		     alert("请选一个节点")
+		 }
+		 for(var i=0,l=nodes;i<1;i++){
+		     nodes[i].nocheck=nocheck;
+		     zTree.updateNode(nodes[i]);
+		 }
+    }
+
 	// 默认勾选上次选择的节点
 	var checkedNodeCode =  parent.$("input[name=<%=organCode%>]").val();
 	//console.log(checkedNodeCode)

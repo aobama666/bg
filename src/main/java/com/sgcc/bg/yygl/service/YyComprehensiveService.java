@@ -8,9 +8,13 @@ import org.apache.ibatis.annotations.Param;
 
 public interface YyComprehensiveService {
     /**
-     * 获取申请单位
+     * 获取人员单位
      */
     List<Map<String,Object>> selectForUserId(  String userId);
+    /**
+     * 获取部门单位
+     */
+    List<Map<String,Object>> selectForDeptCode(  String deptCode);
     /**
      * 获取申请单位
      */

@@ -113,9 +113,9 @@
 	<!-- 本页面所需的js -->
 	<script src="<%=request.getContextPath()%>/yszx/js/plugins/stuff-tree/stuff-tree1.js"></script>
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/organ-tree/organ-tree1.js"></script>
-<!-- 本页面所需的js -->
-<script src="<%=request.getContextPath()%>/js/yygl/configuration/itemSecond.js"></script>
-<script src="<%=request.getContextPath()%>/js/yygl/configuration/matters.js"></script>
+	<!-- 本页面所需的js -->
+	<script src="<%=request.getContextPath()%>/js/yygl/configuration/itemSecond.js"></script>
+	<script src="<%=request.getContextPath()%>/js/yygl/configuration/matters.js"></script>
 
 </body>
 

@@ -66,7 +66,6 @@ public class YyConfigurationController {
 		Logger.info("一级类别配置弹框页面------结束");
 		return model;
 	}
-
 	/**
 	 * 二级类别配置的新增页面
 	 *
@@ -83,6 +82,7 @@ public class YyConfigurationController {
 		Logger.info("一级类别配置新增弹框页面------结束");
 		return model;
 	}
+
 
 	/**
 	 * 二级类别配置的修改页面
@@ -103,6 +103,9 @@ public class YyConfigurationController {
 		Logger.info("一级类别配置新增弹框页面------结束");
 		return model;
 	}
+
+
+
 
 	/**
 	 * 配置管理--申请人事项配置
@@ -355,7 +358,7 @@ public class YyConfigurationController {
 		ComprehensiveMap.put("itemFirst" ,itemFirstIds);
 		String   countNum=yyComprehensiveService.selectForComprehensiveNum(ComprehensiveMap);
 		if (Integer.parseInt(countNum)>0) {
-			rw = new ResultWarp(ResultWarp.FAILED, "该一级事项在已经使用，是否继续删除？");
+			rw = new ResultWarp(ResultWarp.FAILED, "该一级事项已经使用，是否继续删除？");
 			return JSON.toJSONString(rw);
 		}
 		Logger.info("用印模块-配置模块-一级用印事项配置的删除------查看该一级事项下是否存在二级事项");
