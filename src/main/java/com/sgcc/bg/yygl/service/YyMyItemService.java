@@ -62,4 +62,9 @@ public interface YyMyItemService {
      */
     boolean completeUseSeal(String applyUuid);
 
+    /**
+     * 获取当前的印章管理员信息
+     */
+    String getSealAdmin();
+
 }

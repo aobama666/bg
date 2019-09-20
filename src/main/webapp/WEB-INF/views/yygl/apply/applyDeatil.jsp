@@ -221,8 +221,10 @@
 <script>
 
     $(function () {
-        debugger
         var useSealStatus = ${useSealStatus};
+        if(useSealStatus == 2 || useSealStatus == 3){
+            useSealStatus = 1;
+        }
         var x = useSealStatus-1;
         var i = 0;
         //设置正在进行中的

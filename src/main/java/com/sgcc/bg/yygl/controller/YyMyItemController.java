@@ -195,7 +195,7 @@ public class YyMyItemController {
         HRUser loginUser = userService.getUserByUserId(yyApplyService.getLoginUserUUID());
         String approveUser = loginUser.getUserAlias();
 
-        //下一环节是否印章管理员
+        //下一环节是否印章管理员,如果是的话下一环节不现实内容
         String useSealAdmin = "";
         boolean ifLeader = myItemService.ifLeaderApprove(apply.getItemSecondId());
         if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
@@ -226,7 +226,7 @@ public class YyMyItemController {
     @ResponseBody
     @RequestMapping("/agree")
     public String agree(String applyUuid,String toDoerId,String approveOpinion){
-        //用印申请状态
+        //当前用印申请状态
         YyApplyDAO apply = yyApplyService.applyDeatil(applyUuid);
         String useSealStatus = apply.getUseSealStatus();
         String approveUserId = yyApplyService.getLoginUserUUID();
@@ -241,44 +241,46 @@ public class YyMyItemController {
         String auditUrl = "/../../bg/yygl/my_item/toComingSoon";
         //下一环节状态
         String useSealStatusUpdate = "";
+        //下一环节
+        String condition = null;
+        //是否发送待办
+        String sendAudit = YyApplyConstant.SEND_AUDIT_YES;
+        //审批流程执行结果
+        boolean processResult;
 
-        // 根据当前状态，获取下一个要改的状态
+        // 根据当前状态，设定每个环节对应的参数
         if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_DEPT)){
             useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_BUSINESS;
         }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
             useSealStatusUpdate =YyApplyConstant.STATUS_DEAL_OFFICE;
-        }else if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_LEADER)){
-            useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_USER_SEAL;
-        }
-
-        //如果下一环节是印章管理员，不传递待办人
-        if(toDoerId.equals("")){
-            toDoerId = null;
-        }
-
-        //执行审批流程
-        boolean processResult;
-        if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
+        }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
             //如果属于待办公室审批,判断是否需要院领导批准
-            if(myItemService.ifLeaderApprove(apply.getItemSecondId())){
-                //需要
+            if(myItemService.ifLeaderApprove(apply.getItemSecondId())){//需要
+                condition = YyApplyConstant.PROCESS_CONDITION_LEADER;
                 useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_LEADER;
-                processResult = processService.processApprove(applyUuid,YyApplyConstant.PROCESS_CONDITION_LEADER
-                        ,approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_YES);
             }else{
-                //不需要
+                //不需要，走印章管理员，不发待办，待办人为当前环节下所有印章管理员
+                condition = YyApplyConstant.PROCESS_CONDITION_ADMIN;
                 useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_USER_SEAL;
-                processResult = processService.processApprove(applyUuid,YyApplyConstant.PROCESS_CONDITION_ADMIN
-                        ,approveOpinion,approveUserId,toDoerId,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_NO);
+                sendAudit = YyApplyConstant.SEND_AUDIT_NO;
+                toDoerId = myItemService.getSealAdmin();
             }
-        }else{
-            processResult = processService.processApprove(applyUuid,null,approveOpinion,approveUserId
-                    ,toDoerId,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_YES);
+        }else if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_LEADER)){
+            //走印章管理员，不发待办，待办人为当前环节下所有印章管理员
+            useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_USER_SEAL;
+            sendAudit = YyApplyConstant.SEND_AUDIT_NO;
+            toDoerId = myItemService.getSealAdmin();
         }
+
+        //执行审批操作
+        processResult = processService.processApprove(applyUuid,condition,approveOpinion,approveUserId
+                    ,toDoerId,auditTitle,auditUrl,sendAudit);
+
         //如果流程正常到下一环节，修改当前审批状态
         if(processResult){
             yyApplyService.updateApplyStatus(applyUuid,useSealStatusUpdate);
         }
+
         ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"审批完成");
         return JSON.toJSONString(rw);
     }

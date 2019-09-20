@@ -150,4 +150,19 @@ public class YyMyItemServiceImpl implements YyMyItemService{
         return true;
     }
 
+    @Override
+    public String getSealAdmin() {
+        List<String> sealAdminList = myItemMapper.getSealAdmin();
+        StringBuffer sb = new StringBuffer();
+        for(String admin : sealAdminList){
+            sb.append(admin);
+            sb.append(",");
+        }
+        String sealAdminStr = sb.toString();
+        //剔除最后一个逗号
+        Integer douhao = sealAdminStr.lastIndexOf(",");
+        sealAdminStr = sealAdminStr.substring(0,douhao);
+        return sealAdminStr;
+    }
+
 }

@@ -89,10 +89,8 @@ public class ProcessServiceImpl implements ProcessService {
         pbApproveAdd.setCreateUser(approveUserId);
         pbMapper.addApprove(pbApproveAdd);
         // 如果下一环节对应审批扩展，新增对应扩展信息，顺带新增待办用户表信息,发送待办
-        PbApproveExpand pbApproveExpand;
         PbAuditUser pbAuditUser;
         if(if_expand_next){
-            String[] toDoerIdStr = toDoerId.split(",");
             //调用封装方法，新增审批扩展信息，新增待办信息，发送待办
             approveExpandPackage(applyId,approveIdAdd,toDoerId,approveUserId,auditUrl,auditCatalog,auditTitle);
         }else{

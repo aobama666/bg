@@ -80,4 +80,9 @@ public interface YyMyItemMapper {
      */
     Map<String,Object> findDeptForUserName(@Param("userName") String userName);
 
+    /**
+     * 当前有效的印章管理员用户
+     */
+    List<String> getSealAdmin();
+
 }

@@ -102,7 +102,7 @@
     </select>
 
     <select id="ifSign" resultType="java.lang.String">
-        select IF_SIGN from BG_YY_ITEM_SECOND s where s.uuid=#{itemSecondId} and valid='1'
+        select IF_SIGN from BG_YY_ITEM_SECOND s where s.uuid=#{itemSecondId}
     </select>
 
     <select id="ifLeaderApprove" resultType="java.lang.String">
@@ -111,6 +111,12 @@
 
     <select id="findDeptForUserName" resultType="java.util.Map">
         select USERID,USERNAME,USERALIAS,HRDEPTNAME from BG_SYS_USER where username = #{userName} and VALID='1'
+    </select>
+
+    <select id="getSealAdmin" resultType="java.lang.String">
+        SELECT STAFF_ID
+        FROM bg_yy_Approve
+        WHERE NODE_TYPE = '5' AND VALID = '1'
     </select>
 
 </mapper>
