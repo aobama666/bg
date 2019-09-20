@@ -90,13 +90,10 @@
 			</td>
 		</tr>
 	</table>
-
-
 	<div class="btnContent" style="  margin: 35px 0 20px;">
-		<button type="button" class="btn" onclick="itemSecondInfo.itemSecondUpdate()">修改</button>
+		<button type="button" class="btn" onclick="itemSecondInfo.itemSecondUpdate()">确认</button>
 		<button type="button" class="btn" onclick="itemSecondInfo.itemSecondResign()">返回</button>
 	</div>
-
 	<!-- end参观详情信息-->
     <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script> 
     <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>

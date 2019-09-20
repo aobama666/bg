@@ -40,7 +40,7 @@
 				</td>
 				<td class="addInputStyle">
 					<input name="applyUserId" id="applyUserId" type="hidden"  value="${applyUserId}" />
-					<input type="text"  id="applyUserName"  name="applyUserName"   value="${applyUserName}"   readonly     />
+					<input type="text"  id="applyUserName"  name="applyUserName"   value="${applyUserName}"   disabled    />
 				</td>
 			</tr>
 		</table>

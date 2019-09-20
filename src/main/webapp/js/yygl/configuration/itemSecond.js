@@ -3,9 +3,36 @@ itemSecondInfo.saveBtnClickFlag = 0;//保存按钮点击事件
 itemSecondInfo.saveInfoFlag = true;//页面数据保存事件
 $(function(){
     itemSecondInfo.onchangeForIfsign("");
-    $("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'parent',checkType:'checkbox', popEvent:'pop' });
+    var  isNochecks=itemSecondInfo.selectForDeptCode();
+    $("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'parent',checkType:'checkbox', popEvent:'pop' ,level:'1',isNocheck:isNochecks });
+    //$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'parent',checkType:'checkbox', popEvent:'pop' ,level:'1'  });
 });
 
+itemSecondInfo.selectForDeptCode  =function () {
+    var  isNochecks="";
+    $.ajax({
+        url: "/bg/yyComprehensive/selectForDeptCode",
+        type: "post",
+        dataType:"json",
+        contentType: 'application/json',
+        async:false,
+       // data: JSON.stringify(roomDetailFormData),
+        success: function (data) {
+            if(data.success=="true"){
+                var  deptList=data.data.deptList;
+                var  deptIds="";
+                for(i=0;i<deptList.length;i++){
+                    var deptId = deptList[i].DEPTID;
+                    deptIds +=deptId+",";
+                }
+                isNochecks=deptIds;
+            }else{
+                isNochecks="";
+            }
+        }
+    });
+    return  isNochecks;
+}
 
 
 itemSecondInfo.onchangeForIfsign=function (deptIds) {
@@ -24,13 +51,21 @@ itemSecondInfo.onchangeForIfsign=function (deptIds) {
 
 function popEvent(ids,codes,names,pId,level){
     //人员树时：pId,level为空
-    $("#deptId").val(ids);
     // alert("回传ids："+ids);
     // alert("回传codes："+codes);
     // alert("回传names："+names);
     // alert("回传pId："+pId);
     // alert("回传level："+level);
-    itemSecondInfo.onchangeForIfsign(ids);
+    debugger;
+    var   deptidArr=ids.split(',');
+    if(deptidArr.length>3){
+        $("#deptName").val("");
+        messager.tip("业务主管部门不能超过3个",5000);
+        return;
+    }else{
+        $("#deptId").val(ids);
+        itemSecondInfo.onchangeForIfsign(ids);
+    }
 }
 
 //保存
@@ -47,6 +82,9 @@ itemSecondInfo.itemSecondSave=function (){
         itemSecondInfo.saveBtnClickFlag = 0;
         return;
     }
+
+
+
     var roomDetailFormData = roomAddInfoCommon.getFormDataInfo();
     $.messager.confirm( "保存提示", "确认保存该数据吗",
         function(r){

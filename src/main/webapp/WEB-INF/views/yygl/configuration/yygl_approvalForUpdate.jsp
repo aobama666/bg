@@ -91,12 +91,9 @@
 			</td>
 		</tr>
 	</table>
-
 	</div>
-
-
 	<div class="btnContent" style="  margin: 35px 0 20px;">
-		<button type="button" class="btn" onclick="approvalInfo.approvalForUpdate()">修改</button>
+		<button type="button" class="btn" onclick="approvalInfo.approvalForUpdate()">确认</button>
 		<button type="button" class="btn" onclick="approvalInfo.approvalForResign()">返回</button>
 	</div>
 	<!-- end参观详情信息-->

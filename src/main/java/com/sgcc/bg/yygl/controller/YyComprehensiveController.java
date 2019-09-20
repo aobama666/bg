@@ -6,6 +6,7 @@ import com.sgcc.bg.common.*;
 import com.sgcc.bg.yygl.constant.YyApplyConstant;
 import com.sgcc.bg.yygl.service.YyApplyService;
 import com.sgcc.bg.yygl.service.YyComprehensiveService;
+import com.sgcc.bg.yygl.service.YyConfigurationService;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -42,7 +43,57 @@ public class YyComprehensiveController {
 	private YyApplyService applyService;
 	@Autowired
 	private YyMyItemService yyMyItemService;
+	@Autowired
+	private YyConfigurationService yyConfigurationService;
 	private static Logger Logger = LoggerFactory.getLogger(YyComprehensiveController.class);
+	/**
+	 * 部门信息的查询
+	 *
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/selectForDeptCode", method = RequestMethod.POST)
+	public   String  selectForDeptCode() {
+		Logger.info("部门信息的查询------开始");
+		ResultWarp rw = null;
+		String deptCode="41000001";
+		List<Map<String, Object>> deptList = yyComprehensiveService.selectForDeptCode(deptCode);
+		if (deptList.isEmpty()) {
+			rw = new ResultWarp(ResultWarp.FAILED, "查询失败");
+		}else {
+			rw = new ResultWarp(ResultWarp.SUCCESS,  "查询成功");
+			rw.addData("deptList",deptList);
+		}
+		Logger.info("部门信息的查询------结束"+rw);
+		return JSON.toJSONString(rw);
+	}
+	/**
+	 * 二级信息的查询
+	 *
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/selectForitemSecond", method = RequestMethod.POST)
+	public   String  selectForitemSecond(@RequestBody Map<String, Object> paramsMap) {
+		Logger.info("二级信息的查询------开始" + paramsMap);
+		ResultWarp rw = null;
+		String itemSecond = paramsMap.get("itemSecond") == null ? "" : paramsMap.get("itemSecond").toString();
+		Map<String, Object> secondMap = new HashMap<String, Object>();
+		secondMap.put("itemSecond", itemSecond);
+		List<Map<String, Object>> secondList = yyConfigurationService.selectForItemSecond(secondMap);
+		Map<String, Object> map = secondList.get(0);
+		if (map.isEmpty()) {
+			rw = new ResultWarp(ResultWarp.FAILED, "查询失败");
+		}else {
+			Object businessDeptCode =map.get("businessDeptCode");
+			Object businessDeptName =map.get("businessDeptName");
+			rw = new ResultWarp(ResultWarp.SUCCESS,  "查询成功");
+			rw.addData("businessDeptCode",businessDeptCode);
+			rw.addData("businessDeptName",businessDeptName);
+		}
+		Logger.info("二级信息的查询------结束"+rw);
+		return JSON.toJSONString(rw);
+	}
 	/**
 	 * 用印模块---事项弹窗框
 	 */
@@ -91,8 +142,10 @@ public class YyComprehensiveController {
 	@ResponseBody
 	@RequestMapping(value="/uselSealIndex" ,method = RequestMethod.GET)
 	public ModelAndView uselSealIndex(HttpServletRequest res){
+
 		Logger.info("用印管理确认用印查询首页查询-----开始");
 		String type="1";
+
 		Logger.info("------------------用印管理综合查询首页下拉选的查询------------------------");
 		List<Map<String,Object>>      deptInfoList=yyComprehensiveService.selectForDept(type);//用印部门
 		List<Map<String,Object>>      statusInfoList=yyComprehensiveService.selectForStatus(type);//用印状态

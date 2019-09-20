@@ -47,18 +47,6 @@
 			<span class="input-itemName-addon"  onclick="roomList.forItemInfo()" ><span class="glyphicon glyphicon-th-list"></span></span>
 			<input type = "hidden" id = "itemSecond" name = "itemSecondId"   class = "inputQuery changeQuery"   title="用印事项"   >
 			<input type = "hidden" id = "itemFirst" name = "itemFirstId"   class = "inputQuery changeQuery"   title="用印事项"    >
-
-			<%--<label  for="itemFirstId" class="yearTitle">用印事项一级：</label>--%>
-			<%--<select id = "itemFirstId" name = "itemFirstId"   class = "changeQuery userlevel" style="width: 240px"  onchange="changeItemFirst()" >--%>
-				<%--<option value = "">   </option>--%>
-				<%--<c:forEach  var="itemFirstList"  items="${itemFirstList}">--%>
-					<%--<option value ="${itemFirstList.K}" title=" ${itemFirstList.V}" > ${itemFirstList.V}</option>--%>
-				<%--</c:forEach>--%>
-			<%--</select>--%>
-			<%--<label  for="itemSecondId" class="yearTitle">用印事项二级：</label>--%>
-			<%--<select id = "itemSecondId" name = "itemSecondId"   class = "changeQuery userlevel" style="width: 240px">--%>
-				<%--<option value = "">   </option>--%>
-			<%--</select>--%>
 			<label  for="approveNodeId" class="yearTitle"> 节点类型：</label>
 			<select id = "approveNodeId" name = "approveNodeId"   class = "changeQuery userlevel" style="width: 240px">
 				<option value = "">   </option>

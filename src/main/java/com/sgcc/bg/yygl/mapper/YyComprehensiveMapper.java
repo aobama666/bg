@@ -8,10 +8,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface YyComprehensiveMapper {
     /**
-     * 获取申请单位
+     * 获取人员信息
      */
     List<Map<String,Object>> selectForUserId(@Param("userId") String userId);
-
+    /**
+     * 获取部门信息
+     */
+    List<Map<String,Object>> selectForDeptCode(@Param("deptCode") String deptCode);
     /**
      * 获取申请单位
      */

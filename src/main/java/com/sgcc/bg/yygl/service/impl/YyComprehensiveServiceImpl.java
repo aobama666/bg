@@ -14,13 +14,14 @@ public class YyComprehensiveServiceImpl implements YyComprehensiveService {
     @Autowired
     private  YyComprehensiveMapper   yyComprehensiveMapper;
 
-
-
     @Override
     public List<Map<String, Object>> selectForDept(String userRole) {
         return yyComprehensiveMapper.selectForDept(userRole);
     }
-
+    @Override
+    public List<Map<String, Object>> selectForDeptCode(String deptCode) {
+        return yyComprehensiveMapper.selectForDeptCode(deptCode);
+    }
     @Override
     public List<Map<String, Object>> selectForStatus(String userRole) {
         return yyComprehensiveMapper.selectForStatus(userRole);
@@ -56,4 +57,6 @@ public class YyComprehensiveServiceImpl implements YyComprehensiveService {
     public List<Map<String, Object>> selectForUserId(String userId) {
         return yyComprehensiveMapper.selectForUserId(userId);
     }
+
+
 }
