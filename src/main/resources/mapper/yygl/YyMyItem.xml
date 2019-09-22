@@ -55,7 +55,7 @@
             )
             AND VALID = '1'
             AND AUDIT_FLAG = #{ifComingSoon}
-            <if test="ifComingSoon='0'">
+            <if test="ifComingSoon=='0'">
                 AND (APPROVE_RESULT = '0' OR APPROVE_RESULT = '1')
             </if>
             UNION
@@ -69,7 +69,7 @@
             )
             AND VALID = '1'
             AND AUDIT_FLAG = #{ifComingSoon}
-            <if test="ifComingSoon='0'">
+            <if test="ifComingSoon=='0'">
                 AND (APPROVE_RESULT = '0' OR APPROVE_RESULT = '1')
             </if>
         )))
@@ -144,6 +144,12 @@
         SELECT STAFF_ID
         FROM bg_yy_Approve
         WHERE NODE_TYPE = '5' AND VALID = '1'
+    </select>
+
+    <select id="getAuditUser" resultType="java.lang.String">
+        SELECT approve_user
+        FROM TB_WL_AUDIT_USER
+        WHERE APPROVE_ID = #{approveId}
     </select>
 
 </mapper>

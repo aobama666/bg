@@ -93,6 +93,9 @@ applyOperate.applyAdd = function () {
     layer.confirm('确认保存该数据吗',{
             btn:['确定','取消'],icon:0,title:'保存提示'
         },function () {
+            //只能保存一次
+            document.getElementById("applyAdd").setAttribute("disabled","disabled");
+
             $.ajax({
                 url: "/bg/yygl/apply/applyAdd",
                 type: "post",
@@ -102,7 +105,6 @@ applyOperate.applyAdd = function () {
                 success: function (data) {
                     if(data.success=="true"){
                         $("#uuid").attr("value",data.data.applyUuid);
-                        document.getElementById("applyAdd").setAttribute("disabled","disabled");
                         layer.alert(data.msg,{icon:1,title:'信息提示'});
                     }else{
                         layer.alert(data.msg,{icon:2,title:'信息提示'});
@@ -140,7 +142,6 @@ applyOperate.applyUpdate = function () {
                 data: JSON.stringify(paperDetailFormData),
                 success: function (data) {
                     if(data.success=="true"){
-                        document.getElementById("applyUpdate").setAttribute("disabled","disabled");
                         layer.alert(data.msg,{icon:1,title:'信息提示'});
                     }else{
                         layer.alert(data.msg,{icon:2,title:'信息提示'});

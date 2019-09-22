@@ -103,4 +103,14 @@ public interface YyApplyService {
      * 审批记录
      */
     List<Map<String,Object>> approveAnnal(String applyId);
+
+    /**
+     * 该用户是否为印章管理员
+     */
+    boolean ifUseSealAdmin(String userId);
+
+    /**
+     * 该用户是否为当前环节审批人
+     */
+    boolean ifApproveUser(String applyId,String userId);
 }

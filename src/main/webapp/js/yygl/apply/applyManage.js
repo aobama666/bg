@@ -66,8 +66,10 @@ apply.initDataGrid = function(){
             {name: '用印种类',style:{width:"50px"}, data: 'USE_SEAL_KIND'},
             {name: '审批状态',style:{width:"50px"}, data: 'USE_SEAL_STATUS'},
             {name: '用印审批单',style:{width:"50px"}, forMat:function (row) {
-                    return "<a title = '点击查看打印预览' style='color:#0080FF'" +
+                    if(row.USE_SEAL_STATUS_CODE=='8'){
+                        return "<a title = '点击查看打印预览' style='color:#0080FF'" +
                         " onclick=apply.printPreview('"+row.UUID+"')>打印预览</a>";
+                    }
                 }}
         ]
     });

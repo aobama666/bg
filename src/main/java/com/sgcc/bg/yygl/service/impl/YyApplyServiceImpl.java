@@ -5,6 +5,7 @@ import com.sgcc.bg.common.ExportExcelHelper;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.HRUser;
+import com.sgcc.bg.process.mapper.ProcessBaseMapper;
 import com.sgcc.bg.process.service.ProcessService;
 import com.sgcc.bg.service.ApproverService;
 import com.sgcc.bg.service.UserService;
@@ -42,6 +43,8 @@ public class YyApplyServiceImpl implements YyApplyService {
     private YyApplyAnnexMapper applyAnnexMapper;
     @Autowired
     private YyMyItemMapper yyMyItemMapper;
+    @Autowired
+    private ProcessBaseMapper processBaseMapper;
     @Autowired
     private YyApplyAnnexService yyApplyAnnexService;
     @Autowired
@@ -316,5 +319,32 @@ public class YyApplyServiceImpl implements YyApplyService {
     @Override
     public List<Map<String, Object>> approveAnnal(String applyId) {
         return yyApplyMapper.approveAnnal(applyId);
+    }
+
+    @Override
+    public boolean ifUseSealAdmin(String userId) {
+        List<String> sealAdminList = yyMyItemMapper.getSealAdmin();
+        for (String sealAdmin : sealAdminList){
+            if (sealAdmin.equals(userId)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean ifApproveUser(String applyId,String userId) {
+        String approveId = processBaseMapper.getApproveIdForBusinessId(applyId);
+        if(null == approveId || "".equals(approveId)){
+            //还未开始审批流程
+            return false;
+        }
+        List<String> auditUserList = yyMyItemMapper.getAuditUser(approveId);
+        for(String auditUser :auditUserList){
+            if(auditUser.equals(userId)){
+                return true;
+            }
+        }
+        return false;
     }
 }

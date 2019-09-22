@@ -35,11 +35,19 @@
     <h3 style="float: left;margin-left: 3%;">申请编号:${yyApplyDAO.applyCode}</h3>
 <div class="tabbable active" style="text-align:right;width: 97%;padding-top: 5px;padding-bottom: 5px;">
     <button type="button" class="btn" onclick="returnClose()">返回</button>
-    <button type="button" class="btn" onclick="returnClose()">撤回</button>
-    <button type="button" class="btn" onclick="returnClose()">同意</button>
-    <button type="button" class="btn" onclick="returnClose()">退回</button>
-    <button type="button" class="btn" onclick="returnClose()">增加业务会签</button>
-    <button type="button" class="btn" onclick="returnClose()">确认用印</button>
+    <c:if test="${applyUser == 1}">
+        <button type="button" class="btn" onclick="returnClose()">撤回</button>
+    </c:if>
+    <c:if test="${approveUser == 1}">
+        <button type="button" class="btn" onclick="returnClose()">同意</button>
+        <button type="button" class="btn" onclick="returnClose()">退回</button>
+    </c:if>
+    <c:if test="${businessOrOffice == 1}">
+        <button type="button" class="btn" onclick="returnClose()">增加业务会签</button>
+    </c:if>
+    <c:if test="${sealAdmin == 1}">
+        <button type="button" class="btn" onclick="returnClose()">确认用印</button>
+    </c:if>
 </div>
 <table class="visitOperate tableStyle specialTable">
     <tr>

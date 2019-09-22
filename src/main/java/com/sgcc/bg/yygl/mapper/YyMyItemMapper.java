@@ -85,4 +85,9 @@ public interface YyMyItemMapper {
      */
     List<String> getSealAdmin();
 
+    /**
+     * 对应审批记录的待办用户
+     */
+    List<String> getAuditUser(@Param("approveId") String approveId);
+
 }

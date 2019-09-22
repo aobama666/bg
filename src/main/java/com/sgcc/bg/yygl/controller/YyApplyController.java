@@ -9,6 +9,7 @@ import com.sgcc.bg.service.ApproverService;
 import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.UserService;
 import com.sgcc.bg.yygl.bean.YyApply;
+import com.sgcc.bg.yygl.constant.YyApplyConstant;
 import com.sgcc.bg.yygl.pojo.YyApplyDAO;
 import com.sgcc.bg.yygl.pojo.YyApplyVo;
 import com.sgcc.bg.yygl.service.YyApplyService;
@@ -237,6 +238,8 @@ public class YyApplyController {
     public ModelAndView toApplyDetail(String applyUuid){
         //用印基本信息
         YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
+        //当前登陆人
+        String loginUserId = getLoginUserUUID();
 
         //流程图状态信息
         String useSealStatus = yyApplyDAO.getUseSealStatus();
@@ -253,13 +256,38 @@ public class YyApplyController {
 
         //按钮组展示信息
         //申请人-撤回按钮
-        String applyUser = "1";
+        String applyUser = "0";
         //印章管理员-确认用印按钮
-        String sealAdmin = "1";
+        String sealAdmin = "0";
         //审批人-同意退回按钮
-        String approveUser = "1";
+        String approveUser = "0";
         //业务部门负责人，办公室负责人-增加业务会签按钮
-        String businessOrOffice = "1";
+        String businessOrOffice = "0";
+
+        if(!useSealStatus.equals(YyApplyConstant.STATUS_DEAL_USER_SEAL)
+            && !useSealStatus.equals(YyApplyConstant.STATUS_USED_SEAL)
+                && !useSealStatus.equals(YyApplyConstant.STATUS_RETURN)
+                    && !useSealStatus.equals(YyApplyConstant.STATUS_WITHDRAW)
+            && !useSealStatus.equals(YyApplyConstant.STATUS_DEAL_SUB)
+        ){//如果属于可撤回状态范围
+                if(loginUserId.equals(yyApplyDAO.getApplyUserId())){//如果当前登录人为申请人
+                    applyUser = "1";
+                }
+        }
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_USER_SEAL)){//如果是待确认用印状态
+            if(applyService.ifUseSealAdmin(loginUserId)){//如果属于印章管理员
+                sealAdmin = "1";
+            }
+        }
+        if(!useSealStatus.equals(YyApplyConstant.STATUS_DEAL_USER_SEAL)){//印章管理员没有同意退回
+            if(applyService.ifApproveUser(yyApplyDAO.getUuid(),loginUserId)){//如果是当前环节的审批人
+                approveUser = "1";
+                if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)
+                    || useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
+                    businessOrOffice = "1";
+                }
+            }
+        }
 
         ModelAndView mv = new ModelAndView("yygl/apply/applyDeatil");
         mv.addObject("yyApplyDAO",yyApplyDAO);
