@@ -109,11 +109,9 @@
 
     <update id="updateUndoneApproveExpand">
         UPDATE TB_WL_APPROVE_EXPAND
-        SET AUDIT_FLAG = '0'
+        SET AUDIT_FLAG = '0',update_user = #{updateUser},update_time = sysdate
         WHERE AUDIT_FLAG = '1'
         AND APPROVE_ID = #{approveId}
-        AND update_user = #{updateUser}
-        AND update_time = sysdate
     </update>
 
     <select id="selectAuditUserForApprove" resultType="com.sgcc.bg.process.model.PbAuditUser">
@@ -252,7 +250,18 @@
     </select>
 
     <select id="maxApproveStep" resultType="java.lang.String">
-        select max(TO_NUMBER(APPROVE_STEP)) from TB_WL_APPROVE where APPLY_ID=#{applyId}
+        SELECT max(to_number(APPROVE_STEP)) step
+        FROM (
+          SELECT APPROVE_STEP
+          FROM tb_wl_approve
+          WHERE APPLY_ID = #{applyId}
+          UNION
+          SELECT APPROVE_STEP
+          FROM TB_WL_APPROVE_EXPAND
+          WHERE APPROVE_ID IN (SELECT ID
+                               FROM tb_wl_approve
+                               WHERE APPLY_ID = #{applyId})
+        )
     </select>
 
 

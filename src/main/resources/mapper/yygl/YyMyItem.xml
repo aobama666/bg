@@ -29,10 +29,6 @@
         left join bg_sys_user u on a.apply_user_id = u.userid
         left join bg_yy_item_second s on a.item_second_id = s.uuid
         left join bg_yy_item_first f on a.item_first_id = f.uuid
-        left JOIN TB_WL_BUSINESS_R_APPLY b on a.UUID = b.BUSINESS_ID
-        LEFT JOIN TB_WL_APPLY wa on wa.ID = b.APPLY_ID
-        LEFT JOIN  TB_WL_APPROVE p on wa.id = p.APPLY_ID
-        LEFT JOIN TB_WL_AUDIT_USER wau on wau.APPROVE_ID = p.ID
         where 1=1
         <if test="applyCode != null and applyCode != ''">
             and a.apply_code like '%'||#{applyCode}||'%'
@@ -43,10 +39,41 @@
         <if test="useSealUser != null and useSealUser != ''">
             and u.USERALIAS like '%'||#{useSealUser}||'%'
         </if>
-        and p.AUDIT_FLAG = #{ifComingSoon}
-        and wau.APPROVE_USER = #{loginUserId}
+        AND a.UUID IN (SELECT DISTINCT BUSINESS_ID
+            FROM TB_WL_BUSINESS_R_APPLY
+            WHERE APPLY_ID IN (
+            SELECT apply_id
+            FROM TB_WL_APPROVE
+            WHERE id IN (
+            SELECT ID APPROVE_ID
+            FROM TB_WL_APPROVE
+            WHERE id IN (
+            SELECT APPROVE_ID
+            FROM TB_WL_AUDIT_USER
+            WHERE approve_user = #{loginUserId} AND valid = '1' AND
+            APPROVE_EXPAND_ID IS NULL
+            )
+            AND VALID = '1'
+            AND AUDIT_FLAG = #{ifComingSoon}
+            <if test="ifComingSoon='0'">
+                AND (APPROVE_RESULT = '0' OR APPROVE_RESULT = '1')
+            </if>
+            UNION
+            SELECT APPROVE_ID
+            FROM TB_WL_APPROVE_EXPAND
+            WHERE UUID IN (SELECT APPROVE_EXPAND_ID
+            FROM TB_WL_AUDIT_USER
+            WHERE
+            APPROVE_USER = #{loginUserId} AND valid = '1' AND
+            APPROVE_EXPAND_ID IS NOT NULL
+            )
+            AND VALID = '1'
+            AND AUDIT_FLAG = #{ifComingSoon}
+            <if test="ifComingSoon='0'">
+                AND (APPROVE_RESULT = '0' OR APPROVE_RESULT = '1')
+            </if>
+        )))
         and a.valid = '1'
-        and wau.valid = '1'
         order by a.create_time desc
     </sql>
 
