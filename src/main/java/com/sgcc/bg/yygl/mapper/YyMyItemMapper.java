@@ -90,4 +90,10 @@ public interface YyMyItemMapper {
      */
     List<String> getAuditUser(@Param("approveId") String approveId);
 
+
+    /**
+     * 当前事项对应的业务部门
+     */
+    List<String> getSecondItemDept(@Param("secondItemId") String secondItemId);
+
 }

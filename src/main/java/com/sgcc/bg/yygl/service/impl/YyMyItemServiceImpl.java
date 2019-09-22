@@ -165,4 +165,9 @@ public class YyMyItemServiceImpl implements YyMyItemService{
         return sealAdminStr;
     }
 
+    @Override
+    public List<String> getSecondItemDept(String secondItemId) {
+        return myItemMapper.getSecondItemDept(secondItemId);
+    }
+
 }

@@ -152,4 +152,10 @@
         WHERE APPROVE_ID = #{approveId}
     </select>
 
+    <select id="getSecondItemDept" resultType="java.lang.String">
+        SELECT DEPT_ID
+        FROM BG_YY_ITEM_SECOND_DEPT
+        WHERE SECOND_CATEGORY_ID = #{secondItemId} AND VALID = '1'
+    </select>
+
 </mapper>

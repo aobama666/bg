@@ -175,7 +175,28 @@ public class YyMyItemController {
         YyApplyDAO apply = yyApplyService.applyDeatil(checkedId);
         String useSealStatus = apply.getUseSealStatus();
         List<Map<String,Object>> nextApprove;
-        String deptNum = "";
+        String deptNum = "";//部门数量
+
+        //申请部门与业务部门相同时跳过业务部门审批
+        String ifDeptEqual = "0";//是否申请、业务部门相同
+        String ifAllJump = "0";//是否完全跳过
+        Map<String,Object> deptMap = yyApplyService.findDept(yyApplyService.getLoginUserUUID());//申请当前部门
+        String loginUserDeptId = deptMap.get("PDEPTID").toString();
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_DEPT)){
+            List<String> secondItemDeptList = myItemService.getSecondItemDept(apply.getItemSecondId());
+            for(String deptId : secondItemDeptList){
+                if(deptId.equals(loginUserDeptId)){
+                    ifDeptEqual = "1";
+                }
+            }
+            if(secondItemDeptList.size() ==1 && secondItemDeptList.get(0).equals(loginUserDeptId)){//如果当前申请对应事项中申请部门与业务部门完全一致
+                apply.setUseSealStatus(YyApplyConstant.STATUS_DEAL_BUSINESS);
+                useSealStatus = YyApplyConstant.STATUS_DEAL_BUSINESS;
+                ifDeptEqual = "1";
+                ifAllJump = "1";
+            }
+        }
+
         if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_DEPT)){
             //如果下一环节属于待业务主管部门审批，也就是当前为申请部门负责人审批
             nextApprove = myItemService.nextApproveBusiness(apply);
@@ -186,6 +207,17 @@ public class YyMyItemController {
             //根据选择申请查询可以提供的下一环节审批人信息
             nextApprove = myItemService.nextApprove(apply);
             deptNum = "1";
+        }
+
+        //移除当前部门人员信息
+        if(ifDeptEqual.equals("1")){
+            List<Map<String,Object>> nextApproveNew = new ArrayList<>();
+            for(Map<String,Object> next : nextApprove){
+                if(!loginUserDeptId.equals(next.get("DEPTID"))){
+                    nextApproveNew.add(next);
+                }
+            }
+            nextApprove = nextApproveNew;
         }
 
         //审批时间，审批操作人
@@ -214,6 +246,8 @@ public class YyMyItemController {
         mvMap.put("deptNum",deptNum);
         mvMap.put("applyUuid",checkedId);
         mvMap.put("useSealAdmin",useSealAdmin);
+        mvMap.put("ifAllJump",ifAllJump);
+        mvMap.put("ifDeptEqual",ifDeptEqual);
         ModelAndView mv = new ModelAndView("yygl/myItem/agree",mvMap);
         return mv;
     }
@@ -225,7 +259,7 @@ public class YyMyItemController {
      */
     @ResponseBody
     @RequestMapping("/agree")
-    public String agree(String applyUuid,String toDoerId,String approveOpinion){
+    public String agree(String applyUuid,String toDoerId,String approveOpinion,String ifAllJump,String ifDeptEqual){
         //当前用印申请状态
         YyApplyDAO apply = yyApplyService.applyDeatil(applyUuid);
         String useSealStatus = apply.getUseSealStatus();

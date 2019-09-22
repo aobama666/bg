@@ -67,4 +67,8 @@ public interface YyMyItemService {
      */
     String getSealAdmin();
 
+    /**
+     * 当前事项对应的业务部门
+     */
+    List<String> getSecondItemDept(String secondItemId);
 }
