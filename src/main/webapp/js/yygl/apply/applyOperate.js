@@ -184,8 +184,6 @@ applyOperate.applySubmit = function () {
     debugger
     var principalUser = $("input[name='principal']:checked").val();
     var checkedIds = $("#checkedIds").val();
-    var ifDeptEqual = $("#ifDeptEqual").val();
-    var ifAllJump = $("#ifAllJump").val();
     if(principalUser==='' || principalUser === undefined){
         layer.msg("请选择下一环节审批人！");
         return;
@@ -194,7 +192,7 @@ applyOperate.applySubmit = function () {
         url: "/bg/yygl/apply/applySubmit",
         type: "post",
         dataType:"json",
-        data: {'principalUser':principalUser,'checkedIds':checkedIds,'ifAllJump':ifAllJump,'ifDeptEqual':ifDeptEqual},
+        data: {'principalUser':principalUser,'checkedIds':checkedIds},
         success: function (data) {
             if(data.success=="true"){
                 parent.apply.closeAndOpen(data.msg);

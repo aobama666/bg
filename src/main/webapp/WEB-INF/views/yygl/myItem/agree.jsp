@@ -85,6 +85,8 @@
     <input type="text" id="deptNum" value="${deptNum}" style="display: none"/>
     <input type="text" id="applyUuid" value="${applyUuid}" style="display: none"/>
     <input type="text" id="useSealAdmin" value="${useSealAdmin}" style="display: none"/>
+    <input id="ifDeptEqual" value="${ifDeptEqual}" style="display: none;"/>
+    <input id="ifAllJump" value="${ifAllJump}" style="display: none;"/>
 
 </div>
 </body>

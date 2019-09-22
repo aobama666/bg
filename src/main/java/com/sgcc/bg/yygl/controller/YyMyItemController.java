@@ -178,7 +178,7 @@ public class YyMyItemController {
         String deptNum = "";//部门数量
 
         //申请部门与业务部门相同时跳过业务部门审批
-        String ifDeptEqual = "0";//是否申请、业务部门相同
+        String ifDeptEqual = "0";//是否申请、业务部门相同,1表示是，0表示否
         String ifAllJump = "0";//是否完全跳过
         Map<String,Object> deptMap = yyApplyService.findDept(yyApplyService.getLoginUserUUID());//申请当前部门
         String loginUserDeptId = deptMap.get("PDEPTID").toString();
@@ -262,8 +262,6 @@ public class YyMyItemController {
     public String agree(String applyUuid,String toDoerId,String approveOpinion,String ifAllJump,String ifDeptEqual){
         //当前用印申请状态
         YyApplyDAO apply = yyApplyService.applyDeatil(applyUuid);
-        String useSealStatus = apply.getUseSealStatus();
-        String approveUserId = yyApplyService.getLoginUserUUID();
         //待办标题
         StringBuilder sbTitle = new StringBuilder();
         sbTitle.append("【用印申请】");
@@ -273,6 +271,9 @@ public class YyMyItemController {
         String auditTitle = sbTitle.toString();
         //待办链接
         String auditUrl = "/../../bg/yygl/my_item/toComingSoon";
+        String approveUserId = yyApplyService.getLoginUserUUID();
+
+        String useSealStatus = apply.getUseSealStatus();
         //下一环节状态
         String useSealStatusUpdate = "";
         //下一环节
@@ -281,6 +282,15 @@ public class YyMyItemController {
         String sendAudit = YyApplyConstant.SEND_AUDIT_YES;
         //审批流程执行结果
         boolean processResult;
+
+        //跳过业务部门参数准备
+        if(ifDeptEqual.equals("1")){
+            toDoerId = toDoerId+","+approveUserId;
+        }
+        String newToDoerId = toDoerId;
+        if(ifAllJump.equals("1")){
+            toDoerId = approveUserId;
+        }
 
         // 根据当前状态，设定每个环节对应的参数
         if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_DEPT)){
@@ -313,6 +323,24 @@ public class YyMyItemController {
         //如果流程正常到下一环节，修改当前审批状态
         if(processResult){
             yyApplyService.updateApplyStatus(applyUuid,useSealStatusUpdate);
+        }
+
+
+        //申请环节跳过业务部门审批环节
+        if(ifAllJump.equals("1")){
+            processService.processApprove(applyUuid,null,"系统默认同意",approveUserId
+                    ,newToDoerId,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_YES);
+            //撤销待办
+            processService.cancelUpcomingForUserId(apply.getUuid(),approveUserId);
+            yyApplyService.updateApplyStatus(applyUuid,YyApplyConstant.STATUS_DEAL_OFFICE);
+        }
+        //申请部门与业务部门，只有其中一个相同
+        if(ifDeptEqual.equals("1")){
+            //撤销当前人员待办
+            processService.cancelUpcomingForUserId(apply.getUuid(),approveUserId);
+            //完成当前系统默认审批
+            processService.processApprove(applyUuid,null,"系统默认同意",approveUserId
+                    ,approveUserId,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_YES);
         }
 
         ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"审批完成");

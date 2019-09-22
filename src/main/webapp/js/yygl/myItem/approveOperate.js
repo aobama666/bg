@@ -8,6 +8,8 @@ var approve = {};
  */
 approve.agree =function () {
     var useSealAdmin = $("#useSealAdmin").val();
+    var ifAllJump = $("#ifAllJump").val();
+    var ifDeptEqual = $("#ifDeptEqual").val();
     var toDoerId = '';
 
     if(useSealAdmin!=='2'){//如果需要待办人
@@ -28,7 +30,7 @@ approve.agree =function () {
     $.ajax({
         url: "/bg/yygl/my_item/agree",
         type: "post",
-        data: {"applyUuid":applyUuid,"approveOpinion":approveOpinion,"toDoerId":toDoerId},
+        data: {"applyUuid":applyUuid,"approveOpinion":approveOpinion,"toDoerId":toDoerId,'ifAllJump':ifAllJump,'ifDeptEqual':ifDeptEqual},
         success: function (data) {
             parent.myItem.closeAndOpen(data.msg);
         }

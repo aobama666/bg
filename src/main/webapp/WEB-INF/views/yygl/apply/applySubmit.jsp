@@ -58,8 +58,6 @@
     </table>
     </table>
     <input id="checkedIds" value="${checkedIds}" style="display: none;"/>
-    <input id="ifDeptEqual" value="${ifDeptEqual}" style="display: none;"/>
-    <input id="ifAllJump" value="${ifAllJump}" style="display: none;"/>
     <div style="text-align: center;padding-top: 20px">
         <button type="button" class="btn" onclick="applyOperate.applySubmit()">确认</button>
         <button type="button" class="btn" onclick="applyOperate.returnClose()">取消</button>
