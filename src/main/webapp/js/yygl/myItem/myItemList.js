@@ -117,7 +117,7 @@ myItem.toAgree = function () {
         layer.msg('请选择要操作的数据');
         return;
     }else if(checkedItems.length>1){
-        layer.msg('每次只能修改一条数据');
+        layer.msg('每次只能审批一条数据');
         return;
     }
     var checkedId = checkedItems[0].uuid;
@@ -146,7 +146,7 @@ myItem.toSendBack = function () {
         layer.msg('请选择要操作的数据');
         return;
     }else if(checkedItems.length>1){
-        layer.msg('每次只能修改一条数据');
+        layer.msg('每次只能审批一条数据');
         return;
     }
     var checkedId = checkedItems[0].uuid;

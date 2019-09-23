@@ -36,17 +36,17 @@
 <div class="tabbable active" style="text-align:right;width: 97%;padding-top: 5px;padding-bottom: 5px;">
     <button type="button" class="btn" onclick="returnClose()">返回</button>
     <c:if test="${applyUser == 1}">
-        <button type="button" class="btn" onclick="returnClose()">撤回</button>
+        <button type="button" class="btn" onclick="detail.withdraw()">撤回</button>
     </c:if>
     <c:if test="${approveUser == 1}">
-        <button type="button" class="btn" onclick="returnClose()">同意</button>
-        <button type="button" class="btn" onclick="returnClose()">退回</button>
+        <button type="button" class="btn" onclick="detail.agree()">同意</button>
+        <button type="button" class="btn" onclick="detail.refuse()">退回</button>
     </c:if>
     <c:if test="${businessOrOffice == 1}">
-        <button type="button" class="btn" onclick="returnClose()">增加业务会签</button>
+        <button type="button" class="btn" onclick="detail.addSign()">增加业务会签</button>
     </c:if>
     <c:if test="${sealAdmin == 1}">
-        <button type="button" class="btn" onclick="returnClose()">确认用印</button>
+        <button type="button" class="btn" onclick="detail.completeSeal()">确认用印</button>
     </c:if>
 </div>
 <table class="visitOperate tableStyle specialTable">
@@ -226,6 +226,7 @@
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
 <script src="<%=request.getContextPath()%>/js/yygl/apply/applyAnnex.js"></script>
+<script src="<%=request.getContextPath()%>/js/yygl/apply/applyDetail.js"></script>
 <script>
 
     $(function () {

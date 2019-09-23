@@ -319,9 +319,9 @@ public class ProcessServiceImpl implements ProcessService {
         String routingKey = ProcessBaseConstant.ROUTING_KEY;
         String operate = ProcessBaseConstant.OPERATE_INSERT;
         JSONObject jsonObject = new JSONObject(10);
-        jsonObject.put("flowId", flowId);
-        jsonObject.put("precessId", precessId);
-        jsonObject.put("taskId", taskId);
+        jsonObject.put("flowid", flowId);
+        jsonObject.put("precessid", precessId);
+        jsonObject.put("taskid", taskId);
         jsonObject.put("contentType", "2");
         jsonObject.put("remarkFlag", "0");
         jsonObject.put("auditOrigin", "tygl");
@@ -330,7 +330,7 @@ public class ProcessServiceImpl implements ProcessService {
         jsonObject.put("auditFlag", new BigDecimal(1));
         jsonObject.put("auditCatalog", auditCatalog);
         jsonObject.put("auditTitle", auditTitle);
-        jsonObject.put("userId", userId);
+        jsonObject.put("userid", userId);
         jsonObject.put("content", auditUrl);
         jsonObject.put("operate", operate);
         jsonObject.put("isBatch", "0");
@@ -349,16 +349,16 @@ public class ProcessServiceImpl implements ProcessService {
         String routingKey = ProcessBaseConstant.ROUTING_KEY;
         String operate = ProcessBaseConstant.OPERATE_DONE;
         JSONObject jsonObject = new JSONObject(10);
-        jsonObject.put("flowId", flowId);
-        jsonObject.put("precessId", precessId);
-        jsonObject.put("taskId", taskId);
+        jsonObject.put("flowid", flowId);
+        jsonObject.put("precessid", precessId);
+        jsonObject.put("taskid", taskId);
         jsonObject.put("auditOrigin", "tygl");
         jsonObject.put("key", "DOTRl5HgPHQ2iz2iCy");
         jsonObject.put("auditDealOrigin", "1");//流程处理系统（1业务系统 2统一管理支撑平台）
         jsonObject.put("type", "1");//流程处理类型（1流程审批 2流程删除，默认为1）
         jsonObject.put("auditResult", "1");//审批结果（1通过 2拒绝）
         jsonObject.put("auditRemark", "");
-        jsonObject.put("userId", userId);
+        jsonObject.put("userid", userId);
         jsonObject.put("operate", operate);
         String sendMessage = jsonObject.toJSONString();
         //想看这些参数啥意思去看待办rabbit接入API
@@ -372,9 +372,9 @@ public class ProcessServiceImpl implements ProcessService {
         String routingKey = ProcessBaseConstant.ROUTING_KEY;
         String operate = ProcessBaseConstant.OPERATE_REVOKE;
         JSONObject jsonObject = new JSONObject(10);
-        jsonObject.put("flowId",flowId);
-        jsonObject.put("precessId",precessId);
-        jsonObject.put("taskId",taskId);
+        jsonObject.put("flowid",flowId);
+        jsonObject.put("precessid",precessId);
+        jsonObject.put("taskid",taskId);
         jsonObject.put("auditOrigin","tygl");
         jsonObject.put("key",routingKey);
         jsonObject.put("operate",operate);

@@ -258,7 +258,7 @@ apply.submit = function () {
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">选择下一环节审批人</h4>',
-        area:['40%','30%'],
+        area:['60%','40%'],
         fixed:false,//不固定
         maxmin:true,
         content:url,
