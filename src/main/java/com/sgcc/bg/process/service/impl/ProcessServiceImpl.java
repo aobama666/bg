@@ -23,8 +23,97 @@ public class ProcessServiceImpl implements ProcessService {
     private ProcessBaseMapper pbMapper;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
     @Override
-    public boolean applySubmit() {
+    public boolean applySubmit(String businessId,
+                               String nodeName,
+                               String functionType,
+                               String approveRemark,
+                               String approveUserId,
+                               String toDoerId,
+                               String auditTitle,
+                               String auditUrl) {
+        //获取当前业务对应的提交规则信息
+        PbRule subRule  = pbMapper.selectRuleForNode(nodeName,functionType);
+        //获取下一条对应的规则信息
+        PbRule nextRule = pbMapper.selectRuleForId(subRule.getNextNodeId());
+        //auditCatalog信息
+        String auditCatalog = pbMapper.getAuditCatalog(subRule.getFunctionType());
+
+        //添加申请表
+        String approveSubUuid = Rtext.getUUID();
+        String pbApplyUuid = Rtext.getUUID();
+        PbApply pbApply = new PbApply();
+        pbApply.setId(pbApplyUuid);
+        pbApply.setFunctionType(functionType);
+        pbApply.setApplyStatus(nodeName);
+        pbApply.setApproveId(approveSubUuid);
+        pbApply.setCreateUser(approveUserId);
+        pbMapper.addApply(pbApply);
+
+        //添加业务与申请关联表
+        String pbBusinessRApplyId = Rtext.getUUID();
+        PbBusinessRApply pbBusinessRApply = new PbBusinessRApply();
+        pbBusinessRApply.setId(pbBusinessRApplyId);
+        pbBusinessRApply.setBusinessId(businessId);
+        pbBusinessRApply.setApplyId(pbApplyUuid);
+        pbBusinessRApply.setCreateUser(approveUserId);
+        pbMapper.addBusinessRApply(pbBusinessRApply);
+
+        //添加一条提交审批
+        PbApprove approveSub = new PbApprove();
+        approveSub.setId(approveSubUuid);
+        approveSub.setApplyId(pbApplyUuid);
+        approveSub.setApproveNode(subRule.getId());
+        approveSub.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_NO);
+        approveSub.setApproveStep("1");
+        approveSub.setCreateUser(approveUserId);
+        pbMapper.addApprove(approveSub);
+
+        //修改提交审批的状态
+        String approveNextUuid = Rtext.getUUID();
+        PbApprove approveSubUpdate = new PbApprove();
+        approveSubUpdate.setId(approveSubUuid);
+        approveSubUpdate.setApproveStatus(ProcessBaseConstant.APPROVE_YES);
+        approveSubUpdate.setApproveResult(ProcessBaseConstant.RESULT_SUBMIT);
+        approveSubUpdate.setApproveUser(approveUserId);
+        approveSubUpdate.setApproveRemark(approveRemark);
+        approveSubUpdate.setApproveDate(new Date());
+        approveSubUpdate.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_NO);
+        approveSubUpdate.setApproveNode(subRule.getId());
+        approveSubUpdate.setNextApproveId(approveNextUuid);
+        pbMapper.updateApprove(approveSubUpdate);
+
+        //添加提交后的第二条审批信息
+        PbApprove approveNext = new PbApprove();
+        approveNext.setId(approveNextUuid);
+        approveNext.setApplyId(pbApplyUuid);
+        approveNext.setApproveNode(nextRule.getId());
+        approveNext.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_YES);
+        approveNext.setApproveStep(getApproveStep(pbApplyUuid));
+        approveNext.setCreateUser(approveUserId);
+        pbMapper.addApprove(approveNext);
+
+        //修改当前申请状态
+        PbApply applyUpdate = new PbApply();
+        applyUpdate.setId(pbApplyUuid);
+        applyUpdate.setApproveId(approveNextUuid);
+        applyUpdate.setApplyStatus(nextRule.getNode());
+        applyUpdate.setUpdateUser(approveUserId);
+        pbMapper.updateApply(applyUpdate);
+
+        //共有方法中考虑是否会传递多个审批人，目前没对多人做处理
+        //添加待办人信息
+        String auditUserUuId = Rtext.getUUID();
+        PbAuditUser auditUser = new PbAuditUser();
+        auditUser.setId(auditUserUuId);
+        auditUser.setApproveId(approveNextUuid);
+        auditUser.setApproveUser(toDoerId);
+        auditUser.setCreateUser(approveUserId);
+        pbMapper.addAuditUser(auditUser);
+
+        //发送待办，申请id，审批id，
+        sendUpcoming(pbApplyUuid,approveNextUuid,ProcessBaseConstant.PRECESS_APPROVE,toDoerId,auditUrl,auditCatalog,auditTitle);
         return false;
     }
 
@@ -316,6 +405,7 @@ public class ProcessServiceImpl implements ProcessService {
                                 String auditUrl,
                                 String auditCatalog,
                                 String auditTitle) {
+        userId = pbMapper.getUserName(userId);
         String routingKey = ProcessBaseConstant.ROUTING_KEY;
         String operate = ProcessBaseConstant.OPERATE_INSERT;
         JSONObject jsonObject = new JSONObject(10);
@@ -346,6 +436,7 @@ public class ProcessServiceImpl implements ProcessService {
                                     String taskId,
                                     String precessId,
                                     String userId) {
+        userId = pbMapper.getUserName(userId);
         String routingKey = ProcessBaseConstant.ROUTING_KEY;
         String operate = ProcessBaseConstant.OPERATE_DONE;
         JSONObject jsonObject = new JSONObject(10);

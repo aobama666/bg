@@ -6,7 +6,16 @@ public interface ProcessService {
     /**
      * 初始化流程---暂时保留，沿用原有初始化
      */
-    boolean applySubmit();
+    boolean applySubmit(
+            String businessId,
+            String nodeName,
+            String functionType,
+            String approveRemark,
+            String approveUserId,
+            String toDoerId,
+            String auditTitle,
+            String auditUrl
+    );
 
     /**
      * 审批同意，通过审批条件后，按照配置走对应的下一环节，如果到最后一步，完结流程

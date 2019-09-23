@@ -133,7 +133,7 @@
     </select>
 
     <select id="ifLeaderApprove" resultType="java.lang.String">
-        select IF_LEADER_APPROVE from BG_YY_ITEM_SECOND s where s.uuid=#{itemSecondId} and valid='1'
+        select IF_LEADER_APPROVE from BG_YY_ITEM_SECOND s where s.uuid=#{itemSecondId}
     </select>
 
     <select id="findDeptForUserName" resultType="java.util.Map">

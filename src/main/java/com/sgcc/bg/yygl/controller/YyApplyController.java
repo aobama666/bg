@@ -5,6 +5,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.HRUser;
+import com.sgcc.bg.process.service.ProcessService;
 import com.sgcc.bg.service.ApproverService;
 import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.UserService;
@@ -48,6 +49,8 @@ public class YyApplyController {
     private YyKindService yyKindService;
     @Autowired
     private YyMyItemService yyMyItemService;
+    @Autowired
+    private ProcessService processService;
 
 
 

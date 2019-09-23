@@ -39,8 +39,6 @@ public class YyMyItemController {
     @Autowired
     private UserService userService;
     @Autowired
-    private ApproveService approveService;
-    @Autowired
     private ProcessService processService;
 
     /**
@@ -145,7 +143,7 @@ public class YyMyItemController {
         sbTitle.append(apply.getApplyCode());
         String auditTitle = sbTitle.toString();
         //待办链接
-        String auditUrl = "/../../bg/yygl/my_item/toComingSoon";
+        String auditUrl = YyApplyConstant.AUDIT_URL+applyUuid;
         ResultWarp rw;
         String result ="";
         if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
@@ -255,7 +253,7 @@ public class YyMyItemController {
         sbTitle.append(apply.getApplyCode());
         String auditTitle = sbTitle.toString();
         //待办链接
-        String auditUrl = "/../../bg/yygl/my_item/toComingSoon";
+        String auditUrl = YyApplyConstant.AUDIT_URL+applyUuid;
         String approveUserId = yyApplyService.getLoginUserUUID();
 
         String useSealStatus = apply.getUseSealStatus();

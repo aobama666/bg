@@ -66,4 +66,6 @@ public class YyApplyConstant {
     //不发送待办
     public final static String SEND_AUDIT_NO = "0";
 
+    //待办url
+    public final static String AUDIT_URL = "/../../bg/yygl/apply/toApplyDetail?applyUuid=";
 }

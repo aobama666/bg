@@ -119,4 +119,7 @@ public interface ProcessBaseMapper {
     Integer updateUndoneApproveExpand(@Param("approveId") String approveId
             ,@Param("updateUser") String updateUser);
 
+
+    //根据userid获取门户账号
+    String getUserName(@Param("userId") String userId);
 }

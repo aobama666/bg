@@ -276,6 +276,16 @@ public class YyApplyServiceImpl implements YyApplyService {
         String loginUserId = yyApplyService.getLoginUserUUID();
         for(String applyId : applyIdS){
             yyApplyDAO = yyApplyMapper.findApply(applyId);
+            //待办标题
+            StringBuilder sbTitle = new StringBuilder();
+            sbTitle.append("【用印申请】");
+            sbTitle.append(yyApplyDAO.getApplyDept());
+            sbTitle.append(yyApplyDAO.getApplyUser());
+            sbTitle.append(yyApplyDAO.getApplyCode());
+            String auditTitle = sbTitle.toString();
+            //待办链接
+            String auditUrl = YyApplyConstant.AUDIT_URL+applyId;
+
             useSealStatus = yyApplyDAO.getUseSealStatus();
             if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_SUB)
                 ||useSealStatus.equals(YyApplyConstant.STATUS_WITHDRAW)
@@ -283,12 +293,13 @@ public class YyApplyServiceImpl implements YyApplyService {
             ){
                 successNum ++;
                 //创建该申请的流程信息
-                ReturnMessage returnMessage = approveService.startApprove(false,
+                /*ReturnMessage returnMessage = approveService.startApprove(false,
                         "YYGL",
                         "SUBMIT",
                         applyId,
                         principalUser,
-                        loginUserId);
+                        loginUserId);*/
+                processService.applySubmit(applyId,"SUBMIT","YYGL","提交",loginUserId,principalUser,auditTitle,auditUrl);
                 //修改申请状态
                 yyApplyMapper.updateApplyStatus(applyId,YyApplyConstant.STATUS_DEAL_DEPT);
             }else{

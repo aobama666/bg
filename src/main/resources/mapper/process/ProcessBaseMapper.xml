@@ -6,18 +6,18 @@
 
     <insert id="addApply">
         INSERT INTO TB_WL_APPLY (
-          id, FUNCTION_TYPE, APPLY_STATUS, APPROVE_ID, REMARK,
+          id, FUNCTION_TYPE, APPLY_STATUS, APPROVE_ID,
           VALID, CREATE_USER, CREATE_TIME)
         VALUES (
-            #{id},#{functionType},#{appltStatus},#{approveId},#{remark},'1',sysdate
+            #{id},#{functionType},#{applyStatus},#{approveId},'1',#{createUser},sysdate
         )
     </insert>
 
     <insert id="addBusinessRApply">
         insert into TB_WL_BUSINESS_R_APPLY(
-        id,BUSINESS_ID,APPLY_ID,REMARK,VALID,CREATE_USER,CREATE_TIME
+        id,BUSINESS_ID,APPLY_ID,VALID,CREATE_USER,CREATE_TIME
         ) values (
-        #{id},#{businessId},#{applyId},#{remark},'1',#{createUser},sysdate
+        #{id},#{businessId},#{applyId},'1',#{createUser},sysdate
         )
     </insert>
     <insert id="addAuditUser">
@@ -146,7 +146,7 @@
         FUNCTION_TYPE
         FROM tb_wl_rule
         WHERE ID = #{ruleId}) t
-        WHERE r.NODE = t.NODE AND r.FUNCTION_TYPE = t.FUNCTION_TYPE AND r.STATUS = '1'
+        WHERE r.NODE = t.NODE AND r.FUNCTION_TYPE = t.FUNCTION_TYPE
             <if test="status!=null and status!=''">
                 AND r.STATUS = #{status}
             </if>
@@ -262,6 +262,10 @@
                                FROM tb_wl_approve
                                WHERE APPLY_ID = #{applyId})
         )
+    </select>
+
+    <select id="getUserName" resultType="java.lang.String">
+        select USERNAME from BG_SYS_USER where USERID = #{userId}
     </select>
 
 
