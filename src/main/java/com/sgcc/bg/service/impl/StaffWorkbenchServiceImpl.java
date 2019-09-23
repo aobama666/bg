@@ -46,10 +46,7 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	@Autowired
 	private DataDictionaryService dict;
 
-	//员工考勤工时统计记录 一天为8小时
-	//private final static int TIME = 8;
-	int TIME = Integer.parseInt(ConfigUtils.getConfig("KQ_everyday_workDate"));
-	
+
 	private static Logger SWServiceLog =  LoggerFactory.getLogger(StaffWorkbenchServiceImpl.class);
 
 	@Override
@@ -87,6 +84,10 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 
 	@Override
 	public Map<String, Object> workingHoursMap(String selectedDate) {
+
+		//取一天工作时长
+		Integer TIME = Integer.parseInt(ConfigUtils.getConfig("KQ_everyday_workDate"));
+
 		//取月初和月末
 		Map<String,String> dateMap = dateBeginEnd(selectedDate);
 		String dataBegin = dateMap.get("dateBegin");
