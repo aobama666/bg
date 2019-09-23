@@ -270,7 +270,7 @@ public class YyMyItemController {
 
         //跳过业务部门参数准备
         if(ifDeptEqual.equals("1")){
-            toDoerId = toDoerId+","+approveUserId;
+            toDoerId = approveUserId+","+toDoerId;
         }
         String newToDoerId = toDoerId;
         if(ifDeptEqual.equals("2")){

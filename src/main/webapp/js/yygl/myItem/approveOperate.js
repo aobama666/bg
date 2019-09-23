@@ -29,7 +29,7 @@ approve.agree =function () {
     $.ajax({
         url: "/bg/yygl/my_item/agree",
         type: "post",
-        data: {"applyUuid":applyUuid,"approveOpinion":approveOpinion,"toDoerId":toDoerId,'ifAllJump':ifAllJump,'ifDeptEqual':ifDeptEqual},
+        data: {"applyUuid":applyUuid,"approveOpinion":approveOpinion,"toDoerId":toDoerId,'ifDeptEqual':ifDeptEqual},
         success: function (data) {
             parent.myItem.closeAndOpen(data.msg);
         }
