@@ -7,7 +7,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.sgcc.bg.common.*;
 import com.sgcc.bg.mapper.BgKqTemporaryMapper;
 import com.sgcc.bg.model.Temporary;
@@ -15,6 +14,8 @@ import com.sgcc.bg.service.KqTemporaryService;
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,8 @@ public class KqTemporaryServiceImpl implements KqTemporaryService {
 	@Autowired
 	private BgKqTemporaryMapper kqTemporaryMapper;
 
-	private static org.slf4j.Logger Logger = LoggerFactory.getLogger(KqTemporaryServiceImpl.class);
+	private static Logger Logger =  LoggerFactory.getLogger(KqTemporaryServiceImpl.class);
+
 	@Override
 	public String  addTemporary(String beginDate, String endDate) {
 		Gson   gson=new Gson();
