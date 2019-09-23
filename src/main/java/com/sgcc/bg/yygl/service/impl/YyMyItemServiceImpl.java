@@ -73,9 +73,14 @@ public class YyMyItemServiceImpl implements YyMyItemService{
         List<Map<String,Object>> itemBusinessDept = myItemMapper.itemBusinessDept(itemSecondId);
         List<Map<String, Object>> nextNodeApprove = new ArrayList<>();
         Integer radioId = 0;
+        String applyDeptId = yyApplyDAO.getApplyDeptId();
         for(Map<String,Object> ibd : itemBusinessDept){
-            radioId++;
             deptId = ibd.get("DEPT_ID").toString();
+            if(deptId.equals(applyDeptId)){
+                //如果业务部门与申请部门相同，剔除，跳过此部门id
+                continue;
+            }
+            radioId++;
             List<Map<String, Object>> nextNodeApproveFor = myItemMapper.nextNodeApprove(deptId,YyApplyConstant.NODE_BUSINESS,itemSecondId);
             for(Map<String,Object> m : nextNodeApproveFor) {
                 m.put("radioId","staffId"+radioId);

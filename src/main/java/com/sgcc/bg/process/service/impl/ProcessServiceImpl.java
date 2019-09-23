@@ -400,24 +400,9 @@ public class ProcessServiceImpl implements ProcessService {
         if(if_expand){//如果是扩展表
             //根据审批id和审批用户获取对应扩展id
             String approveExpandId = pbMapper.getExpandId(approveId,userId);
-
-            //修改对应待办用户为无效
-            PbAuditUser pbAuditUser = new PbAuditUser();
-            pbAuditUser.setApproveUser(userId);
-            pbAuditUser.setApproveExpandId(approveExpandId);
-            pbAuditUser.setApproveId(approveId);
-            pbMapper.updateAuditUser(pbAuditUser);
-
             //撤销当前待办
             cancelUpcoming(applyId,approveExpandId,ProcessBaseConstant.PRECESS_EXPAND);
         }else{//如果是正常流程审批
-
-            //修改对应待办用户为无效
-            PbAuditUser pbAuditUser = new PbAuditUser();
-            pbAuditUser.setApproveUser(userId);
-            pbAuditUser.setApproveId(approveId);
-            pbMapper.updateAuditUser(pbAuditUser);
-
             //撤销当前待办
             cancelUpcoming(applyId,approveId,ProcessBaseConstant.PRECESS_APPROVE);
         }

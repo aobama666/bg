@@ -8,7 +8,6 @@ var approve = {};
  */
 approve.agree =function () {
     var useSealAdmin = $("#useSealAdmin").val();
-    var ifAllJump = $("#ifAllJump").val();
     var ifDeptEqual = $("#ifDeptEqual").val();
     var toDoerId = '';
 
