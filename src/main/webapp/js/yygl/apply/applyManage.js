@@ -6,19 +6,6 @@ $(function(){
     apply.initDataGrid();
 });
 
-/* 日期查询条件 */
-layui.use('laydate',function () {
-    var laydate = layui.laydate;
-
-    laydate.render({
-        elem: '#startTime',
-    });
-
-    laydate.render({
-        elem: '#endTime'
-    });
-});
-
 /*   列表查询   */
 apply.query = function(){
 
@@ -342,3 +329,17 @@ apply.closeAndOpen = function (message) {
     layer.closeAll();
     layer.msg(message);
 };
+
+
+/*用印管理-事项弹框 */
+apply.forItemInfo = function (){
+    var url = "/bg/yyComprehensive/itemIndex";
+    layer.open({
+        type:2,
+        title:'<h4 style="height:42px;line-height:27px;">用印事项</h4>',
+        area:['300px','350px'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url,
+    });
+}

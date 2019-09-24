@@ -58,46 +58,48 @@
         <input type="hidden" name="checkList"/>
         <span style="margin-left: 20px"></span>
         <label>申请编号：</label>
-        <input type = "text" id = "applyCode" name = "applyCode" style="width: 100px" class = "inputQuery changeQuery" >
+        <input type = "text" id = "applyCode" name = "applyCode" style="width: 150px" class = "inputQuery changeQuery" >
         <span style="margin-left: 20px"></span>
-        <label>用印事项一级：</label>
-        <select id = "useSealItemFirst" name = "useSealItemFirst"  class = "changeQuery changeYear" onchange="apply.changeItemFirst()">
-            <option value = "" selected>请选择</option>
-            <c:forEach  var="itemFirst"  items="${itemFirst}">
-                <option value ="${itemFirst.K}"}> ${itemFirst.V}</option>
-            </c:forEach>
-        </select>
-        <span style="margin-left: 20px"></span>
-        <label>用印事项二级：</label>
-        <div id="selectSecondItem" style="display: inline">
-            <select id = "itemSecondId" name = "itemSecondId"   class = "changeQuery changeYear">
-                <option value = "" selected>请选择</option>
-            </select>
-        </div>
 
-        <br/>
+        <label>申请日期：</label>
+        <input id="startTime" name="startTime"
+               onclick=" WdatePicker({dateFmt:'yyyy-MM-dd',enableInputMask:false})" readonly="true"
+               type="text"
+               class="inputQuery changeQuery Wdate"
+               style="width:150px;"
+        />
+        <label>至</label>
+        <input id="endTime" name="endTime"
+               onclick=" WdatePicker({dateFmt:'yyyy-MM-dd',enableInputMask:false})" readonly="true"
+               type="text"
+               class="inputQuery changeQuery Wdate"
+               style="width:150px;"
+        />
+
         <span style="margin-left: 20px"></span>
-        <label>用印事由：</label>
-        <input type = "text" id = "useSealReason" name = "useSealReason" style="width: 100px" class = "inputQuery changeQuery" >
-        <span style="margin-left: 20px"></span>
-        <label  for="useSealStatus">审批状态：</label>
-        <span style="margin-left: 28px"></span>
+        <label>审批状态：</label>
+        <span style="margin-left: 3px"></span>
         <select id = "useSealStatus" name = "useSealStatus"   class = "changeQuery changeYear">
             <option value = "" selected>请选择</option>
             <c:forEach  var="useSealStatus"  items="${useSealStatus}">
                 <option value ="${useSealStatus.K}"}> ${useSealStatus.V}</option>
             </c:forEach>
         </select>
+
+        <br/>
+
         <span style="margin-left: 20px"></span>
-        <label>申请日期：</label>
-        <span style="margin-left: 24px"></span>
-        <div class="layui-inline" style="width: 6%">
-            <input type="text" class="layui-input" id="startTime" name="startTime" style="width: 100%" />
-        </div>
-        <label>至</label>
-        <div class="layui-inline" style="width: 6%">
-            <input type="text" class="layui-input" id="endTime" name="endTime" style="width: 100%"/>
-        </div>
+        <label>用印事项：</label>
+        <input readonly="true" type = "text" id = "itemName" name = "itemName" style="  width:150px"   class = "inputQuery changeQuery"   title="用印事项"   onclick="apply.forItemInfo()"  >
+        <span class="input-itemName-addon"  onclick="apply.forItemInfo()" ><span class="glyphicon glyphicon-th-list"></span></span>
+        <input type = "hidden" id = "useSealItemSecond" name = "useSealItemSecond"   class = "inputQuery changeQuery"   title="用印事项"   >
+        <input type = "hidden" id = "useSealItemFirst" name = "useSealItemFirst"   class = "inputQuery changeQuery"   title="用印事项"    >
+
+        <span style="margin-left: 20px"></span>
+        <label>用印事由：</label>
+        <input type = "text" id = "useSealReason" name = "useSealReason" style="width: 322px" class = "inputQuery changeQuery" >
+
+
 
 
         <div style="float:right" id = "queryButton" class = "btn query" onclick = "apply.query()">搜索</div>
@@ -135,6 +137,8 @@
 
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>  	<!-- 弹框.js  -->
+<!-- 引入日期选择框 -->
+<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
 <!-- 引入datagrid -->
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
 <!-- 验证校验公共方法，提示框公共方法 -->

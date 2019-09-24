@@ -27,7 +27,7 @@
 </head>
 <body>
 <div class="tabbable active" style="text-align:right;width: 97%;padding-top: 5px;padding-bottom: 5px;">
-    <button type="button" class="btn" onclick="applyOperate.toSubmit()">提交</button>
+    <button id="applySub" type="button" class="btn" onclick="applyOperate.toSubmit()">提交</button>
     <button id="applyAdd" type="button" class="btn" onclick="applyOperate.applyAdd()">保存</button>
     <button type="button" class="btn" onclick="applyOperate.returnClose()">返回</button>
 </div>
@@ -46,9 +46,13 @@
             <span title = "用印日期"><b class="mustWrite">*</b>用印日期</span>
         </td>
         <td style="width: 40%" class="addInputStyle">
-            <div class="layui-inline">
-                <input type="text" class="layui-input validNull" content="用印日期"  id="useSealDate" name="useSealDate" />
-            </div>
+            <input id="useSealDate" name="useSealDate"
+                   onclick=" WdatePicker({dateFmt:'yyyy-MM-dd',enableInputMask:false})" readonly="true"
+                   type="text"
+                   class="inputQuery changeQuery Wdate validNull"
+                   title="请选择用印日期"
+                   content="用印日期"
+            />
         </td>
     </tr>
     <tr>
@@ -70,26 +74,12 @@
     </tr>
     <tr>
         <td style="width: 10%">
-            <span title = "用印事项一级"><b class="mustWrite">*</b>用印事项一级</span>
+            <span title = "用印事项"><b class="mustWrite">*</b>用印事项</span>
         </td>
-        <td style="width: 40%" class="addInputStyle">
-            <select id = "useSealItemFirst" name = "useSealItemFirst" onchange="applyOperate.changeItemFirst()"
-                    content="用印事项一级" class = "changeQuery changeYear validNull">
-                <option value = "">请选择</option>
-                <c:forEach  var="itemFirst"  items="${itemFirst}">
-                    <option value ="${itemFirst.K}"}> ${itemFirst.V}</option>
-                </c:forEach>
-            </select>
-        </td>
-        <td style="width: 10%">
-            <span title = "用印事项二级"><b class="mustWrite">*</b>用印事项二级</span>
-        </td>
-        <td style="width: 40%" class="addInputStyle">
-            <div id="selectSecondItem">
-                <select id = "useSealItemSecond" name = "useSealItemSecond" content="用印事项二级" class = "changeQuery changeYear validNull">
-                        <option value = "">请选择</option>
-                </select>
-            </div>
+        <td style="width: 90%" class="addInputStyle" colspan="3">
+            <input readonly="true" type = "text" id = "itemName" name = "itemName" style="width: 100%"  title="用印事项"   onclick="applyOperate.forItemInfo()"  >
+            <input type="text" id="useSealItemSecond" name="useSealItemSecond" class="validNull" content="用印事项请选择二级,二级用印事项" style="display: none"/>
+            <input type="text" id="useSealItemFirst" name="useSealItemFirst"  style="display: none"/>
         </td>
     </tr>
     <tr>
@@ -139,6 +129,8 @@
 
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/js/bootstrap.min.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>  	<!-- 弹框.js  -->
+<!-- 引入日期选择框 -->
+<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
 <!-- 引入datagrid -->
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
 <!-- 验证校验公共方法，提示框公共方法 -->

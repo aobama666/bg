@@ -97,11 +97,11 @@ public class YyApplyController {
     @RequestMapping("/selectApply")
     public String selectApply(
             String applyCode,String startTime,String endTime,String useSealStatus,String useSealItemFirst
-            , String itemSecondId,String useSealReason, Integer page, Integer limit
+            , String useSealItemSecond,String useSealReason, Integer page, Integer limit
     ){
         //查询数据封装
         Map<String, Object> listMap = applyService.selectApply(
-                applyCode,startTime,endTime,useSealStatus,useSealItemFirst,itemSecondId
+                applyCode,startTime,endTime,useSealStatus,useSealItemFirst,useSealItemSecond
                 ,useSealReason,page,limit,getLoginUserUUID());
         //反馈
         Map<String, Object> mvMap = new HashMap<String, Object>();

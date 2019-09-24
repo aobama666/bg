@@ -7,15 +7,6 @@ $(function () {
     applyOperate.setDefaultValue();
 })
 
-/* 日期查询条件 */
-layui.use('laydate',function () {
-    var laydate = layui.laydate;
-
-    laydate.render({
-        elem: '#useSealDate',
-    });
-});
-
 //修改页面-默认选中原有值-用印事项一级二级
 applyOperate.setDefaultValue = function () {
     var itemFirstIdCode = $("#itemFirstIdCode").val();
@@ -181,7 +172,6 @@ applyOperate.toSubmit = function () {
 //提交用印申请
 applyOperate.applySubmit = function () {
     //发送后台请求
-    debugger
     var principalUser = $("input[name='principal']:checked").val();
     var checkedIds = $("#checkedIds").val();
     if(principalUser==='' || principalUser === undefined){
@@ -195,6 +185,8 @@ applyOperate.applySubmit = function () {
         data: {'principalUser':principalUser,'checkedIds':checkedIds},
         success: function (data) {
             if(data.success=="true"){
+                //只能提交一次
+                parent.document.getElementById("applySub").setAttribute("disabled","disabled");
                 parent.apply.closeAndOpen(data.msg);
             }
         }
@@ -240,6 +232,30 @@ applyOperate.changeItemFirst = function () {
 
 /*关闭页面后弹出信息*/
 applyOperate.closeAndOpen = function (message) {
+    layer.closeAll();
+    layer.msg(message);
+};
+
+
+
+/*用印管理-事项弹框 */
+applyOperate.forItemInfo = function (){
+    var url = "/bg/yyComprehensive/itemIndex";
+    layer.open({
+        type:2,
+        title:'<h4 style="height:42px;line-height:27px;">用印事项</h4>',
+        area:['300px','350px'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url,
+    });
+}
+
+
+//提交后的反馈
+/*关闭页面后弹出信息*/
+var apply = {};
+apply.closeAndOpen = function (message) {
     layer.closeAll();
     layer.msg(message);
 };

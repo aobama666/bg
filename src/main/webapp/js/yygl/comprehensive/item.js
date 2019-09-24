@@ -30,10 +30,16 @@ $(function(){
              parent.$("#itemName").val(treeNode.name);
              parent.$("#itemFirst").val(treeNode.id);
              parent.$("#itemSecond").val("");
+             //针对参数名称不同的页面
+             parent.$("#useSealItemFirst").val(treeNode.id);
+             parent.$("#useSealItemSecond").val("");
          }else{
              parent.$("#itemName").val(treeNode.name);
              parent.$("#itemFirst").val(treeNode.pId);
              parent.$("#itemSecond").val(treeNode.id);
+             //针对参数名称不同的页面
+             parent.$("#useSealItemFirst").val(treeNode.pId);
+             parent.$("#useSealItemSecond").val(treeNode.id);
 
          }
         var closeIndex = parent.layer.getFrameIndex(window.name);
@@ -48,6 +54,9 @@ function clearChecked(){
     parent.$("#itemName").val("");
     parent.$("#itemFirst").val("");
     parent.$("#itemSecond").val("");
+    //针对参数名称不同的页面
+    parent.$("#useSealItemFirst").val("");
+    parent.$("#useSealItemSecond").val("");
     var closeIndex = parent.layer.getFrameIndex(window.name);
     parent.layer.close(closeIndex);
 }
