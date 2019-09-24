@@ -96,12 +96,12 @@ public class YyApplyController {
     @ResponseBody
     @RequestMapping("/selectApply")
     public String selectApply(
-            String applyCode,String startTime,String endTime,String useSealStatus,String useSealItemFirst
-            , String useSealItemSecond,String useSealReason, Integer page, Integer limit
+            String applyCode,String startTime,String endTime,String useSealStatus,String useSealItemFirstFind
+            , String useSealItemSecondFind,String useSealReason, Integer page, Integer limit
     ){
         //查询数据封装
         Map<String, Object> listMap = applyService.selectApply(
-                applyCode,startTime,endTime,useSealStatus,useSealItemFirst,useSealItemSecond
+                applyCode,startTime,endTime,useSealStatus,useSealItemFirstFind,useSealItemSecondFind
                 ,useSealReason,page,limit,getLoginUserUUID());
         //反馈
         Map<String, Object> mvMap = new HashMap<String, Object>();
@@ -196,17 +196,12 @@ public class YyApplyController {
         String userName = webUtils.getUsername();
         HRUser user = userService.getUserByUserName(userName);
         Map<String,Object> dept = applyService.findDept(user.getUserId());
-        //用印事项下拉框信息
-        List<Map<String,Object>> itemFirst = applyService.getItemFirst();
-        List<Map<String,Object>> itemSecond = applyService.getItemSecond(yyApplyDAO.getItemFirstId());
         //反馈
         ModelAndView mv = new ModelAndView("yygl/apply/applyUpdate");
         //修改之前的信息
         mv.addObject("apply",yyApplyDAO);
         mv.addObject("kindCode",kindCode);
         mv.addObject("KindValue",KindValue);
-        mv.addObject("itemFirst",itemFirst);
-        mv.addObject("itemSecond",itemSecond);
         //基础信息
         mv.addObject("deptName",dept.get("PDEPTNAME"));
         mv.addObject("deptId",dept.get("PDEPTID"));

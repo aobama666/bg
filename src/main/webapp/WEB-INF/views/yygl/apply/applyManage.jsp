@@ -92,8 +92,8 @@
         <label>用印事项：</label>
         <input readonly="true" type = "text" id = "itemName" name = "itemName" style="  width:150px"   class = "inputQuery changeQuery"   title="用印事项"   onclick="apply.forItemInfo()"  >
         <span class="input-itemName-addon"  onclick="apply.forItemInfo()" ><span class="glyphicon glyphicon-th-list"></span></span>
-        <input type = "hidden" id = "useSealItemSecond" name = "useSealItemSecond"   class = "inputQuery changeQuery"   title="用印事项"   >
-        <input type = "hidden" id = "useSealItemFirst" name = "useSealItemFirst"   class = "inputQuery changeQuery"   title="用印事项"    >
+        <input type = "hidden" id = "useSealItemSecondFind" name = "useSealItemSecondFind"   class = "inputQuery changeQuery"   title="用印事项"   >
+        <input type = "hidden" id = "useSealItemFirstFind" name = "useSealItemFirstFind"   class = "inputQuery changeQuery"   title="用印事项"    >
 
         <span style="margin-left: 20px"></span>
         <label>用印事由：</label>
