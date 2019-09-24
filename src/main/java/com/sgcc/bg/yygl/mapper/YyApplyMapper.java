@@ -129,5 +129,10 @@ public interface YyApplyMapper {
      */
     List<Map<String,Object>> approveAnnal(@Param("applyId") String applyId);
 
+    /**
+     * 打印预览信息
+     */
+    List<Map<String,Object>> printPreview(@Param("businessId") String businessId);
+
 
 }

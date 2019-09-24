@@ -311,9 +311,11 @@ public class YyApplyController {
         YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
 
         //审批信息
+        List<Map<String, Object>> printPreview = applyService.printPreview(applyUuid);
 
         ModelAndView mv = new ModelAndView("yygl/apply/printPreview");
         mv.addObject("yyApplyDAO",yyApplyDAO);
+        mv.addObject("printPreview",printPreview);
         return mv;
     }
 

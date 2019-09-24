@@ -90,10 +90,14 @@ public interface YyMyItemMapper {
      */
     List<String> getAuditUser(@Param("approveId") String approveId);
 
-
     /**
      * 当前事项对应的业务部门
      */
     List<String> getSecondItemDept(@Param("secondItemId") String secondItemId);
+
+    /**
+     * 当前申请已经参与会签的部门
+     */
+    List<Map<String,Object>> getSignDept(@Param("businessId") String businessId);
 
 }

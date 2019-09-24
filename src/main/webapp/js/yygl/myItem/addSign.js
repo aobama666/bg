@@ -45,9 +45,9 @@ sign.changeDept = function () {
 //根据对应部门查询信息，初始化树内容
 sign.ajaxInitTree = function () {
     var deptCode = $("#signDept").val();
-    if(deptCode === undefined || deptCode === ''){
+    /*if(deptCode === undefined || deptCode === ''){
         deptCode = '90000110';
-    }
+    }*/
     $.ajax({
         url: "/bg/yygl/my_item/initDeptTree?root="+deptCode,
         type: "post",

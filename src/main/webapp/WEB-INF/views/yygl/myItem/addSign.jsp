@@ -64,7 +64,7 @@
         <table style="width: 100%">
             <tr>
                 <td class="bg" width="30%">已流转业务主管部门</td>
-                <td style="text-align: left">&nbsp;&nbsp;&nbsp;中国电科院财务资产部</td>
+                <td style="text-align: left">&nbsp;&nbsp;&nbsp;&nbsp;${signDeptStr}</td>
             </tr>
             <tr>
                 <td class="bg"  width="30%">请选择会签部门</td>

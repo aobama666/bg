@@ -358,4 +358,9 @@ public class YyApplyServiceImpl implements YyApplyService {
         }
         return false;
     }
+
+    @Override
+    public List<Map<String, Object>> printPreview(String businessId) {
+        return yyApplyMapper.printPreview(businessId);
+    }
 }

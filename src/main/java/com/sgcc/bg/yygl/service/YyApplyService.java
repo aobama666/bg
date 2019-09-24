@@ -113,4 +113,9 @@ public interface YyApplyService {
      * 该用户是否为当前环节审批人
      */
     boolean ifApproveUser(String applyId,String userId);
+
+    /**
+     * 打印预览信息
+     */
+    List<Map<String,Object>> printPreview(String businessId);
 }
