@@ -11,7 +11,7 @@
         u.useralias applyUser,
         TO_CHAR(a.use_seal_date, 'YYYY-MM-DD')  useSealDate,
         TO_CHAR(a.create_time, 'YYYY-MM-DD')  createTime,
-        f.first_category_name||'-'||s.second_category_name useSealItem,
+        s.second_category_name useSealItem,
         (select name
             from bg_sys_datadictionary
             where pcode = 'use_seal_status'

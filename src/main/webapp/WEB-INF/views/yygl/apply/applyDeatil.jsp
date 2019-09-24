@@ -24,7 +24,7 @@
     <link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
     <link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath()%>/css/yygl/agree.css" rel="stylesheet" media="all">
-    <%--<link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" media="all">--%>
+    <link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" media="all">
     <style type="text/css">
         .tableBody{
             height: 120px!important;
@@ -34,7 +34,12 @@
 <body>
     <h3 style="float: left;margin-left: 3%;">申请编号:${yyApplyDAO.applyCode}</h3>
 <div class="tabbable active" style="text-align:right;width: 97%;padding-top: 5px;padding-bottom: 5px;">
-    <button type="button" class="btn" onclick="returnClose()">返回</button>
+    <c:if test="${accessType == 0}">
+        <button type="button" class="btn" onclick="returnClose()">返回</button>
+    </c:if>
+    <c:if test="${accessType == 1}">
+        <button type="button" class="btn" onclick="detail.returnItem()">返回</button>
+    </c:if>
     <c:if test="${applyUser == 1}">
         <button type="button" class="btn" onclick="detail.withdraw()">撤回</button>
     </c:if>
@@ -56,6 +61,7 @@
         </td>
         <td style="width: 40%" class="addInputStyle">
             <input type = "text" style="display: none" id = "uuid"  name="uuid" value="${yyApplyDAO.uuid}">
+            <input type = "text" style="display: none" id = "applyUserId"  name="applyUserId" value="${yyApplyDAO.applyUserId}">
             <span>&nbsp;&nbsp;${yyApplyDAO.applyDept}</span>
         </td>
         <td style="width: 10%">
@@ -223,8 +229,12 @@
 </div>
 
 </body>
+<!-- 本页面所需的js -->
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
+<script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>
+<script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>
+<script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 <script src="<%=request.getContextPath()%>/js/yygl/apply/applyAnnex.js"></script>
 <script src="<%=request.getContextPath()%>/js/yygl/apply/applyDetail.js"></script>
 <script>

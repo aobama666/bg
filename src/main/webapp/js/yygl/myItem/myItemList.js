@@ -42,7 +42,7 @@ myItem.initDataGrid = function(){
             {name: '用印部门',style:{width:"50px"}, data: 'applyDept'},
             {name: '用印申请人',style:{width:"30px"}, data: 'applyUser'},
             {name: '用印日期',style:{width:"30px"}, data: 'useSealDate'},
-            {name: '用印事项',style:{width:"50px"}, data: 'createTime'},
+            {name: '用印事项',style:{width:"50px"}, data: 'useSealItem'},
             {name: '用印种类',style:{width:"50px"}, data: 'useSealKind'}
         ]
     });
@@ -53,14 +53,17 @@ myItem.initDataGrid = function(){
  * 用印申请详情弹窗
  */
 myItem.toDeatil = function (applyUuid) {
-    var url = "/bg/yygl/apply/toApplyDetail?applyUuid="+applyUuid;
+    var url = "/bg/yygl/apply/toApplyDetail?accessType=0&applyUuid="+applyUuid;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请详情</h4>',
         area:['85%','85%'],
         fixed:false,//不固定
         maxmin:true,
-        content:url
+        content:url,
+        end: function () {
+            myItem.queryAddPage();
+        }
     });
 }
 

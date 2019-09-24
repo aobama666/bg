@@ -67,5 +67,5 @@ public class YyApplyConstant {
     public final static String SEND_AUDIT_NO = "0";
 
     //待办url
-    public final static String AUDIT_URL = "/../../bg/yygl/apply/toApplyDetail?applyUuid=";
+    public final static String AUDIT_URL = "/../../bg/yygl/apply/toApplyDetail?accessType=1&applyUuid=";
 }

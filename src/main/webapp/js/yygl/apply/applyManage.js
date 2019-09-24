@@ -202,7 +202,7 @@ apply.del = function () {
  * 用印申请详情弹窗
  */
 apply.toDeatil = function (applyUuid) {
-    var url = "/bg/yygl/apply/toApplyDetail?applyUuid="+applyUuid;
+    var url = "/bg/yygl/apply/toApplyDetail?accessType=0&applyUuid="+applyUuid;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请详情</h4>',
@@ -291,13 +291,12 @@ apply.withdraw = function () {
     }
 
     layer.confirm('确定撤回选中的申请吗?',{
-        btn:['确定','取消'],icon:0,title:'自动匹配'
+        btn:['确定','取消'],icon:0,title:'撤回申请'
     },function () {
         $.ajax({
             url: "/bg/yygl/apply/applyWithdraw?applyUuid="+checkedId,
             type: "post",
             dataType:"json",
-            data: {'checkedId':checkedId},
             success: function (data) {
                 layer.msg(data.msg);
                 apply.queryAddPage();

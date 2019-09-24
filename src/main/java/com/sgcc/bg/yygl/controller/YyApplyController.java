@@ -238,7 +238,7 @@ public class YyApplyController {
      * 跳转到详情页面
      */
     @RequestMapping("/toApplyDetail")
-    public ModelAndView toApplyDetail(String applyUuid){
+    public ModelAndView toApplyDetail(String applyUuid,String accessType){
         //用印基本信息
         YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
         //当前登陆人
@@ -301,6 +301,7 @@ public class YyApplyController {
         mv.addObject("leaderApprove",leaderApprove);
         mv.addObject("useSealStatus",useSealStatus);
         mv.addObject("approveAnnal",approveAnnal);
+        mv.addObject("accessType",accessType);
         return mv;
     }
 
