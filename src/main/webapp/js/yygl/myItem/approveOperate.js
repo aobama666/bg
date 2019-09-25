@@ -25,6 +25,10 @@ approve.agree =function () {
         }
     }
     var approveOpinion = $('#approveOpinion').val();
+    if(approveOpinion.length>500){
+        parent.layer.msg('审批意见不得超过500个汉字!');
+        return;
+    }
     var applyUuid = $('#applyUuid').val();
     $.ajax({
         url: "/bg/yygl/my_item/agree",
@@ -43,6 +47,10 @@ approve.agree =function () {
 approve.sendBack = function () {
     var applyId = $("#applyId").val();
     var approveRemark = $("#approveRemark").val();
+    if(approveRemark.length>500){
+        parent.layer.msg('审批意见不得超过500个汉字!');
+        return;
+    }
     $.ajax({
         url: "/bg/yygl/my_item/sendBack",
         type: "post",

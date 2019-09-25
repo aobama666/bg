@@ -30,6 +30,10 @@ applyOperate.kindSave = function () {
     var checkCode = '';
     var checkValue = '';
     var elseKind = $("#elseKind").val();
+    if(elseKind.length>50){
+        parent.layer.msg('其他种类长度不能超过50个汉字！');
+        return;
+    }
     $("input[name='kind']:checked").each(function () {
         if($(this).attr("checked")){
             if(checkCode !== ''){
@@ -103,10 +107,6 @@ applyOperate.applyAdd = function () {
 
 //修改用印申请
 applyOperate.applyUpdate = function () {
-    debugger
-    var useSealItemSecond=$("#useSealItemSecond").val();
-    var useSealItemFirst=$("#useSealItemFirst").val();
-
     //验证必填项是否为空
     var validNull = dataForm.validNullable();
     if(!validNull){
