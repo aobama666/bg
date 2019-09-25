@@ -7,13 +7,6 @@ $(function () {
     applyOperate.setDefaultValue();
 })
 
-//修改页面-默认选中原有值-用印事项一级二级
-applyOperate.setDefaultValue = function () {
-    var itemFirstIdCode = $("#itemFirstIdCode").val();
-    var itemSecondIdCode = $("#itemSecondIdCode").val();
-    $("#useSealItemFirst").val(itemFirstIdCode);
-    $("#useSealItemSecond").val(itemSecondIdCode);
-}
 
 //弹出用印种类选择框
 applyOperate.checkKind = function () {
@@ -201,36 +194,6 @@ applyOperate.returnClose = function () {
     parent.layer.closeAll();
 }
 
-
-/**
- * 级联变动二级用印事项内容
- */
-applyOperate.changeItemFirst = function () {
-    var firstCategoryId = $("#useSealItemFirst option:selected").val();
-    $.ajax({
-        url: "/bg/yygl/apply/secondType",
-        type: "post",
-        dataType:"json",
-        data: {'firstCategoryId':firstCategoryId},
-        success: function (data) {
-            debugger
-            var itemSecond = data.data.itemSecond;
-            var checkContent = '';
-            document.getElementById("selectSecondItem").innerHTML = checkContent;
-            var i ;
-            checkContent = "" +
-                "<select id = 'useSealItemSecond' name = 'useSealItemSecond' content='用印事项二级' class = 'changeQuery changeYear validNull'>" +
-                "<option value=''>请选择</option>";
-            for(i=0;i<itemSecond.length;i++){
-                var k = itemSecond[i].K;
-                var v = itemSecond[i].V;
-                checkContent = checkContent+'<option value = "'+k+'">'+v+'</option>';
-            }
-            checkContent = checkContent + '</select>';
-            document.getElementById("selectSecondItem").innerHTML = checkContent;
-        }
-    });
-}
 
 /*关闭页面后弹出信息*/
 applyOperate.closeAndOpen = function (message) {
