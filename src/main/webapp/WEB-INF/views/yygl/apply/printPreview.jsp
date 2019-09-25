@@ -42,9 +42,9 @@
             <td colspan="3">&nbsp;&nbsp; ${yyApplyDAO.applyDept}</td>
         </tr>
         <tr>
-            <th width="20%">用印申请人:</th>
-            <td>&nbsp;&nbsp; ${yyApplyDAO.applyUser}</td>
-            <th>联系方式:</th>
+            <th>用印申请人:</th>
+            <td width="20%">&nbsp;&nbsp; ${yyApplyDAO.applyUser}</td>
+            <th width="20%">联系方式:</th>
             <td>&nbsp;&nbsp; ${yyApplyDAO.useSealPhone}</td>
         </tr>
         <tr>
