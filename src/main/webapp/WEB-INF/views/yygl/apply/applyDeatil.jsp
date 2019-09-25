@@ -32,6 +32,7 @@
     </style>
 </head>
 <body>
+<input type="hidden" value="${auditType}" id="auditType"/>
     <h3 style="float: left;margin-left: 3%;">申请编号:${yyApplyDAO.applyCode}</h3>
 <div class="tabbable active" style="text-align:right;width: 97%;padding-top: 5px;padding-bottom: 5px;">
     <c:if test="${accessType == 0}">
@@ -206,13 +207,13 @@
 <div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 30px;margin-bottom: 30px">
     <table class="agree" style="width: 100%">
         <tr>
-            <td class="bg">审批人姓名</td>
-            <td class="bg">审批部门/单位</td>
-            <td class="bg">审批意见</td>
-            <td class="bg">审批时间</td>
-            <td class="bg">下一环节审批人角色</td>
-            <td class="bg">下一环节审批人姓名</td>
-            <td class="bg">下一环节审批人联系方式</td>
+            <td width="10%" class="bg">审批人姓名</td>
+            <td width="10%" class="bg">审批部门/单位</td>
+            <td width="20%" class="bg">审批意见</td>
+            <td width="10%" class="bg">审批时间</td>
+            <td width="10%" class="bg">下一环节审批人角色</td>
+            <td width="10%" class="bg">下一环节审批人姓名</td>
+            <td width="10%" class="bg">下一环节审批人联系方式</td>
         </tr>
         <c:forEach var="a" items="${approveAnnal}" >
             <tr>

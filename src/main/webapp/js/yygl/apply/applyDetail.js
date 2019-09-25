@@ -95,8 +95,13 @@ detail.refresh = function () {
 
 
 detail.returnItem = function () {
-    var closeIndex = parent.layer.getFrameIndex(window.name);
-    parent.layer.close(closeIndex);
+    var auditType=$("#auditType").val();
+    if(auditType=="finish"){
+        window.location.href = "/TYGLPT/index/waithaddo/index.jsp??tm="+new Date().getTime();
+
+    }else{
+        window.location.href = "/TYGLPT/index/waittodo/index.jsp?tm="+new Date().getTime();
+    }
 }
 
 

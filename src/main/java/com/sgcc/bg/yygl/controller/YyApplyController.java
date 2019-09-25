@@ -233,7 +233,7 @@ public class YyApplyController {
      * 跳转到详情页面
      */
     @RequestMapping("/toApplyDetail")
-    public ModelAndView toApplyDetail(String applyUuid,String accessType){
+    public ModelAndView toApplyDetail(String applyUuid,String accessType,HttpServletRequest request){
         //用印基本信息
         YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
         //当前登陆人
@@ -286,6 +286,8 @@ public class YyApplyController {
                 }
             }
         }
+        //同意待办跳转处理
+        String type = request.getParameter("type")==null?null:request.getParameter("type").toString();
 
         ModelAndView mv = new ModelAndView("yygl/apply/applyDeatil");
         mv.addObject("yyApplyDAO",yyApplyDAO);
@@ -297,6 +299,7 @@ public class YyApplyController {
         mv.addObject("useSealStatus",useSealStatus);
         mv.addObject("approveAnnal",approveAnnal);
         mv.addObject("accessType",accessType);
+        mv.addObject("auditType",type);
         return mv;
     }
 

@@ -20,10 +20,11 @@
     </style>
     <style>
         td{
-            height: 40px;
+            height: 35px;
         }
         th{
-            height: 40px;
+            height: 35px;
+            text-align: center;
         }
     </style>
 </head>
@@ -32,17 +33,18 @@
     <button onclick="printPreview()">打印</button>
 </div>
 <div>
-    <h2 style="text-align: center;">中国电力科学研究院有限公司用印审批单</h2>
-    <h3>申请编号：${yyApplyDAO.applyCode}</h3>
-    <table border="1" cellspacing="0" width="100%" style="font-size: 20px;">
+    <div style="padding-top: 20px"></div>
+    <div style="text-align: center;font-size: 22px;font-weight: bold;">中国电力科学研究院有限公司用印审批单</div>
+    <div style="font-size: 16px;font-weight: bold">申请编号：${yyApplyDAO.applyCode}</div>
+    <table border="1" cellspacing="0" width="100%" style="font-size: 16px;">
         <tr>
-            <th>用印部门(单位):</th>
+            <th width="20%">用印部门(单位):</th>
             <td colspan="3">&nbsp;&nbsp; ${yyApplyDAO.applyDept}</td>
         </tr>
         <tr>
             <th>用印申请人:</th>
-            <td>&nbsp;&nbsp; ${yyApplyDAO.applyUser}</td>
-            <th>联系方式:</th>
+            <td width="20%">&nbsp;&nbsp; ${yyApplyDAO.applyUser}</td>
+            <th width="20%">联系方式:</th>
             <td>&nbsp;&nbsp; ${yyApplyDAO.useSealPhone}</td>
         </tr>
         <tr>
@@ -75,11 +77,11 @@
                 <td>&nbsp;&nbsp; ${p.APPROVE_REMARK}</td>
             </tr>
             <tr>
-                <td style="text-align: center">申请人:</td>
+                <td style="text-align: center">审批人:</td>
                 <td>&nbsp;&nbsp; ${p.USERALIAS}</td>
             </tr>
             <tr>
-                <td style="text-align: center">申请时间:</td>
+                <td style="text-align: center">审批时间:</td>
                 <td>&nbsp;&nbsp; ${p.APPROVE_DATE}</td>
             </tr>
         </c:forEach>
