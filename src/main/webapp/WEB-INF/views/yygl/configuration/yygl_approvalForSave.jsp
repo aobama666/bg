@@ -53,7 +53,7 @@
 				<div  class="input-group organ"   onclick="approvalInfo.forItemInfo()">
 					<input   id="itemName"       name="itemName"  type="text"        content="用印事项二级名称"   title="必填项  "   readonly />
 					<input  id="itemFirst"   name="itemFirst"  type="hidden"           content="用印事项一级ID"            />
-					<input  id="itemSecond"   name="itemSecond"  type="hidden"             content="用印事项二级ID"         />
+					<input  id="itemSecond"   name="itemSecond"  type="hidden"              content="用印二级事项"         />
 					<span class="input-group-addon" style="height: 30px"><span class="glyphicon glyphicon-th-list"></span></span>
 				</div>
 			</td>

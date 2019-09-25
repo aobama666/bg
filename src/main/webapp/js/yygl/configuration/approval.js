@@ -110,7 +110,7 @@ roomList.forItemInfo = function (){
 			var url = "/bg/yyConfiguration/approvalForSaveIndex";
 			layer.open({
 				type:2,
-				title:'<h4 style="height:42px;line-height:25px;">用印事项二级类别新增</h4>',
+				title:'<h4 style="height:42px;line-height:25px;">审批人新增</h4>',
 				area:['600px','390px'],
 				content:url,
 			});
@@ -129,7 +129,7 @@ roomList.forItemInfo = function (){
 			var url = "/bg/yyConfiguration/approvalForUpdateIndex?approveId="+approveId;
 			layer.open({
 				type:2,
-				title:'<h4 style="height:42px;line-height:25px;">用印事项二级类别修改</h4>',
+				title:'<h4 style="height:42px;line-height:25px;">审批人修改</h4>',
 				area:['600px','390px'],
 				content:url,
 			});
