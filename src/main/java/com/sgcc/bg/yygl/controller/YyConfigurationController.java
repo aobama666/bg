@@ -752,11 +752,15 @@ public class YyConfigurationController {
         String approveNodeId = paramsMap.get("approveNodeId") == null ? "" : paramsMap.get("approveNodeId").toString();//节点类型
         String itemFirstId = paramsMap.get("itemFirst") == null ? "" : paramsMap.get("itemFirst").toString();//用印事项一级类别
         String itemSecondId = paramsMap.get("itemSecond") == null ? "" : paramsMap.get("itemSecond").toString();//用印事项二级类别
-        String approveUserId = paramsMap.get("approveUserId") == null ? "" : paramsMap.get("approveUserId").toString();//员工ID
+       // String approveUserId = paramsMap.get("approveUserId") == null ? "" : paramsMap.get("approveUserId").toString();//员工ID
+		String approveUserCode = paramsMap.get("approveUserCode") == null ? "" : paramsMap.get("approveUserCode").toString();//员工CODE
         String approveDeptId = paramsMap.get("approveDeptId") == null ? "" : paramsMap.get("approveDeptId").toString();//部门ID
 
         Logger.info("用印模块-配置模块-配置的添加------参数 (节点类型)approveNodeId：" + approveNodeId + "(用印事项一级类别)itemFirstId" + itemFirstId +
-                "(用印事项二级类别)itemSecondId" + itemSecondId + "(员工ID)approveUserId" + approveUserId + "(部门ID)approveDeptId" + approveDeptId  );
+                "(用印事项二级类别)itemSecondId" + itemSecondId + "(员工code)approveUserCode" + approveUserCode + "(部门ID)approveDeptId" + approveDeptId  );
+
+		CommonCurrentUser currentUserDate =userUtils.getCommonCurrentUserByHrCode(approveUserCode);
+		String approveUserId=currentUserDate.getUserId();
         CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
         String userId = currentUser.getUserId();
         String uuid = Rtext.getUUID();
@@ -803,9 +807,11 @@ public class YyConfigurationController {
 		String approveNodeId = paramsMap.get("approveNodeId") == null ? "" : paramsMap.get("approveNodeId").toString();//节点类型
 		String itemFirstId = paramsMap.get("itemFirst") == null ? "" : paramsMap.get("itemFirst").toString();//用印事项一级类别
 		String itemSecondId = paramsMap.get("itemSecond") == null ? "" : paramsMap.get("itemSecond").toString();//用印事项二级类别
-		String approveUserId = paramsMap.get("approveUserId") == null ? "" : paramsMap.get("approveUserId").toString();//员工ID
+		//String approveUserId = paramsMap.get("approveUserId") == null ? "" : paramsMap.get("approveUserId").toString();//员工ID
 		String approveDeptId = paramsMap.get("approveDeptId") == null ? "" : paramsMap.get("approveDeptId").toString();//部门ID
-
+		String approveUserCode = paramsMap.get("approveUserCode") == null ? "" : paramsMap.get("approveUserCode").toString();//员工CODE
+		CommonCurrentUser currentUserDate =userUtils.getCommonCurrentUserByHrCode(approveUserCode);
+		String approveUserId=currentUserDate.getUserId();
 		Logger.info("用印模块-配置模块-审批人配置的添加------参数 (节点类型)approveId：" + approveId +"(节点类型)approveNodeId：" + approveNodeId + "(用印事项一级类别)itemFirstId" + itemFirstId +
 				"(用印事项二级类别)itemSecondId" + itemSecondId + "(员工ID)approveUserId" + approveUserId + "(部门ID)approveDeptId" + approveDeptId  );
 		CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
