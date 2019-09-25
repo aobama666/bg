@@ -32,6 +32,7 @@
     </style>
 </head>
 <body>
+<input type="hidden" value="${auditType}" id="auditType"/>
     <h3 style="float: left;margin-left: 3%;">申请编号:${yyApplyDAO.applyCode}</h3>
 <div class="tabbable active" style="text-align:right;width: 97%;padding-top: 5px;padding-bottom: 5px;">
     <c:if test="${accessType == 0}">
