@@ -387,8 +387,9 @@
         UPDATE_USER  = #{approvalMap.updateUser},
         UPDATE_TIME  = #{approvalMap.updateTime},
         VALID  = #{approvalMap.valid}
-        where VALID='1'AND UUID =  #{approvalMap.uuid}
+        where VALID='1' AND  UUID =  #{approvalMap.uuid}
     </update>
+
 
 
 

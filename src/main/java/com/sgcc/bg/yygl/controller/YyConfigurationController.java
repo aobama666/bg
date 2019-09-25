@@ -9,6 +9,7 @@ import com.sgcc.bg.yygl.service.YyConfigurationService;
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hmef.attribute.MAPIAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -537,7 +538,6 @@ public class YyConfigurationController {
 	}
 	/**
 	 * 二级事项的修改
-	 *
 	 * @param paramsMap itemFirstName 一级事项的名称
 	 * @return
 	 */
@@ -575,7 +575,6 @@ public class YyConfigurationController {
         yyConfigurationService.deleteForItemSecondInfo(Map);
         Logger.info("用印模块-配置模块-二级用印事项配置的删除接口---代码结束");
 
-
         Logger.info("用印模块-配置模块-二级用印事项部门配置的删除接口---代码如下：");
         Map<String, Object> deptMap = new HashMap<String, Object>();
         deptMap.put("itemSecondId", secondCategoryId);
@@ -584,6 +583,8 @@ public class YyConfigurationController {
         deptMap.put("updateTime", new Date());
         yyConfigurationService.updateForItemSecondDeptInfo(deptMap);
         Logger.info("用印模块-配置模块-二级用印事部门项配置的删除接口---代码结束");
+
+
 
 
         Logger.info("用印模块-配置模块-二级用印事项配置的新增接口---代码如下：");
@@ -627,7 +628,41 @@ public class YyConfigurationController {
 				deptMaps.put("updateTime", new Date());
 				deptMaps.put("valid", "1");
 				yyConfigurationService.saveForItemSecondDeptInfo(deptMaps);
+                Map<String, Object> approvalMap = new HashMap<String, Object>();
+                approvalMap.put("itemFirstId", itemFirst);
+                approvalMap.put("itemSecondId", secondCategoryId);
+                approvalMap.put("approveDeptId", deptIds);
+                List<Map<String,Object>>  selectForApprovalList= yyConfigurationService.selectForApprovalId(approvalMap);
+                if(!selectForApprovalList.isEmpty()){
+                     for(Map<String,Object> ApprovalMap :selectForApprovalList){
+                         String approveuuid = Rtext.getUUID();
+                         ApprovalMap.put("uuid", approveuuid);
+                         ApprovalMap.put("itemSecondId", uuid);
+                         ApprovalMap.put("createUser", userId);
+                         ApprovalMap.put("createTime", new Date());
+                         ApprovalMap.put("updateUser", userId);
+                         ApprovalMap.put("updateTime", new Date());
+                         ApprovalMap.put("valid", "1");
+                         yyConfigurationService.saveForApprovalInfo(ApprovalMap);
+                     }
+                }
 			}
+            Logger.info("用印模块-配置模块-审批人的追加------新需求代码开始");
+            Map<String, Object> approvalMap = new HashMap<String, Object>();
+            approvalMap.put("itemFirstId", itemFirst);
+            approvalMap.put("itemSecondId", secondCategoryId);
+            List<Map<String,Object>>  selectForApprovalList= yyConfigurationService.selectForApprovalId(approvalMap);
+            if(!selectForApprovalList.isEmpty()){
+                for(Map<String,Object>    selectForApproval: selectForApprovalList){
+                    Object     approveId =selectForApproval.get("approveId");
+                    approvalMap.put("uuid",approveId);
+                    approvalMap.put("updateUser", userId);
+                    approvalMap.put("updateTime", new Date());
+                    approvalMap.put("valid",  "0");
+                    yyConfigurationService.deleteForApprovalInfo(approvalMap);
+                }
+            }
+            Logger.info("用印模块-配置模块-审批人的追加------新需求代码结束");
 			rw = new ResultWarp(ResultWarp.SUCCESS, "修改成功");
 		   }
 		Logger.info("用印模块-配置模块-二级用印事项配置的修改------返回值" + rw);
