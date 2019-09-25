@@ -82,7 +82,7 @@ approvalInfo.changeItemFirstUpdate = function (obj) {
      $("#itemSecondId").append(checkContent)
 }
 approvalInfo.approvalForSave =function () {
-      debugger;
+
     /* 验证必填项   */
     var validNull = dataForm.validNullable();
     if(!validNull){
