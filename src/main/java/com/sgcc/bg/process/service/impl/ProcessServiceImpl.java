@@ -302,6 +302,16 @@ public class ProcessServiceImpl implements ProcessService {
             // 除此之外的本审批id对应的待办用户置为无效状态,避免其他用户显示已办消息
             pbMapper.updateAuditUserForUser(approveId,approveUserId);
         }
+
+        //下一环节规则信息
+        PbRule ruleNext = pbMapper.selectRuleForId(pbRule.getNextNodeId());
+        //修改当前申请状态
+        PbApply applyUpdate = new PbApply();
+        applyUpdate.setId(applyId);
+        applyUpdate.setApproveId(approveIdAdd);
+        applyUpdate.setApplyStatus(ruleNext.getNode());
+        applyUpdate.setUpdateUser(approveUserId);
+        pbMapper.updateApply(applyUpdate);
         return true;
     }
 

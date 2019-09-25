@@ -234,6 +234,9 @@ public class YyApplyController {
      */
     @RequestMapping("/toApplyDetail")
     public ModelAndView toApplyDetail(String applyUuid,String accessType,HttpServletRequest request){
+        //统一系统待办跳转处理
+        String type = request.getParameter("type")==null?null:request.getParameter("type").toString();
+
         //用印基本信息
         YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
         //当前登陆人
@@ -286,8 +289,7 @@ public class YyApplyController {
                 }
             }
         }
-        //同意待办跳转处理
-        String type = request.getParameter("type")==null?null:request.getParameter("type").toString();
+
 
         ModelAndView mv = new ModelAndView("yygl/apply/applyDeatil");
         mv.addObject("yyApplyDAO",yyApplyDAO);
