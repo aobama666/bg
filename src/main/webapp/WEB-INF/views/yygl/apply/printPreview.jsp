@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: mingliao
@@ -66,36 +67,23 @@
             <th>审批角色</th>
             <th colspan="2">审批意见</th>
         </tr>
-        <%--内容查出后循环展示--%>
+        <c:forEach var="p" items="${printPreview}">
             <tr>
-                <td rowspan="3" style="text-align: center">某部门</td>
-                <td rowspan="3" style="text-align: center">用印申请人</td>
+                <td rowspan="3" style="text-align: center">${p.DEPTNAME}</td>
+                <td rowspan="3" style="text-align: center">${p.APPROVE_NODE}</td>
                 <td style="text-align: center">审批意见:</td>
-                <td>&nbsp;&nbsp; 提交</td>
+                <td>&nbsp;&nbsp; ${p.APPROVE_REMARK}</td>
             </tr>
             <tr>
                 <td style="text-align: center">申请人:</td>
-                <td>&nbsp;&nbsp; 申请人姓名</td>
+                <td>&nbsp;&nbsp; ${p.USERALIAS}</td>
             </tr>
             <tr>
                 <td style="text-align: center">申请时间:</td>
-                <td>&nbsp;&nbsp; 2019-09-06 12:45:12</td>
+                <td>&nbsp;&nbsp; ${p.APPROVE_DATE}</td>
             </tr>
-        <%--内容查出后循环展示--%>
-            <tr>
-                <td rowspan="3" style="text-align: center">某部门</td>
-                <td rowspan="3" style="text-align: center">用印申请人</td>
-                <td style="text-align: center">审批意见:</td>
-                <td>&nbsp;&nbsp; 提交</td>
-            </tr>
-            <tr>
-                <td style="text-align: center">申请人:</td>
-                <td>&nbsp;&nbsp; 申请人姓名</td>
-            </tr>
-            <tr>
-                <td style="text-align: center">申请时间:</td>
-                <td>&nbsp;&nbsp; 2019-09-06 12:45:12</td>
-            </tr>
+        </c:forEach>
+
     </table>
 </div>
 <script>

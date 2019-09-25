@@ -158,4 +158,29 @@
         WHERE SECOND_CATEGORY_ID = #{secondItemId} AND VALID = '1'
     </select>
 
+    <select id="getSignDept" resultType="java.util.Map">
+        SELECT
+          decode(t.type, 2, t.pdeptid, 1, t.deptid)     deptId,
+          decode(t.type, 2, t.pdeptname, 1, t.deptname) deptName
+        FROM bg_sys_dept t
+        WHERE t.deptcode IN
+              (SELECT hrdeptcode
+               FROM bg_sys_user
+               WHERE userid IN (
+                 SELECT u.APPROVE_USER
+                 FROM TB_WL_AUDIT_USER u LEFT JOIN TB_WL_APPROVE a
+                     ON a.ID = u.APPROVE_ID
+                 WHERE a.APPLY_ID = (SELECT apply_id
+                                     FROM TB_WL_BUSINESS_R_APPLY
+                                     WHERE BUSINESS_ID = #{businessId} AND
+                                           CREATE_TIME = (SELECT max(CREATE_TIME)
+                                                          FROM
+                                                            TB_WL_BUSINESS_R_APPLY
+                                                          WHERE BUSINESS_ID = #{businessId}
+                                                                AND VALID = '1'))
+                       AND u.APPROVE_EXPAND_ID IS NOT NULL
+               ) AND valid = '1')
+              AND t.valid = '1'
+    </select>
+
 </mapper>

@@ -95,9 +95,8 @@ detail.refresh = function () {
 
 
 detail.returnItem = function () {
-    layer.msg('返回到我的事项列表页面！！！');
-    layer.msg('返回到我的事项列表页面！！！');
-    layer.msg('返回到我的事项列表页面！！！');
+    var closeIndex = parent.layer.getFrameIndex(window.name);
+    parent.layer.close(closeIndex);
 }
 
 

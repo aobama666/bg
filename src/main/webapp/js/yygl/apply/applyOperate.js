@@ -164,7 +164,11 @@ applyOperate.toSubmit = function () {
         area:['40%','50%'],
         fixed:false,//不固定
         maxmin:true,
-        content:url
+        content:url,
+        end:function () {
+            //只能提交一次
+            document.getElementById("applySub").setAttribute("disabled","disabled");
+        }
     });
 
 }
@@ -185,8 +189,6 @@ applyOperate.applySubmit = function () {
         data: {'principalUser':principalUser,'checkedIds':checkedIds},
         success: function (data) {
             if(data.success=="true"){
-                //只能提交一次
-                parent.document.getElementById("applySub").setAttribute("disabled","disabled");
                 parent.apply.closeAndOpen(data.msg);
             }
         }

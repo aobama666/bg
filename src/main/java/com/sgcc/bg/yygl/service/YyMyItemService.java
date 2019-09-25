@@ -71,4 +71,9 @@ public interface YyMyItemService {
      * 当前事项对应的业务部门
      */
     List<String> getSecondItemDept(String secondItemId);
+
+    /**
+     * 当前申请已经参与过的会签部门
+     */
+    List<Map<String,Object>> getSignDept(String businessId);
 }

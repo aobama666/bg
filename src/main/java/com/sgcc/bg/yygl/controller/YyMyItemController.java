@@ -13,6 +13,7 @@ import com.sgcc.bg.yygl.constant.YyApplyConstant;
 import com.sgcc.bg.yygl.pojo.YyApplyDAO;
 import com.sgcc.bg.yygl.service.YyApplyService;
 import com.sgcc.bg.yygl.service.YyMyItemService;
+import org.omg.CORBA.OBJ_ADAPTER;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,11 +115,32 @@ public class YyMyItemController {
     public ModelAndView toAddSign(String checkedId){
         //可选择会签部门
         List<Map<String,Object>> deptList = myItemService.getDeptList();
-        //目前没有做剔除操作
-        //如果需要剔除有两点，1.原有事项配置的业务部门2.后期增加会签在审批表中的审批人所在部门
+        //当前会签部门
+        List<Map<String,Object>> signDept = myItemService.getSignDept(checkedId);
+        StringBuilder signDeptStr = new StringBuilder();
+        for (Map<String,Object> map : signDept){
+            signDeptStr.append(map.get("DEPTNAME"));
+            signDeptStr.append("、");
+        }
+        signDeptStr.deleteCharAt(signDeptStr.length()-1);//去掉最后的顿号
+        //剔除已经会签的部门
+        List<Map<String,Object>> deptListNew = new ArrayList<>();
+        for(Map<String,Object> dmap : deptList){
+            Integer change = 0;
+            for(Map<String,Object> map : signDept){
+                if(map.get("DEPTID").equals(dmap.get("K"))){
+                    change = 1;
+                }
+            }
+            if(change == 0){
+                deptListNew.add(dmap);
+            }
+        }
+        deptList = deptListNew;
         Map<String,Object> mvMap = new HashMap<>();
         mvMap.put("deptList",deptList);
         mvMap.put("applyUuid",checkedId);
+        mvMap.put("signDeptStr",signDeptStr.toString());
         ModelAndView mv = new ModelAndView("yygl/myItem/addSign",mvMap);
         return mv;
     }

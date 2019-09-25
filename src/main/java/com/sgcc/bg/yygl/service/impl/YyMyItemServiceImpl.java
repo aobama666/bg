@@ -175,4 +175,9 @@ public class YyMyItemServiceImpl implements YyMyItemService{
         return myItemMapper.getSecondItemDept(secondItemId);
     }
 
+    @Override
+    public List<Map<String, Object>> getSignDept(String businessId) {
+        return myItemMapper.getSignDept(businessId);
+    }
+
 }

@@ -77,9 +77,9 @@
             <span title = "用印事项"><b class="mustWrite">*</b>用印事项</span>
         </td>
         <td style="width: 90%" class="addInputStyle" colspan="3">
-            <input readonly="true" type = "text" id = "itemName" value="${apply.useSealItem}" name = "itemName" style="width: 100%"  title="用印事项"   onclick="applyOperate.forItemInfo()"  >
-            <input type="text" value="${apply.itemSecondId}" id="useSealItemSecond" name="useSealItemSecond" class="validNull" content="用印事项请选择二级,二级用印事项" style="display: none"/>
-            <input type="text" value="${apply.itemFirstId}" id="useSealItemFirst" name="useSealItemFirst" style="display: none"/>
+            <input readonly="true" type = "text" id = "itemName" value="${apply.useSealItem}" name = "itemName" style="width: 100%"  title="用印事项" onclick="applyOperate.forItemInfo()"/>
+            <input type="hidden" value="${apply.itemSecondId}" id="useSealItemSecond" name="useSealItemSecond" class="validNull" content="用印事项请选择二级,二级用印事项"/>
+            <input type="hidden" value="${apply.itemFirstId}" id="useSealItemFirst" name="useSealItemFirst"/>
         </td>
     </tr>
     <tr>

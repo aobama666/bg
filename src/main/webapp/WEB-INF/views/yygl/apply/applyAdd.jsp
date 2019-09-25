@@ -78,8 +78,8 @@
         </td>
         <td style="width: 90%" class="addInputStyle" colspan="3">
             <input readonly="true" type = "text" id = "itemName" name = "itemName" style="width: 100%"  title="用印事项"   onclick="applyOperate.forItemInfo()"  >
-            <input type="text" id="useSealItemSecond" name="useSealItemSecond" class="validNull" content="用印事项请选择二级,二级用印事项" style="display: none"/>
-            <input type="text" id="useSealItemFirst" name="useSealItemFirst"  style="display: none"/>
+            <input type="hidden" id="useSealItemSecond" name="useSealItemSecond" class="validNull" content="用印事项请选择二级,二级用印事项"/>
+            <input type="hidden" id="useSealItemFirst" name="useSealItemFirst"/>
         </td>
     </tr>
     <tr>
