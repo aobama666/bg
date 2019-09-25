@@ -107,10 +107,6 @@ applyOperate.applyAdd = function () {
 
 //修改用印申请
 applyOperate.applyUpdate = function () {
-    debugger
-    var useSealItemSecond=$("#useSealItemSecond").val();
-    var useSealItemFirst=$("#useSealItemFirst").val();
-
     //验证必填项是否为空
     var validNull = dataForm.validNullable();
     if(!validNull){
