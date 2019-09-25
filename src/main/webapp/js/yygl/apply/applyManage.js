@@ -240,17 +240,27 @@ apply.submit = function () {
             return;
         }
     }
-
-    var url = "/bg/yygl/apply/toApplySubmit?checkedIds="+checkedIds;
-    layer.open({
-        type:2,
-        title:'<h4 style="font-size: 18px;padding-top: 10px">选择下一环节审批人</h4>',
-        area:['60%','40%'],
-        fixed:false,//不固定
-        maxmin:true,
-        content:url,
-        end: function () {
-            apply.queryAddPage();
+    $.ajax({
+        url: "/bg/yygl/apply/ifSubmit?checkedId="+checkedItems[0].UUID,
+        type: "post",
+        dataType:"json",
+        success: function (data) {
+            if(data.success=='true'){
+                var url = "/bg/yygl/apply/toApplySubmit?checkedIds="+checkedIds;
+                layer.open({
+                    type:2,
+                    title:'<h4 style="font-size: 18px;padding-top: 10px">选择下一环节审批人</h4>',
+                    area:['60%','40%'],
+                    fixed:false,//不固定
+                    maxmin:true,
+                    content:url,
+                    end: function () {
+                        apply.queryAddPage();
+                    }
+                });
+            }else{
+                layer.msg(data.msg);
+            }
         }
     });
 

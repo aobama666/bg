@@ -292,13 +292,6 @@ public class YyApplyServiceImpl implements YyApplyService {
                 ||useSealStatus.equals(YyApplyConstant.STATUS_RETURN)
             ){
                 successNum ++;
-                //创建该申请的流程信息
-                /*ReturnMessage returnMessage = approveService.startApprove(false,
-                        "YYGL",
-                        "SUBMIT",
-                        applyId,
-                        principalUser,
-                        loginUserId);*/
                 processService.applySubmit(applyId,"SUBMIT","YYGL","提交",loginUserId,principalUser,auditTitle,auditUrl);
                 //修改申请状态
                 yyApplyMapper.updateApplyStatus(applyId,YyApplyConstant.STATUS_DEAL_DEPT);
@@ -362,5 +355,37 @@ public class YyApplyServiceImpl implements YyApplyService {
     @Override
     public List<Map<String, Object>> printPreview(String businessId) {
         return yyApplyMapper.printPreview(businessId);
+    }
+
+    @Override
+    public String ifApproveIsNull(String applyUuid) {
+        YyApplyDAO apply = yyApplyMapper.findApply(applyUuid);
+        String itemSecondId = apply.getItemSecondId();
+        List<String> nodeDept = yyApplyMapper.getApproveUserId(YyApplyConstant.NODE_DEPT,null,null);
+        if(nodeDept.size()==0){
+            return "未配置部门负责人，无法发起申请";
+        }
+        List<String> getSecondItemDept = yyMyItemMapper.getSecondItemDept(itemSecondId);
+        List<String> nodeBusiness;
+        for (String deptId : getSecondItemDept){
+            nodeBusiness = yyApplyMapper.getApproveUserId(YyApplyConstant.NODE_BUSINESS,deptId,itemSecondId);
+            if(nodeBusiness.size()==0){
+                return "未配置业务主管负责人，无法发起申请";
+            }
+        }
+
+        List<String> nodeOffice = yyApplyMapper.getApproveUserId(YyApplyConstant.NODE_OFFICE,null,null);
+        if(nodeOffice.size()==0){
+            return "未配置办公室负责人，无法发起申请";
+        }
+        List<String> nodeLeader = yyApplyMapper.getApproveUserId(YyApplyConstant.NODE_LEADER,null,itemSecondId);
+        if(nodeLeader.size()==0){
+            return "未配置院领导负责人，无法发起申请";
+        }
+        List<String> nodeAdmin = yyApplyMapper.getApproveUserId(YyApplyConstant.NODE_ADMIN,null,null);
+        if(nodeAdmin.size()==0){
+            return "未配置印章管理员，无法发起申请";
+        }
+        return null;
     }
 }

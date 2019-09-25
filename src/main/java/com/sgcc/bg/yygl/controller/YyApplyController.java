@@ -336,6 +336,23 @@ public class YyApplyController {
 
 
     /**
+     * 判断对应事项审批人是否正常配置，能否正常进行提交操作
+     */
+    @ResponseBody
+    @RequestMapping("/ifSubmit")
+    public String ifSubmit(String checkedId){
+        ResultWarp resultWarp = null;
+        String ifApproveIsNull = applyService.ifApproveIsNull(checkedId);
+        if(null != ifApproveIsNull){
+            resultWarp = new ResultWarp(ResultWarp.FAILED,ifApproveIsNull);
+            return JSON.toJSONString(resultWarp);
+        }
+        resultWarp = new ResultWarp(ResultWarp.SUCCESS,"success");
+        return JSON.toJSONString(resultWarp);
+    }
+
+
+    /**
      * 提交申请选择下一环节审批人
      */
     @RequestMapping("/toApplySubmit")
@@ -351,15 +368,14 @@ public class YyApplyController {
     }
 
 
-
     /**
      * 提交申请
      */
     @ResponseBody
     @RequestMapping("/applySubmit")
     public String applySubmit(String checkedIds,String principalUser){
-        String msg = applyService.submit(checkedIds,principalUser);
         ResultWarp resultWarp = null;
+        String msg = applyService.submit(checkedIds,principalUser);
         resultWarp = new ResultWarp(ResultWarp.SUCCESS,msg);
         return JSON.toJSONString(resultWarp);
     }
