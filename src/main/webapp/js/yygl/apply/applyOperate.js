@@ -30,6 +30,10 @@ applyOperate.kindSave = function () {
     var checkCode = '';
     var checkValue = '';
     var elseKind = $("#elseKind").val();
+    if(elseKind.length>50){
+        parent.layer.msg('其他种类长度不能超过50个汉字！');
+        return;
+    }
     $("input[name='kind']:checked").each(function () {
         if($(this).attr("checked")){
             if(checkCode !== ''){
