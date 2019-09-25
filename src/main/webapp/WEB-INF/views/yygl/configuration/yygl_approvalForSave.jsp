@@ -66,8 +66,7 @@
 			<td   class="addInputStyle">
 				<div id="stuffTree" class="input-group organ">
 					<input   id="popStuffTree"       name="approveUserAlias"  type="text"   class = "validNull"      content="员工姓名"   title="必填项  "   readonly />
-					<input  id="approveUserCode"   name="approveUserCode"  type="hidden"   class = "validNull"    content="员工姓名"            />
-					<input  id="approveUserId"   name="approveUserId"  type="hidden"   class = "validNull"      content="员工姓名"         />
+					<input  id="approveUserCode"   name="approveUserCode"  type="hidden"   class = "validNull"    content="员工姓名编码"            />
 					<span class="input-group-addon" style="height: 30px"><span class="glyphicon glyphicon-th-list"></span></span>
 				</div>
 			</td>

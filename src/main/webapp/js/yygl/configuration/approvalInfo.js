@@ -7,10 +7,11 @@ $(function(){
     $("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'parent',empCode:'empCode',empName:'empName',checkType:'radio',popEvent:'pop'});
 });
 function popEvent(ids,codes,names,pId,level){
+    debugger;
     $("#popStuffTree").val(names);
     $("#approveUserName").val(ids);
     $("#approveUserCode").val(codes);
-    $("#approveUserId").val(pId);
+    //$("#approveUserId").val(pId);
     $.ajax({
         url: "/bg/yyConfiguration/deptInfo",
         type: "post",
@@ -81,7 +82,7 @@ approvalInfo.changeItemFirstUpdate = function (obj) {
      $("#itemSecondId").append(checkContent)
 }
 approvalInfo.approvalForSave =function () {
-
+      debugger;
     /* 验证必填项   */
     var validNull = dataForm.validNullable();
     if(!validNull){
@@ -94,7 +95,6 @@ approvalInfo.approvalForSave =function () {
         itemSecondInfo.saveBtnClickFlag = 0;
         return;
     }
-    debugger
     var  itemFirst=$("#itemFirst").val();
     var  itemSecond=$("#itemSecond").val();
     var  approveNodeId=$("#approveNodeId").val();

@@ -221,6 +221,7 @@ border-color:#00828a;
         var codes = "";
         var texts = "";
         var ids   = "";
+        var pId   = "";
         for(var i=0;i<valueArray.length;i++){
             var val = valueArray[i];
             //hrcode 增加了前缀'P'，需要去除
@@ -231,6 +232,7 @@ border-color:#00828a;
             }
             texts += val.name + ',';
             ids += val.id + ',';
+            pId  += val.pId + ',';
         }
         if(codes.length>0){
             codes = codes.substr(0,codes.length-1);
@@ -240,6 +242,9 @@ border-color:#00828a;
         }
         if(ids.length>0){
             ids = ids.substr(0,ids.length-1);
+        }
+        if(pId.length>0){
+            pId = pId.substr(0,pId.length-1);
         }
         if('parent' == '<%=iframe%>'){
             <%-- var body = parent.layer.getChildFrame('body','<%=index%>');
@@ -253,7 +258,7 @@ border-color:#00828a;
             //返回事件
             try{
                 if('<%=popEvent%>'=='pop'){
-                    iframWin.popEvent(ids,codes,texts);
+                    iframWin.popEvent(ids,codes,texts,pId);
                 }
             }catch(e){}
         }else{

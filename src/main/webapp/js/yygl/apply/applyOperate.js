@@ -110,6 +110,10 @@ applyOperate.applyAdd = function () {
 
 //修改用印申请
 applyOperate.applyUpdate = function () {
+    debugger
+    var useSealItemSecond=$("#useSealItemSecond").val();
+    var useSealItemFirst=$("#useSealItemFirst").val();
+
     //验证必填项是否为空
     var validNull = dataForm.validNullable();
     if(!validNull){
@@ -237,9 +241,6 @@ applyOperate.closeAndOpen = function (message) {
     layer.closeAll();
     layer.msg(message);
 };
-
-
-
 /*用印管理-事项弹框 */
 applyOperate.forItemInfo = function (){
     var url = "/bg/yyComprehensive/itemIndex";
@@ -252,8 +253,6 @@ applyOperate.forItemInfo = function (){
         content:url,
     });
 }
-
-
 //提交后的反馈
 /*关闭页面后弹出信息*/
 var apply = {};
