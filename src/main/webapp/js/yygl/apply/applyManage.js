@@ -120,10 +120,10 @@ apply.toUpdate = function () {
     //获取选中框
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        layer.msg('请选择要操作的数据');
+        layer.msg('请选择要修改的申请');
         return;
     }else if(checkedItems.length>1){
-        layer.msg('每次只能修改一条数据');
+        layer.msg('每次只能修改一条申请');
         return;
     }
     var checkedId = checkedItems[0].UUID;
@@ -154,7 +154,7 @@ apply.toUpdate = function () {
 apply.del = function () {
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        layer.msg('请选择要操作的数据');
+        layer.msg('请选择要操作的申请');
         return;
     }
     var checkedIds = "";
@@ -167,7 +167,7 @@ apply.del = function () {
     checkedIds = checkedIds.slice(0,checkedIds.length-1);
 
     layer.confirm('确定删除选中的申请吗?',{
-            btn:['确定','取消'],icon:0,title:'自动匹配'
+            btn:['确定','取消'],icon:0,title:'删除申请'
         },function () {
             $.ajax({
                 url: "/bg/yygl/apply/del?checkedContent="+checkedIds,
@@ -219,7 +219,7 @@ apply.submit = function () {
     //获取选中框
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        layer.msg('请选择要操作的数据');
+        layer.msg('请选择要操作的申请');
         return;
     }else if(checkedItems.length>5){
         layer.msg('最多同时提交五条申请');
@@ -264,16 +264,20 @@ apply.withdraw = function () {
     //获取选中框
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
-        layer.msg('请选择要操作的数据');
+        layer.msg('请选择要操作的申请');
         return;
     }else if(checkedItems.length>1){
-        layer.msg('每次只能撤回一条数据');
+        layer.msg('每次只能撤回一条申请');
         return;
     }
     var checkedId = checkedItems[0].UUID;
     var useSealStatus = checkedItems[0].USE_SEAL_STATUS_CODE;
     if(useSealStatus==='1' || useSealStatus==='2' || useSealStatus==='3'){
-        layer.msg("该数据未提交无需撤回");
+        layer.msg("该申请未提交无需撤回");
+        return;
+    }
+    if(useSealStatus==='9'){
+        layer.msg("该申请已确认用印，无法撤回操作");
         return;
     }
 

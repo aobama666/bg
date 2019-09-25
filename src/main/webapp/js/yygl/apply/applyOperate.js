@@ -4,7 +4,6 @@ var applyOperate = {};
 var dataItems = new Array();
 
 $(function () {
-    applyOperate.setDefaultValue();
 })
 
 

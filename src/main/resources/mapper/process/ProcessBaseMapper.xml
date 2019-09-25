@@ -95,6 +95,9 @@
           APPROVE_RESULT=#{approveResult},
           APPROVE_REMARK=#{approveRemark},
           AUDIT_FLAG=#{auditFlag},
+          <if test="toDoerIdS!=null and toDoerIdS!=''">
+            TODOER_ID=#{toDoerIdS},
+          </if>
           APPROVE_DATE=sysdate,
           UPDATE_USER=#{updateUser},
           UPDATE_TIME=sysdate
@@ -266,6 +269,12 @@
 
     <select id="getUserName" resultType="java.lang.String">
         select USERNAME from BG_SYS_USER where USERID = #{userId}
+    </select>
+
+    <select id="getExpandToDoer" resultType="java.lang.String">
+        SELECT TODOER_ID
+        FROM TB_WL_APPROVE_EXPAND
+        WHERE APPROVE_ID = #{approveId}
     </select>
 
 
