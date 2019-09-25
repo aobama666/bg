@@ -127,7 +127,26 @@ public class YyConfigurationController {
 		Logger.info("用印事项配置首页查询------结束");
 		return model;
 	}
-
+	/**
+	 * 配置管理--申请人事项配置无操作
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/configurationNoApprovalIndex")
+	public ModelAndView configurationNoApprovalIndex(HttpServletRequest res) {
+		Logger.info("用印事项配置首页查询-----开始");
+		Logger.info("------------------用印事项配置首页查询下拉选的查询------------------------");
+		List<Map<String, Object>> itemFirstList = applyService.getItemFirst();//用印事项一级
+		List<Map<String, Object>> nodeTypeList =yyComprehensiveService.selectForNodeType();//节点类型
+		List<Map<String, Object>> DeptApprovalList =yyConfigurationService.selectForDeptApproval();//部门信息
+		Logger.info("------------------用印事项配置首页查询下拉选的查询------------------------");
+		Map<String, Object> map = new HashMap<>();
+		map.put("itemFirstList", itemFirstList);//用印事项一级
+		map.put("nodeTypeList", nodeTypeList);//节点类型
+		map.put("DeptApprovalList", DeptApprovalList);//节点类型
+		ModelAndView model = new ModelAndView("yygl/configuration/yygl_configuration_noapproval", map);
+		Logger.info("用印事项配置首页查询------结束");
+		return model;
+	}
 	/**
 	 * 申请人配置的新增页面
 	 *
