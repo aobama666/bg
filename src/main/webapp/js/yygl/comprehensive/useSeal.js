@@ -54,7 +54,7 @@ roomList.initDataGrid = function(){
 		tablepage:$(".tablepage"),//分页组件
 		columns: [
 		  {name: '序号',style:{width:"50px"}, data: 'ROWNO'},
-		  {name: '选择',style:{width:"50px"}, data: 'applyId',  forMat:function(row){
+		  {name: '选择',style:{width:"50px"}, data: 'applyId', checkbox:true, forMat:function(row){
 			  dataItems[index] = row;//将一行数据放在一个list中
 			  return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.applyId)+'"/>';
 		 	}
