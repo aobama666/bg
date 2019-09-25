@@ -27,7 +27,7 @@
 <div class="main_div"></div>
 <!-- start    查询条件 -->
 
-	<div class='content_top' style="margin-bottom: 10px;line-height: 50px;">申请人配置</div>
+	<div class='content_top' style="margin-bottom: 10px;line-height: 50px;">审批人配置</div>
     <div class="contentBox">
 	<table class="approvalInfo tableStyle specialTable">
 		<tr>
@@ -67,9 +67,8 @@
 			<td   class="addInputStyle">
 				<div id="stuffTree" class="input-group organ">
 					<input   id="popStuffTree"       name="approveUserAlias"  type="text"   class = "validNull"    value="${approveUserAlias}"  content="员工姓名"   title="必填项  "   readonly />
-					<input  id="approveUserCode"   name="approveUserCode"  type="hidden"   class = "validNull"    content="员工姓名"        value="${approveUserCode}"     />
-					<input  id="approveUserId"   name="approveUserId"  type="hidden"   class = "validNull"      content="员工姓名"   value="${approveUserId}"      />
-					<span class="input-group-addon" style="height: 30px"><span class="glyphicon glyphicon-th-list"></span></span>
+					<input  id="approveUserCode"   name="approveUserCode"  type="hidden"   class = "validNull"    content="员工姓名code"        value="${approveUserCode}"     />
+				 	<span class="input-group-addon" style="height: 30px"><span class="glyphicon glyphicon-th-list"></span></span>
 				</div>
 			</td>
 		</tr>
