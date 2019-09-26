@@ -3,6 +3,7 @@ package com.sgcc.bg.yygl.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.ResultWarp;
+import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.HRUser;
 import com.sgcc.bg.process.service.ProcessService;
 import com.sgcc.bg.service.OrganStuffTreeService;
@@ -31,6 +32,8 @@ import java.util.*;
 public class YyMyItemController {
     private static Logger log = LoggerFactory.getLogger(YyMyItemController.class);
 
+    @Autowired
+    private WebUtils webUtils;
     @Autowired
     private YyMyItemService myItemService;
     @Autowired
@@ -172,6 +175,7 @@ public class YyMyItemController {
             //if业务部门，在本环节，增加待办人，发送对应待办
             processService.addApproveExpand(applyUuid,userId,auditTitle,auditUrl,loginUserId);
             result = "增加会签成功";
+            log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{}业务部门审批环节审批增加会签,待办人:{}",webUtils.getUsername(),userId);
         }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
             //if办公室，走流程，切换到业务部门会签环节，发送对应待办
             processService.processApprove(applyUuid,YyApplyConstant.PROCESS_CONDITION_BUSINESS
@@ -179,6 +183,7 @@ public class YyMyItemController {
             //修改本条申请状态
             yyApplyService.updateApplyStatus(applyUuid,YyApplyConstant.STATUS_DEAL_BUSINESS);
             result = "增加会签成功，切换到业务部门会签环节";
+            log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{}办公室审批环节审批增加会签,待办人:{}",webUtils.getUsername(),userId);
         }
         rw = new ResultWarp(ResultWarp.SUCCESS,result);
         return JSON.toJSONString(rw);
@@ -323,6 +328,7 @@ public class YyMyItemController {
             //修改当前申请状态为已退回
             yyApplyService.updateApplyStatus(applyId,YyApplyConstant.STATUS_RETURN);
         }
+        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{}退回申请,applyIds:{},意见:{}",applyIdS,approveRemark);
         ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"已拒绝当前申请");
         return JSON.toJSONString(rw);
     }
@@ -367,7 +373,7 @@ public class YyMyItemController {
         List<Map<String, Object>> list = organStuffTreeService.initUserTree(root);
 
         //格式化数据
-        List<Map<String, Object>> treelist = formatUserTreeData(list);
+        List<Map<String, Object>> treelist = formatUserTreeData(list,root);
 
         Map<String, Object> modelMap = new HashMap<String, Object>();
         modelMap.put("winName", winName);
@@ -387,7 +393,7 @@ public class YyMyItemController {
      * @param list
      * @return
      */
-    private List<Map<String, Object>> formatUserTreeData(List<Map<String, Object>> list) {
+    private List<Map<String, Object>> formatUserTreeData(List<Map<String, Object>> list,String root) {
         List<Map<String, Object>> treelist = new ArrayList<Map<String, Object>>();
         for(Map<String, Object> k: list){
             Map<String, Object> m = new HashMap<String, Object>();
@@ -398,7 +404,7 @@ public class YyMyItemController {
             m.put("organCode", k.get("id").toString());
             m.put("name", k.get("organName").toString());
             //当前节点是否展开
-            if(k.get("id").toString().equals("41000001")){
+            if(k.get("id").toString().equals(root)){
                 m.put("open", true);
             }
             else{
