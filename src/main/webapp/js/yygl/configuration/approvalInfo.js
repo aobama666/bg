@@ -132,13 +132,14 @@ approvalInfo.forItemInfo = function (){
     var url = "/bg/yyComprehensive/itemIndex";
     layer.open({
         type:2,
-        title:'<h4 style="height:42px;line-height:27px;">用印事项</h4>',
+        title:'<h4 style="height:42px;line-height:27px;font-size: 14px;">用印事项</h4>',
         area:['300px','350px'],
         fixed:false,//不固定
         maxmin:true,
         content:url,
     });
 }
+
 approvalInfo.onchangeForItemName = function () {
        var    approveNodeId= $("#approveNodeId").val();
        if(approveNodeId=="2"||approveNodeId=="4"){

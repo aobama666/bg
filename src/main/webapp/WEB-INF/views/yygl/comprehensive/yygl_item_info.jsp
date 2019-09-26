@@ -10,6 +10,8 @@
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
 	<title>用印事项</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/zTree/css/bootstrapStyle.css">
 	<link href="<%=request.getContextPath()%>/css/ztree/demo.css" rel="stylesheet" type="text/css">
 	<link href="<%=request.getContextPath()%>/css/ztree/zTreeStyle/zTreeStyle.css" rel="stylesheet" type="text/css">
 	<script src="<%=request.getContextPath()%>/js/ztree/jquery-1.4.4.min.js"></script>
