@@ -361,7 +361,7 @@ public class YyApplyServiceImpl implements YyApplyService {
     public String ifApproveIsNull(String applyUuid) {
         YyApplyDAO apply = yyApplyMapper.findApply(applyUuid);
         String itemSecondId = apply.getItemSecondId();
-        List<String> nodeDept = yyApplyMapper.getApproveUserId(YyApplyConstant.NODE_DEPT,null,null);
+        List<String> nodeDept = yyApplyMapper.getApproveUserId(YyApplyConstant.NODE_DEPT,apply.getApplyDeptId(),null);
         if(nodeDept.size()==0){
             return "未配置部门负责人，无法发起申请";
         }

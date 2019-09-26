@@ -219,7 +219,7 @@ public class YyApplyController {
     public String applyUpdate(@RequestBody YyApplyVo yyApplyVo){
         YyApply yyApply = yyApplyVo.toYyApply();
         //保存申请基本信息
-        String applyUuid = applyService.applyUpdate(yyApply);
+        applyService.applyUpdate(yyApply);
         //修改申请用印种类
         yyKindService.kindUpdate(yyApplyVo.getUuid(),yyApplyVo.getUseSealKindCode(),yyApplyVo.getElseKind());
         //反馈前台
@@ -265,8 +265,7 @@ public class YyApplyController {
         //业务部门负责人，办公室负责人-增加业务会签按钮
         String businessOrOffice = "0";
 
-        if(!useSealStatus.equals(YyApplyConstant.STATUS_DEAL_USER_SEAL)
-            && !useSealStatus.equals(YyApplyConstant.STATUS_USED_SEAL)
+        if(!useSealStatus.equals(YyApplyConstant.STATUS_USED_SEAL)
                 && !useSealStatus.equals(YyApplyConstant.STATUS_RETURN)
                     && !useSealStatus.equals(YyApplyConstant.STATUS_WITHDRAW)
             && !useSealStatus.equals(YyApplyConstant.STATUS_DEAL_SUB)

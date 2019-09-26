@@ -80,9 +80,6 @@ applyOperate.applyAdd = function () {
     layer.confirm('确认保存该数据吗',{
             btn:['确定','取消'],icon:0,title:'保存提示'
         },function () {
-            //只能保存一次
-            document.getElementById("applyAdd").setAttribute("disabled","disabled");
-
             $.ajax({
                 url: "/bg/yygl/apply/applyAdd",
                 type: "post",
@@ -92,7 +89,8 @@ applyOperate.applyAdd = function () {
                 success: function (data) {
                     if(data.success=="true"){
                         $("#uuid").attr("value",data.data.applyUuid);
-                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                        window.location.href = "/bg/yygl/apply/toApplyUpdate?checkedId="+data.data.applyUuid;
+                        layer.alert(data.msg,{icon:1,title:'信息提示'});//都跳到修改页面了还有啥提示，老实呆着吧，人家就是要添加完再去修改，你有什么办法。
                     }else{
                         layer.alert(data.msg,{icon:2,title:'信息提示'});
                         return;
@@ -147,25 +145,61 @@ applyOperate.applyUpdate = function () {
  * 提交——新增修改页面
  */
 applyOperate.toSubmit = function () {
+    //验证必填项是否为空
+    var validNull = dataForm.validNullable();
+    if(!validNull){
+        return;
+    }
+    //验证字符长度
+    var checkLength = dataForm.checkLength();
+    if(!checkLength){
+        return;
+    }
+
     //获取申请id
     var checkedIds = $("#uuid").val();
     if('' === checkedIds || undefined === checkedIds){
         layer.msg("请保存基本信息后再提交");
         return;
     }
-    var url = "/bg/yygl/apply/toApplySubmit?checkedIds="+checkedIds;
-    layer.open({
-        type:2,
-        title:'<h4 style="font-size: 18px;padding-top: 10px">选择下一环节审批人</h4>',
-        area:['40%','50%'],
-        fixed:false,//不固定
-        maxmin:true,
-        content:url,
-        end:function () {
-            //只能提交一次
-            document.getElementById("applySub").setAttribute("disabled","disabled");
+    //先保存，在验证该条申请能否提交，再去弹出提交窗口
+    //获取form表单内容
+    var paperDetailFormData = roomAddInfoCommon.getFormDataInfo();
+    $.ajax({
+        url: "/bg/yygl/apply/applyUpdate",
+        type: "post",
+        dataType:"json",
+        contentType: 'application/json',
+        data: JSON.stringify(paperDetailFormData),
+        success: function (data) {
+            if(data.success=="true"){
+                $.ajax({
+                    url: "/bg/yygl/apply/ifSubmit?checkedId="+checkedIds,
+                    type: "post",
+                    dataType:"json",
+                    success: function (data) {
+                        if(data.success=='true'){
+                            var url = "/bg/yygl/apply/toApplySubmit?checkedIds="+checkedIds;
+                            layer.open({
+                                type:2,
+                                title:'<h4 style="font-size: 18px;padding-top: 10px">选择下一环节审批人</h4>',
+                                area:['40%','50%'],
+                                fixed:false,//不固定
+                                maxmin:true,
+                                content:url,
+                                end: function () {
+                                    parent.layer.closeAll();
+                                }
+                            });
+                        }else{
+                            layer.msg(data.msg);
+                        }
+                    }
+                });
+            }
         }
     });
+
 
 }
 
