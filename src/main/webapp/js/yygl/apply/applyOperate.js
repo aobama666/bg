@@ -75,6 +75,13 @@ applyOperate.applyAdd = function () {
     if(!checkLength){
         return;
     }
+    //验证申请日期大于当前时间
+    var useSealDate = $("#useSealDate").val();
+    useSealDate = new Date(useSealDate+' 23:59:59');
+    if(useSealDate<new Date()){
+        layer.msg('申请日期不能早于当前时间');
+        return;
+    }
     //获取form表单内容
     var paperDetailFormData = roomAddInfoCommon.getFormDataInfo();
     layer.confirm('确认保存该数据吗',{
@@ -112,6 +119,13 @@ applyOperate.applyUpdate = function () {
     //验证字符长度
     var checkLength = dataForm.checkLength();
     if(!checkLength){
+        return;
+    }
+    //验证申请日期大于当前时间
+    var useSealDate = $("#useSealDate").val();
+    useSealDate = new Date(useSealDate+' 23:59:59');
+    if(useSealDate<new Date()){
+        layer.msg('申请日期不能早于当前时间');
         return;
     }
     //获取form表单内容
@@ -153,6 +167,13 @@ applyOperate.toSubmit = function () {
     //验证字符长度
     var checkLength = dataForm.checkLength();
     if(!checkLength){
+        return;
+    }
+    //验证申请日期大于当前时间
+    var useSealDate = $("#useSealDate").val();
+    useSealDate = new Date(useSealDate+' 23:59:59');
+    if(useSealDate<new Date()){
+        layer.msg('申请日期不能早于当前时间');
         return;
     }
 
