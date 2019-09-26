@@ -567,107 +567,141 @@ public class YyConfigurationController {
 			rw = new ResultWarp(ResultWarp.FAILED, "该一级事项下二级事项名称已经存在，请重新名称");
 			return JSON.toJSONString(rw);
 		}
-        Logger.info("用印模块-配置模块-二级用印事项配置的修改------开始：");
-        Logger.info("用印模块-配置模块-二级用印事项配置的删除接口---代码如下：");
-        Map.put("updateUser", userId);
-        Map.put("updateTime", new Date());
-        Map.put("valid", "0");
-        yyConfigurationService.deleteForItemSecondInfo(Map);
-        Logger.info("用印模块-配置模块-二级用印事项配置的删除接口---代码结束");
+		Logger.info("用印模块-配置模块-二级用印事项配置的修改------判断该修改一级事项二级事项是否改变");
+		Map<String, Object>  itemMap = new HashMap<String, Object>();
+		itemMap.put("itemFirst", itemFirst);
+		itemMap.put("itemSecondName", itemSecondName);
+		String   itemNum=yyConfigurationService.selectForMattersNum(itemMap);
+		Logger.info("用印模块-配置模块-二级用印事项配置的修改------开始：");
+		Logger.info("用印模块-配置模块-二级用印事项配置的删除接口---代码如下：");
+		Map.put("updateUser", userId);
+		Map.put("updateTime", new Date());
+		Map.put("valid", "0");
+		yyConfigurationService.deleteForItemSecondInfo(Map);
+		Logger.info("用印模块-配置模块-二级用印事项配置的删除接口---代码结束");
 
-        Logger.info("用印模块-配置模块-二级用印事项部门配置的删除接口---代码如下：");
-        Map<String, Object> deptMap = new HashMap<String, Object>();
-        deptMap.put("itemSecondId", secondCategoryId);
-        deptMap.put("valid", "0");
-        deptMap.put("updateUser", userId);
-        deptMap.put("updateTime", new Date());
-        yyConfigurationService.updateForItemSecondDeptInfo(deptMap);
-        Logger.info("用印模块-配置模块-二级用印事部门项配置的删除接口---代码结束");
+		Logger.info("用印模块-配置模块-二级用印事项部门配置的删除接口---代码如下：");
+		Map<String, Object> deptMap = new HashMap<String, Object>();
+		deptMap.put("itemSecondId", secondCategoryId);
+		deptMap.put("valid", "0");
+		deptMap.put("updateUser", userId);
+		deptMap.put("updateTime", new Date());
+		yyConfigurationService.updateForItemSecondDeptInfo(deptMap);
+		Logger.info("用印模块-配置模块-二级用印事部门项配置的删除接口---代码结束");
 
 
 
 
-        Logger.info("用印模块-配置模块-二级用印事项配置的新增接口---代码如下：");
-        Map<String, Object> newMap = new HashMap<String, Object>();
-        String uuid = Rtext.getUUID();
+		Logger.info("用印模块-配置模块-二级用印事项配置的新增接口---代码如下：");
+		Map<String, Object> newMap = new HashMap<String, Object>();
+		String uuid = Rtext.getUUID();
 		newMap.put("uuid", uuid);
 		newMap.put("itemSecondName", itemSecondName);
-        newMap.put("itemFirstId", itemFirst);
-        newMap.put("ifSign", ifsign);
-        newMap.put("ifLeaderApprove", ifLeaderApprove);
-        newMap.put("createUser", userId);
-        newMap.put("createTime", new Date());
-        newMap.put("updateUser", userId);
-        newMap.put("updateTime", new Date());
-        newMap.put("valid", "1");
-        String SortNumber = yyConfigurationService.selectForSecondMaxSortNumber(itemFirst);
-        Logger.info("用印模块-配置模块-二级用印事项配置的新增接口---代码结束");
-        int sortNumber = 0;
-        if (StringUtils.isEmpty(SortNumber)) {
-            sortNumber++;
-        } else {
-            sortNumber = Integer.parseInt(SortNumber);
-            sortNumber++;
-        }
-		newMap.put("sortNumber", sortNumber);
-        int res = yyConfigurationService.saveForItemSecondInfo(newMap);
-        Logger.info("用印模块-配置模块-二级用印事项配置的修改------新需求代码结束");
-		if (res != 1) {
-			rw = new ResultWarp(ResultWarp.FAILED, "修改失败");
+		newMap.put("itemFirstId", itemFirst);
+		newMap.put("ifSign", ifsign);
+		newMap.put("ifLeaderApprove", ifLeaderApprove);
+		newMap.put("createUser", userId);
+		newMap.put("createTime", new Date());
+		newMap.put("updateUser", userId);
+		newMap.put("updateTime", new Date());
+		newMap.put("valid", "1");
+		String SortNumber = yyConfigurationService.selectForSecondMaxSortNumber(itemFirst);
+		Logger.info("用印模块-配置模块-二级用印事项配置的新增接口---代码结束");
+		int sortNumber = 0;
+		if (StringUtils.isEmpty(SortNumber)) {
+			sortNumber++;
 		} else {
-			String[] strArr = deptId.split(",");
-			for (String deptIds : strArr) {
-				Map<String, Object> deptMaps = new HashMap<String, Object>();
-				String deptuuid = Rtext.getUUID();
-				deptMaps.put("uuid", deptuuid);
-				deptMaps.put("itemSecondId", uuid);
-				deptMaps.put("deptId", deptIds);
-				deptMaps.put("createUser", userId);
-				deptMaps.put("createTime", new Date());
-				deptMaps.put("updateUser", userId);
-				deptMaps.put("updateTime", new Date());
-				deptMaps.put("valid", "1");
-				yyConfigurationService.saveForItemSecondDeptInfo(deptMaps);
-                Map<String, Object> approvalMap = new HashMap<String, Object>();
-                approvalMap.put("itemFirstId", itemFirst);
-                approvalMap.put("itemSecondId", secondCategoryId);
-                approvalMap.put("approveDeptId", deptIds);
-                List<Map<String,Object>>  selectForApprovalList= yyConfigurationService.selectForApprovalId(approvalMap);
-                if(!selectForApprovalList.isEmpty()){
-                     for(Map<String,Object> ApprovalMap :selectForApprovalList){
-                         String approveuuid = Rtext.getUUID();
-                         ApprovalMap.put("uuid", approveuuid);
-                         ApprovalMap.put("itemSecondId", uuid);
-                         ApprovalMap.put("createUser", userId);
-                         ApprovalMap.put("createTime", new Date());
-                         ApprovalMap.put("updateUser", userId);
-                         ApprovalMap.put("updateTime", new Date());
-                         ApprovalMap.put("valid", "1");
-                         yyConfigurationService.saveForApprovalInfo(ApprovalMap);
-                     }
-                }
+			sortNumber = Integer.parseInt(SortNumber);
+			sortNumber++;
+		}
+		newMap.put("sortNumber", sortNumber);
+		int res = yyConfigurationService.saveForItemSecondInfo(newMap);
+
+        if(Integer.parseInt(itemNum)==0){
+			Logger.info("用印模块-配置模块-二级用印事项配置的修改------一级事项二级事项有改变----修改不需追加审批人信息");
+			if (res != 1) {
+				rw = new ResultWarp(ResultWarp.FAILED, "修改失败");
+			} else {
+				String[] strArr = deptId.split(",");
+				for (String deptIds : strArr) {
+					Map<String, Object> deptMaps = new HashMap<String, Object>();
+					String deptuuid = Rtext.getUUID();
+					deptMaps.put("uuid", deptuuid);
+					deptMaps.put("itemSecondId", uuid);
+					deptMaps.put("deptId", deptIds);
+					deptMaps.put("createUser", userId);
+					deptMaps.put("createTime", new Date());
+					deptMaps.put("updateUser", userId);
+					deptMaps.put("updateTime", new Date());
+					deptMaps.put("valid", "1");
+					yyConfigurationService.saveForItemSecondDeptInfo(deptMaps);
+				}
+				rw = new ResultWarp(ResultWarp.SUCCESS, "修改成功");
 			}
-            Logger.info("用印模块-配置模块-审批人的追加------新需求代码开始");
-            Map<String, Object> approvalMap = new HashMap<String, Object>();
-            approvalMap.put("itemFirstId", itemFirst);
-            approvalMap.put("itemSecondId", secondCategoryId);
-            List<Map<String,Object>>  selectForApprovalList= yyConfigurationService.selectForApprovalId(approvalMap);
-            if(!selectForApprovalList.isEmpty()){
-                for(Map<String,Object>    selectForApproval: selectForApprovalList){
-                    Object     approveId =selectForApproval.get("approveId");
-                    approvalMap.put("uuid",approveId);
-                    approvalMap.put("updateUser", userId);
-                    approvalMap.put("updateTime", new Date());
-                    approvalMap.put("valid",  "0");
-                    yyConfigurationService.deleteForApprovalInfo(approvalMap);
-                }
-            }
-            Logger.info("用印模块-配置模块-审批人的追加------新需求代码结束");
-			rw = new ResultWarp(ResultWarp.SUCCESS, "修改成功");
-		   }
+		}else{
+			Logger.info("用印模块-配置模块-二级用印事项配置的修改------一级事项二级事项无改变----修改需追加审批人信息");
+			if (res != 1) {
+				rw = new ResultWarp(ResultWarp.FAILED, "修改失败");
+			} else {
+				String[] strArr = deptId.split(",");
+				for (String deptIds : strArr) {
+					Map<String, Object> deptMaps = new HashMap<String, Object>();
+					String deptuuid = Rtext.getUUID();
+					deptMaps.put("uuid", deptuuid);
+					deptMaps.put("itemSecondId", uuid);
+					deptMaps.put("deptId", deptIds);
+					deptMaps.put("createUser", userId);
+					deptMaps.put("createTime", new Date());
+					deptMaps.put("updateUser", userId);
+					deptMaps.put("updateTime", new Date());
+					deptMaps.put("valid", "1");
+					yyConfigurationService.saveForItemSecondDeptInfo(deptMaps);
+
+					Logger.info("用印模块-配置模块-二级用印事项配置的修改------查询事项和部门下是否存在审批人信息---开始");
+					Map<String, Object> approvalMap = new HashMap<String, Object>();
+					approvalMap.put("itemFirstId", itemFirst);
+					approvalMap.put("itemSecondId", secondCategoryId);
+					approvalMap.put("approveDeptId", deptIds);
+					List<Map<String,Object>>  selectForApprovalList= yyConfigurationService.selectForApprovalId(approvalMap);
+					Logger.info("用印模块-配置模块-二级用印事项配置的修改------查询事项和部门下是否存在审批人信息---结束");
+					if(!selectForApprovalList.isEmpty()){
+						Logger.info("用印模块-配置模块-二级用印事项配置的修改------查询事项和部门下存在审批人信息---追加审批人到该用户下");
+						for(Map<String,Object> ApprovalMap :selectForApprovalList){
+							String approveuuid = Rtext.getUUID();
+							ApprovalMap.put("uuid", approveuuid);
+							ApprovalMap.put("itemSecondId", uuid);
+							ApprovalMap.put("createUser", userId);
+							ApprovalMap.put("createTime", new Date());
+							ApprovalMap.put("updateUser", userId);
+							ApprovalMap.put("updateTime", new Date());
+							ApprovalMap.put("valid", "1");
+							yyConfigurationService.saveForApprovalInfo(ApprovalMap);
+						}
+					}
+				}
+
+				rw = new ResultWarp(ResultWarp.SUCCESS, "修改成功");
+			}
+		}
+		Logger.info("用印模块-配置模块-审批人的追加结束------删除旧审批人信息---开始");
+		Map<String, Object> approvalMap = new HashMap<String, Object>();
+		approvalMap.put("itemFirstId", itemFirst);
+		approvalMap.put("itemSecondId", secondCategoryId);
+		List<Map<String,Object>>  selectForApprovalList= yyConfigurationService.selectForApprovalId(approvalMap);
+		if(!selectForApprovalList.isEmpty()){
+			for(Map<String,Object>    selectForApproval: selectForApprovalList){
+				Object     approveId =selectForApproval.get("approveId");
+				approvalMap.put("uuid",approveId);
+				approvalMap.put("updateUser", userId);
+				approvalMap.put("updateTime", new Date());
+				approvalMap.put("valid",  "0");
+				yyConfigurationService.deleteForApprovalInfo(approvalMap);
+			}
+		}
+		Logger.info("用印模块-配置模块-审批人的追加结束------删除旧审批人信息---结束");
 		Logger.info("用印模块-配置模块-二级用印事项配置的修改------返回值" + rw);
 		Logger.info("用印模块-配置模块-二级用印事项配置的修改------结束");
-			return JSON.toJSONString(rw);
+		return JSON.toJSONString(rw);
 		}
 
 	/**
