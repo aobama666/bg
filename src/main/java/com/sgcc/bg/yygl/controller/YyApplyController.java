@@ -269,17 +269,23 @@ public class YyApplyController {
                 && !useSealStatus.equals(YyApplyConstant.STATUS_RETURN)
                     && !useSealStatus.equals(YyApplyConstant.STATUS_WITHDRAW)
             && !useSealStatus.equals(YyApplyConstant.STATUS_DEAL_SUB)
+                && accessType.equals(YyApplyConstant.ACCESS_APPLY)
         ){//如果属于可撤回状态范围
                 if(loginUserId.equals(yyApplyDAO.getApplyUserId())){//如果当前登录人为申请人
                     applyUser = "1";
                 }
         }
-        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_USER_SEAL)){//如果是待确认用印状态
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_USER_SEAL)
+                && accessType.equals(YyApplyConstant.ACCESS_COMPLETE)
+                ){//如果是待确认用印状态
             if(applyService.ifUseSealAdmin(loginUserId)){//如果属于印章管理员
                 sealAdmin = "1";
             }
         }
-        if(!useSealStatus.equals(YyApplyConstant.STATUS_DEAL_USER_SEAL)){//印章管理员没有同意退回
+        if(!useSealStatus.equals(YyApplyConstant.STATUS_DEAL_USER_SEAL)
+                && (accessType.equals(YyApplyConstant.ACCESS_AUDIT)
+                    || accessType.equals(YyApplyConstant.ACCESS_ITEM)
+        )){//印章管理员没有同意退回
             if(applyService.ifApproveUser(yyApplyDAO.getUuid(),loginUserId)){//如果是当前环节的审批人
                 approveUser = "1";
                 if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)
@@ -365,7 +371,7 @@ public class YyApplyController {
     @ResponseBody
     @RequestMapping("/applySubmit")
     public String applySubmit(String checkedIds,String principalUser){
-        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{}提交申请,选中的申请:{},意见:{}",webUtils.getUsername(),checkedIds,principalUser);
+        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{}提交申请,选中的申请:{},待办人:{}",webUtils.getUsername(),checkedIds,principalUser);
         ResultWarp resultWarp = null;
         String msg = applyService.submit(checkedIds,principalUser);
         resultWarp = new ResultWarp(ResultWarp.SUCCESS,msg);

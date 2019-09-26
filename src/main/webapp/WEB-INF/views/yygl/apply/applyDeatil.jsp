@@ -32,10 +32,11 @@
     </style>
 </head>
 <body>
+<div style="padding-top: 20px"></div>
 <input type="hidden" value="${auditType}" id="auditType"/>
     <h3 style="float: left;margin-left: 3%;">申请编号:${yyApplyDAO.applyCode}</h3>
-<div class="tabbable active" style="text-align:right;width: 97%;padding-top: 5px;padding-bottom: 5px;">
-    <c:if test="${accessType == 0}">
+<div class="tabbable active" style="text-align:right;width: 97%;padding-bottom: 5px;">
+    <c:if test="${accessType != 1}">
         <button type="button" class="btn" onclick="returnClose()">返回</button>
     </c:if>
     <c:if test="${accessType == 1}">
@@ -55,7 +56,7 @@
         <button type="button" class="btn" onclick="detail.completeSeal()">确认用印</button>
     </c:if>
 </div>
-<table class="visitOperate tableStyle specialTable">
+<table class="visitOperate tableStyle specialTable" style="padding-top: 20px">
     <tr>
         <td style="width: 10%">
             <span title = "用印部门"><b class="mustWrite">*</b>用印部门</span>
@@ -128,7 +129,7 @@
 
 
 <div class="mingliao" style="margin-left: 3%;width: 94%;">
-    <h3>审批流程</h3>
+    <h3 style="padding-top: 10px;padding-bottom: 10px">审批流程</h3>
     <table class="liuchengTable" >
         <tr>
             <td>
@@ -228,7 +229,7 @@
         </c:forEach>
     </table>
 </div>
-
+<div style="padding-top: 20px"></div>
 </body>
 <!-- 本页面所需的js -->
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>

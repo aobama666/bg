@@ -53,7 +53,7 @@ myItem.initDataGrid = function(){
  * 用印申请详情弹窗
  */
 myItem.toDeatil = function (applyUuid) {
-    var url = "/bg/yygl/apply/toApplyDetail?accessType=0&applyUuid="+applyUuid;
+    var url = "/bg/yygl/apply/toApplyDetail?accessType=2&applyUuid="+applyUuid;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请详情</h4>',
