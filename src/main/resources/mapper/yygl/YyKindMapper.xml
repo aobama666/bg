@@ -46,6 +46,7 @@
         where valid ='1'
         and apply_id = #{applyUuid}
         and use_seal_kind_code is null
+        and USE_SEAL_VALUE is not null
     </select>
 
 </mapper>

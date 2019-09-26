@@ -126,7 +126,10 @@ public class YyKindServiceImpl implements YyKindService {
     @Override
     public String getKindCode(String applyUuid) {
         List<Integer> getKindCode = yyKindMapper.getKindCode(applyUuid);
-        String kindCodeStr = getKindCode.get(0)+"";
+        String kindCodeStr = "";
+        if(0 != getKindCode.size()){
+            kindCodeStr = getKindCode.get(0)+"";
+        }
         for(int i = 1;i<getKindCode.size();i++){
             kindCodeStr = kindCodeStr+","+getKindCode.get(i);
         }

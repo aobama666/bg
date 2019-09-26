@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -152,7 +154,7 @@ public class ProcessServiceImpl implements ProcessService {
             String approveExpandId = pbMapper.getExpandId(approveId,approveUserId);
             //修改对应扩展表信息
             pbMapper.updateApproveExpand(ProcessBaseConstant.RESULT_AGREE,approveRemark,ProcessBaseConstant.AUDIT_FLAG_NO
-                    ,approveUserId,approveId,approveUserId);
+                    ,approveUserId,approveId,approveUserId,toDoerId);
             //完成当前待办信息
             completeUpcoming(applyId,approveExpandId,ProcessBaseConstant.PRECESS_EXPAND,approveUserId);
             //判断本环节审批其他人员是否审批通过
@@ -160,6 +162,9 @@ public class ProcessServiceImpl implements ProcessService {
             if(!ifExpandAllApprove){
                 //最后一个审批通过的人触发对审批表的操作,如果没有全部审批通过，本环节结束，下面的流程就不用走了
                 return false;
+            }else{
+                //如果都走完了，获取当前审批id下的所有扩展信息对应的下一环节待办人，修改对应的toDoerId
+                toDoerId = getToDoerIds(approveId);
             }
         }
 
@@ -251,7 +256,7 @@ public class ProcessServiceImpl implements ProcessService {
         if(if_expand){
             //修改当前人员对应状态
             pbMapper.updateApproveExpand(ProcessBaseConstant.RESULT_REFUSE,approveRemark
-                    ,ProcessBaseConstant.AUDIT_FLAG_NO,approveUserId,approveId,approveUserId);
+                    ,ProcessBaseConstant.AUDIT_FLAG_NO,approveUserId,approveId,approveUserId,null);
             //根据审批id和审批用户获取对应扩展id
             String approveExpandId = pbMapper.getExpandId(approveId,approveUserId);
             //完成当前待办
@@ -297,6 +302,16 @@ public class ProcessServiceImpl implements ProcessService {
             // 除此之外的本审批id对应的待办用户置为无效状态,避免其他用户显示已办消息
             pbMapper.updateAuditUserForUser(approveId,approveUserId);
         }
+
+        //下一环节规则信息
+        PbRule ruleNext = pbMapper.selectRuleForId(pbRule.getNextNodeId());
+        //修改当前申请状态
+        PbApply applyUpdate = new PbApply();
+        applyUpdate.setId(applyId);
+        applyUpdate.setApproveId(approveIdAdd);
+        applyUpdate.setApplyStatus(ruleNext.getNode());
+        applyUpdate.setUpdateUser(approveUserId);
+        pbMapper.updateApply(applyUpdate);
         return true;
     }
 
@@ -566,5 +581,27 @@ public class ProcessServiceImpl implements ProcessService {
         Integer approveStep = Integer.valueOf(maxStep);
         approveStep = approveStep + 1;
         return String.valueOf(approveStep);
+    }
+
+    /**
+     * 共有方法————根据审批id，获取对应扩展表中所有的下一环节待办人
+     */
+    public String getToDoerIds(String approveId){
+        StringBuilder toDoerSb = new StringBuilder();
+        HashSet<String> toDoerSet = new HashSet<>();
+        List<String> expandToDoerList = pbMapper.getExpandToDoer(approveId);
+        String[] toDoerStr;
+        for (String expandTodoer : expandToDoerList){
+            toDoerStr = expandTodoer.split(",");
+            for(String toDoerId : toDoerStr){
+                toDoerSet.add(toDoerId);
+            }
+        }
+        for (String id : toDoerSet){
+            toDoerSb.append(id);
+            toDoerSb.append(",");
+        }
+        toDoerSb.deleteCharAt(toDoerSb.length()-1);//去掉最后一个逗号
+        return toDoerSb.toString();
     }
 }

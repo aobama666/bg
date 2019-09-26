@@ -219,7 +219,7 @@ public class YyApplyController {
     public String applyUpdate(@RequestBody YyApplyVo yyApplyVo){
         YyApply yyApply = yyApplyVo.toYyApply();
         //保存申请基本信息
-        String applyUuid = applyService.applyUpdate(yyApply);
+        applyService.applyUpdate(yyApply);
         //修改申请用印种类
         yyKindService.kindUpdate(yyApplyVo.getUuid(),yyApplyVo.getUseSealKindCode(),yyApplyVo.getElseKind());
         //反馈前台
@@ -234,6 +234,9 @@ public class YyApplyController {
      */
     @RequestMapping("/toApplyDetail")
     public ModelAndView toApplyDetail(String applyUuid,String accessType,HttpServletRequest request){
+        //统一系统待办跳转处理
+        String type = request.getParameter("type")==null?null:request.getParameter("type").toString();
+
         //用印基本信息
         YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
         //当前登陆人
@@ -262,8 +265,7 @@ public class YyApplyController {
         //业务部门负责人，办公室负责人-增加业务会签按钮
         String businessOrOffice = "0";
 
-        if(!useSealStatus.equals(YyApplyConstant.STATUS_DEAL_USER_SEAL)
-            && !useSealStatus.equals(YyApplyConstant.STATUS_USED_SEAL)
+        if(!useSealStatus.equals(YyApplyConstant.STATUS_USED_SEAL)
                 && !useSealStatus.equals(YyApplyConstant.STATUS_RETURN)
                     && !useSealStatus.equals(YyApplyConstant.STATUS_WITHDRAW)
             && !useSealStatus.equals(YyApplyConstant.STATUS_DEAL_SUB)
@@ -286,8 +288,7 @@ public class YyApplyController {
                 }
             }
         }
-        //同意待办跳转处理
-        String type = request.getParameter("type")==null?null:request.getParameter("type").toString();
+
 
         ModelAndView mv = new ModelAndView("yygl/apply/applyDeatil");
         mv.addObject("yyApplyDAO",yyApplyDAO);
@@ -334,6 +335,23 @@ public class YyApplyController {
 
 
     /**
+     * 判断对应事项审批人是否正常配置，能否正常进行提交操作
+     */
+    @ResponseBody
+    @RequestMapping("/ifSubmit")
+    public String ifSubmit(String checkedId){
+        ResultWarp resultWarp = null;
+        String ifApproveIsNull = applyService.ifApproveIsNull(checkedId);
+        if(null != ifApproveIsNull){
+            resultWarp = new ResultWarp(ResultWarp.FAILED,ifApproveIsNull);
+            return JSON.toJSONString(resultWarp);
+        }
+        resultWarp = new ResultWarp(ResultWarp.SUCCESS,"success");
+        return JSON.toJSONString(resultWarp);
+    }
+
+
+    /**
      * 提交申请选择下一环节审批人
      */
     @RequestMapping("/toApplySubmit")
@@ -349,15 +367,14 @@ public class YyApplyController {
     }
 
 
-
     /**
      * 提交申请
      */
     @ResponseBody
     @RequestMapping("/applySubmit")
     public String applySubmit(String checkedIds,String principalUser){
-        String msg = applyService.submit(checkedIds,principalUser);
         ResultWarp resultWarp = null;
+        String msg = applyService.submit(checkedIds,principalUser);
         resultWarp = new ResultWarp(ResultWarp.SUCCESS,msg);
         return JSON.toJSONString(resultWarp);
     }

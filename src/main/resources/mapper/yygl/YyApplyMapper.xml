@@ -440,4 +440,17 @@
         ORDER BY F.APPROVE_STEP
     </select>
 
+    <select id="getApproveUserId" resultType="java.lang.String">
+        SELECT STAFF_ID
+        FROM BG_YY_APPROVE
+        WHERE NODE_TYPE = #{nodeTYpe}
+        <if test="deptId!=null and deptId!=''">
+            AND DEPT_ID = #{deptId}
+        </if>
+        <if test="itemSecondId!=null and itemSecondId!=''">
+            AND ITEM_SECOND_ID = #{itemSecondId}
+        </if>
+        AND VALID = '1'
+    </select>
+
 </mapper>

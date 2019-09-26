@@ -102,7 +102,8 @@ public interface ProcessBaseMapper {
             @Param("auditFlag") String auditFlag,
             @Param("updateUser") String updateUser,
             @Param("approveId") String approveId,
-            @Param("approveUser") String approveUser
+            @Param("approveUser") String approveUser,
+            @Param("toDoerIdS") String toDoerIdS
     );
 
     //查询对应审批id的所有扩展信息是否待办，也就是是否审批
@@ -119,7 +120,10 @@ public interface ProcessBaseMapper {
     Integer updateUndoneApproveExpand(@Param("approveId") String approveId
             ,@Param("updateUser") String updateUser);
 
+    //查询扩展表中，某个审批id其下对应的所有下一环节审批人
+    List<String> getExpandToDoer(@Param("approveId") String approveId);
 
-    //根据userid获取门户账号
+
+    //根据userid获取门户账号,针对待办的所有操作，用户id都需要换成门户账号
     String getUserName(@Param("userId") String userId);
 }

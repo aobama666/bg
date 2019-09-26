@@ -118,4 +118,9 @@ public interface YyApplyService {
      * 打印预览信息
      */
     List<Map<String,Object>> printPreview(String businessId);
+
+    /**
+     * 当前申请哪个环节的审批人没有配置
+     */
+    String ifApproveIsNull(String applyUuid);
 }

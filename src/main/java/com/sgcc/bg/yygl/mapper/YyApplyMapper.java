@@ -134,5 +134,13 @@ public interface YyApplyMapper {
      */
     List<Map<String,Object>> printPreview(@Param("businessId") String businessId);
 
+    /**
+     *  对应事项对应部门对应节点的审批人
+     */
+    List<String> getApproveUserId(
+            @Param("nodeTYpe") String nodeTYpe,
+            @Param("deptId") String deptId,
+            @Param("itemSecondId") String itemSecondId
+    );
 
 }
