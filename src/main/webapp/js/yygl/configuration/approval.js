@@ -51,7 +51,7 @@ roomList.initDataGrid = function(){
 
 		columns: [
             {name: '序号',style:{width:"50px"}, data: 'ROWNO'},
-            {name: '选择',style:{width:"25px"}, data: 'approveId',  forMat:function(row){
+            {name: '选择',style:{width:"50px"}, data: 'approveId',  forMat:function(row){
                     dataItems[index] = row;//将一行数据放在一个list中
                     return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.approveId)+'"/>';
                 }
@@ -97,7 +97,7 @@ roomList.forItemInfo = function (){
     var url = "/bg/yyComprehensive/itemIndex";
     layer.open({
         type:2,
-        title:'<h4 style="height:42px;line-height:27px;">用印事项</h4>',
+        title:'<h4 style="  height: 42px;line-height: 26px;border-bottom: 1px solid #eee;font-size: 14px;color: #333;overflow: hidden;background-color: #F8F8F8;border-radius: 2px 2px 0 0;">用印事项</h4>',
         area:['300px','350px'],
         fixed:false,//不固定
         maxmin:true,
