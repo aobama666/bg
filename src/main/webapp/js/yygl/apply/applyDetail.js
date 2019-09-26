@@ -27,7 +27,7 @@ detail.withdraw = function () {
 //同意
 detail.agree = function () {
     var applyUuid = $("#uuid").val();
-    var url = "/bg/yygl/my_item/toAgree?checkedId="+applyUuid;
+    var url = "/bg/yygl/my_item/toAgree?checkedIds="+applyUuid;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">同意并填写审批意见</h4>',
@@ -44,7 +44,7 @@ detail.agree = function () {
 //退回=拒绝
 detail.refuse = function () {
     var applyUuid = $("#uuid").val();
-    var url = "/bg/yygl/my_item/toSendBack?checkedId="+applyUuid;
+    var url = "/bg/yygl/my_item/toSendBack?checkedIds="+applyUuid;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">退回并填写审批意见</h4>',

@@ -190,9 +190,10 @@ public class YyMyItemController {
      * 跳转同意选择下一个审批人页面
      */
     @RequestMapping("/toAgree")
-    public ModelAndView toAgree(String checkedId){
+    public ModelAndView toAgree(String checkedIds){
+        String[] checkedStr = checkedIds.split(",");
         //获取审批状态，获取下一环节待办人内容
-        YyApplyDAO apply = yyApplyService.applyDeatil(checkedId);
+        YyApplyDAO apply = yyApplyService.applyDeatil(checkedStr[0]);
         String useSealStatus = apply.getUseSealStatus();
         List<Map<String,Object>> nextApprove;
         String deptNum = "";//部门数量
@@ -250,7 +251,7 @@ public class YyMyItemController {
         mvMap.put("nowDate",nowDate);
         mvMap.put("approveUser",approveUser);
         mvMap.put("deptNum",deptNum);
-        mvMap.put("applyUuid",checkedId);
+        mvMap.put("applyUuid",checkedIds);
         mvMap.put("useSealAdmin",useSealAdmin);
         mvMap.put("ifDeptEqual",ifDeptEqual);
         ModelAndView mv = new ModelAndView("yygl/myItem/agree",mvMap);
@@ -264,92 +265,13 @@ public class YyMyItemController {
      */
     @ResponseBody
     @RequestMapping("/agree")
-    public String agree(String applyUuid,String toDoerId,String approveOpinion,String ifDeptEqual){
-        //当前用印申请状态
-        YyApplyDAO apply = yyApplyService.applyDeatil(applyUuid);
-        //待办标题
-        StringBuilder sbTitle = new StringBuilder();
-        sbTitle.append("【用印申请】");
-        sbTitle.append(apply.getApplyDept());
-        sbTitle.append(apply.getApplyUser());
-        sbTitle.append(apply.getApplyCode());
-        String auditTitle = sbTitle.toString();
-        //待办链接
-        String auditUrl = YyApplyConstant.AUDIT_URL+applyUuid;
-        String approveUserId = yyApplyService.getLoginUserUUID();
-
-        String useSealStatus = apply.getUseSealStatus();
-        //下一环节状态
-        String useSealStatusUpdate = "";
-        //下一环节
-        String condition = null;
-        //是否发送待办
-        String sendAudit = YyApplyConstant.SEND_AUDIT_YES;
-        //审批流程执行结果
-        boolean processResult;
-
-        //跳过业务部门参数准备
-        if(ifDeptEqual.equals("1")){
-            toDoerId = approveUserId+","+toDoerId;
+    public String agree(String applyUuidS,String toDoerId,String approveOpinion,String ifDeptEqual){
+        String[] applyUuidStr = applyUuidS.split(",");
+        for(String applyUuid : applyUuidStr){
+            //批量同意——相同状态、事项、审批人、待办人、意见
+            log.info("同意审批，申请id:{},待办人:{},审批意见:{},是否部门相同:{}",applyUuid,toDoerId,approveOpinion,ifDeptEqual);
+            myItemService.agree(applyUuid,toDoerId,approveOpinion,ifDeptEqual);
         }
-        String newToDoerId = toDoerId;
-        if(ifDeptEqual.equals("2")){
-            toDoerId = approveUserId;
-        }
-
-        // 根据当前状态，设定每个环节对应的参数
-        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_DEPT)){
-            useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_BUSINESS;
-        }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
-            useSealStatusUpdate =YyApplyConstant.STATUS_DEAL_OFFICE;
-        }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
-            //如果属于待办公室审批,判断是否需要院领导批准
-            if(myItemService.ifLeaderApprove(apply.getItemSecondId())){//需要
-                condition = YyApplyConstant.PROCESS_CONDITION_LEADER;
-                useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_LEADER;
-            }else{
-                //不需要，走印章管理员，不发待办，待办人为当前环节下所有印章管理员
-                condition = YyApplyConstant.PROCESS_CONDITION_ADMIN;
-                useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_USER_SEAL;
-                sendAudit = YyApplyConstant.SEND_AUDIT_NO;
-                toDoerId = myItemService.getSealAdmin();
-            }
-        }else if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_LEADER)){
-            //走印章管理员，不发待办，待办人为当前环节下所有印章管理员
-            useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_USER_SEAL;
-            sendAudit = YyApplyConstant.SEND_AUDIT_NO;
-            toDoerId = myItemService.getSealAdmin();
-        }
-
-        //执行审批操作
-        processResult = processService.processApprove(applyUuid,condition,approveOpinion,approveUserId
-                    ,toDoerId,auditTitle,auditUrl,sendAudit);
-
-        //如果流程正常到下一环节，修改当前审批状态
-        if(processResult){
-            yyApplyService.updateApplyStatus(applyUuid,useSealStatusUpdate);
-        }
-
-
-        //申请环节跳过业务部门审批环节
-        if(ifDeptEqual.equals("2")){
-            //撤销待办
-            processService.cancelUpcomingForUserId(apply.getUuid(),approveUserId);
-            //执行正常流程
-            processService.processApprove(applyUuid,null,"系统默认同意",approveUserId
-                    ,newToDoerId,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_YES);
-            //修改申请状态
-            yyApplyService.updateApplyStatus(applyUuid,YyApplyConstant.STATUS_DEAL_OFFICE);
-        }
-        //申请部门与业务部门，只有其中一个相同
-        if(ifDeptEqual.equals("1")){
-            //撤销当前人员待办
-            processService.cancelUpcomingForUserId(apply.getUuid(),approveUserId);
-            //完成当前系统默认审批
-            processService.processApprove(applyUuid,null,"系统默认同意",approveUserId
-                    ,approveUserId,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_YES);
-        }
-
         ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"审批完成");
         return JSON.toJSONString(rw);
     }
@@ -361,9 +283,10 @@ public class YyMyItemController {
      */
     @ResponseBody
     @RequestMapping("/toSendBack")
-    public ModelAndView toSendBack(String checkedId){
+    public ModelAndView toSendBack(String checkedIds){
+        String[] checkedStr = checkedIds.split(",");
         //根据所选择申请查询退回人信息
-        YyApplyDAO apply = yyApplyService.applyDeatil(checkedId);
+        YyApplyDAO apply = yyApplyService.applyDeatil(checkedStr[0]);
         Date date = new Date();
         SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String nowDate = sd.format(date);
@@ -379,7 +302,7 @@ public class YyMyItemController {
         mvMap.put("applyUserName",approveUser.getUserAlias());
         mvMap.put("loginUserName",loginUser.getUserAlias());
         mvMap.put("nowDate",nowDate);
-        mvMap.put("applyId",checkedId);
+        mvMap.put("applyId",checkedIds);
         ModelAndView mv = new ModelAndView("yygl/myItem/sendBack",mvMap);
         return mv;
     }
@@ -391,12 +314,15 @@ public class YyMyItemController {
      */
     @ResponseBody
     @RequestMapping("/sendBack")
-    public String sendBack(String applyId,String approveRemark){
+    public String sendBack(String applyIdS,String approveRemark){
+        String[] applyIdStr = applyIdS.split(",");
         String loginUserId = yyApplyService.getLoginUserUUID();
-        //走审批退回操作
-        processService.refuse(applyId,approveRemark,loginUserId);
-        //修改当前申请状态为已退回
-        yyApplyService.updateApplyStatus(applyId,YyApplyConstant.STATUS_RETURN);
+        for(String applyId: applyIdStr){
+            //走审批退回操作
+            processService.refuse(applyId,approveRemark,loginUserId);
+            //修改当前申请状态为已退回
+            yyApplyService.updateApplyStatus(applyId,YyApplyConstant.STATUS_RETURN);
+        }
         ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"已拒绝当前申请");
         return JSON.toJSONString(rw);
     }

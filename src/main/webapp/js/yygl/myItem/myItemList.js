@@ -114,17 +114,25 @@ myItem.toAddSign = function () {
 弹框转到——同意选择下一个审批人
  */
 myItem.toAgree = function () {
-    //获取选中框
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
         layer.msg('请选择要操作的数据');
         return;
-    }else if(checkedItems.length>1){
-        layer.msg('每次只能审批一条数据');
+    }else if(checkedItems.length>5){
+        layer.msg('最多批量操作5条数据');
         return;
     }
-    var checkedId = checkedItems[0].uuid;
-    var url = "/bg/yygl/my_item/toAgree?checkedId="+checkedId;
+    //获取选中框
+    var checkedIds = "";
+    if(checkedItems.length>0) {
+        for (var i = 0; i < checkedItems.length; i++) {
+            checkedIds += checkedItems[i].uuid + ",";
+        }
+    }
+    checkedIds = checkedIds.slice(0,checkedIds.length-1);
+
+    // var checkedId = checkedItems[0].uuid;
+    var url = "/bg/yygl/my_item/toAgree?checkedIds="+checkedIds;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">同意并填写审批意见</h4>',
@@ -143,17 +151,23 @@ myItem.toAgree = function () {
 弹框转到——退回选择下一个审批人
  */
 myItem.toSendBack = function () {
-    //获取选中框
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
         layer.msg('请选择要操作的数据');
         return;
-    }else if(checkedItems.length>1){
-        layer.msg('每次只能审批一条数据');
+    }else if(checkedItems.length>5){
+        layer.msg('最多批量操作5条数据');
         return;
     }
-    var checkedId = checkedItems[0].uuid;
-    var url = "/bg/yygl/my_item/toSendBack?checkedId="+checkedId;
+    //获取选中框
+    var checkedIds = "";
+    if(checkedItems.length>0) {
+        for (var i = 0; i < checkedItems.length; i++) {
+            checkedIds += checkedItems[i].uuid + ",";
+        }
+    }
+    checkedIds = checkedIds.slice(0,checkedIds.length-1);
+    var url = "/bg/yygl/my_item/toSendBack?checkedIds="+checkedIds;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">退回并填写审批意见</h4>',

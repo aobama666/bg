@@ -33,7 +33,7 @@ approve.agree =function () {
     $.ajax({
         url: "/bg/yygl/my_item/agree",
         type: "post",
-        data: {"applyUuid":applyUuid,"approveOpinion":approveOpinion,"toDoerId":toDoerId,'ifDeptEqual':ifDeptEqual},
+        data: {"applyUuidS":applyUuid,"approveOpinion":approveOpinion,"toDoerId":toDoerId,'ifDeptEqual':ifDeptEqual},
         success: function (data) {
             parent.myItem.closeAndOpen(data.msg);
         }
@@ -54,7 +54,7 @@ approve.sendBack = function () {
     $.ajax({
         url: "/bg/yygl/my_item/sendBack",
         type: "post",
-        data: {"applyId":applyId,"approveRemark":approveRemark},
+        data: {"applyIdS":applyId,"approveRemark":approveRemark},
         success: function (data) {
             parent.myItem.closeAndOpen(data.msg);
         }

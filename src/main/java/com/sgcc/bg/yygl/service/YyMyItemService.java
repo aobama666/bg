@@ -25,7 +25,7 @@ public interface YyMyItemService {
     /**
      * 同意
      */
-    String agree();
+    String agree(String applyUuid,String toDoerId,String approveOpinion,String ifDeptEqual);
 
     /**
      * 同意，下一环节审批人信息，业务部门
@@ -36,11 +36,6 @@ public interface YyMyItemService {
      * 同意，下一环节审批人信息，其他环节
      */
     List<Map<String,Object>> nextApprove(YyApplyDAO yyApplyDAO);
-
-    /**
-     * 退回
-     */
-    String sendBack();
 
     /**
      * 获取下拉框内容，部门选项
