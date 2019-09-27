@@ -141,9 +141,9 @@ applyOperate.applyUpdate = function () {
                 data: JSON.stringify(paperDetailFormData),
                 success: function (data) {
                     if(data.success=="true"){
-                        layer.alert(data.msg,{icon:1,title:'信息提示'});
+                        layer.msg(data.msg);
                     }else{
-                        layer.alert(data.msg,{icon:2,title:'信息提示'});
+                        layer.msg(data.msg);
                         return;
                     }
                 }

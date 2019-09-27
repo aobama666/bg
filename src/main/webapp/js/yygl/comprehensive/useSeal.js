@@ -130,7 +130,10 @@ roomList.forDetails = function (applyUuid) {
         area:['85%','85%'],
         fixed:false,//不固定
         maxmin:true,
-        content:url
+        content:url,
+		end: function () {
+            roomList.query();
+        }
     });
 }
 

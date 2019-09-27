@@ -9,17 +9,27 @@ var approve = {};
 approve.agree =function () {
     var useSealAdmin = $("#useSealAdmin").val();
     var ifDeptEqual = $("#ifDeptEqual").val();
+    var deptNum = $("#deptNum").val();
     var toDoerId = '';
 
     if(useSealAdmin!=='2'){//如果需要待办人
-        var deptNum = $("#deptNum").val();
         var toDoerId = $("input[name='staffId1']:checked").val();
+        if(toDoerId === undefined || toDoerId===''){
+            layer.msg('请选择下一环节审批人,每部门必须选一人');
+            return;
+        }
 
         if(deptNum>1){//如果需要选择多部门
             var i =2;
+            var staffId = '';
             for(i;i<=deptNum;i++){
+                debugger
                 var snapName = 'staffId'+i;
-                var staffId = $("input[name='"+snapName+"']:checked").val();
+                staffId = $("input[name='"+snapName+"']:checked").val();
+                if(staffId === undefined || staffId===''){
+                    layer.msg('请选择下一环节审批人,每部门必须选一人');
+                    return;
+                }
                 toDoerId = toDoerId+','+staffId;
             }
         }

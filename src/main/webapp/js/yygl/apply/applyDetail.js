@@ -17,8 +17,8 @@ detail.withdraw = function () {
             type: "post",
             dataType:"json",
             success: function (data) {
-                layer.msg(data.msg);
-                window.location.reload();
+                layer.msg(data.msg);//这个提示显示不了了，测试让关闭页面刷新父级页面了
+                parent.window.location.reload();
             }
         });
     })
@@ -84,7 +84,7 @@ detail.completeSeal = function () {
         type:2,
         title:'<h4 style="height:42px;line-height:25px;">确认用印</h4>',
         area:['600px','240px'],
-        content:url,
+        content:url
     });
 }
 

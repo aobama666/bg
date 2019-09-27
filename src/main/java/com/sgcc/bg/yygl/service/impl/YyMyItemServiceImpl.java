@@ -145,7 +145,7 @@ public class YyMyItemServiceImpl implements YyMyItemService{
             processService.cancelUpcomingForUserId(apply.getUuid(),approveUserId);
             //完成当前系统默认审批
             processService.processApprove(applyUuid,null,"系统默认同意",approveUserId
-                    ,approveUserId,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_YES);
+                    ,null,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_YES);
         }
         return "审批完成";
     }
