@@ -142,17 +142,46 @@ public class BGServiceImpl implements IBGService {
 			if(empList.size()==0){
 				return "目前项目下不存在参与人员，请添加人员后启动。";//没有人员
 			}
+			//负责人负责的时间总和
+			long sumDate = 0 ;
 			int count=0;
+			String[] startDate = new String[empList.size()];
+			String[] endDate = new String[empList.size()];
 			for (Map<String, String> emp : empList) {
 				if("1".equals(emp.get("ROLE"))){
+					startDate[count] = emp.get("START_DATE");
+					endDate[count] = emp.get("END_DATE");
 					count++;
+					sumDate += DateUtil.getDaySub(emp.get("START_DATE"),emp.get("END_DATE"));
+					sumDate++;
 				}
 			}
 			if(count==0){
 				return "目前项目下不存在负责人，请添加负责人后启动。";//存在人员但无负责人
-			}else if(count>1){
+			}/*else if(count>1){
 				return "目前项目下存在多个负责人，指定一名负责人。";//负责人重复
+			}*/
+
+			for(int i=1;i<startDate.length;i++){
+				if(startDate[i] != null && startDate[i] != "") {
+					if (DateUtil.getFormatDate(startDate[i], "yyyy-MM-dd").getTime() < DateUtil.getFormatDate(endDate[i - 1], "yyyy-MM-dd").getTime()) {
+						return "项目负责人多个，日期交叉";
+					}
+				}
 			}
+
+			Map<String ,String> map = bgMapper.getProjectsInfo(proId);
+			if(map!=null){
+				long infoDate = DateUtil.getDaySub(map.get("startDate"),map.get("endDate"))+1;
+				if(sumDate>infoDate){
+					//return "项目负责人参与时间不能晚于项目周期";
+					return "负责人参与累计时间大于项目时间";
+				}
+				if(sumDate<infoDate){
+					return "负责人参与累计时间小于项目时间";
+				}
+			}
+
 		}else if("pause".equals(operation)){
 			proStatus="2";
 		}else if("finish".equals(operation)){
@@ -222,11 +251,13 @@ public class BGServiceImpl implements IBGService {
 			Map<String,String> dictMap = new HashMap<>();
 			dictMap.put("技术服务项目" , "JS");
 			dictMap.put("其他" , "QT");
+			//获取级别
+			Map<String,String> rank=dict.getDictDataByPcode("project_rank");
 			
 			wbsCodeSet.addAll(list);
 			bgServiceLog.info("项目信息excel表格最后一行： " + rows);
 			/* 保存有效的Excel模版列数 */
-			String[] cellValue = new String[10];
+			String[] cellValue = new String[11];
 			for (int i = 1; i <=rows; i++) {// 从第2行开始是正式数据
 				// 获取正式数据并封装进cellValue数组中
 				StringBuffer checkStr = new StringBuffer();
@@ -259,13 +290,22 @@ public class BGServiceImpl implements IBGService {
 						errorInfo.append("项目名称不能超过50字！ ");
 						errorNum.add(1);
 					}
+
+					//项目级别验证
+                    if(cellValue[2]==null || "".equals(cellValue[2])){
+					    errorInfo.append("项目级别不能为空！ ");
+					    errorNum.add(2);
+                    }else if (cellValue[2].length()>20){
+					    errorInfo.append("项目级别不能超过20个字！ ");
+                    }
+
 					// 项目分类校验 必填
-					if (cellValue[2] == null || "".equals(cellValue[2])) {
+					if (cellValue[3] == null || "".equals(cellValue[3])) {
 						errorInfo.append("项目类型不能为空！ ");
-						errorNum.add(2);
-					}else if(!dictMap.containsKey(cellValue[2])){
+						errorNum.add(3);
+					}else if(!dictMap.containsKey(cellValue[3])){
 						errorInfo.append("无此项目类型！ ");
-						errorNum.add(2);
+						errorNum.add(3);
 					}
 					
 					/*if(!"技术服务项目".equals(cellValue[2])){
@@ -282,77 +322,77 @@ public class BGServiceImpl implements IBGService {
 						}
 					}*/
 					//校验wbs编号，当为科研或横向时必填，如果填了，则校验唯一
-					if (("科研项目".equals(cellValue[2]) || "横向项目".equals(cellValue[2]))
-							&& Rtext.isEmpty(cellValue[3])) {
+					if (("科研项目".equals(cellValue[3]) || "横向项目".equals(cellValue[3]))
+							&& Rtext.isEmpty(cellValue[4])) {
 						errorInfo.append("wbs编号不能为空！ ");
-						errorNum.add(3);
-					}else if(!Rtext.isEmpty(cellValue[3]) && cellValue[3].length()>50){
+						errorNum.add(4);
+					}else if(!Rtext.isEmpty(cellValue[4]) && cellValue[4].length()>50){
 						errorInfo.append("wbs编号不能超过50字！ ");
-						errorNum.add(3);
-					}else if (!Rtext.isEmpty(cellValue[3]) && !repeatChecker.add(cellValue[3])) {
+						errorNum.add(4);
+					}else if (!Rtext.isEmpty(cellValue[4]) && !repeatChecker.add(cellValue[4])) {
 						errorInfo.append("wbs编号重复！ ");
-						errorNum.add(3);
-					}else if(!Rtext.isEmpty(cellValue[3]) && wbsCodeSet.contains(cellValue[3])){
+						errorNum.add(4);
+					}else if(!Rtext.isEmpty(cellValue[4]) && wbsCodeSet.contains(cellValue[4])){
 						errorInfo.append("系统中已经存此wbs编号！ ");
-						errorNum.add(3);
+						errorNum.add(4);
 					}
 				
 					// 项目说明长度200以内
-					if (cellValue[4].length() > 200) {
+					if (cellValue[5].length() > 200) {
 						errorInfo.append("项目说明不能超过200字！ ");
-						errorNum.add(4);
-					}
-					// 发布日期 必填;格式
-					if (cellValue[5] == null || "".equals(cellValue[5])) {
-						errorInfo.append("项目开始日期不能为空！ ");
-						errorNum.add(5);
-					} else if (!DateUtil.isValidDate(cellValue[5], "yyyy-MM-dd")) {
-						errorInfo.append("项目开始日期填写有误！ ");
 						errorNum.add(5);
 					}
 					// 发布日期 必填;格式
 					if (cellValue[6] == null || "".equals(cellValue[6])) {
-						errorInfo.append("项目结束日期不能为空！ ");
+						errorInfo.append("项目开始日期不能为空！ ");
 						errorNum.add(6);
 					} else if (!DateUtil.isValidDate(cellValue[6], "yyyy-MM-dd")) {
-						errorInfo.append("项目结束日期填写有误！ ");
+						errorInfo.append("项目开始日期填写有误！ ");
 						errorNum.add(6);
 					}
+					// 发布日期 必填;格式
+					if (cellValue[7] == null || "".equals(cellValue[7])) {
+						errorInfo.append("项目结束日期不能为空！ ");
+						errorNum.add(7);
+					} else if (!DateUtil.isValidDate(cellValue[7], "yyyy-MM-dd")) {
+						errorInfo.append("项目结束日期填写有误！ ");
+						errorNum.add(7);
+					}
 					//如果日期均正确 ，则验证技术服务项目是否跨年
-					if(!errorNum.contains(5) && !errorNum.contains(6)){
+					if(!errorNum.contains(6) && !errorNum.contains(7)){
 						//如果日期均正确 ，则验证技术服务项目是否跨年
-						if("技术服务项目".equals(cellValue[2])){
-							if(!(cellValue[5].substring(0,4)).equals(cellValue[6].substring(0,4))){
+						if("技术服务项目".equals(cellValue[3])){
+							if(!(cellValue[6].substring(0,4)).equals(cellValue[7].substring(0,4))){
 								errorInfo.append("技术服务项目不能跨年！ ");
-								errorNum.add(5);
 								errorNum.add(6);
+								errorNum.add(7);
 							}
 						}
 						//验证日期是否符合先后逻辑顺序
-						if(DateUtil.fomatDate(cellValue[6]).getTime()<=DateUtil.fomatDate(cellValue[5]).getTime()){
+						if(DateUtil.fomatDate(cellValue[7]).getTime()<=DateUtil.fomatDate(cellValue[6]).getTime()){
 							errorInfo.append("项目结束日期必须大于项目开始日期！ ");
-							errorNum.add(6);
+							errorNum.add(7);
 						}
 					}
 					// 组织信息 技术服务项目为必填项(如果不填则默认登录人所在处室)
-					if("技术服务项目".equals(cellValue[2])){
-						if(!Rtext.isEmpty(cellValue[7])){
-							if(Rtext.isEmpty(getDeptIdByDeptCode(cellValue[7]))){
+					if("技术服务项目".equals(cellValue[3])){
+						if(!Rtext.isEmpty(cellValue[8])){
+							if(Rtext.isEmpty(getDeptIdByDeptCode(cellValue[8]))){
 								errorInfo.append("组织信息填写错误！ "); 
-								errorNum.add(7);
+								errorNum.add(8);
 							}
 						}
 					}
 					// 计划投入工时 必填;数字
-					if (cellValue[8] == null || "".equals(cellValue[8])) {
+					if (cellValue[9] == null || "".equals(cellValue[9])) {
 						errorInfo.append("计划投入工时不能为空！ ");
-						errorNum.add(8);
-					} else if (!cellValue[8].matches(regex)) {
+						errorNum.add(9);
+					} else if (!cellValue[9].matches(regex)) {
 						errorInfo.append("计划投入工时填写有误！ ");
-						errorNum.add(8);
-					} else if (cellValue[8].length() > 8) {
+						errorNum.add(9);
+					} else if (cellValue[9].length() > 8) {
 						errorInfo.append("计划投入工时不能超过8位数！ ");
-						errorNum.add(8);
+						errorNum.add(9);
 					}
 					// 是否分解
 					/*if (cellValue[9] == null || "".equals(cellValue[9])) {
@@ -377,24 +417,25 @@ public class BGServiceImpl implements IBGService {
 							String value = entry.getValue();
 							if(cellValue[2].equals(value)) pro.setCategory(key);
 						}*/
-						pro.setCategory(dictMap.get(cellValue[2]));
-						pro.setWBSNumber(cellValue[3]);
-						pro.setProjectIntroduce(cellValue[4]);
-						pro.setStartDate(DateUtil.fomatDate(cellValue[5]));
-						pro.setEndDate(DateUtil.fomatDate(cellValue[6]));
+						pro.setProjectGrade(rank.get(cellValue[2]));
+						pro.setCategory(dictMap.get(cellValue[3]));
+						pro.setWBSNumber(cellValue[4]);
+						pro.setProjectIntroduce(cellValue[5]);
+						pro.setStartDate(DateUtil.fomatDate(cellValue[6]));
+						pro.setEndDate(DateUtil.fomatDate(cellValue[7]));
 						
-						if("技术服务项目".equals(cellValue[2])){
+						if("技术服务项目".equals(cellValue[3])){
 							String OrganDeptId="";
-							if(Rtext.isEmpty(cellValue[7])){
+							if(Rtext.isEmpty(cellValue[8])){
 								CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(currentUsername);
 								String deptCode=currentUser==null?"":currentUser.getDeptCode();
 								OrganDeptId=getDeptIdByDeptCode(deptCode);
 							}else{
-								OrganDeptId=getDeptIdByDeptCode(cellValue[7]);
+								OrganDeptId=getDeptIdByDeptCode(cellValue[8]);
 							}
 							pro.setOrganInfo(OrganDeptId);
 						}
-						pro.setPlanHours(Integer.parseInt(cellValue[8]));
+						pro.setPlanHours(Integer.parseInt(cellValue[9]));
 						/*String decompose ="";
 						if("否".equals(cellValue[9])){
 							decompose="0";
@@ -415,13 +456,14 @@ public class BGServiceImpl implements IBGService {
 						ProjectInfoVali prov = new ProjectInfoVali();
 						prov.setSqnum(cellValue[0]);
 						prov.setProjectName(cellValue[1]);
-						prov.setCategory(cellValue[2]);
-						prov.setWBSNumber(cellValue[3]);
-						prov.setProjectIntroduce(cellValue[4]);
-						prov.setStartDate(cellValue[5]);
-						prov.setEndDate(cellValue[6]);
-						prov.setOrganInfo(cellValue[7]);
-						prov.setPlanHours(cellValue[8]);
+						prov.setProjectGrade(cellValue[2]);
+						prov.setCategory(cellValue[3]);
+						prov.setWBSNumber(cellValue[4]);
+						prov.setProjectIntroduce(cellValue[5]);
+						prov.setStartDate(cellValue[6]);
+						prov.setEndDate(cellValue[7]);
+						prov.setOrganInfo(cellValue[8]);
+						prov.setPlanHours(cellValue[9]);
 						//prov.setDecompose(cellValue[9]);
 						prov.setErrorInfo(errorInfo.toString());
 						prov.setErrSet(errorNum);
@@ -436,7 +478,8 @@ public class BGServiceImpl implements IBGService {
 				// 生成错误信息文件
 				Object[][] title = { 
 						{ "序号\r\n（选填）", "sqnum","nowrap" }, 
-						{ "项目名称\r\n（必填，50字以内）", "projectName","nowrap" }, 
+						{ "项目名称\r\n（必填，50字以内）", "projectName","nowrap" },
+                        { "项目级别\r\n(必填，20字以内)","projectGrade","nowrap"},
 						{ "项目类型\r\n（必填）", "category" ,"nowrap"},
 						{ "WBS编号\r\n（项目类型为科研项目、横向项目时必填）", "WBSNumber" ,"nowrap"}, 
 						{ "项目说明\r\n（200字以内）","projectIntroduce"},
@@ -490,6 +533,8 @@ public class BGServiceImpl implements IBGService {
 		String errorUUID = "";
 		//累加负责人角色数目
 		Map<String,Integer> roleMap=new HashMap<>();
+		//存放项目id
+		Set<String> setId = new HashSet<String>();
 		try{
 			POIFSFileSystem fs = null;
 			HSSFSheet sheet;
@@ -664,7 +709,7 @@ public class BGServiceImpl implements IBGService {
 					}else if(!roleStr.contains("["+cellValue[6]+"]")){
 						errorInfo.append("不存在此角色！  ");
 						errorNum.add(6);
-					}else if(!Rtext.isEmpty(proId)){//项目存在
+					}/*else if(!Rtext.isEmpty(proId)){//项目存在
 						//获取map中指定项目的项目负责人数量
 						int currentValue=roleMap.get(proId);
 						if("项目负责人".equals(cellValue[6])){
@@ -674,9 +719,9 @@ public class BGServiceImpl implements IBGService {
 								errorNum.add(6);
 							}
 						}
-					}
+					}*/
 					
-					//校验项目中负责人只能存在一条
+
 					if(!Rtext.isEmpty(proId) && !errorNum.contains(3) && !errorNum.contains(6)){//项目存在，此人存在且角色存在并不冲突
 						//获取当前项目中人员信息
 						List<Map<String, String>> empList=bgMapper.getProUsersByProId(proId);
@@ -685,6 +730,8 @@ public class BGServiceImpl implements IBGService {
 								Map<String,String> map=new HashMap<>();
 								map.put("ROLE",po.getRole());
 								map.put("HRCODE",po.getHrcode());
+								map.put("startDate",DateUtil.dateToStr(po.getStartDate()));
+								map.put("endDate", DateUtil.dateToStr(po.getEndDate()));
 								empList.add(map);
 							}
 						}
@@ -698,14 +745,56 @@ public class BGServiceImpl implements IBGService {
 							}
 						}else{//此人存在且为参与人时，项目中此人如果已经作为负责人，则不允许添加
 							for (Map<String, String> map : empList) {
-								if(cellValue[3].equals(map.get("HRCODE")) && "1".equals(map.get("ROLE"))){
+								/*if(cellValue[3].equals(map.get("HRCODE")) && "1".equals(map.get("ROLE"))){
 									errorInfo.append("此人为当前项目负责人，请勿重复添加！  ");
 									errorNum.add(6);
 									break;
+								}*/
+								if(cellValue[3].equals(map.get("HRCODE"))) {
+									if (DateUtil.fomatDate(cellValue[4]).getTime() > DateUtil.fomatDate(map.get("endDate")).getTime() ||
+											DateUtil.fomatDate(cellValue[5]).getTime() < DateUtil.fomatDate(map.get("startDate")).getTime()) {
+										//日期不重叠
+									} else {
+										errorInfo.append("此人" + user.getUserAlias() + "日期(" + map.get("startDate") + "至" + map.get("endDate") + ")重叠! ");
+										errorNum.add(4);
+										errorNum.add(5);
+										break;
+									}
 								}
 							}
 						}
 					}
+
+					//验证项目负责人 负责的时间段是否有交叉
+					//取出该项目所有负责人的开始时间和结束时间
+					//与已存在参与人"+user.getUserAlias()+"日期("+dateMap.get("startDate")+"至"+dateMap.get("endDate")+")重叠!
+					if( ("项目负责人").equals(cellValue[6]) && !Rtext.isEmpty(cellValue[4]) && !Rtext.isEmpty(cellValue[5])
+							&& !errorNum.contains(4) && !errorNum.contains(5)){
+						List<Map<String, String>> listPrincipalDate = bgMapper.listPrincipalDate(proId);
+						for (ProjectUserPo po : userList) {
+							if(po.getProjectId().equals(proId)){
+								Map<String,String> map=new HashMap<>();
+								map.put("startDate",DateUtil.dateToStr(po.getStartDate()));
+								map.put("endDate", DateUtil.dateToStr(po.getEndDate()));
+								map.put("role",po.getRole());
+								map.put("empName",po.getEmpName());
+								listPrincipalDate.add(map);
+							}
+						}
+						//验证负责人时间是否重叠和 负责人时间是否贯穿整个项目
+						for (Map<String, String> principalDateMap : listPrincipalDate) {
+							if (DateUtil.fomatDate(cellValue[4]).getTime() > DateUtil.fomatDate(principalDateMap.get("endDate")).getTime() ||
+									DateUtil.fomatDate(cellValue[5]).getTime() < DateUtil.fomatDate(principalDateMap.get("startDate")).getTime()) {
+								//日期不重叠
+							} else {
+								//errorInfo.append("与项目负责人" + principalDateMap.get("empName") + "日期(" + principalDateMap.get("startDate") + "至" + principalDateMap.get("endDate") + ")重叠! ");
+								errorInfo.append("与项目负责人" + cellValue[3] + "日期(" + cellValue[4] + "至" + cellValue[5] + ")重叠! ");
+								errorNum.add(4);
+								errorNum.add(5);
+							}
+						}
+					}
+
 
 					if(!Rtext.isEmpty(cellValue[7]) && cellValue[7].length()>200){
 						errorInfo.append("工作任务超过200字！  ");
@@ -737,13 +826,17 @@ public class BGServiceImpl implements IBGService {
 							proUser.setRole("0");
 						}
 						proUser.setTask(cellValue[7]);
-						proUser.setPlanHours(Double.parseDouble(cellValue[8]));
+						if(null!=cellValue[8]&&cellValue[8]!="") {
+							proUser.setPlanHours(Double.parseDouble(cellValue[8]));
+						}
 						proUser.setStatus("1");
 						proUser.setCreateDate(new Date());
 						proUser.setUpdateDate(new Date());
 						proUser.setCreateUser(webUtils.getUsername());
 						proUser.setUpdateUser(webUtils.getUsername());
 						proUser.setSrc("1");
+						proUser.setSqnum(cellValue[0]);
+						setId.add(proId);
 						userList.add(proUser);
 					} else {// 未通过校验
 						ProjectUserVali pruv = new ProjectUserVali();
@@ -761,8 +854,100 @@ public class BGServiceImpl implements IBGService {
 						errorList.add(pruv);
 					}
 				}
-				
 			}
+
+			//验证负责人是否负责整个项目周期
+			//存放正确导入的人员信息
+			List<ProjectUserPo> projectUserPoList = new ArrayList<>();
+			List<Map<String, String>> listPrincipal = new ArrayList<>();
+			for(String set : setId){
+				for(ProjectUserPo po : userList) {
+					if ((set).equals(po.getProjectId()) && ("1").equals(po.getRole())) {
+						projectUserPoList.add(po);
+					}
+				}
+				long sumDate = 0;
+				StringBuffer errorInfo = new StringBuffer();
+				Set<Integer> errorNum = new HashSet<Integer>();
+				//导入数据
+				for(ProjectUserPo up :projectUserPoList){
+					if(("1").equals(up.getRole())){
+						sumDate += DateUtil.getDaySub(DateUtil.dateToStr(up.getStartDate()),DateUtil.dateToStr(up.getEndDate()));
+						sumDate++;
+					}
+				}
+				//原来已经保存的数据
+				listPrincipal = bgMapper.listPrincipalDate(String.valueOf(set));
+				for(Map<String,String> map : listPrincipal){
+					sumDate += DateUtil.getDaySub(map.get("startDate"),map.get("endDate"));
+					sumDate++;
+				}
+				//查项目周期时间
+				Map<String ,String> map = bgMapper.getProjectsInfo(String.valueOf(set));
+
+				if(map!=null){
+					long infoDate = DateUtil.getDaySub(map.get("startDate"),map.get("endDate"))+1;
+					if(sumDate>infoDate){
+						errorInfo.append("项目编号为"+map.get("projectNumber")+"负责人时间晚于项目周期");
+						errorNum.add(4);
+						errorNum.add(5);
+						for(ProjectUserPo up :projectUserPoList){
+							userList.remove(up);
+
+							ProjectUserVali pruv = new ProjectUserVali();
+							pruv.setSqnum(up.getSqnum());
+							pruv.setProjectNumber(map.get("projectNumber"));
+							pruv.setEmpName(up.getEmpName());
+							pruv.setHrcode(up.getHrcode());
+							pruv.setStartDate(DateUtil.dateToStr(up.getStartDate()));
+							pruv.setEndDate(DateUtil.dateToStr(up.getEndDate()));
+							if(up.getRole().equals("1")){
+								pruv.setRole("项目负责人");
+							}else {
+								pruv.setRole("项目参与人");
+							}
+							if(null != up.getPlanHours()) {
+								pruv.setPlanHours(String.valueOf(up.getPlanHours()));
+							}
+							pruv.setTask(up.getTask());
+							pruv.setErrorInfo(errorInfo.toString());
+							pruv.setErrSet(errorNum);
+							errorList.add(pruv);
+						}
+					}
+					if(sumDate<infoDate){
+						errorInfo.append("项目编号为"+map.get("projectNumber")+"负责人时间早于项目周期");
+						errorNum.add(4);
+						errorNum.add(5);
+						for(ProjectUserPo up :projectUserPoList){
+							userList.remove(up);
+
+							ProjectUserVali pruv = new ProjectUserVali();
+							pruv.setSqnum(up.getSqnum());
+							pruv.setProjectNumber(map.get("projectNumber"));
+							pruv.setEmpName(up.getEmpName());
+							pruv.setHrcode(up.getHrcode());
+							pruv.setStartDate(DateUtil.dateToStr(up.getStartDate()));
+							pruv.setEndDate(DateUtil.dateToStr(up.getEndDate()));
+							pruv.setRole(up.getRole());
+							if(up.getRole().equals("1")){
+								pruv.setRole("项目负责人");
+							}else {
+								pruv.setRole("项目参与人");
+							}
+							if(null != up.getPlanHours()) {
+								pruv.setPlanHours(String.valueOf(up.getPlanHours()));
+							}
+							pruv.setTask(up.getTask());
+							pruv.setErrorInfo(errorInfo.toString());
+							pruv.setErrSet(errorNum);
+							errorList.add(pruv);
+						}
+					}
+				}
+			}
+
+
 			// 返回错误数据
 			if (errorList.size() > 0) {
 				bgServiceLog.info("出错的项目： " + errorList);
@@ -859,7 +1044,7 @@ public class BGServiceImpl implements IBGService {
 		Object[][] title = { 
 							 { "项目编号", "projectNumber","nowrap" },
 							 { "WBS编号", "WBSNumber","nowrap" },
-							 { "项目名称", "projectName","nowrap" }, 
+							 { "项目名称", "projectName","nowrap" },
 							 { "项目说明","projectIntroduce"},
 							 { "项目类型", "category","nowrap" },
 							 { "项目开始时间","startDate","nowrap"}, 
@@ -1006,11 +1191,11 @@ public class BGServiceImpl implements IBGService {
 		for (Map<String, String> stuffMap : list) {
 			Iterator<Map<String, String>> iterator= workerList.iterator();
 			while(iterator.hasNext()){
-				Map<String, String> workerMap=iterator.next();
-				if(stuffMap.get("hrcode").equals(workerMap.get("HRCODE"))
-						&& DateUtil.compareDate(workerMap.get("WORK_TIME") , stuffMap.get("startDate"))
-						&& DateUtil.compareDate(stuffMap.get("endDate") , workerMap.get("WORK_TIME"))){
-					bgServiceLog.info("updateStuff ：删除成功"+stuffMap.get("hrcode"));
+			Map<String, String> workerMap=iterator.next();
+				if (stuffMap.get("hrcode").equals(workerMap.get("HRCODE"))
+						&& DateUtil.compareDate(workerMap.get("WORK_TIME_BEGIN"), stuffMap.get("startDate"))
+						&& DateUtil.compareDate(stuffMap.get("endDate"), workerMap.get("WORK_TIME_END"))) {
+					bgServiceLog.info("updateStuff ：删除成功" + stuffMap.get("hrcode"));
 					iterator.remove();
 				}
 			}
@@ -1133,6 +1318,7 @@ public class BGServiceImpl implements IBGService {
 		String startDateStr=Rtext.toStringTrim(request.getParameter("startDate"),"");
 		String endDateStr=Rtext.toStringTrim(request.getParameter("endDate"),"");
 		String planHoursStr=Rtext.toStringTrim(request.getParameter("planHours"),"");
+		String projectGrade=Rtext.toStringTrim(request.getParameter("projectGrade"),"");
 		//项目编号后台生成
 		if(projectNumber.indexOf("BG")==-1){//如果不存在项目编号
 			projectNumber = getBGNumber();
@@ -1142,10 +1328,11 @@ public class BGServiceImpl implements IBGService {
 				|| Rtext.isEmpty(category)
 				|| Rtext.isEmpty(startDateStr) 
 				|| Rtext.isEmpty(endDateStr) 
-				|| Rtext.isEmpty(planHoursStr)){
+				|| Rtext.isEmpty(planHoursStr)
+				|| Rtext.isEmpty(projectGrade)){
 			bgServiceLog.info("bgController 项目必填参数存在空值："+"projectName:"+projectName+"/"+"category:"+category+"/"+
 					"startDateStr:"+startDateStr+"/"+"endDateStr:"+endDateStr+"/"+
-					"planHoursStr:"+planHoursStr);
+					"planHoursStr:"+planHoursStr+"/"+"projectGrade"+projectGrade);
 			resultMap.put("result", "fail");
 			return JSON.toJSONString(resultMap);
 		}
@@ -1158,6 +1345,11 @@ public class BGServiceImpl implements IBGService {
 		if("JS".equals(category) && Rtext.isEmpty(deptCode)){
 			bgServiceLog.info("技术服务项目，组织信息为必填项");
 			resultMap.put("result", "fail");
+			return JSON.toJSONString(resultMap);
+		}
+		if(projectGrade.length()>20){
+			bgServiceLog.info("项目级别超过20个字");
+			resultMap.put("result","fail");
 			return JSON.toJSONString(resultMap);
 		}
 		if(projectName.length()>50){
@@ -1202,6 +1394,7 @@ public class BGServiceImpl implements IBGService {
 		pro.setProjectIntroduce(projectIntroduce);
 		pro.setStartDate(startDate);
 		pro.setEndDate(endDate);
+		pro.setProjectGrade(projectGrade);
 		if("JS".equals(category)){//当为技术服务项目时才保存或更新组织信息
 			pro.setOrganInfo(getDeptIdByDeptCode(deptCode));
 		}

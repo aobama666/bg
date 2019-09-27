@@ -20,7 +20,7 @@
 	  from bg_interface_bsp t
 	  LEFT JOIN bg_sys_user u
 	    ON u.HRCODE = t.emp_code
-	     LEFT JOIN bg_sys_user A
+	  LEFT JOIN bg_sys_user A
     	ON A.HRCODE = t.project_leader
 	 where 1 = 1		
 		<if test="year!=null and year!='' and year!=0">

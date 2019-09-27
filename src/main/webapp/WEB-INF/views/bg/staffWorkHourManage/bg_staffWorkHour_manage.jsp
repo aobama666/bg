@@ -45,6 +45,8 @@
 	src="<%=request.getContextPath()%>/common/plugins/bootstrap-datepicker-master/dist/js/bootstrap-datepicker.js"></script>
 <script type="text/javascript"
 	src="<%=request.getContextPath()%>/common/plugins/common.js"></script>
+<script type="text/javascript"
+	src="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/locales/bootstrap-datepicker.zh-CN.min.js"></script>
 <%-- 
 [if lt IE 9>
 	<script src="<%=request.getContextPath()%>/common/plugins/html5shiv/html5shiv.min.js"></script>
@@ -95,7 +97,7 @@
 				style="width: 100%; padding-left: 10px">
 				<div class="form-group col-xs-4" style="margin-bottom:0;">
 					<label>查询日期：</label>
-					<div class="controls">
+					<%--<div class="controls">
 						<div class="input-group date form_date bg-white">
 							<input name="startDate" property="startDate"  readonly="true" placeholder='开始时间'>
 							<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
@@ -104,6 +106,22 @@
 						<div class="input-group date form_date bg-white">
 							<input name="endDate" property="endDate"  readonly="true" placeholder='结束时间'>
 							<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+						</div>
+					</div>--%>
+
+					<div class="controls"  data-date-format="yyyy-mm">
+						<div class="input-group date form_date bg-white" id="dateTime">
+							<input  name="startDate" property="startDate" type="text" class="form-control form_datetime_2 input-sm bg-white" placeholder='开始时间' readonly/>
+							<span class="input-group-addon">
+							<span class="glyphicon glyphicon-calendar"></span>
+						</span>
+						</div>
+						<div class="floatLeft">-</div>
+						<div class="input-group date form_date bg-white" id="dateTimeEnd">
+							<input  name="endDate" property="endDate" type="text" class="form-control form_datetime_2 input-sm bg-white" placeholder='结束时间' readonly />
+							<span class="input-group-addon">
+							<span class="glyphicon glyphicon-calendar"></span>
+						</span>
 						</div>
 					</div>
 				</div>
@@ -176,13 +194,57 @@
 var mmg;
 var pn = 1;
 var limit = 30;
+
+var date = new Date();
+var startYear = date.getFullYear();
+var startMonth=date.getMonth()+1>=10?(date.getMonth()+1):"0"+(date.getMonth()+1);
+var endMonth=date.getMonth()+2>=10?(date.getMonth()+2):"0"+(date.getMonth()+2);
+var endYear = startYear;
+if(endMonth==13){
+    yearEnd = parseInt(startYear)+1;
+    endMonth="0"+1;
+}
+var start = startYear+"-"+startMonth;
+var end = endYear+"-"+endMonth;
+$("input[name=startDate]").val(start);
+$("input[name=endDate]").val(start);
+
+function Timeinit() {
+    // 时间初始化
+    $("#dateTime").datepicker({
+        startView: 'months',  //起始选择范围
+        maxViewMode:'years', //最大选择范围
+        minViewMode:'months', //最小选择范围
+        todayHighlight : true,// 当前时间高亮显示
+        autoclose : 'true',// 选择时间后弹框自动消失
+        format : 'yyyy-mm',// 时间格式
+        language : 'zh-CN',// 汉化
+        //todayBtn:"linked",//显示今天 按钮
+        //clearBtn : true,// 清除按钮，和今天 按钮只能显示一个
+    });
+    $("#dateTimeEnd").datepicker({
+        startView: 'months',  //起始选择范围
+        maxViewMode:'years', //最大选择范围
+        minViewMode:'months', //最小选择范围
+        todayHighlight : true,// 当前时间高亮显示
+        autoclose : 'true',// 选择时间后弹框自动消失
+        format : 'yyyy-mm',// 时间格式
+        language : 'zh-CN',// 汉化
+        //todayBtn:"linked",//显示今天 按钮
+        //clearBtn : true,// 清除按钮，和今天 按钮只能显示一个
+    });
+    $("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',limit:'yes',level:'2',checkType:'radio'});
+}
+
+
 $(function(){
-	init();
+	//init();
+    Timeinit();
 	queryList();
 	
 });
 
-function init(){
+/*function init(){
 	$("input[name=startDate]").val(common.getWeek(0));
 	$("input[name=endDate]").val(common.getWeek(-6));
 	$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',limit:'yes',level:'2',checkType:'radio'});
@@ -195,8 +257,18 @@ function init(){
 		todayHighlight:true
 	});
 	//$(".form_date").datepicker( 'setDates' , new Date() );
-}
+}*/
+
+
 function forSearch(){
+
+    var startDate = $("input[name=startDate]").val();
+    var endDate = $("input[name=endDate]").val();
+    if(startDate>endDate){
+        layer.msg("查询时间范围：开始时间晚于结束时间！");
+        return;
+    }
+
 	pn = 1;
 	queryList("reload");
 }
@@ -206,7 +278,9 @@ function queryList(load){
 	var cols = [
 				{title:'ID', name:'ID', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 				{title:'APPROVER_USERNAME', name:'APPROVER_USERNAME', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},
+	            //{title:'日期', name:'WORK_TIME', width:100, sortable:false, align:'center'},
+	            {title:'开始日期', name:'WORK_TIME_BEGIN', width:100, sortable:false, align:'center'},
+	            {title:'结束日期', name:'WORK_TIME_END', width:100, sortable:false, align:'center'},
 	            {title:'部门（单位）', name:'DEPT', width:120, sortable:false, align:'left'},
 	            {title:'处室', name:'LAB', width:150, sortable:false, align:'left'},
 	            {title:'人员编号', name:'HRCODE', width:100, sortable:false, align:'center'},
@@ -226,7 +300,8 @@ function queryList(load){
 	            		var dict=${statusJson};
 	            		return dict[val];
 	            	}	
-	            }
+	            },
+        		{title:'审核备注', name:'PROCESS_NOTE', width:100, sortable:false, align:'center'}
 	    		];
 	var mmGridHeight = $("body").parent().height() - 230;
 	mmg = $('#mmg').mmGrid({
@@ -257,6 +332,7 @@ function queryList(load){
 
 }
 
+/*提交*/
 function forSubmit(){
 	var rows=mmg.selectedRows();
 	if(rows.length==0){
@@ -287,7 +363,9 @@ function forSubmit(){
 			params["id"] =  $.trim(item.ID);
 			params["hrCode"] =  $.trim(item.HRCODE);
 			params["approver"] =  $.trim(item.APPROVER_USERNAME);
-			params["date"] =  $.trim(item.WORK_TIME);
+			//params["date"] =  $.trim(item.WORK_TIME);
+			params["date"] =  $.trim(item.WORK_TIME_BEGIN);
+			params["dateEnd"] =  $.trim(item.WORK_TIME_END);
 			params["projectName"] =  $.trim(item.PROJECT_NAME);
 			params["workHour"] =  $.trim(item.WORKING_HOUR);
 			params["jobContent"] =  $.trim(item.JOB_CONTENT);
@@ -365,7 +443,8 @@ function forUpdate(){
 		layer.open({
 			type:2,
 			title:"修改",
-			area:['620px', height+'px'],
+			//area:['620px', height+'px'],
+			area:['620px', '500px'],
 			//scrollbar:false,
 		 	content:['<%=request.getContextPath()%>/staffWorkingHourManage/update?whId='+whId],
 		 	end:function(){

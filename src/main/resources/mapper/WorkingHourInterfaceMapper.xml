@@ -20,13 +20,16 @@
 				AND 1=2
 			</when>
 			<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
-				AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+				AND  TO_CHAR(W.WORK_TIME_BEGIN, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+				AND  TO_CHAR(W.WORK_TIME_END, 'yyyy') = #{yearName, jdbcType = VARCHAR}
 			</when>
 			<when test='WT_SEASON.substring(0,1).toString() == "S"'>
-				AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
+					and   TO_CHAR(W.WORK_TIME_BEGIN,'yyyy-mm-dd') &gt;= #{startDate, jdbcType = VARCHAR}
+					and   TO_CHAR(W.WORK_TIME_END,'yyyy-mm-dd') &lt;= #{endDate, jdbcType = VARCHAR}
 			</when>
 			<when test='WT_SEASON.substring(0,1).toString() == "M"'>
-				AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+				AND  TO_CHAR(W.WORK_TIME_BEGIN, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+				AND  TO_CHAR(W.WORK_TIME_END, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
 			</when>
 			<otherwise>
 				AND 1=2
@@ -51,7 +54,10 @@
 				U1.HRCODE PROJECT_LEADER,
 				U1.USERALIAS LEADER_USERNAME,
 				NVL(W.WORKING_HOUR,0) WORKING_HOUR,
-				W.APPROVER as APPROVER
+				W.APPROVER as APPROVER,
+                PU1.START_DATE,
+				PU1.END_DATE
+
 		FROM BG_WORKINGHOUR_INFO W
 		LEFT JOIN BG_SYS_USER U
 		  ON U.USERNAME = W.WORKER
@@ -66,6 +72,8 @@
 		LEFT JOIN BG_PROJECT_USER PU2
 		  ON P.ID = PU2.PROJECT_ID
 		 AND PU2.ROLE = '1'
+		 AND PU2.HRCODE = U.HRCODE
+		 AND ROWNUM = 1
 		LEFT JOIN BG_SYS_USER U1
 		  ON U1.HRCODE = PU2.HRCODE
 		 AND ROWNUM = 1
@@ -79,18 +87,23 @@
 				AND 1=2
 			</when>
 			<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
-				AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+
+				AND  TO_CHAR(W.WORK_TIME_BEGIN, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+				AND  TO_CHAR(W.WORK_TIME_END, 'yyyy') = #{yearName, jdbcType = VARCHAR}
 			</when>
 			<when test='WT_SEASON.substring(0,1).toString() == "S"'>
-				AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
+				and   TO_CHAR(W.WORK_TIME_BEGIN,'yyyy-mm-dd') &gt;= #{startDate, jdbcType = VARCHAR}
+				and   TO_CHAR(W.WORK_TIME_END,'yyyy-mm-dd') &lt;= #{endDate, jdbcType = VARCHAR}
 			</when>
 			<when test='WT_SEASON.substring(0,1).toString() == "M"'>
-				AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+				AND  TO_CHAR(W.WORK_TIME_BEGIN, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+				AND  TO_CHAR(W.WORK_TIME_END, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
 			</when>
 			<otherwise>
 				AND 1=2
 			</otherwise>
-		</choose>		
+		</choose>
+
 	</sql>
 
 	<!--  sql语句块  获取基本信息   非项目前期 -->
@@ -111,7 +124,9 @@
 				U1.HRCODE PROJECT_LEADER,
 				U1.USERALIAS LEADER_USERNAME,
 				NVL(W.WORKING_HOUR,0) WORKING_HOUR,
-				W.APPROVER as APPROVER
+				W.APPROVER as APPROVER,
+                PU2.START_DATE,
+				PU2.END_DATE
 		FROM BG_WORKINGHOUR_INFO W
 		LEFT JOIN BG_SYS_USER U
 		  ON U.USERNAME = W.WORKER
@@ -124,6 +139,8 @@
 		LEFT JOIN BG_PROJECT_USER PU2
 		  ON W.PROJECT_ID = PU2.PROJECT_ID
 		 AND PU2.ROLE = '1'
+		AND PU2.HRCODE = U.HRCODE
+		and rownum=1
 		LEFT JOIN BG_SYS_USER U1
 		  ON U1.HRCODE = PU2.HRCODE
 		 AND ROWNUM = 1
@@ -137,13 +154,16 @@
 				AND 1=2
 			</when>
 			<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
-				AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+				AND  TO_CHAR(W.WORK_TIME_BEGIN, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+				AND  TO_CHAR(W.WORK_TIME_END, 'yyyy') = #{yearName, jdbcType = VARCHAR}
 			</when>
 			<when test='WT_SEASON.substring(0,1).toString() == "S"'>
-				AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
+				and   TO_CHAR(W.WORK_TIME_BEGIN,'yyyy-mm-dd') &gt;= #{startDate, jdbcType = VARCHAR}
+				and   TO_CHAR(W.WORK_TIME_END,'yyyy-mm-dd') &lt;= #{endDate, jdbcType = VARCHAR}
 			</when>
 			<when test='WT_SEASON.substring(0,1).toString() == "M"'>
-				AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+				AND  TO_CHAR(W.WORK_TIME_BEGIN, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+				AND  TO_CHAR(W.WORK_TIME_END, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
 			</when>
 			<otherwise>
 				AND 1=2
@@ -165,15 +185,18 @@
 			DECODE(U.ROLE, NULL, NULL, '', NULL, '1', '1', '0', '0') PROJECT_ROLE,
 			U.HRCODE PROJECT_LEADER,
 			U2.USERALIAS LEADER_USERNAME,
-			0 WORKING_HOUR,
-			U2.USERNAME APPROVER
-		FROM (SELECT DISTINCT U.HRCODE, U.PROJECT_ID, U.ROLE
+            0 WORKING_HOUR,
+			U2.USERNAME APPROVER,
+            U.START_DATE,
+			U.END_DATE
+		FROM (SELECT DISTINCT U.HRCODE, U.PROJECT_ID, U.ROLE,U.START_DATE,U.END_DATE
 				FROM BG_PROJECT_USER U
 				INNER JOIN BG_PROJECT_INFO P
 				  ON P.ID = U.PROJECT_ID
 				 AND P.STATUS = 1
 				WHERE U.STATUS = 1
 				  AND U.ROLE = '1'
+
 				  AND (EXISTS (   SELECT W.ID
 									FROM BG_WORKINGHOUR_INFO W
 									WHERE 1 = 1									
@@ -185,13 +208,16 @@
 											AND 1=2
 										</when>
 										<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
-											AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_BEGIN, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_END, 'yyyy') = #{yearName, jdbcType = VARCHAR}
 										</when>
 										<when test='WT_SEASON.substring(0,1).toString() == "S"'>
-											AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
-										</when>
+											and   TO_CHAR(W.WORK_TIME_BEGIN,'yyyy-mm-dd') &gt;= #{startDate, jdbcType = VARCHAR}
+											and   TO_CHAR(W.WORK_TIME_END,'yyyy-mm-dd') &lt;= #{endDate, jdbcType = VARCHAR}
+										 </when>
 										<when test='WT_SEASON.substring(0,1).toString() == "M"'>
-											AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_BEGIN, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_END, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
 										</when>
 										<otherwise>
 											AND 1=2
@@ -212,13 +238,17 @@
 											AND 1=2
 										</when>
 										<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
-											AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_BEGIN, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_END, 'yyyy') = #{yearName, jdbcType = VARCHAR}
 										</when>
 										<when test='WT_SEASON.substring(0,1).toString() == "S"'>
-											AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
+											and   TO_CHAR(W.WORK_TIME_BEGIN,'yyyy-mm-dd') &gt;= #{startDate, jdbcType = VARCHAR}
+											and   TO_CHAR(W.WORK_TIME_END,'yyyy-mm-dd') &lt;= #{endDate, jdbcType = VARCHAR}
 										</when>
 										<when test='WT_SEASON.substring(0,1).toString() == "M"'>
-											AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_BEGIN, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_END, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+
 										</when>
 										<otherwise>
 											AND 1=2
@@ -240,13 +270,16 @@
 											AND 1=2
 										</when>
 										<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
-											AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_BEGIN, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_END, 'yyyy') = #{yearName, jdbcType = VARCHAR}
 										</when>
 										<when test='WT_SEASON.substring(0,1).toString() == "S"'>
-											AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
+											and   TO_CHAR(W.WORK_TIME_BEGIN,'yyyy-mm-dd') &gt;= #{startDate, jdbcType = VARCHAR}
+											and   TO_CHAR(W.WORK_TIME_END,'yyyy-mm-dd') &lt;= #{endDate, jdbcType = VARCHAR}
 										</when>
 										<when test='WT_SEASON.substring(0,1).toString() == "M"'>
-											AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_BEGIN, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_END, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
 										</when>
 										<otherwise>
 											AND 1=2
@@ -270,13 +303,16 @@
 											AND 1=2
 										</when>
 										<when test='WT_SEASON.substring(0,1).toString() == "Y"'>
-											AND  TO_CHAR(W.WORK_TIME, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_BEGIN, 'yyyy') = #{yearName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_END, 'yyyy') = #{yearName, jdbcType = VARCHAR}
 										</when>
 										<when test='WT_SEASON.substring(0,1).toString() == "S"'>
-											AND W.WORK_TIME BETWEEN TO_DATE(#{startDate, jdbcType = VARCHAR},'yyyy-MM-dd') AND TO_DATE(#{endDate, jdbcType = VARCHAR},'yyyy-MM-dd')
+											and   TO_CHAR(W.WORK_TIME_BEGIN,'yyyy-mm-dd') &gt;= #{startDate, jdbcType = VARCHAR}
+											and   TO_CHAR(W.WORK_TIME_END,'yyyy-mm-dd') &lt;= #{endDate, jdbcType = VARCHAR}
 										</when>
 										<when test='WT_SEASON.substring(0,1).toString() == "M"'>
-											AND  TO_CHAR(W.WORK_TIME, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_BEGIN, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
+											AND  TO_CHAR(W.WORK_TIME_END, 'yyyy-MM') = #{monthName, jdbcType = VARCHAR}
 										</when>
 										<otherwise>
 											AND 1=2
@@ -288,16 +324,20 @@
 		AND P.STATUS = 1
 		INNER JOIN BG_SYS_USER U2
 		ON U2.HRCODE = U.HRCODE
+
 	</sql>
 	<!-- 获取基本信息 -->
-	<select id="getInterfaceBaseInfo" resultType="java.util.Map">
+		<select id="getInterfaceBaseInfo" resultType="java.util.Map">
 		SELECT DISTINCT M.EMP_CODE,
 		M.PROJECT_ID,
 		M.WT_TYPE,
 		M.WBS_CODE,
 		M.WBS_NAME,
 		M.PROJECT_ROLE,
-		M.PROJECT_LEADER
+		M.PROJECT_LEADER,
+        M.ROLE,
+        M.START_DATE,
+		M.END_DATE
 		FROM (<include refid = "queryBaseInfo"/>  UNION ALL <include refid="queryBaseInfoBefore"/>)  M
 		GROUP BY  M.EMP_CODE,
 		M.PROJECT_ID,
@@ -305,12 +345,16 @@
 		M.WBS_CODE,
 		M.WBS_NAME,
 		M.PROJECT_ROLE,
-		M.PROJECT_LEADER
+		M.PROJECT_LEADER,
+        M.ROLE,
+        M.START_DATE,
+		M.END_DATE
 	</select>
 	<!-- 获取员工投入总工时 -->
 	<select id="getInterfaceTotalByUser" resultType="java.util.Map">
 		SELECT M.EMP_CODE,
 		SUM(M.WORKING_HOUR) WORKING_HOUR
+
 		FROM (<include refid = "queryBaseInfo"/>  UNION ALL <include refid="queryBaseInfoBefore"/>) M
 		GROUP BY M.EMP_CODE
 	</select>
@@ -318,10 +362,12 @@
 	<select id="getInterfaceTotalByProj" resultType="java.util.Map">
 		SELECT M.EMP_CODE,
 		M.PROJECT_ID,
-		SUM(M.WORKING_HOUR) WORKING_HOUR
+		SUM(M.WORKING_HOUR) WORKING_HOUR,
+        M.ROLE
 		FROM (<include refid = "queryBaseInfo"/> UNION ALL <include refid="queryBaseInfoBefore"/>) M
 		GROUP BY  M.EMP_CODE,
-		M.PROJECT_ID
+		M.PROJECT_ID,
+        M.ROLE
 	</select>
 	<!-- 记录传输数据 -->
 	<insert id="addInterfaceBspData">
@@ -383,4 +429,30 @@
 		FROM (<include refid = "queryBaseInfo"/> UNION ALL <include refid="queryBaseInfoBefore"/>) M WHERE M.ID IS NOT NULL
 
 	</insert>
+
+	<!-- 获取项目负责人 -->
+	<select id="selectForProjectUser" resultType="java.util.Map">
+		SELECT  * FROM (
+			SELECT
+				PU.ID,
+				PU.HRCODE,
+				PU.PROJECT_ID,
+				PU.START_DATE,
+				PU.END_DATE,
+				U1.HRCODE PROJECT_LEADER,
+				U1.USERALIAS LEADER_USERNAME
+			FROM  BG_PROJECT_USER PU
+				LEFT JOIN BG_SYS_USER U1
+			ON U1.HRCODE = PU.HRCODE
+			WHERE   PU.ROLE = '1'  AND  STATUS='1'
+			AND   PU.PROJECT_ID= #{projectId}
+			AND   ((to_char(PU.START_DATE,'yyyy-mm-dd') &lt;= #{monthEndDay} AND   to_char(PU.END_DATE,'yyyy-mm-dd') &gt;=#{monthEndDay})
+					or (to_char(PU.START_DATE,'yyyy-mm-dd') &lt;= #{monthEndDay} AND   to_char(PU.END_DATE,'yyyy-mm-dd') &lt;=#{monthEndDay}))
+			order by PU.END_DATE desc)
+		  where ROWNUM = 1
+
+
+	</select>
+
+
 </mapper>

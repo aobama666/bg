@@ -31,7 +31,9 @@
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/organ-tree/organ-tree.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/common.js"></script>
-<!--[if lt IE 9>
+	<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+
+	<!--[if lt IE 9>
 	<script src="<%=request.getContextPath() %>/common/plugins/html5shiv/html5shiv.min.js"></script>
 	<script src="<%=request.getContextPath() %>/common/plugins/respond/respond.js"></script>
 	<script src="<%=request.getContextPath() %>/common/plugins/pseudo/jquery.pseudo.js"></script>
@@ -74,9 +76,9 @@
 			<label>统计报表：</label>
 			<div class="controls"  data-date-format="yyyy-mm-dd">
 				<select name="Atype">
-					<option value="0">日报</option>
-					<option value="1" selected='selected'>周报</option>
-					<option value="2">月报</option>
+					<%--<option value="0">日报</option>--%>
+					<%--<option value="1" selected='selected'>周报</option>--%>
+					<option value="2" selected='selected'>月报</option>
 					<option value="3">季报</option>
 					<option value="4">年报</option>
 					<option value="5">自定义</option>
@@ -85,7 +87,7 @@
 		</div>
 		<div class="form-group col-xs-5" style="margin-bottom:0;">
 			<label>统计日期：</label>
-			<div class="controls"  data-date-format="yyyy-mm-dd">
+			<%--<div class="controls"  data-date-format="yyyy-mm-dd">
 				<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
 					<input name="startTime" property="startTime"  readonly="true" placeholder='开始时间'>
 					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
@@ -95,7 +97,22 @@
 					<input name="endTime" property="endTime"  readonly="true" placeholder='结束时间'>
 					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 				</div>
+			</div>--%>
+			<div class="controls"  data-date-format="yyyy-mm">
+				<div class="input-group date form_date bg-white" id="startdateTime"　data-date-format="yyyy-mm" >
+					<input id="startTime" name="startTime" property="startTime"   type="hidden"  >
+					<input  id="startTimes" name="startTimes" property="startTimes"  type="text"  class="form-control form_datetime_2 input-sm bg-white"   readonly  />
+					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+				</div>
+				<div class="floatLeft">--</div>
+				<div class="input-group date form_date bg-white" id="enddateTime"　data-date-format="yyyy-mm" >
+					<input id="endTime" name="endTime" property="endTime"  type="hidden"  >
+					<input  id="endTimes" name="endTimes" property="endTimes" type="text"  class="form-control form_datetime_2 input-sm bg-white"  readonly    />
+					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+				</div>
 			</div>
+
+
 		</div>
 		 <div class="form-group col-xs-3">
 			<label>统计维度：</label>
@@ -127,7 +144,7 @@
 		<div class="datashow" style="margin-left:33px">
 			<div>
 				<div class='showcheck'><input type="checkbox" name="bpShow" value="1" checked="checked"/></div>
-				<div class='linHeight'>项目计入项目前期　</div>
+				<div class='linHeight'>项目前期计入项目工时　</div>
 			</div>
 			<!-- <div>&nbsp;&nbsp;&nbsp;&nbsp;</div> --> 
 			<div>
@@ -189,11 +206,174 @@ $(function(){
 	init();
 	queryListPart();
 });
+function Timeinit() {
+    // 时间初始化
+    $("#startdateTime").datepicker({
+        startView: 'months',  //起始选择范围
+        maxViewMode:'years', //最大选择范围
+        minViewMode:'months', //最小选择范围
+        todayHighlight : true,// 当前时间高亮显示
+        autoclose : 'true',// 选择时间后弹框自动消失
+        format : 'yyyy-mm',// 时间格式
+        language : 'zh-CN',// 汉化
+        // todayBtn:"linked",//显示今天 按钮
+        //clearBtn : true,// 清除按钮，和今天 按钮只能显示一个
+    });
+    $("#enddateTime").datepicker({
+        startView: 'months',  //起始选择范围
+        maxViewMode:'years', //最大选择范围
+        minViewMode:'months', //最小选择范围
+        todayHighlight : true,// 当前时间高亮显示
+        autoclose : 'true',// 选择时间后弹框自动消失
+        format : 'yyyy-mm',// 时间格式
+        language : 'zh-CN',// 汉化
+        // todayBtn:"linked",//显示今天 按钮
+        //clearBtn : true,// 清除按钮，和今天 按钮只能显示一个
+    });
+}
+//获取结束时间的
+function getEndD(endDate) {
+    var   eDate = new Date(endDate);
+    var   date=new Date(eDate.getFullYear(),eDate.getMonth()+1,0);
+    var   days=date.getDate();
+    return days;
+}
+//比较两个时间是否大于一个月，例如20170215--到20170315 是一个月，到20170316是大于一个月
+function getD(sDate, endDate) {
 
+    var sDate = new Date(sDate);
+    var eDate = new Date(endDate);
+    if (eDate.getFullYear() - sDate.getFullYear() > 1) {//先比较年
+        return true;
+    } else if (eDate.getMonth() - sDate.getMonth() > 1) {//再比较月
+        return true;
+    } else if (eDate.getMonth() - sDate.getMonth() == 1) {
+        if (eDate.getDate() - sDate.getDate() >= 0) {
+            return true;
+        }
+    }else if (eDate.getMonth() - sDate.getMonth() == 0) {
+        var   date=new Date(sDate.getFullYear(),sDate.getMonth()+1,0);
+        var   days=date.getDate();
+        var   numdays=eDate.getDate() - sDate.getDate()+1;
+        if (numdays==days) {
+            return true;
+        }
+    } else if (eDate.getFullYear() - sDate.getFullYear() == 1) {
+        if (eDate.getMonth()+12 - sDate.getMonth() > 1) {
+            return true;
+        }
+        else if (eDate.getDate() - sDate.getDate() >= 1) {
+            return true;
+        }
+    }
+    return false;
+}
 function init(){
+    Timeinit();
+    var   date = new Date();
+    var   month=date.getMonth()+1;
+    var months;
+    if(month<10){
+        months="0"+month;
+    }
+    var   newdate=date.getFullYear()+"-"+months;
+    $("#startTimes").val(newdate);
+    $("#endTimes").val(newdate);
 	$(".form_date").datepicker({autoclose:true,todayHighlight:true,language: 'cn', orientation:'auto'});
 }
+
+//获取结束时间的
+function getEndD(endDate) {
+    var   eDate = new Date(endDate);
+    //alert(endDate);
+    var   date=new Date(eDate.getFullYear(),eDate.getMonth()+1,0);
+    var   days=date.getDate();
+    return days;
+}
+
+//获得开始时间
+function timeBegin (dateStr) {
+    var dateStr=dateStr+"-01";
+    var date=new Date(dateStr.replace(/-/g,"\/"));
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var firstDay=new Date(year,month,1);//这个月的第一天
+    var currentMonth=firstDay.getMonth(); //取得月份数
+    var nextMonthFirstDay=new Date(firstDay.getFullYear(),currentMonth+1,1);//加1获取下个月第一天
+    var dis=nextMonthFirstDay.getTime()-24*60*60*1000;//减去一天就是这个月的最后一天
+    var lastDay=new Date(dis);
+    var time =dateFtt("yyyy-MM-dd",firstDay);//格式化 //这个格式化方法要用你们自己的，也可以用本文已经贴出来的下面的Format
+    var timeEnd=dateFtt("yyyy-MM-dd",lastDay);//格式化
+    return time;
+}
+
+//获得结束时间
+function timeEnd(dateStr) {
+    var dateStr=dateStr+"-01";
+    var date=new Date(dateStr.replace(/-/g,"\/"));
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var firstDay=new Date(year,month,1);//这个月的第一天
+    var currentMonth=firstDay.getMonth(); //取得月份数
+    var nextMonthFirstDay=new Date(firstDay.getFullYear(),currentMonth+1,1);//加1获取下个月第一天
+    var dis=nextMonthFirstDay.getTime()-24*60*60*1000;//减去一天就是这个月的最后一天
+    var lastDay=new Date(dis);
+    var time =dateFtt("yyyy-MM-dd",firstDay);//格式化 //这个格式化方法要用你们自己的，也可以用本文已经贴出来的下面的Format
+    var timeEnd=dateFtt("yyyy-MM-dd",lastDay);//格式化
+    return timeEnd;
+}
+
+function dateFtt(fmt,date)
+{ //author: meizz
+    var o = {
+        "M+" : date.getMonth()+1,     //月份
+        "d+" : date.getDate(),     //日
+        "h+" : date.getHours(),     //小时
+        "m+" : date.getMinutes(),     //分
+        "s+" : date.getSeconds(),     //秒
+        "q+" : Math.floor((date.getMonth()+3)/3), //季度
+        "S" : date.getMilliseconds()    //毫秒
+    };
+    if(/(y+)/.test(fmt))
+        fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));
+    for(var k in o)
+        if(new RegExp("("+ k +")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+    return fmt;
+}
+
 function forSearch(){
+    /*var  startDate =$("#startTimes").val()+"-01";
+    var  endDate=$("#endTimes").val();
+    var  days=getEndD(endDate);
+    endDate=endDate+"-"+days;*/
+
+    var  startDate =timeBegin($("#startTimes").val());
+    var  endDate=timeEnd($("#endTimes").val());
+
+    if(startDate==""){
+        layer.msg("开始时间不能为空");
+        return ;
+    }
+    if(endDate==""){
+        layer.msg("结束时间不能为空");
+        return ;
+    }
+    if((new Date(endDate.replace(/-/g,"\/")))<(new Date(startDate.replace(/-/g,"\/")))){
+        layer.msg("结束时间必须大于开始时间");
+        return ;
+    }
+    /*var  falg=getD(startDate, endDate);
+    if(!falg){
+        layer.msg("结束时间大等于开始时间的一个月的时间");
+        return ;
+    }*/
+    $("#startTime").val(startDate);
+    $("#endTime").val(endDate);
+
+
+
+
 	var statics = $("select[name=Btype]").val();
 	if(statics=="0"){
 		$(".table1").show();
