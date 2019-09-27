@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.yygl.mapper.YyComprehensiveMapper">
+    <!-- 用户信息的查询-->
+    <select id="selectForUserId" resultType="java.util.Map" >
+        select
+        USERID,HRCODE,USERNAME,USERALIAS
+        from BG_SYS_USER  A
+        WHERE   A.VALID='1'
+        <if test="userId!= null and userId!= ''">
+            AND   A.USERID  =#{userId}
+        </if>
+
+    </select>
+    <!-- 部门信息的查询-->
+    <select id="selectForDeptCode" resultType="java.util.Map" >
+        SELECT
+        DEPTID,DEPTNAME,DEPTCODE,PDEPTCODE,TYPE
+        FROM BG_SYS_DEPT
+        WHERE   VALID='1'
+        <if test="deptCode!= null and deptCode!= ''">
+            AND   PDEPTCODE  =#{deptCode}
+        </if>
+        UNION  ALL
+        SELECT
+        DEPTID,DEPTNAME,DEPTCODE,PDEPTCODE,TYPE
+        FROM BG_SYS_DEPT
+        WHERE   VALID='1'
+        <if test="deptCode!= null and deptCode!= ''">
+        AND   DEPTCODE  =#{deptCode}
+        </if>
+    </select>
+
+
+
+
+    <!-- 申请单位的查询-->
+    <select id="selectForDept" resultType="java.util.Map" >
+         select
+            DISTINCT( A.DEPT_ID),
+            D.DEPTNAME
+         from bg_yy_apply  A
+         INNER JOIN    BG_SYS_DEPT  D  ON    A.DEPT_ID=D.DEPTID
+         WHERE   A.VALID='1'  and   D.VALID='1'
+        <if test="userRole=='1'.toString()">
+            AND   A.USE_SEAL_STATUS IN   ('8','9')
+        </if>
+
+    </select>
+    <!-- 审批状态的查询-->
+    <select id="selectForStatus" resultType="java.util.Map" >
+     select  NAME, CODE
+      from BG_SYS_DATADICTIONARY  where  pcode = 'use_seal_status'     and   VAILD='1'
+        <if test="userRole=='1'.toString()">
+            AND  CODE IN   ('8','9')
+        </if>
+        ORDER BY   TO_NUMBER(SORT_ID)
+    </select>
+    <!-- 节点类型的查询-->
+    <select id="selectForNodeType" resultType="java.util.Map" >
+        select  NAME, CODE
+        from BG_SYS_DATADICTIONARY  where  pcode = 'node_type'     AND  PID='YYGL000003'    and   VAILD='1'
+        ORDER BY   TO_NUMBER(SORT_ID)
+    </select>
+
+    <!--参观预定查询公共sql-->
+    <sql id="comprehensiveInfo">
+        select
+        A.UUID   as  "applyId",
+        A.APPLY_CODE  as  "applyCode",
+        A.DEPT_ID  as  "deptId",
+        D.DEPTNAME  as  "deptName",
+        A.APPLY_USER_ID  as  "applyUserId",
+        U.USERALIAS   as  "applyUserName",
+        to_char(A.USE_SEAL_DATE,'yyyy-mm-dd')    as  "userSealDate",
+        A.USE_SEAL_PHONE    as  "userSealPhone",
+        A.USE_SEAL_REASON   as  "userSealReason",
+        A.USE_SEAL_STATUS   as   "userSealStatus",
+        (select name  from bg_sys_datadictionary  where pcode = 'use_seal_status'  and code = A.USE_SEAL_STATUS)   as  "userSealStatusName",
+        (select replace(wm_concat(nvl(d.name, k.use_seal_value)),',',';') useSealKind  from bg_yy_kind k,
+        (select * from bg_sys_datadictionary d where d.pcode = 'use_seal_kind' and d.vaild = '1') d
+        where k.use_seal_kind_code = d.code(+)
+        and k.apply_id = a.uuid and k.valid='1'
+        )  as   "userSealkindName",
+        A.ITEM_FIRST_ID   as  "itemFirstId",
+        F.FIRST_CATEGORY_NAME  as  "itemFirstName",
+        A.ITEM_SECOND_ID  as  "itemSecondId",
+        S.SECOND_CATEGORY_NAME   as  "secondCategoryName",
+        A.APPLY_HANDLE_USER_ID   as   "applyHandleUserId",
+        AU.USERALIAS  as  "applyHandleUserName",
+        A.OFFICE_HANDLE_USER_ID   as   "officeHandleUserId",
+        OU.USERALIAS  as "officeHandleUserName",
+        F.FIRST_CATEGORY_NAME||'-'||S.SECOND_CATEGORY_NAME  as   "itemName"
+        from bg_yy_apply  A
+        LEFT   JOIN      BG_SYS_DEPT  D  ON    A.DEPT_ID=D.DEPTID
+        LEFT   JOIN      bg_sys_user  U  ON    A.apply_user_id = U.userid
+        LEFT   JOIN      bg_yy_item_first F   ON A.ITEM_FIRST_ID = F.uuid
+        LEFT   JOIN      bg_yy_item_second S   ON A.item_second_id = S.uuid
+        LEFT   JOIN      bg_sys_user  AU  ON    A.APPLY_HANDLE_USER_ID = AU.userid
+        LEFT   JOIN      bg_sys_user  OU  ON    A.OFFICE_HANDLE_USER_ID = OU.userid
+        WHERE   A.VALID='1'
+        <if test="applyMap.applyCode!=null and applyMap.applyCode!=''">
+            and A.APPLY_CODE  like '%'||#{applyMap.applyCode}||'%'
+        </if>
+        <if test="applyMap.startData!= null and applyMap.startData!= ''">
+            and   to_char(A.USE_SEAL_DATE,'yyyy-mm-dd') &gt;= #{applyMap.startData}
+        </if>
+        <if test="applyMap.endData!= null and applyMap.endData!= ''">
+            and   to_char(A.USE_SEAL_DATE,'yyyy-mm-dd')  &lt;= #{applyMap.endData}
+        </if>
+        <if test="applyMap.deptId!=null and applyMap.deptId!=''">
+            and A.DEPT_ID  like '%'||#{applyMap.deptId}||'%'
+        </if>
+        <if test="applyMap.useSealReason!=null and applyMap.useSealReason!=''">
+            and A.USE_SEAL_REASON  like '%'||#{applyMap.useSealReason}||'%'
+        </if>
+        <if test="applyMap.useSealStatus!=null and applyMap.useSealStatus!=''">
+            and A.USE_SEAL_STATUS  like '%'||#{applyMap.useSealStatus}||'%'
+        </if>
+        <if test="applyMap.itemFirst!=null and applyMap.itemFirst!=''">
+            and A.ITEM_FIRST_ID  like '%'||#{applyMap.itemFirst}||'%'
+        </if>
+        <if test="applyMap.itemSecond!=null and applyMap.itemSecond!=''">
+            and A.ITEM_SECOND_ID  like '%'||#{applyMap.itemSecond}||'%'
+        </if>
+        <if test="applyMap.userRole=='1'.toString()">
+            AND  A.USE_SEAL_STATUS  IN   ('8','9')
+        </if>
+        ORDER BY A.CREATE_TIME DESC
+    </sql>
+
+
+    <!-- 综合查询数据-->
+    <select id="selectForComprehensive" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT  T.*  from(
+        SELECT  TB.* , ROWNUM AS ROWNO  from(
+        <include refid="comprehensiveInfo"/>
+        ) TB  WHERE #{applyMap.page_end} >= ROWNUM
+        ) T   WHERE T.ROWNO > #{applyMap.page_start}
+
+    </select>
+    <!-- 综合查询条数-->
+    <select id="selectForComprehensiveNum" resultType="java.lang.String" parameterType="java.util.HashMap" >
+        SELECT    COUNT(1)  AS "countNum"  from(<include refid="comprehensiveInfo"/>)
+    </select>
+
+    <!-- 综合查询数据导出-->
+    <select id="selectForComprehensiveExl" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT  T.*  from(
+        <include refid="comprehensiveInfo"/>
+        ) T where  1=1
+        <if test="null != applyMap.applyIds and applyMap.applyIds.size > 0">
+            AND  "applyId"  IN
+            <foreach collection="applyMap.applyIds" item="applyId" open="(" separator="," close=")">
+                #{applyId,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+    </select>
+
+
+    <!-- 确定用印人员信息的添加-->
+    <update id="updateForAffirm">
+        update BG_YY_APPLY set
+         APPLY_HANDLE_USER_ID = #{applyUserId},
+         OFFICE_HANDLE_USER_ID = #{officeUserId},
+         USE_SEAL_STATUS = #{status}
+        where UUID = #{applyId}
+    </update>
+    <!--事项的查询-->
+    <select id="selectForItemList" resultType="java.util.Map"   >
+         SELECT
+          UUID as "id",
+          FIRST_CATEGORY_NAME as "name",
+          VALID   as "pId",
+          FIRST_CATEGORY_NAME as "t"
+          from BG_YY_ITEM_FIRST   where  VALID='1'
+            union all
+          SELECT
+           UUID as "id",
+           SECOND_CATEGORY_NAME as "name",
+           FIRST_CATEGORY_ID   as "pId",
+           SECOND_CATEGORY_NAME as "t"
+         from BG_YY_ITEM_SECOND   where  VALID='1'
+    </select>
+
+</mapper>

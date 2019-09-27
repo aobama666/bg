@@ -35,7 +35,7 @@
     position: relative;
     float: left;
     margin-top: -12px;
-    height: 400px;
+    height: 500px;
     overflow-y:auto;
 }
 .tree-box li{
@@ -120,7 +120,7 @@ hr {
 		</div>
 	</div>
 </div>
-<div class="tree-box">
+<div class="tree-box"  >
 	<ul id="tree" class="ztree"></ul>
 </div>
 </body>

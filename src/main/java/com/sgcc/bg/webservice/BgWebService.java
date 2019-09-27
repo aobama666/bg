@@ -46,13 +46,13 @@ public class BgWebService {
 	/**
 	 * 根据人资系统请求参数，返回工时信息
 	 * @param xml
-	 * <?xml version="1.0" encoding="utf-8"?>
+	 * <![CDATA[<?xml version="1.0" encoding="utf-8"?>
 	 * 	<ROOT>
 	 * 		<SYS_KEY>bsp</SYS_KEY >
 	 * 		<SYS_VALUE>sBu5jn3AE00IdN12MF</SYS_VALUE>
 	 * 		<BG_YEAR>2018</BG_YEAR>   -- yyyy
 	 * 		<BG_PERIOD>S1</BG_PERIOD> -- Y（年度），S1-S4（季度）,M1-M12（月份）
-	 * 	</ROOT>
+	 * 	</ROOT> ]]>
 	 * @return
 	 */
 	public String getBgData(String xml){

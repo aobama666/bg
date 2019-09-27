@@ -324,7 +324,6 @@ public class YSZXController {
 					    list.add(maps);
 					    }
 						map.put("deptInfo",list);
-						
 					}
 				}
 			}
