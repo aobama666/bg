@@ -80,4 +80,13 @@ public class ProcessBaseConstant {
     //不发送待办
     public final static String SEND_AUDIT_NO = "0";
 
+
+    /**
+     * 待办审批结果
+     */
+    //通过
+    public final static String AUDIT_RESULT_AGREE = "1";
+    //拒绝
+    public final static String AUDIT_RESULT_REFUSE = "2";
+
 }

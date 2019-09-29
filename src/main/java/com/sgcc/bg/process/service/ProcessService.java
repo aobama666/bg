@@ -102,11 +102,13 @@ public interface ProcessService {
      * @param taskId        审批id OR 审批扩展id
      * @param precessId     标识，是审批id还是审批扩展id
      * @param userId        用户id
+     * @param auditResult   审批结果（1通过 2拒绝）
      */
     boolean completeUpcoming(String flowId,
                              String taskId,
                              String precessId,
-                             String userId
+                             String userId,
+                             String auditResult
     );
 
 

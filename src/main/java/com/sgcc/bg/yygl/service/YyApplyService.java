@@ -105,6 +105,11 @@ public interface YyApplyService {
     List<Map<String,Object>> approveAnnal(String applyId);
 
     /**
+     * 业务会签审批记录单独查询
+     */
+    List<Map<String,Object>> approveAnnalBusiness(String applyId);
+
+    /**
      * 该用户是否为印章管理员
      */
     boolean ifUseSealAdmin(String userId);
