@@ -197,13 +197,13 @@ public class BgWebService {
 		List<Map<String,Object>> totalBgUser = bgInterfaceService.getInterfaceTotalByUser(period, year, startDate, endDate, monthName);
 		if(totalBgUser!=null&&totalBgUser.size()>0){
 			for(Map<String,Object> m:baseInfo){
-				String hrcode = m.get("EMP_CODE")==null?null:m.get("EMP_CODE").toString();
-				String role = m.get("ROLE")==null?null:m.get("ROLE").toString();
-				if(hrcode!=null){
+				//String hrcode = m.get("EMP_CODE")==null?null:m.get("EMP_CODE").toString();
+				String project = m.get("PROJECT_ID")==null?null:m.get("PROJECT_ID").toString();
+				if(project!=null){
 					for(Map<String,Object> n:totalBgUser){
-						String hr = n.get("EMP_CODE")==null?null:n.get("EMP_CODE").toString();
-						String ro = n.get("ROLE")==null?null:n.get("ROLE").toString();
-						if(hr!=null&&hr.equals(hrcode) && ro!=null && ro.equals(role)){
+						//String hr = n.get("EMP_CODE")==null?null:n.get("EMP_CODE").toString();
+						String pr = n.get("PROJECT_ID")==null?null:n.get("PROJECT_ID").toString();
+						if(pr!=null && pr.equals(project) /*&& ro!=null && ro.equals(role)*/){
 							String hour = n.get("WORKING_HOUR")==null?"0":n.get("WORKING_HOUR").toString();
 							m.put("TOTAL_INPUT_TIME", hour);
 						}

@@ -145,14 +145,28 @@ public class BGServiceImpl implements IBGService {
 			//负责人负责的时间总和
 			long sumDate = 0 ;
 			int count=0;
-			String[] startDate = new String[empList.size()];
-			String[] endDate = new String[empList.size()];
+			//统计负责人数
 			for (Map<String, String> emp : empList) {
+				if("1".equals(emp.get("ROLE"))){
+					count++;
+				}
+			}
+			String[] startDate = new String[count];
+			String[] endDate = new String[count];
+			/*for (Map<String, String> emp : empList) {
 				if("1".equals(emp.get("ROLE"))){
 					startDate[count] = emp.get("START_DATE");
 					endDate[count] = emp.get("END_DATE");
 					count++;
 					sumDate += DateUtil.getDaySub(emp.get("START_DATE"),emp.get("END_DATE"));
+					sumDate++;
+				}
+			}*/
+			for(int i=0;i<empList.size();i++){
+				if("1".equals(empList.get(i).get("ROLE"))){
+					startDate[i] = empList.get(i).get("START_DATE");
+					endDate[i] = empList.get(i).get("END_DATE");
+					sumDate += DateUtil.getDaySub(empList.get(i).get("START_DATE"),empList.get(i).get("END_DATE"));
 					sumDate++;
 				}
 			}
@@ -161,7 +175,8 @@ public class BGServiceImpl implements IBGService {
 			}/*else if(count>1){
 				return "目前项目下存在多个负责人，指定一名负责人。";//负责人重复
 			}*/
-
+			Arrays.sort(startDate);
+			Arrays.sort(endDate);
 			for(int i=1;i<startDate.length;i++){
 				if(startDate[i] != null && startDate[i] != "") {
 					if (DateUtil.getFormatDate(startDate[i], "yyyy-MM-dd").getTime() < DateUtil.getFormatDate(endDate[i - 1], "yyyy-MM-dd").getTime()) {
@@ -888,7 +903,7 @@ public class BGServiceImpl implements IBGService {
 				if(map!=null){
 					long infoDate = DateUtil.getDaySub(map.get("startDate"),map.get("endDate"))+1;
 					if(sumDate>infoDate){
-						errorInfo.append("项目编号为"+map.get("projectNumber")+"负责人时间晚于项目周期");
+						errorInfo.append("项目编号为"+map.get("projectNumber")+"负责人参与累计时间大于项目时间");
 						errorNum.add(4);
 						errorNum.add(5);
 						for(ProjectUserPo up :projectUserPoList){
@@ -916,7 +931,7 @@ public class BGServiceImpl implements IBGService {
 						}
 					}
 					if(sumDate<infoDate){
-						errorInfo.append("项目编号为"+map.get("projectNumber")+"负责人时间早于项目周期");
+						errorInfo.append("项目编号为"+map.get("projectNumber")+"负责人参与累计时间小于项目时间");
 						errorNum.add(4);
 						errorNum.add(5);
 						for(ProjectUserPo up :projectUserPoList){
