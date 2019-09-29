@@ -254,6 +254,11 @@ public class YyApplyController {
 
         //审批流程信息
         List<Map<String, Object>> approveAnnal = applyService.approveAnnal(applyUuid);
+        //如果属于业务会签，单独查询对应审批流程
+        List<Map<String,Object>> approveAnnalBusiness = new ArrayList<>();
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
+            approveAnnalBusiness = applyService.approveAnnalBusiness(applyUuid);
+        }
 
         //按钮组展示信息
         //申请人-撤回按钮
@@ -305,6 +310,7 @@ public class YyApplyController {
         mv.addObject("leaderApprove",leaderApprove);
         mv.addObject("useSealStatus",useSealStatus);
         mv.addObject("approveAnnal",approveAnnal);
+        mv.addObject("approveAnnalBusiness",approveAnnalBusiness);
         mv.addObject("accessType",accessType);
         mv.addObject("auditType",type);
         return mv;

@@ -156,7 +156,7 @@ public class ProcessServiceImpl implements ProcessService {
             pbMapper.updateApproveExpand(ProcessBaseConstant.RESULT_AGREE,approveRemark,ProcessBaseConstant.AUDIT_FLAG_NO
                     ,approveUserId,approveId,approveUserId,toDoerId);
             //完成当前待办信息
-            completeUpcoming(applyId,approveExpandId,ProcessBaseConstant.PRECESS_EXPAND,approveUserId);
+            completeUpcoming(applyId,approveExpandId,ProcessBaseConstant.PRECESS_EXPAND,approveUserId,ProcessBaseConstant.AUDIT_RESULT_AGREE);
             //判断本环节审批其他人员是否审批通过
             boolean ifExpandAllApprove = ifExpandAllApprove(approveId);
             if(!ifExpandAllApprove){
@@ -231,7 +231,7 @@ public class ProcessServiceImpl implements ProcessService {
         pbMapper.updateApprove(pbApproveUpdate);
         if(!if_expand){//如果不属于审批扩展表
             //完成当前待办信息
-            completeUpcoming(applyId,approveId,ProcessBaseConstant.PRECESS_APPROVE,approveUserId);
+            completeUpcoming(applyId,approveId,ProcessBaseConstant.PRECESS_APPROVE,approveUserId,ProcessBaseConstant.AUDIT_RESULT_AGREE);
             // 除此之外的本审批id对应的待办用户置为无效状态，避免其他用户显示已办消息
             pbMapper.updateAuditUserForUser(approveId,approveUserId);
         }
@@ -260,7 +260,7 @@ public class ProcessServiceImpl implements ProcessService {
             //根据审批id和审批用户获取对应扩展id
             String approveExpandId = pbMapper.getExpandId(approveId,approveUserId);
             //完成当前待办
-            completeUpcoming(applyId,approveExpandId,ProcessBaseConstant.PRECESS_EXPAND,approveUserId);
+            completeUpcoming(applyId,approveExpandId,ProcessBaseConstant.PRECESS_EXPAND,approveUserId,ProcessBaseConstant.AUDIT_RESULT_REFUSE);
 
             //获取当前待办状态为待办的审批扩展信息，
             List<String> undoneApproveExpand = pbMapper.undoneApproveExpand(approveId);
@@ -298,7 +298,7 @@ public class ProcessServiceImpl implements ProcessService {
 
         //如果不属于审批扩展表,完成当前待办信息
         if(!if_expand){
-            completeUpcoming(applyId,approveId,ProcessBaseConstant.PRECESS_APPROVE,approveUserId);
+            completeUpcoming(applyId,approveId,ProcessBaseConstant.PRECESS_APPROVE,approveUserId,ProcessBaseConstant.AUDIT_RESULT_REFUSE);
             // 除此之外的本审批id对应的待办用户置为无效状态,避免其他用户显示已办消息
             pbMapper.updateAuditUserForUser(approveId,approveUserId);
         }
@@ -420,7 +420,15 @@ public class ProcessServiceImpl implements ProcessService {
                                 String auditUrl,
                                 String auditCatalog,
                                 String auditTitle) {
-        userId = pbMapper.getUserName(userId);
+        String[] userIdStr = userId.split(",");
+        StringBuilder userSb = new StringBuilder();
+        String userName;
+        for(String userIdFor : userIdStr){
+            userName = pbMapper.getUserName(userIdFor);
+            userSb.append(userName);
+            userSb.append(",");
+        }
+        userId = userSb.deleteCharAt(userSb.length()-1).toString();//去掉最后一个半角逗号
         String routingKey = ProcessBaseConstant.ROUTING_KEY;
         String operate = ProcessBaseConstant.OPERATE_INSERT;
         JSONObject jsonObject = new JSONObject(10);
@@ -450,7 +458,8 @@ public class ProcessServiceImpl implements ProcessService {
     public boolean completeUpcoming(String flowId,
                                     String taskId,
                                     String precessId,
-                                    String userId) {
+                                    String userId,
+                                    String auditResult) {
         userId = pbMapper.getUserName(userId);
         String routingKey = ProcessBaseConstant.ROUTING_KEY;
         String operate = ProcessBaseConstant.OPERATE_DONE;
@@ -462,7 +471,7 @@ public class ProcessServiceImpl implements ProcessService {
         jsonObject.put("key", "DOTRl5HgPHQ2iz2iCy");
         jsonObject.put("auditDealOrigin", "1");//流程处理系统（1业务系统 2统一管理支撑平台）
         jsonObject.put("type", "1");//流程处理类型（1流程审批 2流程删除，默认为1）
-        jsonObject.put("auditResult", "1");//审批结果（1通过 2拒绝）
+        jsonObject.put("auditResult", auditResult);//审批结果（1通过 2拒绝）
         jsonObject.put("auditRemark", "");
         jsonObject.put("userid", userId);
         jsonObject.put("operate", operate);

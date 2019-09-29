@@ -11,6 +11,7 @@ $(function () {
 applyOperate.checkKind = function () {
     var useSealKindCode = $("#useSealKindCode").val();
     var elseKind = $("#elseKind").val();
+    elseKind = encodeURI(elseKind);
     var url = "/bg/yygl/apply/toCheckKind?useSealKindCode="+useSealKindCode+"&elseKind="+elseKind;
     layer.open({
         type:2,

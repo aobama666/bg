@@ -130,6 +130,11 @@ public interface YyApplyMapper {
     List<Map<String,Object>> approveAnnal(@Param("applyId") String applyId);
 
     /**
+     * 业务部门会签时单独的审批记录
+     */
+    List<Map<String,Object>> approveAnnalBusiness(@Param("applyId") String applyId);
+
+    /**
      * 打印预览信息
      */
     List<Map<String,Object>> printPreview(@Param("businessId") String businessId);

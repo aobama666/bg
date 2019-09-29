@@ -122,6 +122,13 @@ myItem.toAgree = function () {
         layer.msg('最多批量操作5条数据');
         return;
     }
+    //判断五个申请的事项是否一致
+    for(var i = 0; i <checkedItems.length; i++){
+        if(checkedItems[i].useSealItem !== checkedItems[0].useSealItem){
+            layer.msg("批量同意时用印事项必须一致");
+            return;
+        }
+    }
     //获取选中框
     var checkedIds = "";
     if(checkedItems.length>0) {
@@ -158,6 +165,13 @@ myItem.toSendBack = function () {
     }else if(checkedItems.length>5){
         layer.msg('最多批量操作5条数据');
         return;
+    }
+    //判断五个申请的事项是否一致
+    for(var i = 0; i <checkedItems.length; i++){
+        if(checkedItems[i].applyUser !== checkedItems[0].applyUser){
+            layer.msg("批量退回时申请人必须一致");
+            return;
+        }
     }
     //获取选中框
     var checkedIds = "";

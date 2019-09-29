@@ -326,6 +326,11 @@ public class YyApplyServiceImpl implements YyApplyService {
     }
 
     @Override
+    public List<Map<String, Object>> approveAnnalBusiness(String applyId) {
+        return yyApplyMapper.approveAnnalBusiness(applyId);
+    }
+
+    @Override
     public boolean ifUseSealAdmin(String userId) {
         List<String> sealAdminList = yyMyItemMapper.getSealAdmin();
         for (String sealAdmin : sealAdminList){

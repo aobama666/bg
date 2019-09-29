@@ -227,6 +227,17 @@
                 <td>${a.NEXT_PHONE}</td>
             </tr>
         </c:forEach>
+        <c:forEach var="a" items="${approveAnnalBusiness}" >
+            <tr>
+                <td>${a.USERALIAS}</td>
+                <td>${a.DEPTNAME}</td>
+                <td>${a.APPROVE_REMARK}</td>
+                <td>${a.APPROVE_DATE}</td>
+                <td>${a.APPROVE_NODE}</td>
+                <td>${a.NEXT_USERALIAS}</td>
+                <td>${a.NEXT_PHONE}</td>
+            </tr>
+        </c:forEach>
     </table>
 </div>
 <div style="padding-top: 20px"></div>
