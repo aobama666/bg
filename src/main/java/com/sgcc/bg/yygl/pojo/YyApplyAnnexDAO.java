@@ -8,8 +8,10 @@ public class YyApplyAnnexDAO {
     private String uuid;
     private String useSealFileName;
     private String useSealFileLink;
+    private String useSealFileUuid;
     private String proofFileName;
     private String proofFileLink;
+    private String proofFileUuid;
     private String useSealAmount;
     private String remark;
 
@@ -59,6 +61,22 @@ public class YyApplyAnnexDAO {
 
     public void setUseSealAmount(String useSealAmount) {
         this.useSealAmount = useSealAmount;
+    }
+
+    public String getUseSealFileUuid() {
+        return useSealFileUuid;
+    }
+
+    public void setUseSealFileUuid(String useSealFileUuid) {
+        this.useSealFileUuid = useSealFileUuid;
+    }
+
+    public String getProofFileUuid() {
+        return proofFileUuid;
+    }
+
+    public void setProofFileUuid(String proofFileUuid) {
+        this.proofFileUuid = proofFileUuid;
     }
 
     public String getRemark() {
