@@ -4,6 +4,8 @@
 .classpath
 /bin/
 /.externalToolBuilders/
-/.idea
+/.idea/
 *.iml
+
 /hs_err_pid9936.log
+jxl.log

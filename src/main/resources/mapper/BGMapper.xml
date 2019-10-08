@@ -277,7 +277,7 @@
 		    AND T.ID = R.BG_EMP_ID
 		  WHERE T.PROJECT_ID = #{proId}
 		    AND T.STATUS = '1'
-		  ORDER BY T.ROLE DESC, T.HRCODE,T.START_DATE
+		  ORDER BY T.ROLE DESC, T.START_DATE,T.HRCODE
 	</select>
 	
 	<update id="deleteProjectByProId">

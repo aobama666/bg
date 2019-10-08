@@ -9,6 +9,7 @@
 	String ct = request.getAttribute("ct").toString();
 	String iframeId = request.getAttribute("iframeId").toString();
 	String iframe = request.getAttribute("iframe").toString();
+	String isNocheck = request.getAttribute("isNocheck").toString();
 %>
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -38,12 +39,74 @@
     position: relative;
     float: left;
     margin-top: -10px;
-    height: 400px;
+    height: 407px !important;
     overflow-y:auto;
 }
 .tree-box li{
 	padding: 3px 4px;
 }
+._box {
+	border: 1px solid #1b9974;
+	background: #ffffff;
+	padding: 7px 10px;
+	width: 100%;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	position: relative;
+	margin-top: -10px;
+	height: 38px;
+}
+._box input {
+	height: 22px;
+	padding: 1px 5px;
+}
+._box label {
+	font-size: 12px;
+	font-weight: normal;
+	margin-top: 4px;
+	float: left;
+	width: 68px;
+	text-align: right;
+}
+._box .controls {
+	margin-left: 71px;
+}
+
+body {
+	background-color:#D5E7E7;
+	padding:15px;
+}
+h5 {
+	margin: 2px 0;
+	color:#0a433a;
+	font-weight:bold;
+}
+hr {
+	color:#ffffff;
+	background-color:#ffffff;
+	border-color:#ffffff;
+}
+.page-header-sl {
+	margin: 5px 0 7px 0;
+	height: 10px;
+}
+
+.page-header-sl h5{
+	float: left;
+}
+.button-box {
+	float: right;
+}
+.btn{
+	background-color:#2D9592;
+	border-color:#2D9592;
+}
+.btn:hover{
+	background-color:#00828a;
+	border-color:#00828a;
+}
+
+
 </style>
 </head>
 <body>
@@ -52,10 +115,12 @@
 	<div class="button-box">
 		<button type="button" class="btn btn-success btn-xs" onclick="selected()"> 确认</button>
 		<button type="button" class="btn btn-warning btn-xs" onclick="clearChecked()"> 清空</button>
+		<%--<a  id="nocheckTrue"  href="#" class="btn btn-warning btn-xs" onclick="return false;">隐藏</a>--%>
+		<%--<a  id="nocheckFalse" href="#" class="btn btn-warning btn-xs" onclick="return false;">显示</a>--%>
 	</div>
 </div>
 <hr>
-<div class="tree-box">
+<div class="tree-box"  style="height: 800px">
 	<ul id="organTree" class="ztree"></ul>
 </div>
 </body>
@@ -68,6 +133,7 @@ $(function(){
 			},
 			check: {
 				enable: true,
+                nocheckInherit:true,
 				chkStyle: "<%=ct%>",
 				chkboxType: {"Y": "", "N": ""},
 				radioType: "all"
@@ -84,8 +150,35 @@ $(function(){
 				
 			}
 		};
-
 	tree = $.fn.zTree.init($("#organTree"), setting, getTree());
+    $("#nocheckTrue").bind("click",{nocheck:true},nocheckNode);
+    $("#nocheckFalse").bind("click",{nocheck:false},nocheckNode);
+    var isNocheck = '<%=isNocheck%>';
+    if(isNocheck!=""){
+        var zTree=$.fn.zTree.getZTreeObj("organTree")
+        var nodesSys=zTree.getNodes();
+        var nodesSysAll=zTree.transformToArray(nodesSys);
+        for(var i=0;i<nodesSysAll.length;i++){
+            var  id=nodesSysAll[i].id;
+            if(isNocheck.match(id)){
+                nodesSysAll[i].nocheck=true;
+                zTree.updateNode(nodesSysAll[i]);
+            }
+		}
+	}
+     function  nocheckNode(e) {
+		var zTree=$.fn.zTree.getZTreeObj("organTree")
+		 nocheck=e.data.nocheck,
+         nodes   =zTree.getSelectedNodes();
+		 if(nodes.length==0){
+		     alert("请选一个节点")
+		 }
+		 for(var i=0,l=nodes;i<1;i++){
+		     nodes[i].nocheck=nocheck;
+		     zTree.updateNode(nodes[i]);
+		 }
+    }
+
 	// 默认勾选上次选择的节点
 	var checkedNodeCode =  parent.$("input[name=<%=organCode%>]").val();
 	//console.log(checkedNodeCode)

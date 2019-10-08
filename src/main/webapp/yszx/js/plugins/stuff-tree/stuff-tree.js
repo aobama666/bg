@@ -1,8 +1,6 @@
 $.fn.extend({
 	stuffTree:function (properties) {
-		 
 		return this.each(function () {
-			 
 			var organBox = $(this);
 			/*
 			 * empCode 员工编号
