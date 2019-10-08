@@ -42,7 +42,7 @@ public interface YyComprehensiveService {
     /**
      * 确认用印信息的添加
      */
-    int updateForAffirm( String applyUserId,  String officeUserId, String applyId,String  status) ;
+    int updateForAffirm( String updateForAffirm,  String officeUserId, String applyId,String  status) ;
     /**
      * 事项的查询树
      */

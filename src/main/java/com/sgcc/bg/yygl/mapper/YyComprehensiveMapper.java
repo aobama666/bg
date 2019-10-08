@@ -47,4 +47,8 @@ public interface YyComprehensiveMapper {
      * 事项的查询树
      */
     List<Map<String,String>> selectForItemList();
+    /**
+     * 根据username查询对应userid
+     */
+    String getUserIdForUserName(@Param("userName") String userName);
 }

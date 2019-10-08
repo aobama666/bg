@@ -6,7 +6,7 @@ $(function(){
 });
 function popEvent(ids,codes,names,pId,level){
     $("#applyUserName").val(names);
-    $("#applyUserId").val(pId);
+    $("#applyUserId").val(ids);
 }
 //确认
 function affirmSave(){

@@ -52,7 +52,7 @@
 			</td>
 			<td   class="addInputStyle">
 				<input type="hidden" name="secondCategoryId" id="secondCategoryId"  value="${secondCategoryId}" >
-				<input  id="itemSecondName"   name="itemSecondName"  type="text"  value="${secondCategoryName}"    class = "validNull"   len="20"    content="用印事项二级类别"   title="必填项 ,字段长度不能超过 20" />
+				<input  id="itemSecondName"   name="itemSecondName"  type="text"  value="${secondCategoryName}"    class = "validNull"   len="100"    content="用印事项二级类别"   title="必填项,长度不能超过100" />
 			</td>
 		</tr>
 		<tr>
