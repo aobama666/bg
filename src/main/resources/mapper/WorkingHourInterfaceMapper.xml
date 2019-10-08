@@ -352,11 +352,11 @@
 	</select>
 	<!-- 获取员工投入总工时 -->
 	<select id="getInterfaceTotalByUser" resultType="java.util.Map">
-		SELECT M.PROJECT_ID,
+		SELECT M.EMP_CODE,
 		SUM(M.WORKING_HOUR) WORKING_HOUR
 
 		FROM (<include refid = "queryBaseInfo"/>  UNION ALL <include refid="queryBaseInfoBefore"/>) M
-		GROUP BY M.PROJECT_ID
+		GROUP BY M.EMP_CODE
 	</select>
 	<!-- 获取员工项目投入总工时 -->
 	<select id="getInterfaceTotalByProj" resultType="java.util.Map">
