@@ -68,8 +68,8 @@ public class YyMyItemServiceImpl implements YyMyItemService{
         //待办标题
         StringBuilder sbTitle = new StringBuilder();
         sbTitle.append("【用印申请】");
-        sbTitle.append(apply.getApplyDept());
-        sbTitle.append(apply.getApplyUser());
+        sbTitle.append(apply.getApplyDept()+" ");
+        sbTitle.append(apply.getApplyUser()+" ");
         sbTitle.append(apply.getApplyCode());
         String auditTitle = sbTitle.toString();
         //待办链接

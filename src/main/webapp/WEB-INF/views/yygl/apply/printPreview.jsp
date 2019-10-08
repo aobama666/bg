@@ -29,7 +29,7 @@
     </style>
 </head>
 <body>
-<div class="navbar">
+<div class="navbar" style="float: right">
     <button onclick="printPreview()">打印</button>
 </div>
 <div>

@@ -191,12 +191,12 @@ public class YyComprehensiveController {
 	public String affirmForSave(@RequestBody Map<String, Object> paramsMap){
 		Logger.info("用印管理确定用印------保存接口");
 		ResultWarp rw =  null;
-		String applyUserId = paramsMap.get("applyUserId") == null ? "" : paramsMap.get("applyUserId").toString();
+		String applyUserName = paramsMap.get("applyUserId") == null ? "" : paramsMap.get("applyUserId").toString();//这个id目前取的是username
 		String applyId = paramsMap.get("applyId") == null ? "" : paramsMap.get("applyId").toString();
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String officeUserId=  currentUser.getUserId();
-		Logger.info("用印管理确定用印------参数：（申请单位经办人）applyUserId:"+applyUserId+"(办公室经办人)officeUserId:"+officeUserId+"(用印UUID)applyId:"+applyId);
-		int  res=yyComprehensiveService.updateForAffirm(applyUserId,officeUserId,applyId, YyApplyConstant.STATUS_USED_SEAL);
+		Logger.info("用印管理确定用印------参数：（申请单位经办人）applyUserName:"+applyUserName+"(办公室经办人)officeUserId:"+officeUserId+"(用印UUID)applyId:"+applyId);
+		int  res=yyComprehensiveService.updateForAffirm(applyUserName,officeUserId,applyId, YyApplyConstant.STATUS_USED_SEAL);
 		Logger.info("用印管理确定用印-----添加流程代码");
 		yyMyItemService.completeUseSeal(applyId);
 		Logger.info("用印管理确定用印-----添加流程代码");
@@ -353,7 +353,7 @@ public class YyComprehensiveController {
 		headermap.put("secondCategoryName", "用印事项");
 		headermap.put("userSealkindName", "用印种类");
 		headermap.put("userSealStatusName", "审批状态");
-		headermap.put("applyHandleUserName", "申请单位经办");
+		headermap.put("applyHandleUserName", "申请单位经办人");
 		headermap.put("officeHandleUserName", "办公室经办人");
 		OutputStream os = null;
 		try {
