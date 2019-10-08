@@ -245,10 +245,14 @@ function forSearch(){
 	   return ;
 	}
 
-   if((new Date(endDate.replace(/-/g,"\/")))<(new Date(startDate.replace(/-/g,"\/")))){
+   /*if((new Date(endDate.replace(/-/g,"\/")))<(new Date(startDate.replace(/-/g,"\/")))){
 	   layer.msg("结束时间必须大于开始时间");
 	   return ;
-   }
+   }*/
+    if(startDate>endDate){
+        layer.msg("查询时间范围：开始时间大于结束时间！");
+        return;
+    }
 	pn = 1;
 	queryList("reload");
 }
