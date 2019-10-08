@@ -353,7 +353,7 @@ public class YyComprehensiveController {
 		headermap.put("secondCategoryName", "用印事项");
 		headermap.put("userSealkindName", "用印种类");
 		headermap.put("userSealStatusName", "审批状态");
-		headermap.put("applyHandleUserName", "申请单位经办");
+		headermap.put("applyHandleUserName", "申请单位经办人");
 		headermap.put("officeHandleUserName", "办公室经办人");
 		OutputStream os = null;
 		try {

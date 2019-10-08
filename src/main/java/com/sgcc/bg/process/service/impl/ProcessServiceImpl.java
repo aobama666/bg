@@ -495,7 +495,7 @@ public class ProcessServiceImpl implements ProcessService {
         jsonObject.put("operate",operate);
         String sendMessage = jsonObject.toJSONString();
         //想看这些参数啥意思去看待办rabbit接入API
-        log.info("流程模块撤回待办(revokeTask):{}",sendMessage);
+        log.info("流程模块撤销待办(revokeTask):{}",sendMessage);
         rabbitTemplate.convertAndSend(routingKey, sendMessage);
         return true;
     }

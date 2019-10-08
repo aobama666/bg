@@ -16,7 +16,6 @@
     <meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
     <title>用印申请新增</title>
-    <link href="<%=request.getContextPath()%>/css/yygl/liucheng.css" rel="stylesheet" media="all">
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/item.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
     <link href="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/css/newPage.css?verNo=<%=VersionUtils.verNo%>" rel="stylesheet" type="text/css"/>
@@ -25,6 +24,7 @@
     <link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath()%>/css/yygl/agree.css" rel="stylesheet" media="all">
     <link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" media="all">
+    <link href="<%=request.getContextPath()%>/css/yygl/liucheng.css" rel="stylesheet" media="all">
     <style type="text/css">
         .tableBody{
             height: 120px!important;
@@ -36,12 +36,6 @@
 <input type="hidden" value="${auditType}" id="auditType"/>
     <h3 style="float: left;margin-left: 3%;">申请编号:${yyApplyDAO.applyCode}</h3>
 <div class="tabbable active" style="text-align:right;width: 97%;padding-bottom: 5px;">
-    <c:if test="${accessType != 1}">
-        <button type="button" class="btn" onclick="returnClose()">返回</button>
-    </c:if>
-    <c:if test="${accessType == 1}">
-        <button type="button" class="btn" onclick="detail.returnItem()">返回</button>
-    </c:if>
     <c:if test="${applyUser == 1}">
         <button type="button" class="btn" onclick="detail.withdraw()">撤回</button>
     </c:if>
@@ -54,6 +48,12 @@
     </c:if>
     <c:if test="${sealAdmin == 1}">
         <button type="button" class="btn" onclick="detail.completeSeal()">确认用印</button>
+    </c:if>
+    <c:if test="${accessType != 1}">
+        <button type="button" class="btn" onclick="returnClose()">返回</button>
+    </c:if>
+    <c:if test="${accessType == 1}">
+        <button type="button" class="btn" onclick="detail.returnItem()">返回</button>
     </c:if>
 </div>
 <table class="visitOperate tableStyle specialTable" style="padding-top: 20px">
@@ -243,6 +243,7 @@
 <div style="padding-top: 20px"></div>
 </body>
 <!-- 本页面所需的js -->
+
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/datagrid2.0/js/jquery-tool.datagrid.js?verNo=<%=VersionUtils.verNo%>"></script>    <!-- datagrid表格.js   -->
 <script src="<%=request.getContextPath()%>/yszx/js/stylePage/layer/layer.js"></script>

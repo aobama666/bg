@@ -86,7 +86,7 @@ roomList.initDataGrid = function(){
                         return "";
                     }
 		   }},
-            {name: '申请单位经办', style:{width:"100px"},data: 'applyHandleUserName' },
+            {name: '申请单位经办人', style:{width:"100px"},data: 'applyHandleUserName' },
             {name: '办公室经办人', style:{width:"100px"},data: 'officeHandleUserName' }
 		]
 	});

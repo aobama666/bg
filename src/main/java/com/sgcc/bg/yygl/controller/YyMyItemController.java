@@ -163,8 +163,8 @@ public class YyMyItemController {
         //待办标题
         StringBuilder sbTitle = new StringBuilder();
         sbTitle.append("【用印申请】");
-        sbTitle.append(apply.getApplyDept());
-        sbTitle.append(apply.getApplyUser());
+        sbTitle.append(apply.getApplyDept()+" ");
+        sbTitle.append(apply.getApplyUser()+" ");
         sbTitle.append(apply.getApplyCode());
         String auditTitle = sbTitle.toString();
         //待办链接
@@ -390,7 +390,8 @@ public class YyMyItemController {
     /**
      * 复制于人员树controller部分，具体流程未深究
      * 格式化人员树 {"id": "P41070003","open": false,"organCode": "P41070003","pId": "60000258","name": "杨久蓉","isParent": false,"nocheck": false}
-     * @param list
+     * @param list 人员信息
+     * @param root 默认展开对应部门第一个节点
      * @return
      */
     private List<Map<String, Object>> formatUserTreeData(List<Map<String, Object>> list,String root) {
