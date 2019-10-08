@@ -252,11 +252,12 @@ public class KqTemporaryServiceImpl implements KqTemporaryService {
 	public String exportExcel(HttpServletRequest request, HttpServletResponse response) {
 		String beginDate = request.getParameter("startTime" ) == null ? "" : request.getParameter("startTime").toString(); //开始时间
 		String endDate = request.getParameter("endTime" ) == null ? "" : request.getParameter("endTime").toString(); //结束数据
+		String kqTime = request.getParameter("kqTime" ) == null ? "" : request.getParameter("kqTime").toString(); //时间
 		String empName = request.getParameter("empName" ) == null ? "" : request.getParameter("empName").toString(); //类型
 		String idsStr = request.getParameter("selectList")==null?"":request.getParameter("selectList").trim();
 
 		//取月初和月末
-		String[] str= beginDate.split("-");
+		String[] str= kqTime.split("-");
 		int year = Integer.parseInt(str[0]);
 		int month = Integer.parseInt(str[1]);
 		//每月月初

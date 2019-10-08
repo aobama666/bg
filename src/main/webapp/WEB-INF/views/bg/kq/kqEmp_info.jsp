@@ -107,27 +107,31 @@
 </div>
 </body>
 <script type="text/javascript">
+    $("input[name=startTime]").val(common.getMonthFirstDay());
+    $("input[name=endTime]").val(common.getMonthEndDay());
 var mmg ;
 var pn = 1 ;
 var limit = 30 ;
 
 $(function(){
-    Timeinit();
 	init();
 	queryListPro();
 });
 
 function init(){
-    $("input[name=startTime]").val(common.getMonthFirstDay());
-    $("input[name=endTime]").val(common.getMonthEndDay());
+    Timeinit();
     var   date = new Date();
     var   month=date.getMonth()+1;
     var months;
     if(month<10){
         months="0"+month;
-    }
+    }else {
+        months = month;
+	}
     var   newdate=date.getFullYear()+"-"+months;
     $("#kqTime").val(newdate);
+    $("#startTime").val(newdate);
+    $("#endTime").val(newdate);
 	$(".form_date").datepicker({autoclose:true,todayHighlight:true, language: 'cn',orientation:'auto'});
 }
 
@@ -142,6 +146,7 @@ function Timeinit() {
         format : 'yyyy-mm',// 时间格式
         language : 'zh-CN',// 汉化
     });
+
 }
 //获取结束时间的
 function getEndD(endDate) {
