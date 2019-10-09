@@ -106,6 +106,7 @@
 <form action="">
     <input type = "text" style="display: none" value="" id = "filePath" name="filePath">
     <input type = "text" style="display: none" value="" id = "fileName" name="fileName">
+    <input type = "text" style="display: none" value="" id = "checkAnnexUuid" name="checkAnnexUuid">
 </form>
 
 <div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 1%">

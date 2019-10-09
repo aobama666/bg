@@ -5,6 +5,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.sgcc.bg.common.FileDownloadUtil;
 import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.Rtext;
+import com.sgcc.bg.lunwen.service.LwFileService;
 import com.sgcc.bg.lunwen.util.UploadUtil;
 import com.sgcc.bg.yygl.bean.YyApplyAnnex;
 import com.sgcc.bg.yygl.constant.YyApplyConstant;
@@ -34,6 +35,8 @@ public class YyApplyStuffController {
 
     @Autowired
     private YyApplyAnnexService yyApplyAnnexService;
+    @Autowired
+    private LwFileService lwFileService;
 
     /**
      * 展示对应的材料信息
@@ -121,12 +124,16 @@ public class YyApplyStuffController {
      * 下载对应的材料
      */
     @RequestMapping("/downloadStuff")
-    public void downloadStuff(HttpServletRequest request, HttpServletResponse response){
-        String filePath = request.getParameter("filePath");
-        String fileName = request.getParameter("fileName");
+    public void downloadStuff(String checkAnnexUuid,HttpServletRequest request, HttpServletResponse response){
+        Map<String,Object> lwFile = lwFileService.findFile(checkAnnexUuid);
+        String fileName = lwFile.get("FILENAME").toString();
+//        用印没有把文件名称和文件格式分开，这个需要后期调整一下
+//        String fileExt = lwFile.get("FILEEXTNAME").toString();
+//        fileName = fileName+"."+fileExt;
+        String ftpFilePath = lwFile.get("FTPFILEPATH").toString();
         //从ftp下载文件
         try {
-            FileDownloadUtil.fileDownloadFromFtpLwAnnex(response, request, filePath, fileName);
+            FileDownloadUtil.fileDownloadFromFtpLwAnnex(response, request, ftpFilePath, fileName);
         } catch (Exception e) {
             e.printStackTrace();
         }
