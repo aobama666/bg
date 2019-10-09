@@ -491,7 +491,7 @@ public class ProcessServiceImpl implements ProcessService {
         jsonObject.put("precessid",precessId);
         jsonObject.put("taskid",taskId);
         jsonObject.put("auditOrigin","tygl");
-        jsonObject.put("key",routingKey);
+        jsonObject.put("key","DOTRl5HgPHQ2iz2iCy");
         jsonObject.put("operate",operate);
         String sendMessage = jsonObject.toJSONString();
         //想看这些参数啥意思去看待办rabbit接入API
