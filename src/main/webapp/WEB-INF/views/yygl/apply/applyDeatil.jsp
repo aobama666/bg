@@ -114,8 +114,6 @@
 </table>
 
 <form action="">
-    <input type = "text" style="display: none" value="" id = "filePath" name="filePath">
-    <input type = "text" style="display: none" value="" id = "fileName" name="fileName">
     <input type = "text" style="display: none" value="" id = "checkAnnexUuid" name="checkAnnexUuid">
 </form>
 

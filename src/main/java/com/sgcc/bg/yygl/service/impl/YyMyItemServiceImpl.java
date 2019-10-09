@@ -131,21 +131,21 @@ public class YyMyItemServiceImpl implements YyMyItemService{
 
         //申请环节跳过业务部门审批环节
         if(ifDeptEqual.equals("2")){
-            //撤销待办
-            processService.cancelUpcomingForUserId(apply.getUuid(),approveUserId);
             //执行正常流程
             processService.processApprove(applyUuid,null,"系统默认同意",approveUserId
                     ,newToDoerId,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_YES);
-            //修改申请状态
+            //撤销当前人员待办
+            processService.cancelUpcomingForUserId(apply.getUuid(),approveUserId);
+            //修改用印申请状态
             yyApplyService.updateApplyStatus(applyUuid,YyApplyConstant.STATUS_DEAL_OFFICE);
         }
         //申请部门与业务部门，只有其中一个相同
         if(ifDeptEqual.equals("1")){
-            //撤销当前人员待办
-            processService.cancelUpcomingForUserId(apply.getUuid(),approveUserId);
             //完成当前系统默认审批
             processService.processApprove(applyUuid,null,"系统默认同意",approveUserId
                     ,null,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_YES);
+            //撤销当前人员待办
+            processService.cancelUpcomingForUserId(apply.getUuid(),approveUserId);
         }
         return "审批完成";
     }

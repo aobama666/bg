@@ -49,8 +49,6 @@ annex.initDataGrid = function(){
 
 //下载选中材料
 annex.downloadStuff = function (uuid) {
-    $("#filePath").val(filePath);
-    $("#fileName").val(fileName);
     $("#checkAnnexUuid").val(uuid);
     document.forms[0].action = "/bg/yygl/applyStuff/downloadStuff";
     document.forms[0].submit();
