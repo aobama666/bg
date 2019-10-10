@@ -692,7 +692,6 @@
 					<useTestClasspath>true</useTestClasspath>
 				</configuration>
 			</plugin>
-
 			<!-- tomcat -->
 			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
@@ -706,7 +705,6 @@
 					<path>/</path>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>commons-dbcp</groupId>
 				<artifactId>commons-dbcp</artifactId>

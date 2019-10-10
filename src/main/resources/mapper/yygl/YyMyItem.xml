@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.yygl.mapper.YyMyItemMapper">
+
+    <sql id="selectMyItemPublic">
+        select a.uuid,
+        a.apply_code applyCode,
+        a.use_seal_reason useSealReason,
+        d.deptname applyDept,
+        u.useralias applyUser,
+        TO_CHAR(a.use_seal_date, 'YYYY-MM-DD')  useSealDate,
+        TO_CHAR(a.create_time, 'YYYY-MM-DD')  createTime,
+        s.second_category_name useSealItem,
+        (select name
+            from bg_sys_datadictionary
+            where pcode = 'use_seal_status'
+            and code = a.use_seal_status) use_seal_status,
+        a.use_seal_status use_seal_status_code,
+        (select replace(wm_concat(nvl(d.name, k.use_seal_value)),',',';') useSealKind
+            from bg_yy_kind k,
+            (select * from bg_sys_datadictionary d
+            where d.pcode = 'use_seal_kind'
+            and d.vaild = '1') d
+            where k.use_seal_kind_code = d.code(+)
+            and k.apply_id = a.uuid and k.valid='1') useSealKind
+        from bg_yy_apply a
+        left join bg_sys_dept d on d.deptId = a.dept_id
+        left join bg_sys_user u on a.apply_user_id = u.userid
+        left join bg_yy_item_second s on a.item_second_id = s.uuid
+        left join bg_yy_item_first f on a.item_first_id = f.uuid
+        where 1=1
+        <if test="applyCode != null and applyCode != ''">
+            and a.apply_code like '%'||#{applyCode}||'%'
+        </if>
+        <if test="deptId != null and deptId != ''">
+            and a.dept_id = #{deptId}
+        </if>
+        <if test="useSealUser != null and useSealUser != ''">
+            and u.USERALIAS like '%'||#{useSealUser}||'%'
+        </if>
+        AND a.UUID IN (SELECT DISTINCT BUSINESS_ID
+            FROM TB_WL_BUSINESS_R_APPLY
+            WHERE APPLY_ID IN (
+            SELECT apply_id
+            FROM TB_WL_APPROVE
+            WHERE id IN (
+            SELECT ID APPROVE_ID
+            FROM TB_WL_APPROVE
+            WHERE id IN (
+            SELECT APPROVE_ID
+            FROM TB_WL_AUDIT_USER
+            WHERE approve_user = #{loginUserId} AND valid = '1' AND
+            APPROVE_EXPAND_ID IS NULL
+            )
+            AND VALID = '1'
+            AND AUDIT_FLAG = #{ifComingSoon}
+            <if test="ifComingSoon=='0'">
+                AND (APPROVE_RESULT = '0' OR APPROVE_RESULT = '1')
+            </if>
+            UNION
+            SELECT APPROVE_ID
+            FROM TB_WL_APPROVE_EXPAND
+            WHERE UUID IN (SELECT APPROVE_EXPAND_ID
+            FROM TB_WL_AUDIT_USER
+            WHERE
+            APPROVE_USER = #{loginUserId} AND valid = '1' AND
+            APPROVE_EXPAND_ID IS NOT NULL
+            )
+            AND VALID = '1'
+            AND AUDIT_FLAG = #{ifComingSoon}
+            <if test="ifComingSoon=='0'">
+                AND (APPROVE_RESULT = '0' OR APPROVE_RESULT = '1')
+            </if>
+        )))
+        and a.valid = '1'
+        order by a.create_time desc
+    </sql>
+
+    <select id="selectMyItem" resultType="com.sgcc.bg.yygl.pojo.YyApplyDAO">
+        select *
+        from (select p.*, ROWNUM as r
+            from (
+              <include refid="selectMyItemPublic"/>
+            ) p
+          where #{pageEnd} >= ROWNUM )
+        where r > #{pageStart}
+    </select>
+
+    <select id="getMyItemNums" resultType="java.lang.Integer">
+        SELECT COUNT(*)  from(<include refid="selectMyItemPublic"/>)
+    </select>
+
+    <select id="getDept" resultType="java.util.Map">
+        SELECT
+          DEPTID   k,
+          DEPTNAME v,
+          DEPTCODE code
+        FROM bg_sys_dept
+        WHERE PDEPTCODE = '90000110' AND VALID = '1' AND src IN (0, 2)
+        ORDER BY SORT_ID
+    </select>
+
+    <select id="nextNodeApprove" resultType="java.util.Map">
+        SELECT
+          a.STAFF_ID staffId,
+          u.USERNAME,
+          u.USERALIAS,
+          a.DEPT_ID deptId,
+          d.DEPTNAME,
+          (select name from BG_SYS_DATADICTIONARY where pcode ='node_type' and code = a.NODE_TYPE) NODETYPE
+        FROM BG_YY_APPROVE a
+        LEFT JOIN BG_SYS_DEPT d ON a.DEPT_ID = d.DEPTID
+        LEFT JOIN BG_SYS_USER u ON u.USERID = a.STAFF_ID
+        WHERE 1=1
+        <if test="deptId!=null and deptId!=''">
+          AND a.DEPT_ID = #{deptId}
+        </if>
+        AND a.NODE_TYPE = #{nodeType}
+        <if test="itemSecondId!=null and itemSecondId!=''">
+          AND a.ITEM_SECOND_ID = #{itemSecondId}
+        </if>
+        AND a.VALID = '1' AND d.VALID = '1' AND u.VALID = '1'
+    </select>
+
+    <select id="itemBusinessDept" resultType="java.util.Map">
+        select s.DEPT_ID,d.DEPTNAME from BG_YY_ITEM_SECOND_DEPT s LEFT JOIN BG_SYS_DEPT d ON d.DEPTID = s.DEPT_ID
+        where s.SECOND_CATEGORY_ID=#{itemSecondId} and d.VALID='1' and s.VALID='1'
+    </select>
+
+    <select id="ifSign" resultType="java.lang.String">
+        select IF_SIGN from BG_YY_ITEM_SECOND s where s.uuid=#{itemSecondId}
+    </select>
+
+    <select id="ifLeaderApprove" resultType="java.lang.String">
+        select IF_LEADER_APPROVE from BG_YY_ITEM_SECOND s where s.uuid=#{itemSecondId}
+    </select>
+
+    <select id="findDeptForUserName" resultType="java.util.Map">
+        select USERID,USERNAME,USERALIAS,HRDEPTNAME from BG_SYS_USER where username = #{userName} and VALID='1'
+    </select>
+
+    <select id="getSealAdmin" resultType="java.lang.String">
+        SELECT STAFF_ID
+        FROM bg_yy_Approve
+        WHERE NODE_TYPE = '5' AND VALID = '1'
+    </select>
+
+    <select id="getAuditUser" resultType="java.lang.String">
+        SELECT approve_user
+        FROM TB_WL_AUDIT_USER
+        WHERE APPROVE_ID = #{approveId}
+              AND APPROVE_EXPAND_ID IS NULL
+        UNION ALL
+        SELECT APPROVE_USER
+        FROM TB_WL_APPROVE_EXPAND
+        WHERE AUDIT_FLAG = '1' AND APPROVE_ID = #{approveId}
+    </select>
+
+    <select id="getSecondItemDept" resultType="java.lang.String">
+        SELECT DEPT_ID
+        FROM BG_YY_ITEM_SECOND_DEPT
+        WHERE SECOND_CATEGORY_ID = #{secondItemId} AND VALID = '1'
+    </select>
+
+    <select id="getSignDept" resultType="java.util.Map">
+        SELECT
+          decode(t.type, 2, t.pdeptid, 1, t.deptid)     deptId,
+          decode(t.type, 2, t.pdeptname, 1, t.deptname) deptName
+        FROM bg_sys_dept t
+        WHERE t.deptcode IN
+              (SELECT hrdeptcode
+               FROM bg_sys_user
+               WHERE userid IN (
+                 SELECT u.APPROVE_USER
+                 FROM TB_WL_AUDIT_USER u LEFT JOIN TB_WL_APPROVE a
+                     ON a.ID = u.APPROVE_ID
+                 WHERE a.APPLY_ID = (SELECT apply_id
+                                     FROM TB_WL_BUSINESS_R_APPLY
+                                     WHERE BUSINESS_ID = #{businessId} AND
+                                           CREATE_TIME = (SELECT max(CREATE_TIME)
+                                                          FROM
+                                                            TB_WL_BUSINESS_R_APPLY
+                                                          WHERE BUSINESS_ID = #{businessId}
+                                                                AND VALID = '1'))
+                       AND u.APPROVE_EXPAND_ID IS NOT NULL
+               ) AND valid = '1')
+              AND t.valid = '1'
+    </select>
+
+</mapper>

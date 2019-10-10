@@ -164,47 +164,47 @@ roomList.initDataGrid = function(){
 		});
 		 
 	}
-	/* 演示中心管理-删除方法*/
-	roomList.delEvent = function(){
-		var checkedItems = dataGrid.getCheckedItems(dataItems);
-		if(checkedItems.length==0){
-			messager.tip("请选择要操作的数据",1000);
-			return;
-		}else if(checkedItems.length>1){
-			messager.tip("每次只能删除一条数据",2000);
-			return;
-		}
-		if(checkedItems[0].approveState!="SAVE"&& checkedItems[0].approveState!="RETURN"){
-			messager.tip("选择的数据无法删除,审批状态为：待提交,被退回才可以删除",5000);
-			return;
-		}
-		var checkedIds = dataGrid.getCheckedIds();
-		 $.messager.confirm( "删除提示", "确认删除选中数据吗",
-			function(r){
-				if(r){
-					$.ajax({
-					    url: "/bg/IdeaInfo/deleteIdeaInfo?ideaId="+checkedIds,//删除
-						type: "post",
-						dataType:"json",
-						contentType: 'application/json',
-						success: function (data) {
-							if(data.success == "true"){
-								messager.tip("删除成功",1000);
-								roomList.query();
-							}else{
-								messager.tip("删除失败",1000);
-								roomList.query();
-							}
-						}
-					});
-				}
-			}
-		);
-	}
-	
-	 
-	
-	/* 演示中心管理-提交方法*/
+/* 演示中心管理-删除方法*/
+roomList.delEvent = function(){
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length==0){
+        messager.tip("请选择要操作的数据",1000);
+        return;
+    }else if(checkedItems.length>1){
+        messager.tip("每次只能删除一条数据",2000);
+        return;
+    }
+    if(checkedItems[0].approveState!="SAVE"&& checkedItems[0].approveState!="RETURN"){
+        messager.tip("选择的数据无法删除,审批状态为：待提交,被退回才可以删除",5000);
+        return;
+    }
+    var checkedIds = dataGrid.getCheckedIds();
+    $.messager.confirm( "删除提示", "确认删除选中数据吗",
+        function(r){
+            if(r){
+                $.ajax({
+                    url: "/bg/IdeaInfo/deleteIdeaInfo?ideaId="+checkedIds,//删除
+                    type: "post",
+                    dataType:"json",
+                    contentType: 'application/json',
+                    success: function (data) {
+                        if(data.success == "true"){
+                            messager.tip("删除成功",1000);
+                            roomList.query();
+                        }else{
+                            messager.tip("删除失败",1000);
+                            roomList.query();
+                        }
+                    }
+                });
+            }
+        }
+    );
+}
+
+
+
+/* 演示中心管理-提交方法*/
 	roomList.submitEvent = function(){
 	   debugger;
 	 	var checkedItems = dataGrid.getCheckedItems(dataItems);

@@ -671,7 +671,7 @@ import com.sgcc.bg.workinghourinfo.service.projectWorkingTimeService;
 		 * @param bpShow
 		 * @param type
 		 * @param projectNumber
-		 * @param worker
+		 * @param
 		 * @param hrCode
 		 * @return
 		 */

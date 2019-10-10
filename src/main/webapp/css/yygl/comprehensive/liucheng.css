@@ -1,0 +1,193 @@
+body,html,div,span,b,i{
+    margin:0;padding:0;
+}
+body{
+    font-family: "微软雅黑";
+}
+.contain{
+    margin: auto;
+    width:57%;
+    padding:10px;
+}
+.Ready{
+    text-align: center;
+    line-height: 36px;
+}
+
+.NoneEndEvent{
+    text-align: center;
+    line-height: 36px;
+
+}
+td span{
+    display: inline-block;
+    height:30px;
+    line-height: 30px;
+    margin-left:10px;
+}
+.blueSpan{
+    display: inline-block;
+    background: #8ECE49;
+    padding:5px 12px;
+    margin-left:10px;
+    border:1px solid #ccc;
+}
+.contain .blue{
+    background: #8ECE49;
+}
+.contain .yellow{
+    background: #E4E400;
+}
+.contain .huise{
+    background: #F3F3F3;
+}
+.yellowSpan{
+    display: inline-block;
+    background:  #E4E400;
+    padding:5px 12px;
+    margin-left:10px;
+    border:1px solid #ccc;
+}
+.huiseSpan{
+    display: inline-block;
+    background: #F3F3F3;
+    padding:5px 12px;
+    margin-left:10px;
+    border:1px solid #ccc;
+}
+.PublicNotice{
+    text-align: center;
+    line-height: 36px;
+    height:60px!important;
+}
+body{
+    font-size: 14px;
+}
+.toDown{
+    display: inline-block;
+    width:140px;
+    height:37px;
+    background: url(../../../images/yygl/comprehensive/index.png) 245px 97px;
+}
+.toRight{
+    display: inline-block;
+    width:40px;
+    height:37px;
+    background: url(../../../images/yygl/comprehensive/index.png) 204px 170px;
+}
+.toRightDown{
+    display: inline-block;
+    width:140px;
+    height:93px;
+    background: url(../../../images/yygl/comprehensive/index.png) 601px 414px;
+}
+.toDownRight{
+    display: inline-block;
+    width:100%;
+    height:91px;
+    background: url(../../../images/yygl/comprehensive/index2.png) 330px 267px;
+}
+.toUp{
+    display: inline-block;
+    width:150px;
+    height:37px;
+    background: url(../../../images/yygl/comprehensive/index.png) 227px 37px;
+}
+.toUpLarge{
+    display: inline-block;
+    width:150%;
+    height:91px;
+    background: url(../../../images/yygl/comprehensive/index.png) 117px 358px;
+}
+.AnswerRaise{
+    width:150px;
+    height:54px;
+    background: #EBEBEB;
+    border:1px solid #999;
+    text-align: center;
+    line-height: 54px;
+}
+.AnswerAccept{
+    padding: 7px 5px;
+    width: 90px;
+    height: 40px;
+    background: #EBEBEB;
+    border:1px solid #999;
+    text-align: center;
+}
+.AnswerCheck{
+    padding: 7px 5px;
+    width: 90px;
+    height: 40px;
+    background: #EBEBEB;
+    border:1px solid #999;
+    text-align: center;
+}
+.TaskAccept{
+    padding: 7px 10px;
+    width: 90px;
+    height: 40px;
+    background: #EBEBEB;
+    border:1px solid #999;
+    text-align: center;
+}
+.AnswerSolve{
+    padding: 7px 10px;
+    width: 90px;
+    height: 40px;
+    background: #EBEBEB;
+    border:1px solid #999;
+    text-align: center;
+}
+.AnswerResultCheck{
+    width:150px;
+    height:54px;
+    background: #EBEBEB;
+    border:1px solid #999;
+    text-align: center;
+    line-height: 54px;
+}
+.AnswerChecked{
+    width:150px;
+    height:54px;
+    background: #EBEBEB;
+    border:1px solid #999;
+    text-align: center;
+    line-height: 54px;
+}
+.AnswerPublishFirst{
+    width:150px;
+    height:54px;
+    background: #EBEBEB;
+    border:1px solid #999;
+    text-align: center;
+    line-height: 54px;
+}
+.AnswerSolveByMaster{
+    padding: 7px 5px;
+    width: 90px;
+    height: 40px;
+    background: #EBEBEB;
+    border:1px solid #999;
+    text-align: center;
+}
+.AnswerPublishLast{
+    padding: 7px 5px;
+    width: 90px;
+    height: 40px;
+    background: #EBEBEB;
+    border:1px solid #999;
+    text-align: center;
+}
+.back{
+    width:150px;height:36px;
+    background: url(../../../images/yygl/comprehensive/index.png) 120px 168px;
+}
+.endback{
+    width:150px;height:36px;
+    background: url(../../../images/yygl/comprehensive/index.png) 104px 168px;
+}
+.overFlow{
+    position: relative;
+    height: 52px;
+}

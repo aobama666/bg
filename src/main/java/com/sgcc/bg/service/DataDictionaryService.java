@@ -19,7 +19,6 @@ public interface DataDictionaryService {
 	 */
 	String getDictDataJsonStr(String pcode);
 	
-	
-	
-   List<Map<String, String>>  selectDictDataByPcode(String pcode);
+    List<Map<String, String>>  selectDictDataByPcode(String pcode);
+
 }

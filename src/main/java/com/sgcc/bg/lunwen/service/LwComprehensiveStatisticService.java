@@ -25,7 +25,7 @@ public interface LwComprehensiveStatisticService {
      * @param end
      * @return
      */
-    List<PaperComprehensiveVO> paperComprehensiveVOList(String year, String paperName, String author, String paperId, int start, int end);
+    List<PaperComprehensiveVO> paperComprehensiveVOList(String year, String paperName, String author, String paperId,int start,int end);
 
     /**
      * 综合统计列表count

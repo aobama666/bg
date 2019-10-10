@@ -1,5 +1,7 @@
 package com.sgcc.bg.yszx.controller;
 
+import com.sgcc.bg.controller.OrganStuffTreeController;
+import com.sgcc.bg.service.OrganStuffTreeNewService;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,9 +30,11 @@ import com.sgcc.bg.service.OrganStuffTreeService;
 @Controller
 @RequestMapping(value="/newOrganstufftree")
 public class newOrganStuffTreeController {
-	private Logger logger = Logger.getLogger(newOrganStuffTreeController.class);
+	private org.slf4j.Logger logger = LoggerFactory.getLogger(OrganStuffTreeController.class);
 	@Autowired
 	private OrganStuffTreeService organStuffTreeService;
+	@Autowired
+	private OrganStuffTreeNewService organStuffTreeNewService;
 	@Autowired
 	private  WebUtils webUtils;
 	@Autowired
@@ -41,7 +46,7 @@ public class newOrganStuffTreeController {
 	 */
 	@RequestMapping(value = "/initStuffTree", method = RequestMethod.GET)
 	public ModelAndView initStuffTree(HttpServletRequest request){
-		//empCode 员工编号
+        //empCode 员工编号
 		String empCode = request.getParameter("empCode")==null?"":request.getParameter("empCode").toString();
 		//empName 员工姓名
 		String empName = request.getParameter("empName")==null?"":request.getParameter("empName").toString();
@@ -49,7 +54,7 @@ public class newOrganStuffTreeController {
 		//String index = request.getParameter("index")==null?"":request.getParameter("index").toString();
 		//index   窗口名，获取窗口对象用
 		String winName = request.getParameter("winName")==null?"":request.getParameter("winName").toString();
-		//iframe  self 作用域：当前窗口   parent 作用域：父类窗口 
+		//iframe  self 作用域：当前窗口   parent 作用域：父类窗口
 		String iframe = request.getParameter("iframe")==null?"":request.getParameter("iframe").toString();
 		//ct      树形节点选择框样式：radio，checkbox
 		String ct = request.getParameter("ct")==null?"":request.getParameter("ct").toString();
@@ -57,20 +62,20 @@ public class newOrganStuffTreeController {
 		String root = request.getParameter("root")==null?"":request.getParameter("root").toString();
 		//popEvent    自定义触发父层事件
 		String popEvent = request.getParameter("popEvent")==null?"":request.getParameter("popEvent").toString();
-		
+
 		logger.info("[initStuffTree:in param]：empCode="+empCode+";"
-				                          +"empName="+empName+";"
-				                          +"winName="+winName+";"
-				                          +"iframe="+iframe+";"
-				                          +"ct="+ct+";"
-				                          +"root="+root+";"
-				                          +"popEvent="+popEvent);		
+				+"empName="+empName+";"
+				+"winName="+winName+";"
+				+"iframe="+iframe+";"
+				+"ct="+ct+";"
+				+"root="+root+";"
+				+"popEvent="+popEvent);
 		//获取组织或组织人员数据列表
 		List<Map<String, Object>> list = organStuffTreeService.initUserTree(root);
-		
+
 		//格式化数据
 		List<Map<String, Object>> treelist = formatUserTreeData(list);
-		
+
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		modelMap.put("empCode", empCode);
 		modelMap.put("empName", empName);
@@ -80,13 +85,17 @@ public class newOrganStuffTreeController {
 		modelMap.put("root", root);
 		modelMap.put("popEvent", popEvent);
 		modelMap.put("treelist",JSON.toJSONString(treelist, SerializerFeature.WriteMapNullValue));
+		//ModelAndView model = new ModelAndView("bg/common/organstufftree/stuffTreePage",modelMap);
 		ModelAndView model = new ModelAndView("yszx/common/organstufftree/stuffTreePage",modelMap);
 		return model;
+
+
+
 	}
-	
+
 	/**
 	 * 动态加载人员节点
-	 * @param context
+	 * @param
 	 */
 	@RequestMapping(value = "/queryUserTreeByOrgan", method = RequestMethod.POST)
 	public void queryUserTreeByOrgan(HttpServletRequest request,HttpServletResponse response){
@@ -116,7 +125,7 @@ public class newOrganStuffTreeController {
 	
 	/**
 	 * 模糊查询人员
-	 * @param context
+	 * @param
 	 */
 	@RequestMapping(value = "/queryUserTreeByUser", method = RequestMethod.POST)
 	public void queryUserTreeByUser(HttpServletRequest request,HttpServletResponse response){
@@ -215,7 +224,9 @@ public class newOrganStuffTreeController {
 		String limit = request.getParameter("limit")==null?"":request.getParameter("limit").toString();
 		//popEvent    自定义触发父层事件
 		String popEvent = request.getParameter("popEvent")==null?"":request.getParameter("popEvent").toString();
-				
+		//popEvent    是否可选
+		String isNocheck = request.getParameter("isNocheck")==null?"":request.getParameter("isNocheck").toString();
+
 		logger.info("[initOrganTree:in param]:organCode="+organCode+";"
 							                +"organName="+organName+";"
 							                +"iframeId="+iframeId+";"
@@ -323,8 +334,9 @@ public class newOrganStuffTreeController {
 		modelMap.put("ct", ct);
 		modelMap.put("root", root);
 		modelMap.put("popEvent", popEvent);
+		modelMap.put("isNocheck", isNocheck);
 		modelMap.put("treelist",JSON.toJSONString(treelist, SerializerFeature.WriteMapNullValue));
-		ModelAndView model = new ModelAndView("bg/common/organstufftree/organTreePage",modelMap);
+		ModelAndView model = new ModelAndView("yszx/common/organstufftree/organTreePage",modelMap);
 		return model;
 	}
 }

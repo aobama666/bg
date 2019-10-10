@@ -268,7 +268,7 @@ roomList.initDataGrid = function(){
 
 	/* 同意信息库信息 */
 	messageAgree= function(stauts){
-		debugger;
+
 	    var html=messageagreeHtml();
 		if(html =='' || html ==undefined){
 			messager.tip("审批人查询失败",1000);
@@ -328,7 +328,7 @@ roomList.initDataGrid = function(){
 	    return expertIdStr.substring(0,expertIdStr.length-1);
 	}*/
 	function	selectForAgree(approveId,stauts,auditUserId,approveRemark){
-		    debugger;
+
 		  
 	 					$.ajax({
 	 					   // url: "/bg/Approve/sendApprove?approveId="+approveId+"&stauts="+stauts+"&auditUserId="+auditUserId+"&approveRemark="+approveRemark,//删除

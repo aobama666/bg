@@ -7,7 +7,7 @@ $(function(){
 	//‘新增’页面，院领导姓名多选下拉框
 	roomDetailInfo.initSelectForLeader();
 	//初始化人员选择树
-	$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'parent',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'}); 
+	$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'self',empCode:'empCode',empName:'empName',checkType:'checkbox',popEvent:'pop'});
 });
 //获取当前时间
 function getNowFormatDate() {    
@@ -246,7 +246,7 @@ roomDetailInfo.messageResign =function(){
 }
 /* 保存信息库信息 */
 roomDetailInfo.messageSave= function(approvalUserd){
-	   debugger;
+
 	   /* 主ID  */
 	    var id=$("#id").val();
 	    var approveId=$("#wlApproveId").val();

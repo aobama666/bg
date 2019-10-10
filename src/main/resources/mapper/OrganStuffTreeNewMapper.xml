@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+ -->
+<mapper namespace="com.sgcc.bg.mapper.OrganStuffTreeNewMapper">	
+	<!--  获取组织树权限 -->
+    <sql id="queryBaseOrganInfo">
+        <choose>
+			<when test="limit != null and limit != '' and limit == 'yes' "><!-- 权限控制 -->
+			    <choose>
+					<when test="show != null and show != '' and show == 'PART' "><!-- 局部显示 -->
+					    SELECT D1.DEPTID,
+						       D1.DEPTNAME,
+						       D1.DEPTCODE,
+						       D1.TYPE,
+						       D1.SORT_ID,
+						       D1.SRC,
+						       D1.PDEPTCODE,
+						       D1.PDEPTID,
+						       D1.PDEPTNAME,
+						       D1.VALID
+						  FROM BG_SYS_DEPT D1
+						 WHERE 1 = 1
+						   AND D1.DEPTCODE IS NOT NULL
+						   AND D1.VALID = 1
+						   <if test="level != null and level != '' "><!-- 控制显示层级  0 院  1 部门 2 处室-->
+						   AND TO_NUMBER(#{level, jdbcType = VARCHAR}) >= D1.TYPE
+						   </if>
+						   <choose>
+								<when test="dataSrc != null and dataSrc != '' and dataSrc == 'RLZY' "><!-- 数据来源  人力资源   0 ERP 1 人资  2 手动-->
+								    AND ((D1.SRC = 0 AND NOT EXISTS
+									         (SELECT DT2.DEPTCODE
+									            FROM BG_SYS_DEPT DT2
+									           WHERE DT2.DEPTCODE = D1.DEPTCODE
+									             AND DT2.SRC = 1
+									             AND DT2.VALID = 1)) OR D1.SRC IN (1, 2))
+								</when>
+								<otherwise><!-- 数据来源  默认 -->
+									AND D1.SRC IN (0,2)
+								</otherwise>
+						   </choose>
+						 START WITH D1.DEPTCODE IN
+						            (CASE WHEN (SELECT COUNT(PUR.ID)
+						                FROM TB_PRIV_USER_R_ROLE PUR
+						                LEFT JOIN TB_PRIV_ROLE PR
+						                  ON PUR.ROLE_ID = PR.ID
+						                LEFT JOIN BG_SYS_USER BU
+						                  ON BU.USERID = PUR.USER_ID
+						               WHERE PUR.VALID = '1'
+						                 AND PR.VALID = '1'
+						                 AND BU.USERNAME = #{userName, jdbcType = VARCHAR}
+						                 AND PR.FUNCTION_TYPE = #{funcType, jdbcType = VARCHAR}
+						                 AND PR.ROLE_STATUS = '0'
+						                 AND PR.ROLE_TYPE = '1') > 0 THEN <!-- 院专责权限 -->
+						             (select bc.value
+						                from bg_sys_config bc
+						               where bc.key = 'ORGAN_CODE_DKY') WHEN
+						             (SELECT COUNT(PUR.ID)
+						                FROM TB_PRIV_USER_R_ROLE PUR
+						                LEFT JOIN TB_PRIV_ROLE PR
+						                  ON PUR.ROLE_ID = PR.ID
+						                LEFT JOIN BG_SYS_USER BU
+						                  ON BU.USERID = PUR.USER_ID
+						               WHERE PUR.VALID = '1'
+						                 AND PR.VALID = '1'
+						                 AND BU.USERNAME = #{userName, jdbcType = VARCHAR}
+						                 AND PR.FUNCTION_TYPE = #{funcType, jdbcType = VARCHAR}
+						                 AND PR.ROLE_STATUS = '0'
+						                 AND PR.ROLE_TYPE = '0') > 0 THEN <!-- 单位权限 -->
+						             (SELECT BD.DEPTCODE
+						                FROM TB_PRIV_MGR_USER_R_DEPT PUD
+						                LEFT JOIN BG_SYS_DEPT BD
+						                  ON PUD.DEPT_ID = BD.DEPTID
+						                LEFT JOIN BG_SYS_USER BU
+						                  ON BU.USERID = PUD.USER_ID
+						               WHERE PUD.VALID = '1'
+						                 AND BD.VALID = 1
+						                 AND PUD.ROLE_STATUS = '0'
+						                 AND BU.USERNAME = #{userName, jdbcType = VARCHAR}
+						                 AND PUD.FUNCTION_TYPE = #{funcType, jdbcType = VARCHAR}) END)
+						CONNECT BY PRIOR D1.DEPTCODE = D1.PDEPTCODE
+					</when>
+					<otherwise><!-- 全局显示 -->
+					    SELECT DT3.DEPTID,
+						       DT3.DEPTNAME,
+						       DT3.DEPTCODE,
+						       DT3.TYPE,
+						       DT3.SORT_ID,
+						       DT3.SRC,
+						       DT3.PDEPTCODE,
+						       DT3.PDEPTID,
+						       DT3.PDEPTNAME,
+						       DT3.VALID
+						  FROM BG_SYS_DEPT DT3
+						 WHERE 1 = 1
+						   AND DT3.DEPTCODE IS NOT NULL
+						   AND DT3.VALID = 1
+						   <if test="level != null and level != '' "><!-- 控制显示层级  0 院  1 部门 2 处室-->
+						   AND TO_NUMBER(#{level, jdbcType = VARCHAR}) >= DT3.TYPE
+						   </if>
+						   AND DT3.DEPTCODE IN
+						       (SELECT DT.DEPTCODE
+						          FROM BG_SYS_DEPT DT
+						         WHERE DT.DEPTCODE IS NOT NULL
+						           AND DT.VALID = 1
+						         START WITH DT.DEPTCODE = #{rootId, jdbcType = VARCHAR}
+						        CONNECT BY PRIOR DT.DEPTCODE = DT.PDEPTCODE  <!-- 当前节点以上-->
+						        UNION
+						        SELECT DT.DEPTCODE
+						          FROM BG_SYS_DEPT DT
+						         WHERE DT.DEPTCODE IS NOT NULL
+						           AND DT.VALID = 1
+						         START WITH DT.DEPTCODE = #{rootId, jdbcType = VARCHAR}         <!-- 当前节点以下-->
+						        CONNECT BY PRIOR DT.PDEPTCODE = DT.DEPTCODE)
+						   <choose>
+								<when test="dataSrc != null and dataSrc != '' and dataSrc == 'RLZY' "><!-- 数据来源  人力资源   0 ERP 1 人资  2 手动   ，1  覆盖 0 -->
+								    AND ((DT3.SRC = 0 AND NOT EXISTS
+									         (SELECT DT2.DEPTCODE
+									            FROM BG_SYS_DEPT DT2
+									           WHERE DT2.DEPTCODE = DT3.DEPTCODE
+									             AND DT2.SRC = 1
+									             AND DT2.VALID = 1)) OR DT3.SRC IN (1, 2))
+								</when>
+								<otherwise><!-- 数据来源  默认 -->
+									AND DT3.SRC IN (0,2)
+								</otherwise>
+						   </choose>
+						   
+					</otherwise>
+				</choose>
+			</when>
+			<otherwise><!-- 非权限控制 -->
+			    <choose>
+					<when test="show != null and show != '' and show == 'PART' "><!-- 局部显示 -->
+					    SELECT D1.DEPTID,
+						       D1.DEPTNAME,
+						       D1.DEPTCODE,
+						       D1.TYPE,
+						       D1.SORT_ID,
+						       D1.SRC,
+						       D1.PDEPTCODE,
+						       D1.PDEPTID,
+						       D1.PDEPTNAME,
+						       D1.VALID
+						  FROM BG_SYS_DEPT D1
+						 WHERE 1 = 1
+						   AND D1.DEPTCODE IS NOT NULL
+						   AND D1.VALID = 1
+						   <if test="level != null and level != '' "><!-- 控制显示层级  0 院  1 部门 2 处室-->
+						   AND TO_NUMBER(#{level, jdbcType = VARCHAR}) >= D1.TYPE
+						   </if>
+						   <choose>
+								<when test="dataSrc != null and dataSrc != '' and dataSrc == 'RLZY' "><!-- 数据来源  人力资源   0 ERP 1 人资  2 手动-->
+								    AND ((D1.SRC = 0 AND NOT EXISTS
+									         (SELECT DT2.DEPTCODE
+									            FROM BG_SYS_DEPT DT2
+									           WHERE DT2.DEPTCODE = D1.DEPTCODE
+									             AND DT2.SRC = 1
+									             AND DT2.VALID = 1)) OR D1.SRC IN (1, 2))
+								</when>
+								<otherwise><!-- 数据来源  默认 -->
+									AND D1.SRC IN (0,2)
+								</otherwise>
+						   </choose>
+						 START WITH D1.DEPTCODE = #{rootId, jdbcType = VARCHAR}
+						CONNECT BY PRIOR D1.DEPTCODE = D1.PDEPTCODE
+					</when>
+					<otherwise><!-- 全局显示 -->
+					    SELECT DT3.DEPTID,
+						       DT3.DEPTNAME,
+						       DT3.DEPTCODE,
+						       DT3.TYPE,
+						       DT3.SORT_ID,
+						       DT3.SRC,
+						       DT3.PDEPTCODE,
+						       DT3.PDEPTID,
+						       DT3.PDEPTNAME,
+						       DT3.VALID
+						  FROM BG_SYS_DEPT DT3
+						 WHERE 1 = 1
+						   AND DT3.DEPTCODE IS NOT NULL
+						   AND DT3.VALID = 1
+						   <if test="level != null and level != '' "><!-- 控制显示层级  0 院  1 部门 2 处室-->
+						   AND TO_NUMBER(#{level, jdbcType = VARCHAR}) >= DT3.TYPE
+						   </if>
+						   AND DT3.DEPTCODE IN
+						       (SELECT DT.DEPTCODE
+						          FROM BG_SYS_DEPT DT
+						         WHERE DT.DEPTCODE IS NOT NULL
+						           AND DT.VALID = 1
+						         START WITH DT.DEPTCODE = #{rootId, jdbcType = VARCHAR}
+						        CONNECT BY PRIOR DT.DEPTCODE = DT.PDEPTCODE  <!-- 当前节点以上-->
+						        UNION
+						        SELECT DT.DEPTCODE
+						          FROM BG_SYS_DEPT DT
+						         WHERE DT.DEPTCODE IS NOT NULL
+						           AND DT.VALID = 1
+						         START WITH DT.DEPTCODE = #{rootId, jdbcType = VARCHAR}         <!-- 当前节点以下-->
+						        CONNECT BY PRIOR DT.PDEPTCODE = DT.DEPTCODE)
+						   <choose>
+								<when test="dataSrc != null and dataSrc != '' and dataSrc == 'RLZY' "><!-- 数据来源  人力资源   0 ERP 1 人资  2 手动   ，1  覆盖 0 -->
+								    AND ((DT3.SRC = 0 AND NOT EXISTS
+									         (SELECT DT2.DEPTCODE
+									            FROM BG_SYS_DEPT DT2
+									           WHERE DT2.DEPTCODE = DT3.DEPTCODE
+									             AND DT2.SRC = 1
+									             AND DT2.VALID = 1)) OR DT3.SRC IN (1, 2))
+								</when>
+								<otherwise><!-- 数据来源  默认 -->
+									AND DT3.SRC IN (0,2)
+								</otherwise>
+						   </choose>
+						   
+					</otherwise>
+				</choose>
+			</otherwise>
+		</choose>
+	</sql>  
+
+    <!--  获取组织树 -->
+    <select id="getAllOrganTree" resultType="java.util.Map">
+    	SELECT T.DEPTID,
+		       T.PDEPTID,
+		       T.DEPTCODE,
+		       T.DEPTNAME,
+		       T.PDEPTCODE,
+		       T.PDEPTNAME,
+		       T.TYPE,
+		       'ORGAN' DATATYPE,     
+			   (SELECT COUNT(S.DEPTID)
+		          FROM (<include refid = "queryBaseOrganInfo"/>) S
+		         WHERE S.PDEPTCODE = T.DEPTCODE) CHILD_NUM
+		  FROM (<include refid = "queryBaseOrganInfo"/>) T
+		 WHERE 1=1
+		 START WITH T.DEPTCODE = <choose>
+										<when test="show != null and show != '' and show == 'PART' "><!-- 局部显示 -->
+										    #{rootId, jdbcType = VARCHAR} 
+										</when>
+										<otherwise><!-- 数据来源  默认 -->
+											(select bc.value from bg_sys_config bc where bc.key = 'ORGAN_CODE_DKY')
+										</otherwise>
+								   </choose>
+		CONNECT BY PRIOR T.DEPTCODE = T.PDEPTCODE
+		 ORDER SIBLINGS BY T.SORT_ID NULLS LAST
+    </select>
+    
+    <!--  获取组织人员 sql -->
+    <sql id="queryBaseUserInfo">
+	    SELECT R.USERID,R.DEPTID
+		  FROM BG_SYS_USER_DEPT_RELATION R
+		 INNER JOIN BG_SYS_USER BU
+		    ON BU.USERID = R.USERID  
+		 INNER JOIN BG_SYS_DEPT BD
+		    ON BD.DEPTID = R.DEPTID
+		 WHERE 1=1
+		   AND SYSDATE BETWEEN R.EXP_START_TIME AND R.EXP_END_TIME
+		   AND BU.HRCODE IS NOT NULL
+		   AND BU.STATE = 0
+		   AND BU.VALID = 1   
+		   AND BD.VALID = 1
+		   AND R.VALID = 1   
+		   <choose>
+				<when test="dataSrc != null and dataSrc != '' and dataSrc == 'RLZY' "><!-- 数据来源  人力资源   0 ERP 1 人资  2 手动   ，1  覆盖 0 -->
+				    AND ((R.SRC = 0 AND NOT EXISTS
+				        (SELECT R1.USERID
+				            FROM BG_SYS_USER_DEPT_RELATION R1
+				           WHERE R1.USERID = R.USERID
+				             AND SYSDATE BETWEEN R1.EXP_START_TIME AND R1.EXP_END_TIME
+				             AND R1.VALID = 1
+				             AND R1.SRC = 1)) OR R.SRC IN (1, 2))
+				</when>
+				<otherwise><!-- 数据来源  默认 -->
+					AND R.SRC IN (0,2)
+				</otherwise>
+		   </choose>
+    </sql>
+    <!--  初始化人员树 -->
+    <select id="initUserTree" resultType="java.util.Map">
+		SELECT T.DEPTID,
+		       T.PDEPTID,
+		       T.DEPTCODE,
+		       T.DEPTNAME,
+		       T.PDEPTCODE,
+		       T.TYPE,
+		       'ORGAN' DATATYPE,
+		       ((SELECT COUNT(S.DEPTID)
+		          FROM (<include refid = "queryBaseOrganInfo"/>) S
+		         WHERE S.PDEPTCODE = T.DEPTCODE) +
+		       (SELECT COUNT(S.USERID)
+		          FROM (<include refid = "queryBaseUserInfo"/>) S
+		         WHERE S.DEPTID = T.DEPTID)) CHILD_NUM  <!-- 子节点数量  组织+人员-->
+		  FROM (<include refid = "queryBaseOrganInfo"/>) T
+		 WHERE 1=1
+		 START WITH T.DEPTCODE = <choose>
+										<when test="show != null and show != '' and show == 'PART' "><!-- 局部显示 -->
+										    #{rootId, jdbcType = VARCHAR} 
+										</when>
+										<otherwise><!-- 数据来源  默认 -->
+											(select bc.value from bg_sys_config bc where bc.key = 'ORGAN_CODE_DKY')
+										</otherwise>
+								   </choose>
+		CONNECT BY PRIOR T.DEPTCODE = T.PDEPTCODE
+		 ORDER SIBLINGS BY T.SORT_ID NULLS LAST
+    </select>
+    <!--  获取人员树  局部加载 -->
+    <select id="getUserTreeByOrgan" resultType="java.util.Map">
+		SELECT U.USERID  USERID,
+		       U.USERNAME DEPTID,
+		       BD.DEPTID PDEPTID,
+		       'P'||U.HRCODE DEPTCODE,
+		       U.USERALIAS DEPTNAME,
+		       BD.DEPTCODE PDEPTCODE,
+		       2 TYPE,
+		       'PERSION' DATATYPE,
+		       0 CHILD_NUM
+		  FROM BG_SYS_USER_DEPT_RELATION R
+		 INNER JOIN BG_SYS_USER U
+		    ON U.USERID = R.USERID	
+		 INNER JOIN BG_SYS_DEPT BD
+		   ON BD.DEPTID = R.DEPTID
+		 WHERE 1 = 1
+		   AND R.DEPTID = #{organId, jdbcType = VARCHAR}
+		   AND SYSDATE BETWEEN R.EXP_START_TIME AND R.EXP_END_TIME
+		   <choose>
+				<when test="dataSrc != null and dataSrc != '' and dataSrc == 'RLZY' "><!-- 数据来源  人力资源   0 ERP 1 人资  2 手动   ，1  覆盖 0 -->
+				    AND ((R.SRC = 0 AND NOT EXISTS
+				        (SELECT R1.USERID
+				            FROM BG_SYS_USER_DEPT_RELATION R1
+				           WHERE R1.USERID = R.USERID
+				             AND SYSDATE BETWEEN R1.EXP_START_TIME AND R1.EXP_END_TIME
+				             AND R1.VALID = 1
+				             AND R1.SRC = 1)) OR R.SRC IN (1, 2))
+				</when>
+				<otherwise><!-- 数据来源  默认 -->
+					AND R.SRC IN (0,2)
+				</otherwise>
+		   </choose>
+		   AND U.HRCODE IS NOT NULL	  
+		   AND U.VALID = 1
+		   AND U.STATE = 0
+		   AND BD.VALID = 1
+		   AND R.VALID = 1
+		 ORDER BY U.SORT_ID NULLS LAST
+    </select>	
+    <!--  获取用户所在部门  模糊 -->
+    <sql id="queryUserDeptInfo">
+    	SELECT DISTINCT R.DEPTID
+          FROM BG_SYS_USER_DEPT_RELATION R
+         INNER JOIN BG_SYS_USER U1
+            ON U1.USERID = R.USERID  
+         INNER JOIN BG_SYS_DEPT BD
+            ON BD.DEPTID = R.DEPTID                                
+         WHERE 1 = 1
+           AND SYSDATE BETWEEN R.EXP_START_TIME AND R.EXP_END_TIME
+           <if test="empCode!=null and empCode.length>0">
+                 AND U1.HRCODE LIKE '%'||#{empCode,jdbcType=VARCHAR}||'%'
+                 </if>
+                 <if test="empName!=null and empName.length>0">
+                 AND U1.USERALIAS LIKE '%'||#{empName,jdbcType=VARCHAR}||'%'
+                 </if>                                
+           AND U1.STATE = 0
+           AND BD.DEPTCODE IN
+                      (SELECT DT.DEPTCODE
+                         FROM BG_SYS_DEPT DT
+                        WHERE DT.DEPTCODE IS NOT NULL
+                          AND DT.VALID = 1
+                        START WITH DT.DEPTCODE = #{rootId, jdbcType = VARCHAR}
+                       CONNECT BY PRIOR DT.DEPTID = DT.PDEPTID)
+           AND U1.HRCODE IS NOT NULL
+           AND U1.VALID = 1
+           AND BD.VALID = 1
+			<choose>
+				<when test="dataSrc != null and dataSrc != '' and dataSrc == 'RLZY' "><!-- 数据来源  人力资源   0 ERP 1 人资  2 手动   ，1  覆盖 0 -->						                                
+			AND ((R.SRC = 0 AND NOT EXISTS
+			         (SELECT R1.USERID
+			             FROM BG_SYS_USER_DEPT_RELATION R1
+			            WHERE R1.USERID = R.USERID
+			              AND R1.SRC = 1 
+			              AND SYSDATE BETWEEN R1.EXP_START_TIME AND R1.EXP_END_TIME
+			              AND R1.VALID = 1)) OR R.SRC IN (1, 2))
+			                           </when>
+			<otherwise><!-- 数据来源  默认 -->
+				AND R.SRC IN (0,2)
+			</otherwise>
+			 </choose>
+                 AND R.VALID = 1
+    </sql>
+    <!--  获取人原组织  模糊 -->
+    <sql id="queryBaseInfo">
+        <choose>
+			<when test="limit != null and limit != '' and limit == 'yes' "><!-- 权限控制 -->
+			    1
+			</when>
+			<otherwise><!-- 非权限控制 -->
+			   <!-- 全局显示 -->
+			    SELECT DT3.DEPTID
+				  FROM BG_SYS_DEPT DT3
+				 WHERE 1 = 1
+				   AND DT3.DEPTCODE IS NOT NULL
+				   AND DT3.VALID = 1
+				   <if test="level != null and level != '' "><!-- 控制显示层级  0 院  1 部门 2 处室-->
+				   AND TO_NUMBER(#{level, jdbcType = VARCHAR}) >= DT3.TYPE
+				   </if>
+				   AND DT3.DEPTCODE IN
+				       (SELECT DT.DEPTCODE
+				          FROM BG_SYS_DEPT DT
+				         WHERE DT.DEPTCODE IS NOT NULL
+				           AND DT.VALID = 1
+				         START WITH DT.DEPTID in   (<include refid = "queryUserDeptInfo"/>) <!-- 员工所在单位 -->
+				        CONNECT BY PRIOR DT.DEPTID = DT.PDEPTID  <!-- 当前节点以上-->
+				        UNION
+				        SELECT DT.DEPTCODE
+				          FROM BG_SYS_DEPT DT
+				         WHERE DT.DEPTCODE IS NOT NULL
+				           AND DT.VALID = 1
+				         START WITH DT.DEPTID in   (<include refid = "queryUserDeptInfo"/>)<!-- 当前节点以下-->
+				        CONNECT BY PRIOR DT.PDEPTID = DT.DEPTID)
+			</otherwise>
+		</choose>
+	</sql>
+    <!--  获取人员树  模糊查询 -->
+    <select id="getUserTreeByUser" resultType="java.util.Map">
+		SELECT T.DEPTID,T.PDEPTID,T.DEPTCODE, T.DEPTNAME, T.PDEPTCODE, T.TYPE, T.DATATYPE, T.CHILD_NUM
+		  FROM (SELECT D.DEPTID,
+		               D.PDEPTID,
+		               D.DEPTCODE,
+		               D.DEPTNAME,
+		               D.PDEPTCODE,
+		               D.TYPE,
+		               'ORGAN' DATATYPE,
+		               1 CHILD_NUM,
+		               D.SORT_ID
+		          FROM BG_SYS_DEPT D
+		         WHERE D.DEPTID in (<include refid = "queryBaseInfo"/>)
+		        UNION
+		        SELECT U1.USERNAME DEPTID,
+				       BD.DEPTID PDEPTID,
+		               'P' || U1.HRCODE DEPTCODE,
+		               U1.USERALIAS DEPTNAME,
+		               BD.DEPTCODE PDEPTCODE,
+		               2 TYPE,
+		               'PERSION' DATATYPE,
+		               0 CHILD_NUM,
+		               U1.SORT_ID
+		          FROM BG_SYS_USER_DEPT_RELATION R
+		          INNER JOIN BG_SYS_USER U1
+		            ON U1.USERID = R.USERID
+		          INNER JOIN BG_SYS_DEPT BD
+		            ON BD.DEPTID = R.DEPTID
+		         WHERE 1=1
+		           <if test="empCode!=null and empCode.length>0">
+		           AND U1.HRCODE LIKE '%'||#{empCode,jdbcType=VARCHAR}||'%'
+		           </if>
+		           <if test="empName!=null and empName.length>0">
+		           AND U1.USERALIAS LIKE '%'||#{empName,jdbcType=VARCHAR}||'%'
+		           </if>
+		           AND SYSDATE BETWEEN R.EXP_START_TIME AND R.EXP_END_TIME
+		           AND BD.DEPTCODE IN
+                        (SELECT DT.DEPTCODE
+                           FROM BG_SYS_DEPT DT
+                          WHERE DT.DEPTCODE IS NOT NULL
+                            AND DT.VALID = 1
+                          START WITH DT.DEPTCODE = #{rootId, jdbcType = VARCHAR}
+                         CONNECT BY PRIOR DT.DEPTID = DT.PDEPTID)
+		           AND U1.HRCODE IS NOT NULL
+		           AND U1.VALID = 1
+		           AND U1.STATE = 0
+		           AND BD.VALID = 1
+		           AND R.VALID = 1
+		           <choose>
+				   <when test="dataSrc != null and dataSrc != '' and dataSrc == 'RLZY' "><!-- 数据来源  人力资源   0 ERP 1 人资  2 手动   ，1  覆盖 0 -->
+		           AND ((R.SRC = 0 AND NOT EXISTS
+		                (SELECT R1.USERID
+		                    FROM BG_SYS_USER_DEPT_RELATION R1
+		                   WHERE R1.USERID = R.USERID
+		                     AND R1.SRC = 1
+		                     AND SYSDATE BETWEEN R1.EXP_START_TIME AND R1.EXP_END_TIME
+		                     AND R1.VALID = 1)) OR R.SRC IN (1, 2) AND R.VALID = 1)
+		           </when>
+						<otherwise><!-- 数据来源  默认 -->
+							AND R.SRC IN (0,2)
+						</otherwise>
+				   </choose>) T
+		 START WITH T.DEPTCODE = <choose>
+									<when test="show != null and show != '' and show == 'PART' "><!-- 局部显示 -->
+									    #{rootId, jdbcType = VARCHAR} 
+									</when>
+									<otherwise><!-- 数据来源  默认 -->
+										(select bc.value from bg_sys_config bc where bc.key = 'ORGAN_CODE_DKY')
+									</otherwise>
+							   </choose>
+		CONNECT BY PRIOR T.DEPTCODE = T.PDEPTCODE
+		 ORDER SIBLINGS BY T.SORT_ID NULLS LAST
+    </select>
+</mapper>

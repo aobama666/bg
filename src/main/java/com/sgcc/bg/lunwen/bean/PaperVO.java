@@ -1,5 +1,6 @@
 package com.sgcc.bg.lunwen.bean;
 
+
 public class PaperVO {
 
     /**

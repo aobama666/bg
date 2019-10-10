@@ -98,7 +98,53 @@ public class UserUtils {
 		CommonCurrentUser user = getCommonCurrentUserByUsernameOrHrCode(username, null, "userName",curDate);
 		return user;
 	}
-	
+
+	/**
+	 * 根据用户名获取用户最新信息
+	 * @param username 用户名
+	 * @param  beginDate 开始时间
+	 * @return
+	 */
+	public CommonCurrentUser getCommonCurrentUserByUsernameScope(String username,String beginDate,String endDate){
+		CommonCurrentUser user = getCommonCurrentUserByUsernameOrHrCodeScope(username, null, "userName",beginDate,endDate);
+		return user;
+	}
+
+	/**
+	 * 根据用户名或人资编号获取用户特定时间（时间段）信息
+	 * @param userName 用户名
+	 * @param hrCode  人资编号
+	 * @param type  userName  hrCode
+	 * @param
+	 * @return
+	 */
+	private CommonCurrentUser getCommonCurrentUserByUsernameOrHrCodeScope(String userName,String hrCode,String type,String beginDate,String endDate){
+		CommonCurrentUser user = null;
+		try{
+			if(beginDate==null||beginDate.length()==0 || endDate==null || endDate.length()==0){
+				return null;
+			}
+
+			if(!DateUtil.isValidDate(beginDate, "yyyy-MM-dd")){
+				return null;
+			}
+			if(!DateUtil.isValidDate(endDate, "yyyy-MM-dd")){
+				return null;
+			}
+
+			Map<String,Object> userMap = null;
+			if(type.equals("userName")){
+				userMap = userInfoMapper.getCommonCurrentUserByUsernameOrHrCodeScope(userName, null, "userName",beginDate,endDate);
+			}else if(type.equals("hrCode")){
+				userMap = userInfoMapper.getCommonCurrentUserByUsernameOrHrCodeScope(null, hrCode, "hrCode",beginDate,endDate);
+			}
+			user = formatCurrentUser(userMap);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return user;
+	}
+
 	/**
 	 * 根据用户名或人资编号获取用户特定时间信息
 	 * @param userName 用户名
@@ -197,7 +243,7 @@ public class UserUtils {
 	}
 	/**
 	 * 根据登陆账号 获取用户管理角色列表  获取用户组织权限列表
-	 * @param hrCode 人资编号
+	 * @param
 	 * @return
 	 */
 	public UserPrivilege getUserOrganPrivilegeByUserName(String userName){
@@ -286,8 +332,48 @@ public class UserUtils {
 		return userPriv;
 	}
 	/**
+	 * 根据登陆账号 获取用户管理角色列表  获取用户组织权限列表  新 2019-08-21
+	 * @param userName 用户账号
+	 * @param funcName 功能名称
+	 * @param funcType 功能类型  0 管理类  1 审批类
+	 * @return
+	 */
+	public UserPrivilege getNewUserOrganPrivilegeByUserName(String userName,String funcName,String funcType){
+		UserPrivilege userPriv = null;
+		try{
+			List<Map<String,Object>> roleList = userInfoMapper.getNewUserRoleByUserName(userName,funcName,funcType);
+			if(roleList!=null&&roleList.size()>0){
+				userPriv = new UserPrivilege();
+				
+				List<UserRole> userRole = new ArrayList<UserRole>();				
+				
+				userPriv.setUserRole(userRole);
+				
+				for(Map<String,Object> map:roleList){	
+					String roleCode = map.get("ROLE_CODE")==null?"":map.get("ROLE_CODE").toString();
+					String roleName = map.get("ROLE_NAME")==null?"":map.get("ROLE_NAME").toString();
+					String roleType = map.get("ROLE_TYPE")==null?"":map.get("ROLE_TYPE").toString();
+					String roleStatus = map.get("ROLE_STATUS")==null?"":map.get("ROLE_STATUS").toString();
+					String functionType = map.get("FUNCTION_TYPE")==null?"":map.get("FUNCTION_TYPE").toString();
+					
+					UserRole role = new UserRole();
+					role.setRoleCode(roleCode);
+					role.setRoleName(roleName);
+					role.setRoleType(roleType);
+					role.setRoleStatus(roleStatus);
+					role.setFunctionType(functionType);
+					
+					userRole.add(role);
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return userPriv;
+	}
+	/**
 	 * 根据登陆账号 获取用户管理角色列表  获取用户组织权限列表
-	 * @param hrCode 人资编号
+	 * @param
 	 * @return
 	 */
 	public UserPrivilege getUserOrganPrivilegeByUserNames(String userName){

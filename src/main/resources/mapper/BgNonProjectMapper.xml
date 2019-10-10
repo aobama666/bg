@@ -46,8 +46,9 @@
 		  </if>
 		  AND t1.status='1'
 	</select>
-	
-	
+
+
+
 	<insert id="addProInfo"  parameterType="com.sgcc.bg.model.ProjectInfoPo">
 		INSERT INTO BG_PROJECT_INFO 
 			(ID,PROJECT_NAME,CATEGORY,PROJECT_NUMBER,WBS_NUMBER,

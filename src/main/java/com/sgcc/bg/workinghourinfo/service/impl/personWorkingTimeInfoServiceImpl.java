@@ -107,6 +107,20 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 				  String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
 				  return jsonStr; 
 			 }
+
+			//取月初和月末
+			String[] str = beginData.split("-");
+			int year = Integer.parseInt(str[0]);
+			int month = Integer.parseInt(str[1]);
+
+			String[] strEnd = endData.split("-");
+			int yearEnd = Integer.parseInt(strEnd[0]);
+			int monthEnd = Integer.parseInt(strEnd[1]);
+			//查询开始月初
+			beginData = DateUtil.getFirstDayOfMonth1(year, month);
+			//查询结束月末
+			endData = DateUtil.getLastDayOfMonth1(yearEnd, monthEnd);
+
 			 /**--------------根据类型分割开始时间和结束时间-----------------------**/
 			 List<Map<String, Object>> maplist=Statistics(userName,type,bpShow,beginData,endData);
 			 /**-----------------------分页----------------------------------**/
@@ -353,8 +367,9 @@ import com.sgcc.bg.workinghourinfo.service.personWorkingTimeInfoService;
 		public String createExcel(String id,String userName,String bpShow,String type,String beginData,String endData, HttpServletResponse response){
 			//构建Excel表头
  
-			 Object[][] title = { 
-					 { "日期", "WORK_TIME" }, 
+			 Object[][] title = {
+					 { "开始日期", "WORK_TIME_BEGIN" },
+					 { "结束日期", "WORK_TIME_END" },
 					 { "类型","CATEGORY"},
 					 { "任务名称","PROJECT_NAME"},
 					 { "工作内容简述","JOB_CONTENT"},

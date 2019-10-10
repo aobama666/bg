@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface UserInfoMapper {
 	/**
 	 * 根据用户名或人资编号获取用户最新信息 
-	 * @param username 用户名
+	 * @param userName 用户名
 	 * @param hrCode 人资编号
 	 * @param type username 用户名  hrCode 人资编号
 	 * @param curDate 指定时间 yyyy-MM-dd
@@ -23,6 +23,16 @@ public interface UserInfoMapper {
 	 * @return
 	 */
 	public List<Map<String, Object>> getUserRoleByUserName(@Param("userName")String userName);
+	/**
+	 * 获取用户管理角色列表  新 2019-08-21
+	 * @param userName 登陆账号
+	 * @param funcName 功能名称
+	 * @param funcType 功能类型  0 管理类  1 审批类
+	 * @return
+	 */
+	public List<Map<String, Object>> getNewUserRoleByUserName(@Param("userName")String userName,
+			                                                  @Param("funcName")String funcName,
+			                                                  @Param("funcType")String funcType);
 	/**
 	 * 获取用户组织权限列表
 	 * @param userName 登陆账号
@@ -39,9 +49,25 @@ public interface UserInfoMapper {
 	
 	/**
 	 * 根据用户ID获取用户
-	 * @param userName 登陆账号
+	 * @param
 	 * @return
 	 */
 	public List<Map<String, Object>> getUserByUserId(@Param("userId")String userId);
-	
+
+
+
+
+	/**
+	 * 根据用户名或人资编号获取用户最新信息
+	 * @param userName 用户名
+	 * @param hrCode 人资编号
+	 * @param type username 用户名  hrCode 人资编号
+	 * @param
+	 * @return
+	 */
+	Map<String,Object> getCommonCurrentUserByUsernameOrHrCodeScope(@Param("userName")String userName,
+																   @Param("hrCode")String hrCode,
+																   @Param("type")String type,
+																   @Param("beginDate")String beginDate,
+																   @Param("endDate")String endDate);
 }

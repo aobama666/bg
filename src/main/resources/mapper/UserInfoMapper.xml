@@ -66,28 +66,52 @@
 		   AND U.USERNAME = #{userName, jdbcType = VARCHAR}
 		   AND T.VALID = 1
     </select>
-    <!--  获取用户组织权限列表 -->
-    <select id="getUserOrganPrivByUserName" resultType="java.util.Map">
+    <!--  获取用户管理角色列表  新  2019-08 -->
+    <select id="getNewUserRoleByUserName" resultType="java.util.Map">
 		SELECT U.USERID,
 		       U.USERNAME,
 		       U.USERALIAS,
 		       U.HRCODE,
-		       D.DEPTID,
-		       D.DEPTNAME,
-		       D.TYPE,
-		       D.DEPTCODE,
-		       D.PDEPTID,
-		       D.PDEPTNAME,
-		       D.PDEPTCODE
-		  FROM BG_SYS_PRIV_USER_R_ORGAN T
+		       R.ROLE_NAME,
+		       R.ROLE_CODE,
+		       R.ROLE_TYPE,
+		       R.FUNCTION_TYPE,
+		       R.ROLE_STATUS
+		  FROM TB_PRIV_USER_R_ROLE T
+		 INNER JOIN TB_PRIV_ROLE R
+		    ON R.ID = T.ROLE_ID
+		   AND R.VALID = 1
 		 INNER JOIN BG_SYS_USER U
 		    ON U.USERID = T.USER_ID
-		   AND U.STATE = 0
 		   AND U.VALID = 1
-		 INNER JOIN BG_SYS_DEPT D
-		    ON D.DEPTID = T.ORGAN_ID
-		   AND D.VALID = 1
 		 WHERE 1 = 1
+		   AND U.USERNAME = #{userName, jdbcType = VARCHAR}
+		   AND R.ROLE_STATUS = #{funcType, jdbcType = VARCHAR}
+		   AND R.FUNCTION_TYPE = #{funcName, jdbcType = VARCHAR}
+		   AND T.VALID = 1
+    </select>
+    <!--  获取用户组织权限列表 -->
+    <select id="getUserOrganPrivByUserName" resultType="java.util.Map">
+	    SELECT U.USERID,
+	           U.USERNAME,
+	           U.USERALIAS,
+	           U.HRCODE,
+	           D.DEPTID,
+	           D.DEPTNAME,
+	           D.TYPE,
+	           D.DEPTCODE,
+	           DECODE(D.TYPE,2,D.PDEPTID,1,D.DEPTID) PDEPTID,
+	           DECODE(D.TYPE,2,D.PDEPTNAME,1,D.DEPTNAME) PDEPTNAME,
+	           DECODE(D.TYPE,2,D.PDEPTCODE,1,D.DEPTCODE) PDEPTCODE
+	      FROM BG_SYS_PRIV_USER_R_ORGAN T
+	     INNER JOIN BG_SYS_USER U
+	        ON U.USERID = T.USER_ID
+	       AND U.STATE = 0
+	       AND U.VALID = 1
+	     INNER JOIN BG_SYS_DEPT D
+	        ON D.DEPTID = T.ORGAN_ID
+	       AND D.VALID = 1
+	     WHERE 1 = 1
 		   AND U.USERNAME = #{userName, jdbcType = VARCHAR}
 		   AND D.TYPE = #{roleType, jdbcType = VARCHAR}
 		   AND T.VALID = 1
@@ -110,7 +134,8 @@
 		  LEFT JOIN bg_SYS_DEPT D
 		    ON T.HRDEPTCODE = D.DEPTCODE
 		 where t.username = #{userName, jdbcType = VARCHAR}
-    </select>    
+		 and d.valid = '1'
+    </select>
     <!--  根据用户ID获取对象 -->
     <select id="getUserByUserId" resultType="java.util.Map">
 		select T.USERID,
@@ -129,5 +154,50 @@
 		  LEFT JOIN bg_SYS_DEPT D
 		    ON T.HRDEPTCODE = D.DEPTCODE
 		 where t.USERID = #{userId, jdbcType = VARCHAR}
-    </select>    
+		 and d.valid='1'
+    </select>
+
+
+	<select id="getCommonCurrentUserByUsernameOrHrCodeScope" resultType="java.util.Map">
+		SELECT U.USERID,
+				U.USERNAME,
+				U.HRCODE,
+				U.USERALIAS,
+				D.PDEPTID,
+				D2.DEPTNAME PDEPTNAME,
+				D.DEPTID,
+				D.DEPTNAME,
+				D.PDEPTCODE,
+				D.DEPTCODE,
+				U.STATE,
+				U.MOBILE,
+				U.EMAIL,
+				D.TYPE
+				FROM BG_SYS_USER_DEPT_RELATION R
+				INNER JOIN BG_SYS_USER U
+				ON U.USERID = R.USERID
+				INNER JOIN BG_SYS_DEPT D
+				ON D.DEPTID = R.DEPTID
+				INNER JOIN BG_SYS_DEPT D2
+				ON D.PDEPTID = D2.DEPTID
+		WHERE rownum = 1 AND 1 = 1
+		<if test="type=='userName'">
+			AND U.USERNAME = #{userName,jdbcType=VARCHAR}
+		</if>
+		<if test="type=='hrCode'">
+			AND U.HRCODE = #{hrCode,jdbcType=VARCHAR}
+		</if>
+		AND (R.EXP_START_TIME &lt;= TO_DATE(#{beginDate,jdbcType=VARCHAR},'yyyy-MM-dd')
+			  AND R.EXP_END_TIME &gt;= TO_DATE(#{endDate,jdbcType=VARCHAR},'yyyy-MM-dd'))
+		AND ((R.SRC = 0 AND NOT EXISTS
+            (SELECT R1.USERID
+            FROM BG_SYS_USER_DEPT_RELATION R1
+            WHERE R1.USERID = R.USERID
+            AND (R1.EXP_START_TIME &lt;= TO_DATE(#{beginDate,jdbcType=VARCHAR},'yyyy-MM-dd')
+                    AND R1.EXP_END_TIME &gt;= TO_DATE(#{endDate,jdbcType=VARCHAR},'yyyy-MM-dd'))
+            AND R1.VALID = 1
+            AND R1.SRC = 1)) OR R.SRC IN (1,2))
+		AND R.VALID = 1
+		AND ROWNUM = 1
+	</select>
 </mapper>

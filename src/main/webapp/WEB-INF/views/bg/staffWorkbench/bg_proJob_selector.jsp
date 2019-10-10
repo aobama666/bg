@@ -69,7 +69,7 @@ a{
 						<input name="proName" property="proName">
 					</div>
 				</div>
-				<input type="hidden" name="selectedDate" value="${selectedDate}">
+				<input type="hidden" name="selectedDate" value="${selectedDate}" id="fillDa">
 			</form>
 		</div>
 		<div class="query-box-right">
@@ -134,24 +134,67 @@ function queryList(load){
 	}
 }
 
+function parseDate(dateStr) {
+    var isoExp = /^\s*(\d{4})-(\d\d)-(\d\d)\s*$/;//正则
+    var date = new Date(NaN);
+    var parts = isoExp.exec(dateStr);//正则验证
+    if(parts) {
+        var month = Number(parts[2]);
+        //设置时间
+        date.setFullYear(parts[1], month - 1, parts[3]);
+        //判断是否正确
+        if(month != date.getMonth() + 1) {
+            date.setTime(NaN);
+        }
+    }
+    return date;
+}
+
 function forAdd(){
 	var items = mmg.selectedRows();
-	
+
+    var dateStr=$("#fillDa").val()+"-01";
+    var date=new Date(dateStr.replace(/-/g,"\/"));
+    var year = date.getFullYear();
+    var month = date.getMonth();
+    var firstDay=new Date(year,month,1);//这个月的第一天
+    var currentMonth=firstDay.getMonth(); //取得月份数
+    var nextMonthFirstDay=new Date(firstDay.getFullYear(),currentMonth+1,1);//加1获取下个月第一天
+    var dis=nextMonthFirstDay.getTime()-24*60*60*1000;//减去一天就是这个月的最后一天
+    var lastDay=new Date(dis);
+    var time =dateFtt("yyyy-MM-dd",firstDay);//格式化 //这个格式化方法要用你们自己的，也可以用本文已经贴出来的下面的Format
+    var timeEnd=dateFtt("yyyy-MM-dd",lastDay);//格式化
+
 	for(var i=0;i<items.length;i++){
 		var approverHrcode = items[i].HRCODE;
 		var approverName = items[i].PRINCIPAL;
 		var category = items[i].CATEGORY;
+		var role = items[i].ROLE;
 		var editable = "true";
+
+		var id = items[i].ID;
+
 		//新增项目，如果是常规工作和项目前期类型,或者项目负责人为当前登录人，则审核人为按审批层级的默认审核人
-		if('CG,BP'.indexOf(category)!=-1 || approverHrcode==parent.currentUserHrcode){
+		/*if('CG,BP'.indexOf(category)!=-1 || approverHrcode==parent.currentUserHrcode){
 			approverHrcode=parent.approverHrcode;
 			approverName=parent.approverName;
 		}else{
 			editable = "false";
+		}*/
+        if('CG,BP'.indexOf(category)!=-1 ){
+            approverHrcode=parent.approverHrcode;
+            approverName=parent.approverName;
+        }else if (approverHrcode==parent.currentUserHrcode || role == 1) {
+            approverHrcode=parent.approverHrcode;
+            approverName=parent.approverName;
+        }else {
+                editable = "false";
 		}
 		 
 		parent.mmg.addRow({
 			"PROJECT_ID":items[i].ID,
+			"WORK_TIME_BEGIN":time,
+			"WORK_TIME_END":timeEnd,
 			"CATEGORY":items[i].CATEGORY,
 			"PROJECT_NAME":items[i].PROJECT_NAME,
 			"PRINCIPAL":approverName,
@@ -167,6 +210,25 @@ function forAdd(){
 
 function forClose() {
 	parent.layer.close(parent.layer.getFrameIndex(window.name));
+}
+
+function dateFtt(fmt,date)
+{ //author: meizz
+    var o = {
+        "M+" : date.getMonth()+1,     //月份
+        "d+" : date.getDate(),     //日
+        "h+" : date.getHours(),     //小时
+        "m+" : date.getMinutes(),     //分
+        "s+" : date.getSeconds(),     //秒
+        "q+" : Math.floor((date.getMonth()+3)/3), //季度
+        "S" : date.getMilliseconds()    //毫秒
+    };
+    if(/(y+)/.test(fmt))
+        fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));
+    for(var k in o)
+        if(new RegExp("("+ k +")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+    return fmt;
 }
 
 </script>
