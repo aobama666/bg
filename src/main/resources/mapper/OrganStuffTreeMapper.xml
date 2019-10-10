@@ -154,7 +154,7 @@
 		       BD.DEPTID PDEPTID,
 		       'P'||U.HRCODE DEPTCODE,
 		       U.USERALIAS DEPTNAME,
-		       BD.PDEPTCODE PDEPTCODE,
+		       BD.DEPTCODE PDEPTCODE,
 		       2 TYPE,
 		       'PERSION' DATATYPE,
 		       0 CHILD_NUM
@@ -188,7 +188,7 @@
 		       BD.DEPTID PDEPTID,
 		       'P'||U.HRCODE DEPTCODE,
 		       U.USERALIAS DEPTNAME,
-		       BD.PDEPTCODE PDEPTCODE,
+		       BD.DEPTCODE PDEPTCODE,
 		       2 TYPE,
 		       'PERSION' DATATYPE,
 		       0 CHILD_NUM
@@ -272,7 +272,7 @@
 				       BD.DEPTID PDEPTID,
 		               'P' || U1.HRCODE DEPTCODE,
 		               U1.USERALIAS DEPTNAME,
-		               BD.PDEPTCODE PDEPTCODE,
+		               BD.DEPTCODE PDEPTCODE,
 		               2 TYPE,
 		               'PERSION' DATATYPE,
 		               0 CHILD_NUM,

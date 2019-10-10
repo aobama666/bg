@@ -190,7 +190,9 @@ function init(){
     var months;
     if(month<10){
         months="0"+month;
-    }
+    }else {
+        months=month;
+	}
     var   newdate=date.getFullYear()+"-"+months;
     $("#startTimes").val(newdate);
     $("#endTimes").val(newdate);

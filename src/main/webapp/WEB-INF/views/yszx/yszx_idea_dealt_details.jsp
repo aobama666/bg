@@ -385,8 +385,7 @@
 		 userPrivilegehtml +='<div class="maxBox">';
 		 userPrivilegehtml +='<textarea   id="approveRemark"    name="approveRemark"  style="height:100px; width: 100%;background-color: #fff;resize: none"> </textarea>';	    
 		 userPrivilegehtml +='</div>';
-		 userPrivilegehtml +='</div>';             
-
+		 userPrivilegehtml +='</div>';
 		return userPrivilegehtml;
 	}
  

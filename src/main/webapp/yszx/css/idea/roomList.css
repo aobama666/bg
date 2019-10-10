@@ -7,6 +7,18 @@ table a:HOVER{color:red;}
 .changeQuery:HOVER{
 	border-color:#A2C1F5 ;
 }
+.input-itemName-addon {
+	padding: 3px 12px 8px;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1;
+	color: #555;
+	text-align: center;
+	background-color: #eee;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	margin-left: -44px;
+}
 /* end 閹兼粎鍌ㄥ鍡涚炊閺嶅洦鏂佹稉濠傚箵娴滃娆� */
 
 /* start 閻愮懓鍤弬鏉款杻瀵懓鍤柅澶嬪缁夋垶濡ф總鏍уС缁鐎烽柅澶嬪濡楋拷 */
@@ -23,6 +35,36 @@ body{
     border-bottom: solid 1px #e3e3e3;
     text-indent: 20px;
     font-size: 18px;
+}
+.content_yygl_tottom {
+	line-height: 60px;
+	background-color: #fff;
+	width: 97%;
+	border-bottom: solid 1px #e3e3e3;
+	text-indent: 20px;
+	font-size: 18px;
+}
+.content_yygl_top {
+	line-height: 45px;
+	background-color: #fff;
+	width: 160px;
+	border-bottom: solid 1px #e3e3e3;
+	border-left: solid 1px #e3e3e3;
+	border-right: solid 1px #e3e3e3;
+	border-top: solid 1px #e3e3e3;
+	text-indent: 20px;
+	font-size: 18px;
+}
+.content_yygl_comprehensive {
+	line-height: 40px;
+	background-color: #fff;
+	width: 100px;
+	border-bottom: solid 1px #e3e3e3;
+	border-left: solid 1px #e3e3e3;
+	border-right: solid 1px #e3e3e3;
+	border-top: solid 1px #e3e3e3;
+	text-indent: 20px;
+	font-size: 14px;
 }
 body #hiddenDiv{
 	width:100%;

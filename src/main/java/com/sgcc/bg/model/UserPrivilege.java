@@ -15,6 +15,8 @@ public class UserPrivilege {
 	
 	private String organForLabId =  "";
 	
+	private String roleMgrType =  "";
+	
 
 	public List<UserRole>  getUserRole() {
 		return userRole;
@@ -51,6 +53,25 @@ public class UserPrivilege {
 			userRoleCode = tmp;
 		}
 		return userRoleCode;
+	}
+	
+	public String getRoleMgrType() {
+		return roleMgrType;
+	}
+
+	public void setRoleMgrType(String roleMgrType) {
+		if(userRole!=null&&userRole.size()>0){
+			StringBuffer sb = new StringBuffer();
+			for(UserRole obj:userRole){
+				if(obj.getRoleStatus()!=null&&obj.getRoleStatus().equals("0")){
+					sb.append(obj.getRoleType()).append(",");
+				}
+			}
+			String tmp = sb.toString();
+			tmp = tmp.substring(0, tmp.lastIndexOf(","));
+			roleMgrType = tmp;
+		}
+		this.roleMgrType = roleMgrType;
 	}
 
 	public void setUserRoleCode(String userRoleCode) {

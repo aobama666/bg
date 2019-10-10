@@ -46,13 +46,13 @@ public class BgWebService {
 	/**
 	 * 根据人资系统请求参数，返回工时信息
 	 * @param xml
-	 * <?xml version="1.0" encoding="utf-8"?>
+	 * <![CDATA[<?xml version="1.0" encoding="utf-8"?>
 	 * 	<ROOT>
 	 * 		<SYS_KEY>bsp</SYS_KEY >
 	 * 		<SYS_VALUE>sBu5jn3AE00IdN12MF</SYS_VALUE>
 	 * 		<BG_YEAR>2018</BG_YEAR>   -- yyyy
 	 * 		<BG_PERIOD>S1</BG_PERIOD> -- Y（年度），S1-S4（季度）,M1-M12（月份）
-	 * 	</ROOT>
+	 * 	</ROOT> ]]>
 	 * @return
 	 */
 	public String getBgData(String xml){
@@ -198,12 +198,12 @@ public class BgWebService {
 		if(totalBgUser!=null&&totalBgUser.size()>0){
 			for(Map<String,Object> m:baseInfo){
 				String hrcode = m.get("EMP_CODE")==null?null:m.get("EMP_CODE").toString();
-				String role = m.get("ROLE")==null?null:m.get("ROLE").toString();
+				//String project = m.get("PROJECT_ID")==null?null:m.get("PROJECT_ID").toString();
 				if(hrcode!=null){
 					for(Map<String,Object> n:totalBgUser){
 						String hr = n.get("EMP_CODE")==null?null:n.get("EMP_CODE").toString();
-						String ro = n.get("ROLE")==null?null:n.get("ROLE").toString();
-						if(hr!=null&&hr.equals(hrcode) && ro!=null && ro.equals(role)){
+						//String pr = n.get("PROJECT_ID")==null?null:n.get("PROJECT_ID").toString();
+						if(hr!=null && hr.equals(hrcode) /*&& ro!=null && ro.equals(role)*/){
 							String hour = n.get("WORKING_HOUR")==null?"0":n.get("WORKING_HOUR").toString();
 							m.put("TOTAL_INPUT_TIME", hour);
 						}
