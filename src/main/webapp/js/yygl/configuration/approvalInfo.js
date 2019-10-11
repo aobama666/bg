@@ -25,7 +25,7 @@ function popEvent(ids,codes,names,pId,level){
         url: "/bg/yyConfiguration/deptInfo",
         type: "post",
         dataType:"json",
-        data: {'approveUserCode':codes},
+        data: {'approveUserName':ids},
         success: function (data) {
             var deptName = data.data.deptName;
             var deptId = data.data.deptId;
