@@ -6,15 +6,12 @@ import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.HRUser;
 import com.sgcc.bg.process.service.ProcessService;
-import com.sgcc.bg.service.OrganStuffTreeService;
+import com.sgcc.bg.service.OrganStuffTreeNewService;
 import com.sgcc.bg.service.UserService;
-import com.sgcc.bg.yszx.service.ApproveService;
-import com.sgcc.bg.yygl.bean.YyApply;
 import com.sgcc.bg.yygl.constant.YyApplyConstant;
 import com.sgcc.bg.yygl.pojo.YyApplyDAO;
 import com.sgcc.bg.yygl.service.YyApplyService;
 import com.sgcc.bg.yygl.service.YyMyItemService;
-import org.omg.CORBA.OBJ_ADAPTER;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +34,7 @@ public class YyMyItemController {
     @Autowired
     private YyMyItemService myItemService;
     @Autowired
-    private OrganStuffTreeService organStuffTreeService;
+    private OrganStuffTreeNewService organStuffTreeNewService;
     @Autowired
     private YyApplyService yyApplyService;
     @Autowired
@@ -370,7 +367,7 @@ public class YyMyItemController {
         log.info("[yygl-initStuffTree:in param]：winName={};iframe={};ct={};root={};popEvent={}"
                 ,winName,iframe,ct,root,popEvent);
         //获取组织或组织人员数据列表
-        List<Map<String, Object>> list = organStuffTreeService.initUserTree(root);
+        List<Map<String, Object>> list = organStuffTreeNewService.initUserTree(root,"","","","","","PART");
 
         //格式化数据
         List<Map<String, Object>> treelist = formatUserTreeData(list,root);

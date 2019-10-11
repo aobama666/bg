@@ -139,6 +139,8 @@ public class OrganStuffTreeController {
 		String funcType = request.getParameter("func")==null?"xxxxx":request.getParameter("func").toString();
 		//show    显示控制：show=PART 部分显示   默认为所有
 		String show = request.getParameter("show")==null?"":request.getParameter("show").toString();
+		//tmpType    //tmpType=1 模板类型  1 报工  2 统一  默认为统一
+		String tmpType = request.getParameter("tmpType")==null?"":request.getParameter("tmpType").toString();
 		
 		StringBuffer logInfo = new StringBuffer();
 		logInfo.append("[initOrganTree:in param]:");
@@ -154,6 +156,7 @@ public class OrganStuffTreeController {
 		logInfo.append("dataSrc=").append(dataSrc).append(";");
 		logInfo.append("funcType=").append(funcType).append(";");
 		logInfo.append("show=").append(show).append(";");
+		logInfo.append("tmpType=").append(tmpType).append(";");
 		
 		logger.info(logInfo.toString());	
 		
@@ -183,7 +186,10 @@ public class OrganStuffTreeController {
 		modelMap.put("show", show);
 		
 		modelMap.put("treelist",JSON.toJSONString(treelist, SerializerFeature.WriteMapNullValue));
-		ModelAndView model = new ModelAndView("bg/common/organstufftree/stuffTreePageNew",modelMap);
+		ModelAndView model = new ModelAndView("yszx/common/organstufftree/stuffTreePageNew",modelMap);
+		if(tmpType!=null&&tmpType.equals("1")){
+			model = new ModelAndView("bg/common/organstufftree/stuffTreePageNew",modelMap);
+		}
 		return model;
 	}
 	
@@ -616,6 +622,10 @@ public class OrganStuffTreeController {
 		String funcType = request.getParameter("func")==null?"xxxxx":request.getParameter("func").toString();
 		//show    显示控制：show=PART 部分显示   默认为所有
 		String show = request.getParameter("show")==null?"":request.getParameter("show").toString();
+		//tmpType    //tmpType=1 模板类型  1 报工  2 统一  默认为统一
+		String tmpType = request.getParameter("tmpType")==null?"":request.getParameter("tmpType").toString();
+		//isNocheck    //isNocheck  用印管理使用
+		String isNocheck = request.getParameter("isNocheck")==null?"":request.getParameter("isNocheck").toString();
 		
 		StringBuffer logInfo = new StringBuffer();
 		logInfo.append("[initOrganTree:in param]:");
@@ -631,6 +641,8 @@ public class OrganStuffTreeController {
 		logInfo.append("dataSrc=").append(dataSrc).append(";");
 		logInfo.append("funcType=").append(funcType).append(";");
 		logInfo.append("show=").append(show).append(";");
+		logInfo.append("tmpType=").append(tmpType).append(";");
+		logInfo.append("isNocheck=").append(isNocheck).append(";");
 		
 		logger.info(logInfo.toString());	
 		
@@ -686,9 +698,13 @@ public class OrganStuffTreeController {
 		modelMap.put("dataSrc", dataSrc);
 		modelMap.put("funcType", funcType);
 		modelMap.put("show", show);
+		modelMap.put("isNocheck", isNocheck);
 		
 		modelMap.put("treelist",JSON.toJSONString(treelist, SerializerFeature.WriteMapNullValue));
-		ModelAndView model = new ModelAndView("bg/common/organstufftree/organTreePageNew",modelMap);
+		ModelAndView model = new ModelAndView("yszx/common/organstufftree/organTreePage",modelMap);
+		if(tmpType!=null&&tmpType.equals("1")){
+			model = new ModelAndView("bg/common/organstufftree/organTreePageNew",modelMap);
+		}
 		return model;
 	}
 }

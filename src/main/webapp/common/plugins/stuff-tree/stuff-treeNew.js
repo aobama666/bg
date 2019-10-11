@@ -9,7 +9,7 @@ $.fn.extend({
 			 * iframe  self 作用域：当前窗口   parent 作用域：父类窗口
 			 * ct      树形节点选择框样式：radio，checkbox
 			 */
-			var empCode,empName,root,iframe,ct,limit,level,dataSrc,func,show;
+			var empCode,empName,root,iframe,ct,limit,level,dataSrc,func,show,tmpType;
 			root = properties.root;
 			iframe = properties.iframe == undefined ? "self" : properties.iframe;
 			ct = properties.checkType == undefined ? "radio" : properties.checkType;
@@ -23,6 +23,7 @@ $.fn.extend({
 			dataSrc = properties.dataSrc == undefined ? "" : properties.dataSrc;//数据来源：dataSrc=RLZY 人资专用，其他为报工默认
 			func = properties.func == undefined ? "" : properties.func;//功能类型：func=YYGL 用印管理
 			show = properties.show == undefined ? "" : properties.show;//show=PART 部分显示
+			tmpType = properties.tmpType == undefined ? "" : properties.tmpType;//tmpType=1 模板类型  1 报工  2 统一  默认为统一
 			
 			/* 
 			 * 如果指定了empCode和empName两个文本框的name,则按照指定的组件获取;
@@ -55,7 +56,7 @@ $.fn.extend({
 						content:[basePath+'/organstufftree/initStuffTreeNew?iframe='
 						         +iframe+'&ct='+ct+'&winName='+winName+'&root='+root+'&empCode='
 						         +empCode+'&empName='+empName+'&popEvent='+popEvent
-						         +'&limit='+limit+'&level='+level+'&dataSrc='+dataSrc+'&func='+func+'&show='+show,'no'],
+						         +'&limit='+limit+'&level='+level+'&dataSrc='+dataSrc+'&func='+func+'&show='+show+'&tmpType='+tmpType,'no'],
 						success: function(layero, index){//弹窗加载完毕后，调整人员组织树的高度不被遮挡
 						    	var iframes = layero.find("iframe");
 						    	var stuffPage = iframes[0].contentWindow.document;
