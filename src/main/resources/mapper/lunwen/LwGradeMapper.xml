@@ -134,6 +134,8 @@
             s.second_index,
             s.weights sweights,
             s.REFERENCE_REQUIRE require,
+            s.score_max scoreMax,
+            s.score_min scoreMin,
             f.weights fweights
             <if test="pmeId != null and pmeId != ''">
                 ,g.score
