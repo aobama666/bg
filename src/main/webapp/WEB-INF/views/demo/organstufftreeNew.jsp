@@ -118,8 +118,8 @@ $(function(){
 	/*
 		iframe:self 作用域：当前窗口   parent 作用域：父类窗口
 	*/
-	$("#stuffTree").stuffTree({root:'41030000',empCode:'empCode',empName:'empName',iframe:'self',checkType:'radio',popEvent:'pop',show:'PART',level:'',limit:'no',func:'',dataSrc:''});
-	$("#stuffTree2").stuffTree({root:'41030000',empCode:'empCode2',empName:'empName2',iframe:'self',checkType:'checkbox',popEvent:'pop',show:'',level:'',limit:'no',func:'',dataSrc:''});
+	$("#stuffTree").stuffTree({root:'41030000',empCode:'empCode',empName:'empName',iframe:'self',checkType:'radio',popEvent:'pop',show:'PART',level:'',limit:'no',func:'',dataSrc:'',tmpType:''});
+	$("#stuffTree2").stuffTree({root:'41030000',empCode:'empCode2',empName:'empName2',iframe:'self',checkType:'checkbox',popEvent:'pop',show:'',level:'',limit:'no',func:'',dataSrc:'',tmpType:''});
 	//新增按钮
 	$("#stuffTree3").stuffTree({bindLayId:'addStuffTree',root:'41000001',empCode:'empCode3',empName:'empName3',iframe:'self',checkType:'radio',popEvent:'pop'});
 	/*
@@ -130,8 +130,8 @@ $(function(){
 		func:功能类型：func=YYGL 用印管理
 		show:show=PART 部分显示
 	*/
-	$("#organTree").organTree({root:'41030000',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio',popEvent:'pop',show:'PART',level:'',limit:'no',func:'',dataSrc:''});
-	$("#organTree2").organTree({root:'41030000',organCode:'deptCode2',organName:'deptName2',iframe:'self',checkType:'checkbox',popEvent:'pop',show:'',level:'',limit:'no',func:'',dataSrc:''});
+	$("#organTree").organTree({root:'41030000',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio',popEvent:'pop',show:'PART',level:'',limit:'no',func:'',dataSrc:'',tmpType:''});
+	$("#organTree2").organTree({root:'41030000',organCode:'deptCode2',organName:'deptName2',iframe:'self',checkType:'checkbox',popEvent:'pop',show:'',level:'',limit:'no',func:'',dataSrc:'',tmpType:''});
 	/*
 		limit:'yes' 启用个人权限管理   '' 或  'no' 不启用
 		level   控制显示层级，如 0 显示到院1 显示到部门 2 显示到科室,为空''时，显示到科室
