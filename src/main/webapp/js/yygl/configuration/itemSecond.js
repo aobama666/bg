@@ -4,8 +4,17 @@ itemSecondInfo.saveInfoFlag = true;//页面数据保存事件
 $(function(){
     itemSecondInfo.onchangeForIfsign("");
     var  isNochecks=itemSecondInfo.selectForDeptCode();
-    $("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'parent',checkType:'checkbox', popEvent:'pop' ,level:'1',isNocheck:isNochecks });
+//    $("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'parent',checkType:'checkbox', popEvent:'pop' ,level:'1',isNocheck:isNochecks });
     //$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'parent',checkType:'checkbox', popEvent:'pop' ,level:'1'  });
+    /*
+	checkType : checkbox 多选  radio 单选  //organCode,organName,root,iframe,ct,limit,level,dataSrc,func,show;
+	level:显示数节点   0 分院  1 部门  2 处室
+	limit:'yes' 启用个人权限管理   '' 或  'no' 不启用
+	dataSrc:数据来源：dataSrc=RLZY 人资专用，其他为报工默认
+	func:功能类型：func=YYGL 用印管理
+	show:show=PART 部分显示
+	*/
+    $("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'parent',checkType:'checkbox', popEvent:'pop' ,level:'1',isNocheck:isNochecks ,show:'PART',limit:'no',func:'',dataSrc:'',tmpType:''});
 });
 
 itemSecondInfo.selectForDeptCode  =function () {
