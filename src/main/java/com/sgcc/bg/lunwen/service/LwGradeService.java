@@ -51,4 +51,12 @@ public interface LwGradeService {
      */
     String gradeSubmit(String userId);
 
+    /**
+     * 原有计算加权分计算逻辑，由于需求变更现已废弃，个人比较念旧，所以暂时保留,该方法是在原有上getTotalScore请求提炼出来的函数，如需使用请酌情测试
+     * 原有的业务逻辑如下:
+     * 分别叠加每个一级指标下的所有二级指标对应相乘权重后的分数，再乘以一级指标对应权重，相加得以总分
+     * @param paperType 论文类型
+     * @param scoreList 表单打分list
+     */
+    Double calculateTotalScore(String paperType,List<Double> scoreList);
 }
