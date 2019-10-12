@@ -171,10 +171,11 @@ public class YyComprehensiveController {
 		Logger.info("用印管理用印弹框页面------开始");
 		Map<String, Object> map = new HashMap<>();
 		map.put("applyId",applyId);
-		map.put("applyUserId",applyUserId);
 		List<Map<String,Object>>  userlist=yyComprehensiveService.selectForUserId(applyUserId);
-		Object applyUserName=userlist.get(0).get("USERALIAS");
+		String applyUserName=userlist.get(0).get("USERNAME").toString();
+		String applyUserAlias = userlist.get(0).get("USERALIAS").toString();
 		map.put("applyUserName",applyUserName);
+		map.put("applyUserAlias",applyUserAlias);
 		ModelAndView model = new ModelAndView("yygl/comprehensive/yygl_affirm_info",map);
 		Logger.info("用印管理用印弹框页面------结束");
 		return model;
@@ -191,7 +192,7 @@ public class YyComprehensiveController {
 	public String affirmForSave(@RequestBody Map<String, Object> paramsMap){
 		Logger.info("用印管理确定用印------保存接口");
 		ResultWarp rw =  null;
-		String applyUserName = paramsMap.get("applyUserId") == null ? "" : paramsMap.get("applyUserId").toString();//这个id目前取的是username
+		String applyUserName = paramsMap.get("applyUserName") == null ? "" : paramsMap.get("applyUserName").toString();
 		String applyId = paramsMap.get("applyId") == null ? "" : paramsMap.get("applyId").toString();
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String officeUserId=  currentUser.getUserId();
