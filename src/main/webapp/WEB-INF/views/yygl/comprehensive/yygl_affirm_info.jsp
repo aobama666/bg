@@ -39,8 +39,8 @@
 					<span title = "申请单位经办人"> 申请单位经办人</span>
 				</td>
 				<td class="addInputStyle">
-					<input name="applyUserId" id="applyUserId" type="hidden"  value="${applyUserId}" />
-					<input type="text"  id="applyUserName"  name="applyUserName"   value="${applyUserName}"   disabled    />
+					<input name="applyUserName" id="applyUserName" type="hidden"  value="${applyUserName}"/>
+					<input type="text"  id="applyUserAlias"  name="applyUserAlias"   value="${applyUserAlias}" disabled/>
 				</td>
 			</tr>
 		</table>
