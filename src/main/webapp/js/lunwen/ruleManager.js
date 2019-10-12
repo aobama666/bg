@@ -56,7 +56,7 @@ rule.init = function () {
                 }
                 scoreTableContent += '<td width="15%">'+scoreTable[i].SECOND_INDEX+'('+scoreTable[i].SWEIGHTS+'%)</td>';
                 scoreTableContent += '<td width="50%" style="margin-left: 2px;margin-right: 2px;text-align: left">'+scoreTable[i].REQUIRE+'</td>';
-                scoreTableContent += '<td width="10%">0~100</td>';
+                scoreTableContent += '<td width="10%">'+scoreTable[i].SCOREMIN+'~'+scoreTable[i].SCOREMAX+'</td>';
                 scoreTableContent += '</tr>';
             }
             scoreTableContent +='</table>';
