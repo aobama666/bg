@@ -1,9 +1,6 @@
 package com.sgcc.bg.mapper;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
@@ -364,4 +361,35 @@ public interface BGMapper {
 	 * @return
 	 */
 	Map<String,String> getProjectsInfo(String proId);
+
+	/**
+	 * 取项目填报工时
+	 * @param id
+	 * @return
+	 */
+	Integer hourSum(String id);
+
+	//取项目关联的前期项目是否有工时
+	Integer qianQiSum(String id);
+
+	/**
+	 * 取项目人员填报的工时
+	 * @param proId
+	 * @param hrcode
+	 * @return
+	 */
+	Integer workingHour(@Param("proId") String proId, @Param("hrcode") String hrcode);
+
+	//查看项目时间段中每月人员填报工时
+    List<Map<String,String>> userWorker(String proId);
+
+    //查项目员工填报日期
+	List<Map<String,String>> projectTime(String proId);
+
+	//把原来时间段取出来
+	List<Map<String,String>> userDateOld(@Param("hrCode") String hrCode, @Param("proId") String proId);
+
+	//判断改变的时间段中是否有工时
+	List<Map<String,String>> userWorkingInfo(@Param("start") String start, @Param("end") String end, @Param("proId") String proId, @Param("hrCode") String hrCode);
+
 }

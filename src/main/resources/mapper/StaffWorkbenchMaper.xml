@@ -172,6 +172,7 @@
 		</if>
 		ORDER BY T.CREATE_DATE DESC
 	</select>-->
+
 	<select id="getProjectsByDate" resultType="java.util.Map">
 		SELECT T.CATEGORY,
 			T.ID,
@@ -191,12 +192,12 @@
 			ON T4.PROJECT_ID = T.ID
 			AND T4.ROLE = '1'
 			AND T4.STATUS = '1'
-			and ( T4.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
-				or T4.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
-				or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T4.START_DATE and
-				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T4.END_DATE)
-				or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T4.START_DATE and
-				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T4.END_DATE))
+		and ( T4.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+			or T4.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+			or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T4.START_DATE and
+			TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T4.END_DATE)
+			or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T4.START_DATE and
+			TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T4.END_DATE))
 		WHERE ((T.CATEGORY IN ('JS', 'KY', 'HX', 'QT') AND
 					T2.USERNAME = #{username} AND
 					( T1.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
@@ -214,12 +215,12 @@
 					WHERE D.VALID = '1'
 					START WITH D.DEPTID = T.ORGAN_INFO
 					CONNECT BY PRIOR D.DEPTID = D.PDEPTID)))
-		AND ( T1.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
-			or T1.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
-			or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T1.START_DATE and
-				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T1.END_DATE)
-			or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T1.START_DATE and
-				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T1.END_DATE)
+		AND ( T.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+			or T.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+			or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T.START_DATE and
+				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T.END_DATE)
+			or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T.START_DATE and
+				TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T.END_DATE)
 		)
 		AND T.STATUS = '1'
 		AND T.PROJECT_STATUS = '1'
@@ -231,6 +232,13 @@
 		</if>
 		ORDER BY T1.END_DATE
 	</select>
+	<!--AND ( T1.START_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+	or T1.END_DATE between TO_DATE(#{dataBegin}, 'yyyy-mm-dd') and TO_DATE(#{dataEnd}, 'yyyy-mm-dd')
+	or (TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &gt;=T1.START_DATE and
+	TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &lt;= T1.END_DATE)
+	or(TO_DATE(#{dataBegin}, 'yyyy-mm-dd') &lt;=T1.START_DATE and
+	TO_DATE(#{dataEnd}, 'yyyy-mm-dd') &gt;= T1.END_DATE)
+	)-->
 
 	
 	<select id="getAllProjects" resultType="java.util.Map">
