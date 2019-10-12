@@ -192,4 +192,10 @@ public interface BgNonProjectMapper {
 	 */
 	public List<Map<String, String>> getBgWorkerByProId(@Param("proId")String proId);
 
+	/**
+	 * 查询项目前期工作所关联项目的工时
+	 * @param id
+	 * @return
+	 */
+	Integer hourSum(String id);
 }

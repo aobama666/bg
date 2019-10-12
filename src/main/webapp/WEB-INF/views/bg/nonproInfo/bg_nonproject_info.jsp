@@ -270,12 +270,16 @@ function forDelete(){
 		var forbiddenRows="";
 		for(var i=0;i<rows.length;i++){
 			var row=rows[i];
-			if(row.projectStatus!="0"){
+			/*if(row.projectStatus!="0"){
 				forbiddenRows+=row.RN+" ,";
-			}
+			}*/
+            if(row.hourSum!="0"){
+                forbiddenRows+=row.RN+" ,";
+            }
 		}
 		if(forbiddenRows!=""){
-			layer.msg("第 "+forbiddenRows.substr(0,forbiddenRows.length-1)+" 行无法删除！");
+			//layer.msg("第 "+forbiddenRows.substr(0,forbiddenRows.length-1)+" 行无法删除！");
+			layer.msg("第 "+forbiddenRows.substr(0,forbiddenRows.length-1)+" 行有工时填报无法删除！");
 			return;
 		}
 		layer.confirm('确认删除吗?', {icon: 7,title:'提示',shift:-1},function(index){
