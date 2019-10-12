@@ -106,6 +106,11 @@
                     if(val==undefined) val="";
                     return  '<div style="display:inline"><input value="'+val+'"  class="form-control" name="planHours" property="planHours" style="padding:6px 2px;text-align:center"></div>';
                 }
+            },
+            {title:'工时', name:'workingHour',width:95,sortable:false, align:'center',hidden: true, lockDisplay: true,
+                renderer:function(val,item,rowIndex){
+                    return  '<div style="display:inline"><input value="'+val+'"  class="form-control" name="workingHour" property="workingHour" style="padding:6px 2px;border:none;text-align:center"></div>';
+                }
             }
         ];
         var mmGridHeight = $("body").parent().height() - 220;
@@ -351,7 +356,7 @@
                         });
                         note+=item.NAME+"("+item.WORK_TIME_BEGIN+")"+"-"+"("+item.WORK_TIME_END+")、";
                     });
-                    parent.layer.msg(note.substr(0,note.length-1)+"已存在报工信息，请核实!");
+                    parent.layer.msg(note.substr(0,note.length-1)+"已存在报工信息，请勿修改!");
                 }
             },
             error:function(){
@@ -543,9 +548,13 @@
         }
 
         var index = "";
+        var indexWorking = "";
         $.each(selectedRows,function(i,row){
             if($(row).find('input[name="sync"]').val()=='1'){
                 index += $(row).find('.mmg-index').text()+"，";
+            }
+            if($(row).find('input[name="workingHour"]').val() != '0'){
+                indexWorking += $(row).find('.mmg-index').text()+"，";
             }
         });
         if(index!=""){
@@ -553,6 +562,12 @@
             layer.msg("第"+index+"行为系统关联人员，无法删除！");
             return;
         }
+        if(indexWorking != ""){
+            indexWorking = indexWorking.substr(0,indexWorking.length-1);
+            layer.msg("第 "+indexWorking+" 行该员工已有工时投入信息，不能直接删除！");
+            return;
+        }
+
 
         layer.confirm('确认删除吗?', {icon: 7,title:'提示',shift:-1},function(index){
             layer.close(index);

@@ -444,6 +444,20 @@ public class DateUtil {
 		}
 		
 	}
+
+	public static boolean compareYear(String beginData,String endData,String time) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+		Date beginDatas = sdf.parse(beginData);
+		Date endDatas = sdf.parse(endData);
+		Date times = sdf.parse(time);
+		if(beginDatas.getTime()<=times.getTime()&&times.getTime()<=endDatas.getTime()){
+			return true;
+		}else{
+			return false;
+		}
+
+	}
+
 	  public static String minutes (String s,int num){
 	    	SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	        String  res = null;
