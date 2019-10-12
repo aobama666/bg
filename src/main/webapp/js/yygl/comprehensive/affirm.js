@@ -14,16 +14,16 @@ $(function(){
 	$("#stuffTree").stuffTree({bindLayId:'popStuffTree',root:'41000001',iframe:'parent',empCode:'empCode',empName:'empName',checkType:'radio',popEvent:'pop',show:'PART',level:'',limit:'no',func:'',dataSrc:''});
 });
 function popEvent(ids,codes,names,pId,level){
-    $("#applyUserName").val(names);
-    $("#applyUserId").val(ids);
+    $("#applyUserAlias").val(names);
+    $("#applyUserName").val(ids);
 }
 //确认
 function affirmSave(){
         var   affirmFormData = roomAddInfoCommon.getFormDataInfo();
         var  applyId=  $("#applyId").val();
-        var  applyUserId=$("#applyUserId").val();
+        var  applyUserName=$("#applyUserName").val();
         affirmFormData.applyId=applyId;
-        affirmFormData.applyUserId=applyUserId;
+        affirmFormData.applyUserName=applyUserName;
         layer.confirm('确认保存该数据吗?',{
                 btn:['确定','取消'],icon:0,title:'确认提示'
             },function () {
