@@ -51,7 +51,7 @@
             and code = m.score_status) as scoreStatus,
             m.score_status scoreStatusCode,
             ROWNUM rown
-            from    bg_lw_paper      p，
+            from    bg_lw_paper      p,
             bg_lw_paper_match_expert m,
             bg_lw_specialist s
             where 1 = 1
@@ -101,7 +101,7 @@
         and vaild = 1
         and code = m.score_status) as scoreStatus,
         ROWNUM rown
-        from    bg_lw_paper      p，
+        from    bg_lw_paper      p,
         bg_lw_paper_match_expert m,
         bg_lw_specialist s
         where 1 = 1
@@ -134,6 +134,8 @@
             s.second_index,
             s.weights sweights,
             s.REFERENCE_REQUIRE require,
+            s.score_max scoreMax,
+            s.score_min scoreMin,
             f.weights fweights
             <if test="pmeId != null and pmeId != ''">
                 ,g.score

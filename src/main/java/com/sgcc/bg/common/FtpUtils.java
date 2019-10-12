@@ -42,6 +42,11 @@ public class FtpUtils {
 	 * 优秀论文评审论文附件
 	 */
 	public static String PaperUploadPath = "/accessory/lunwen/";
+
+	/**
+	 * 用印管理附件
+	 */
+	public static String UseSealStuffPath = "/accessory/yygl/";
 	
 	/**
 	 * 微信图片上传路径

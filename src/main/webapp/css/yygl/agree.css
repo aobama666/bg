@@ -1,0 +1,27 @@
+.agree .bg{
+    background: #d5e7e7;
+}
+.agree td{
+    border: solid 1px black;
+    text-align: center;
+    font-size: 15px;
+    height: 30px;
+}
+.content-tag{
+    background: #d5e7e7;
+    height: 30px;
+    width:180px;
+    text-align: center;
+    padding-top:5px;
+    border: solid 1px black;
+    border-bottom: none;
+    float: left;
+    font-size: 15px;
+}
+.content-tag-line{
+    padding-top:5px;
+    height: 30px;
+    width:100%;
+    display: block;
+    border-bottom: solid 1px black;
+}

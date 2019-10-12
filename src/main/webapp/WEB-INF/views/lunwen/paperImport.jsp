@@ -81,6 +81,7 @@ function uploadProFile() {
         loadPage("close");
     }
 }
+
 /*错误信息下载*/
 function downLoadErr(_this){
     loadPage("open");

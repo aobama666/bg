@@ -37,25 +37,25 @@ import java.util.regex.Pattern;
 /**
  * 论文管理控制层
  */
-@Controller
-@RequestMapping("/lwPaper")
-public class LwPaperController {
-    private static Logger log = LoggerFactory.getLogger(LwPaperController.class);
+    @Controller
+    @RequestMapping("/lwPaper")
+    public class LwPaperController {
+        private static Logger log = LoggerFactory.getLogger(LwPaperController.class);
 
-    @Autowired
-    private WebUtils webUtils;
-    @Autowired
-    private LwPaperService lwPaperService;
-    @Autowired
-    private LwFileService lwFileService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private DataDictionaryService dataDictionaryService;
-    @Autowired
-    private LwPaperMatchSpecialistService lwPaperMatchSpecialistService;
-    @Autowired
-    private LwSpecialistService lwSpecialistService;
+        @Autowired
+        private WebUtils webUtils;
+        @Autowired
+        private LwPaperService lwPaperService;
+        @Autowired
+        private LwFileService lwFileService;
+        @Autowired
+        private UserService userService;
+        @Autowired
+        private DataDictionaryService dataDictionaryService;
+        @Autowired
+        private LwPaperMatchSpecialistService lwPaperMatchSpecialistService;
+        @Autowired
+        private LwSpecialistService lwSpecialistService;
 
     /**
      * 跳转至论文管理

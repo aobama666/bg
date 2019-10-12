@@ -13,7 +13,7 @@
 	        PCODE = #{pcode}
 	        AND
 	        VAILD = 1
-        ORDER BY SORT_ID ASC
+        ORDER BY to_number(SORT_ID) ASC
     </select>
     
      <select id="selectDictDataByPcode" resultType="java.util.Map">
@@ -26,6 +26,6 @@
 	        PCODE = #{pcode}
 	        AND
 	        VAILD = 1
-        ORDER BY SORT_ID ASC
+        ORDER BY to_number(SORT_ID) ASC
     </select>
 </mapper>

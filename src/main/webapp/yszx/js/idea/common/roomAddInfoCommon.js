@@ -7,7 +7,7 @@ var roomAddInfoCommon = {
 		getFormDataInfo:function(e){
 			var formData = {};
 			if(!e){
-				e = $(".addInputStyle>input,.addInputStyle>select,.addInputStyle>textarea");
+				e = $(".addInputStyle>input,.addInputStyle>select,.addInputStyle>textarea,.addInputStyle>*>input,.addInputStyle>*>select");
 			}
 			for(var a = 0;a<e.length;a++){
 				var ele = $(e[a]);
@@ -53,6 +53,7 @@ var dataForm = {
 			return true;
 		},
 
+
 		/**
 		 * 验证字段是否为空，取消提示
 		 * @param   e 可传 可不传 需要验证的字段（经过jquery包装的）
@@ -69,9 +70,7 @@ var dataForm = {
 				var eleValue = ele.val();
 				if(!eleValue){
 					return false;
-				}else{
-                    ele.removeClass("validRefuse");
-                }
+				}
 			}
 			return true;
 		},
@@ -91,9 +90,11 @@ var dataForm = {
 				var eleTitle = ele.parent().prev().text();
 				var eleValue = ele.val();
 				if(eleValue > big || eleValue < little){
-                    messager.tip("请输入0-100之间的分值，最多保留两位小数点",3000);
+                    messager.tip("请输入"+little+"~"+big+"之间的分值，最多保留两位小数点",3000);
                     ele.addClass("validRefuse");
 					return false;
+				}else{
+					ele.removeClass("validRefuse");
 				}
 			}
 			return true;
