@@ -1260,18 +1260,23 @@ public class BGServiceImpl implements IBGService {
 						b.addAll(Collections.singleton(Collections.singletonList(settleMap.get(j).get("startDate")).get(0)));
 						a = (List) a.get(0);
 						b = (List) b.get(0);
-						if(a.size()>b.size()){
+						/*if(a.size()>b.size()){
 							settle.add(settleMap.get(i));
 							break;
+						}*/
+						if(a.size()>b.size()){
+							settle.add(settleMap.get(j));
+							break;
 						}
-					}else {
+					}/*else {
 						settle.add(settleMap.get(i));
 						break;
-					}
+					}*/
 				}
 			}
+			settleMap.removeAll(settle);
 
-			for (Map<String, String> map : settle) {
+			for (Map<String, String> map : settleMap) {
 				List startDate = new ArrayList();
 				List endDate = new ArrayList();
 				String hrCode = map.get("hrCode");
