@@ -1520,48 +1520,50 @@ public class BGServiceImpl implements IBGService {
 		}
 		//如果项目时间修改则效验修改范围是否有工时 （当项目时间范围缩小：如果缩小时间段有工时则不能修改）
 		Map<String,String> projectMap = bgMapper.projectMap(proId);
-		try {
-			if(DateUtil.judgeDateNOEqu(projectMap.get("START_DATE"), startDateStr)){
-				//取月初和月末
-				String[] str= projectMap.get("START_DATE").split("-");
-				String[] s= startDateStr.split("-");
-				int yearOld = Integer.parseInt(str[0]);
-				int monthOld = Integer.parseInt(str[1]);
-				int yearNow = Integer.parseInt(s[0]);
-				int monthNow = Integer.parseInt(s[1]);
-				//之前项目开始时间
-				String dateBegin = DateUtil.getFirstDayOfMonth1(yearOld,monthOld);
-				//现在项目开始时间
-				String dateEnd = DateUtil.getLastDayOfMonth1(yearNow,monthNow);
-				List<Map<String,String>> workingHours = bgMapper.userWorkingInfo(dateBegin,dateEnd,proId,null);
-				if(workingHours!= null && workingHours.size()>0){
-					resultMap.put("result","error");
-					resultMap.put("content",projectMap.get("START_DATE")+"到"+startDateStr+"时间段有工时填报，不可修改！");
-                    return JSON.toJSONString(resultMap);
-				}
-			}
-			if(DateUtil.judgeDateNOEqu(endDateStr,projectMap.get("END_DATE"))){
-				//取月初和月末
-				String[] str= projectMap.get("END_DATE").split("-");
-				String[] s = endDateStr.split("-");
-				int yearOld = Integer.parseInt(str[0]);
-				int monthOld = Integer.parseInt(str[1]);
-				int yearNow = Integer.parseInt(s[0]);
-				int monthNow = Integer.parseInt(s[1]);
-				//现在项目结束时间
-				String dateBegin = DateUtil.getFirstDayOfMonth1(yearNow,monthNow);
-				//之前项目结束时间
-				String dateEnd = DateUtil.getLastDayOfMonth1(yearOld,monthOld);
-				List<Map<String,String>> workingHours = bgMapper.userWorkingInfo(dateBegin,dateEnd,proId,null);
-				if(workingHours!= null && workingHours.size()>0){
-					resultMap.put("result","error");
-					resultMap.put("content",endDateStr+"到"+projectMap.get("END_DATE")+"时间段有工时填报，不可修改！");
-                    return JSON.toJSONString(resultMap);
-				}
-			}
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		if(null!= projectMap) {
+            try {
+                if (DateUtil.judgeDateNOEqu(projectMap.get("START_DATE"), startDateStr)) {
+                    //取月初和月末
+                    String[] str = projectMap.get("START_DATE").split("-");
+                    String[] s = startDateStr.split("-");
+                    int yearOld = Integer.parseInt(str[0]);
+                    int monthOld = Integer.parseInt(str[1]);
+                    int yearNow = Integer.parseInt(s[0]);
+                    int monthNow = Integer.parseInt(s[1]);
+                    //之前项目开始时间
+                    String dateBegin = DateUtil.getFirstDayOfMonth1(yearOld, monthOld);
+                    //现在项目开始时间
+                    String dateEnd = DateUtil.getLastDayOfMonth1(yearNow, monthNow);
+                    List<Map<String, String>> workingHours = bgMapper.userWorkingInfo(dateBegin, dateEnd, proId, null);
+                    if (workingHours != null && workingHours.size() > 0) {
+                        resultMap.put("result", "error");
+                        resultMap.put("content", projectMap.get("START_DATE") + "到" + startDateStr + "时间段有工时填报，不可修改！");
+                        return JSON.toJSONString(resultMap);
+                    }
+                }
+                if (DateUtil.judgeDateNOEqu(endDateStr, projectMap.get("END_DATE"))) {
+                    //取月初和月末
+                    String[] str = projectMap.get("END_DATE").split("-");
+                    String[] s = endDateStr.split("-");
+                    int yearOld = Integer.parseInt(str[0]);
+                    int monthOld = Integer.parseInt(str[1]);
+                    int yearNow = Integer.parseInt(s[0]);
+                    int monthNow = Integer.parseInt(s[1]);
+                    //现在项目结束时间
+                    String dateBegin = DateUtil.getFirstDayOfMonth1(yearNow, monthNow);
+                    //之前项目结束时间
+                    String dateEnd = DateUtil.getLastDayOfMonth1(yearOld, monthOld);
+                    List<Map<String, String>> workingHours = bgMapper.userWorkingInfo(dateBegin, dateEnd, proId, null);
+                    if (workingHours != null && workingHours.size() > 0) {
+                        resultMap.put("result", "error");
+                        resultMap.put("content", endDateStr + "到" + projectMap.get("END_DATE") + "时间段有工时填报，不可修改！");
+                        return JSON.toJSONString(resultMap);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
 
 		Date startDate = DateUtil.fomatDate(startDateStr);
 		Date endDate = DateUtil.fomatDate(endDateStr);
