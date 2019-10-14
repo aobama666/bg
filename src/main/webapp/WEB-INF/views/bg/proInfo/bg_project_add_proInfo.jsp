@@ -329,7 +329,9 @@ function forSave_pro(){
 						stuffShow();
 					}
 					
-				}else {
+				}else if (data.result=="error"){
+                    parent.layer.msg(data.content);
+                }else {
 					parent.layer.msg("保存失败!");
 				}
 			},

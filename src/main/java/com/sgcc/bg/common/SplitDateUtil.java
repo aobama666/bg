@@ -13,36 +13,11 @@ import java.util.*;
 public class SplitDateUtil {
 
     public static void main(String[] args) {
-        /*List<KeyValueForDate> list = SplitDateUtil.getKeyValueForDate("2015-08-23","2016-06-10");
+        List<KeyValueForDate> list = SplitDateUtil.getKeyValueForDate("2015-06-2","2016-06-10");
         System.out.println("开始日期--------------结束日期");
         for(KeyValueForDate date : list){
             System.out.println(date.getStartDate()+"-----"+date.getEndDate());
-        }*/
-        Set a = new HashSet();
-        Set b = new HashSet();
-        Set c = new HashSet();
-        Set d = new HashSet();
-        Map map1 = new HashMap();
-        Map map2 = new HashMap();
-        Map map3 = new HashMap();
-        Map map4 = new HashMap();
-        map1.put("a","1");
-        map1.put("b","3");
-        map2.put("a","2");
-        map2.put("b","3");
-        map3.put("a","1");
-        map3.put("b","3");
-        map4.put("a","4");
-        map4.put("b","3");
-        a.add(map1);
-        a.add(map2);
-        b.add(map3);
-        b.add(map4);
-        c.addAll(a);
-        a.addAll(b);
-        c.retainAll(b);
-        a.removeAll(c);
-        System.out.print(a);
+        }
     }
 
     /**
@@ -81,11 +56,15 @@ public class SplitDateUtil {
                 cale.setTime(dd.getTime());
 
                 if(dd.getTime().equals(d1)){
-                    cale.set(Calendar.DAY_OF_MONTH, dd
-                            .getActualMaximum(Calendar.DAY_OF_MONTH));
-                    lastDay = sdf.format(cale.getTime());
-                    keyValueForDate.setStartDate(sdf.format(d1));
-                    keyValueForDate.setEndDate(lastDay);
+                    if(dd.get(Calendar.MONTH) == d2.getMonth() && dd.get(Calendar.YEAR) == c.get(Calendar.YEAR)){
+                        keyValueForDate.setStartDate(sdf.format(d1));
+                        keyValueForDate.setEndDate(sdf.format(d2));
+                    }else {
+                        cale.set(Calendar.DAY_OF_MONTH, dd.getActualMaximum(Calendar.DAY_OF_MONTH));
+                        lastDay = sdf.format(cale.getTime());
+                        keyValueForDate.setStartDate(sdf.format(d1));
+                        keyValueForDate.setEndDate(lastDay);
+                    }
 
                 }else if(dd.get(Calendar.MONTH) == d2.getMonth() && dd.get(Calendar.YEAR) == c.get(Calendar.YEAR)){
                     cale.set(Calendar.DAY_OF_MONTH,1);//取第一天

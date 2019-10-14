@@ -57,7 +57,8 @@ public class BgNonProjectServiceImpl implements BgNonProjectService {
 		List<Map<String, String>> list=bgNonProjectMapper.getAllProjects(webUtils.getUsername(),proName, proStatus);
 		for(Map<String,String> map : list){
 			Integer hourSum = bgNonProjectMapper.hourSum(map.get("id"));
-			map.put("hourSum", String.valueOf(hourSum));
+			Integer qianQiSum = bgNonProjectMapper.qianQiSum(map.get("id"));
+			map.put("hourSum", String.valueOf(hourSum+qianQiSum));
 		}
 		return list;
 	}

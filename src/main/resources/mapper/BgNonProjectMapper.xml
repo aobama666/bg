@@ -276,4 +276,10 @@
 							and VALID='1')
         and VALID = '1'
 	</select>
+
+	<select id="qianQiSum" resultType="java.lang.Integer">
+		SELECT nvl(sum(WORKING_HOUR),0) as hourSum from BG_WORKINGHOUR_INFO
+        WHERE PROJECT_ID = #{id}
+        AND VALID = '1'
+	</select>
 </mapper>

@@ -392,4 +392,6 @@ public interface BGMapper {
 	//判断改变的时间段中是否有工时
 	List<Map<String,String>> userWorkingInfo(@Param("start") String start, @Param("end") String end, @Param("proId") String proId, @Param("hrCode") String hrCode);
 
+	//查项目详情
+    Map<String,String> projectMap(String proId);
 }

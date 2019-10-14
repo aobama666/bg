@@ -743,12 +743,29 @@
 		FROM BG_WORKINGHOUR_INFO W
 		left join BG_SYS_USER U
 		ON W.WORKER = U.USERNAME
-		WHERE U.HRCODE= #{hrCode}
-		AND W.PROJECT_ID = #{proId}
-		AND W.WORK_TIME_BEGIN >= TO_DATE(#{start}, 'yyyy-mm-dd')
-		AND W.WORK_TIME_END  &lt;= TO_DATE(#{end}, 'yyyy-mm-dd')
-		AND W.VALID = '1'
+		WHERE W.VALID = '1'
 		AND U.VALID = '1'
+		<if test="hrCode != null and hrCode != ''">
+			AND U.HRCODE= #{hrCode}
+		</if>
+		<if test="proId != null and proId != ''">
+			AND W.PROJECT_ID = #{proId}
+		</if>
+		<if test="start != null and start != ''">
+			AND W.WORK_TIME_BEGIN >= TO_DATE(#{start}, 'yyyy-mm-dd')
+		</if>
+		<if test="end != null and end != ''">
+			AND W.WORK_TIME_END  &lt;= TO_DATE(#{end}, 'yyyy-mm-dd')
+		</if>
+	</select>
+
+	<select id="projectMap" resultType="java.util.Map">
+		SELECT ID,
+		        TO_CHAR(START_DATE, 'yyyy-mm-dd') AS "START_DATE",
+				TO_CHAR(END_DATE, 'yyyy-mm-dd') AS "END_DATE"
+		FROM bg_project_info
+		WHERE  ID = #{proId}
+		and STATUS = '1'
 	</select>
 
 </mapper>
