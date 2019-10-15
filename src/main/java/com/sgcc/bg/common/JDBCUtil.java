@@ -10,9 +10,9 @@ import java.util.Map;
 
 public class JDBCUtil {
 
-    private  Connection connection = null;
-    private PreparedStatement pstmt = null;
-    private  ResultSet resultSet = null;
+    private static Connection connection = null;
+    private static PreparedStatement pstmt = null;
+    private static ResultSet resultSet = null;
     private static JDBCUtil per = null;
     private static final String DRIVER = "oracle.jdbc.OracleDriver";
     private static final String URL = ConfigUtils.getConfig("jdbc_syncForZH_url");
@@ -53,7 +53,7 @@ public class JDBCUtil {
      * @return
      * @throws SQLException
      */
-    public  List<Map<String, Object>> executeQuery(String sql, List<Object> params) throws SQLException {
+    public static List<Map<String, Object>> executeQuery(String sql, List<Object> params) throws SQLException {
         List<Map<String, Object>> list = new ArrayList<>();
         int index = 1;
         pstmt = connection.prepareStatement(sql);

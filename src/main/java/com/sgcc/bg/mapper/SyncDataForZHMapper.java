@@ -82,4 +82,25 @@ public interface SyncDataForZHMapper {
     void deleteDeptTypeForBGMore();
 
 
+    /*更新新增组织的更新时间*/
+    void updateDeptSysDateByTempNewOrgan(String time);
+
+    /*更新部门排序的更新时间*/
+    void updateDeptSysDateByDeptSort(String time);
+
+    /*更新处室排序的更新时间*/
+    void updateDeptSysDateByPartSort(String time);
+
+    /*更新人员排序的更新时间*/
+    void updateDeptSysDateByEmpSort(String time);
+
+    /*更新日历班次的更新时间*/
+    void updateDeptSysDateBySchedule(String time);
+
+    /*更新人员关系的更新时间*/
+    void updateDeptSysDateByTempEmpRelation(String time);
+
+    /*更新处部门类型的更新时间*/
+    void updateDeptSysDateByTempDeptType(String time);
+
 }
