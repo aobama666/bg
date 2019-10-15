@@ -197,8 +197,8 @@ public interface BgNonProjectMapper {
 	 * @param id
 	 * @return
 	 */
-	Integer hourSum(String id);
+	Double hourSum(String id);
 
 	//前期工作人员投入工时
-	Integer qianQiSum(String id);
+	Double qianQiSum(String id);
 }

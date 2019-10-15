@@ -49,8 +49,8 @@ public class BGServiceImpl implements IBGService {
 	public List<Map<String, String>> getAllProjects(String proName,String proStatus) {
 		List<Map<String, String>> list=bgMapper.getAllProjects(webUtils.getUsername(),proName, proStatus);
 		for(Map<String,String> map : list){
-			Integer hourSum = bgMapper.hourSum(map.get("id"));
-			Integer qianSum = bgMapper.qianQiSum(map.get("id"));
+			Double hourSum = bgMapper.hourSum(map.get("id"));
+			Double qianSum = bgMapper.qianQiSum(map.get("id"));
 			map.put("hourSum", String.valueOf(hourSum+qianSum));
 		}
 		return list;
