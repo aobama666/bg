@@ -821,7 +821,28 @@ public class DateUtil {
 		calendar.set(getNowYear(), getNowMonth() - 2, day);
 		return getDayEndTime(calendar.getTime());
 	}
+	public static boolean isFirstDayOfMonth(String FirstDay) throws ParseException {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = format.parse(FirstDay);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		if(calendar.get(Calendar.DAY_OF_MONTH)==1){
+			return  true;
+		}
+		return  false;
+	}
 
+	public static boolean isLastDayOfMonth(String lastDay) throws ParseException {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = format.parse(lastDay);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.DATE,(calendar.get(Calendar.DATE)+1));
+		if(calendar.get(Calendar.DAY_OF_MONTH)==1){
+			return  true;
+		}
+		return  false;
+	}
 	    public static void main(String[] args) {
 			String s = "2019-07-21";
 			String e = "2019-07-31";

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.mapper.SyncProjectMapper">
+
+
+	<select id="queryDataDictionaryInfo" resultType="java.util.Map">
+		SELECT  CODE,NAME  from  BG_SYS_DATADICTIONARY  where VAILD='1'  and  PID = #{pid}   ORDER BY SORT_ID DESC
+	</select>
+
+	<select id="queryDeptInfo" resultType="java.util.Map">
+        SELECT  *  from  BG_SYS_DEPT  where VALID='1'  and  DEPTCODE = #{deptCode}
+	</select>
+
+	<select id="queryAuditoriginInfo" resultType="java.util.Map">
+		SELECT  SYSNAME,SYSKEY  from  BG_SYS_AUDITORIGIN  where   SYSNAME = #{key}
+	</select>
+
+
+	<select id="queryProjectInfo" resultType="java.util.Map">
+		SELECT   DISTINCT projectId   as  "projectId",
+		                    projectNumber  as  "projectNumber",
+		                    projectName  as  "projectName",
+		                    wbsNumber   as  "wbsNumber",
+		                    year  as "year",
+		                    month  as "month" ,
+		                    projectGrade  as "projectGrade",
+		                    deptCode  as "deptCode"
+		FROM(
+		SELECT
+		A.PROJECT_ID  as  projectId,
+		A.projectNumber,
+		A.projectName,
+		A.wbsNumber,
+		A.year,
+		A.month,
+		A.projectGrade,
+		A.WORK_TIME_BEGIN,
+		A.WORK_TIME_END,
+		B.TYPE ,
+		B.PDEPTCODE  as  pdeptNumber,
+		B.DEPTCODE  as  deptNumber,
+		DECODE (B.TYPE,
+		'2',DECODE (A.projectGrade,'YJ','','BMJ',B.PDEPTCODE,'CSJ',B.DEPTCODE) ,
+		'1',B.DEPTCODE) as deptCode
+		FROM (
+		SELECT
+		T.PROJECT_ID,
+		P.PROJECT_NUMBER   AS  projectNumber,
+		P.PROJECT_NAME     AS  projectName,
+		P.WBS_NUMBER   AS   wbsNumber,
+		TO_CHAR(T.WORK_TIME_END, 'yyyy') as year,
+		TO_CHAR(T.WORK_TIME_END, 'MM') as month,
+		T.WORK_TIME_BEGIN,
+		T.WORK_TIME_END,
+		T.WORKING_HOUR,
+		P.PROJECT_GRADE  as projectGrade
+		FROM BG_WORKINGHOUR_INFO T
+		LEFT JOIN BG_PROJECT_INFO P
+		ON P.ID = T.PROJECT_ID
+		WHERE T.VALID = 1    AND   P.STATUS=1
+		)  A   LEFT JOIN
+		(
+		SELECT
+		D.SRC,D.EXP_START_TIME,D.EXP_END_TIME,
+		D1.DEPTCODE,D1.DEPTNAME,D1.TYPE,D1.PDEPTCODE  ,PU.PROJECT_ID ,PU.START_DATE,PU.END_DATE
+		FROM    BG_PROJECT_USER    PU
+		LEFT JOIN BG_SYS_USER U  ON PU.HRCODE = U.HRCODE
+		LEFT JOIN BG_SYS_USER_DEPT_RELATION D  ON U.USERID = D.USERID
+		LEFT JOIN BG_SYS_DEPT D1  ON D.DEPTID = D1.DEPTID
+		where   PU.STATUS='1'  AND  PU.ROLE='1'  and  D.VALID='1'
+		)  B    ON      A.PROJECT_ID=B.PROJECT_ID   and   B.START_DATE  &lt;= A.WORK_TIME_END 	and   B.END_DATE &gt;= A.WORK_TIME_END
+		and   B.EXP_START_TIME  &lt;= A.WORK_TIME_END 	and   B.EXP_END_TIME &gt;= A.WORK_TIME_END
+		)  where  1=1
+		<if  test="beginDate!= null and beginDate!= ''">
+			AND WORK_TIME_BEGIN   &gt;=    TO_DATE( #{beginDate}, 'yyyy-MM-dd')
+		</if>
+		<if  test="endDate!= null and endDate!= ''">
+			AND WORK_TIME_END     &lt;=     TO_DATE( #{endDate}, 'yyyy-MM-dd')
+		</if>
+		<if  test="projectType!= null and projectType!= ''">
+			and   projectGrade = #{projectType}
+		</if>
+		<if  test="deptCode!= null and deptCode!= ''">
+			and   deptCode = #{deptCode}
+		</if>
+	</select>
+
+	<insert id="addProjectNode"  parameterType="java.util.HashMap">
+		INSERT INTO BG_SYNC_PROJECT_NOTE (
+		UUID,
+		BEGINDATE,
+		ENDDATE,
+		PROJECT_TYPE,
+		DEPTCODE,
+        CREATE_DATE,
+        UPDATE_DATE,
+        CREATE_USER,
+        UPDATE_USER,
+        VALID
+		)
+		VALUES(
+		#{projectNode.id},
+		#{projectNode.beginDate},
+		#{projectNode.endDate},
+		#{projectNode.projectType},
+		#{projectNode.deptCode},
+		#{projectNode.createTime},
+		#{projectNode.updateTime},
+		#{projectNode.createUser},
+		#{projectNode.updateUser},
+		#{projectNode.valid}
+
+		)
+	</insert>
+
+
+	<insert id="addProjectInfo"  parameterType="java.util.HashMap">
+		INSERT INTO BG_SYNC_PROJECT (
+		UUID,
+		PROJECT_ID,
+		PROJECT_NUMBER,
+		PROJECT_NAME,
+		WBS_NUMBER,
+		YEAR,
+		MONTH,
+		PROJECT_GRADE,
+		DEPTCODE,
+		PROJECT_NOTEID,
+		CREATE_DATE,
+        UPDATE_DATE,
+        CREATE_USER,
+        UPDATE_USER,
+        VALID
+		)
+		VALUES(
+		#{projectInfo.uuid},
+		#{projectInfo.projectId},
+		#{projectInfo.projectNumber},
+		#{projectInfo.projectName},
+		#{projectInfo.wbsNumber},
+		#{projectInfo.year},
+		#{projectInfo.month},
+		#{projectInfo.projectGrade},
+		#{projectInfo.deptCode},
+		#{projectInfo.projectNodeId},
+		#{projectInfo.createTime},
+		#{projectInfo.updateTime},
+		#{projectInfo.createUser},
+		#{projectInfo.updateUser},
+		#{projectInfo.valid}
+		)
+	</insert>
+
+
+
+</mapper>
