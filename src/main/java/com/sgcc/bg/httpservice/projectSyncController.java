@@ -133,7 +133,7 @@ public class projectSyncController {
                     return JSON.toJSONString(rw);
                 }
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数:系统秘钥：" + keyValue);
-                String      ProjectInfo = this.syncProjectService.queryProjectInfo(beginDate, endDate, projectType, deptCode);
+                String      ProjectInfo = this.syncProjectService.queryProjectInfo(beginDate, endDate, projectType, deptCode,key);
                 return ProjectInfo;
             } catch (Exception e) {
                 e.printStackTrace();

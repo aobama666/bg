@@ -3,6 +3,12 @@
 
 <mapper namespace="com.sgcc.bg.mapper.SyncProjectMapper">
 
+	<select id="queryProjectNoteInfo" resultType="java.util.Map">
+		SELECT       DISTINCT  N.DEPTCODE  ,
+		                         D.DEPTNAME
+	    FROM    BG_SYNC_PROJECT_NOTE   N
+	    LEFT JOIN BG_SYS_DEPT   D   ON D.DEPTCODE = N.DEPTCODE  where  N.VALID='1'  AND   N.PROJECT_TYPE=#{ProjectType}
+	</select>
 
 	<select id="queryDataDictionaryInfo" resultType="java.util.Map">
 		SELECT  CODE,NAME  from  BG_SYS_DATADICTIONARY  where VAILD='1'  and  PID = #{pid}   ORDER BY SORT_ID DESC
@@ -15,7 +21,6 @@
 	<select id="queryAuditoriginInfo" resultType="java.util.Map">
 		SELECT  SYSNAME,SYSKEY  from  BG_SYS_AUDITORIGIN  where   SYSNAME = #{key}
 	</select>
-
 
 	<select id="queryProjectInfo" resultType="java.util.Map">
 		SELECT   DISTINCT projectId   as  "projectId",
@@ -97,7 +102,9 @@
         UPDATE_DATE,
         CREATE_USER,
         UPDATE_USER,
-        VALID
+        VALID,
+        KEY,
+        BATCHID
 		)
 		VALUES(
 		#{projectNode.id},
@@ -109,11 +116,11 @@
 		#{projectNode.updateTime},
 		#{projectNode.createUser},
 		#{projectNode.updateUser},
-		#{projectNode.valid}
-
+		#{projectNode.valid},
+		#{projectNode.key},
+		#{projectNode.batchId}
 		)
 	</insert>
-
 
 	<insert id="addProjectInfo"  parameterType="java.util.HashMap">
 		INSERT INTO BG_SYNC_PROJECT (
@@ -152,6 +159,102 @@
 		)
 	</insert>
 
+	<sql id="projectNoteInfo">
+		SELECT
+		N.UUID,
+		N.BEGINDATE,
+		N.ENDDATE,
+		N.PROJECT_TYPE,
+		DECODE(N.PROJECT_TYPE,'YJ','院级','BMJ','部门级','CSJ','处室级') PROJECT_TYPE_NAME,
+		N.DEPTCODE,
+		TO_CHAR(N.CREATE_DATE,'YYYY-MM-DD HH:MI:SS')  CREATE_DATE,
+		D.DEPTNAME,
+		N.BATCHID
+		FROM    BG_SYNC_PROJECT_NOTE   N
+		LEFT JOIN BG_SYS_DEPT   D   ON D.DEPTCODE = N.DEPTCODE  where  N.VALID='1'
+		<if  test="projectNode.beginDate!= null and projectNode.beginDate!= ''">
+			AND TO_DATE(N.BEGINDATE, 'yyyy-MM-dd')   &gt;=    TO_DATE( #{projectNode.beginDate}, 'yyyy-MM-dd')
+		</if>
+		<if  test="projectNode.endDate!= null and projectNode.endDate!= ''">
+			AND TO_DATE(N.ENDDATE , 'yyyy-MM-dd')    &lt;=     TO_DATE( #{projectNode.endDate}, 'yyyy-MM-dd')
+		</if>
+		<if  test="projectNode.projectType!= null and projectNode.projectType!= ''">
+			AND N.PROJECT_TYPE     =      #{projectNode.projectType}
+		</if>
+		<if  test="projectNode.deptCode!= null and projectNode.deptCode!= ''">
+			AND N.DEPTCODE     =      #{projectNode.deptCode}
+		</if>
+		ORDER BY N.CREATE_DATE  DESC
+	</sql>
 
+	<select id="selectProjectNoteInfo" resultType="java.util.Map">
+			SELECT  T.*  from(
+			SELECT  TB.* , ROWNUM AS ROWNO  from(
+			<include refid="projectNoteInfo"/>
+			) TB  WHERE #{projectNode.page_end} >= ROWNUM
+			) T   WHERE T.ROWNO > #{projectNode.page_start}
+	</select>
+
+
+	<select id="selectProjectNoteInfoNum" resultType="java.lang.String" parameterType="java.util.HashMap" >
+		SELECT    COUNT(1)  AS "countNum"  from(<include refid="projectNoteInfo"/>)
+	</select>
+
+
+
+
+
+	<sql id="projectDetailsInfo">
+		SELECT
+		P.UUID,
+		P.PROJECT_ID,
+		P.PROJECT_NUMBER,
+		P.PROJECT_NAME,
+		P.WBS_NUMBER,
+		P.YEAR,
+		P.MONTH,
+		P.PROJECT_GRADE,
+		DECODE(P.PROJECT_GRADE,'YJ','院级','BMJ','部门级','CSJ','处室级') PROJECT_GRADE_NAME,
+		P.DEPTCODE,
+		D.DEPTNAME,
+		N.BEGINDATE,
+		N.ENDDATE,
+		P.PROJECT_NOTEID
+		FROM    BG_SYNC_PROJECT   P
+		LEFT JOIN BG_SYS_DEPT   D   ON D.DEPTCODE = P.DEPTCODE
+		LEFT JOIN BG_SYNC_PROJECT_NOTE   N   ON N.UUID = P.PROJECT_NOTEID
+		where  P.VALID='1'
+		<if  test="projectDetails.year!= null and projectDetails.year!= ''">
+			AND P.YEAR     =      #{projectDetails.year}
+		</if>
+		<if  test="projectDetails.month!= null and projectDetails.month!= ''">
+			AND P.MONTH     =      #{projectDetails.month}
+		</if>
+		<if  test="projectDetails.projectName!= null and projectDetails.projectName!= ''">
+			AND P.PROJECT_NAME     =      #{projectDetails.projectName}
+		</if>
+		<if  test="projectDetails.projectNumber!= null and projectDetails.projectNumber!= ''">
+			AND P.PROJECT_NUMBER     =      #{projectNode.projectNumber}
+		</if>
+		<if  test="projectDetails.wbsNumber!= null and projectDetails.wbsNumber!= ''">
+			AND P.WBS_NUMBER     =      #{projectDetails.wbsNumber}
+		</if>
+		<if  test="projectDetails.noteId!= null and projectDetails.noteId!= ''">
+			AND P.PROJECT_NOTEID     =      #{projectDetails.noteId}
+		</if>
+		ORDER BY P.YEAR ,P.MONTH,P.PROJECT_NAME
+	</sql>
+
+	<select id="selectProjectDetailsInfo" resultType="java.util.Map">
+		SELECT  T.*  from(
+		SELECT  TB.* , ROWNUM AS ROWNO  from(
+		<include refid="projectDetailsInfo"/>
+		) TB  WHERE #{projectDetails.page_end} >= ROWNUM
+		) T   WHERE T.ROWNO > #{projectDetails.page_start}
+	</select>
+
+	<select id="selectProjectDetailsInfoNum" resultType="java.lang.String" parameterType="java.util.HashMap" >
+		SELECT    COUNT(1)  AS "countNum"  from(<include refid="projectDetailsInfo"/>)
+	</select>
 
 </mapper>

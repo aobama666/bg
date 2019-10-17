@@ -16,8 +16,17 @@ public class DateUtil {
 	private final static SimpleDateFormat sdfDays = new SimpleDateFormat("yyyyMMdd");
 
 	private final static SimpleDateFormat sdfTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	private final static SimpleDateFormat newsdfTime = new SimpleDateFormat("yyyyMMddHHmmss");
    
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	/**
+	 * 获取yyyyMMdd HHmmss
+	 * @return
+	 */
+	public static String getNewsdfTime() {
+		return newsdfTime.format(new Date());
+	}
 	/**
 	 * 获取YYYY格式
 	 * @return
@@ -844,14 +853,6 @@ public class DateUtil {
 		return  false;
 	}
 	    public static void main(String[] args) {
-			String s = "2019-07-21";
-			String e = "2019-07-31";
-			boolean a = false;
-			try {
-				a = DateUtil.judgeDate(s,e);
-			} catch (ParseException e1) {
-				e1.printStackTrace();
-			}
-			System.out.println(a);
+			System.out.println(getNewsdfTime());
 		}
 }

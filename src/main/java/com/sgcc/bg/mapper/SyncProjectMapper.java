@@ -15,10 +15,21 @@ public interface SyncProjectMapper {
 
     int addProjectInfo(@Param("projectInfo") Map<String, Object> projectInfo);
 
-    List<Map<String, Object>> selectForProjectInfo(@Param("ProjectNodeInfo") Map<String, Object> ProjectNodeInfo);
+    List<Map<String, Object>> selectProjectNoteInfo(@Param("projectNode") Map<String, Object> projectNode);
+
+    List<Map<String, Object>> selectProjectDetailsInfo(@Param("projectDetails") Map<String, Object> projectDetails);
+
+    String  selectProjectNoteInfoNum(@Param("projectNode") Map<String, Object> projectNode);
+
+    String  selectProjectDetailsInfoNum(@Param("projectDetails") Map<String, Object> projectDetails);
+
+
+
 
     List<Map<String, Object>>  queryDataDictionaryInfo(@Param("pid") String pid);
 
     List<Map<String, Object>>  queryAuditoriginInfo(@Param("key") String key);
+
+    List<Map<String, Object>>  queryProjectNoteInfo(@Param("ProjectType") String ProjectType);
 
 }
