@@ -106,14 +106,19 @@ uploadAnnex.addEvent = function (){
     if(!checkLength){
         return;
     }
+    var loadIndex = '';//加载条
     layer.confirm('确认上传吗',{
             btn:['确定','取消'],icon:0,title:'上传提示'
         },function () {
+            loadIndex = layer.load(1,{
+               shade: [0.5,'#fff']
+            });
             $("#queryForm").ajaxSubmit({
                 url: "/bg/lwPaper/paperAddAnnex",
                 type: "post",
                 dataType: "json",
                 success: function (data) {
+                    layer.close(loadIndex);
                     if(data.success=="true"){
                         layer.alert(data.msg,{icon:1,title:'信息提示'});
                         parent.layer.closeAll();
@@ -174,14 +179,19 @@ uploadAnnex.addBatchEvent = function(){
         return;
     }
 
+    var loadIndex = '';
     layer.confirm('确认上传吗',{
             btn:['确定','取消'],icon:0,title:'上传提示'
         },function () {
+            loadIndex = layer.load(1,{
+                shade: [0.5,'#fff']
+            });
             $("#queryForm").ajaxSubmit({
                 url: "/bg/lwPaper/btachUpload",
                 type: "post",
                 dataType: "json",
-                success: function (data) {
+                    success: function (data) {
+                    layer.close(loadIndex);
                     $("#errorFile").html('');
                     if(data.success === 'true'){
                         parent.paperList.closeAndOpen(data.msg);
