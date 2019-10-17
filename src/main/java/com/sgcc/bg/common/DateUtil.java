@@ -322,6 +322,18 @@ public class DateUtil {
 		}
 		
 	}
+
+	public static boolean judgeDateNOEqu(String beginData,String endData) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date beginDatas = sdf.parse(beginData);
+		Date endDatas = sdf.parse(endData);
+		if(beginDatas.getTime()<endDatas.getTime()){
+			return true;
+		}else{
+			return false;
+		}
+
+	}
 	/**
 	 * 判断两个日期的大小
 	 * @param beginData 日期1
@@ -766,7 +778,12 @@ public class DateUtil {
 	    public static void main(String[] args) {
 			String s = "2019-07-21";
 			String e = "2019-07-31";
-			Long a = getDaySub(s,e);
+			boolean a = false;
+			try {
+				a = DateUtil.judgeDate(s,e);
+			} catch (ParseException e1) {
+				e1.printStackTrace();
+			}
 			System.out.println(a);
 		}
 }
