@@ -367,10 +367,10 @@ public interface BGMapper {
 	 * @param id
 	 * @return
 	 */
-	Integer hourSum(String id);
+	Double hourSum(String id);
 
 	//取项目关联的前期项目是否有工时
-	Integer qianQiSum(String id);
+	Double qianQiSum(String id);
 
 	/**
 	 * 取项目人员填报的工时

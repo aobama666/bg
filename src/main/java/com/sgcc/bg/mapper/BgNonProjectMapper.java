@@ -192,13 +192,14 @@ public interface BgNonProjectMapper {
 	 */
 	public List<Map<String, String>> getBgWorkerByProId(@Param("proId")String proId);
 
+
+	//前期工作人员投入工时
+	Double qianQiSum(String id);
+
 	/**
-	 * 查询项目前期工作所关联项目的工时
+	 * 项目详情
 	 * @param id
 	 * @return
 	 */
-	Integer hourSum(String id);
-
-	//前期工作人员投入工时
-	Integer qianQiSum(String id);
+	Map<String,String> projectInfo(String id);
 }
