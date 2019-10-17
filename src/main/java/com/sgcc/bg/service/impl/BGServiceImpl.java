@@ -51,7 +51,11 @@ public class BGServiceImpl implements IBGService {
 		for(Map<String,String> map : list){
 			Double hourSum = bgMapper.hourSum(map.get("id"));
 			Double qianSum = bgMapper.qianQiSum(map.get("id"));
-			map.put("hourSum", String.valueOf(hourSum+qianSum));
+			String sum = String.valueOf(hourSum+qianSum);
+			if(sum.equals("0.0")){
+				sum = "0";
+			}
+			map.put("hourSum", sum);
 		}
 		return list;
 	}
