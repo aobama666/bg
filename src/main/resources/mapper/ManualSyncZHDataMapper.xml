@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+ -->
+<mapper namespace="com.sgcc.bg.mapper.ManualSyncZHDataMapper">
+   <!--将同步操作信息保存到数据库表中-->
+    <insert id="insertOperationRecord" parameterType="com.sgcc.bg.model.OperationRecordPo">
+        INSERT INTO BG_SYNC_ZH_OPERATION_RECORD
+        (
+        UUID,OPERATION_USER,OPERATION_CONTENT,OPERATION_STATUS,OPERATION_START_DATE,OPERATION_END_DATE,CREATE_DATE,CREATE_USER,ERROR_INFO,DATA_MARK
+        )
+        VALUES (
+           SYS_GUID(),#{operationUser,jdbcType=VARCHAR},
+           #{operationContent,jdbcType=VARCHAR},
+           #{operationStatus,jdbcType=VARCHAR},
+           #{operationStartDate,jdbcType=VARCHAR},
+           #{operationEndDate,jdbcType=VARCHAR},
+           #{createDate,jdbcType=VARCHAR},
+           #{createUser,jdbcType=VARCHAR},
+           #{errorInfo,jdbcType=VARCHAR},
+           #{dataMark,jdbcType=VARCHAR}
+        )
+    </insert>
+
+
+    <select id="getAllOperationRecord" resultType="java.util.Map">
+        SELECT R.UUID,
+                R.REQUEST_TYPE,
+                D.NAME as REQUEST_NAME,
+                to_char(R.START_DATE,'yyyy-MM-dd HH24:MI:SS') AS START_DATE,
+                to_char(R.END_DATE,'yyyy-MM-dd HH24:MI:SS') AS END_DATE,
+                DECODE(R.STATUS,'0','未开始','1','运行中','2','已完成','3','失败') STATUS,
+                R.MESSAGE,
+                R.REMARK,
+                R.CREATE_USER,
+                R.UPDATE_USER,
+                to_char(R.UPDATE_DATE,'yyyy-MM-dd HH24:MI:SS') AS START_DATE,
+                R.RUN_STEP,
+                R.REQUEST_INFO,
+                DECODE(R.SYNC_TYPE,'0','定时任务','1','手动同步') SYNC_TYPE,
+                R.REQUEST_TYPE,
+                R.CREATE_DATE,
+                nvl(U.USERALIAS,R.CREATE_USER) as NAME
+        FROM BG_SYS_REQUEST_MANAGER R
+        LEFT JOIN BG_SYS_USER U
+          ON R.CREATE_USER = U.HRCODE
+        LEFT JOIN  BG_SYS_DATADICTIONARY D
+          ON D.CODE = R.REQUEST_TYPE
+        WHERE 1=1
+        <if test="type != null and type !=''">
+            AND REQUEST_TYPE = #{type}
+        </if>
+        <if test="userName != null and userName != ''">
+            AND  R.CREATE_USER IN(
+            SELECT HRCODE FROM BG_SYS_USER WHERE USERALIAS LIKE '%'||#{userName}||'%'
+            )
+        </if>
+        ORDER BY  R.END_DATE DESC
+    </select>
+
+
+    <select id="neworgan" resultType="java.util.Map">
+        SELECT ZNO.UUID,
+                ZNO.ORGAN_ID,
+                ZNO.PARENT_ID,
+                ZNO.ORGAN_CODE,
+                ZNO.ORANG_NAME,
+                ZNO.PARENT_CODE,
+                ZNO.BEGIN_DATE,
+                ZNO.END_DATE,
+                ZNO.INNER_ORGAN_LEV_CODE,
+                ZNO.INNER_ORGAN_LEV_NAME,
+                ZNO.ORGAN_TYPE,REMARKS,
+                to_char(ZNO.UPDATE_DATE, 'yyyy-MM-dd HH24:MI') UPDATE_DATE,
+                ORD.DEPTNAME
+        FROM BG_CEPRI_ZYSY_NEW_ORGAN ZNO
+        LEFT JOIN BG_SYS_DEPT ORD
+        ON ORD.DEPTCODE = ZNO.PARENT_CODE
+        AND ORD.VALID = '1'
+        WHERE ZNO.VALID = '1'
+        AND ZNO.ISENABLE = '1'
+        <if test="organName != null and organName != ''">
+          and  ZNO.ORANG_NAME like '%' || #{organName} || '%'
+        </if>
+        order by ZNO.UPDATE_DATE DESC
+    </select>
+
+    <!--部门排序-->
+    <select id="deptSort" resultType="java.util.Map">
+        SELECT ORD.UUID,
+                ORD.ORGAN_CODE,
+                ORD.ORGAN_NAME,
+                ORD.ORGAN_ORDER,
+                ORD.SJC,
+                ORD.ORGAN_TYPE,
+                to_char(ORD.UPDATE_DATE,'yyyy-MM-dd HH24:MI') UPDATE_DATE
+        FROM BG_CEPRI_DHB_DEPT_ORDER ORD
+        where ORD.VALID = '1'
+        AND ORD.ISENABLE = '1'
+        <if test="organNameDept != null and organNameDept != ''">
+          and  ORD.ORGAN_NAME like '%' || #{organNameDept} || '%'
+        </if>
+        order by ORD.UPDATE_DATE DESC, ORD.ORGAN_ORDER
+    </select>
+
+    <!--处室排序-->
+    <select id="partSort" resultType="java.util.Map">
+        SELECT PA.UUID,
+                PA.PART_CODE,
+                PA.PART_NAME,
+                PA.PART_ORDER,
+                PA.SJC,
+                PA.ORGAN_TYPE,
+                to_char(PA.UPDATE_DATE,'yyyy-MM-dd HH24:MI') UPDATE_DATE
+        FROM BG_CEPRI_DHB_PART_ORDER PA
+        where PA.VALID = '1'
+        AND PA.ISENABLE = '1'
+        <if test="partName != null and partName != ''">
+          and  PA.PART_NAME like '%' || #{partName} || '%'
+        </if>
+        order by PA.UPDATE_DATE DESC,PA.PART_ORDER
+    </select>
+
+    <!--人员排序-->
+    <select id="empSort" resultType="java.util.Map">
+        SELECT EMP.UUID,
+                EMP.EMP_CODE,
+				US.USERALIAS AS EMP_NAME,
+                EMP.EMP_ORDER,
+                EMP.SJC,
+                EMP.ZHUANZE_DEPT_CODE,
+                US.USERNAME AS ZHUANZE_USER_ID,
+                EMP.ORGAN_CODE,
+                to_char(EMP.UPDATE_DATE,'yyyy-MM-dd HH24:MI') UPDATE_DATE,
+                ORD.DEPTNAME
+        FROM BG_CEPRI_DHB_EMP_ORDER EMP
+            LEFT JOIN BG_SYS_DEPT ORD
+            ON EMP.ORGAN_CODE= ORD.DEPTCODE
+            AND ORD.VALID = '1'
+            left join BG_SYS_USER US
+            ON US.HRCODE = EMP.EMP_CODE
+            AND US.VALID='1'
+        WHERE EMP.VALID = '1'
+        AND EMP.ISENABLE = '1'
+        <if test="empName != null and empName != ''">
+          and  US.USERALIAS like '%' || #{empName} || '%'
+        </if>
+        order by EMP.UPDATE_DATE DESC,EMP.EMP_ORDER
+    </select>
+
+    <!--日历班次-->
+    <select id="calender" resultType="java.util.Map">
+        SELECT UUID,
+                BCXX_DATE,
+                BCXX_WEEK,
+                BC_CODE,
+                DECODE(RBC_CODE,'RBC001','工作日','RBC002','节假日','RBC003','半天特殊日','RBCOO3','弹性工作日') RBC_CODE,
+                DECODE(IS_HOLIDAY,'1','节假日','0','工作日') IS_HOLIDAY,
+                SJC,
+                to_char(UPDATE_TIME,'yyyy-MM-dd HH24:MI') UPDATE_TIME
+        FROM BG_CEPRI_KAOQIN_BCXX
+        WHERE VALID  = '1'
+        AND ISENABLE = '1'
+        <if test="dateTime != null and dateTime != ''">
+         AND to_char(BCXX_DATE,'yyyy-mm-dd') &gt;= #{dateTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND to_char(BCXX_DATE,'yyyy-mm-dd') &lt;= #{endTime}
+        </if>
+        order by BCXX_DATE DESC
+    </select>
+
+    <!--人员关系变更-->
+    <select id="empRelation" resultType="java.util.Map">
+        SELECT SEI.UUID,
+                SEI.EMP_CODE,
+                EO.USERALIAS,
+                SEI.BEGIN_DATE,
+                SEI.END_DATE,
+                SEI.EMP_PERSON_AREA,
+                SEI.EMP_PERSON_BTRTL,
+                SEI.ST_OFFICE_CODE,
+                SEI.ERP_POST_CODE,
+                SEI.UPDATE_USER_ID,
+                SEI.UPDATE_TIME,
+                SEI.SJC,
+                SEI.ST_OFFICE_NAME,
+                SEI.ST_DEPT_CODE,
+                SEI.ST_DEPT_NAME,
+                SEI.ST_OFFICE_ID,
+                SEI.REMARKS,
+                to_char(SEI.UPDATE_DATE,'yyyy-MM-dd HH24:MI') UPDATE_DATE
+        FROM BG_CEPRI_ZYSY_SPECIAL_EMP_INFO SEI
+            LEFT JOIN BG_SYS_USER EO
+            ON SEI.EMP_CODE = EO.HRCODE
+            AND EO.VALID  = '1'
+        WHERE SEI.VALID  = '1'
+        AND SEI.ISENABLE = '1'
+        <if test="useralias != null and useralias != ''">
+          and  EO.USERALIAS like '%' || #{useralias} || '%'
+        </if>
+        order by SEI.UPDATE_DATE DESC
+    </select>
+
+    <!--部门类型-->
+    <select id="deptType" resultType="java.util.Map">
+        select T.UUID,
+                T.ORGAN_CODE,
+                T.ORGAN_TYPE_CODE,
+                /*T.ORGAN_TYPE_NAME,*/
+                T.BUS_DEPT_TYPE,
+                T.PARENT_ORGAN_CODE,
+                to_char(T.UPDATE_DATE,'yyyy-MM-dd HH24:MI') UPDATE_DATE,
+                D.DEPTNAME AS ORGAN_NAME,
+                DDO.DEPTNAME AS PARENT_ORGAN_NAME,
+                SD.NAME AS ORGAN_TYPE_NAME
+        from BG_CEPRI_JXGL_ORGAN_TYPE_M T
+            left join BG_SYS_DEPT D
+              ON T.ORGAN_CODE = D.DEPTCODE
+            left join BG_SYS_DEPT DDO
+              ON T.PARENT_ORGAN_CODE = DDO.DEPTCODE
+            LEFT JOIN BG_SYS_DATADICTIONARY SD
+                ON SD.CODE = T.ORGAN_TYPE_CODE
+           where D.VALID = 1
+           AND T.ISENABLE = '1'
+           AND D.TYPE = 1
+
+          <if test="deptName != null and deptName != ''">
+            AND  D.DEPTNAME like '%' || #{deptName} || '%'
+          </if>
+    </select>
+
+
+    <!--查询同步中的数据-->
+    <select id="manager" resultType="java.util.Map">
+        SELECT M.UUID,
+                M.REQUEST_TYPE,
+                D.NAME AS REQUEST_TYPE_NAME,
+                M.START_DATE,
+                M.STATUS,
+                M.RUN_STEP
+        FROM BG_SYS_REQUEST_MANAGER M
+        LEFT JOIN BG_SYS_DATADICTIONARY D
+        ON M.REQUEST_TYPE = D.CODE
+        where M.STATUS = '1'
+        AND M.VALID = '1'
+        AND D.VAILD = '1'
+    </select>
+
+</mapper>
