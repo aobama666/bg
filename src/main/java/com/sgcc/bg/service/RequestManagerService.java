@@ -1,12 +1,18 @@
 package com.sgcc.bg.service;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.Map;
 
 public interface RequestManagerService {
-    String syncDataForZH(HttpServletRequest request,String startDate,String category,String requestRemark,String userName);
 
-    void insertOperationRecord(Map<String, String> recordPo);
-    List<Map<String,String>> getAllOperationRecord(String userName, String dataType);
+    /**
+     * 新增
+     * @param map
+     */
+    void insertManager(Map<String, Object> map);
+
+    /**
+     * 修改
+     * @param updateMap
+     */
+    void updateManager(Map<String, Object> updateMap);
 }
