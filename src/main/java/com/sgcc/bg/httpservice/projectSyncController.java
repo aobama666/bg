@@ -1,5 +1,5 @@
-
 package com.sgcc.bg.httpservice;
+
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -8,7 +8,6 @@ import com.sgcc.bg.common.HttpResultWarp;
 import com.sgcc.bg.service.SyncProjectService;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,26 +16,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+
 @Controller
 @RequestMapping("bgSyncService")
 public class projectSyncController {
     private static Logger logger = LoggerFactory.getLogger(projectSyncController.class);
     @Autowired
     SyncProjectService syncProjectService;
+
     @RequestMapping(value = {"/queryProjectInfo"}, method = {RequestMethod.POST})
-    @ResponseBody
-    public String queryProjectInfo(HttpServletRequest req) {
+    @ResponseBody   
+    public String queryProjectInfo(String   jsonStr) throws  Exception{
         logger.info("项目同步--->报工系统向绩效系统推送项目信息--->开始");
         HttpResultWarp rw = null;
-        String json = req.getParameter("data");
-        if (json.isEmpty()) {
-            rw = new HttpResultWarp(HttpResultWarp.FAILED , "参数不能为空");
-            return JSON.toJSONString(rw);
-        } else {
-            logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数json:" + json);
+            if (jsonStr.isEmpty()) {
+                rw = new HttpResultWarp(HttpResultWarp.FAILED , "参数不能为空");
+                return JSON.toJSONString(rw);
+            }
+            logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数json:" + jsonStr);
             try {
                 Gson gson = new Gson();
-                JsonObject jsonObject = (JsonObject)gson.fromJson(json, JsonObject.class);
+                JsonObject jsonObject = (JsonObject)gson.fromJson(jsonStr, JsonObject.class);
                 if (!jsonObject.has("beginDate")) {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "开始时间不能为空");
                     return  JSON.toJSONString(rw);
@@ -121,7 +121,6 @@ public class projectSyncController {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "系统秘钥不能为空");
                     return JSON.toJSONString(rw);
                 }
-
                 List<Map<String, Object>>  auditoriginList =syncProjectService.queryAuditoriginInfo(key);
                 if(auditoriginList.isEmpty()){
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "系统编码不存在");
@@ -133,14 +132,14 @@ public class projectSyncController {
                     return JSON.toJSONString(rw);
                 }
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数:系统秘钥：" + keyValue);
-                String      ProjectInfo = this.syncProjectService.queryProjectInfo(beginDate, endDate, projectType, deptCode,key);
-                return ProjectInfo;
+                String      projectInfo = this.syncProjectService.queryProjectInfo(beginDate, endDate, projectType, deptCode,key);
+                return projectInfo;
             } catch (Exception e) {
                 e.printStackTrace();
                 rw = new HttpResultWarp(HttpResultWarp.FAILED, "参数解析异常");
-                String jsonStr = JSON.toJSONString(rw);
-                return jsonStr;
+                return JSON.toJSONString(rw);
             }
         }
-    }
+
+
 }

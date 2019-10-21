@@ -28,7 +28,7 @@
 	<div class='content_top'>项目项目详情</div>
 	<form id="queryForm" style="margin-bottom: 10px;">
 		<input type = "hidden"   id = "noteId" name="noteId" value="${noteId}">
-		<label  for="beginDate" class="yearTitle">同步项目日期：</label>
+		<label  for="beginDate" class="yearTitle">同步日期：</label>
 		<input id="beginDate" name="beginDate"
 			   onclick=" WdatePicker({dateFmt:'yyyy-MM-dd',enableInputMask:false})" readonly="true"
 			   type="text"
@@ -53,8 +53,9 @@
 				<option value ="${dataDictionaryList.CODE}" title=" ${dataDictionaryList.NAME}" > ${dataDictionaryList.NAME}</option>
 			</c:forEach>
 		</select>
+		<br>
 		<label  for="projectNumber" class="yearTitle">项目编码：</label>
-		<select id = "projectNumber" name = "projectNumber"   class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
+		<select id = "projectNumber" name = "projectNumber"   class = "changeQuery userlevel" style="width: 320px;margin-left: -2px">
 			<option value = "">   </option>
 		</select>
 		<label  for="wbsNumber" class="yearTitle">WBS编号：</label>
