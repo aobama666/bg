@@ -6,7 +6,6 @@ import com.sgcc.bg.mapper.SyncProjectMapper;
 import com.sgcc.bg.service.SyncProjectService;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -24,8 +23,6 @@ public class SyncProjectServiceImpl implements SyncProjectService {
     private UserUtils userUtils;
     private static Logger logger = LoggerFactory.getLogger(SyncProjectServiceImpl.class);
 
-    public SyncProjectServiceImpl() {
-    }
 
     public String queryProjectInfo(String beginDate, String endDate, String projectType, String deptCode,String key) {
         logger.info("项目同步--->报工系统向绩效系统推送项目信息--->查询项目信息");
@@ -112,9 +109,15 @@ public class SyncProjectServiceImpl implements SyncProjectService {
                 String batchId=key+"-"+DateUtil.getNewsdfTime();
                 ProjectNode.put("batchId", batchId);
                 this.syncProjectMapper.addProjectNode(ProjectNode);
-                Iterator project = ProjectList.iterator();
-                while(project.hasNext()) {
-                    Map<String, Object> ProjectInfo = (Map)project.next();
+                for(Map<String ,Object> ProjectInfo:ProjectList){
+                    Object  deptCodes=ProjectInfo.get("deptCode");
+                    if(deptCodes==null){
+                        ProjectInfo.put("deptCode",  "");
+                    }
+                    Object  wbsNumbers=ProjectInfo.get("wbsNumber");
+                    if(wbsNumbers==null){
+                        ProjectInfo.put("wbsNumber",  "");
+                    }
                     ProjectInfo.put("uuid", Rtext.getUUID());
                     ProjectInfo.put("projectNodeId", id);
                     ProjectInfo.put("createTime", new Date());
@@ -157,4 +160,13 @@ public class SyncProjectServiceImpl implements SyncProjectService {
     public  String  selectProjectDetailsInfoNum(Map<String, Object> projectDetails){
         return syncProjectMapper.selectProjectDetailsInfoNum(projectDetails);
     }
+
+    public List<Map<String, Object>>   selectForProjectNumber( Map<String, Object> projectDetails){
+        return syncProjectMapper.selectForProjectNumber(projectDetails);
+    }
+
+    public List<Map<String, Object>>   selectForWbsNumber(Map<String, Object> projectDetails){
+        return syncProjectMapper.selectForWbsNumber(projectDetails);
+    }
+
 }

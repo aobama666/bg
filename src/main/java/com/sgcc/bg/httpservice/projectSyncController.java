@@ -26,17 +26,17 @@ public class projectSyncController {
 
     @RequestMapping(value = {"/queryProjectInfo"}, method = {RequestMethod.POST})
     @ResponseBody   
-    public String queryProjectInfo(String   jsonStr) throws  Exception{
+    public String queryProjectInfo(String   jsonText) throws  Exception{
         logger.info("项目同步--->报工系统向绩效系统推送项目信息--->开始");
         HttpResultWarp rw = null;
-            if (jsonStr.isEmpty()) {
+            if (jsonText.isEmpty()) {
                 rw = new HttpResultWarp(HttpResultWarp.FAILED , "参数不能为空");
                 return JSON.toJSONString(rw);
             }
-            logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数json:" + jsonStr);
+            logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数json:" + jsonText);
             try {
                 Gson gson = new Gson();
-                JsonObject jsonObject = (JsonObject)gson.fromJson(jsonStr, JsonObject.class);
+                JsonObject jsonObject = (JsonObject)gson.fromJson(jsonText, JsonObject.class);
                 if (!jsonObject.has("beginDate")) {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "开始时间不能为空");
                     return  JSON.toJSONString(rw);
@@ -102,37 +102,37 @@ public class projectSyncController {
                     return JSON.toJSONString(rw);
                 }
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数:部门编码：" + deptCode);
-                if (!jsonObject.has("key")) {
+                if (!jsonObject.has("sysName")) {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "系统编码不能为空");
                     return JSON.toJSONString(rw);
                 }
-                String    key = jsonObject.get("key").getAsString().trim();
-                if (key.isEmpty()) {
+                String    sysName = jsonObject.get("sysName").getAsString().trim();
+                if (sysName.isEmpty()) {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "系统编码不能为空");
                     return JSON.toJSONString(rw);
                 }
-                logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数:系统编码：" + key);
-                if (!jsonObject.has("keyValue")) {
+                logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数:系统编码：" + sysName);
+                if (!jsonObject.has("sysKey")) {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "系统秘钥不能为空");
                     return JSON.toJSONString(rw);
                 }
-                String          keyValue = jsonObject.get("keyValue").getAsString().trim();
-                if (keyValue.isEmpty()) {
+                String          sysKey = jsonObject.get("sysKey").getAsString().trim();
+                if (sysKey.isEmpty()) {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "系统秘钥不能为空");
                     return JSON.toJSONString(rw);
                 }
-                List<Map<String, Object>>  auditoriginList =syncProjectService.queryAuditoriginInfo(key);
+                List<Map<String, Object>>  auditoriginList =syncProjectService.queryAuditoriginInfo(sysName);
                 if(auditoriginList.isEmpty()){
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "系统编码不存在");
                     return JSON.toJSONString(rw);
                 }
                 String   syskey =  String.valueOf(auditoriginList.get(0).get("SYSKEY")).trim() ;
-                if(!syskey.equals(keyValue)){
+                if(!syskey.equals(sysKey)){
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "系统秘钥错误");
                     return JSON.toJSONString(rw);
                 }
-                logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数:系统秘钥：" + keyValue);
-                String      projectInfo = this.syncProjectService.queryProjectInfo(beginDate, endDate, projectType, deptCode,key);
+                logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数:系统秘钥：" + sysName);
+                String      projectInfo = this.syncProjectService.queryProjectInfo(beginDate, endDate, projectType, deptCode,sysName);
                 return projectInfo;
             } catch (Exception e) {
                 e.printStackTrace();

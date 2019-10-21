@@ -22,6 +22,7 @@
 		SELECT  SYSNAME,SYSKEY  from  BG_SYS_AUDITORIGIN  where   SYSNAME = #{key}
 	</select>
 
+
 	<select id="queryProjectInfo" resultType="java.util.Map">
 		SELECT   DISTINCT projectId   as  "projectId",
 		                    projectNumber  as  "projectNumber",
@@ -90,6 +91,12 @@
 			and   deptCode = #{deptCode}
 		</if>
 	</select>
+
+
+
+
+
+
 
 	<insert id="addProjectNode"  parameterType="java.util.HashMap">
 		INSERT INTO BG_SYNC_PROJECT_NOTE (
@@ -173,10 +180,11 @@
 		FROM    BG_SYNC_PROJECT_NOTE   N
 		LEFT JOIN BG_SYS_DEPT   D   ON D.DEPTCODE = N.DEPTCODE  where  N.VALID='1'
 		<if  test="projectNode.beginDate!= null and projectNode.beginDate!= ''">
-			AND TO_DATE(N.BEGINDATE, 'yyyy-MM-dd')   &gt;=    TO_DATE( #{projectNode.beginDate}, 'yyyy-MM-dd')
+
+			AND TO_DATE(TO_CHAR (N.CREATE_DATE, 'yyyy-MM-dd'), 'yyyy-MM-dd')   &gt;=    TO_DATE( #{projectNode.beginDate}, 'yyyy-MM-dd')
 		</if>
 		<if  test="projectNode.endDate!= null and projectNode.endDate!= ''">
-			AND TO_DATE(N.ENDDATE , 'yyyy-MM-dd')    &lt;=     TO_DATE( #{projectNode.endDate}, 'yyyy-MM-dd')
+			AND TO_DATE(TO_CHAR (N.CREATE_DATE, 'yyyy-MM-dd') , 'yyyy-MM-dd')    &lt;=     TO_DATE( #{projectNode.endDate}, 'yyyy-MM-dd')
 		</if>
 		<if  test="projectNode.projectType!= null and projectNode.projectType!= ''">
 			AND N.PROJECT_TYPE     =      #{projectNode.projectType}
@@ -194,7 +202,6 @@
 			) TB  WHERE #{projectNode.page_end} >= ROWNUM
 			) T   WHERE T.ROWNO > #{projectNode.page_start}
 	</select>
-
 
 	<select id="selectProjectNoteInfoNum" resultType="java.lang.String" parameterType="java.util.HashMap" >
 		SELECT    COUNT(1)  AS "countNum"  from(<include refid="projectNoteInfo"/>)
@@ -234,7 +241,7 @@
 			AND P.PROJECT_NAME     =      #{projectDetails.projectName}
 		</if>
 		<if  test="projectDetails.projectNumber!= null and projectDetails.projectNumber!= ''">
-			AND P.PROJECT_NUMBER     =      #{projectNode.projectNumber}
+			AND P.PROJECT_NUMBER     =      #{projectDetails.projectNumber}
 		</if>
 		<if  test="projectDetails.wbsNumber!= null and projectDetails.wbsNumber!= ''">
 			AND P.WBS_NUMBER     =      #{projectDetails.wbsNumber}
@@ -256,5 +263,20 @@
 	<select id="selectProjectDetailsInfoNum" resultType="java.lang.String" parameterType="java.util.HashMap" >
 		SELECT    COUNT(1)  AS "countNum"  from(<include refid="projectDetailsInfo"/>)
 	</select>
+
+	<select id="selectForProjectNumber" resultType="java.util.Map"   >
+		SELECT
+		DISTINCT	 PROJECT_NUMBER
+		from(<include refid="projectDetailsInfo"/>)
+	</select>
+
+	<select id="selectForWbsNumber" resultType="java.util.Map"   >
+		SELECT
+		DISTINCT   WBS_NUMBER
+		from(<include refid="projectDetailsInfo"/>)
+
+
+	</select>
+
 
 </mapper>

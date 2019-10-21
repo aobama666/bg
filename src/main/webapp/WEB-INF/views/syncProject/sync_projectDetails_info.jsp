@@ -28,40 +28,38 @@
 	<div class='content_top'>项目项目详情</div>
 	<form id="queryForm" style="margin-bottom: 10px;">
 		<input type = "hidden"   id = "noteId" name="noteId" value="${noteId}">
-		<label  for="beginDate" class="yearTitle">同步日期：</label>
-		<input id="beginDate" name="beginDate"
-			   onclick=" WdatePicker({dateFmt:'yyyy-MM-dd',enableInputMask:false})" readonly="true"
+		<label  for="year" class="yearTitle">考核年度：</label>
+		<input id="year" name="year"
+			   onclick=" WdatePicker({dateFmt:'yyyy',enableInputMask:false})" readonly="true"
 			   type="text"
 			   class="Wdate validNull  "
 			   title="必填项 ,同步开始时间（格式：yyyy-MM-dd）"
 			   content="同步开始时间"
-			   style="width:150px;"
+			   style="width:240px;"
 		/>
-		<label >至 </label>
-		<input id="endDate" name="endDate"
-			   onclick=" WdatePicker({dateFmt:'yyyy-MM-dd',enableInputMask:false})" readonly="true"
+		<label  for="month" class="yearTitle">考核月度：</label>
+		<input id="month" name="month"
+			   onclick=" WdatePicker({dateFmt:'MM',enableInputMask:false})" readonly="true"
 			   type="text"
 			   class="Wdate validNull  "
 			   title="必填项  ,同步开始时间（格式：yyyy-MM-dd）"
 			   content="同步开始时间"
-			   style="width:150px;"
+			   style="width:240px;"
 		/>
 		<label  for="projectName" class="yearTitle"> 项目名称：</label>
-		<select id = "projectName" name = "projectName"   class = "changeQuery userlevel" style="width: 240px;margin-left: -2px"   >
-			<option value = "">   </option>
-			<c:forEach  var="dataDictionaryList"  items="${dataDictionaryList}">
-				<option value ="${dataDictionaryList.CODE}" title=" ${dataDictionaryList.NAME}" > ${dataDictionaryList.NAME}</option>
-			</c:forEach>
-		</select>
+		<input type = "text" id = "projectName" name = "projectName" style="width: 240px" class = "inputQuery changeQuery" >
 		<br>
 		<label  for="projectNumber" class="yearTitle">项目编码：</label>
-		<select id = "projectNumber" name = "projectNumber"   class = "changeQuery userlevel" style="width: 320px;margin-left: -2px">
-			<option value = "">   </option>
+		<select id = "projectNumber" name = "projectNumber"   class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
+            <option value=""></option>
+			<c:forEach  var="projectNumberInfo"  items="${projectNumberInfo}">
+				<option value ="${projectNumberInfo.PROJECT_NUMBER}" title=" ${projectNumberInfo.PROJECT_NUMBER}" > ${projectNumberInfo.PROJECT_NUMBER}</option>
+			</c:forEach>
 		</select>
 		<label  for="wbsNumber" class="yearTitle">WBS编号：</label>
-		<select id = "wbsNumber" name = "wbsNumber"   class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
-			<option value = "">   </option>
-		</select>
+
+		<input type = "text" id = "wbsNumber" name = "wbsNumber" style="width: 240px" class = "inputQuery changeQuery" >
+
 		<div id = "queryButton" class = "btn query" onclick = "roomList.query()" style="margin-left: 20px;">搜索</div> <!-- 原来引用的函数onclick = "roomList.query()" -->
 
 	</form>

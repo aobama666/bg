@@ -21,4 +21,9 @@ public interface SyncProjectService {
 
     List<Map<String, Object>>  queryProjectNoteInfo(String ProjectType);
 
+    List<Map<String, Object>> selectForProjectNumber(Map<String, Object> projectDetails);
+
+    List<Map<String, Object>> selectForWbsNumber(Map<String, Object> projectDetails);
+
+
 }
