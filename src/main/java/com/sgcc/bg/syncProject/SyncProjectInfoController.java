@@ -44,8 +44,12 @@ public class SyncProjectInfoController {
     @RequestMapping(value = "/syncProjectInfo_details", method = RequestMethod.GET)
     public ModelAndView details(String uuid){
         Map<String, Object> map = new HashMap<>();
-
         map.put("noteId", uuid);//用印部门
+        List<Map<String, Object>>  projectNumberInfo =syncProjectService.selectForProjectNumber(map);
+        List<Map<String, Object>>  wbsNumberInfoInfo =syncProjectService.selectForWbsNumber(map);
+        map.put("projectNumberInfo",projectNumberInfo);
+
+        map.put("wbsNumberList",wbsNumberInfoInfo);
         ModelAndView model = new ModelAndView("syncProject/sync_projectDetails_info",map);
         return model;
     }
@@ -96,7 +100,7 @@ public class SyncProjectInfoController {
         }
         Map<String, Object> Map = new HashMap<String, Object>();
         Map.put("beginDate",beginDate);
-        Map.put("endData",endDate);
+        Map.put("endDate",endDate);
         Map.put("projectType",projectType);
         Map.put("deptCode",deptCode);
         Map.put("page_start",page_start);

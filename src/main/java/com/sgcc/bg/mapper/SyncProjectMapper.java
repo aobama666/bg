@@ -23,13 +23,15 @@ public interface SyncProjectMapper {
 
     String  selectProjectDetailsInfoNum(@Param("projectDetails") Map<String, Object> projectDetails);
 
-
-
-
     List<Map<String, Object>>  queryDataDictionaryInfo(@Param("pid") String pid);
 
     List<Map<String, Object>>  queryAuditoriginInfo(@Param("key") String key);
 
     List<Map<String, Object>>  queryProjectNoteInfo(@Param("ProjectType") String ProjectType);
+
+    List<Map<String, Object>>   selectForProjectNumber(@Param("projectDetails") Map<String, Object> projectDetails);
+
+    List<Map<String, Object>>   selectForWbsNumber(@Param("projectDetails") Map<String, Object> projectDetails);
+
 
 }
