@@ -60,6 +60,5 @@ public class projectSyncTest {
        // http://10.85.60.102/bg/bgSyncService/queryProjectInfo?
         String data="jsonText={ beginDate:\"2019-01-01\", endDate:\"2019-12-31\", projectType:\"YJ\", deptCode:\"41010000\", sysName:\"bsp\", sysKey:\" sBu5jn3AE00IdN12MF \" }";
         interfaceUtil("http://10.85.60.102/bg/bgSyncService/queryProjectInfo", data);
-
     }
 }
