@@ -27,14 +27,14 @@ public class projectSyncController {
     @RequestMapping(value = {"/queryProjectInfo"}, method = {RequestMethod.POST})
     @ResponseBody   
     public String queryProjectInfo(String   jsonText) throws  Exception{
-        logger.info("项目同步--->报工系统向绩效系统推送项目信息--->开始");
-        HttpResultWarp rw = null;
-            if (jsonText.isEmpty()) {
+            logger.info("项目同步--->报工系统向绩效系统推送项目信息--->开始");
+            logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数json:" + jsonText);
+            HttpResultWarp rw = null;
+            if (jsonText==null||jsonText.length()==0) {
                 rw = new HttpResultWarp(HttpResultWarp.FAILED , "参数不能为空");
                 return JSON.toJSONString(rw);
             }
-            logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数json:" + jsonText);
-            try {
+                try {
                 Gson gson = new Gson();
                 JsonObject jsonObject = (JsonObject)gson.fromJson(jsonText, JsonObject.class);
                 if (!jsonObject.has("beginDate")) {
