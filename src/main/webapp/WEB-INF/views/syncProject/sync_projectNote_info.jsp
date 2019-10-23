@@ -27,7 +27,7 @@
 <div class="sheach">
 	<div class='content_top'>项目同步记录</div>
 	<form id="queryForm" style="margin-bottom: 10px;">
-		<label  for="beginDate" class="yearTitle">同步项目日期：</label>
+		<label  for="beginDate" class="yearTitle">同步日期：</label>
 		<input id="beginDate" name="beginDate"
 			   onclick=" WdatePicker({dateFmt:'yyyy-MM-dd',enableInputMask:false})" readonly="true"
 			   type="text"
@@ -52,7 +52,7 @@
 				<option value ="${dataDictionaryList.CODE}" title=" ${dataDictionaryList.NAME}" > ${dataDictionaryList.NAME}</option>
 			</c:forEach>
 		</select>
-		<label  for="deptCode" class="yearTitle">部门编码：</label>
+		<label  for="deptCode" class="yearTitle">部门名称：</label>
 		<select id = "deptCode" name = "deptCode"   class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
 			<option value = "">   </option>
 		</select>

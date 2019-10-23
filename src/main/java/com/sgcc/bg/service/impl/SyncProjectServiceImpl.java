@@ -94,6 +94,28 @@ public class SyncProjectServiceImpl implements SyncProjectService {
         try {
             if (!ProjectList.isEmpty()) {
                 Map<String, Object> ProjectNode = new HashMap();
+                String   countNum =syncProjectMapper.selectProjectNoteInfoNum(ProjectNode);
+                int  countNums=Integer.parseInt(countNum);
+                countNums++;
+                String batchId="";
+                if(countNum.equals("1")){
+                    batchId= key+"-"+DateUtil.getDays()+"-001";
+                    ProjectNode.put("batchId", batchId);
+                }
+                if(0<countNums&& countNums<10){
+                    batchId= key+"-"+DateUtil.getDays()+"-00"+countNums;
+                    ProjectNode.put("batchId", batchId);
+                }
+                if(10<countNums&& countNums<100){
+                    batchId= key+"-"+DateUtil.getDays()+"-0"+countNums;
+                    ProjectNode.put("batchId", batchId);
+                }
+                if(100<countNums){
+                    batchId= key+"-"+DateUtil.getDays()+"-"+countNums;
+                    ProjectNode.put("batchId", batchId);
+                }
+
+
                 String id = Rtext.getUUID();
                 ProjectNode.put("id", id);
                 ProjectNode.put("beginDate", beginDate);
@@ -106,8 +128,10 @@ public class SyncProjectServiceImpl implements SyncProjectService {
                 ProjectNode.put("updateUser", this.webUtils.getUsername());
                 ProjectNode.put("valid", "1");
                 ProjectNode.put("key", key);
-                String batchId=key+"-"+DateUtil.getNewsdfTime();
-                ProjectNode.put("batchId", batchId);
+
+
+
+
                 this.syncProjectMapper.addProjectNode(ProjectNode);
                 for(Map<String ,Object> ProjectInfo:ProjectList){
                     Object  deptCodes=ProjectInfo.get("deptCode");

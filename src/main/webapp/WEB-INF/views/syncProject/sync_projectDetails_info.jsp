@@ -25,7 +25,7 @@
 <div class="main_div"></div>
 <!-- start    查询条件 -->
 <div class="sheach">
-	<div class='content_top'>项目项目详情</div>
+
 	<form id="queryForm" style="margin-bottom: 10px;">
 		<input type = "hidden"   id = "noteId" name="noteId" value="${noteId}">
 		<label  for="year" class="yearTitle">考核年度：</label>
@@ -50,12 +50,8 @@
 		<input type = "text" id = "projectName" name = "projectName" style="width: 240px" class = "inputQuery changeQuery" >
 		<br>
 		<label  for="projectNumber" class="yearTitle">项目编码：</label>
-		<select id = "projectNumber" name = "projectNumber"   class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
-            <option value=""></option>
-			<c:forEach  var="projectNumberInfo"  items="${projectNumberInfo}">
-				<option value ="${projectNumberInfo.PROJECT_NUMBER}" title=" ${projectNumberInfo.PROJECT_NUMBER}" > ${projectNumberInfo.PROJECT_NUMBER}</option>
-			</c:forEach>
-		</select>
+		<input type = "text" id = "projectNumber" name = "projectNumber" style="width: 240px" class = "inputQuery changeQuery" >
+
 		<label  for="wbsNumber" class="yearTitle">WBS编号：</label>
 
 		<input type = "text" id = "wbsNumber" name = "wbsNumber" style="width: 240px" class = "inputQuery changeQuery" >

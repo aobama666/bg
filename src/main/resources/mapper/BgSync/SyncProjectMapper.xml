@@ -238,13 +238,13 @@
 			AND P.MONTH     =      #{projectDetails.month}
 		</if>
 		<if  test="projectDetails.projectName!= null and projectDetails.projectName!= ''">
-			AND P.PROJECT_NAME     =      #{projectDetails.projectName}
+			AND P.PROJECT_NAME like '%'||#{projectDetails.projectName}||'%'
 		</if>
 		<if  test="projectDetails.projectNumber!= null and projectDetails.projectNumber!= ''">
-			AND P.PROJECT_NUMBER     =      #{projectDetails.projectNumber}
+			AND P.PROJECT_NUMBER like '%'||#{projectDetails.projectNumber}||'%'
 		</if>
 		<if  test="projectDetails.wbsNumber!= null and projectDetails.wbsNumber!= ''">
-			AND P.WBS_NUMBER     =      #{projectDetails.wbsNumber}
+			AND P.WBS_NUMBER like '%'||#{projectDetails.wbsNumber}||'%'
 		</if>
 		<if  test="projectDetails.noteId!= null and projectDetails.noteId!= ''">
 			AND P.PROJECT_NOTEID     =      #{projectDetails.noteId}

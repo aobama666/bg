@@ -28,7 +28,6 @@ $(function(){
 
 /*  start  列表查询  */
 roomList.query = function(){
-        debugger;
         dataItems = new Array();
         index = 0;
         $("#datagrid").datagrid("seach");
@@ -56,7 +55,8 @@ roomList.initDataGrid = function(){
 				  		"white-space: nowrap;" +
 				  		"text-overflow: ellipsis;" +
 				  		"overflow: hidden;' BATCHID = '"+row.BATCHID+"'  ,applyId ='"+row.UUID+"'     " +
-				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.UUID+"')>"+row.BATCHID+"</a>";
+				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.UUID+"','"+row.BATCHID+"')>"+row.BATCHID+"</a>";
+
 		  }},
 		  {name: '同步开始日期', style:{width:"200px"},data: 'BEGINDATE'},
 		  {name: '同步结束时间',style:{width:"150px"}, data: 'ENDDATE'},
@@ -79,15 +79,14 @@ changeDeptCode = function () {
         data: {'projectTypeCode':projectTypeCode},
         success: function (data) {
             var deptList = data.data.deptList;
-            var checkContent = '';
             var i ;
-            checkContent = "<option selected='selected'></option>";
+            var  checkContent ='<option value = ""> </option>';
             for(i=0;i<deptList.length;i++){
                 var k = deptList[i].DEPTCODE;
                 var v = deptList[i].DEPTNAME;
                 checkContent = checkContent+'<option value = "'+k+'">'+v+'</option>';
             }
-            document.getElementById("deptCode").innerHTML = checkContent;
+            $("#deptCode").empty().append(checkContent)
         }
     });
 }
@@ -95,11 +94,11 @@ changeDeptCode = function () {
 /**
  * 用印申请详情弹窗
  */
-roomList.forDetails = function (uuid) {
+roomList.forDetails = function (uuid,batchId) {
     var url = "/bg/syncProjectInfo/syncProjectInfo_details?uuid="+uuid;
     layer.open({
         type:2,
-        title:'<h4 style="font-size: 18px;padding-top: 10px">同步详情</h4>',
+        title:'<h4 style="font-size: 18px;padding-top: 10px"> 同步详情('+batchId+ ')</h4>',
         area:['85%','85%'],
         fixed:false,//不固定
         maxmin:true,

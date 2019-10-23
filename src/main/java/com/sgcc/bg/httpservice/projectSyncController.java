@@ -30,7 +30,12 @@ public class projectSyncController {
             logger.info("项目同步--->报工系统向绩效系统推送项目信息--->开始");
             logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数json:" + jsonText);
             HttpResultWarp rw = null;
+
             if (jsonText==null||jsonText.length()==0) {
+                rw = new HttpResultWarp(HttpResultWarp.FAILED , "参数不能为空");
+                return JSON.toJSONString(rw);
+            }
+            if(jsonText.isEmpty()){
                 rw = new HttpResultWarp(HttpResultWarp.FAILED , "参数不能为空");
                 return JSON.toJSONString(rw);
             }
