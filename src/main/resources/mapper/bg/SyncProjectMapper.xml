@@ -180,11 +180,10 @@
 		FROM    BG_SYNC_PROJECT_NOTE   N
 		LEFT JOIN BG_SYS_DEPT   D   ON D.DEPTCODE = N.DEPTCODE  where  N.VALID='1'
 		<if  test="projectNode.beginDate!= null and projectNode.beginDate!= ''">
-
-			AND TO_DATE(TO_CHAR (N.CREATE_DATE, 'yyyy-MM-dd'), 'yyyy-MM-dd')   &gt;=    TO_DATE( #{projectNode.beginDate}, 'yyyy-MM-dd')
+			AND TO_DATE(N.BEGINDATE, 'yyyy-MM-dd')   &gt;=    TO_DATE( #{projectNode.beginDate}, 'yyyy-MM-dd')
 		</if>
 		<if  test="projectNode.endDate!= null and projectNode.endDate!= ''">
-			AND TO_DATE(TO_CHAR (N.CREATE_DATE, 'yyyy-MM-dd') , 'yyyy-MM-dd')    &lt;=     TO_DATE( #{projectNode.endDate}, 'yyyy-MM-dd')
+			AND TO_DATE(N.ENDDATE, 'yyyy-MM-dd')      &lt;=     TO_DATE( #{projectNode.endDate}, 'yyyy-MM-dd')
 		</if>
 		<if  test="projectNode.projectType!= null and projectNode.projectType!= ''">
 			AND N.PROJECT_TYPE     =      #{projectNode.projectType}
