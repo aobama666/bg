@@ -44,11 +44,6 @@ roomList.initDataGrid = function(){
 		tablepage:$(".tablepage"),//分页组件
 		columns: [
 		  {name: '序号',style:{width:"50px"}, data: 'ROWNO'},
-		    //{name: '选择',style:{width:"50px"}, data: 'applyId', checkbox:true, forMat:function(row){
-            //   dataItems[index] = row;//将一行数据放在一个list中
-            //   return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.applyId)+'"/>';
-            // }
-            // },
 		  {name: '批次号',style:{width:"150px"}, data: 'BATCHID',forMat:function(row){
 			  return "<a title = '"+row.applyCode+"' style='width:150px;" +
                         "color: blue;" +
@@ -56,13 +51,12 @@ roomList.initDataGrid = function(){
 				  		"text-overflow: ellipsis;" +
 				  		"overflow: hidden;' BATCHID = '"+row.BATCHID+"'  ,applyId ='"+row.UUID+"'     " +
 				  		"href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.UUID+"','"+row.BATCHID+"')>"+row.BATCHID+"</a>";
-
 		  }},
 		  {name: '同步开始日期', style:{width:"200px"},data: 'BEGINDATE'},
 		  {name: '同步结束时间',style:{width:"150px"}, data: 'ENDDATE'},
 		  {name: '部门名称', style:{width:"150px"},data: 'DEPTNAME'},
 		  {name: '项目类型', style:{width:"150px"},data: 'PROJECT_TYPE_NAME'},
-		  {name: '同步时间', style:{width:"100px"},data: 'CREATE_DATE'}
+		  {name: '时间戳', style:{width:"100px"},data: 'CREATE_DATE'}
 		]
 	});
 
