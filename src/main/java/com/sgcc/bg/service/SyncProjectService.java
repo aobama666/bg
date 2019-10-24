@@ -25,5 +25,8 @@ public interface SyncProjectService {
 
     List<Map<String, Object>> selectForWbsNumber(Map<String, Object> projectDetails);
 
+    List<Map<String, Object>> selectForYear(Map<String, Object> projectDetails);
+
+    List<Map<String, Object>> selectForMonth(Map<String, Object> projectDetails);
 
 }

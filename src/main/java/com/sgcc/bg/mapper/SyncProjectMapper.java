@@ -9,7 +9,13 @@ import org.springframework.stereotype.Repository;
 public interface SyncProjectMapper {
     List<Map<String, Object>> queryDeptInfo(@Param("deptCode") String var1);
 
-    List<Map<String, Object>> queryProjectInfo(@Param("beginDate") String beginDate, @Param("endDate") String endDate, @Param("projectType") String projectType, @Param("deptCode") String deptCode);
+    List<Map<String, Object>> queryProjectInfo(
+            @Param("beginDate") String beginDate,
+            @Param("endDate") String endDate,
+            @Param("projectType") String projectType,
+            @Param("deptCode") String deptCode
+            );
+
 
     int addProjectNode(@Param("projectNode") Map<String, Object> projectNode);
 
@@ -33,5 +39,8 @@ public interface SyncProjectMapper {
 
     List<Map<String, Object>>   selectForWbsNumber(@Param("projectDetails") Map<String, Object> projectDetails);
 
+    List<Map<String, Object>>   selectForYear(@Param("projectDetails") Map<String, Object> projectDetails);
+
+    List<Map<String, Object>>   selectForMonth(@Param("projectDetails") Map<String, Object> projectDetails);
 
 }
