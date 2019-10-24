@@ -46,10 +46,9 @@ public class SyncProjectInfoController {
         Map<String, Object> map = new HashMap<>();
         map.put("noteId", uuid);//用印部门
         List<Map<String, Object>>  projectNumberInfo =syncProjectService.selectForProjectNumber(map);
-        List<Map<String, Object>>  wbsNumberInfoInfo =syncProjectService.selectForWbsNumber(map);
+        List<Map<String, Object>>  yearInfo =syncProjectService.selectForYear(map);
         map.put("projectNumberInfo",projectNumberInfo);
-
-        map.put("wbsNumberList",wbsNumberInfoInfo);
+        map.put("yearInfo",yearInfo);
         ModelAndView model = new ModelAndView("syncProject/sync_projectDetails_info",map);
         return model;
     }
@@ -62,10 +61,29 @@ public class SyncProjectInfoController {
     public String selectFordeptCode(String projectTypeCode){
         List<Map<String,Object>> deptList = new ArrayList<>();
         if(null != projectTypeCode && !"".equals(projectTypeCode)){
+
             deptList = syncProjectService.queryProjectNoteInfo(projectTypeCode);
         }
         ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"success");
         rw.addData("deptList",deptList);
+        return JSON.toJSONString(rw);
+    }
+    /**
+     * 根据项目类型填充部门信息下拉框内容,所谓联动
+     */
+    @ResponseBody
+    @RequestMapping(value = "/selectForMonth")
+    public String selectForMonth(String year,String noteId){
+        List<Map<String,Object>> monthList = new ArrayList<>();
+        if(null != year && !"".equals(year)){
+            Map<String, Object> map = new HashMap<>();
+            map.put("noteId", noteId);
+            map.put("year", year);
+            monthList = syncProjectService.selectForMonth(map);
+        }
+
+        ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"success");
+        rw.addData("monthList",monthList);
         return JSON.toJSONString(rw);
     }
 

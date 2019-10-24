@@ -29,23 +29,18 @@
 	<form id="queryForm" style="margin-bottom: 10px;">
 		<input type = "hidden"   id = "noteId" name="noteId" value="${noteId}">
 		<label  for="year" class="yearTitle">考核年度：</label>
-		<input id="year" name="year"
-			   onclick=" WdatePicker({dateFmt:'yyyy',enableInputMask:false})" readonly="true"
-			   type="text"
-			   class="Wdate validNull  "
-			   title="必填项 ,同步开始时间（格式：yyyy-MM-dd）"
-			   content="同步开始时间"
-			   style="width:240px;"
-		/>
+		<select id = "year" name = "year"   class = "changeQuery userlevel" style="width: 240px;margin-left: -2px"  onchange="changeMonth()">
+			<option value = "">   </option>
+			<c:forEach  var="yearInfo"  items="${yearInfo}">
+				<option value ="${yearInfo.YEAR}" title=" ${yearInfo.YEAR}" > ${yearInfo.YEAR}</option>
+			</c:forEach>
+		</select>
+
 		<label  for="month" class="yearTitle">考核月度：</label>
-		<input id="month" name="month"
-			   onclick=" WdatePicker({dateFmt:'MM',enableInputMask:false})" readonly="true"
-			   type="text"
-			   class="Wdate validNull  "
-			   title="必填项  ,同步开始时间（格式：yyyy-MM-dd）"
-			   content="同步开始时间"
-			   style="width:240px;"
-		/>
+		<select id = "month" name = "month"   class = "changeQuery userlevel" style="width: 240px;margin-left: -2px"   >
+			<option value = "">   </option>
+
+		</select>
 		<label  for="projectName" class="yearTitle"> 项目名称：</label>
 		<input type = "text" id = "projectName" name = "projectName" style="width: 240px" class = "inputQuery changeQuery" >
 		<br>

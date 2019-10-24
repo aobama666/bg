@@ -28,58 +28,61 @@ public class SyncProjectServiceImpl implements SyncProjectService {
         logger.info("项目同步--->报工系统向绩效系统推送项目信息--->查询项目信息");
         HttpResultWarp rw = null;
         try {
-            logger.info("项目同步--->报工系统向绩效系统推送项目信息--->验证部门信息是否存在");
-            List<Map<String, Object>> deptList = syncProjectMapper.queryDeptInfo(deptCode);
-            if (deptList.isEmpty()) {
-                rw = new HttpResultWarp(HttpResultWarp.FAILED, "该部门编码不存在");
-                return  JSON.toJSONString(rw);
-            }
-            if (deptList.size() > 1) {
-                rw = new HttpResultWarp(HttpResultWarp.FAILED, "该部门编码不异常");
-                return JSON.toJSONString(rw);
-            }
+
+//            logger.info("项目同步--->报工系统向绩效系统推送项目信息--->验证部门信息是否存在");
+//            List<Map<String, Object>> deptList = syncProjectMapper.queryDeptInfo(deptCode);
+//            if (deptList.isEmpty()) {
+//                rw = new HttpResultWarp(HttpResultWarp.FAILED, "该部门编码不存在");
+//                return  JSON.toJSONString(rw);
+//            }
+//            if (deptList.size() > 1) {
+//                rw = new HttpResultWarp(HttpResultWarp.FAILED, "该部门编码不异常");
+//                return JSON.toJSONString(rw);
+//            }
 
             if (projectType.equals("YJ")) {
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->查询项目信息--->院级");
-                List<Map<String, Object>>        ProjectList = syncProjectMapper.queryProjectInfo(beginDate, endDate, projectType, "");
+                List<Map<String, Object>>        ProjectList = syncProjectMapper.queryProjectInfo(beginDate, endDate, projectType, deptCode );
                 rw = new HttpResultWarp(HttpResultWarp.SUCCESS, "查询成功");
                 rw.addData("data", ProjectList);
                 String  jsonstr= JSON.toJSONString(rw);
                 addProject(beginDate, endDate, projectType, deptCode,key, ProjectList);
                 return jsonstr;
-            } else  if (projectType.equals("BMJ")) {
+            } else  if (projectType.equals("BMJ")  ) {
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->查询项目信息--->部门级");
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->获取部门信息级别");
-                String type = String.valueOf(deptList.get(0).get("TYPE"));
-                logger.info("项目同步--->报工系统向绩效系统推送项目信息--->部门信息级别" + type);
-                    if (type.equals("1")) {
+               // String type = String.valueOf(deptList.get(0).get("TYPE"));
+               // logger.info("项目同步--->报工系统向绩效系统推送项目信息--->部门信息级别" + type);
+                 //   if (type.equals("1")) {
                             List<Map<String, Object>>    ProjectList = syncProjectMapper.queryProjectInfo(beginDate, endDate, projectType, deptCode);
                             rw = new HttpResultWarp(HttpResultWarp.SUCCESS, "查询成功");
                             rw.addData("data", ProjectList);
                             String  jsonstr= JSON.toJSONString(rw);
                             addProject(beginDate, endDate, projectType, deptCode,key, ProjectList);
                             return jsonstr;
-                    } else {
-                            rw = new HttpResultWarp("fail", "项目类型为部门级，部门编码不匹配");
-                            return JSON.toJSONString(rw);
-                    }
-                } else if (projectType.equals("CSJ")) {
+//                    } else {
+//                            rw = new HttpResultWarp("fail", "项目类型为部门级，部门编码不匹配");
+//                            return JSON.toJSONString(rw);
+//                    }
+                }
+                else if (projectType.equals("CSJ")) {
                     logger.info("项目同步--->报工系统向绩效系统推送项目信息--->查询项目信息--->处室级");
                     logger.info("项目同步--->报工系统向绩效系统推送项目信息--->获取部门信息级别");
-                     String   type = String.valueOf(deptList.get(0).get("TYPE"));
-                    logger.info("项目同步--->报工系统向绩效系统推送项目信息--->部门信息级别" + type);
-                    if (type.equals("2")) {
+//                     String   type = String.valueOf(deptList.get(0).get("TYPE"));
+//                    logger.info("项目同步--->报工系统向绩效系统推送项目信息--->部门信息级别" + type);
+//                    if (type.equals("2")) {
                         List<Map<String, Object>>     ProjectList =syncProjectMapper.queryProjectInfo(beginDate, endDate, projectType, deptCode);
                         rw = new HttpResultWarp(HttpResultWarp.SUCCESS, "查询成功");
                         rw.addData("data", ProjectList);
                         String  jsonstr= JSON.toJSONString(rw);
                         addProject(beginDate, endDate, projectType, deptCode,key, ProjectList);
                         return jsonstr;
-                    } else {
-                        rw = new HttpResultWarp(HttpResultWarp.FAILED, "项目类型为处室级，部门编码不匹配");
-                        return JSON.toJSONString(rw);
-                    }
-                } else {
+//                    } else {
+//                        rw = new HttpResultWarp(HttpResultWarp.FAILED, "项目类型为处室级，部门编码不匹配");
+//                        return JSON.toJSONString(rw);
+//                    }
+                }
+                else {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "该项目类型不存在");
                     return JSON.toJSONString(rw);
                 }
@@ -144,10 +147,6 @@ public class SyncProjectServiceImpl implements SyncProjectService {
                     }
                     ProjectInfo.put("uuid", Rtext.getUUID());
                     ProjectInfo.put("projectNodeId", id);
-                    ProjectInfo.put("createTime", new Date());
-                    ProjectInfo.put("updateTime", new Date());
-                    ProjectInfo.put("createUser", this.webUtils.getUsername());
-                    ProjectInfo.put("updateUser", this.webUtils.getUsername());
                     ProjectInfo.put("valid", "1");
                     syncProjectMapper.addProjectInfo(ProjectInfo);
                 }
@@ -191,6 +190,13 @@ public class SyncProjectServiceImpl implements SyncProjectService {
 
     public List<Map<String, Object>>   selectForWbsNumber(Map<String, Object> projectDetails){
         return syncProjectMapper.selectForWbsNumber(projectDetails);
+    }
+    public  List<Map<String, Object>> selectForYear(Map<String, Object> projectDetails){
+        return syncProjectMapper.selectForYear(projectDetails);
+    }
+
+    public  List<Map<String, Object>> selectForMonth(Map<String, Object> projectDetails){
+        return syncProjectMapper.selectForMonth(projectDetails);
     }
 
 }

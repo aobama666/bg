@@ -22,74 +22,119 @@
 		SELECT  SYSNAME,SYSKEY  from  BG_SYS_AUDITORIGIN  where   SYSNAME = #{key}
 	</select>
 
-
-	<select id="queryProjectInfo" resultType="java.util.Map">
-		SELECT   DISTINCT projectId   as  "projectId",
-		                    projectNumber  as  "projectNumber",
-		                    projectName  as  "projectName",
-		                    wbsNumber   as  "wbsNumber",
-		                    year  as "year",
-		                    month  as "month" ,
-		                    projectGrade  as "projectGrade",
-		                    deptCode  as "deptCode"
-		FROM(
-		SELECT
-		A.PROJECT_ID  as  projectId,
-		A.projectNumber,
-		A.projectName,
-		A.wbsNumber,
-		A.year,
-		A.month,
-		A.projectGrade,
-		A.WORK_TIME_BEGIN,
-		A.WORK_TIME_END,
-		B.TYPE ,
-		B.PDEPTCODE  as  pdeptNumber,
-		B.DEPTCODE  as  deptNumber,
-		DECODE (B.TYPE,
-		'2',DECODE (A.projectGrade,'YJ','','BMJ',B.PDEPTCODE,'CSJ',B.DEPTCODE) ,
-		'1',B.DEPTCODE) as deptCode
-		FROM (
-		SELECT
-		T.PROJECT_ID,
-		P.PROJECT_NUMBER   AS  projectNumber,
-		P.PROJECT_NAME     AS  projectName,
-		P.WBS_NUMBER   AS   wbsNumber,
-		TO_CHAR(T.WORK_TIME_END, 'yyyy') as year,
-		TO_CHAR(T.WORK_TIME_END, 'MM') as month,
-		T.WORK_TIME_BEGIN,
-		T.WORK_TIME_END,
-		T.WORKING_HOUR,
-		P.PROJECT_GRADE  as projectGrade
+	<sql id="projectInfo">
+		SELECT DISTINCT PRJ.ID as projectId,
+		PRJ.PROJECT_NUMBER as projectNumber,
+		PRJ.PROJECT_NAME as projectName,
+		PRJ.WBS_NUMBER as wbsNumber,
+		TO_CHAR(TM.workTime, 'yyyy') as year,
+		TO_CHAR(TM.workTime, 'MM') as month,
+		prj.project_grade as projectGrade,
+		d.deptcode as deptCode,
+		d.pdeptcode as pdeptCode,
+		d.type
+		FROM (SELECT M.PROJECT_ID,
+		M.workTime,
+		SU.USERID,
+		R.DEPTID,
+		U.END_DATE U_END_DATE,
+		(SELECT MAX(PU.END_DATE)
+		FROM BG_PROJECT_USER PU
+		WHERE M.PROJECT_ID = PU.PROJECT_ID
+		AND PU.ROLE = '1'
+		AND PU.STATUS = '1'
+		AND M.workTime2 BETWEEN TO_CHAR(PU.START_DATE, 'yyyy-MM') AND TO_CHAR(PU.END_DATE, 'yyyy-MM')) U_MAX_END_DATE,
+		R.ID R_ID,
+		(SELECT RT.ID
+		FROM BG_SYS_USER_DEPT_RELATION RT
+		WHERE RT.USERID = R.USERID
+		AND RT.VALID = 1
+		AND M.workTime BETWEEN RT.EXP_START_TIME AND  RT.EXP_END_TIME
+		AND ((RT.SRC = 0 AND NOT EXISTS
+		(SELECT R1.USERID
+		FROM BG_SYS_USER_DEPT_RELATION R1
+		WHERE R1.USERID = RT.USERID
+		AND M.workTime BETWEEN R1.EXP_START_TIME AND  R1.EXP_END_TIME
+		AND R1.VALID = 1
+		AND R1.SRC = 1)) OR RT.SRC IN (1, 2))) R_ID_VAILD
+		FROM (SELECT T1.PROJECT_ID,
+		last_day(to_date(T1.workTime, 'yyyy-MM')) workTime,
+		t1.workTime workTime2
+		FROM (SELECT T.PROJECT_ID,
+		TO_CHAR(T.WORK_TIME_END, 'yyyy-MM') as workTime
 		FROM BG_WORKINGHOUR_INFO T
 		LEFT JOIN BG_PROJECT_INFO P
 		ON P.ID = T.PROJECT_ID
-		WHERE T.VALID = 1    AND   P.STATUS=1
-		)  A   LEFT JOIN
-		(
-		SELECT
-		D.SRC,D.EXP_START_TIME,D.EXP_END_TIME,
-		D1.DEPTCODE,D1.DEPTNAME,D1.TYPE,D1.PDEPTCODE  ,PU.PROJECT_ID ,PU.START_DATE,PU.END_DATE
-		FROM    BG_PROJECT_USER    PU
-		LEFT JOIN BG_SYS_USER U  ON PU.HRCODE = U.HRCODE
-		LEFT JOIN BG_SYS_USER_DEPT_RELATION D  ON U.USERID = D.USERID
-		LEFT JOIN BG_SYS_DEPT D1  ON D.DEPTID = D1.DEPTID
-		where   PU.STATUS='1'  AND  PU.ROLE='1'  and  D.VALID='1'
-		)  B    ON      A.PROJECT_ID=B.PROJECT_ID   and   B.START_DATE  &lt;= A.WORK_TIME_END 	and   B.END_DATE &gt;= A.WORK_TIME_END
-		and   B.EXP_START_TIME  &lt;= A.WORK_TIME_END 	and   B.EXP_END_TIME &gt;= A.WORK_TIME_END
-		)  where  1=1
+		WHERE T.VALID = 1
+		AND T.STATUS = '3'
+		AND P.STATUS = '1'
+		AND P.CATEGORY != 'BP'
+		<if  test="projectType!= null and projectType!= ''">
+			AND  P.PROJECT_GRADE    =      #{projectType}
+		</if>
 		<if  test="beginDate!= null and beginDate!= ''">
-			AND WORK_TIME_BEGIN   &gt;=    TO_DATE( #{beginDate}, 'yyyy-MM-dd')
+			AND  TO_CHAR(T.WORK_TIME_END, 'yyyy-MM') &gt;=  TO_CHAR(TO_DATE(#{beginDate}, 'yyyy-MM-dd'),'yyyy-MM')
 		</if>
 		<if  test="endDate!= null and endDate!= ''">
-			AND WORK_TIME_END     &lt;=     TO_DATE( #{endDate}, 'yyyy-MM-dd')
+			AND  TO_CHAR(T.WORK_TIME_END, 'yyyy-MM') &lt;= TO_CHAR(TO_DATE(#{endDate}, 'yyyy-MM-dd'),'yyyy-MM')
 		</if>
+		UNION
+		SELECT P1.ID PROJECT_ID,
+		TO_CHAR(T.WORK_TIME_END, 'yyyy-MM') as workTime
+		FROM BG_WORKINGHOUR_INFO T
+		LEFT JOIN BG_PROJECT_INFO P
+		ON P.ID = T.PROJECT_ID
+		LEFT JOIN BG_PROJECT_INFO P1
+		ON P.RELATED_PROJECT_ID = P1.ID
+		WHERE T.VALID = 1
+		AND T.STATUS = '3'
+		AND P.STATUS = '1'
+		AND P1.STATUS = '1'
+		AND P.CATEGORY = 'BP1'
 		<if  test="projectType!= null and projectType!= ''">
-			and   projectGrade = #{projectType}
+			AND  P.PROJECT_GRADE    =      #{projectType}
 		</if>
-		<if  test="deptCode!= null and deptCode!= ''">
-			and   deptCode = #{deptCode}
+		<if  test="beginDate!= null and beginDate!= ''">
+			AND  TO_CHAR(T.WORK_TIME_END, 'yyyy-MM') &gt;=  TO_CHAR(TO_DATE(#{beginDate}, 'yyyy-MM-dd'),'yyyy-MM')
 		</if>
+		<if  test="endDate!= null and endDate!= ''">
+			AND  TO_CHAR(T.WORK_TIME_END, 'yyyy-MM') &lt;= TO_CHAR(TO_DATE(#{endDate}, 'yyyy-MM-dd'),'yyyy-MM')
+		</if>
+		)T1) M
+		LEFT JOIN BG_PROJECT_USER U
+		ON M.PROJECT_ID = U.PROJECT_ID
+		AND U.ROLE = '1'
+		AND U.STATUS = '1'
+		AND M.workTime2 BETWEEN TO_CHAR(U.START_DATE, 'yyyy-MM') AND
+		TO_CHAR(U.END_DATE, 'yyyy-MM')
+		LEFT JOIN BG_SYS_USER SU
+		ON SU.HRCODE = U.HRCODE
+		AND SU.VALID = 1
+		AND ROWNUM = 1
+		LEFT JOIN BG_SYS_USER_DEPT_RELATION R
+		ON R.USERID = SU.USERID
+		AND R.VALID = 1
+		AND M.workTime BETWEEN R.EXP_START_TIME AND R.EXP_END_TIME
+		WHERE 1 = 1) TM
+		LEFT JOIN BG_PROJECT_INFO PRJ
+		ON PRJ.ID = TM.PROJECT_ID
+		LEFT JOIN BG_SYS_DEPT D
+		ON D.DEPTID = TM.DEPTID
+		WHERE 1 = 1
+		AND TM.R_ID = TM.R_ID_VAILD
+		AND TM.U_END_DATE = TM.U_MAX_END_DATE
+	</sql>
+
+	<select id="queryProjectInfo" resultType="java.util.Map">
+		SELECT
+		projectNumber  as  "projectNumber",
+		projectName   as  "projectName",
+		wbsNumber  as  "wbsNumber",
+		year  as  "year",
+		month   as  "month",
+		projectGrade   as  "projectGrade",
+		deptCode  as  "deptCode"
+		FROM (<include refid="projectInfo"/>)
 	</select>
 
 
@@ -132,7 +177,7 @@
 	<insert id="addProjectInfo"  parameterType="java.util.HashMap">
 		INSERT INTO BG_SYNC_PROJECT (
 		UUID,
-		PROJECT_ID,
+		PROJECT_NOTEID,
 		PROJECT_NUMBER,
 		PROJECT_NAME,
 		WBS_NUMBER,
@@ -140,16 +185,11 @@
 		MONTH,
 		PROJECT_GRADE,
 		DEPTCODE,
-		PROJECT_NOTEID,
-		CREATE_DATE,
-        UPDATE_DATE,
-        CREATE_USER,
-        UPDATE_USER,
         VALID
 		)
 		VALUES(
 		#{projectInfo.uuid},
-		#{projectInfo.projectId},
+		#{projectInfo.projectNodeId},
 		#{projectInfo.projectNumber},
 		#{projectInfo.projectName},
 		#{projectInfo.wbsNumber},
@@ -157,11 +197,6 @@
 		#{projectInfo.month},
 		#{projectInfo.projectGrade},
 		#{projectInfo.deptCode},
-		#{projectInfo.projectNodeId},
-		#{projectInfo.createTime},
-		#{projectInfo.updateTime},
-		#{projectInfo.createUser},
-		#{projectInfo.updateUser},
 		#{projectInfo.valid}
 		)
 	</insert>
@@ -213,7 +248,6 @@
 	<sql id="projectDetailsInfo">
 		SELECT
 		P.UUID,
-		P.PROJECT_ID,
 		P.PROJECT_NUMBER,
 		P.PROJECT_NAME,
 		P.WBS_NUMBER,
@@ -273,8 +307,17 @@
 		SELECT
 		DISTINCT   WBS_NUMBER
 		from(<include refid="projectDetailsInfo"/>)
+	</select>
 
-
+	<select id="selectForYear" resultType="java.util.Map"   >
+		SELECT
+		DISTINCT  YEAR
+		from(<include refid="projectDetailsInfo"/>)
+	</select>
+	<select id="selectForMonth" resultType="java.util.Map"   >
+		SELECT
+		DISTINCT  MONTH
+		from(<include refid="projectDetailsInfo"/>)
 	</select>
 
 

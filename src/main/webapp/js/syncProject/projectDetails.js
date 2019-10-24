@@ -28,7 +28,6 @@ $(function(){
 
 /*  start  列表查询  */
 roomList.query = function(){
-        debugger;
         dataItems = new Array();
         index = 0;
         $("#datagrid").datagrid("seach");
@@ -61,24 +60,25 @@ roomList.initDataGrid = function(){
 /**
  * 根据项目类型填充部门信息下拉框内容
  */
-changeDeptCode = function () {
-    var projectTypeCode = $("#projectType option:selected").val();
+changeMonth = function () {
+    var noteId = $("#noteId").val();
+    var year = $("#year option:selected").val();
     $.ajax({
-        url: "/bg/syncProjectInfo/selectFordeptCode",
+        url: "/bg/syncProjectInfo/selectForMonth",
         type: "post",
         dataType:"json",
-        data: {'projectTypeCode':projectTypeCode},
+        data: {'year':year,'noteId':noteId},
         success: function (data) {
-            var deptList = data.data.deptList;
+            var monthList = data.data.monthList;
             var checkContent = '';
             var i ;
             checkContent = "<option selected='selected'></option>";
-            for(i=0;i<deptList.length;i++){
-                var k = deptList[i].DEPTCODE;
-                var v = deptList[i].DEPTNAME;
+            for(i=0;i<monthList.length;i++){
+                var k = monthList[i].MONTH;
+                var v = monthList[i].MONTH;
                 checkContent = checkContent+'<option value = "'+k+'">'+v+'</option>';
             }
-            document.getElementById("deptCode").innerHTML = checkContent;
+            $("#month").empty().append(checkContent)
         }
     });
 }
