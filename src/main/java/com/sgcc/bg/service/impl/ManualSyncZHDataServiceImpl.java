@@ -492,19 +492,6 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
             }
             logger.info("综合系统人员排序同步结束");
 
-            /*********************************日历班次*************************************************************/
-            updateMap(uuid,"1","同步综合系统日历班次",null,null);
-            logger.info("综合系统同步日历开始");
-            Map<String, String> stringMap4 = syncDataForZHService.syncScheduleForZH(time, creatUser);
-            if("0".equals(stringMap4.get("status"))){
-                logger.info("错误信息："+stringMap4.get("message"));
-                updateMap(uuid,"3",null,new Date(),stringMap4.get("message"));
-                resMap.put("msg" , stringMap4.get("message"));
-                resMap.put("code", "201");
-                return JSON.toJSONString(resMap);
-            }
-            logger.info("综合系统同步日历班次结束");
-
             /*********************************人员关系变更********************************************************/
             updateMap(uuid,"1","同步综合系统人员关系变更",null,null);
             logger.info("综合系统同步人员关系变更开始");
@@ -530,6 +517,20 @@ public class ManualSyncZHDataServiceImpl implements ManualSyncZHDataService {
                 return JSON.toJSONString(resMap);
             }
             logger.info("综合系统同步部门类型结束");
+
+            /*********************************日历班次*************************************************************/
+            updateMap(uuid,"1","同步综合系统日历班次",null,null);
+            logger.info("综合系统同步日历开始");
+            Map<String, String> stringMap4 = syncDataForZHService.syncScheduleForZH(time, creatUser);
+            if("0".equals(stringMap4.get("status"))){
+                logger.info("错误信息："+stringMap4.get("message"));
+                updateMap(uuid,"3",null,new Date(),stringMap4.get("message"));
+                resMap.put("msg" , stringMap4.get("message"));
+                resMap.put("code", "201");
+                return JSON.toJSONString(resMap);
+            }
+            logger.info("综合系统同步日历班次结束");
+
             updateMap(uuid,"2","",new Date(),null);
         } catch (Exception e) {
             //程序执行过程中出现异常，进行捕捉并中断程序

@@ -96,7 +96,6 @@ public class SyncZhDataBase {
     public void newSyncBaseDataForZH(){
         String localhost_ip = QuartzJob.getLocalIP()==null?"xxx":QuartzJob.getLocalIP();
         //获取执行同步任务的时间
-        System.out.println(ConfigUtils.getConfig("DataSync02")+"***"+ConfigUtils.getConfig("DataSync02_IP")+"****"+localhost_ip);
         if (Rtext.ToBoolean(ConfigUtils.getConfig("DataSync02"))
                 &&ConfigUtils.getConfig("DataSync02_IP").equals(localhost_ip)) {
 
