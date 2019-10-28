@@ -36,7 +36,7 @@
 			</c:forEach>
 		</select>
 
-		<label  for="month" class="yearTitle">考核月度：</label>
+		<label  for="month" class="yearTitle">&nbsp;&nbsp;考核月度：</label>
 		<select id = "month" name = "month"   class = "changeQuery userlevel" style="width: 240px;margin-left: -2px"   >
 			<option value = "">   </option>
 
