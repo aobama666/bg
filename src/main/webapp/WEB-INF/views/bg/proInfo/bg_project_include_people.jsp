@@ -553,7 +553,7 @@
             if($(row).find('input[name="sync"]').val()=='1'){
                 index += $(row).find('.mmg-index').text()+"，";
             }
-            if($(row).find('input[name="workingHour"]').val() != '0'){
+            if($(row).find('input[name="workingHour"]').val() != '0' && $(row).find('input[name="workingHour"]').val() != 'undefined'){
                 indexWorking += $(row).find('.mmg-index').text()+"，";
             }
         });

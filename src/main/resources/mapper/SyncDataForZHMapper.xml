@@ -59,33 +59,35 @@
     <update id="updateTempForIsenable">
         UPDATE BG_CEPRI_ZYSY_NEW_ORGAN  SET VALID = '1'
     </update>
+
+    <!--MERGE INTO BG_SYS_DEPT D
+    USING (SELECT ORGAN_CODE, ORANG_NAME, PARENT_CODE, ORGAN_TYPE, UPDATE_DATE
+    FROM BG_CEPRI_ZYSY_NEW_ORGAN
+    WHERE ISENABLE = 1) CR
+    ON (D.SRC = 1 AND D.DEPTCODE = CR.ORGAN_CODE)
+    WHEN MATCHED THEN
+    UPDATE
+    SET D.DEPTNAME    = CR.ORANG_NAME,
+    D.PDEPTCODE   = CR.PARENT_CODE,
+    D.TYPE        = CR.ORGAN_TYPE,
+    D.UPDATE_DATE = CR.UPDATE_DATE
+    WHEN NOT MATCHED THEN
+    INSERT
+    (D.DEPTID, D.DEPTCODE, D.DEPTNAME, D.PDEPTCODE, D.TYPE, D.CREATE_DATE,D.UPDATE_DATE,D.SRC,D.UPDATE_USER)
+    VALUES
+    (SYS_GUID(),
+    CR.ORGAN_CODE,
+    CR.ORANG_NAME,
+    CR.PARENT_CODE,
+    CR.ORGAN_TYPE,
+    SYSDATE,
+    SYSDATE,
+    1,
+    'admin')-->
+
     <!--根据新增组织信息跟新部门信息-->
     <insert id="insertDeptByTempNewOrgan">
-        /*MERGE INTO BG_SYS_DEPT D
-        USING (SELECT ORGAN_CODE, ORANG_NAME, PARENT_CODE, ORGAN_TYPE, UPDATE_DATE
-                 FROM BG_CEPRI_ZYSY_NEW_ORGAN
-                 WHERE ISENABLE = 1) CR
-        ON (D.SRC = 1 AND D.DEPTCODE = CR.ORGAN_CODE)
-        WHEN MATCHED THEN
-          UPDATE
-             SET D.DEPTNAME    = CR.ORANG_NAME,
-                 D.PDEPTCODE   = CR.PARENT_CODE,
-                 D.TYPE        = CR.ORGAN_TYPE,
-                 D.UPDATE_DATE = CR.UPDATE_DATE
-        WHEN NOT MATCHED THEN
-          INSERT
-            (D.DEPTID, D.DEPTCODE, D.DEPTNAME, D.PDEPTCODE, D.TYPE, D.CREATE_DATE,D.UPDATE_DATE,D.SRC,D.UPDATE_USER)
-          VALUES
-            (SYS_GUID(),
-             CR.ORGAN_CODE,
-             CR.ORANG_NAME,
-             CR.PARENT_CODE,
-             CR.ORGAN_TYPE,
-             SYSDATE,
-             SYSDATE,
-             1,
-             'admin')*/
-             MERGE INTO BG_SYS_DEPT D
+        MERGE INTO BG_SYS_DEPT D
         USING (SELECT N.ORGAN_CODE,
                        N.ORANG_NAME,
                        N.ORGAN_TYPE,
@@ -519,7 +521,9 @@
           UPDATE
              SET DO.ORGAN_TYPE = TEM.ID,
                  DO.UPDATE_time   = SYSDATE,
-                 DO.UPDATE_USER   =TEM.CREATE_USER,DO.SYNC_UPDATE_DATE = SYSDATE WHERE (DO.ORGAN_TYPE != TEM.ID)
+                 DO.UPDATE_USER   =TEM.CREATE_USER,
+                 DO.SYNC_UPDATE_DATE = SYSDATE
+             WHERE (DO.ORGAN_TYPE != TEM.ID)
             WHEN NOT MATCHED THEN
               INSERT
                 (UUID, ORGAN_ID, ORGAN_TYPE, VALID, CREATE_time, CREATE_USER,SYNC_DATE,SYNC_UPDATE_DATE)
