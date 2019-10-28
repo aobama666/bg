@@ -687,7 +687,7 @@
 		AND W.VALID = '1'
 	</select>
 
-	<select id="workingHour" resultType="java.lang.Integer">
+	<select id="workingHour" resultType="java.lang.Double">
 		SELECT nvl(sum(a.WORKING_HOUR),0) from BG_WORKINGHOUR_INFO a
        		 left join BG_SYS_USER u
 			 on a.worker = u.username
@@ -767,5 +767,4 @@
 		WHERE  ID = #{proId}
 		and STATUS = '1'
 	</select>
-
 </mapper>
