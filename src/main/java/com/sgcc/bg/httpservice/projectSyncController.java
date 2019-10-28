@@ -1,8 +1,9 @@
 package com.sgcc.bg.httpservice;
 
+
+
 import com.alibaba.fastjson.JSON;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.alibaba.fastjson.JSONObject;
 import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.common.HttpResultWarp;
 import com.sgcc.bg.service.SyncProjectService;
@@ -40,13 +41,13 @@ public class projectSyncController {
                 return JSON.toJSONString(rw);
             }
                 try {
-                Gson gson = new Gson();
-                JsonObject jsonObject = (JsonObject)gson.fromJson(jsonText, JsonObject.class);
-                if (!jsonObject.has("beginDate")) {
-                    rw = new HttpResultWarp(HttpResultWarp.FAILED, "开始时间不能为空");
+                  JSONObject jsonObject=  JSONObject.parseObject(jsonText);
+                logger.info("项目同步--->报工系统向绩效系统推送项目信息--->JsonObject:" + jsonObject);
+                if (!jsonObject.containsKey("beginDate")) {
+                    rw = new HttpResultWarp(HttpResultWarp.FAILED, "参数开始时间不能为空");
                     return  JSON.toJSONString(rw);
                 }
-                String   beginDate = jsonObject.get("beginDate").getAsString().trim();
+                String   beginDate = jsonObject.get("beginDate").toString().trim();
                 if (beginDate.isEmpty()) {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "开始时间不能为空");
                     return JSON.toJSONString(rw);
@@ -62,11 +63,11 @@ public class projectSyncController {
                     return JSON.toJSONString(rw);
                 }
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数:开始时间，格式：yyyy-MM-dd（beginDate）：" + beginDate);
-                if (!jsonObject.has("endDate")) {
+                if (!jsonObject.containsKey("endDate")) {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "结束时间不能为空");
                     return JSON.toJSONString(rw);
                 }
-                String       endDate = jsonObject.get("endDate").getAsString().trim();
+                String       endDate = jsonObject.get("endDate").toString().trim();
                 if (endDate.isEmpty()) {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "结束时间不能为空");
                     return JSON.toJSONString(rw);
@@ -87,11 +88,11 @@ public class projectSyncController {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "开始时间不能大于结束时间");
                     return JSON.toJSONString(rw);
                 }
-                if (!jsonObject.has("projectType")) {
+                if (!jsonObject.containsKey("projectType")) {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "项目类型不能为空");
                     return JSON.toJSONString(rw);
                 }
-                String   projectType = jsonObject.get("projectType").getAsString().trim();
+                String   projectType = jsonObject.get("projectType").toString().trim();
                 if (projectType.isEmpty()) {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "项目类型不能为空");
                     return JSON.toJSONString(rw);
@@ -99,11 +100,11 @@ public class projectSyncController {
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数:项目类型：" + projectType);
                     String deptCode="";
                     if(!projectType.equals("YJ")){
-                    if (!jsonObject.has("deptCode")) {
+                    if (!jsonObject.containsKey("deptCode")) {
                         rw = new HttpResultWarp(HttpResultWarp.FAILED, "部门编码不能为空");
                         return JSON.toJSONString(rw);
                     }
-                    deptCode = jsonObject.get("deptCode").getAsString().trim();
+                    deptCode = jsonObject.get("deptCode").toString().trim();
                     if (deptCode.isEmpty()) {
                         rw = new HttpResultWarp(HttpResultWarp.FAILED, "部门编码不能为空");
                         return JSON.toJSONString(rw);
@@ -112,21 +113,21 @@ public class projectSyncController {
                   } 
 
 
-                if (!jsonObject.has("sysName")) {
+                if (!jsonObject.containsKey("sysName")) {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "系统编码不能为空");
                     return JSON.toJSONString(rw);
                 }
-                String    sysName = jsonObject.get("sysName").getAsString().trim();
+                String    sysName = jsonObject.get("sysName").toString().trim();
                 if (sysName.isEmpty()) {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "系统编码不能为空");
                     return JSON.toJSONString(rw);
                 }
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数:系统编码：" + sysName);
-                if (!jsonObject.has("sysKey")) {
+                if (!jsonObject.containsKey("sysKey")) {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "系统秘钥不能为空");
                     return JSON.toJSONString(rw);
                 }
-                String          sysKey = jsonObject.get("sysKey").getAsString().trim();
+                String          sysKey = jsonObject.get("sysKey").toString().trim();
                 if (sysKey.isEmpty()) {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "系统秘钥不能为空");
                     return JSON.toJSONString(rw);
