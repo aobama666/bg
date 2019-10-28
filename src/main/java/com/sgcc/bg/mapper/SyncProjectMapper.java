@@ -13,7 +13,8 @@ public interface SyncProjectMapper {
             @Param("beginDate") String beginDate,
             @Param("endDate") String endDate,
             @Param("projectType") String projectType,
-            @Param("deptCode") String deptCode
+            @Param("deptCode") String deptCode,
+            @Param("type") String type
             );
 
 
