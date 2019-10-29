@@ -5,49 +5,146 @@
 	id:必须与对应接口的某个对应的方法名一致
  -->
 <mapper namespace="com.sgcc.bg.mapper.RequestManagerMapper">
-   <!--将同步操作信息保存到数据库表中-->
-    <insert id="insertOperationRecord" parameterType="java.util.Map">
-        INSERT INTO BG_SYS_REQUEST_MANAGER
-        (
-        UUID,REQUEST_TYPE,STATUS,START_DATE,END_DATE,CREATE_DATE,CREATE_USER,MESSAGE,REMARK,UPDATE_DATE,UPDATE_USER
-        )
-        VALUES (
-           SYS_GUID(),
-           #{requestType,jdbcType=VARCHAR},
-           #{operationStatus,jdbcType=VARCHAR},
-           TO_DATE(#{startDate},'yyyy-MM-dd HH24:MI:SS'),
-           TO_DATE(#{endDate},'yyyy-MM-dd HH24:MI:SS'),
-           TO_DATE(#{createDate},'yyyy-MM-dd HH24:MI:SS'),
-           #{createUserId,jdbcType=VARCHAR},
-           #{message,jdbcType=VARCHAR},
-           #{requestRemark,jdbcType=VARCHAR},
-           SYSDATE,
-           #{createUserId,jdbcType=VARCHAR}
 
-        )
+
+    <insert id="insertManager" parameterType="java.util.Map">
+        INSERT INTO BG_SYS_REQUEST_MANAGER
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="UUID != null ">
+                    UUID,
+                </if>
+                <if test="REQUEST_TYPE != null ">
+                    REQUEST_TYPE,
+                </if>
+                <if test="START_DATE != null ">
+                    START_DATE,
+                </if>
+                <if test="END_DATE != null ">
+                    END_DATE,
+                </if>
+                <if test="STATUS != null ">
+                    STATUS,
+                </if>
+                <if test="MESSAGE != null ">
+                    MESSAGE,
+                </if>
+                <if test="REMARK != null ">
+                    REMARK,
+                </if>
+                <if test="CREATE_USER != null ">
+                    CREATE_USER,
+                </if>
+                <if test="CREATE_DATE != null ">
+                    CREATE_DATE,
+                </if>
+                <if test="UPDATE_USER != null ">
+                    UPDATE_USER,
+                </if>
+                <if test="UPDATE_DATE != null ">
+                    UPDATE_DATE,
+                </if>
+                <if test="RUN_STEP != null ">
+                    RUN_STEP,
+                </if>
+                <if test="REQUEST_INFO != null ">
+                    REQUEST_INFO,
+                </if>
+                <if test="SYNC_TYPE != null ">
+                    SYNC_TYPE
+                </if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="UUID != null ">
+                    #{UUID,jdbcType = VARCHAR},
+                </if>
+                <if test="REQUEST_TYPE != null ">
+                    #{REQUEST_TYPE,jdbcType = VARCHAR},
+                </if>
+                <if test="START_DATE != null ">
+                    #{START_DATE,jdbcType=TIMESTAMP},
+                </if>
+                <if test="END_DATE != null ">
+                    #{END_DATE,jdbcType=TIMESTAMP},
+                </if>
+                <if test="STATUS != null ">
+                    #{STATUS,jdbcType = VARCHAR},
+                </if>
+                <if test="MESSAGE != null ">
+                    #{MESSAGE,jdbcType = VARCHAR},
+                </if>
+                <if test="REMARK != null ">
+                    #{REMARK,jdbcType = VARCHAR},
+                </if>
+                <if test="CREATE_USER != null ">
+                    #{CREATE_USER,jdbcType = VARCHAR},
+                </if>
+                <if test="CREATE_DATE != null ">
+                    #{CREATE_DATE,jdbcType=TIMESTAMP},
+                </if>
+                <if test="UPDATE_USER != null ">
+                    #{UPDATE_USER,jdbcType = VARCHAR},
+                </if>
+                <if test="UPDATE_DATE != null ">
+                    #{UPDATE_DATE,jdbcType=TIMESTAMP},
+                </if>
+                <if test="RUN_STEP != null ">
+                    #{RUN_STEP,jdbcType = VARCHAR},
+                </if>
+                <if test="REQUEST_INFO != null ">
+                    #{REQUEST_INFO,jdbcType = VARCHAR},
+                </if>
+                <if test="SYNC_TYPE != null ">
+                    #{SYNC_TYPE,jdbcType = VARCHAR}
+                </if>
+            </trim>
     </insert>
 
-    <select id="getAllOperationRecord" resultType="java.util.Map">
-        SELECT R.CREATE_USER,
-                R.STATUS,
-                to_char(R.START_DATE,'yyyy-MM-dd HH24:MI:SS') AS START_DATE,
-                to_char(R.END_DATE,'yyyy-MM-dd HH24:MI:SS') AS END_DATE,
-                R.MESSAGE,
-                R.REQUEST_TYPE,
-                R.CREATE_DATE,
-                U.USERNAME
-        FROM BG_SYS_REQUEST_MANAGER R
-        LEFT JOIN BG_SYS_USER U
-        ON R.CREATE_USER = U.USERID
-        WHERE 1=1
-        <if test="dataType != null and dataType !=''">
-            AND REQUEST_TYPE = #{dataType}
-        </if>
-        <if test="userName != null and userName != ''">
-            AND  R.CREATE_USER IN(
-            SELECT USERID FROM BG_SYS_USER WHERE USERNAME LIKE '%'||#{userName}||'%'
-            )
-        </if>
-        ORDER BY  R.CREATE_DATE DESC
-    </select>
+
+    <update id="updateManager" parameterType="java.util.Map">
+        UPDATE BG_SYS_REQUEST_MANAGER
+        <set>
+            <if test="REQUEST_TYPE != null">
+                REQUEST_TYPE = #{REQUEST_TYPE,jdbcType=VARCHAR},
+            </if>
+            <if test="START_DATE != null">
+                START_DATE = #{START_DATE,jdbcType=TIMESTAMP},
+            </if>
+            <if test="END_DATE != null">
+                END_DATE = #{END_DATE,jdbcType=TIMESTAMP},
+            </if>
+            <if test="STATUS != null">
+                STATUS = #{STATUS,jdbcType =VARCHAR},
+            </if>
+            <if test="MESSAGE != null">
+                MESSAGE = #{MESSAGE,jdbcType = VARCHAR},
+            </if>
+            <if test="REMARK != null">
+                REMARK = #{REMARK,jdbcType = VARCHAR},
+            </if>
+            <if test="CREATE_USER != null">
+                CREATE_USER = #{CREATE_USER,jdbcType = VARCHAR},
+            </if>
+            <if test="CREATE_DATE != null">
+                CREATE_DATE = #{CREATE_DATE,jdbcType=TIMESTAMP},
+            </if>
+            <if test="UPDATE_USER != null">
+                UPDATE_USER = #{UPDATE_USER,jdbcType = VARCHAR},
+            </if>
+            <if test="UPDATE_DATE != null">
+                UPDATE_DATE = #{UPDATE_DATE,jdbcType=TIMESTAMP},
+            </if>
+            <if test="RUN_STEP != null">
+                RUN_STEP = #{RUN_STEP,jdbcType = VARCHAR},
+            </if>
+            <if test="REQUEST_INFO != null">
+                REQUEST_INFO = #{REQUEST_INFO,jdbcType = VARCHAR},
+            </if>
+            <if test="SYNC_TYPE != null">
+                SYNC_TYPE = #{SYNC_TYPE,jdbcType = VARCHAR},
+            </if>
+        </set>
+        where UUID = #{UUID,jdbcType = VARCHAR}
+    </update>
+
+
 </mapper>

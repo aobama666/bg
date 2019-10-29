@@ -60,15 +60,15 @@ grade.init = function () {
                 scoreTableContent += '<td width="15%">'+scoreTable[i].SECOND_INDEX+'('+scoreTable[i].SWEIGHTS+'%)</td>';
                 scoreTableContent += '<td width="50%" style="text-align: left">'+scoreTable[i].REQUIRE+'</td>';
                 scoreTableContent += '<td width="10%">'+scoreTable[i].SCOREMIN+'~'+scoreTable[i].SCOREMAX+'</td>';
-                if(scoreStatus === '0'){//未打分
+                if(scoreStatus === '0'){//未打分onkeyup
                     scoreTableContent += '<td style="background-color: white" width="10%" class="addInputStyle"><input name="score'+i+'"' +
-                        ' type="text" class="validNull" content="对应分值" onkeyup="grade.ifValidNull(this,'+scoreTable[i].SCOREMIN+','+scoreTable[i].SCOREMAX+')"/></td>';
+                        ' type="text" class="validNull" content="对应分值" onblur="grade.ifValidNull(this,'+scoreTable[i].SCOREMIN+','+scoreTable[i].SCOREMAX+')"/></td>';
                 }else if(scoreStatus === '2'){//已完成
                     scoreTableContent += '<td style="background-color: white" width="10%" class="addInputStyle"><input name="score'+i+'"' +
                         ' value="'+scoreTable[i].SCORE+'" type="text" readonly/></td>';
                 }else {//未提交，或者重新评审
                     scoreTableContent += '<td style="background-color: white" width="10%" class="addInputStyle"><input name="score'+i+'"' +
-                        ' value="'+scoreTable[i].SCORE+'" type="text" class="validNull" content="对应分值" onkeyup="grade.ifValidNull(this,'+scoreTable[i].SCOREMIN+','+scoreTable[i].SCOREMAX+')"/></td>';
+                        ' value="'+scoreTable[i].SCORE+'" type="text" class="validNull" content="对应分值" onblur="grade.ifValidNull(this,'+scoreTable[i].SCOREMIN+','+scoreTable[i].SCOREMAX+')"/></td>';
                 }
                 scoreTableContent += '</tr>';
             }
@@ -153,7 +153,6 @@ grade.saveGrade = function () {
  * 每次离开input都会判断，全部分数框打分之后进行加权总分计算
  */
 grade.ifValidNull = function (obj,min,max) {
-    debugger;
     //输入格式控制
     obj.value = obj.value.replace(/[^\d.]/g, "");  //清除“数字”和“.”以外的字符
     obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的

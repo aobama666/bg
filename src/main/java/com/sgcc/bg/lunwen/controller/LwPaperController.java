@@ -10,6 +10,7 @@ import com.sgcc.bg.lunwen.service.LwPaperMatchSpecialistService;
 import com.sgcc.bg.lunwen.service.LwPaperService;
 import com.sgcc.bg.lunwen.service.LwSpecialistService;
 import com.sgcc.bg.lunwen.util.DownLoadUtil;
+import com.sgcc.bg.lunwen.util.FIleDeleteUtil;
 import com.sgcc.bg.lunwen.util.UploadUtil;
 import com.sgcc.bg.lunwen.util.ZipUtil;
 import com.sgcc.bg.model.HRUser;
@@ -920,7 +921,7 @@ import java.util.regex.Pattern;
 //            response.setContentType("text/html;charset=utf-8");
 //        response.setContentType("text/javascript;charset=utf-8");
         response.setContentType("text/plain;charset=utf-8");
-        //如果上传zip文件大于100mb，直接驳回，不允许他有这种猖狂的操作
+        //如果上传zip文件大于100mb，直接驳回，不允许他有这种猖狂的操作,实际上这个判断是鸡肋的，springmvc在配置文件中设置了只能上传100mb以内的文件，那块直接就给拦截了
         int fileSize = request.getContentLength();//上传文件大小，单位为B
         if(fileSize > 104857600){
             rw = new ResultWarp(ResultWarp.FAILED ,"上传的zip包大小不得大于100MB");
@@ -955,7 +956,7 @@ import java.util.regex.Pattern;
 
             if(0>fileName.lastIndexOf("-") || 0>fileName.lastIndexOf(".")){
                 //如果不存在中划线或者点标志，这个文件名称不正确，不能继续操作，走下一个文件
-                new File(localPath).delete();
+                FIleDeleteUtil.deleteFolderOrFile(new File(localPath));
                 errorMessageMap = new HashMap<>();
                 errorMessageMap.put("fileName",fileName);
                 errorMessageMap.put("errorReason","文件名称格式不符合条件");
@@ -979,7 +980,7 @@ import java.util.regex.Pattern;
                 }
             }
             if(errorFileFormat){
-                new File(localPath).delete();
+                FIleDeleteUtil.deleteFolderOrFile(new File(localPath));
                 errorMessageMap = new HashMap<>();
                 errorMessageMap.put("fileName",fileName);
                 errorMessageMap.put("errorReason","文件类型不符合条件");
@@ -991,7 +992,7 @@ import java.util.regex.Pattern;
             List<Map<String,Object>> lwFileForFileName = lwFileService.findLwFileForFileName(fileNameBefore,fileNameAfter);
             if(0!=lwFileForFileName.size()){
                 //附件已存在，删除本地路径附件，返回已存在标识
-                new File(localPath).delete();
+                FIleDeleteUtil.deleteFolderOrFile(new File(localPath));
                 errorMessageMap = new HashMap<>();
                 errorMessageMap.put("fileName",fileName);
                 errorMessageMap.put("errorReason","该附件已存在");
@@ -1004,7 +1005,7 @@ import java.util.regex.Pattern;
             //如果论文不存在
             if(null == lwPaper){
 //                errorFileName.add(fileName);
-                new File(localPath).delete();
+                FIleDeleteUtil.deleteFolderOrFile(new File(localPath));
                 errorMessageMap = new HashMap<>();
                 errorMessageMap.put("fileName",fileName);
                 errorMessageMap.put("errorReason","该论文不存在");
@@ -1029,7 +1030,7 @@ import java.util.regex.Pattern;
             }catch(Exception e){
                 log.error("ftp操作异常");
                 e.printStackTrace();
-                new File(localPath).delete();
+                FIleDeleteUtil.deleteFolderOrFile(new File(localPath));
                 errorMessageMap = new HashMap<>();
                 errorMessageMap.put("fileName",fileName);
                 errorMessageMap.put("errorReason","文件服务器连接异常");
@@ -1037,7 +1038,7 @@ import java.util.regex.Pattern;
                 continue;
             }
             //删除上传成功的本地文件
-            new File(localPath).delete();
+            FIleDeleteUtil.deleteFolderOrFile(new File(localPath));
 
             //保存附件信息至数据库
             LwFile lwFile = new LwFile();
@@ -1058,7 +1059,7 @@ import java.util.regex.Pattern;
         }
 
         //删除刚才生成的uuid文件夹
-        uuidPathFile.delete();
+        FIleDeleteUtil.deleteFolderOrFile(uuidPathFile);
         //反馈前台
         if(errorMessage.size() == 0){
             rw = new ResultWarp(ResultWarp.SUCCESS ,"上传附件完成");
@@ -1066,7 +1067,6 @@ import java.util.regex.Pattern;
             rw = new ResultWarp(ResultWarp.FAILED ,"上传附件完成");
             rw.addData("errorMessage",errorMessage);
         }
-//        return JSON.toJSONString(rw);
         try {
             response.getWriter().print(JSON.toJSONString(rw));
         } catch (IOException e) {
