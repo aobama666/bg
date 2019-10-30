@@ -240,7 +240,7 @@ changeDeptCode = function () {
  */
 forDetails = function (uuid,batchId) {
     debugger;
-    var url = "/bg/syncProjectInfo/syncProjectInfo_newdetails?uuid="+uuid;
+    var url = "/bg/syncProjectInfo/syncProjectInfo_details?uuid="+uuid;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px"> 同步详情('+batchId+ ')</h4>',

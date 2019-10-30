@@ -24,52 +24,26 @@ public class SyncProjectInfoController {
     private static Logger logger = LoggerFactory.getLogger(SyncProjectInfoController.class);
     @Autowired
     SyncProjectService syncProjectService;
+
     /**
      *项目同步-同步记录页面
      * @return
      */
     @RequestMapping(value = "/syncProjectInfo_index", method = RequestMethod.GET)
-    public ModelAndView initPage(HttpServletRequest request){
-        List<Map<String, Object>> DataDictionaryInfo =syncProjectService.queryDataDictionaryInfo("DT000010");
-        Map<String, Object> map = new HashMap<>();
-        map.put("dataDictionaryList", DataDictionaryInfo);//用印部门
-        ModelAndView model = new ModelAndView("syncProject/sync_projectNote_info",map);
-        return model;
-    }
-    /**
-     *项目同步-同步记录页面
-     * @return
-     */
-    @RequestMapping(value = "/syncProjectInfo_newindex", method = RequestMethod.GET)
     public ModelAndView yncProjectInfoNew(HttpServletRequest request){
         List<Map<String, Object>> DataDictionaryInfo =syncProjectService.queryDataDictionaryInfo("DT000010");
         Map<String, Object> map = new HashMap<>();
         map.put("dataDictionaryList", DataDictionaryInfo);//用印部门
-        ModelAndView model = new ModelAndView("syncProject/sync_projectNote_new",map);
+        ModelAndView model = new ModelAndView("syncProject/sync_projectNote_index",map);
         return model;
     }
+
     /**
      *项目同步-详情页面
      * @return
      */
 
     @RequestMapping(value = "/syncProjectInfo_details", method = RequestMethod.GET)
-    public ModelAndView details(String uuid){
-        Map<String, Object> map = new HashMap<>();
-        map.put("noteId", uuid);//用印部门
-        List<Map<String, Object>>  projectNumberInfo =syncProjectService.selectForProjectNumber(map);
-        List<Map<String, Object>>  yearInfo =syncProjectService.selectForYear(map);
-        map.put("projectNumberInfo",projectNumberInfo);
-        map.put("yearInfo",yearInfo);
-        ModelAndView model = new ModelAndView("syncProject/sync_projectDetails_info",map);
-        return model;
-    }
-    /**
-     *项目同步-详情页面
-     * @return
-     */
-
-    @RequestMapping(value = "/syncProjectInfo_newdetails", method = RequestMethod.GET)
     public ModelAndView newdetails(String uuid){
         Map<String, Object> map = new HashMap<>();
         map.put("noteId", uuid);//用印部门
@@ -77,7 +51,7 @@ public class SyncProjectInfoController {
         List<Map<String, Object>>  yearInfo =syncProjectService.selectForYear(map);
         map.put("projectNumberInfo",projectNumberInfo);
         map.put("yearInfo",yearInfo);
-        ModelAndView model = new ModelAndView("syncProject/sync_projectDetails_new",map);
+        ModelAndView model = new ModelAndView("syncProject/sync_projectDetails_index",map);
         return model;
     }
 
