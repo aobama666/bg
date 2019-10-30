@@ -10,7 +10,7 @@ public class HttpResultWarp implements Serializable {
     private String message;
     private Map<String, Object> data = new HashMap();
     public static final String SUCCESS = "success";
-    public static final String FAILED = "failed";
+    public static final String FAILED = "failure";
 
     public String getResult() {
         return this.result;
