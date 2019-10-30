@@ -98,7 +98,7 @@ public class projectSyncController {
                     return JSON.toJSONString(rw);
                 }
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数:项目类型：" + projectType);
-                    String deptCode="";
+                    String deptCode=" ";
                     if(!projectType.equals("YJ")){
                     if (!jsonObject.containsKey("deptCode")) {
                         rw = new HttpResultWarp(HttpResultWarp.FAILED, "部门编码不能为空");
@@ -109,6 +109,7 @@ public class projectSyncController {
                         rw = new HttpResultWarp(HttpResultWarp.FAILED, "部门编码不能为空");
                         return JSON.toJSONString(rw);
                     }
+                        deptCode=deptCode;
                     logger.info("项目同步--->报工系统向绩效系统推送项目信息--->参数:部门编码：" + deptCode);
                   } 
 
