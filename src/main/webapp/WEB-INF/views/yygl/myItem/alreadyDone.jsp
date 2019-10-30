@@ -44,7 +44,7 @@
         <input type = "text" id = "applyCode" name = "applyCode" style="width: 100px" class = "inputQuery changeQuery" >
         <span style="margin-left: 20px"></span>
         <label>申请部门：</label>
-        <select id = "deptId" name = "deptId"  class = "changeQuery changeYear" onchange="apply.changeItemFirst()">
+        <select style="width: 250px" id = "deptId" name = "deptId"  class = "changeQuery changeYear" onchange="apply.changeItemFirst()">
             <option value = "" selected>请选择</option>
             <c:forEach  var="dept"  items="${deptList}">
                 <option value ="${dept.K}"}> ${dept.V}</option>

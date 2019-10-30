@@ -25,7 +25,7 @@ annex.initDataGrid = function(){
             {name: '用印材料',style:{width:"50px"}, data: 'useSealFileName',forMat:function(row){
                     return "<a title = '点击下载附件' style='width:250px;" +
                         " text-align:left;'id='\"+row.UUID+\"'" +
-                        " href = 'javascript:void(0)' onclick = annex.downloadStuff('"+row.useSealFileName+"','"+row.useSealFileLink+"')>"+row.useSealFileName+"</a>";
+                        " href = 'javascript:void(0)' onclick = annex.downloadStuff('"+row.useSealFileUuid+"')>"+row.useSealFileName+"</a>";
                 }},
             {name: '佐证材料',style:{width:"50px"}, data: 'proofFileName',
                 forMat:function(row){
@@ -34,7 +34,7 @@ annex.initDataGrid = function(){
                     if(row.proofFileName == undefined){
                         rvalue += "></a>";
                     }else{
-                        rvalue += " href = 'javascript:void(0)' onclick = annex.downloadStuff('"+row.proofFileName+"','"+row.proofFileLink+"')>"+row.proofFileName+"</a>";
+                        rvalue += " href = 'javascript:void(0)' onclick = annex.downloadStuff('"+row.proofFileUuid+"')>"+row.proofFileName+"</a>";
                     }
                     return rvalue;
                 }},
@@ -48,9 +48,8 @@ annex.initDataGrid = function(){
 
 
 //下载选中材料
-annex.downloadStuff = function (fileName,filePath) {
-    $("#filePath").val(filePath);
-    $("#fileName").val(fileName);
+annex.downloadStuff = function (uuid) {
+    $("#checkAnnexUuid").val(uuid);
     document.forms[0].action = "/bg/yygl/applyStuff/downloadStuff";
     document.forms[0].submit();
 }

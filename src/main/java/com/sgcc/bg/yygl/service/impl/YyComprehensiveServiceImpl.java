@@ -40,7 +40,10 @@ public class YyComprehensiveServiceImpl implements YyComprehensiveService {
         return yyComprehensiveMapper.selectForComprehensiveExl(applyMap);
     }
     @Override
-    public int updateForAffirm(String applyUserId,  String officeUserId, String applyId,String status) {
+    public int updateForAffirm(String applyUserName,  String officeUserId, String applyId,String status) {
+        //根据用户名查询对应用户id
+        String applyUserId = yyComprehensiveMapper.getUserIdForUserName(applyUserName);
+        //确认用印修改对应经办人信息
         return yyComprehensiveMapper.updateForAffirm(applyUserId,officeUserId,applyId,status);
     }
 

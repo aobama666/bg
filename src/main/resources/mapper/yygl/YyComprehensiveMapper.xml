@@ -184,4 +184,8 @@
          from BG_YY_ITEM_SECOND   where  VALID='1'
     </select>
 
+    <select id="getUserIdForUserName" resultType="java.lang.String">
+        select userid from BG_SYS_USER where USERNAME = #{userName}
+    </select>
+
 </mapper>

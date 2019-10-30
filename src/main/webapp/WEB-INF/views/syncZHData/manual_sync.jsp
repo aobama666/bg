@@ -1,10 +1,7 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: tonny
-  Date: 2019/4/11
-  Time: 11:12
-  To change this template use File | Settings | File Templates.
---%>
+<%@page import="com.sgcc.bg.common.VersionUtils"%>
+<%@page import="java.util.Map"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%--<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -49,8 +46,7 @@
 <div class="tab-pane fade in active" id="proInfo">
     <div class="page-header-sl">
         <div class="button-box">
-            <button type="button" class="btn btn-success btn-xs"
-                    onclick="forSave()">同步</button>
+            <button type="button" class="btn btn-success btn-xs" onclick="forSave()">同步</button>
             <!-- <button type="button" class="btn btn-warning btn-xs"
                         onclick="forClose()">关闭</button> -->
         </div>
@@ -60,17 +56,11 @@
         <div class="form-group col-xs-11">
             <label>数据分类</label>
             <div class="controls">
-                <select id="category" name="category" property="category"
-                        ">
-                    <options collection="typeList" property="label"
-                             labelProperty="value">
-                        <option value="1">新增组织</option>
-                        <option value="2">部门排序</option>
-                        <option value="3">处室排序</option>
-                        <option value="4">员工排序</option>
-                        <option value="5">日历班次</option>
-                        <option value="6">人员关系变更</option>
-                        <option value="7">部门类型</option>
+                <select id="category" name="category" property="category">
+                    <options collection="typeList" property="label" labelProperty="value">
+                        <c:forEach  var="type"  items="${map}">
+                            <option value ="${type.key}"}> ${type.value}</option>
+                        </c:forEach>
                     </options>
                 </select>
             </div>
@@ -78,18 +68,18 @@
     </div>
 </div>
 <script type="text/javascript">
+
     function forSave() {
         var category=$("select[name='category']").val();
-        var param = {};
-        param['category']=category;
-        $.post('<%=request.getContextPath()%>/manualSyncData/operationSync',param,function (data) {
-            if(data.status==1){
-                parent.layer.msg(data.info);
-            }else{
-                parent.layer.msg(data.info);
-            }
-        });
+        parent.forSave(category);
+        parent.queryList('reload');
+        forClose()
     }
+
+    function forClose(){
+        parent.layer.close(parent.layer.getFrameIndex(window.name));
+    }
+
 </script>
 
 </body>

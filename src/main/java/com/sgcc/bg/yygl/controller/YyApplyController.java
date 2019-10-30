@@ -49,8 +49,6 @@ public class YyApplyController {
     private YyKindService yyKindService;
     @Autowired
     private YyMyItemService yyMyItemService;
-    @Autowired
-    private ProcessService processService;
 
 
 
@@ -170,6 +168,7 @@ public class YyApplyController {
     @RequestMapping("/applyAdd")
     public String applyAdd(@RequestBody YyApplyVo yyApplyVo){
         YyApply yyApply = yyApplyVo.toYyApply();
+        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{},新增用印申请——{}",webUtils.getUsername(),yyApply);
         //保存申请基本信息
         String applyUuid = applyService.applyAdd(yyApply);
         //保存申请用印种类
@@ -218,7 +217,8 @@ public class YyApplyController {
     @RequestMapping("/applyUpdate")
     public String applyUpdate(@RequestBody YyApplyVo yyApplyVo){
         YyApply yyApply = yyApplyVo.toYyApply();
-        //保存申请基本信息
+        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{}修改用印申请——{}",webUtils.getUsername(),yyApply.toString());
+        //修改申请基本信息
         applyService.applyUpdate(yyApply);
         //修改申请用印种类
         yyKindService.kindUpdate(yyApplyVo.getUuid(),yyApplyVo.getUseSealKindCode(),yyApplyVo.getElseKind());
@@ -241,7 +241,7 @@ public class YyApplyController {
         YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
         //当前登陆人
         String loginUserId = getLoginUserUUID();
-
+        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{}查询用印申请详情信息,applyUuid={}",webUtils.getUsername(),applyUuid);
         //流程图状态信息
         String useSealStatus = yyApplyDAO.getUseSealStatus();
         boolean ifLeaderApprove = yyMyItemService.ifLeaderApprove(yyApplyDAO.getItemSecondId());
@@ -254,6 +254,11 @@ public class YyApplyController {
 
         //审批流程信息
         List<Map<String, Object>> approveAnnal = applyService.approveAnnal(applyUuid);
+        //如果属于业务会签，单独查询对应审批流程
+        List<Map<String,Object>> approveAnnalBusiness = new ArrayList<>();
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
+            approveAnnalBusiness = applyService.approveAnnalBusiness(applyUuid);
+        }
 
         //按钮组展示信息
         //申请人-撤回按钮
@@ -269,17 +274,23 @@ public class YyApplyController {
                 && !useSealStatus.equals(YyApplyConstant.STATUS_RETURN)
                     && !useSealStatus.equals(YyApplyConstant.STATUS_WITHDRAW)
             && !useSealStatus.equals(YyApplyConstant.STATUS_DEAL_SUB)
+                && accessType.equals(YyApplyConstant.ACCESS_APPLY)
         ){//如果属于可撤回状态范围
                 if(loginUserId.equals(yyApplyDAO.getApplyUserId())){//如果当前登录人为申请人
                     applyUser = "1";
                 }
         }
-        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_USER_SEAL)){//如果是待确认用印状态
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_USER_SEAL)
+                && accessType.equals(YyApplyConstant.ACCESS_COMPLETE)
+                ){//如果是待确认用印状态
             if(applyService.ifUseSealAdmin(loginUserId)){//如果属于印章管理员
                 sealAdmin = "1";
             }
         }
-        if(!useSealStatus.equals(YyApplyConstant.STATUS_DEAL_USER_SEAL)){//印章管理员没有同意退回
+        if(!useSealStatus.equals(YyApplyConstant.STATUS_DEAL_USER_SEAL)
+                && (accessType.equals(YyApplyConstant.ACCESS_AUDIT)
+                    || accessType.equals(YyApplyConstant.ACCESS_ITEM)
+        )){//印章管理员没有同意退回
             if(applyService.ifApproveUser(yyApplyDAO.getUuid(),loginUserId)){//如果是当前环节的审批人
                 approveUser = "1";
                 if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)
@@ -299,6 +310,7 @@ public class YyApplyController {
         mv.addObject("leaderApprove",leaderApprove);
         mv.addObject("useSealStatus",useSealStatus);
         mv.addObject("approveAnnal",approveAnnal);
+        mv.addObject("approveAnnalBusiness",approveAnnalBusiness);
         mv.addObject("accessType",accessType);
         mv.addObject("auditType",type);
         return mv;
@@ -311,6 +323,8 @@ public class YyApplyController {
      */
     @RequestMapping("/toPrintPreview")
     public ModelAndView toPrintPreview(String applyUuid){
+        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{}进入打印预览,applyUuid={}",webUtils.getUsername(),applyUuid);
+
         //用印基本信息
         YyApplyDAO yyApplyDAO = applyService.applyDeatil(applyUuid);
 
@@ -320,16 +334,6 @@ public class YyApplyController {
         ModelAndView mv = new ModelAndView("yygl/apply/printPreview");
         mv.addObject("yyApplyDAO",yyApplyDAO);
         mv.addObject("printPreview",printPreview);
-        return mv;
-    }
-
-
-    /**
-     * 跳转到打印预览页
-     */
-    @RequestMapping("/toApplyPrint")
-    public ModelAndView toApplyPrint(){
-        ModelAndView mv = new ModelAndView("yygl/apply/applyManage");
         return mv;
     }
 
@@ -373,6 +377,7 @@ public class YyApplyController {
     @ResponseBody
     @RequestMapping("/applySubmit")
     public String applySubmit(String checkedIds,String principalUser){
+        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{}提交申请,选中的申请:{},待办人:{}",webUtils.getUsername(),checkedIds,principalUser);
         ResultWarp resultWarp = null;
         String msg = applyService.submit(checkedIds,principalUser);
         resultWarp = new ResultWarp(ResultWarp.SUCCESS,msg);
@@ -386,6 +391,7 @@ public class YyApplyController {
     @ResponseBody
     @RequestMapping("/applyWithdraw")
     public String applyWithdraw(String applyUuid){
+        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{}撤回,applyId:{}",webUtils.getUsername(),applyUuid);
         applyService.withdraw(applyUuid);
         ResultWarp resultWarp = null;
         resultWarp = new ResultWarp(ResultWarp.SUCCESS,"撤回申请成功");
@@ -399,6 +405,7 @@ public class YyApplyController {
     @ResponseBody
     @RequestMapping("/del")
     public String del(String checkedContent){
+        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{}删除申请,选中内容:{}",checkedContent);
         String resultMessage = applyService.applyDel(checkedContent);
         ResultWarp resultWarp = null;
         resultWarp = new ResultWarp(ResultWarp.SUCCESS,resultMessage);
@@ -411,7 +418,7 @@ public class YyApplyController {
      */
     @RequestMapping("/export")
     public void export(HttpServletRequest request,HttpServletResponse response){
-        log.info("导出用印申请记录，登录账号"+getLoginUserUUID());
+        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~{}导出用印申请记录",webUtils.getUsername());
         applyService.applyExport(request,response);
     }
 

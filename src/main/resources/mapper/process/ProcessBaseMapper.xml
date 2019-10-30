@@ -275,6 +275,7 @@
         SELECT TODOER_ID
         FROM TB_WL_APPROVE_EXPAND
         WHERE APPROVE_ID = #{approveId}
+        AND TODOER_ID is not null
     </select>
 
 

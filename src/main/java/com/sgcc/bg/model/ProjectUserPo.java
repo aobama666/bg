@@ -39,7 +39,19 @@ public class ProjectUserPo implements Serializable{
 	private Double planHours;
 	//数据来源
 	private String src;
-	
+
+	//序号
+	private String sqnum;
+
+
+	public String getSqnum() {
+		return sqnum;
+	}
+
+	public void setSqnum(String sqnum) {
+		this.sqnum = sqnum;
+	}
+
 	public ProjectUserPo() {
 		super();
 	}

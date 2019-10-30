@@ -1,14 +1,9 @@
 package com.sgcc.bg.common;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.text.DateFormat;
+import java.util.*;
 import com.sgcc.bg.workinghourinfo.Utils.DataBean;
 
 public class DateUtil {
@@ -21,8 +16,17 @@ public class DateUtil {
 	private final static SimpleDateFormat sdfDays = new SimpleDateFormat("yyyyMMdd");
 
 	private final static SimpleDateFormat sdfTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	private final static SimpleDateFormat newsdfTime = new SimpleDateFormat("yyyyMMddHHmmss");
    
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	/**
+	 * 获取yyyyMMdd HHmmss
+	 * @return
+	 */
+	public static String getNewsdfTime() {
+		return newsdfTime.format(new Date());
+	}
 	/**
 	 * 获取YYYY格式
 	 * @return
@@ -107,7 +111,23 @@ public class DateUtil {
 		}
 	}
 
-	
+	public static Date fomatDateMonth(String date) {
+		DateFormat fmt = new SimpleDateFormat("yyyy-MM");
+		try {
+			return fmt.parse(date);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	//把date转换为string
+	public static String dateToStr(Date date){
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyy-MM-dd");
+		String dateString = simpleDateFormat.format(date);
+		return dateString;
+	}
+
 
 	public static int getDiffYear(String startTime, String endTime) {
 		DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
@@ -210,10 +230,8 @@ public class DateUtil {
     
     /**
 	 * 校验时间合法
-	 * @param s
-	 * @param format
-	 * @return
-	 */
+	 * @param time
+	 * @param	 */
     public static boolean isCheckTime(String time){
     	try{
     		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -230,8 +248,8 @@ public class DateUtil {
  
        /**
       	 * 校验时间合法
-      	 * @param s
-      	 * @param format
+      	 * @param
+      	 * @param
       	 * @return
       	 */
           public static String isGetDay(String time){
@@ -250,8 +268,8 @@ public class DateUtil {
       
     /**
 	 * 校验时间合法
-	 * @param s
-	 * @param format
+	 * @param
+	 * @param
 	 * @return
 	 */
     public static boolean isCheckDate(String time){
@@ -279,10 +297,26 @@ public class DateUtil {
 			return false;
 		}
 	}
+
+	/**
+	 * 校验日期是否合法
+	 * @return
+	 */
+	public static boolean isValidDateYearMonth(String s) {
+		DateFormat fmt = new SimpleDateFormat("yyyy-MM");
+		try {
+			fmt.parse(s);
+			return true;
+		} catch (Exception e) {
+			// 如果throw java.text.ParseException或者NullPointerException，就说明格式不对
+			return false;
+		}
+	}
+
 	/**
 	 * 判断两个日期的大小
-	 * @param date1 日期1
-	 * @param date2 日期2
+	 * @param beginData 日期1
+	 * @param endData 日期2
 	 * @return 
 	 * @throws ParseException
 	 */
@@ -297,10 +331,22 @@ public class DateUtil {
 		}
 		
 	}
+
+	public static boolean judgeDateNOEqu(String beginData,String endData) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date beginDatas = sdf.parse(beginData);
+		Date endDatas = sdf.parse(endData);
+		if(beginDatas.getTime()<endDatas.getTime()){
+			return true;
+		}else{
+			return false;
+		}
+
+	}
 	/**
 	 * 判断两个日期的大小
-	 * @param date1 日期1
-	 * @param date2 日期2
+	 * @param beginData 日期1
+	 * @param endData 日期2
 	 * @return 
 	 * @throws ParseException
 	 */
@@ -323,8 +369,8 @@ public class DateUtil {
 	
 	/**
 	 * 判断两个日期的大小
-	 * @param date1 日期1
-	 * @param date2 日期2
+	 * @param beginData 日期1
+	 * @param endData 日期2
 	 * @return 
 	 * @throws ParseException
 	 */
@@ -341,8 +387,7 @@ public class DateUtil {
 	}
 	 /**
    	 * 校验时间合法
-   	 * @param s
-   	 * @param format
+   	 * @param time
    	 * @return
    	 */
        public static String isGetDate(String time){
@@ -359,8 +404,8 @@ public class DateUtil {
        }
 	/**
 	 * 判断一个时间是否在一个时间段中
-	 * @param date1 日期1
-	 * @param date2 日期2
+	 * @param beginTime 日期1
+	 * @param endTime 日期2
 	 * @return 
 	 * @throws ParseException
 	 */
@@ -385,8 +430,8 @@ public class DateUtil {
 	
 	/**
 	 * 判断两个日期的大小
-	 * @param date1 日期1
-	 * @param date2 日期2
+	 * @param beginData 日期1
+	 * @param endData 日期2
 	 * @return 
 	 * @throws ParseException
 	 */
@@ -403,8 +448,8 @@ public class DateUtil {
 	}
 	/**
 	 * 判断一个日期是否在一个时间段内
-	 * @param date1 日期1
-	 * @param date2 日期2
+	 * @param beginData 日期1
+	 * @param endData 日期2
 	 * @return 
 	 * @throws ParseException
 	 */
@@ -420,6 +465,20 @@ public class DateUtil {
 		}
 		
 	}
+
+	public static boolean compareYear(String beginData,String endData,String time) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+		Date beginDatas = sdf.parse(beginData);
+		Date endDatas = sdf.parse(endData);
+		Date times = sdf.parse(time);
+		if(beginDatas.getTime()<=times.getTime()&&times.getTime()<=endDatas.getTime()){
+			return true;
+		}else{
+			return false;
+		}
+
+	}
+
 	  public static String minutes (String s,int num){
 	    	SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	        String  res = null;
@@ -465,7 +524,7 @@ public class DateUtil {
 		 * <li>功能描述：时间相减得到分钟数
 		 * @param beginDateStr
 		 * @param endDateStr
-		 * @param time间隔 时间
+		 * @param times 间隔 时间
 		 * @return long
 		 * @author Administrator
 		 */
@@ -622,12 +681,178 @@ public class DateUtil {
 	        } 
 	        return dates;
 	    }
+
+	//获取本月的开始时间
+	public static Date getBeginDayOfMonth() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(getNowYear(), getNowMonth() -1, 1);
+
+		return getDayStartTime(calendar.getTime());
+	}
+	//获取本月的结束时间
+	public static Date getEndDayOfMonth() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(getNowYear(), getNowMonth() - 1, 1);
+		int day = calendar.getActualMaximum(5);
+		calendar.set(getNowYear(), getNowMonth() - 1, day);
+		return getDayEndTime(calendar.getTime());
+	}
+	//获取某个日期的开始时间
+	public static Timestamp getDayStartTime(Date d) {
+		Calendar calendar = Calendar.getInstance();
+		if(null != d) calendar.setTime(d);
+		calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),    calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		return new Timestamp(calendar.getTimeInMillis());
+	}
+	//获取某个日期的结束时间
+	public static Timestamp getDayEndTime(Date d) {
+		Calendar calendar = Calendar.getInstance();
+		if(null != d) calendar.setTime(d);
+		calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),    calendar.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+		calendar.set(Calendar.MILLISECOND, 999);
+		return new Timestamp(calendar.getTimeInMillis());
+	}
+	//获取今年是哪一年
+	public static Integer getNowYear() {
+		Date date = new Date();
+		GregorianCalendar gc = (GregorianCalendar) Calendar.getInstance();
+		gc.setTime(date);
+		return Integer.valueOf(gc.get(1));
+	}
+	//获取本月是哪一月
+	public static int getNowMonth() {
+		Date date = new Date();
+		GregorianCalendar gc = (GregorianCalendar) Calendar.getInstance();
+		gc.setTime(date);
+		return gc.get(2) + 1;
+	}
+
+	/**
+	 * 获取指定年月的第一天
+	 * @param year
+	 * @param month
+	 * @return
+	 */
+	public static String getFirstDayOfMonth1(int year, int month) {
+		Calendar cal = Calendar.getInstance();
+		//设置年份
+		cal.set(Calendar.YEAR, year);
+		//设置月份
+		cal.set(Calendar.MONTH, month-1);
+		//获取某月最小天数
+		int firstDay = cal.getMinimum(Calendar.DATE);
+		//设置日历中月份的最小天数
+		cal.set(Calendar.DAY_OF_MONTH,firstDay);
+		//格式化日期
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		return sdf.format(cal.getTime());
+	}
+
+	/**
+	 * 获取指定年月的第一天
+	 * @param time 时间
+	 * @return
+	 */
+	public static String getFirstDay(String time) {
+		String[] str= time.split("-");
+		int year = Integer.parseInt(str[0]);
+		int month = Integer.parseInt(str[1]);
+		Calendar cal = Calendar.getInstance();
+		//设置年份
+		cal.set(Calendar.YEAR, year);
+		//设置月份
+		cal.set(Calendar.MONTH, month-1);
+		//获取某月最小天数
+		int firstDay = cal.getMinimum(Calendar.DATE);
+		//设置日历中月份的最小天数
+		cal.set(Calendar.DAY_OF_MONTH,firstDay);
+		//格式化日期
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		return sdf.format(cal.getTime());
+	}
+
+	/**
+	 * 获取指定年月的最后一天
+	 * @param year
+	 * @param month
+	 * @return
+	 */
+	public static String getLastDayOfMonth1(int year, int month) {
+		Calendar cal = Calendar.getInstance();
+		//设置年份
+		cal.set(Calendar.YEAR, year);
+		//设置月份
+		cal.set(Calendar.MONTH, month-1);
+		//获取某月最大天数
+		int lastDay = cal.getActualMaximum(Calendar.DATE);
+		//设置日历中月份的最大天数
+		cal.set(Calendar.DAY_OF_MONTH, lastDay);
+		//格式化日期
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		return sdf.format(cal.getTime());
+	}
+
+	/**
+	 * 获取指定年月的最后一天
+	 * @param time 时间
+	 * @return
+	 */
+	public static String getLastDay(String time) {
+		String[] str= time.split("-");
+		int year = Integer.parseInt(str[0]);
+		int month = Integer.parseInt(str[1]);
+		Calendar cal = Calendar.getInstance();
+		//设置年份
+		cal.set(Calendar.YEAR, year);
+		//设置月份
+		cal.set(Calendar.MONTH, month-1);
+		//获取某月最大天数
+		int lastDay = cal.getActualMaximum(Calendar.DATE);
+		//设置日历中月份的最大天数
+		cal.set(Calendar.DAY_OF_MONTH, lastDay);
+		//格式化日期
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		return sdf.format(cal.getTime());
+	}
+
+	//获取上月的开始时间
+	public static Date getBeginDayOfLastMonth() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(getNowYear(), getNowMonth() - 2, 1);
+		return getDayStartTime(calendar.getTime());
+	}
+	//获取上月的结束时间
+	public static Date getEndDayOfLastMonth() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(getNowYear(), getNowMonth() - 2, 1);
+		int day = calendar.getActualMaximum(5);
+		calendar.set(getNowYear(), getNowMonth() - 2, day);
+		return getDayEndTime(calendar.getTime());
+	}
+	public static boolean isFirstDayOfMonth(String FirstDay) throws ParseException {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = format.parse(FirstDay);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		if(calendar.get(Calendar.DAY_OF_MONTH)==1){
+			return  true;
+		}
+		return  false;
+	}
+
+	public static boolean isLastDayOfMonth(String lastDay) throws ParseException {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = format.parse(lastDay);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.DATE,(calendar.get(Calendar.DATE)+1));
+		if(calendar.get(Calendar.DAY_OF_MONTH)==1){
+			return  true;
+		}
+		return  false;
+	}
 	    public static void main(String[] args) {
-        	String startAt="2017-04-04";
-        	String endAt="2017-04-11";
-        	List<DataBean> list=getDatas(startAt,endAt);
-        	for(DataBean  bean:list){
-        		System.out.println(	bean.getStartData()+"至"+bean.getEndData());
-        	}
+			System.out.println(getNewsdfTime());
 		}
 }

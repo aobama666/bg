@@ -86,7 +86,7 @@ roomList.initDataGrid = function(){
                         return "";
                     }
 		   }},
-            {name: '申请单位经办', style:{width:"100px"},data: 'applyHandleUserName' },
+            {name: '申请单位经办人', style:{width:"100px"},data: 'applyHandleUserName' },
             {name: '办公室经办人', style:{width:"100px"},data: 'officeHandleUserName' }
 		]
 	});
@@ -123,14 +123,17 @@ changeItemFirst = function () {
  * 用印申请详情弹窗
  */
 roomList.forDetails = function (applyUuid) {
-    var url = "/bg/yygl/apply/toApplyDetail?applyUuid="+applyUuid;
+    var url = "/bg/yygl/apply/toApplyDetail?accessType=3&applyUuid="+applyUuid;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请详情</h4>',
         area:['85%','85%'],
         fixed:false,//不固定
         maxmin:true,
-        content:url
+        content:url,
+		end: function () {
+            roomList.query();
+        }
     });
 }
 

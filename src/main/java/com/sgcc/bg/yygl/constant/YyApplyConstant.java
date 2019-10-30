@@ -68,4 +68,17 @@ public class YyApplyConstant {
 
     //待办url
     public final static String AUDIT_URL = "/../../bg/yygl/apply/toApplyDetail?accessType=1&applyUuid=";
+
+
+    /**
+     * 详情中访问类型
+     */
+    //从外部系统待办链接进入
+    public final static String ACCESS_AUDIT = "1";
+    //从待办事项进入
+    public final static String ACCESS_ITEM = "2";
+    //从确认用印进入
+    public final static String ACCESS_COMPLETE = "3";
+    //从申请列表进入
+    public final static String ACCESS_APPLY = "4";
 }

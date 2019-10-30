@@ -68,7 +68,8 @@
 	<input type="hidden" name="currentHrcode" id="currentHrcode" value="${hrcode}"/>
 	<input type="hidden" name="currentDeptName" id="currentDeptName" value="${deptName}"/>
 	<input type="hidden" name="currentDeptCode" id="currentDeptCode" value="${deptCode}"/>
-	
+	<input type="hidden" name="rankMap" id="rankMap" value="${rankMap}"/>
+
 	<ul id="myTab" class="nav nav-tabs">
 		<li class="active"><a href="#proInfo" data-toggle="tab">项目信息</a></li>
 		<li><a href="#people" data-toggle="">参与人员</a></li>
@@ -96,9 +97,9 @@
 		initPro();
 		queryList();
 		queryList_beforePro();
-	}); 
+	});
 
-	
+
 	function checkNumberFormat(planHours){
 		var result = {};
 		var reg=/^([0-9]|[1-9][0-9]{0,7})$/;
@@ -124,7 +125,34 @@
 		}
 		return result;
 	}
-	
+
+    //计算相差天数
+    function timeFn(da1,da2) {//di作为一个变量传进来
+        //如果时间格式是正确的，那下面这一步转化时间格式就可以不用了
+        //var dateBegin = new Date(d1.replace(/-/g, "/"));//将-转化为/，使用new Date
+        //var dateEnd = new Date(d2.replace(/-/g, "/"));//将-转化为/，使用new Date
+        //var dateEnd = new Date();//获取当前时间
+        var dateDiff = da2.getTime() - da1.getTime();//时间差的毫秒数
+        var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000));//计算出相差天数
+        return dayDiff;
+    }
+
+    function compareDay(day) {
+        var sDate = getDate($("input[name='startDate']").val());
+        var eDate = getDate($("input[name='endDate']").val());
+        var xmDate = timeFn(sDate,eDate);
+        var compare = 0;
+        if(day>xmDate){
+            compare=1;
+        }else if(day<xmDate){
+            compare=-1
+        }else {
+            compare=0
+        }
+        return compare;
+    }
+
+
 	function checkStartDate(startDate){
 		var result = {};
 		var currentYear=new Date().getFullYear();

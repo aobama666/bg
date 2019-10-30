@@ -105,6 +105,9 @@
 
 			<div id="datagrid"></div>
 		</div>
+<form action="">
+	<input type = "text" style="display: none" value="" id = "annexUuid" name="annexUuid">
+</form>
 
 	<div class="btnContent"  style="margin-top: 5px">
 		<button type="button" class="btn" onclick="paperList.updateEvent()">保存</button>

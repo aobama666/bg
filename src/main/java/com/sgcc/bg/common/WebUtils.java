@@ -66,7 +66,7 @@ public class WebUtils {
 				break;
 			}
 		}
-		log.info("cookievalue:"+cookievalue);
+//		log.info("cookievalue:"+cookievalue);
 		Map<String,String> resultMap = new HashMap<String,String>();
 		CommonUser user = getUserFromRedis(cookievalue);
 		return user;

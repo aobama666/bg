@@ -91,14 +91,14 @@
 			</div>
 			<hr>
 			<div class="form-box">
-				<div class="form-group col-xs-11">
+				<div class="form-group col-xs-5">
 					<label for="category"><font
 						class="glyphicon glyphicon-asterisk required"></font>项目分类</label>
 					<div class="controls">
 						<select name="category" property="category" onchange="typeChange(this)">
 							<options collection="typeList" property="label"
 								labelProperty="value">
-								<option  value="QT" <c:if test="${category=='QT'}">selected="selected"</c:if> >其他</option>
+									<option  value="QT" <c:if test="${category=='QT'}">selected="selected"</c:if> >其他</option>
 								<option  value="KY" <c:if test="${category=='KY'}">selected="selected"</c:if> >科研项目</option>
 								<option value="HX" <c:if test="${category=='HX'}">selected="selected"</c:if> >横向项目</option>
 								<option value="JS" <c:if test="${category=='JS'}">selected="selected"</c:if> >技术服务项目</option>	
@@ -106,6 +106,21 @@
 						</select>
 					</div>
 				</div>
+
+				<div class="form-group col-xs-6">
+					<label for="projectGrade"><font class="glyphicon glyphicon-asterisk required"></font>项目级别</label>
+					<div class="controls bg-white">
+						<%--<input type="text" name="projectGrade" property="projectGrade" value="${projectGrade}">--%>
+						<select name="projectGrade" property="projectGrade">
+							<options collection="typeList" property="label" labelProperty="value">
+								<option  value="YJ" <c:if test="${projectGrade=='YJ'}">selected="selected"</c:if> >院级</option>
+								<option  value="BMJ" <c:if test="${projectGrade=='BMJ'}">selected="selected"</c:if> >部门级</option>
+								<option value="CSJ" <c:if test="${projectGrade=='CSJ'}">selected="selected"</c:if> >处室级</option>
+							</options>
+						</select>
+					</div>
+				</div>
+
 				<div class="form-group col-xs-11">
 					<label for="projectName"><font
 						class="glyphicon glyphicon-asterisk required"></font>项目名称</label>
@@ -260,6 +275,7 @@
 		*/
 		var validator=[
               	      {name:'category',vali:'required'},
+					  {name:'projectGrade',vali:'required;length[-20]'},
              	      {name:'projectName',vali:'required;length[-50]'},
              	      {name:'WBSNumber',vali:''},//WBS编号不作为必填项校验了
              	      {name:'projectIntroduce',vali:'length[-200]'},
@@ -338,6 +354,8 @@
 							parent.layer.msg("保存成功!");
 							stuffShow();
 						}
+					}else if (data.result=="error"){
+                        parent.layer.msg(data.content);
 					}else {
 						parent.layer.msg("保存失败!");
 					}
@@ -582,7 +600,7 @@
 			result.info = "";
 		}else{
 			result.result = false;
-			result.info = "项目结束时间不能小于项目开始时间；";
+			result.info = "项目开始时间晚于项目结束时间；";
 		}
 		return result;
 	} 
@@ -594,7 +612,7 @@
 			result.info = "";
 		}else{
 			result.result = false;
-			result.info = "项目结束时间不能小于项目开始时间；";
+			result.info = "项目开始时间晚于项目结束时间；";
 		}
 		return result;
 	}  */
@@ -610,7 +628,33 @@
 			result.info = "日期超范围；";
 		}
 		return result;
-	} 
+	}
+
+    //计算相差天数
+    function timeFn(da1,da2) {//di作为一个变量传进来
+        //如果时间格式是正确的，那下面这一步转化时间格式就可以不用了
+        //var dateBegin = new Date(d1.replace(/-/g, "/"));//将-转化为/，使用new Date
+        //var dateEnd = new Date(d2.replace(/-/g, "/"));//将-转化为/，使用new Date
+        //var dateEnd = new Date();//获取当前时间
+        var dateDiff = da2.getTime() - da1.getTime();//时间差的毫秒数
+        var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000));//计算出相差天数
+        return dayDiff;
+    }
+
+	function compareDay(day) {
+ 	    var sDate = getDate($("input[name='startDate']").val());
+ 	    var eDate = getDate($("input[name='endDate']").val());
+ 	    var xmDate = timeFn(sDate,eDate);
+ 	    var compare = 0;
+		if(day>xmDate){
+		    compare=1;
+		}else if(day<xmDate){
+		    compare=-1
+        }else {
+		    compare=0
+		}
+		return compare;
+    }
 	
 	//仅用于保存当前行的开始日期数据
 	function setStartDate(val){
@@ -802,7 +846,7 @@
 		setTimeout(resize,200);
 	}
 	
-	function roleChange(_this){
+	/*function roleChange(_this){
 		var role=_this.val();
 		var hrCode=_this.parents("tr").find("input[name='hrcode']").val();
 		var rows=$("#mmg tr").has("input[value='"+hrCode+"']");
@@ -814,7 +858,7 @@
 		rows.each(function(index,row){
 			$(row).find("select").val(role);
 		});
-	}
+	}*/
 	
 	function getDate(dateStr){
 		var reg=new RegExp("\\-","gi");

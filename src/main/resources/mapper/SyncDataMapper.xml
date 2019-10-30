@@ -261,7 +261,8 @@
 		          AND P.BEGDA IS NOT NULL
 		          AND P.ENDDA IS NOT NULL
 		          AND U.USERID IS NOT NULL
-		          AND NVL(D.DEPTID, D1.DEPTID) IS NOT NULL) B
+		          AND ((d.deptcode is not null and d.src = 0) or (d.deptcode is null and d1.deptcode is not null and d1.src = 0))
+		          ) B
 		ON (A.SRC = 0 AND A.USERID = B.USERID AND A.DEPTID = B.DEPTID AND A.EXP_START_TIME = B.BEGIN_DATE AND A.EXP_END_TIME = B.END_DATE)
 		WHEN MATCHED THEN
 		  UPDATE SET A.VALID = 1, A.UPDATE_USER = 'admin', A.UPDATE_DATE = SYSDATE

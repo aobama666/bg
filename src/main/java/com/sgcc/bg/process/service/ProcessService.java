@@ -4,7 +4,7 @@ public interface ProcessService {
 
 
     /**
-     * 初始化流程---暂时保留，沿用原有初始化
+     * 初始化流程
      */
     boolean applySubmit(
             String businessId,
@@ -18,7 +18,7 @@ public interface ProcessService {
     );
 
     /**
-     * 审批同意，通过审批条件后，按照配置走对应的下一环节，如果到最后一步，完结流程
+     * 审批同意，通过审批条件后，按照配置走对应的下一环节
      * @param businessId    业务id
      * @param condition     判断条件
      * @param approveRemark 审批意见
@@ -41,7 +41,11 @@ public interface ProcessService {
     );
 
     /**
-     * 拒绝，流程结束，退回至申请人
+     * 审批拒绝，按照配置走对应的下一环节
+     * @param businessId        业务id
+     * @param approveRemark     审批意见
+     * @param approveUserId     审批人
+     * @return
      */
     boolean refuse(
             String businessId,
@@ -102,11 +106,13 @@ public interface ProcessService {
      * @param taskId        审批id OR 审批扩展id
      * @param precessId     标识，是审批id还是审批扩展id
      * @param userId        用户id
+     * @param auditResult   审批结果（1通过 2拒绝）
      */
     boolean completeUpcoming(String flowId,
                              String taskId,
                              String precessId,
-                             String userId
+                             String userId,
+                             String auditResult
     );
 
 

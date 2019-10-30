@@ -79,7 +79,7 @@
         <span style="margin-left: 20px"></span>
         <label>审批状态：</label>
         <span style="margin-left: 3px"></span>
-        <select id = "useSealStatus" name = "useSealStatus"   class = "changeQuery changeYear">
+        <select style="width: 150px;" id = "useSealStatus" name = "useSealStatus"   class = "changeQuery changeYear">
             <option value = "" selected>请选择</option>
             <c:forEach  var="useSealStatus"  items="${useSealStatus}">
                 <option value ="${useSealStatus.K}"}> ${useSealStatus.V}</option>

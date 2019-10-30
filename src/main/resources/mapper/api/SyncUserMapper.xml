@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+ -->
+<mapper namespace="com.sgcc.bg.mapper.api.SyncUserMapper">
+	<!-- 获取所有用户信息 -->
+	<select id="getUsers" resultType="com.sgcc.bg.model.SysUser">
+		SELECT USERID userId,
+			   HRCODE hrCode,
+			   USERNAME userName,
+			   USERALIAS userAlias,
+			   SEX sex,
+			   CARDID cardId,
+			   MOBILE mobile,
+			   PHONE phone,
+			   EMAIL email,
+			   to_char(BIRTHDAY, 'YYYY-MM-DD') birthday,
+			   STATE state,
+			   HRDEPTNAME hrDeptName,
+			   HRDEPTCODE hrDeptCode,
+			   to_char(JOBDATE, 'YYYY-MM-DD') jobDate,
+			   POSTCODE postCode,
+			   POSTNAME postName,
+			   STATION station,
+			   MAJOR major,
+			   EDU edu,
+			   POSTALCODE postalCode,
+			   TAX tax,
+			   NATION nation,
+			   ADDRESS address,
+			   COUNTRY country,
+			   EMPLOYEENUMBER employeeNumber,
+			   SRC src,
+			   SORT_ID sortId,
+			   VALID valid
+		  FROM BG_SYS_USER
+	</select>
+	
+</mapper>

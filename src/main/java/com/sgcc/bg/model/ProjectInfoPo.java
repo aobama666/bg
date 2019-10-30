@@ -49,6 +49,9 @@ public class ProjectInfoPo implements Serializable {
 
 	//数据来源
 	private String src;
+
+	//项目级别
+	private String projectGrade;
 	
 	/*ID
 	PROJECT_NAME
@@ -226,8 +229,14 @@ public class ProjectInfoPo implements Serializable {
 	public void setSrc(String src) {
 		this.src = src;
 	}
-	
-	
+
+	public String getProjectGrade() {
+		return projectGrade;
+	}
+
+	public void setProjectGrade(String projectGrade) {
+		this.projectGrade = projectGrade;
+	}
 
 	@Override
 	public int hashCode() {
@@ -256,12 +265,27 @@ public class ProjectInfoPo implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ProjectInfoPo [id=" + id + ", projectName=" + projectName + ", category=" + category + ", WBSNumber="
-				+ WBSNumber + ", projectNumber=" + projectNumber + ", organInfo=" + organInfo + ", projectIntroduce="
-				+ projectIntroduce + ", decompose=" + decompose + ", status=" + status + ", projectStatus="
-				+ projectStatus + ", planHours=" + planHours + ", startDate=" + startDate + ", endDate=" + endDate
-				+ ", createUser=" + createUser + ", createDate=" + createDate + ", updateUser=" + updateUser
-				+ ", updateDate=" + updateDate + ", relatedProId=" + relatedProjectId + ", src=" + src + "]";
+		return "ProjectInfoPo{" +
+				"id='" + id + '\'' +
+				", projectName='" + projectName + '\'' +
+				", category='" + category + '\'' +
+				", WBSNumber='" + WBSNumber + '\'' +
+				", projectNumber='" + projectNumber + '\'' +
+				", organInfo='" + organInfo + '\'' +
+				", projectIntroduce='" + projectIntroduce + '\'' +
+				", decompose='" + decompose + '\'' +
+				", status='" + status + '\'' +
+				", projectStatus='" + projectStatus + '\'' +
+				", planHours=" + planHours +
+				", startDate=" + startDate +
+				", endDate=" + endDate +
+				", createUser='" + createUser + '\'' +
+				", createDate=" + createDate +
+				", updateUser='" + updateUser + '\'' +
+				", updateDate=" + updateDate +
+				", relatedProjectId='" + relatedProjectId + '\'' +
+				", src='" + src + '\'' +
+				", projectGrade='" + projectGrade + '\'' +
+				'}';
 	}
-
 }

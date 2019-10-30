@@ -10,13 +10,15 @@ import com.sgcc.bg.mapper.BgInterFaceMapper;
 import com.sgcc.bg.service.BgInterfaceService;
 @Service
 public class BgInterfaceServiceImpl implements BgInterfaceService {
-	@Autowired
+
+
+    @Autowired
 	private BgInterFaceMapper bgInterFaceMapper;
 
 	@Override
 	public List<Map<String, Object>> getInterfaceBaseInfo(String WT_SEASON, String yearName, String startDate,
-			String endDate, String monthName) {
-		List<Map<String, Object>> list = bgInterFaceMapper.getInterfaceBaseInfo(WT_SEASON, yearName, startDate, endDate, monthName);
+			String endDate, String monthName, String monthEndDay) {
+		List<Map<String, Object>> list = bgInterFaceMapper.getInterfaceBaseInfo(WT_SEASON, yearName, startDate, endDate, monthName,monthEndDay);
 		return list;
 	}
 
@@ -47,9 +49,14 @@ public class BgInterfaceServiceImpl implements BgInterfaceService {
 
 	@Override
 	public List<Map<String, Object>> getInterfaceBaseData(String WT_SEASON, String yearName, String startDate,
-			String endDate, String monthName) {
-		List<Map<String, Object>> list = bgInterFaceMapper.getInterfaceBaseData(WT_SEASON, yearName, startDate, endDate, monthName);
+			String endDate, String monthName ) {
+		List<Map<String, Object>> list = bgInterFaceMapper.getInterfaceBaseData(WT_SEASON, yearName, startDate, endDate, monthName );
 		return list;
 	}
+    @Override
+    public List<Map<String, Object>> selectForProjectUser(String projectId, String monthEndDay) {
+        List<Map<String, Object>> list =  bgInterFaceMapper.selectForProjectUser(projectId,monthEndDay);
+        return list;
+    }
 
 }

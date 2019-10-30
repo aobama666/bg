@@ -507,7 +507,8 @@
 								sortIndex();
 							}
 						});
-						note+=item.NAME+"("+item.WORK_TIME+")、";
+						//note+=item.NAME+"("+item.WORK_TIME+")、";
+                        note+=item.NAME+"("+item.WORK_TIME_BEGIN+")"+"-"+"("+item.WORK_TIME_END+")、";
 					});
 					parent.layer.msg(note.substr(0,note.length-1)+"已存在报工信息，请核实!");
 				} 
@@ -778,7 +779,7 @@
 		setTimeout(resize,200);
 	}
 	
-	function roleChange(_this){
+	/*function roleChange(_this){
 		var role=_this.val();
 		var hrCode=_this.parents("tr").find("input[name='hrcode']").val();
 		var rows=$("#mmg tr").has("input[value='"+hrCode+"']");
@@ -790,7 +791,7 @@
 		rows.each(function(index,row){
 			$(row).find("select").val(role);
 		});
-	}
+	}*/
 	
 	function getDate(dateStr){
 		var reg=new RegExp("\\-","gi");

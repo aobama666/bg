@@ -954,19 +954,14 @@ public class YyConfigurationController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/deptInfo")
-	public String deptInfo(String  approveUserCode) {
-		CommonCurrentUser	currentUser=userUtils.getCommonCurrentUserByHrCode(approveUserCode);
-		String  deptName="";
-		String  deptId="";
-		String  type=currentUser.getType();
-		if(type.equals("1")){
-					   deptName=currentUser.getDeptName();
-		                deptId=currentUser.getDeptId();
-		}else{
-			  deptName=currentUser.getpDeptName();
-			   deptId=currentUser.getpDeptId();
-		}
-
+	public String deptInfo(String  approveUserName) {
+		//获取用户信息
+		CommonCurrentUser	currentUser=userUtils.getCommonCurrentUserByUsername(approveUserName);
+		//据用户id获取部门信息
+		Map<String,Object> deptMap = applyService.findDept(currentUser.getUserId());
+		String  deptName= deptMap.get("PDEPTNAME").toString();
+		String  deptId= deptMap.get("PDEPTID").toString();
+		//反馈
 		ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"success");
 		rw.addData("deptName",deptName);
 		rw.addData("deptId",deptId);

@@ -17,8 +17,8 @@ detail.withdraw = function () {
             type: "post",
             dataType:"json",
             success: function (data) {
-                layer.msg(data.msg);
-                window.location.reload();
+                layer.msg(data.msg);//这个提示显示不了了，测试让关闭页面刷新父级页面了
+                parent.window.location.reload();
             }
         });
     })
@@ -27,7 +27,7 @@ detail.withdraw = function () {
 //同意
 detail.agree = function () {
     var applyUuid = $("#uuid").val();
-    var url = "/bg/yygl/my_item/toAgree?checkedId="+applyUuid;
+    var url = "/bg/yygl/my_item/toAgree?checkedIds="+applyUuid;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">同意并填写审批意见</h4>',
@@ -44,7 +44,7 @@ detail.agree = function () {
 //退回=拒绝
 detail.refuse = function () {
     var applyUuid = $("#uuid").val();
-    var url = "/bg/yygl/my_item/toSendBack?checkedId="+applyUuid;
+    var url = "/bg/yygl/my_item/toSendBack?checkedIds="+applyUuid;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">退回并填写审批意见</h4>',
@@ -83,8 +83,8 @@ detail.completeSeal = function () {
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:25px;">确认用印</h4>',
-        area:['600px','240px'],
-        content:url,
+        area:['60%','40%'],
+        content:url
     });
 }
 

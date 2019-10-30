@@ -77,7 +77,7 @@ roomList.initDataGrid = function(){
             {name: '用印事项', style:{width:"200px"},data: 'secondCategoryName'},
             {name: '用印种类',style:{width:"200px"},data: 'userSealkindName'   },
             {name: '审批状态', style:{width:"150px"},data: 'userSealStatusName' },
-            {name: '申请单位经办', style:{width:"100px"},data: 'applyHandleUserName' },
+            {name: '申请单位经办人', style:{width:"100px"},data: 'applyHandleUserName' },
             {name: '办公室经办人', style:{width:"100px"},data: 'officeHandleUserName' }
 		]
 	});

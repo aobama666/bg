@@ -26,12 +26,18 @@
           (SELECT FTP_FILE_PATH
            FROM BG_LW_FILE
            WHERE UUID = a.USE_SEAL_FILE_ID AND valid = 1) AS useSealFileLink,
+           (SELECT UUID
+           FROM BG_LW_FILE
+           WHERE UUID = a.USE_SEAL_FILE_ID AND valid = 1) AS useSealFileUuid,
           (SELECT file_name
            FROM BG_LW_FILE
            WHERE UUID = a.PROOF_FILE_ID AND valid = 1)    AS proofFileName,
           (SELECT FTP_FILE_PATH
            FROM BG_LW_FILE
            WHERE UUID = a.PROOF_FILE_ID AND valid = 1)    AS proofFileLink,
+           (SELECT UUID
+           FROM BG_LW_FILE
+           WHERE UUID = a.PROOF_FILE_ID AND valid = 1)    AS proofFileUuid,
           a.USE_SEAL_AMOUNT                                  useSealAmount,
           a.REMARK                                           remark
         FROM BG_YY_APPLY_ANNEX a

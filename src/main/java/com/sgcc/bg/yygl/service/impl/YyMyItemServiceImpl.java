@@ -62,8 +62,92 @@ public class YyMyItemServiceImpl implements YyMyItemService{
     }
 
     @Override
-    public String agree() {
-        return null;
+    public String agree(String applyUuid,String toDoerId,String approveOpinion,String ifDeptEqual) {
+        //当前用印申请状态
+        YyApplyDAO apply = yyApplyService.applyDeatil(applyUuid);
+        //待办标题
+        StringBuilder sbTitle = new StringBuilder();
+        sbTitle.append("【用印申请】");
+        sbTitle.append(apply.getApplyDept()+" ");
+        sbTitle.append(apply.getApplyUser()+" ");
+        sbTitle.append(apply.getApplyCode());
+        String auditTitle = sbTitle.toString();
+        //待办链接
+        String auditUrl = YyApplyConstant.AUDIT_URL+applyUuid;
+        String approveUserId = yyApplyService.getLoginUserUUID();
+
+        String useSealStatus = apply.getUseSealStatus();
+        //下一环节状态
+        String useSealStatusUpdate = "";
+        //下一环节
+        String condition = null;
+        //是否发送待办
+        String sendAudit = YyApplyConstant.SEND_AUDIT_YES;
+        //审批流程执行结果
+        boolean processResult;
+
+        //跳过业务部门参数准备
+        if(ifDeptEqual.equals("1")){
+            toDoerId = approveUserId+","+toDoerId;
+        }
+        String newToDoerId = toDoerId;
+        if(ifDeptEqual.equals("2")){
+            toDoerId = approveUserId;
+        }
+
+        // 根据当前状态，设定每个环节对应的参数
+        if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_DEPT)){
+            useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_BUSINESS;
+        }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_BUSINESS)){
+            useSealStatusUpdate =YyApplyConstant.STATUS_DEAL_OFFICE;
+        }else if (useSealStatus.equals(YyApplyConstant.STATUS_DEAL_OFFICE)){
+            //如果属于待办公室审批,判断是否需要院领导批准
+            if(ifLeaderApprove(apply.getItemSecondId())){//需要
+                condition = YyApplyConstant.PROCESS_CONDITION_LEADER;
+                useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_LEADER;
+            }else{
+                //不需要，走印章管理员，不发待办，待办人为当前环节下所有印章管理员
+                condition = YyApplyConstant.PROCESS_CONDITION_ADMIN;
+                useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_USER_SEAL;
+                sendAudit = YyApplyConstant.SEND_AUDIT_NO;
+                toDoerId = getSealAdmin();
+            }
+        }else if(useSealStatus.equals(YyApplyConstant.STATUS_DEAL_LEADER)){
+            //走印章管理员，不发待办，待办人为当前环节下所有印章管理员
+            useSealStatusUpdate = YyApplyConstant.STATUS_DEAL_USER_SEAL;
+            sendAudit = YyApplyConstant.SEND_AUDIT_NO;
+            toDoerId = getSealAdmin();
+        }
+
+        //执行审批操作
+        processResult = processService.processApprove(applyUuid,condition,approveOpinion,approveUserId
+                ,toDoerId,auditTitle,auditUrl,sendAudit);
+
+        //如果流程正常到下一环节，修改当前审批状态
+        if(processResult){
+            yyApplyService.updateApplyStatus(applyUuid,useSealStatusUpdate);
+        }
+
+
+        //申请环节跳过业务部门审批环节
+        if(ifDeptEqual.equals("2")){
+            //执行正常流程
+            processService.processApprove(applyUuid,null,"系统默认同意",approveUserId
+                    ,newToDoerId,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_YES);
+            //撤销当前人员待办
+            processService.cancelUpcomingForUserId(apply.getUuid(),approveUserId);
+            //修改用印申请状态
+            yyApplyService.updateApplyStatus(applyUuid,YyApplyConstant.STATUS_DEAL_OFFICE);
+        }
+        //申请部门与业务部门，只有其中一个相同
+        if(ifDeptEqual.equals("1")){
+            //完成当前系统默认审批
+            processService.processApprove(applyUuid,null,"系统默认同意",approveUserId
+                    ,null,auditTitle,auditUrl,YyApplyConstant.SEND_AUDIT_YES);
+            //撤销当前人员待办
+            processService.cancelUpcomingForUserId(apply.getUuid(),approveUserId);
+        }
+        return "审批完成";
     }
 
     @Override
@@ -118,11 +202,6 @@ public class YyMyItemServiceImpl implements YyMyItemService{
             m.put("radioId","staffId1");
         }
         return nextNodeApprove;
-    }
-
-    @Override
-    public String sendBack() {
-        return null;
     }
 
     @Override

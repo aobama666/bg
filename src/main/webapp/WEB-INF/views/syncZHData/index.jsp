@@ -1,18 +1,18 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: tonny
-  Date: 2019/4/11
-  Time: 9:01
-  To change this template use File | Settings | File Templates.
---%>
+<%@page import="com.sgcc.bg.common.VersionUtils"%>
+<%@page import="java.util.Map"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%--<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+
+<%@page import="java.util.List"%>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>报工同步综合系统数据</title>
+    <title>报工同步综合系统数据请求管理</title>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmGrid.css">
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmPaginator.css">
@@ -72,15 +72,11 @@
                 <div class="form-group col-xs-4">
                     <label>同步类型：</label>
                     <div class="controls">
-                        <select  name="dataType" id="syncDataZh">
-                            <option value=""></option>
-                            <option value="1">新增组织</option>
-                            <option value="2">部门排序</option>
-                            <option value="3">处室排序</option>
-                            <option value="4">员工排序</option>
-                            <option value="5">日历班次</option>
-                            <option value="6">人员关系变更</option>
-                            <option value="7">部门类型</option>
+                        <select  name="type" id="type">
+                            <option></option>
+                            <c:forEach  var="type"  items="${repMap}">
+                                <option value ="${type.key}"}> ${type.value}</option>
+                            </c:forEach>
                         </select>
                     </div>
                 </div>
@@ -105,6 +101,7 @@
             </table>
             <div id="pg" style="text-align:right;"></div>
         </div>
+        <div><span style="color: red">注：综合系统信息与日历班次信息不可同时同步</span></div>
     </div>
     <script type="text/javascript">
         var mmg;
@@ -132,6 +129,50 @@
             });
         }
 
+        function forSearch() {
+            pn = 1;
+            queryList("reload");
+        }
+
+        function forSave(category) {
+            if ('SYNC_ZHXT_MESSAGE' == category) {
+                $.ajax({
+                    url: "<%=request.getContextPath()%>/manualSyncData/operationSyncMessage?category=" + category,
+                    type: "post",
+                    dataType: "json",
+                    contentType: 'application/json',
+                    data: '',
+                    success: function (data) {
+                        if (data.code == "201") {
+                            layer.msg(data.msg);
+                            queryList('reload');
+                        } else {
+                            layer.msg(data.msg);
+                            queryList('reload');
+                        }
+                    }
+                });
+            }else if ('SYNC_ZHXT_RILI'==category){
+                $.ajax({
+                    url: "<%=request.getContextPath()%>/manualSyncData/operationSyncRili?category=" + category,
+                    type: "post",
+                    dataType: "json",
+                    contentType: 'application/json',
+                    data: '',
+                    success: function (data) {
+                        if (data.code == "201") {
+                            layer.msg(data.msg);
+                            queryList('reload');
+                        } else {
+                            layer.msg(data.msg);
+                            queryList('reload');
+                        }
+                    }
+                });
+            }
+        }
+
+
         // 初始化列表数据
         function queryList(load){
             var ran = Math.random()*100000000;
@@ -139,17 +180,15 @@
                 {title:'序列', name:'hex2', width:40, sortable:false, align:'center', hidden: true, lockDisplay: true},
                 // {title:'', name:'startToEnd', width:100, sortable:false, align:'center'},
                 // {title:'人员编号', name:'userCode', width:100, sortable:false, align:'center'},
-                {title:'操作内容', name:'OPERATION_CONTENT', width:80, sortable:false, align:'center'},
-                // {title:'工作类型', name:'workType', width:80, sortable:false, align:'center'},
-                {title:'操作人员', name:'OPERATION_USER', width:120, sortable:false, align:'center'},
-                {title:'状态', name:'OPERATION_STATUS', width:100, sortable:false, align:'center',
-                    renderer:function(val,item,rowIndex){
-                        var dict=${statusJson};
-                        return dict[val];
-                    }},
-                {title:'开始时间', name:'OPERATION_START_DATE', width:80, sortable:false, align:'center'},
-                {title:'结束时间', name:'OPERATION_END_DATE', width:120, sortable:false, align:'center'},
-                {title:'错误信息', name:'errorInfo', width:120, sortable:false, align:'center'}
+                {title:'请求类型', name:'REQUEST_NAME', width:80, sortable:false, align:'center'},
+                {title:'开始时间', name:'START_DATE', width:80, sortable:false, align:'center'},
+                {title:'结束时间', name:'END_DATE', width:80, sortable:false, align:'center'},
+                {title:'状态', name:'STATUS', width:80, sortable:false, align:'center'},
+                {title:'错误信息', name:'MESSAGE', width:80, sortable:false, align:'center'},
+                {title:'备注', name:'REMARK', width:80, sortable:false, align:'center'},
+                {title:'创建人', name:'NAME', width:80, sortable:false, align:'center'},
+                {title:'运行阶段', name:'RUN_STEP', width:80, sortable:false, align:'center'},
+                {title:'同步方式', name:'SYNC_TYPE', width:80, sortable:false, align:'center'},
             ];
             var mmGridHeight = $("body").parent().height() - 220;
             mmg = $('#mmg').mmGrid({
@@ -176,12 +215,6 @@
             if(load == "reload"){
                 mmg.load({page:pn});
             }
-        }
-
-        function forSearch() {
-            pn = 1;
-            queryList("reload");
-            // alert(JSON.stringify($(".query-box").sotoCollecterForZH()));
         }
     </script>
 </body>

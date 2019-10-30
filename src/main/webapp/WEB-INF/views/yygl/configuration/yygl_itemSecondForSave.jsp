@@ -49,7 +49,7 @@
 				<span title = "用印事项二级类别">用印事项二级类别</span>
 			</td>
 			<td   class="addInputStyle">
-				<input  id="itemSecondName"   name="itemSecondName"  type="text"   class = "validNull"   len="20"    content="用印事项二级类别"   title="必填项 ,字段长度不能超过 20" />
+				<input  id="itemSecondName"   name="itemSecondName"  type="text"   class = "validNull"   len="100"    content="用印事项二级类别"   title="必填项,长度不能超过 100" />
 			</td>
 		</tr>
 		<tr>

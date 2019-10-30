@@ -171,10 +171,11 @@ public class YyComprehensiveController {
 		Logger.info("用印管理用印弹框页面------开始");
 		Map<String, Object> map = new HashMap<>();
 		map.put("applyId",applyId);
-		map.put("applyUserId",applyUserId);
 		List<Map<String,Object>>  userlist=yyComprehensiveService.selectForUserId(applyUserId);
-		Object applyUserName=userlist.get(0).get("USERALIAS");
+		String applyUserName=userlist.get(0).get("USERNAME").toString();
+		String applyUserAlias = userlist.get(0).get("USERALIAS").toString();
 		map.put("applyUserName",applyUserName);
+		map.put("applyUserAlias",applyUserAlias);
 		ModelAndView model = new ModelAndView("yygl/comprehensive/yygl_affirm_info",map);
 		Logger.info("用印管理用印弹框页面------结束");
 		return model;
@@ -191,12 +192,12 @@ public class YyComprehensiveController {
 	public String affirmForSave(@RequestBody Map<String, Object> paramsMap){
 		Logger.info("用印管理确定用印------保存接口");
 		ResultWarp rw =  null;
-		String applyUserId = paramsMap.get("applyUserId") == null ? "" : paramsMap.get("applyUserId").toString();
+		String applyUserName = paramsMap.get("applyUserName") == null ? "" : paramsMap.get("applyUserName").toString();
 		String applyId = paramsMap.get("applyId") == null ? "" : paramsMap.get("applyId").toString();
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String officeUserId=  currentUser.getUserId();
-		Logger.info("用印管理确定用印------参数：（申请单位经办人）applyUserId:"+applyUserId+"(办公室经办人)officeUserId:"+officeUserId+"(用印UUID)applyId:"+applyId);
-		int  res=yyComprehensiveService.updateForAffirm(applyUserId,officeUserId,applyId, YyApplyConstant.STATUS_USED_SEAL);
+		Logger.info("用印管理确定用印------参数：（申请单位经办人）applyUserName:"+applyUserName+"(办公室经办人)officeUserId:"+officeUserId+"(用印UUID)applyId:"+applyId);
+		int  res=yyComprehensiveService.updateForAffirm(applyUserName,officeUserId,applyId, YyApplyConstant.STATUS_USED_SEAL);
 		Logger.info("用印管理确定用印-----添加流程代码");
 		yyMyItemService.completeUseSeal(applyId);
 		Logger.info("用印管理确定用印-----添加流程代码");
@@ -353,7 +354,7 @@ public class YyComprehensiveController {
 		headermap.put("secondCategoryName", "用印事项");
 		headermap.put("userSealkindName", "用印种类");
 		headermap.put("userSealStatusName", "审批状态");
-		headermap.put("applyHandleUserName", "申请单位经办");
+		headermap.put("applyHandleUserName", "申请单位经办人");
 		headermap.put("officeHandleUserName", "办公室经办人");
 		OutputStream os = null;
 		try {

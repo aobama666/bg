@@ -152,7 +152,9 @@ function queryList(load){
 		height: mmGridHeight,
 		cols: [
 	            {title:'序列', name:'hex2', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'日期', name:'WORK_TIME', width:80, sortable:false, align:'center'},
+	            //{title:'日期', name:'WORK_TIME', width:80, sortable:false, align:'center'},
+	            {title:'开始日期', name:'WORK_TIME_BEGIN', width:80, sortable:false, align:'center'},
+	            {title:'结束日期', name:'WORK_TIME_END', width:80, sortable:false, align:'center'},
 	            {title:'人员编号', name:'HRCODE', width:80, sortable:false, align:'center'},
 	            //{title:'人员姓名', name:'USERALIAS', width:70, sortable:false, align:'center'},
 	            {title:'类型', name:'CATEGORY', width:100, sortable:false, align:'center'},

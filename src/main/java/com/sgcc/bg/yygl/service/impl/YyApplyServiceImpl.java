@@ -104,7 +104,7 @@ public class YyApplyServiceImpl implements YyApplyService {
         String startTime = request.getParameter("startTime").trim();
         String endTime = request.getParameter("endTime").trim();
         String useSealStatus = request.getParameter("useSealStatus").trim();
-        String itemSecondId = request.getParameter("itemSecondId").trim();
+        String itemSecondId = request.getParameter("useSealItemSecondFind").trim();
         String useSealReason = request.getParameter("useSealReason").trim();
         String userId = getLoginUserUUID();
         String ids = request.getParameter("checkList");
@@ -279,8 +279,8 @@ public class YyApplyServiceImpl implements YyApplyService {
             //待办标题
             StringBuilder sbTitle = new StringBuilder();
             sbTitle.append("【用印申请】");
-            sbTitle.append(yyApplyDAO.getApplyDept());
-            sbTitle.append(yyApplyDAO.getApplyUser());
+            sbTitle.append(yyApplyDAO.getApplyDept()+" ");
+            sbTitle.append(yyApplyDAO.getApplyUser()+" ");
             sbTitle.append(yyApplyDAO.getApplyCode());
             String auditTitle = sbTitle.toString();
             //待办链接
@@ -323,6 +323,11 @@ public class YyApplyServiceImpl implements YyApplyService {
     @Override
     public List<Map<String, Object>> approveAnnal(String applyId) {
         return yyApplyMapper.approveAnnal(applyId);
+    }
+
+    @Override
+    public List<Map<String, Object>> approveAnnalBusiness(String applyId) {
+        return yyApplyMapper.approveAnnalBusiness(applyId);
     }
 
     @Override

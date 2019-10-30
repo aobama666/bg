@@ -7,6 +7,7 @@ import com.sgcc.bg.common.ResultWarp;
 import com.sgcc.bg.common.Rtext;
 import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.lunwen.bean.LwGrade;
+import com.sgcc.bg.lunwen.bean.LwPaperMatchSpecialist;
 import com.sgcc.bg.lunwen.constant.LwPaperConstant;
 import com.sgcc.bg.lunwen.service.LwGradeService;
 import com.sgcc.bg.lunwen.service.LwPaperMatchSpecialistService;
@@ -17,6 +18,7 @@ import com.sgcc.bg.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.*;
 
 /**
  * 论文打分控制层
@@ -90,10 +93,10 @@ public class LwGradeController {
         String userId= getLoginUserUUID();
         //分页获取对应某批论文信息
         List<Map<String, Object>> lwPaperList =  lwGradeService.selectGrade(
-                pageStart,pageEnd,paperName, DateUtil.getYear(),scoreStatus,userId,paperType, LwPaperConstant.VALID_YES);
+                pageStart,pageEnd,paperName, DateUtil.getYear(),scoreStatus,userId,paperType,LwPaperConstant.VALID_YES);
         //获取总数
         Integer lwPaperCount = lwGradeService.selectGradeCount(
-                pageStart,pageEnd,paperName, DateUtil.getYear(),scoreStatus,userId,paperType, LwPaperConstant.VALID_YES);
+                pageStart,pageEnd,paperName, DateUtil.getYear(),scoreStatus,userId,paperType,LwPaperConstant.VALID_YES);
 
         //查询数据封装
         Map<String, Object> listMap = new HashMap<String, Object>();
@@ -167,53 +170,18 @@ public class LwGradeController {
     @RequestMapping(value = "/getTotalScore")
     public void getTotalScore(HttpServletRequest request, HttpServletResponse response){
         response.setContentType("text/plain;charset=utf-8");
-        //获取论文关联专家信息表id
-        String pmeId = request.getParameter("pmeId");
         String paperType = request.getParameter("paperType");
         Integer scoreTableLength = Integer.valueOf(request.getParameter("scoreTableLength"));
-        //轮循获取对应分数信息
-        String gradeId;//分数详情表主键id，修改分数使用
-        String secondIndexId;//二级指标id
         String score;//二级指标对应的分数
         Double totalScore = 0.0;//总分
+        //轮循获取对应分数信息，并得出总分
         List<Double> scoreList = new ArrayList<>();
         for(int i=0;i<scoreTableLength;i++){
-            //查看首次入库还是二次修改，根据关联id和二级指标id查询是否有对应数据，有的话修改，没有的话添加
-            secondIndexId =request.getParameter("secondIndexId"+i);
             score = request.getParameter("score"+i);
             scoreList.add(Double.valueOf(score));
+            totalScore = totalScore + (Double.valueOf(score));
         }
-        //计算加权总分
-        //嵌套循环，内部嵌套叠加每个二级的分数，外部叠加一级分数，求得总分
-        //每个一级指标对应二级指标的数量
-        List<String> firstIndexs = lwGradeService.firstIndexNums(paperType);
-        List<Map<String,Object>> scoreTable = lwGradeService.nowScoreTable(paperType,null);
-        Double firstScore = 0.0;//单个一级指标分数
-        Double secondScore = 0.0;//单个二级指标分数
-        Double weightsS = 0.0;//单个二级指标权重
-        Double weightsF = 0.0;//单个一级指标权重
-        Integer indexNum  = 0;//当前处于第几个指标
-        for(String firstIndex : firstIndexs){
-            Integer firstNums = Integer.valueOf(firstIndex);
-            for(int i=0;i<firstNums;i++){
-                //查询当前二级指标对应的权重
-                weightsS = Double.valueOf(scoreTable.get(indexNum).get("SWEIGHTS").toString());
-                //二级指标分数计算叠加至一级指标
-                secondScore = scoreList.get(indexNum);
-                secondScore = (secondScore * weightsS)/100;
-                firstScore += secondScore;
-                indexNum++;
-            }
-            //查询当前一级指标对应权重
-            firstNums = indexNum-firstNums;
-            weightsF = Double.valueOf(scoreTable.get(firstNums).get("FWEIGHTS").toString());
-            //一级指标分数计算叠加至总分
-            firstScore = (firstScore * weightsF)/100;
-            totalScore += firstScore;
-            //一级指标对应分数归零
-            firstScore = 0.0;
-        }
-        //格式化小数点后两位
+        //虽然相加不会出现多余的情况，但还是再次格式化小数点后两位，没有原因，就是想格
         BigDecimal bg = new BigDecimal(totalScore);
         totalScore = bg.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
         ResultWarp rw = null;

@@ -21,7 +21,8 @@ public interface BgInterFaceMapper {
 			@Param("yearName")String yearName,
 			@Param("startDate")String startDate,
 			@Param("endDate")String endDate,
-			@Param("monthName")String monthName);
+			@Param("monthName")String monthName,
+	        @Param("monthEndDay")String monthEndDay);
 	/**
 	 * 获取按人员统计值
 	 * @param WT_SEASON 期间    Y,S1,S2,S3,S4,M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12
@@ -85,5 +86,10 @@ public interface BgInterFaceMapper {
 			@Param("yearName")String yearName,
 			@Param("startDate")String startDate,
 			@Param("endDate")String endDate,
-			@Param("monthName")String monthName);
+			@Param("monthName")String monthName
+	         );
+
+    List<Map<String, Object>> selectForProjectUser(@Param("projectId")String projectId,
+                                                   @Param("monthEndDay")String monthEndDay
+                                                    );
 }

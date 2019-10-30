@@ -53,7 +53,7 @@ myItem.initDataGrid = function(){
  * 用印申请详情弹窗
  */
 myItem.toDeatil = function (applyUuid) {
-    var url = "/bg/yygl/apply/toApplyDetail?accessType=0&applyUuid="+applyUuid;
+    var url = "/bg/yygl/apply/toApplyDetail?accessType=2&applyUuid="+applyUuid;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">用印申请详情</h4>',
@@ -114,17 +114,32 @@ myItem.toAddSign = function () {
 弹框转到——同意选择下一个审批人
  */
 myItem.toAgree = function () {
-    //获取选中框
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
         layer.msg('请选择要操作的数据');
         return;
-    }else if(checkedItems.length>1){
-        layer.msg('每次只能审批一条数据');
+    }else if(checkedItems.length>5){
+        layer.msg('最多批量操作5条数据');
         return;
     }
-    var checkedId = checkedItems[0].uuid;
-    var url = "/bg/yygl/my_item/toAgree?checkedId="+checkedId;
+    //判断五个申请的事项是否一致
+    for(var i = 0; i <checkedItems.length; i++){
+        if(checkedItems[i].useSealItem !== checkedItems[0].useSealItem){
+            layer.msg("批量同意时用印事项必须一致");
+            return;
+        }
+    }
+    //获取选中框
+    var checkedIds = "";
+    if(checkedItems.length>0) {
+        for (var i = 0; i < checkedItems.length; i++) {
+            checkedIds += checkedItems[i].uuid + ",";
+        }
+    }
+    checkedIds = checkedIds.slice(0,checkedIds.length-1);
+
+    // var checkedId = checkedItems[0].uuid;
+    var url = "/bg/yygl/my_item/toAgree?checkedIds="+checkedIds;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">同意并填写审批意见</h4>',
@@ -143,17 +158,30 @@ myItem.toAgree = function () {
 弹框转到——退回选择下一个审批人
  */
 myItem.toSendBack = function () {
-    //获取选中框
     var checkedItems = dataGrid.getCheckedItems(dataItems);
     if(checkedItems.length==0){
         layer.msg('请选择要操作的数据');
         return;
-    }else if(checkedItems.length>1){
-        layer.msg('每次只能审批一条数据');
+    }else if(checkedItems.length>5){
+        layer.msg('最多批量操作5条数据');
         return;
     }
-    var checkedId = checkedItems[0].uuid;
-    var url = "/bg/yygl/my_item/toSendBack?checkedId="+checkedId;
+    //判断五个申请的事项是否一致
+    for(var i = 0; i <checkedItems.length; i++){
+        if(checkedItems[i].applyUser !== checkedItems[0].applyUser){
+            layer.msg("批量退回时申请人必须一致");
+            return;
+        }
+    }
+    //获取选中框
+    var checkedIds = "";
+    if(checkedItems.length>0) {
+        for (var i = 0; i < checkedItems.length; i++) {
+            checkedIds += checkedItems[i].uuid + ",";
+        }
+    }
+    checkedIds = checkedIds.slice(0,checkedIds.length-1);
+    var url = "/bg/yygl/my_item/toSendBack?checkedIds="+checkedIds;
     layer.open({
         type:2,
         title:'<h4 style="font-size: 18px;padding-top: 10px">退回并填写审批意见</h4>',
