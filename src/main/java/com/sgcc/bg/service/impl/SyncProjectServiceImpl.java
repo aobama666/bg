@@ -50,30 +50,49 @@ public class SyncProjectServiceImpl implements SyncProjectService {
             if (projectType.equals("YJ")) {
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->查询项目信息--->院级");
                 List<Map<String, Object>>        ProjectList = syncProjectMapper.queryProjectInfo(beginDate, endDate, projectType, deptCode,"" );
-                rw = new HttpResultWarp(HttpResultWarp.SUCCESS, "查询成功");
-                rw.addData("data", ProjectList);
-                String  jsonstr= JSON.toJSONString(rw);
-                addProject(beginDate, endDate, projectType, deptCode,key, ProjectList);
+//                rw = new HttpResultWarp(HttpResultWarp.SUCCESS, "查询成功");
+//                rw.addData("data",ProjectList);
+                List<Map<String, Object>>  ProjectLists=ProjectList;
+                addProject(beginDate, endDate, projectType, deptCode,key, ProjectLists);
+                Map<String ,Object>  map=new HashMap<String ,Object>();
+                map.put("data",ProjectList);
+                map.put("message","查询成功");
+                map.put("result","success");
+                String  jsonstr= JSON.toJSONString(map);
                 return jsonstr;
             } else  if (projectType.equals("BMJ")  ) {
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->查询项目信息--->部门级");
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->获取部门信息级别");
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->部门信息级别" + type);
                       List<Map<String, Object>>    ProjectList = syncProjectMapper.queryProjectInfo(beginDate, endDate, projectType, deptCode,type);
-                      rw = new HttpResultWarp(HttpResultWarp.SUCCESS, "查询成功");
-                      rw.addData("data", ProjectList);
-                      String  jsonstr= JSON.toJSONString(rw);
-                      addProject(beginDate, endDate, projectType, deptCode,key, ProjectList);
+//                      rw = new HttpResultWarp(HttpResultWarp.SUCCESS, "查询成功");
+//                      rw.addData("data", ProjectList);
+//                      String  jsonstr= JSON.toJSONString(rw);
+//                      addProject(beginDate, endDate, projectType, deptCode,key, ProjectList);
+                List<Map<String, Object>>  ProjectLists=ProjectList;
+                addProject(beginDate, endDate, projectType, deptCode,key, ProjectLists);
+                Map<String ,Object>  map=new HashMap<String ,Object>();
+                map.put("data",ProjectList);
+                map.put("message","查询成功");
+                map.put("result","success");
+                String  jsonstr= JSON.toJSONString(map);
                       return jsonstr;
             } else if (projectType.equals("CSJ")) {
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->查询项目信息--->处室级");
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->获取部门信息级别");
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->部门信息级别" + type);
                         List<Map<String, Object>>     ProjectList =syncProjectMapper.queryProjectInfo(beginDate, endDate, projectType, deptCode,type);
-                        rw = new HttpResultWarp(HttpResultWarp.SUCCESS, "查询成功");
-                        rw.addData("data", ProjectList);
-                        String  jsonstr= JSON.toJSONString(rw);
-                        addProject(beginDate, endDate, projectType, deptCode,key, ProjectList);
+//                        rw = new HttpResultWarp(HttpResultWarp.SUCCESS, "查询成功");
+//                        rw.addData("data", ProjectList);
+//                        String  jsonstr= JSON.toJSONString(rw);
+//                        addProject(beginDate, endDate, projectType, deptCode,key, ProjectList);
+                List<Map<String, Object>>  ProjectLists=ProjectList;
+                addProject(beginDate, endDate, projectType, deptCode,key, ProjectLists);
+                Map<String ,Object>  map=new HashMap<String ,Object>();
+                map.put("data",ProjectList);
+                map.put("message","查询成功");
+                map.put("result","success");
+                String  jsonstr= JSON.toJSONString(map);
                         return jsonstr;
 
                 }

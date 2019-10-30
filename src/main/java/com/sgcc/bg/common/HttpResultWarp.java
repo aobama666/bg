@@ -9,8 +9,8 @@ public class HttpResultWarp implements Serializable {
     private String result;
     private String message;
     private Map<String, Object> data = new HashMap();
-    public static final String SUCCESS = "true";
-    public static final String FAILED = "fail";
+    public static final String SUCCESS = "success";
+    public static final String FAILED = "failed";
 
     public String getResult() {
         return this.result;
