@@ -64,6 +64,22 @@ public class SyncProjectInfoController {
         ModelAndView model = new ModelAndView("syncProject/sync_projectDetails_info",map);
         return model;
     }
+    /**
+     *项目同步-详情页面
+     * @return
+     */
+
+    @RequestMapping(value = "/syncProjectInfo_newdetails", method = RequestMethod.GET)
+    public ModelAndView newdetails(String uuid){
+        Map<String, Object> map = new HashMap<>();
+        map.put("noteId", uuid);//用印部门
+        List<Map<String, Object>>  projectNumberInfo =syncProjectService.selectForProjectNumber(map);
+        List<Map<String, Object>>  yearInfo =syncProjectService.selectForYear(map);
+        map.put("projectNumberInfo",projectNumberInfo);
+        map.put("yearInfo",yearInfo);
+        ModelAndView model = new ModelAndView("syncProject/sync_projectDetails_new",map);
+        return model;
+    }
 
     /**
      * 根据项目类型填充部门信息下拉框内容,所谓联动
@@ -138,16 +154,22 @@ public class SyncProjectInfoController {
         logger.info("同步记录查询接口------selectForProjectNodeInfo");
         List<Map<String, Object>>   ProjectNodeList= syncProjectService.selectForProjectNodeInfo(Map);
         String   countNum =syncProjectService.selectForProjectNodeInfoNum(Map);
-        Map<String, Object> jsonMap1 = new HashMap<String, Object>();
-        jsonMap1.put("data", ProjectNodeList);
-        jsonMap1.put("total", countNum);
-        Map<String, Object> jsonMap = new HashMap<String, Object>();
-        jsonMap.put("data", jsonMap1);
-        jsonMap.put("msg", "success");
-        jsonMap.put("success", "true");
-        String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
-        logger.info("项目同步-同步记录查询------返回值"+jsonStr);
+//        Map<String, Object> jsonMap1 = new HashMap<String, Object>();
+//        jsonMap1.put("data", ProjectNodeList);
+//        jsonMap1.put("total", countNum);
+//        Map<String, Object> jsonMap = new HashMap<String, Object>();
+//        jsonMap.put("data", jsonMap1);
+//        jsonMap.put("msg", "success");
+//        jsonMap.put("success", "true");
+//        String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("items", ProjectNodeList);
+        map.put("totalCount", countNum);
+        String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
         logger.info("项目同步-同步记录查询------结束");
+        logger.info("项目同步-同步记录查询------返回值"+jsonStr);
         return jsonStr;
     }
     /**
@@ -192,14 +214,17 @@ public class SyncProjectInfoController {
         List<Map<String, Object>>   ProjectNodeList= syncProjectService.selectProjectDetailsInfo(Map);
         String   countNum =syncProjectService.selectProjectDetailsInfoNum(Map);
 
-        Map<String, Object> jsonMap1 = new HashMap<String, Object>();
-        jsonMap1.put("data", ProjectNodeList);
-        jsonMap1.put("total", countNum);
-        Map<String, Object> jsonMap = new HashMap<String, Object>();
-        jsonMap.put("data", jsonMap1);
-        jsonMap.put("msg", "success");
-        jsonMap.put("success", "true");
-        String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+//        Map<String, Object> jsonMap1 = new HashMap<String, Object>();
+//        jsonMap1.put("data", ProjectNodeList);
+//        jsonMap1.put("total", countNum);
+//        Map<String, Object> jsonMap = new HashMap<String, Object>();
+//        jsonMap.put("data", jsonMap1);
+//        jsonMap.put("msg", "success");
+//        jsonMap.put("success", "true");
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("items", ProjectNodeList);
+        map.put("totalCount", countNum);
+        String jsonStr = JSON.toJSONStringWithDateFormat(map, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
         logger.info("项目同步-同步详情记录查询------返回值"+jsonStr);
         logger.info("项目同步-同步详情记录查询------结束");
         return jsonStr;
