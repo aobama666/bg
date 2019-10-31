@@ -53,25 +53,8 @@
 	<div class="query-box-left">
 		<form name="queryBox" action="" style="width:100%;padding-left:10px"   method="post" >
 			<input type = "hidden"   id = "noteId" name="noteId" value="${noteId}">
-			<div class="form-group col-xs-4">
-				<label>考核年度：</label>
-				<div class="controls">
-					<select id = "year" name = "year" onchange= "changeMonth()">
-						<option value = "">   </option>
-						<c:forEach  var="yearInfo"  items="${yearInfo}">
-							<option value ="${yearInfo.YEAR}" title=" ${yearInfo.YEAR}" > ${yearInfo.YEAR}</option>
-						</c:forEach>
-					</select>
-				</div>
-			</div>
-			<div class="form-group col-xs-4">
-				<label>考核月度：</label>
-				<div class="controls">
-					<select id = "month" name = "month" >
-					    <option value = "">   </option>
-					</select>
-				</div>
-			</div>
+
+
 			<div class="form-group col-xs-4">
 				<label>项目名称：</label>
 				<div class="controls">
@@ -133,8 +116,6 @@ function queryListPro(load){
 	            {title:'序列', name:'ROWNO', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 		        {title:'同步开始时间', name:'BEGINDATE', width:110, sortable:false, align:' center'},
 	            {title:'同步结束时间', name:'ENDDATE', width:100, sortable:false, align:'center'},
-	            {title:'考核年度', name:'YEAR', width:100, sortable:false, align:'center'},
-	            {title:'考核月度', name:'MONTH', width:150, sortable:false, align:'center'},
                 {title:'项目名称', name:'PROJECT_NAME', width:150, sortable:false, align:'center'},
                 {title:'项目编号', name:'PROJECT_NUMBER', width:150, sortable:false, align:'center'},
                 {title:'WBS编号', name:'WBS_NUMBER', width:150, sortable:false, align:'center'},

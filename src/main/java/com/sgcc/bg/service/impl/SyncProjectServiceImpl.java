@@ -189,15 +189,6 @@ public class SyncProjectServiceImpl implements SyncProjectService {
         return syncProjectMapper.selectForProjectNumber(projectDetails);
     }
 
-    public List<Map<String, Object>>   selectForWbsNumber(Map<String, Object> projectDetails){
-        return syncProjectMapper.selectForWbsNumber(projectDetails);
-    }
-    public  List<Map<String, Object>> selectForYear(Map<String, Object> projectDetails){
-        return syncProjectMapper.selectForYear(projectDetails);
-    }
 
-    public  List<Map<String, Object>> selectForMonth(Map<String, Object> projectDetails){
-        return syncProjectMapper.selectForMonth(projectDetails);
-    }
 
 }
