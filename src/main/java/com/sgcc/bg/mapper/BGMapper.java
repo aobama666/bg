@@ -378,7 +378,7 @@ public interface BGMapper {
 	 * @param hrcode
 	 * @return
 	 */
-	Integer workingHour(@Param("proId") String proId, @Param("hrcode") String hrcode);
+	Double workingHour(@Param("proId") String proId, @Param("hrcode") String hrcode);
 
 	//查看项目时间段中每月人员填报工时
     List<Map<String,String>> userWorker(String proId);
@@ -394,4 +394,5 @@ public interface BGMapper {
 
 	//查项目详情
     Map<String,String> projectMap(String proId);
+
 }

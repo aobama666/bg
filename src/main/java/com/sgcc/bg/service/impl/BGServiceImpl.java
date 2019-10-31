@@ -85,8 +85,12 @@ public class BGServiceImpl implements IBGService {
 	public List<Map<String, String>> getProUsersByProId(String proId) {
 		List<Map<String, String>> userList=bgMapper.getProUsersByProId(proId);
 		for(Map<String,String> map : userList){
-			Integer workingHour = bgMapper.workingHour(proId,map.get("HRCODE"));
-			map.put("workingHour", String.valueOf(workingHour));
+			Double workingHour = bgMapper.workingHour(proId,map.get("HRCODE"));
+			String sum = String.valueOf(workingHour);
+			if(sum.equals("0.0")){
+				sum = "0";
+			}
+			map.put("workingHour", sum);
 		}
 		return userList;
 	}
