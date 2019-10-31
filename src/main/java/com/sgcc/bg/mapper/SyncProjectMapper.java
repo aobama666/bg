@@ -38,10 +38,8 @@ public interface SyncProjectMapper {
 
     List<Map<String, Object>>   selectForProjectNumber(@Param("projectDetails") Map<String, Object> projectDetails);
 
-    List<Map<String, Object>>   selectForWbsNumber(@Param("projectDetails") Map<String, Object> projectDetails);
 
-    List<Map<String, Object>>   selectForYear(@Param("projectDetails") Map<String, Object> projectDetails);
 
-    List<Map<String, Object>>   selectForMonth(@Param("projectDetails") Map<String, Object> projectDetails);
+
 
 }

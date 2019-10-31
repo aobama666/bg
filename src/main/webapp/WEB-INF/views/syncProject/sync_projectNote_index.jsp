@@ -239,7 +239,7 @@ changeDeptCode = function () {
  * 详细信息
  */
 forDetails = function (uuid,batchId) {
-    debugger;
+
     var url = "/bg/syncProjectInfo/syncProjectInfo_details?uuid="+uuid;
     layer.open({
         type:2,
