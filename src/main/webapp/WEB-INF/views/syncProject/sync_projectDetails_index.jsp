@@ -153,31 +153,7 @@ function queryListPro(load){
 		mmg.load({page:pn});
 	}
 }
-/**
- * 根据项目类型填充部门信息下拉框内容
- */
-changeMonth = function () {
-    var noteId = $("#noteId").val();
-    var year = $("#year option:selected").val();
-    $.ajax({
-        url: "/bg/syncProjectInfo/selectForMonth",
-        type: "post",
-        dataType:"json",
-        data: {'year':year,'noteId':noteId},
-        success: function (data) {
-            var monthList = data.data.monthList;
-            var checkContent = '';
-            var i ;
-            checkContent = "<option selected='selected'></option>";
-            for(i=0;i<monthList.length;i++){
-                var k = monthList[i].MONTH;
-                var v = monthList[i].MONTH;
-                checkContent = checkContent+'<option value = "'+k+'">'+v+'</option>';
-            }
-            $("#month").empty().append(checkContent)
-        }
-    });
-}
+
  
 
 </script>
