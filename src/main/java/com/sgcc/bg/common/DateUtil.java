@@ -16,8 +16,17 @@ public class DateUtil {
 	private final static SimpleDateFormat sdfDays = new SimpleDateFormat("yyyyMMdd");
 
 	private final static SimpleDateFormat sdfTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	private final static SimpleDateFormat newsdfTime = new SimpleDateFormat("yyyyMMddHHmmss");
    
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	/**
+	 * 获取yyyyMMdd HHmmss
+	 * @return
+	 */
+	public static String getNewsdfTime() {
+		return newsdfTime.format(new Date());
+	}
 	/**
 	 * 获取YYYY格式
 	 * @return
@@ -821,16 +830,29 @@ public class DateUtil {
 		calendar.set(getNowYear(), getNowMonth() - 2, day);
 		return getDayEndTime(calendar.getTime());
 	}
+	public static boolean isFirstDayOfMonth(String FirstDay) throws ParseException {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = format.parse(FirstDay);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		if(calendar.get(Calendar.DAY_OF_MONTH)==1){
+			return  true;
+		}
+		return  false;
+	}
 
+	public static boolean isLastDayOfMonth(String lastDay) throws ParseException {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = format.parse(lastDay);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.DATE,(calendar.get(Calendar.DATE)+1));
+		if(calendar.get(Calendar.DAY_OF_MONTH)==1){
+			return  true;
+		}
+		return  false;
+	}
 	    public static void main(String[] args) {
-			String s = "2019-07-21";
-			String e = "2019-07-31";
-			boolean a = false;
-			try {
-				a = DateUtil.judgeDate(s,e);
-			} catch (ParseException e1) {
-				e1.printStackTrace();
-			}
-			System.out.println(a);
+			System.out.println(getNewsdfTime());
 		}
 }
