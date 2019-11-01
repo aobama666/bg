@@ -106,8 +106,12 @@ public class SyncProjectInfoController {
                 Map.put("type",type);
                 Map.put("deptCode",deptCode);
             }else{
-                Map.put("type","");
-                Map.put("deptCode","");
+                Map<String, Object> map = new HashMap<String, Object>();
+                List<Map<String, Object>>   ProjectNodeList =new ArrayList<Map<String, Object>>();
+                map.put("items", ProjectNodeList);
+                map.put("totalCount", "0");
+                String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+                return jsonStr;
             }
         }else{
             Map.put("type","");
