@@ -33,7 +33,7 @@ public class SyncProjectInfoController {
     public ModelAndView yncProjectInfoNew(HttpServletRequest request){
         List<Map<String, Object>> DataDictionaryInfo =syncProjectService.queryDataDictionaryInfo("DT000010");
         Map<String, Object> map = new HashMap<>();
-        map.put("dataDictionaryList", DataDictionaryInfo);//用印部门
+        map.put("dataDictionaryList", DataDictionaryInfo);
         ModelAndView model = new ModelAndView("syncProject/sync_projectNote_index",map);
         return model;
     }
@@ -61,7 +61,6 @@ public class SyncProjectInfoController {
     public String selectFordeptCode(String projectTypeCode){
         List<Map<String,Object>> deptList = new ArrayList<>();
         if(null != projectTypeCode && !"".equals(projectTypeCode)){
-
             deptList = syncProjectService.queryProjectNoteInfo(projectTypeCode);
         }
         ResultWarp rw = new ResultWarp(ResultWarp.SUCCESS,"success");
@@ -100,25 +99,28 @@ public class SyncProjectInfoController {
             page_end = page*limit;
         }
         Map<String, Object> Map = new HashMap<String, Object>();
+        if(deptCode!=""){
+            List<Map<String, Object>>   deptList =  syncProjectService.queryDeptInfo(deptCode);
+            String  type =  String.valueOf(deptList.get(0).get("TYPE"));
+            if("1".equals(type)||"2".equals(type)){
+                Map.put("type",type);
+                Map.put("deptCode",deptCode);
+            }else{
+                Map.put("type","");
+                Map.put("deptCode","");
+            }
+        }else{
+            Map.put("type","");
+            Map.put("deptCode","");
+        }
         Map.put("beginDate",beginDate);
         Map.put("endDate",endDate);
         Map.put("projectType",projectType);
-        Map.put("deptCode",deptCode);
         Map.put("page_start",page_start);
         Map.put("page_end",page_end);
         logger.info("同步记录查询接口------selectForProjectNodeInfo");
         List<Map<String, Object>>   ProjectNodeList= syncProjectService.selectForProjectNodeInfo(Map);
         String   countNum =syncProjectService.selectForProjectNodeInfoNum(Map);
-//        Map<String, Object> jsonMap1 = new HashMap<String, Object>();
-//        jsonMap1.put("data", ProjectNodeList);
-//        jsonMap1.put("total", countNum);
-//        Map<String, Object> jsonMap = new HashMap<String, Object>();
-//        jsonMap.put("data", jsonMap1);
-//        jsonMap.put("msg", "success");
-//        jsonMap.put("success", "true");
-//        String jsonStr = JSON.toJSONStringWithDateFormat(jsonMap, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
-
-
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("items", ProjectNodeList);
         map.put("totalCount", countNum);
@@ -168,14 +170,6 @@ public class SyncProjectInfoController {
         logger.info("同步详情记录查询接口------selectForProjectNodeInfo");
         List<Map<String, Object>>   ProjectNodeList= syncProjectService.selectProjectDetailsInfo(Map);
         String   countNum =syncProjectService.selectProjectDetailsInfoNum(Map);
-
-//        Map<String, Object> jsonMap1 = new HashMap<String, Object>();
-//        jsonMap1.put("data", ProjectNodeList);
-//        jsonMap1.put("total", countNum);
-//        Map<String, Object> jsonMap = new HashMap<String, Object>();
-//        jsonMap.put("data", jsonMap1);
-//        jsonMap.put("msg", "success");
-//        jsonMap.put("success", "true");
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("items", ProjectNodeList);
         map.put("totalCount", countNum);
