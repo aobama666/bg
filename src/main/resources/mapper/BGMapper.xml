@@ -672,5 +672,99 @@
 		AND STATUS = '1'
 	</select>
 
+    <select id="hourSum" resultType="java.lang.Double">
+        SELECT nvl(sum(WORKING_HOUR),0) as hourSum from BG_WORKINGHOUR_INFO
+        WHERE PROJECT_ID = #{id}
+        AND VALID = '1'
+    </select>
 
+	<select id="qianQiSum" resultType="java.lang.Double">
+		SELECT nvl(SUM(W.WORKING_HOUR),0) as qianQiSum
+		FROM BG_WORKINGHOUR_INFO W
+		WHERE W.PROJECT_ID IN (select a.id from bg_project_info  a
+								where a.RELATED_PROJECT_ID = #{id}
+								and a.STATUS = '1')
+		AND W.VALID = '1'
+	</select>
+
+	<select id="workingHour" resultType="java.lang.Double">
+		SELECT nvl(sum(a.WORKING_HOUR),0) from BG_WORKINGHOUR_INFO a
+       		 left join BG_SYS_USER u
+			 on a.worker = u.username
+        WHERE a.PROJECT_ID = #{proId}
+		and u.hrcode = #{hrcode}
+        AND a.VALID = '1'
+        and u.VALID = '1'
+	</select>
+
+	<select id="userWorker" resultType="java.util.Map">
+		select NVL(SUM(T.WORKING_HOUR),0),
+				t.worker,
+				u.hrcode,
+				TO_CHAR(T.work_time_begin, 'yyyy-mm') AS "dateTime",
+				TO_CHAR(T.work_time_begin, 'yyyy-mm-dd') AS "WORK_TIME_BEGIN",
+				TO_CHAR(T.work_time_end, 'yyyy-mm-dd') AS "WORK_TIME_END"
+		from BG_WORKINGHOUR_INFO t
+		LEFT JOIN BG_SYS_USER u
+		ON u.username = t.worker
+		where t.PROJECT_ID = #{proId}
+		and t.VALID = '1'
+		and u.VALID = '1'
+		group by t.work_time_begin,t.work_time_end ,t.worker,u.hrcode
+	</select>
+
+	<select id="projectTime" resultType="java.util.Map">
+		SELECT u.ID,u.HRCODE, u.PROJECT_ID,u.START_DATE,u.END_DATE
+		from BG_PROJECT_USER u
+		WHERE u.PROJECT_ID = #{proId}
+		AND u.STATUS= '1'
+	</select>
+
+	<select id="userDateOld" resultType="java.util.Map">
+		SELECT u.ID,
+				u.HRCODE,
+				u.PROJECT_ID,
+				TO_CHAR(u.START_DATE, 'yyyy-mm-dd') AS "START_DATE",
+				TO_CHAR(u.END_DATE, 'yyyy-mm-dd') AS "END_DATE"
+		from BG_PROJECT_USER u
+		WHERE u.PROJECT_ID = #{proId}
+		and u.HRCODE = #{hrCode}
+		AND u.STATUS= '1'
+	</select>
+
+	<select id="userWorkingInfo" resultType="java.util.Map">
+		SELECT W.WORKING_HOUR,
+				W.PROJECT_ID,
+				W.APPROVER,
+				W.WORKER,
+				U.USERALIAS,
+				TO_CHAR(W.WORK_TIME_BEGIN, 'yyyy-mm-dd') AS "WORK_TIME_BEGIN",
+				TO_CHAR(W.WORK_TIME_END, 'yyyy-mm-dd') AS "WORK_TIME_END"
+		FROM BG_WORKINGHOUR_INFO W
+		left join BG_SYS_USER U
+		ON W.WORKER = U.USERNAME
+		WHERE W.VALID = '1'
+		AND U.VALID = '1'
+		<if test="hrCode != null and hrCode != ''">
+			AND U.HRCODE= #{hrCode}
+		</if>
+		<if test="proId != null and proId != ''">
+			AND W.PROJECT_ID = #{proId}
+		</if>
+		<if test="start != null and start != ''">
+			AND W.WORK_TIME_BEGIN >= TO_DATE(#{start}, 'yyyy-mm-dd')
+		</if>
+		<if test="end != null and end != ''">
+			AND W.WORK_TIME_END  &lt;= TO_DATE(#{end}, 'yyyy-mm-dd')
+		</if>
+	</select>
+
+	<select id="projectMap" resultType="java.util.Map">
+		SELECT ID,
+		        TO_CHAR(START_DATE, 'yyyy-mm-dd') AS "START_DATE",
+				TO_CHAR(END_DATE, 'yyyy-mm-dd') AS "END_DATE"
+		FROM bg_project_info
+		WHERE  ID = #{proId}
+		and STATUS = '1'
+	</select>
 </mapper>

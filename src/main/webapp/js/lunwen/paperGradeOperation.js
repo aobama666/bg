@@ -31,7 +31,7 @@ grade.init = function () {
                 '</tr>';
             /*
                 一级指标纵向合并，首行使用第一个一级指标，全盘计算k值如果符合条件将add标示改为true，for循环下一圈添加对应一级指标内容，赋值顺序就是执行逻辑
-                js轮循三种颜色，黄兰粉，从一级指标开始，如果add为true，执行轮训方法，反之使用之前的颜色
+                js轮循三种颜色，黄蓝粉，从一级指标开始，如果add为true，执行轮训方法，反之使用之前的颜色
                 算法拙劣，欢迎在保持原有功能下重构
             */
             var j = 0;//一级指标数量数组第几位
@@ -59,16 +59,16 @@ grade.init = function () {
                 }
                 scoreTableContent += '<td width="15%">'+scoreTable[i].SECOND_INDEX+'('+scoreTable[i].SWEIGHTS+'%)</td>';
                 scoreTableContent += '<td width="50%" style="text-align: left">'+scoreTable[i].REQUIRE+'</td>';
-                scoreTableContent += '<td width="10%">0~100</td>';
-                if(scoreStatus === '0'){//未打分
+                scoreTableContent += '<td width="10%">'+scoreTable[i].SCOREMIN+'~'+scoreTable[i].SCOREMAX+'</td>';
+                if(scoreStatus === '0'){//未打分onkeyup
                     scoreTableContent += '<td style="background-color: white" width="10%" class="addInputStyle"><input name="score'+i+'"' +
-                        ' type="text" class="validNull" content="对应分值" onkeyup="grade.ifValidNull(this)"/></td>';
+                        ' type="text" class="validNull" content="对应分值" onblur="grade.ifValidNull(this,'+scoreTable[i].SCOREMIN+','+scoreTable[i].SCOREMAX+')"/></td>';
                 }else if(scoreStatus === '2'){//已完成
                     scoreTableContent += '<td style="background-color: white" width="10%" class="addInputStyle"><input name="score'+i+'"' +
                         ' value="'+scoreTable[i].SCORE+'" type="text" readonly/></td>';
                 }else {//未提交，或者重新评审
                     scoreTableContent += '<td style="background-color: white" width="10%" class="addInputStyle"><input name="score'+i+'"' +
-                        ' value="'+scoreTable[i].SCORE+'" type="text" class="validNull" content="对应分值" onkeyup="grade.ifValidNull(this)"/></td>';
+                        ' value="'+scoreTable[i].SCORE+'" type="text" class="validNull" content="对应分值" onblur="grade.ifValidNull(this,'+scoreTable[i].SCOREMIN+','+scoreTable[i].SCOREMAX+')"/></td>';
                 }
                 scoreTableContent += '</tr>';
             }
@@ -111,16 +111,18 @@ function iteratorColor(array) {
  */
 grade.saveGrade = function () {
     var scoreStatus =  $("#scoreStatus").val();
+    //判大小,查看是否有不满足分值需求的值
+    var ifScoreSize = $(".validRefuse").length;
+    if(ifScoreSize > 0){
+        messager.tip("每条打分必须满足对应的分值才能进行保存操作",3000);
+        return;
+    }
     //判空
     var validNull = dataForm.validNullable();
     if(!validNull){
         return;
     }
-    //判大小
-    var scoreSize = dataForm.scoreSize(0,100,null);
-    if(!scoreSize){
-        return;
-    }
+
     var msgTitle = '';
     var msg = '';
     if(scoreStatus === '0'){
@@ -150,7 +152,7 @@ grade.saveGrade = function () {
 /**
  * 每次离开input都会判断，全部分数框打分之后进行加权总分计算
  */
-grade.ifValidNull = function (obj) {
+grade.ifValidNull = function (obj,min,max) {
     //输入格式控制
     obj.value = obj.value.replace(/[^\d.]/g, "");  //清除“数字”和“.”以外的字符
     obj.value = obj.value.replace(/\.{2,}/g, "."); //只保留第一个. 清除多余的
@@ -160,7 +162,9 @@ grade.ifValidNull = function (obj) {
         obj.value = parseFloat(obj.value);
     }
     //大小控制，也添加了一个共有方法，参数为大小范围
-    var scoreSize = dataForm.scoreSize(0,100);
+    var e = new Array();
+    e[0] = obj;
+    var scoreSize = dataForm.scoreSize(parseInt(min),parseInt(max),e);
     if(!scoreSize){
         return;
     }
@@ -169,7 +173,7 @@ grade.ifValidNull = function (obj) {
     if(!validNull){
         return;
     }else{
-        //计算总分
+        //如果全部不为空，计算总分
         grade.getTotalScore();
     }
 }

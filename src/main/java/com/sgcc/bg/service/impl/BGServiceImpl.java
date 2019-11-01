@@ -4,20 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.sgcc.bg.common.*;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -31,15 +24,6 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.sgcc.bg.common.CommonCurrentUser;
-import com.sgcc.bg.common.DateUtil;
-import com.sgcc.bg.common.ExcelUtil;
-import com.sgcc.bg.common.ExportExcelHelper;
-import com.sgcc.bg.common.FtpUtils;
-import com.sgcc.bg.common.ParamValidationUtil;
-import com.sgcc.bg.common.Rtext;
-import com.sgcc.bg.common.UserUtils;
-import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.mapper.BGMapper;
 import com.sgcc.bg.model.ProjectInfoPo;
 import com.sgcc.bg.model.ProjectInfoVali;
@@ -64,6 +48,15 @@ public class BGServiceImpl implements IBGService {
 	@Override
 	public List<Map<String, String>> getAllProjects(String proName,String proStatus) {
 		List<Map<String, String>> list=bgMapper.getAllProjects(webUtils.getUsername(),proName, proStatus);
+		for(Map<String,String> map : list){
+			Double hourSum = bgMapper.hourSum(map.get("id"));
+			Double qianSum = bgMapper.qianQiSum(map.get("id"));
+			String sum = String.valueOf(hourSum+qianSum);
+			if(sum.equals("0.0")){
+				sum = "0";
+			}
+			map.put("hourSum", sum);
+		}
 		return list;
 	}
 
@@ -91,6 +84,14 @@ public class BGServiceImpl implements IBGService {
 	@Override
 	public List<Map<String, String>> getProUsersByProId(String proId) {
 		List<Map<String, String>> userList=bgMapper.getProUsersByProId(proId);
+		for(Map<String,String> map : userList){
+			Double workingHour = bgMapper.workingHour(proId,map.get("HRCODE"));
+			String sum = String.valueOf(workingHour);
+			if(sum.equals("0.0")){
+				sum = "0";
+			}
+			map.put("workingHour", sum);
+		}
 		return userList;
 	}
 
@@ -1201,9 +1202,9 @@ public class BGServiceImpl implements IBGService {
 	@Override
 	public String updateStuff(String proId,String src,List<HashMap> list) {
 		//查询该项目是否已有报工记录
-		List<Map<String,String>> workerList=bgMapper.getBgWorkerByProId(proId);
+		//List<Map<String,String>> workerList=bgMapper.getBgWorkerByProId(proId);
 		
-		for (Map<String, String> stuffMap : list) {
+		/*for (Map<String, String> stuffMap : list) {
 			Iterator<Map<String, String>> iterator= workerList.iterator();
 			while(iterator.hasNext()){
 			Map<String, String> workerMap=iterator.next();
@@ -1221,8 +1222,139 @@ public class BGServiceImpl implements IBGService {
 			resultMap.put("result", "fail");
 			resultMap.put("failList", JSON.toJSONString(workerList, SerializerFeature.WriteMapNullValue));
 			return JSON.toJSONString(resultMap);
+		}*/
+		Map<String, String> resultMap = new HashMap<>();
+		//储存填报工时的人员信息
+		Set<Map<String,String>> failList = new HashSet<>();
+		//查看项目时间段中每月人员填报工时
+		List<Map<String,String>> userWorker = bgMapper.userWorker(proId);
+		//查项目员工填报日期
+		//List<Map<String,String>> projectTime = bgMapper.projectTime(proId);
+
+		if(null!= userWorker && userWorker.size()>0) {
+			List<Map<String, String>> settleMap  = new ArrayList<>();
+			// 1. 把新数据整理 如果一个参与人有多个数据 则整合到一条中 开始、结束时间用list存储
+			for(int i=0; i<list.size() ; i++){
+				String hrCode = Rtext.toStringTrim(list.get(i).get("hrcode"), "");
+				String startDateStr = Rtext.toStringTrim(list.get(i).get("startDate"), "");
+				String endDateStr = Rtext.toStringTrim(list.get(i).get("endDate"), "");
+				List startDate  =new ArrayList();
+				List endDate  =new ArrayList();
+				startDate.add(startDateStr);
+				endDate.add(endDateStr);
+				for(int j=i+1 ; j<list.size() ; j++){
+					String hr = Rtext.toStringTrim(list.get(j).get("hrcode"), "");
+					String start = Rtext.toStringTrim(list.get(j).get("startDate"), "");
+					String end = Rtext.toStringTrim(list.get(j).get("endDate"), "");
+					if(hrCode.equals(hr)){
+						startDate.add(start);
+						endDate.add(end);
+					}
+				}
+				Map m = new HashMap();
+				m.put("hrCode",hrCode);
+				m.put("startDate",startDate);
+				m.put("endDate",endDate);
+				settleMap.add(m);
+			}
+
+			// 2.去重 如果list的最后几条是同一个参与人 则会出现重复数据 settleMap的最后条数据可能重复
+			List<Map<String, String>> settle  = new ArrayList<>();
+			for(int i=0; i<settleMap.size() ; i++){
+				for(int j=i+1 ;j <settleMap.size() ;j++){
+					if(settleMap.get(i).get("hrCode").equals(settleMap.get(j).get("hrCode"))){
+						List a = new ArrayList();
+						List b = new ArrayList();
+						a.addAll(Collections.singleton(Collections.singletonList(settleMap.get(i).get("startDate")).get(0)));
+						b.addAll(Collections.singleton(Collections.singletonList(settleMap.get(j).get("startDate")).get(0)));
+						a = (List) a.get(0);
+						b = (List) b.get(0);
+						/*if(a.size()>b.size()){
+							settle.add(settleMap.get(i));
+							break;
+						}*/
+						if(a.size()>b.size()){
+							settle.add(settleMap.get(j));
+							break;
+						}
+					}/*else {
+						settle.add(settleMap.get(i));
+						break;
+					}*/
+				}
+			}
+			settleMap.removeAll(settle);
+
+			for (Map<String, String> map : settleMap) {
+				List startDate = new ArrayList();
+				List endDate = new ArrayList();
+				String hrCode = map.get("hrCode");
+				startDate.addAll( Collections.singletonList(Collections.singletonList(map.get("startDate")).get(0)));
+				endDate.addAll( Collections.singletonList(Collections.singletonList(map.get("endDate")).get(0)));
+				startDate =  (List) startDate.get(0);
+				endDate =  (List) endDate.get(0);
+				//临时储存setDateOld的值
+				Set<Map<String, String>> listChangeDate = new HashSet<>();
+				// 3.把原来时间段取出来
+				List<Map<String, String>> userOld = bgMapper.userDateOld(hrCode, proId);
+				//把原来时间按月分段
+				List<KeyValueForDate> listDateOld = new ArrayList<>();
+				//把listDateOld放到set（setDateOld）里
+				Set<Map<String,String>> setDateOld = new HashSet<>();
+				for (Map<String, String> userMap : userOld) {
+					listDateOld .addAll( SplitDateUtil.getKeyValueForDate(userMap.get("START_DATE"), userMap.get("END_DATE")));
+				}
+				for(KeyValueForDate key : listDateOld){
+					Map m = new HashMap();
+					m.put("start",key.getStartDate());
+					m.put("end",key.getEndDate());
+					setDateOld.add(m);
+				}
+				// 4. 把现在时间取出来并按月分段
+				List<KeyValueForDate> listDateNew = new ArrayList<>();
+				for(int i=0 ; i<startDate.size(); i++) {
+					listDateNew .addAll( SplitDateUtil.getKeyValueForDate(String.valueOf(startDate.get(i)), String.valueOf(endDate.get(i))));
+				}
+				Set<Map<String, String>> setDateNew = new HashSet<>();
+				for(KeyValueForDate key : listDateNew){
+					Map m = new HashMap();
+					m.put("start",key.getStartDate());
+					m.put("end",key.getEndDate());
+					setDateNew.add(m);
+				}
+
+				// 5. 两时间对比取出变化的时间段
+				listChangeDate.addAll(setDateOld);
+				setDateOld.addAll(setDateNew);
+				listChangeDate.retainAll(setDateNew);
+				setDateOld.removeAll(listChangeDate);
+
+				// 6. 判断改变的时间段中是否有工时
+				for (Map<String,String> key : setDateOld) {
+					String[] str = key.get("start").split("-");
+					int year = Integer.parseInt(str[0]);
+					int month = Integer.parseInt(str[1]);
+					String start = DateUtil.getFirstDayOfMonth1(year, month);
+					String end = DateUtil.getLastDayOfMonth1(year, month);
+					List<Map<String, String>> userWorkingInfo = bgMapper.userWorkingInfo(start, end, proId, hrCode);
+					if (null != userWorkingInfo && userWorkingInfo.size() > 0) {
+						Map m = new HashMap();
+						m.put("NAME", userWorkingInfo.get(0).get("USERALIAS"));
+						m.put("WORK_TIME_BEGIN", userWorkingInfo.get(0).get("WORK_TIME_BEGIN"));
+						m.put("WORK_TIME_END", userWorkingInfo.get(0).get("WORK_TIME_END"));
+						failList.add(m);
+					}
+				}
+			}
 		}
-		
+
+		if(null != failList && failList.size()>0){
+			resultMap.put("result", "fail");
+			resultMap.put("failList", JSON.toJSONString(failList, SerializerFeature.WriteMapNullValue));
+			return JSON.toJSONString(resultMap);
+		}
+
+
 		//删除旧的项目下所有人员
 		int affectedRows = bgMapper.deleteProUsersByProId(proId);
 		bgServiceLog.info("updateStuff ：删除成功"+affectedRows+"名参与人！");
@@ -1394,8 +1526,53 @@ public class BGServiceImpl implements IBGService {
 			resultMap.put("result", "fail");
 			return JSON.toJSONString(resultMap);
 		}
-		
-		
+		//如果项目时间修改则效验修改范围是否有工时 （当项目时间范围缩小：如果缩小时间段有工时则不能修改）
+		Map<String,String> projectMap = bgMapper.projectMap(proId);
+		if(null!= projectMap) {
+            try {
+                if (DateUtil.judgeDateNOEqu(projectMap.get("START_DATE"), startDateStr)) {
+                    //取月初和月末
+                    String[] str = projectMap.get("START_DATE").split("-");
+                    String[] s = startDateStr.split("-");
+                    int yearOld = Integer.parseInt(str[0]);
+                    int monthOld = Integer.parseInt(str[1]);
+                    int yearNow = Integer.parseInt(s[0]);
+                    int monthNow = Integer.parseInt(s[1]);
+                    //之前项目开始时间
+                    String dateBegin = DateUtil.getFirstDayOfMonth1(yearOld, monthOld);
+                    //现在项目开始时间
+                    String dateEnd = DateUtil.getLastDayOfMonth1(yearNow, monthNow);
+                    List<Map<String, String>> workingHours = bgMapper.userWorkingInfo(dateBegin, dateEnd, proId, null);
+                    if (workingHours != null && workingHours.size() > 0) {
+                        resultMap.put("result", "error");
+                        resultMap.put("content", projectMap.get("START_DATE") + "到" + startDateStr + "时间段有工时填报，不可修改！");
+                        return JSON.toJSONString(resultMap);
+                    }
+                }
+                if (DateUtil.judgeDateNOEqu(endDateStr, projectMap.get("END_DATE"))) {
+                    //取月初和月末
+                    String[] str = projectMap.get("END_DATE").split("-");
+                    String[] s = endDateStr.split("-");
+                    int yearOld = Integer.parseInt(str[0]);
+                    int monthOld = Integer.parseInt(str[1]);
+                    int yearNow = Integer.parseInt(s[0]);
+                    int monthNow = Integer.parseInt(s[1]);
+                    //现在项目结束时间
+                    String dateBegin = DateUtil.getFirstDayOfMonth1(yearNow, monthNow);
+                    //之前项目结束时间
+                    String dateEnd = DateUtil.getLastDayOfMonth1(yearOld, monthOld);
+                    List<Map<String, String>> workingHours = bgMapper.userWorkingInfo(dateBegin, dateEnd, proId, null);
+                    if (workingHours != null && workingHours.size() > 0) {
+                        resultMap.put("result", "error");
+                        resultMap.put("content", endDateStr + "到" + projectMap.get("END_DATE") + "时间段有工时填报，不可修改！");
+                        return JSON.toJSONString(resultMap);
+                    }
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
 		Date startDate = DateUtil.fomatDate(startDateStr);
 		Date endDate = DateUtil.fomatDate(endDateStr);
 		Integer planHours = Rtext.ToInteger(planHoursStr, 0);

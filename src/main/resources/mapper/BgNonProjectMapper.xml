@@ -267,4 +267,17 @@
 		 WHERE T.PROJECT_ID = #{proId}
 		   AND T.VALID = 1
 	</select>
+
+	<select id="qianQiSum" resultType="java.lang.Double">
+		SELECT nvl(sum(WORKING_HOUR),0) as hourSum from BG_WORKINGHOUR_INFO
+        WHERE PROJECT_ID = #{id}
+        AND VALID = '1'
+	</select>
+
+	<select id="projectInfo" resultType="java.util.Map">
+		SELECT ID, PROJECT_NAME, CATEGORY, WBS_NUMBER, PROJECT_NUMBER, PROJECT_INTRODUCE, ORGAN_INFO, RELATED_PROJECT_ID
+		FROM BG_PROJECT_INFO
+		WHERE id = #{id}
+		AND STATUS ='1'
+	</select>
 </mapper>

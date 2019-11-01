@@ -109,4 +109,40 @@ public class LwGradeServiceImpl implements LwGradeService {
         return "提交成功";
     }
 
+    @Override
+    public Double calculateTotalScore(String paperType,List<Double> scoreList) {
+        Double totalScore = 0.0;//总分
+        //计算加权总分
+        //嵌套循环，内部嵌套叠加每个二级的分数，外部叠加一级分数，求得总分
+        //每个一级指标对应二级指标的数量
+        List<String> firstIndexs = firstIndexNums(paperType);
+        List<Map<String,Object>> scoreTable = nowScoreTable(paperType,null);
+        Double firstScore = 0.0;//单个一级指标分数
+        Double secondScore = 0.0;//单个二级指标分数
+        Double weightsS;//单个二级指标权重
+        Double weightsF;//单个一级指标权重
+        Integer indexNum  = 0;//当前处于第几个指标
+        for(String firstIndex : firstIndexs){
+            Integer firstNums = Integer.valueOf(firstIndex);
+            for(int i=0;i<firstNums;i++){
+                //查询当前二级指标对应的权重
+                weightsS = Double.valueOf(scoreTable.get(indexNum).get("SWEIGHTS").toString());
+                //二级指标分数计算叠加至一级指标
+                secondScore = scoreList.get(indexNum);
+                secondScore = (secondScore * weightsS)/100;
+                firstScore += secondScore;
+                indexNum++;
+            }
+            //查询当前一级指标对应权重
+            firstNums = indexNum-firstNums;
+            weightsF = Double.valueOf(scoreTable.get(firstNums).get("FWEIGHTS").toString());
+            //一级指标分数计算叠加至总分
+            firstScore = (firstScore * weightsF)/100;
+            totalScore += firstScore;
+            //一级指标对应分数归零
+            firstScore = 0.0;
+        }
+        return totalScore;
+    }
+
 }

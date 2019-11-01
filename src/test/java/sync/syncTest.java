@@ -88,8 +88,8 @@ public class syncTest {
 		
 	}
 
-	@Test
+	/*@Test
 	public void testSyncForZH(){
 		syncZhDataBase.syncBaseDataForZH();
-	}
+	}*/
 }

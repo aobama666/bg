@@ -77,6 +77,7 @@ public class LoginFilter implements Filter {
 			}else if (request.getRequestURI().equals(request.getContextPath()+"/index/login")
 					|| request.getRequestURI().equals(request.getContextPath()+"/index/loginsystem")
 					|| request.getRequestURI().equals(request.getContextPath()+"/index/autocompleteName")
+					|| request.getRequestURI().equals(request.getContextPath()+"/bgSyncService/queryProjectInfo")
 					|| request.getRequestURI().equals(request.getContextPath()+"/syncUser/getUsers")) {
 				chain.doFilter(request, response);
 			}else {

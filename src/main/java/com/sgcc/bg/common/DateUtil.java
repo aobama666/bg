@@ -16,8 +16,17 @@ public class DateUtil {
 	private final static SimpleDateFormat sdfDays = new SimpleDateFormat("yyyyMMdd");
 
 	private final static SimpleDateFormat sdfTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+	private final static SimpleDateFormat newsdfTime = new SimpleDateFormat("yyyyMMddHHmmss");
    
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	/**
+	 * 获取yyyyMMdd HHmmss
+	 * @return
+	 */
+	public static String getNewsdfTime() {
+		return newsdfTime.format(new Date());
+	}
 	/**
 	 * 获取YYYY格式
 	 * @return
@@ -322,6 +331,18 @@ public class DateUtil {
 		}
 		
 	}
+
+	public static boolean judgeDateNOEqu(String beginData,String endData) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date beginDatas = sdf.parse(beginData);
+		Date endDatas = sdf.parse(endData);
+		if(beginDatas.getTime()<endDatas.getTime()){
+			return true;
+		}else{
+			return false;
+		}
+
+	}
 	/**
 	 * 判断两个日期的大小
 	 * @param beginData 日期1
@@ -444,6 +465,20 @@ public class DateUtil {
 		}
 		
 	}
+
+	public static boolean compareYear(String beginData,String endData,String time) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+		Date beginDatas = sdf.parse(beginData);
+		Date endDatas = sdf.parse(endData);
+		Date times = sdf.parse(time);
+		if(beginDatas.getTime()<=times.getTime()&&times.getTime()<=endDatas.getTime()){
+			return true;
+		}else{
+			return false;
+		}
+
+	}
+
 	  public static String minutes (String s,int num){
 	    	SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	        String  res = null;
@@ -715,6 +750,29 @@ public class DateUtil {
 	}
 
 	/**
+	 * 获取指定年月的第一天
+	 * @param time 时间
+	 * @return
+	 */
+	public static String getFirstDay(String time) {
+		String[] str= time.split("-");
+		int year = Integer.parseInt(str[0]);
+		int month = Integer.parseInt(str[1]);
+		Calendar cal = Calendar.getInstance();
+		//设置年份
+		cal.set(Calendar.YEAR, year);
+		//设置月份
+		cal.set(Calendar.MONTH, month-1);
+		//获取某月最小天数
+		int firstDay = cal.getMinimum(Calendar.DATE);
+		//设置日历中月份的最小天数
+		cal.set(Calendar.DAY_OF_MONTH,firstDay);
+		//格式化日期
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		return sdf.format(cal.getTime());
+	}
+
+	/**
 	 * 获取指定年月的最后一天
 	 * @param year
 	 * @param month
@@ -734,6 +792,30 @@ public class DateUtil {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		return sdf.format(cal.getTime());
 	}
+
+	/**
+	 * 获取指定年月的最后一天
+	 * @param time 时间
+	 * @return
+	 */
+	public static String getLastDay(String time) {
+		String[] str= time.split("-");
+		int year = Integer.parseInt(str[0]);
+		int month = Integer.parseInt(str[1]);
+		Calendar cal = Calendar.getInstance();
+		//设置年份
+		cal.set(Calendar.YEAR, year);
+		//设置月份
+		cal.set(Calendar.MONTH, month-1);
+		//获取某月最大天数
+		int lastDay = cal.getActualMaximum(Calendar.DATE);
+		//设置日历中月份的最大天数
+		cal.set(Calendar.DAY_OF_MONTH, lastDay);
+		//格式化日期
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		return sdf.format(cal.getTime());
+	}
+
 	//获取上月的开始时间
 	public static Date getBeginDayOfLastMonth() {
 		Calendar calendar = Calendar.getInstance();
@@ -748,11 +830,29 @@ public class DateUtil {
 		calendar.set(getNowYear(), getNowMonth() - 2, day);
 		return getDayEndTime(calendar.getTime());
 	}
+	public static boolean isFirstDayOfMonth(String FirstDay) throws ParseException {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = format.parse(FirstDay);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		if(calendar.get(Calendar.DAY_OF_MONTH)==1){
+			return  true;
+		}
+		return  false;
+	}
 
+	public static boolean isLastDayOfMonth(String lastDay) throws ParseException {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = format.parse(lastDay);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.set(Calendar.DATE,(calendar.get(Calendar.DATE)+1));
+		if(calendar.get(Calendar.DAY_OF_MONTH)==1){
+			return  true;
+		}
+		return  false;
+	}
 	    public static void main(String[] args) {
-			String s = "2019-07-21";
-			String e = "2019-07-31";
-			Long a = getDaySub(s,e);
-			System.out.println(a);
+			System.out.println(getNewsdfTime());
 		}
 }
