@@ -179,7 +179,7 @@
 						<div id="organTree" class="input-group organ">
 							<input type="hidden" name="deptCode" id="deptCode" value="${deptCode}">
 							<input type="text" name="deptName" id="deptName" readonly="readonly" value="${deptName}">
-							<span class="input-group-addon"><span class="glyphicon glyphicon-th-list"></span></span>
+							<span class="input-group-addon"><span class="glyphicon glyphicon-th-list" id="deptSpan"></span></span>
 						</div>
 					</div>
 				</div>
@@ -230,13 +230,20 @@
 	//初始化操作,当不为其他类型,并且来源是其他系统,项目类型、项目名称、WBS页面不可更改
 	function init(){
 		srcNum = common.getQueryString("src");
-		var srcArr = ['BG','BGB','KY','HX'];
+		var srcArr = ['BG','BGB','KY','HX','JS'];
+		debugger;
 		src = srcArr[srcNum];
 		if(src=='KY' || src=='HX'){
 			//禁用输入框
 			$('#proInfo select[name="category"],input[name="projectName"],input[name="WBSNumber"]').prop("disabled",true);
 			//显示关联项目按钮
 			//$('#proSelect').show();
+		}
+		if(src == 'JS'){
+            $('#deptName').removeAttr("readonly");
+            $("deptSpan").hide();
+            $('#proInfo select[name="category"],input[name="projectName"],input[name="WBSNumber"],input[name="deptName"]').prop("disabled",true);
+            //$('#proInfo input[name="deptName"]').attr("disabled",true);
 		}
 	}
 	

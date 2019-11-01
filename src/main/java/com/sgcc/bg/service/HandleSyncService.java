@@ -1,5 +1,7 @@
 package com.sgcc.bg.service;
 
+import java.util.Map;
+
 public interface HandleSyncService {
 	
 	/**
@@ -37,5 +39,26 @@ public interface HandleSyncService {
 	 * 删除出错信息表中过期数据
 	 */
 	void cutErrorRecord();
-	
+
+	/**
+	 * 转存技术服务同步数据
+	 */
+	void copyFromKYJS();
+
+	/**
+	 * 校验技术服务数据并存入报工系统中间表
+	 */
+	void validateKYJS();
+
+	/**
+	 * 根据技术服务数据更新报工中已关联的数据
+	 */
+	void updateFromKYJS();
+
+	/**
+	 *数据同步状态记录表
+	 * @param type
+	 * @return
+	 */
+    Map<String,Object> syncStatus(String type);
 }

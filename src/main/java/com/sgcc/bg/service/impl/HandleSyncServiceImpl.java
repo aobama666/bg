@@ -211,6 +211,7 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 		String projectIntroduce = Rtext.toString(proMap.get("PROJECT_REMARK"));
 		String startDateStr  = Rtext.toString(proMap.get("PROJECT_START_DATE"));
 		String endDateStr = Rtext.toString(proMap.get("PROJECT_END_DATE"));
+		String projectOrganize = Rtext.toString(proMap.get("PROJECT_ORGANIZE"));
 		
 		String errorInfo = "";
 		
@@ -222,7 +223,9 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 			category="KY";
 		}else if("HXXM".equals(category)){
 			category="HX";
-		}else{
+		}else if ("JF".equals(category)){
+		    category="JS";
+        }else{
 			errorInfo += "项目类型错误；";
 		}
 		
@@ -238,7 +241,9 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 		}*/
 		
 		if(projectIntroduce.length()>200) errorInfo += "项目介绍超过200字；"; 
-		
+
+		if("JS".equals(category) && projectOrganize.isEmpty()) errorInfo+="组织机构为空";
+
 		SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
 		Date startDate = null;
 		Date endDate = null;
@@ -502,6 +507,143 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 				}
 			}
 		}
+	}
+
+    @Override
+    public void copyFromKYJS() {
+        logger.info("转存技术服务项目信息表");
+        handleMapper.addKYJSToProTemp();
+        handleMapper.cutKYJSProTemp(DAYS);
+
+        logger.info("转存技术服务参与人员表");
+        handleMapper.addKYJSToEmpTemp();
+        handleMapper.cutKYJSEmpTemp(DAYS);
+    }
+
+    @Override
+    public void validateKYJS() {
+        logger.info("删除技术服务中间表项目信息");
+        handleMapper.truncateTable("BG_SYNC_KY_JS_PROJECT");
+//		字段名称	英文名称	类型	是否必推字段	要求
+//		项目ID	PROJECT_ID	VARCHAR2(50)	是	科研项目ID，唯一
+//		项目分类	PROJECT_TYPE	VARCHAR2(20)	是	科研项目，编码：KYXM
+//		项目名称	PROJECT_NAME	VARCHAR2(100 CHAR)	是
+//		WBS编号	PROJECT_WBS	VARCHAR2(50)	是
+//		项目说明	PROJECT_REMARK	VARCHAR2(200 CHAR )	否	项目摘要
+//		项目开始时间	PROJECT_START_DATE	VARCHAR2(20)	是	格式：yyyy-MM-dd
+//		项目结束时间	PROJECT_END_DATE	VARCHAR2(20)	是	格式：yyyy-MM-dd
+        logger.info("获取所有技术服务项目信息");
+        List<Map<String, Object>> proList = handleMapper.getAllSyncProFromKYJS();
+        logger.info("处理获取到的项目信息");
+        for (Map<String, Object> proMap : proList) {
+            if(validPro(proMap,"JS")){
+                //校验通过存入报工中间表
+                handleMapper.saveProFromKYJS(proMap);
+            }
+        }
+
+        logger.info("删除技术服务中间表人员信息");
+        handleMapper.truncateTable("BG_SYNC_KY_JS_EMP");
+//		字段名称	英文名称	类型	是否必推字段	要求
+//		人员姓名	USER_NAME	VARCHAR2(100 CHAR)	是
+//		人员编号	USER_HRCODE	VARCHAR2(20)	是	人资编号，必须是院内人员，唯一
+//		开始时间	JOIN_START_DATE	VARCHAR2(20)	是	格式：yyyy-MM-dd
+//		结束时间	JOIN_END_DATE	VARCHAR2(20)	是	格式：yyyy-MM-dd
+//		角色	PROJECT_ROLE	VARCHAR2(2)	是	纵向项目中的项目执行人默认为项目负责人；
+//		其他人默认为项目参与人;
+//		1 项目负责人 0 项目参与人
+//		投入工时	WORK_TIME	NUMBER	是	单位：月
+        logger.info("获取所有参与人员");
+        List<Map<String, Object>> empList = handleMapper.getAllSyncEmpFromKYJS();
+        logger.info("处理获取到的参与人员信息");
+        for (Map<String, Object> empMap : empList) {
+            if(valiEmp(empMap,"JS")){
+                //通过校验的参与人员信息保存到报工系统人员中间表
+                handleMapper.saveEmpFromKYJS(empMap);
+            }
+        }
+    }
+
+    @Override
+    public void updateFromKYJS() {
+        //获取所有已关联的技术服务项目关联关系
+        List<Map<String, Object>>  proRelList = bgMapper.getProRelation(null,null,"JS");
+        for (Map<String, Object> map : proRelList) {
+            String bgProId = Rtext.toString(map.get("BG_ID"));
+            String jsProId = Rtext.toString(map.get("SYNC_ID"));
+
+            if(bgProId.isEmpty() || jsProId.isEmpty()) continue;
+
+            //更新已经关联到报工系统的项目信息的部分字段（项目类型，项目名称，wbs编号）
+            Map<String, Object> kyProMap = bgMapper.getProInfoByProIdFromKYJS(jsProId);
+
+            String proName = Rtext.toString(kyProMap.get("PROJECT_NAME"));
+            String wbsCode = Rtext.toString(kyProMap.get("WBS_NUMBER"));
+            String DEPTID = Rtext.toString(kyProMap.get("DEPTID"));
+
+            ProjectInfoPo pro = bgMapper.getProPoByProId(bgProId);
+            pro.setProjectName(proName);
+            pro.setWBSNumber(wbsCode);
+            pro.setUpdateDate(new Date());
+            pro.setUpdateUser("HandleSyncJob");
+            pro.setOrganInfo(DEPTID);
+
+            bgMapper.updateProInfo(pro);
+
+            /*************************************************************************/
+
+            //更新参与人员
+            Date startDate = pro.getStartDate();
+            Date endDate = pro.getEndDate();
+
+            List<Map<String, String>> bgEmpList = bgMapper.getProUsersByProId(bgProId);
+            List<HashMap> jsEmpList = bgMapper.getEmpByProIdFromKYJS(jsProId);
+
+            //遍历报工系统中的参与人员获取必要信息
+            Set<String> bgEmpSet = new HashSet<>();
+            boolean existsPrincipal = false;//是否存在项目负责人
+            for (Map<String, String> bgEmp : bgEmpList) {
+                String bgHrCode = bgEmp.get("HRCODE");
+                String role = bgEmp.get("ROLE");
+                bgEmpSet.add(bgHrCode);
+                if("1".equals(role)) existsPrincipal = true;
+            }
+
+            for (HashMap jsEmp : jsEmpList) {
+                String jsHrCode = (String) jsEmp.get("hrcode");
+
+                if(!bgEmpSet.contains(jsHrCode)){//如果报工系统中不存在则同步到报工系统并添加关联
+                    ProjectUserPo proUser = new ProjectUserPo();
+                    String empId = Rtext.getUUID();
+                    proUser.setId(empId);
+                    proUser.setRole(existsPrincipal?"0":Rtext.toString(jsEmp.get("role")));
+                    proUser.setProjectId(bgProId);
+                    proUser.setHrcode(jsHrCode);
+                    proUser.setEmpName(Rtext.toString(jsEmp.get("stuffName")));
+
+                    proUser.setStartDate(startDate);
+                    proUser.setEndDate(endDate);
+                    proUser.setTask(null);
+                    Double planHours = Rtext.ToDouble(jsEmp.get("planHours"),0d);
+                    proUser.setPlanHours(planHours*22*24);
+                    proUser.setSrc("2");
+                    proUser.setStatus("1");
+                    proUser.setCreateDate(new Date());
+                    proUser.setUpdateDate(new Date());
+                    proUser.setCreateUser("HandleSyncJob");
+                    proUser.setUpdateUser("HandleSyncJob");
+
+                    bgMapper.addProUser(proUser);
+                    bgMapper.addEmpRelation(empId, bgProId, jsHrCode, "JS");
+                }
+            }
+        }
+    }
+
+	@Override
+	public Map<String, Object> syncStatus(String type) {
+		Map<String,Object> syncStatus = bgMapper.syncStatus(type);
+		return syncStatus;
 	}
 
 	@Override

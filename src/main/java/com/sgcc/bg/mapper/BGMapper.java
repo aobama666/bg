@@ -395,4 +395,35 @@ public interface BGMapper {
 	//查项目详情
     Map<String,String> projectMap(String proId);
 
+	/**
+	 * 根据项目id从科研系统中获取项目信息（技术服务）
+	 * @param
+	 * @return
+	 */
+	Map<String,Object> getProInfoByProIdFromKYJS(String proId);
+
+	/**
+	 * 根据项目id从科研系统中获取参与人员（技术服务）
+	 * @param
+	 * @return
+	 */
+	List<HashMap> getEmpByProIdFromKYJS(String proId);
+
+	List<Map<String,Object>> getProjectsFromJS(@Param("username") String username,
+											   @Param("proName") String proName,
+											   @Param("wbsNumber") String wbsNumber);
+
+	/**
+	 * 根据项目id从科研系统中获取项目信息
+	 * @param proId
+	 * @return
+	 */
+    Map<String,Object> getProInfoByProIdFromJS(String proId);
+
+	/**
+	 * 最新数据同步状态记录
+	 * @param type
+	 * @return
+	 */
+	Map<String,Object> syncStatus(String type);
 }

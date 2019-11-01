@@ -170,4 +170,48 @@ public interface HandleSyncMapper {
 	 * @param days 当前日期前的天数
 	 */
 	void cutErrorRecord(int days);
+
+	/**
+	 * 转存技术服务项目信息中间表
+	 */
+    void addKYJSToProTemp();
+
+	/**
+	 * 清理过期的技术服务转存项目信息
+	 * @param days  当前日期前的天数
+	 */
+	void cutKYJSProTemp(int days);
+
+	/**
+	 * 转存技术服务人员信息中间表
+	 */
+	void addKYJSToEmpTemp();
+
+	/**
+	 * 清理过期的技术服务参与人员信息
+	 * @param days 当前日期前的天数
+	 */
+	void cutKYJSEmpTemp(int days);
+
+	/**
+	 * 从科研系统（数据中心推送表）获取所有项目信息（技术服务）
+	 */
+	List<Map<String,Object>> getAllSyncProFromKYJS();
+
+	/**
+	 * 保存校验通过的从科研同步的项目信息(技术服务)
+	 * @param proMap
+	 */
+	void saveProFromKYJS(Map<String, Object> proMap);
+
+	/**
+	 * 从科研系统（数据中心推送表）获取所有参与人信息(技术服务)
+	 */
+	List<Map<String,Object>> getAllSyncEmpFromKYJS();
+
+	/**
+	 *
+	 * @param empMap
+	 */
+	void saveEmpFromKYJS(Map<String, Object> empMap);
 }

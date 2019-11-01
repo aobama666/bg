@@ -1392,6 +1392,8 @@ public class BGServiceImpl implements IBGService {
 			return bgMapper.getProInfoByProIdFromKY(proId);
 		}else if("HX".equals(src)){
 			return bgMapper.getProInfoByProIdFromHX(proId);
+		}else if ("JS".equals(src)){
+			return bgMapper.getProInfoByProIdFromJS(proId);
 		}
 		return null;
 	}
@@ -1402,6 +1404,8 @@ public class BGServiceImpl implements IBGService {
 			return bgMapper.getEmpByProIdFromKY(proId);
 		}else if("HX".equals(src)){
 			return bgMapper.getEmpByProIdFromHX(proId);
+		}else if("JS".equals(src)){
+			return bgMapper.getEmpByProIdFromKYJS(proId);
 		}
 		return new ArrayList<HashMap>() {
 		};
@@ -1417,6 +1421,8 @@ public class BGServiceImpl implements IBGService {
 			return bgMapper.getProjectsFromKY(username,proName,wbsNumber);
 		}else if("HX".equals(src)){
 			return bgMapper.getProjectsFromHX(username,proName,wbsNumber);
+		}else if ("JS".equals(src)){
+			return bgMapper.getProjectsFromJS(username,proName,wbsNumber);
 		}
 		return null;
 	}
@@ -1598,7 +1604,10 @@ public class BGServiceImpl implements IBGService {
 			srcFlag = "2";
 		}else if("HX".equalsIgnoreCase(src)){
 			srcFlag = "3";
+		}else if("JS".equalsIgnoreCase(src)){
+			srcFlag = "4";
 		}
+
 		pro.setSrc(srcFlag);
 		pro.setStatus("1");
 		pro.setProjectStatus("0");
@@ -1681,6 +1690,8 @@ public class BGServiceImpl implements IBGService {
 				srcFlag = "2";
 			}else if("HX".equalsIgnoreCase(src)){
 				srcFlag = "3";
+			}else if ("JS".equalsIgnoreCase(src)){
+				srcFlag = "4";
 			}
 			proUser.setSrc(srcFlag);
 			proUser.setStatus("1");
