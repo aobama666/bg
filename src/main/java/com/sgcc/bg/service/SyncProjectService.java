@@ -23,6 +23,7 @@ public interface SyncProjectService {
 
     List<Map<String, Object>> selectForProjectNumber(Map<String, Object> projectDetails);
 
+    List<Map<String, Object>> queryDeptInfo(@Param("deptCode") String deCode);
 
 
 
