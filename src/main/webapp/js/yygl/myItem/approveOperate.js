@@ -40,11 +40,18 @@ approve.agree =function () {
         return;
     }
     var applyUuid = $('#applyUuid').val();
+    //提示加载动画，调整按钮禁用
+    var loadIndex = '';//加载条
+    loadIndex = layer.load(1,{
+        shade: [0.5,'#fff']
+    });
+    $("#affirm").attr("disabled","disabled");
     $.ajax({
         url: "/bg/yygl/my_item/agree",
         type: "post",
         data: {"applyUuidS":applyUuid,"approveOpinion":approveOpinion,"toDoerId":toDoerId,'ifDeptEqual':ifDeptEqual},
         success: function (data) {
+            layer.close(loadIndex);
             parent.myItem.closeAndOpen(data.msg);
         }
     });
