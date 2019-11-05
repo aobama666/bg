@@ -3,6 +3,7 @@
 
 <mapper namespace="com.sgcc.bg.yygl.mapper.YyMyItemMapper">
 
+    <!--该sql为待办和一版的集合体，如需修改，请先熟悉流程及各个参数对应状态，祝好运-->
     <sql id="selectMyItemPublic">
         select a.uuid,
         a.apply_code applyCode,
@@ -55,7 +56,7 @@
             )
             AND VALID = '1'
             AND AUDIT_FLAG = #{ifComingSoon}
-            <if test="ifComingSoon=='0'">
+            <if test="ifComingSoon==0">
                 AND (APPROVE_RESULT = '0' OR APPROVE_RESULT = '1')
             </if>
             UNION
@@ -69,11 +70,14 @@
             )
             AND VALID = '1'
             AND AUDIT_FLAG = #{ifComingSoon}
-            <if test="ifComingSoon=='0'">
+            <if test="ifComingSoon==0">
                 AND (APPROVE_RESULT = '0' OR APPROVE_RESULT = '1')
             </if>
         )))
-        and a.valid = '1'
+        AND a.valid = '1'
+        <if test="ifComingSoon==1">
+            AND a.USE_SEAL_STATUS != '8'
+        </if>
         order by a.create_time desc
     </sql>
 
