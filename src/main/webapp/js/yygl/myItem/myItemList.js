@@ -128,7 +128,12 @@ myItem.toAgree = function () {
             layer.msg("批量同意时用印事项必须一致");
             return;
         }
+        if(checkedItems[i].useSealStatus !== checkedItems[0].useSealStatus){
+            layer.msg("批量同意时所有申请状态必须一致");
+            return;
+        }
     }
+
     //获取选中框
     var checkedIds = "";
     if(checkedItems.length>0) {
