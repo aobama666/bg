@@ -1,9 +1,14 @@
 <!DOCTYPE>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+		 pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%-- <%@page import="crpri.ess.util.ToolsUtil"%>
+<%@page import="crpri.ess.util.JsonUtil"%> --%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%-- <%
+	String path = ToolsUtil.getContextPath(request);
+%> --%>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -11,23 +16,37 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
 <title>项目同步记录</title>
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/bootstrap/css/bootstrap.css">
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmGrid.css">
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmPaginator.css">
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/css/bootstrap-datepicker.min.css" media="screen">
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/common/css/style.css">
+	<link rel="stylesheet" type="text/css"
+		  href="<%=request.getContextPath()%>/common/plugins/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css"
+		  href="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmGrid.css">
+	<link rel="stylesheet" type="text/css"
+		  href="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmPaginator.css">
+	<link rel="stylesheet" type="text/css"
+		  href="<%=request.getContextPath()%>/common/plugins/bootstrap-datepicker-master/dist/css/bootstrap-datepicker.min.css" media="screen">
+	<link rel="stylesheet" type="text/css"
+		  href="<%=request.getContextPath()%>/common/css/style.css">
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/jQuery/jquery-1.9.1.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmGrid.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/mmGrid/src/mmPaginator.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/js/bootstrap-datepicker.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/layer/layer.min.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/organ-tree/organ-tree.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/common.js"></script>
- <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/locales/bootstrap-datepicker.zh-CN.min.js"></script>
-
+	<script type="text/javascript"
+			src="<%=request.getContextPath()%>/common/plugins/jQuery/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript"
+			src="<%=request.getContextPath()%>/common/plugins/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript"
+			src="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmGrid.js"></script>
+	<script type="text/javascript"
+			src="<%=request.getContextPath()%>/common/plugins/mmGrid/src/mmPaginator.js"></script>
+	<script type="text/javascript"
+			src="<%=request.getContextPath()%>/common/plugins/layer/layer.min.js"></script>
+	<script type="text/javascript"
+			src="<%=request.getContextPath()%>/common/plugins/organ-tree/organ-tree.js"></script>
+	<script type="text/javascript"
+			src="<%=request.getContextPath()%>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
+	<script type="text/javascript"
+			src="<%=request.getContextPath()%>/common/plugins/bootstrap-datepicker-master/dist/js/bootstrap-datepicker.js"></script>
+	<script type="text/javascript"
+			src="<%=request.getContextPath()%>/common/plugins/common.js"></script>
+	<script type="text/javascript"
+			src="<%=request.getContextPath() %>/common/plugins/bootstrap-datepicker-master/dist/locales/bootstrap-datepicker.zh-CN.min.js"></script>
 
 
 <style type="text/css">
@@ -54,7 +73,7 @@
 		<form name="queryBox" action="" style="width:100%;padding-left:10px"   method="post" >
 			<hidden name="uuid" property="uuid"></hidden>
 			<div class="form-group col-xs-5" style="margin-bottom:0;">
-				<label>同步日期：</label>
+				<label>同步时间：</label>
 			 <div class="controls"  data-date-format="yyyy-mm-dd">
 					<div class="input-group date form_date bg-white" data-date-format="yyyy-mm-dd">
 						<input name="beginDate"  id="beginDate" property="beginDate"  readonly="true" placeholder='开始时间'>
@@ -70,7 +89,7 @@
 			<div class="form-group col-xs-3">
 				<label>项目类型：</label>
 				<div class="controls">
-					<select id = "projectType" name = "projectType" onchange="changeDeptCode()">
+					<select id = "projectType" name = "projectType"  >
 						<option value = "">   </option>
 						<c:forEach  var="dataDictionaryList"  items="${dataDictionaryList}">
 							<option value ="${dataDictionaryList.CODE}" title=" ${dataDictionaryList.NAME}" > ${dataDictionaryList.NAME}</option>
@@ -78,12 +97,14 @@
 					</select>
 				</div>
 			</div>
-			<div class="form-group col-xs-3">
-				<label>组织名称：</label>
+			<div class="form-group col-xs-4">
+				<label for="deptName"> 组织机构：</label>
 				<div class="controls">
-					<select id = "deptCode" name = "deptCode" >
-					    <option value = "">   </option>
-					</select>
+					<div id="organTree" class="input-group organ bg-white">
+						<input type="hidden" name="deptCode" id="deptCode" property="deptCode">
+						<input type="text" name="deptName" id="deptName" readonly="readonly">
+						<span class="input-group-addon"><span class="glyphicon glyphicon-th-list"></span></span>
+					</div>
 				</div>
 			</div>
 		</form>
@@ -109,9 +130,12 @@ var mmg ;
 var pn = 1 ;
 var limit = 30 ;
 $(function(){
-	init();
+    $("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio',popEvent:'pop'});
+    init();
 	queryListPro();
+
 });
+
 
 function init(){
 	$(".form_date").datepicker({autoclose:true,todayHighlight:true, language: 'cn',orientation:'auto'});
@@ -175,6 +199,7 @@ function queryListPro(load){
 		        {title:'同步开始时间', name:'BEGINDATE', width:110, sortable:false, align:' center'},
 	            {title:'同步结束时间', name:'ENDDATE', width:100, sortable:false, align:'center'},
 	            {title:'部门名称', name:'DEPTNAME', width:100, sortable:false, align:'center'},
+		        {title:'处室名称', name:'LABNAME', width:100, sortable:false, align:'center'},
 	            {title:'项目类型', name:'PROJECT_TYPE_NAME', width:150, sortable:false, align:'center'},
 	            {title:'时间戳', name:'CREATE_DATE', width:150, sortable:false, align:'center'}
         　　　　

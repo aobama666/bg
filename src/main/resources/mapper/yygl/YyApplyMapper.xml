@@ -263,6 +263,7 @@
          where t.deptcode =
                (select hrdeptcode from bg_sys_user where userid = #{userId} and valid='1')
                and t.valid='1'
+               and t.SRC='0'
     </select>
 
     <select id="getItemFirst" resultType="java.util.Map">

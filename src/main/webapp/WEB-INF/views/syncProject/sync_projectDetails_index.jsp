@@ -120,7 +120,8 @@ function queryListPro(load){
                 {title:'项目编号', name:'PROJECT_NUMBER', width:150, sortable:false, align:'center'},
                 {title:'WBS编号', name:'WBS_NUMBER', width:150, sortable:false, align:'center'},
                 {title:'项目类型', name:'PROJECT_GRADE_NAME', width:150, sortable:false, align:'center'},
-	            {title:'组织名称', name:'DEPTNAME', width:150, sortable:false, align:'center'}
+	            {title:'部门名称', name:'DEPTNAME', width:150, sortable:false, align:'center'},
+                {title:'处室名称', name:'LABNAME', width:150, sortable:false, align:'center'}
         　　　　
 	    		];
 	var mmGridHeight = $("body").parent().height() - 220;
