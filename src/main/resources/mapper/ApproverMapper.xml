@@ -5,45 +5,103 @@
 	id:必须与对应接口的某个对应的方法名一致
  -->
 <mapper namespace="com.sgcc.bg.mapper.ApproverMapper">
+
+	<!-- 获取数据字典信息 -->
+	<select id="selectForDatadicttionary" resultType="java.util.Map">
+     SELECT   NAME  ,CODE    FROM  BG_SYS_DATADICTIONARY   where VAILD='1'   and   PCODE=#{pcode}
+     ORDER BY  TO_NUMBER(SORT_ID)
+	</select>
+	<!-- 获取用户信息信息 -->
+	<select id="selectForUserInfo" resultType="java.util.Map">
+       SELECT U.USERID
+		FROM BG_SYS_USER U
+		WHERE U.HRCODE = #{empCode}
+		AND U.STATE = 0  and  U.VALID='1'
+	</select>
+	<!-- 获取部门信息 -->
+
+	<select id="getDeptByDeptCode" resultType="java.util.Map">
+		SELECT *
+		FROM BG_SYS_DEPT
+		WHERE VALID = 1
+		AND DEPTCODE = #{deptCode,jdbcType=VARCHAR}
+	</select>
+
+	<sql id="approverInfo">
+		SELECT T.UUID,
+		U.USERNAME,
+		U.USERALIAS,
+		U.HRDEPTNAME,
+		U.HRCODE,
+		T.SUBTYPE,
+		N.NAME AS SUBNAME,
+		D.DEPTNAME,
+		D.DEPTCODE,
+		D.TYPE,
+		T.PRIORITY
+		FROM BG_SYS_APPROVAL_USER_R_SUBTYPE T
+		LEFT JOIN BG_SYS_USER U
+		ON U.USERID = T.USER_ID
+		AND U.STATE = 0
+		LEFT JOIN BG_SYS_DEPT D
+		ON D.DEPTID = T.MANAGE_DEPT
+		AND T.VALID = 1
+		LEFT JOIN BG_SYS_DATADICTIONARY N
+		ON N.PCODE = 'submitUserType'
+		AND N.CODE = T.SUBTYPE
+		AND N.VAILD = 1
+		WHERE t.valid=1
+		<if test="approverList.id != null and approverList.id != ''" >
+			AND T.UUID LIKE '%'||#{approverList.id,jdbcType=VARCHAR}||'%'
+		</if>
+		<if test="approverList.username != null and approverList.username != ''" >
+			AND U.USERALIAS LIKE '%'||#{approverList.username,jdbcType=VARCHAR}||'%'
+		</if>
+		<if test="approverList.empCode != null and approverList.empCode != ''" >
+			AND U.HRCODE = #{approverList.empCode,jdbcType=VARCHAR}
+		</if>
+		<if test="approverList.deptCode != null and approverList.deptCode != ''" >
+			AND D.DEPTCODE = #{approverList.deptCode,jdbcType=VARCHAR}
+		</if>
+		<if test="approverList.subType != null and approverList.subType != ''" >
+			AND T.SUBTYPE = #{approverList.subType,jdbcType=VARCHAR}
+		</if>
+		ORDER BY T.UPDATE_TIME DESC
+	</sql>
+
 	<!-- 获取所有专责权限信息 -->
 	<select id="getAllApprovers" resultType="java.util.Map">
-		SELECT T.UUID,
-			   U.USERNAME,
-		       U.USERALIAS,
-		       U.HRDEPTNAME,
-		       U.HRCODE,
-		       T.SUBTYPE,
-		       N.NAME AS SUBNAME,
-		       D.DEPTNAME,
-		       D.DEPTCODE,
-		       D.TYPE
-		  FROM BG_SYS_APPROVAL_USER_R_SUBTYPE T
-		  LEFT JOIN BG_SYS_USER U
-		    ON U.USERID = T.USER_ID
-		   AND U.STATE = 0
-		  LEFT JOIN BG_SYS_DEPT D
-		    ON D.DEPTID = T.MANAGE_DEPT
-		   AND T.VALID = 1
-		  LEFT JOIN BG_SYS_DATADICTIONARY N
-		    ON N.PCODE = 'submitUserType'
-		   AND N.CODE = T.SUBTYPE
-		   AND N.VAILD = 1
-		   WHERE t.valid=1
-		   <if test="username != null and username != ''" >
-			AND U.USERALIAS LIKE '%'||#{username,jdbcType=VARCHAR}||'%'
-	       </if>	
-	       <if test="empCode != null and empCode != ''" >
-			AND U.HRCODE = #{empCode,jdbcType=VARCHAR}
-	       </if>
-	       <if test="deptCode != null and deptCode != ''" >
-			AND D.DEPTCODE = #{deptCode,jdbcType=VARCHAR}
-	       </if>
-	       <if test="subType != null and subType != ''" >
-			AND T.SUBTYPE = #{subType,jdbcType=VARCHAR}
-	       </if>
-		 ORDER BY SUBTYPE,USERNAME NULLS LAST
+        SELECT   *  FROM (<include refid="approverInfo"/>)
 	</select>
-	
+
+
+	<sql id="organInfo">
+		SELECT
+			T.UUID,
+			T.ORGAN_ID  AS DEPTID,
+			D.DEPTCODE  AS DEPTCODE,
+			D.DEPTNAME  AS DEPTNAME,
+			D.TYPE  AS DEPTTYPE,
+			T.ORGAN_TYPE AS ORGANTYPE_ID,
+			P.CODE  AS ORGANTYPE_CODE,
+			P.NAME AS ORGANTYPE_NANE
+			FROM BG_SYS_APPROVAL_DEPT_R_ORGTYPE T
+			LEFT JOIN BG_SYS_DEPT D  ON D.DEPTID = T.ORGAN_ID  AND D.VALID = 1
+			LEFT JOIN BG_SYS_DATADICTIONARY P  ON P.ID = T.ORGAN_TYPE  AND P.VAILD = 1
+		WHERE  T.VALID='1'
+		    <if test="organList.deptCode != null and organList.deptCode != ''" >
+			  AND D.DEPTCODE = #{organList.deptCode,jdbcType=VARCHAR}
+		    </if>
+		    <if test="organList. organtCode != null and organList.organtCode != ''" >
+			  AND P.CODE = #{organList.organtCode,jdbcType=VARCHAR}
+		    </if>
+			ORDER BY D.DEPTNAME
+	</sql>
+	<!-- 获取所有审核部门信息 -->
+	<select id="selectForApproverOrgant" resultType="java.util.Map">
+		SELECT   *   FROM (<include refid="organInfo"/>)
+	</select>
+
 	<!-- 获取组织类型表内容-->
 	<select id="getOrganType" resultType="java.util.Map">
 		SELECT D.DEPTCODE,D.DEPTNAME AS ORGAN, P.NAME AS TYPE
@@ -56,7 +114,43 @@
 		  AND P.VAILD = 1
 		ORDER BY D.DEPTNAME
 	</select>
-	
+
+
+	<sql id="roleInfo">
+        SELECT
+			  T.UUID,
+			  T.SUBMIT_ROLE,
+			  D1.NAME AS SUBMIT_ROLENAME,
+			  T.APPROVAL_ROLE,
+			  D2.NAME AS APPROVE_ROLENAME,
+			  T.APPROVAL_ROLE_ORGANTYPE,
+			  D3.NAME AS ORGANTYPE,
+			  T.IS_DEFAULT
+		FROM BG_SYS_APPROVAL_RULE T
+		LEFT JOIN BG_SYS_DATADICTIONARY D1  ON T.SUBMIT_ROLE = D1.CODE  AND D1.VAILD = 1  AND D1.PCODE = 'submitUserType'
+		LEFT JOIN BG_SYS_DATADICTIONARY D2  ON T.APPROVAL_ROLE = D2.CODE AND D2.VAILD = 1 AND D2.PCODE = 'submitUserType'
+		LEFT JOIN BG_SYS_DATADICTIONARY D3  ON D3.CODE = APPROVAL_ROLE_ORGANTYPE AND D3.VAILD = 1 AND D3.PCODE = 'organType'
+		WHERE  T.VALID='1'
+		<if test="roleList.submitRole != null and roleList.submitRole != ''" >
+			AND T.SUBMIT_ROLE = #{roleList.submitRole,jdbcType=VARCHAR}
+		</if>
+		<if test="roleList.approvalRole != null and roleList.approvalRole != ''" >
+			AND T.APPROVAL_ROLE = #{roleList.approvalRole,jdbcType=VARCHAR}
+		</if>
+		<if test="roleList.organType != null and roleList.organType != ''" >
+			AND T.APPROVAL_ROLE_ORGANTYPE = #{roleList.organType,jdbcType=VARCHAR}
+		</if>
+		ORDER BY T.APPROVAL_ROLE_ORGANTYPE, TO_NUMBER(SUBSTR(SUBMIT_ROLE, 4)), TO_NUMBER(SUBSTR(APPROVAL_ROLE, 4))
+	</sql>
+
+
+	<!-- 获取所有规则信息 -->
+	<select id="selectForApproveRule" resultType="java.util.Map">
+		SELECT   *   FROM (<include refid="roleInfo"/>)
+	</select>
+
+
+
 	<!-- 获取审批规则表内容 -->
 	<select id="getApproveRule" resultType="java.util.Map">
 		SELECT D3.NAME AS ORGANTYPE, D1.NAME AS ROLE, D2.NAME AS APPROVEROLE
@@ -75,22 +169,56 @@
 		   AND D3.PCODE = 'organType'
 		 ORDER BY T.APPROVAL_ROLE_ORGANTYPE, TO_NUMBER(SUBSTR(SUBMIT_ROLE, 4))
 	</select>
-	
+
+
+
+
 	<!-- 插入专责人员角色 -->
 	<insert id="addApprover"  parameterType="String">
 		INSERT INTO BG_SYS_APPROVAL_USER_R_SUBTYPE
-		    (USER_ID, MANAGE_DEPT, SUBTYPE)
-		    SELECT (SELECT U.USERID
-		              FROM BG_SYS_USER U
-		             WHERE U.HRCODE = #{empCode, jdbcType = VARCHAR}
-		               AND U.STATE = 0),
-		           (SELECT D.DEPTID
-		              FROM BG_SYS_DEPT D
-		             WHERE D.DEPTCODE = #{deptCode, jdbcType = VARCHAR}
-		               AND D.VALID = 1),
-		           #{subType, jdbcType = VARCHAR}
-		      FROM DUAL
+		(USER_ID, MANAGE_DEPT, PRIORITY, SUBTYPE)
+		SELECT (SELECT U.USERID
+		FROM BG_SYS_USER U
+		WHERE U.HRCODE = #{empCode, jdbcType = VARCHAR}
+		AND U.STATE = 0),
+		(SELECT D.DEPTID
+		FROM BG_SYS_DEPT D
+		WHERE D.DEPTCODE = #{deptCode, jdbcType = VARCHAR}
+		AND D.VALID = 1),
+		#{priority, jdbcType = VARCHAR},
+		#{subType, jdbcType = VARCHAR}
+		FROM DUAL
 	</insert>
+	<!-- 插入专责人员角色 -->
+	<insert id="addNewApprover"    parameterType="java.util.HashMap">
+		insert into BG_SYS_APPROVAL_USER_R_SUBTYPE
+		(UUID,
+		USER_ID,
+		SUBTYPE,
+		MANAGE_DEPT,
+		REMARK,
+		PRIORITY,
+		VALID,
+		CREATE_USER,
+		CREATE_TIME,
+		UPDATE_USER,
+		UPDATE_TIME
+		) values
+		(#{approverInfo.uuid},
+		#{approverInfo.userId},
+		#{approverInfo.subType},
+		#{approverInfo.ManageDept},
+		#{approverInfo.remark},
+		#{approverInfo.priority},
+		#{approverInfo.valid},
+		#{approverInfo.createUser},
+		#{approverInfo.createTime},
+		#{approverInfo.updateUser},
+		#{approverInfo.updateTime}
+		)
+	</insert>
+
+
 	
 	<!-- 根据id删除审批人，逻辑删除 -->
 	<update id="deleteApprover">
@@ -98,14 +226,22 @@
 		    SET T.VALID = 0, T.UPDATE_TIME = SYSDATE
 		  WHERE T.UUID = #{id}                           
 	</update>
+	<!-- 根据id修改审批人 -->
+	<update id="updataApprover">
+		UPDATE BG_SYS_APPROVAL_USER_R_SUBTYPE T
+		SET
+		T.USER_ID=#{approverInfo.userId},
+		T.SUBTYPE=#{approverInfo.subType},
+		T.MANAGE_DEPT=#{approverInfo.ManageDept},
+		T.PRIORITY=#{approverInfo.priority},
+		T.UPDATE_USER=#{approverInfo.updateUser},
+		T.UPDATE_TIME=#{approverInfo.updateTime}
+		WHERE  VALID='1' and  T.UUID = #{approverInfo.id}
+	</update>
 	
-	<select id="getDeptByDeptCode" resultType="java.util.Map">
-		SELECT *
-		  FROM BG_SYS_DEPT
-		 WHERE VALID = 1
-		   AND DEPTCODE = #{deptCode,jdbcType=VARCHAR}
-	</select>
-	
+
+
+
 	<update id="deleteOrganByPDeptCode"> 
 		UPDATE BG_SYS_PRIV_USER_R_ORGAN O
   		  	SET O.VALID = 0, O.UPDATE_TIME = SYSDATE
