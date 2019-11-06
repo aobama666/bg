@@ -142,6 +142,7 @@
             ];
             var mmGridHeight = $("body").parent().height() - 220;
             mmg1 = $('#mmg1').mmGrid({
+                cosEdit:"4",
                 indexCol: true,
                 indexColWidth: 30,
                 checkCol: true,
@@ -197,6 +198,7 @@
             ];
             var mmGridHeight = $("body").parent().height() - 220;
             mmg2 = $('#mmg2').mmGrid({
+                cosEdit:"4",
                 indexCol: true,
                 indexColWidth: 30,
                 checkCol: true,
