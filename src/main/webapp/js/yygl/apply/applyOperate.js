@@ -234,12 +234,19 @@ applyOperate.applySubmit = function () {
         layer.msg("请选择下一环节审批人！");
         return;
     }
+    //禁用确认按钮，提示加载动画
+    var loadIndex = '';//加载条
+    loadIndex = layer.load(1,{
+        shade: [0.5,'#fff']
+    });
+    $("#affirm").attr("disabled","disabled");
     $.ajax({
         url: "/bg/yygl/apply/applySubmit",
         type: "post",
         dataType:"json",
         data: {'principalUser':principalUser,'checkedIds':checkedIds},
         success: function (data) {
+            layer.close(loadIndex);
             if(data.success=="true"){
                 parent.apply.closeAndOpen(data.msg);
             }

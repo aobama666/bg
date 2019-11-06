@@ -79,7 +79,7 @@
         </tr>
     </table>
     <div style="text-align: center;padding-top: 20px">
-        <button type="button" class="btn" onclick="approve.agree()">确认</button>
+        <button id="affirm" type="button" class="btn" onclick="approve.agree()">确认</button>
         <button type="button" class="btn" onclick="approve.returnClose()">取消</button>
     </div>
     <input type="text" id="deptNum" value="${deptNum}" style="display: none"/>
