@@ -120,7 +120,7 @@
 		AND T.STATUS = '3'
 		AND P.STATUS = '1'
 		AND P1.STATUS = '1'
-		AND P.CATEGORY = 'BP1'
+		AND P.CATEGORY = 'BP'
 		<if  test="projectType!= null and projectType!= ''">
 			AND  P.PROJECT_GRADE    =      #{projectType}
 		</if>
