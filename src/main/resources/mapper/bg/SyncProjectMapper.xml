@@ -329,10 +329,4 @@
 		DISTINCT	 PROJECT_NUMBER
 		from(<include refid="projectDetailsInfo"/>)
 	</select>
-
-
-
-
-
-
 </mapper>

@@ -63,13 +63,13 @@
 	<hr>
 	<div class="form-box">
 		<div class="form-group col-xs-11">
-			<label for="stuffTree">人员姓名：</label>
-			<div class="controls">
-				<div id="stuffTree" class="input-group organ">
+			<label  >姓名：</label>
+			<div class="controls"  >
+				<div   class="input-group organ"   >
 					<input type="hidden" name="id" id="id" value="${UUID}">
 					<input type="hidden" name="empCode" id="empCode" value="${HRCODE}">
-					<input type="text" name="empName" id="empName" value="${USERALIAS}" readonly="readonly">
-					<span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+					<input type="text" name="empName" id="empName" value="${USERALIAS}"   disabled="true">
+					<span class="input-group-addon" ><span class="glyphicon glyphicon-user"></span></span>
 				</div>
 			</div>
 		</div>

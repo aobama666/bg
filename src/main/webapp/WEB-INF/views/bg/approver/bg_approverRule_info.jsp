@@ -72,7 +72,7 @@ a{
 			<form name="queryBox" action="" method="post"
 				style="width: 100%; padding-left: 10px">
 				<div class="form-group col-xs-4">
-					<label for="organType">部门类别：</label>
+					<label for="organType">组织类别：</label>
 					<div class="controls">
 						<select id="organType" name="organType" property="organType">
 							<option></option>
@@ -137,9 +137,10 @@ function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 				{title:'UUID', name:'UUID', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'部门类型',name:'ORGANTYPE', width:100, sortable:false, align:'center'},
+	            {title:'组织类型',name:'ORGANTYPE', width:100, sortable:false, align:'center'},
 	            {title:'提交人类别', name:'SUBMIT_ROLENAME', width:100, sortable:false, align:'center'},
-	            {title:'审核人类别', name:'APPROVE_ROLENAME', width:80,sortable:false, align:'center'}
+	            {title:'审核人类别', name:'APPROVE_ROLENAME', width:80,sortable:false, align:'center'},
+                {title:'默认审批角色', name:'IS_DEFAULT_NAME', width:80,sortable:false, align:'center'}
 	    		];
 	var mmGridHeight = $("body").parent().height()-190;
 	mmg = $('#mmg').mmGrid({
@@ -179,7 +180,7 @@ function forSearch(){
 function forProcess(){
     layer.open({
         type:2,
-        title:"提交流程",
+        title:"审批规则总览",
         area:['900px', 　'520px'],
         skin:'query-box',
         content:['<%=request.getContextPath()%>/approver/processShow']

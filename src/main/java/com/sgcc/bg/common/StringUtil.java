@@ -97,7 +97,7 @@ public class StringUtil {
      * @return 如果是符合格式的字符串,返回 <b>true </b>,否则为 <b>false </b>
      */
     /**正数 */
-    private static final String V_POSITIVE_NUMBER="^[1-9]\\d*|0$";
+    private static final String V_POSITIVE_NUMBER="^[1-9]\\d*|$";
     public static boolean PositiveNumber(String value){
         return value.matches(V_POSITIVE_NUMBER);
     }
@@ -105,7 +105,7 @@ public class StringUtil {
 
 
     public static void main(String[] args) {
-        String  value="12";
+        String  value="1";
         boolean  flag=  PositiveNumber(value);
         System.out.println(flag);
       

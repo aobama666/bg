@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>提交流程展示</title>
+<title>审批规则总览展示</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css"

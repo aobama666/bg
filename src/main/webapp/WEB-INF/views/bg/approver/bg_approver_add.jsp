@@ -63,7 +63,7 @@
 	<hr>
 	<div class="form-box">
 		<div class="form-group col-xs-11">
-			<label for="stuffTree">人员姓名：</label>
+			<label for="stuffTree">姓名：</label>
 			<div class="controls">
 				<div id="stuffTree" class="input-group organ">
 					<input type="hidden" name="empCode" id="empCode" value="">
@@ -96,7 +96,7 @@
 		<div class="form-group col-xs-11" >
 			<label >优先级：</label>
 			<div class="controls">
-				<input type="text" id="priority" name="priority" property="priority">
+				<input type="text" id="priority" name="priority" property="priority" value="1">
 			</div>
 		</div>
 	</div>

@@ -252,6 +252,12 @@ public class ApproverController {
 			rw.setMsg("优先级不能为空");
 			return rw;
 		}
+		boolean  flag=  StringUtil.PositiveNumber(priority);
+		if(!flag){
+			rw.setSuccess("false");
+			rw.setMsg("优先级错误！必须为大于0的整数 ");
+			return rw;
+		}
 		log.info("审批人配置-参数：人员姓名（empCode）"+empCode+"-管理部门(roleCode)"+deptCode
 				+"-审核人级别(roleCode)"+roleCode+"-优先级(priority)"+priority);
 		Map<String ,Object> approverList=new HashMap<>();

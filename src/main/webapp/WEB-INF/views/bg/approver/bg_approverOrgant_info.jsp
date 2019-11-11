@@ -12,7 +12,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
 
-<title>审批部门配置</title>
+<title>审批组织配置</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css"
@@ -59,7 +59,7 @@ a{
 </head>
 <body>
 	<div class="page-header-sl">
-		<h5>审批部门配置</h5>
+		<h5>审批组织配置</h5>
 	</div>
 	<hr>
 	<div class="query-box">
@@ -67,7 +67,7 @@ a{
 			<form name="queryBox" action="" method="post"
 				style="width: 100%; padding-left: 10px">
 				<div class="form-group col-xs-4">
-					<label for="deptName"> 组织机构：</label>
+					<label for="deptName"> 组织名称：</label>
 					<div class="controls">
 						<div id="organTree" class="input-group organ bg-white">
 							<input type="text" name="deptName" id="deptName" readonly="readonly">
@@ -77,7 +77,7 @@ a{
 					</div>
 				</div>
 				<div class="form-group col-xs-4">
-					<label for="organtCode">部门类型：</label>
+					<label for="organtCode">组织类型：</label>
 					<div class="controls">
 						<select id="organtCode" name="organtCode" property="organType">
 							<option></option>
@@ -116,15 +116,15 @@ $(function(){
 	queryList();
 });
 function init(){
-	$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio',popEvent:'pop'});
+	$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio',popEvent:'pop',level:'1'});
 }
 function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 				{title:'UUID', name:'UUID', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'部门类型',name:'ORGANTYPE_NANE', width:100, sortable:false, align:'center'},
-	            {title:'部门名称', name:'DEPTNAME', width:100, sortable:false, align:'center'}
-
+	            {title:'组织类型',name:'ORGANTYPE_NANE', width:100, sortable:false, align:'center'},
+	            {title:'组织名称', name:'DEPTNAME', width:100, sortable:false, align:'center'},
+                {title:'组织类型', name:'DEPTTYPE', width:100, sortable:false, align:'center'}
 	    		];
 	var mmGridHeight = $("body").parent().height()-190;
 	mmg = $('#mmg').mmGrid({

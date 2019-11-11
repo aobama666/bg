@@ -82,7 +82,7 @@ a{
 			<form name="queryBox" action="" method="post"
 				style="width: 100%; padding-left: 10px">
 				<div class="form-group col-xs-4">
-					<label for="username"> 人员姓名：</label>
+					<label for="username"> 姓名：</label>
 					<div class="controls">
 						<input name="username" id="username"/>	
 					</div>
@@ -99,7 +99,7 @@ a{
 					</div>
 				</div>
 				<div class="form-group col-xs-4">
-					<label for="deptName"> 组织机构：</label>
+					<label for="deptName"> 组织名称：</label>
 					<div class="controls">
 						<div id="organTree" class="input-group organ bg-white">
 							<input type="text" name="deptName" id="deptName" readonly="readonly">
@@ -141,10 +141,11 @@ function queryList(load){
 	var ran = Math.random()*100000000;
 	var cols = [
 				{title:'UUID', name:'UUID', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
-	            {title:'人员姓名',name:'USERALIAS', width:100, sortable:false, align:'center'},
+	            {title:'姓名',name:'USERALIAS', width:100, sortable:false, align:'center'},
 	            {title:'审核人类别', name:'SUBNAME', width:100, sortable:false, align:'center'},
-	            {title:'组织机构', name:'DEPTNAME', width:120,sortable:false, align:'center'},
-	            {title:'优先级', name:'PRIORITY', width:80,sortable:false, align:'center'},
+	            {title:'组织名称', name:'DEPTNAME', width:120,sortable:false, align:'center'},
+		        {title:'组织等级', name:'TYPE', width:120,sortable:false, align:'center'},
+	            {title:'审核优先级', name:'PRIORITY', width:80,sortable:false, align:'center'},
 	            {title:'操作', name:'handle', width:50, sortable:false, align:'center',
 	            	renderer:function(val,item,rowIndex){
 	            		return '  <a onclick="forUpdata(\''+item.UUID+'\')">修改</a>       ';
