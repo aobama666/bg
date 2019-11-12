@@ -38,6 +38,7 @@ public class HandleSyncJob {
          *
          * 当配置表BG_SYS_CONFIG:DataSyncKY=true;DataSyncKY_IP=服务器IP，执行定时任务
          */
+
         logger.info("[HandleSyncJob]:关联系统数据同步配置：DataSyncKY="+ConfigUtils.getConfig("DataSyncKY")+";"
                 +"DataSyncKY_IP="+ConfigUtils.getConfig("DataSyncKY_IP")+";"
                 +"localhost_ip="+localhost_ip);
