@@ -124,7 +124,7 @@ function queryList(load){
 				{title:'UUID', name:'UUID', width:0, sortable:false, align:'center', hidden: true, lockDisplay: true},
 	            {title:'组织类型',name:'ORGANTYPE_NANE', width:100, sortable:false, align:'center'},
 	            {title:'组织名称', name:'DEPTNAME', width:100, sortable:false, align:'center'},
-                {title:'组织类型', name:'DEPTTYPE', width:100, sortable:false, align:'center'}
+                {title:'组织级别', name:'DEPTTYPE', width:100, sortable:false, align:'center'}
 	    		];
 	var mmGridHeight = $("body").parent().height()-190;
 	mmg = $('#mmg').mmGrid({
