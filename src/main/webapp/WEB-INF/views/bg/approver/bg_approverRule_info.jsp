@@ -72,7 +72,7 @@ a{
 			<form name="queryBox" action="" method="post"
 				style="width: 100%; padding-left: 10px">
 				<div class="form-group col-xs-4">
-					<label for="organType">组织类别：</label>
+					<label for="organType">组织类型：</label>
 					<div class="controls">
 						<select id="organType" name="organType" property="organType">
 							<option></option>
