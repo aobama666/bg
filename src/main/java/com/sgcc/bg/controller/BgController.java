@@ -549,7 +549,7 @@ public class BgController {
 		};
 		
 		Map<String,Object> proData = bgService.getProDataByProIdAndSrc(proId,src);
-		//List<Map<String,Object>> empData = bgService.getEmpDataByProIdAndSrc(proId,src);
+		//List<HashMap> empData = bgService.getEmpDataByProIdAndSrc(proId,src);
 		
 		jsonMap.put("result", "success");
 		jsonMap.put("proData", proData);

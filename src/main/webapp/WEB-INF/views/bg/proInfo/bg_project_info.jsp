@@ -156,7 +156,7 @@ function queryList(load){
 	            		val = $.trim(val);
 	            		if(val=='0' || val=='1'){
 	            			return '报工系统';
-	            		}else if(val=='2'){
+	            		}else if(val=='2' || val=='4'){
 	            			return '科研系统';
 	            		}else if(val=='3'){
 	            			return '横向系统';
