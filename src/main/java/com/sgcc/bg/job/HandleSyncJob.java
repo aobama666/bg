@@ -48,17 +48,17 @@ public class HandleSyncJob {
         Date endDate;
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat ds = new SimpleDateFormat("yyyy-MM-dd");
-        sightcingDate = df.parse(ds.format(date)+"12:00:00");
+        sightcingDate = df.parse(ds.format(date)+" 12:00:00");
         if(date.getTime()<sightcingDate.getTime()){
             String amStartDate = ConfigUtils.getConfig("amStartDate");
             String amEndDate = ConfigUtils.getConfig("amEndDate");
-            startDate = df.parse(ds.format(date)+amStartDate);
-            endDate = df.parse(ds.format(date)+amEndDate);
+            startDate = df.parse(ds.format(date)+" "+amStartDate);
+            endDate = df.parse(ds.format(date)+" "+amEndDate);
         }else {
             String pmSartDate = ConfigUtils.getConfig("pmStartDate");
             String pmEndDate = ConfigUtils.getConfig("pmEndDate");
-            startDate = df.parse(ds.format(date)+pmSartDate);
-            endDate = df.parse(ds.format(date)+pmEndDate);
+            startDate = df.parse(ds.format(date)+" "+pmSartDate);
+            endDate = df.parse(ds.format(date)+" "+pmEndDate);
         }
 
         if (Rtext.ToBoolean(ConfigUtils.getConfig("DataSyncKY"))
