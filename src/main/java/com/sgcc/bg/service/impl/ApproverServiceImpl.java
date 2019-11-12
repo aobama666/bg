@@ -287,7 +287,7 @@ public class ApproverServiceImpl implements ApproverService {
 						{ "角色\r\n（必填）","subType","nowrap"}, 
 						{ "组织名称\r\n（选填）","deptName","nowrap"},
 						{ "组织编号\r\n（必填）","deptCode","nowrap"},
-						{ "优先级\r\n（必填）","priority","nowrap"},
+						{ "审核优先级\r\n（必填）","priority","nowrap"},
 						{ "错误说明","errInfo"}
 				};
 				errorUUID = ExportExcelHelper.createErrorExcel(FtpUtils.BgTempUploadPath, title, errorList);
@@ -346,7 +346,7 @@ public class ApproverServiceImpl implements ApproverService {
 							 { "姓名", "USERALIAS","nowrap" },
 							 { "审核人类别", "SUBNAME","nowrap" },
 							 { "组织名称","DEPTNAME"},
-				             { "组织等级","DEPTTYPE"},
+				             { "组织等级","TYPE"},
 				             { "审核优先级","PRIORITY"}
 							// { "组织编号","DEPTCODE","nowrap"}
 							};
