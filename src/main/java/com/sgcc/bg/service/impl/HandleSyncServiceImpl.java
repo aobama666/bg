@@ -114,17 +114,17 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 			
 			//更新已经关联到报工系统的项目信息的部分字段（项目类型，项目名称，wbs编号）
 			Map<String, Object> kyProMap = bgMapper.getProInfoByProIdFromKY(kyProId);
-			
-			String proName = Rtext.toString(kyProMap.get("PROJECT_NAME"));
-			String wbsCode = Rtext.toString(kyProMap.get("WBS_NUMBER"));
-
 			ProjectInfoPo pro = bgMapper.getProPoByProId(bgProId);
-			pro.setProjectName(proName);
-			pro.setWBSNumber(wbsCode);
-			pro.setUpdateDate(new Date());
-			pro.setUpdateUser("HandleSyncJob");
-			
-			bgMapper.updateProInfo(pro);
+			if(null!=kyProMap) {
+				String proName = Rtext.toString(kyProMap.get("PROJECT_NAME"));
+				String wbsCode = Rtext.toString(kyProMap.get("WBS_NUMBER"));
+				pro.setProjectName(proName);
+				pro.setWBSNumber(wbsCode);
+				pro.setUpdateDate(new Date());
+				pro.setUpdateUser("HandleSyncJob");
+
+				bgMapper.updateProInfo(pro);
+			}
 			
 			/*************************************************************************/
 			
@@ -447,18 +447,17 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 			
 			//更新已经关联到报工系统的项目信息的部分字段（项目类型，项目名称，wbs编号）
 			Map<String, Object> hxProMap = bgMapper.getProInfoByProIdFromHX(hxProId);
-			
-			String proName = Rtext.toString(hxProMap.get("PROJECT_NAME"));
-			String wbsCode = Rtext.toString(hxProMap.get("WBS_NUMBER"));
-
 			ProjectInfoPo pro = bgMapper.getProPoByProId(bgProId);
-			pro.setProjectName(proName);
-			pro.setWBSNumber(wbsCode);
-			pro.setUpdateDate(new Date());
-			pro.setUpdateUser("HandleSyncJob");
-			
-			bgMapper.updateProInfo(pro);
-			
+			if(null!=hxProMap) {
+				String proName = Rtext.toString(hxProMap.get("PROJECT_NAME"));
+				String wbsCode = Rtext.toString(hxProMap.get("WBS_NUMBER"));
+				pro.setProjectName(proName);
+				pro.setWBSNumber(wbsCode);
+				pro.setUpdateDate(new Date());
+				pro.setUpdateUser("HandleSyncJob");
+
+				bgMapper.updateProInfo(pro);
+			}
 			/*************************************************************************/
 			
 			//更新参与人员
@@ -576,19 +575,19 @@ public class HandleSyncServiceImpl implements HandleSyncService {
 
             //更新已经关联到报工系统的项目信息的部分字段（项目类型，项目名称，wbs编号）
             Map<String, Object> kyProMap = bgMapper.getProInfoByProIdFromKYJS(jsProId);
+			ProjectInfoPo pro = bgMapper.getProPoByProId(bgProId);
+            if(null!= kyProMap) {
+				String proName = Rtext.toString(kyProMap.get("PROJECT_NAME"));
+				String wbsCode = Rtext.toString(kyProMap.get("WBS_NUMBER"));
+				String DEPTID = Rtext.toString(kyProMap.get("DEPTID"));
+				pro.setProjectName(proName);
+				pro.setWBSNumber(wbsCode);
+				pro.setUpdateDate(new Date());
+				pro.setUpdateUser("HandleSyncJob");
+				pro.setOrganInfo(DEPTID);
 
-            String proName = Rtext.toString(kyProMap.get("PROJECT_NAME"));
-            String wbsCode = Rtext.toString(kyProMap.get("WBS_NUMBER"));
-            String DEPTID = Rtext.toString(kyProMap.get("DEPTID"));
-
-            ProjectInfoPo pro = bgMapper.getProPoByProId(bgProId);
-            pro.setProjectName(proName);
-            pro.setWBSNumber(wbsCode);
-            pro.setUpdateDate(new Date());
-            pro.setUpdateUser("HandleSyncJob");
-            pro.setOrganInfo(DEPTID);
-
-            bgMapper.updateProInfo(pro);
+				bgMapper.updateProInfo(pro);
+			}
 
             /*************************************************************************/
 
