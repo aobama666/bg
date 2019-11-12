@@ -61,17 +61,14 @@ a{
 <body>
 	<div class="page-header-sl">
 		<h5>审批人配置</h5>
-		<span style="margin-left:10px">【</span>
-		<a onclick="show('organType')">部门类型</a>
-		<a onclick="show('approveRule')">审批规则</a>
-		<span>】</span>
+
 		<div class="button-box">
 			<button type="button" class="btn btn-primary btn-xs"
 				 name="kOne" onclick="forAdd()">新增</button>
 			<button type="button" class="btn btn-success btn-xs"
 					name="kOne" onclick="forDelete()">删除</button>
-			<button type="button" class="btn btn-warning btn-xs" name="kOne" onclick="forImport()">
-				批量导入</button>
+			<%--<button type="button" class="btn btn-warning btn-xs" name="kOne" onclick="forImport()">--%>
+				<%--批量导入</button>--%>
 			<button type="button" class="btn btn-info btn-xs"
 				onclick="forExport()">导出</button>
 		</div>
