@@ -282,7 +282,7 @@ public class ApproverServiceImpl implements ApproverService {
 				// 生成错误信息文件
 				Object[][] title = { 
 						{ "序号\r\n（选填）", "sqnum","nowrap" }, 
-						{ "人员姓名\r\n（选填）", "empName","nowrap" }, 
+						{ "姓名\r\n（选填）", "empName","nowrap" },
 						{ "人员编号\r\n（必填）", "empCode" ,"nowrap"},
 						{ "角色\r\n（必填）","subType","nowrap"}, 
 						{ "组织名称\r\n（选填）","deptName","nowrap"},
@@ -343,11 +343,11 @@ public class ApproverServiceImpl implements ApproverService {
 		}
 		
 		Object[][] title = { 
-							 { "人员姓名", "USERALIAS","nowrap" },
-							// { "人员编号", "HRCODE","nowrap" },
-							 { "审核人类型", "SUBNAME","nowrap" },
-							 { "组织机构","DEPTNAME"},
-				             { "优先级","PRIORITY"}
+							 { "姓名", "USERALIAS","nowrap" },
+							 { "审核人类别", "SUBNAME","nowrap" },
+							 { "组织名称","DEPTNAME"},
+				             { "组织等级","DEPTTYPE"},
+				             { "审核优先级","PRIORITY"}
 							// { "组织编号","DEPTCODE","nowrap"}
 							};
 		ExportExcelHelper.getExcel(response, "报工管理-审批权限授权-"+DateUtil.getDays(), title, resultList, "normal");
