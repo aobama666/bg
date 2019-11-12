@@ -106,7 +106,12 @@
             }else if(type == 'JS'){
                 $(".table1").hide();
                 $(".table2").show();
-                queryList2('reload');
+                //queryList2('reload');
+                if($('.table2>.mmGrid').length>0){
+                    queryList2('reload');
+                }else{
+                    queryList2();
+                }
             }
         }
 
