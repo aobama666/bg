@@ -47,6 +47,7 @@ $.fn.extend({
 				var winName = window.name;
 				var height=$(window).height()*0.9;
 				if(height>555) height = 555;
+                if(height<400) height = 555;
 				var p = {
 						type:2,// 0 content中填写显示的内容 ；1 content中为对象，弹出当前页面的一个块，如：contend:$(#id01) ；2 content中为文件地址，弹出一个文件 ，如：contend:'a.html'
 						title:"人员选择页面",

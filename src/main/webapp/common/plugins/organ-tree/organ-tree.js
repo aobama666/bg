@@ -36,6 +36,8 @@ $.fn.extend({
 				var iframeId = window.name;
 				var height=$(window).height()*0.9;
 				if(height>520) height = 520;
+                if(height<400) height = 520;
+
 				var p = {
 						type:2,
 						title:"组织机构选择页面",
