@@ -28,6 +28,11 @@
     <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/organ-tree/organ-tree.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/common.js"></script>
+    <!--[if lt IE 9>
+	<script src="<%=request.getContextPath() %>/common/plugins/html5shiv/html5shiv.min.js"></script>
+	<script src="<%=request.getContextPath() %>/common/plugins/respond/respond.js"></script>
+	<script src="<%=request.getContextPath() %>/common/plugins/pseudo/jquery.pseudo.js"></script>
+<![endif]-->
     <style type="text/css">
         /*.query_box h5{float: left;margin-right:8px;margin-top: 10px}*/
         /*.query_box .syncData{float: left}*/
