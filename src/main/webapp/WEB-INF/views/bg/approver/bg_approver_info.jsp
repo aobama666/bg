@@ -250,7 +250,7 @@ function forUpdata(id){
 
 //删除
 function forDelete(){
-    debugger;
+
     var rows = mmg.selectedRows();
     var ids="";
     if(rows.length > 0) {
@@ -267,10 +267,11 @@ function forDelete(){
                     { id: ids},
                     function(data){
                         if(data.success=="true"){
-                            parent.queryList("reload");
-                            forClose();
-                        }
-                        parent.layer.msg(data.msg);
+                            layer.msg(data.msg);
+                        }else{
+                            layer.msg(data.msg);
+						}
+                        queryList("reload");
                     }
                 );
             });
