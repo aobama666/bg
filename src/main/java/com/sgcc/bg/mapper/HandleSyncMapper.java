@@ -1,5 +1,6 @@
 package com.sgcc.bg.mapper;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -214,4 +215,28 @@ public interface HandleSyncMapper {
 	 * @param empMap
 	 */
 	void saveEmpFromKYJS(Map<String, Object> empMap);
+
+	/**
+	 * 查科研数据
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	List<Map<String,Object>> listKY(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+	/**
+	 * 查横向数据
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	List<Map<String,Object>> listHX(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+	/**
+	 * 查技术服务数据
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
+	List<Map<String,Object>> listJS(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }

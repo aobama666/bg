@@ -109,7 +109,9 @@
                  D.PDEPTCODE   = CR.PARENT_CODE,
                  D.TYPE        = CR.ORGAN_TYPE,
                  D.UPDATE_DATE = CR.UPDATE_DATE,
-                 D.SYNC_UPDATE_DATE = SYSDATE
+                 D.SYNC_UPDATE_DATE = SYSDATE,
+                 D.PDEPTID = DEPTID,
+                 D.PDEPTNAME = DEPTNAME
              WHERE (D.DEPTNAME    != CR.ORANG_NAME OR D.PDEPTCODE   != CR.PARENT_CODE OR D.TYPE != CR.ORGAN_TYPE)
         WHEN NOT MATCHED THEN
           INSERT

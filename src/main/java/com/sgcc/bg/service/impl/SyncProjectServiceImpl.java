@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,7 @@ public class SyncProjectServiceImpl implements SyncProjectService {
     private SyncProjectMapper syncProjectMapper;
     @Autowired
     private WebUtils webUtils;
-    @Autowired
-    private UserUtils userUtils;
     private static Logger logger = LoggerFactory.getLogger(SyncProjectServiceImpl.class);
-
-
     public String queryProjectInfo(String beginDate, String endDate, String projectType, String deptCode,String key) {
         logger.info("项目同步--->报工系统向绩效系统推送项目信息--->查询项目信息");
         HttpResultWarp rw = null;
@@ -46,10 +43,9 @@ public class SyncProjectServiceImpl implements SyncProjectService {
                     return JSON.toJSONString(rw);
                 }
             }
-
             if (projectType.equals("YJ")) {
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->查询项目信息--->院级");
-                List<Map<String, Object>>        ProjectList = syncProjectMapper.queryProjectInfo(beginDate, endDate, projectType, deptCode,"" );
+                List<Map<String, Object>>   ProjectList = syncProjectMapper.queryProjectInfo(beginDate, endDate, projectType, "","" );
                 Map<String ,Object>  map=new HashMap<String ,Object>();
                 map.put("data",ProjectList);
                 map.put("message","查询成功");
@@ -61,31 +57,26 @@ public class SyncProjectServiceImpl implements SyncProjectService {
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->查询项目信息--->部门级");
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->获取部门信息级别");
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->部门信息级别" + type);
-                      List<Map<String, Object>>    ProjectList = syncProjectMapper.queryProjectInfo(beginDate, endDate, projectType, deptCode,type);
-
+                List<Map<String, Object>>    ProjectList = syncProjectMapper.queryProjectInfo(beginDate, endDate, projectType, deptCode,type);
                 Map<String ,Object>  map=new HashMap<String ,Object>();
                 map.put("data",ProjectList);
                 map.put("message","查询成功");
                 map.put("result","success");
                 String  jsonstr= JSON.toJSONString(map);
                 addProject(beginDate, endDate, projectType, deptCode,key, ProjectList);
-
-                      return jsonstr;
+                return jsonstr;
             } else if (projectType.equals("CSJ")) {
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->查询项目信息--->处室级");
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->获取部门信息级别");
                 logger.info("项目同步--->报工系统向绩效系统推送项目信息--->部门信息级别" + type);
-                        List<Map<String, Object>>     ProjectList =syncProjectMapper.queryProjectInfo(beginDate, endDate, projectType, deptCode,type);
-
+                List<Map<String, Object>>     ProjectList =syncProjectMapper.queryProjectInfo(beginDate, endDate, projectType, deptCode,type);
                 Map<String ,Object>  map=new HashMap<String ,Object>();
                 map.put("data",ProjectList);
                 map.put("message","查询成功");
                 map.put("result","success");
                 String  jsonstr= JSON.toJSONString(map);
                 addProject(beginDate, endDate, projectType, deptCode,key, ProjectList);
-
-                        return jsonstr;
-
+                return jsonstr;
                 }
                 else {
                     rw = new HttpResultWarp(HttpResultWarp.FAILED, "该项目类型不存在");
@@ -100,7 +91,6 @@ public class SyncProjectServiceImpl implements SyncProjectService {
 
     public void addProject(String beginDate, String endDate, String projectType, String deptCode,String key, List<Map<String, Object>> ProjectLists) {
         try {
-            if (!ProjectLists.isEmpty()) {
                 Map<String, Object> ProjectNode = new HashMap();
                 String   countNum =syncProjectMapper.selectProjectNoteInfoNum(ProjectNode);
                 int  countNums=Integer.parseInt(countNum);
@@ -122,8 +112,6 @@ public class SyncProjectServiceImpl implements SyncProjectService {
                     batchId= key+"-"+DateUtil.getDays()+"-"+countNums;
                     ProjectNode.put("batchId", batchId);
                 }
-
-
                 String id = Rtext.getUUID();
                 ProjectNode.put("id", id);
                 ProjectNode.put("beginDate", beginDate);
@@ -137,6 +125,7 @@ public class SyncProjectServiceImpl implements SyncProjectService {
                 ProjectNode.put("valid", "1");
                 ProjectNode.put("key", key);
                 this.syncProjectMapper.addProjectNode(ProjectNode);
+            if (!ProjectLists.isEmpty()) {
                 for(Map<String ,Object> ProjectInfo:ProjectLists){
                     Object  deptCodes=ProjectInfo.get("deptCode");
                     if(deptCodes==null){
@@ -155,16 +144,13 @@ public class SyncProjectServiceImpl implements SyncProjectService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
     public    List<Map<String, Object>> selectForProjectNodeInfo( Map<String ,Object> ProjectNodeInfo  ){
         return syncProjectMapper.selectProjectNoteInfo(ProjectNodeInfo);
-
     }
     public  List<Map<String, Object>>  queryDataDictionaryInfo(String pid){
         return syncProjectMapper.queryDataDictionaryInfo(pid);
     }
-
     public   List<Map<String, Object>>  queryAuditoriginInfo(String key){
         return syncProjectMapper.queryAuditoriginInfo(key);
     }
@@ -189,6 +175,8 @@ public class SyncProjectServiceImpl implements SyncProjectService {
         return syncProjectMapper.selectForProjectNumber(projectDetails);
     }
 
-
+    public   List<Map<String, Object>> queryDeptInfo(String deCode){
+        return syncProjectMapper.queryDeptInfo(deCode);
+    }
 
 }

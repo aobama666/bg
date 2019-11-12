@@ -1,5 +1,6 @@
 package com.sgcc.bg.job;
 
+import com.sgcc.bg.mapper.HandleSyncMapper;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,10 @@ import com.sgcc.bg.service.HandleSyncService;
 
 import ch.qos.logback.classic.Logger;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 
@@ -19,10 +24,13 @@ public class HandleSyncJob {
     @Autowired
     private HandleSyncService handleSyncService;
 
+    @Autowired
+    private HandleSyncMapper handleSyncMapper;
+
     /**
      * 处理其他系统的接口数据
      */
-    public void handleData() {
+    public void handleData() throws ParseException {
         String localhost_ip = QuartzJob.getLocalIP()==null?"xxx":QuartzJob.getLocalIP();
 /**********************************科研***********************************************************/
         /*
@@ -33,11 +41,32 @@ public class HandleSyncJob {
         logger.info("[HandleSyncJob]:关联系统数据同步配置：DataSyncKY="+ConfigUtils.getConfig("DataSyncKY")+";"
                 +"DataSyncKY_IP="+ConfigUtils.getConfig("DataSyncKY_IP")+";"
                 +"localhost_ip="+localhost_ip);
+
+        Date date = new Date();
+        Date sightcingDate ;
+        Date startDate;
+        Date endDate;
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat ds = new SimpleDateFormat("yyyy-MM-dd");
+        sightcingDate = df.parse(ds.format(date)+"12:00:00");
+        if(date.getTime()<sightcingDate.getTime()){
+            String amStartDate = ConfigUtils.getConfig("amStartDate");
+            String amEndDate = ConfigUtils.getConfig("amEndDate");
+            startDate = df.parse(ds.format(date)+amStartDate);
+            endDate = df.parse(ds.format(date)+amEndDate);
+        }else {
+            String pmSartDate = ConfigUtils.getConfig("pmStartDate");
+            String pmEndDate = ConfigUtils.getConfig("pmEndDate");
+            startDate = df.parse(ds.format(date)+pmSartDate);
+            endDate = df.parse(ds.format(date)+pmEndDate);
+        }
+
         if (Rtext.ToBoolean(ConfigUtils.getConfig("DataSyncKY"))
                 &&ConfigUtils.getConfig("DataSyncKY_IP").equals(localhost_ip)) {
 
-            Map<String,Object> syncStatus = handleSyncService.syncStatus("KJXM");
-            if(null != syncStatus.get("STATE") && String.valueOf(syncStatus.get("STATE")).equals("1")) {
+            List<Map<String,Object>> listKY = handleSyncMapper.listKY(startDate,endDate);
+
+            if(null != listKY && listKY.size()>0) {
 
                 logger.info("开始处转存研系统数据...");
                 handleSyncService.copyFromKY();
@@ -71,8 +100,8 @@ public class HandleSyncJob {
         if (Rtext.ToBoolean(ConfigUtils.getConfig("DataSyncHX"))
                 &&ConfigUtils.getConfig("DataSyncHX_IP").equals(localhost_ip)) {
 
-            Map<String,Object> syncStatus = handleSyncService.syncStatus("HXXM");
-            if(null != syncStatus.get("STATE") && String.valueOf(syncStatus.get("STATE")).equals("1")) {
+            List<Map<String,Object>> listHX = handleSyncMapper.listHX(startDate,endDate);
+            if(null!= listHX && listHX.size()>0) {
 
                 logger.info("开始处转存横向系统数据...");
                 handleSyncService.copyFromHX();
@@ -106,8 +135,8 @@ public class HandleSyncJob {
         if (Rtext.ToBoolean(ConfigUtils.getConfig("DataSyncJS"))
                 &&ConfigUtils.getConfig("DataSyncJS_IP").equals(localhost_ip)) {
 
-            Map<String,Object> syncStatus = handleSyncService.syncStatus("JSFU");
-            if(null != syncStatus.get("STATE") && String.valueOf(syncStatus.get("STATE")).equals("1")) {
+            List<Map<String,Object>> listJS = handleSyncMapper.listJS(startDate,endDate);
+            if(null != listJS && listJS.size()>0) {
 
                 logger.info("开始处转存技术服务数据...");
                 handleSyncService.copyFromKYJS();

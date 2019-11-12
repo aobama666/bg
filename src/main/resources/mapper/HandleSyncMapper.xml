@@ -442,4 +442,38 @@
 		'admin',
 		'1')
 	</insert>
+
+	<select id="listKY" resultType="java.util.Map">
+		SELECT PROJECT_ID,
+				PROJECT_TYPE,
+				PROJECT_NAME,
+				PROJECT_WBS,
+				PROJECT_REMARK
+		FROM BG_KY_PRJ_VIEW
+		where CREATE_DATE
+		between #{startDate} and #{endDate}
+	</select>
+
+	<select id="listHX" resultType="java.util.Map">
+		SELECT PROJECT_ID,
+		PROJECT_TYPE,
+		PROJECT_NAME,
+		PROJECT_WBS,
+		PROJECT_REMARK
+		FROM BG_HX_PRJ_VIEW
+		where CREATE_DATE
+		between #{startDate} and #{endDate}
+	</select>
+
+	<select id="listJS" resultType="java.util.Map">
+		SELECT PROJECT_ID,
+				PROJECT_TYPE,
+				PROJECT_NAME,
+				PROJECT_WBS,
+				PROJECT_REMARK,
+				PROJECT_ORGANIZE
+		FROM BG_KY_JS_PRJ_VIEW
+		where CREATE_DATE
+		between #{startDate} and #{endDate}
+	</select>
 </mapper>

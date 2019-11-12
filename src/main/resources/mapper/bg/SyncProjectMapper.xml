@@ -120,7 +120,7 @@
 		AND T.STATUS = '3'
 		AND P.STATUS = '1'
 		AND P1.STATUS = '1'
-		AND P.CATEGORY = 'BP1'
+		AND P.CATEGORY = 'BP'
 		<if  test="projectType!= null and projectType!= ''">
 			AND  P.PROJECT_GRADE    =      #{projectType}
 		</if>
@@ -236,31 +236,41 @@
 	</insert>
 
 	<sql id="projectNoteInfo">
-		SELECT
-		N.UUID,
-		N.BEGINDATE,
-		N.ENDDATE,
-		N.PROJECT_TYPE,
-		DECODE(N.PROJECT_TYPE,'YJ','院级','BMJ','部门级','CSJ','处室级') PROJECT_TYPE_NAME,
-		N.DEPTCODE,
-		TO_CHAR(N.CREATE_DATE,'YYYY-MM-DD HH:MI:SS')  CREATE_DATE,
-		D.DEPTNAME,
-		N.BATCHID
-		FROM    BG_SYNC_PROJECT_NOTE   N
-		LEFT JOIN BG_SYS_DEPT   D   ON D.DEPTCODE = N.DEPTCODE  where  N.VALID='1'
+        SELECT   *  FROM(
+                SELECT
+                N.UUID,
+                N.BEGINDATE,
+                N.ENDDATE,
+                N.PROJECT_TYPE,
+                DECODE(N.PROJECT_TYPE,'YJ','院级','BMJ','部门级','CSJ','处室级') PROJECT_TYPE_NAME,
+                TO_CHAR(N.CREATE_DATE,'YYYY-MM-DD HH:MI:SS')  CREATE_DATE,
+                D.TYPE,
+                DECODE(D.TYPE,'1',D.DEPTNAME,'2',PDEPTNAME)   as  DEPTNAME,
+                DECODE(D.TYPE,'1',D.DEPTCODE,'2',PDEPTCODE)   as  DEPTCODE,
+                DECODE(D.TYPE,'1','','2',D.DEPTNAME)   as  LABNAME,
+                DECODE(D.TYPE,'1','','2',D.DEPTCODE)   as  LABCODE,
+                N.BATCHID
+                FROM    BG_SYNC_PROJECT_NOTE   N
+                LEFT JOIN BG_SYS_DEPT   D   ON D.DEPTCODE = N.DEPTCODE  where  N.VALID='1'
+        )where  1=1
 		<if  test="projectNode.beginDate!= null and projectNode.beginDate!= ''">
-			AND TO_DATE(N.BEGINDATE, 'yyyy-MM-dd')   &gt;=    TO_DATE( #{projectNode.beginDate}, 'yyyy-MM-dd')
+			AND TO_DATE(BEGINDATE, 'yyyy-MM-dd')   &gt;=    TO_DATE( #{projectNode.beginDate}, 'yyyy-MM-dd')
 		</if>
 		<if  test="projectNode.endDate!= null and projectNode.endDate!= ''">
-			AND TO_DATE(N.ENDDATE, 'yyyy-MM-dd')      &lt;=     TO_DATE( #{projectNode.endDate}, 'yyyy-MM-dd')
+			AND TO_DATE(ENDDATE, 'yyyy-MM-dd')      &lt;=     TO_DATE( #{projectNode.endDate}, 'yyyy-MM-dd')
 		</if>
 		<if  test="projectNode.projectType!= null and projectNode.projectType!= ''">
-			AND N.PROJECT_TYPE     =      #{projectNode.projectType}
+			AND PROJECT_TYPE     =      #{projectNode.projectType}
 		</if>
-		<if  test="projectNode.deptCode!= null and projectNode.deptCode!= ''">
-			AND N.DEPTCODE     =      #{projectNode.deptCode}
-		</if>
-		ORDER BY N.CREATE_DATE  DESC
+        <if  test="projectNode.deptCode!= null and projectNode.deptCode!= ''">
+            <if  test='projectNode.type.toString() == "1"'>
+                AND DEPTCODE   =      #{projectNode.deptCode}
+            </if>
+            <if  test='projectNode.type.toString() == "2"'>
+                AND  LABCODE   =   #{projectNode.deptCode}
+            </if>
+        </if>
+		ORDER BY CREATE_DATE  DESC
 	</sql>
 
 	<select id="selectProjectNoteInfo" resultType="java.util.Map">
@@ -280,6 +290,7 @@
 
 
 	<sql id="projectDetailsInfo">
+        SELECT  *  FROM  (
 		SELECT
 		P.UUID,
 		P.PROJECT_NUMBER,
@@ -287,8 +298,11 @@
 		P.WBS_NUMBER,
 		P.PROJECT_GRADE,
 		DECODE(P.PROJECT_GRADE,'YJ','院级','BMJ','部门级','CSJ','处室级') PROJECT_GRADE_NAME,
-		P.DEPTCODE,
-		D.DEPTNAME,
+        D.TYPE,
+        DECODE(D.TYPE,'1',D.DEPTNAME,'2',PDEPTNAME)   as  DEPTNAME,
+        DECODE(D.TYPE,'1',D.DEPTCODE,'2',PDEPTCODE)   as  DEPTCODE,
+        DECODE(D.TYPE,'1','','2',D.DEPTNAME)   as  LABNAME,
+        DECODE(D.TYPE,'1','','2',D.DEPTCODE)   as  LABCODE,
 		N.BEGINDATE,
 		N.ENDDATE,
 		P.PROJECT_NOTEID
@@ -296,20 +310,20 @@
 		LEFT JOIN BG_SYS_DEPT   D   ON D.DEPTCODE = P.DEPTCODE
 		LEFT JOIN BG_SYNC_PROJECT_NOTE   N   ON N.UUID = P.PROJECT_NOTEID
 		where  P.VALID='1'
-
+        )where 1=1
 		<if  test="projectDetails.projectName!= null and projectDetails.projectName!= ''">
-			AND P.PROJECT_NAME like '%'||#{projectDetails.projectName}||'%'
+			AND PROJECT_NAME like '%'||#{projectDetails.projectName}||'%'
 		</if>
 		<if  test="projectDetails.projectNumber!= null and projectDetails.projectNumber!= ''">
-			AND P.PROJECT_NUMBER like '%'||#{projectDetails.projectNumber}||'%'
+			AND PROJECT_NUMBER like '%'||#{projectDetails.projectNumber}||'%'
 		</if>
 		<if  test="projectDetails.wbsNumber!= null and projectDetails.wbsNumber!= ''">
-			AND P.WBS_NUMBER like '%'||#{projectDetails.wbsNumber}||'%'
+			AND WBS_NUMBER like '%'||#{projectDetails.wbsNumber}||'%'
 		</if>
 		<if  test="projectDetails.noteId!= null and projectDetails.noteId!= ''">
-			AND P.PROJECT_NOTEID     =      #{projectDetails.noteId}
+			AND PROJECT_NOTEID     =      #{projectDetails.noteId}
 		</if>
-		ORDER BY P.YEAR ,P.MONTH,P.PROJECT_NAME
+		ORDER BY  PROJECT_NAME
 	</sql>
 
 	<select id="selectProjectDetailsInfo" resultType="java.util.Map">
