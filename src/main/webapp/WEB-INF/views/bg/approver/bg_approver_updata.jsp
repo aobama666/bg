@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>添加审批权限</title>
+<title>修改审批权限</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css"
@@ -57,18 +57,19 @@
 	<div class="page-header-sl">
 		<div class="button-box">
 			<button type="button" class="btn btn-success btn-xs"
-				onclick="forSubmit()">保存</button>
+				onclick="forSubmit()">修改</button>
 		</div>
 	</div>
 	<hr>
 	<div class="form-box">
 		<div class="form-group col-xs-11">
-			<label for="stuffTree">姓名：</label>
-			<div class="controls">
-				<div id="stuffTree" class="input-group organ">
-					<input type="hidden" name="empCode" id="empCode" value="">
-					<input type="text" name="empName" id="empName" readonly="readonly">
-					<span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+			<label  >姓名：</label>
+			<div class="controls"  >
+				<div   class="input-group organ"   >
+					<input type="hidden" name="id" id="id" value="${UUID}">
+					<input type="hidden" name="empCode" id="empCode" value="${HRCODE}">
+					<input type="text" name="empName" id="empName" value="${USERALIAS}"   disabled="true">
+					<span class="input-group-addon" ><span class="glyphicon glyphicon-user"></span></span>
 				</div>
 			</div>
 		</div>
@@ -76,8 +77,8 @@
 			<label for="organTree">管理部门：</label>
 			<div class="controls">
 				<div id="organTree" class="input-group organ">
-					<input type="hidden" name="deptCode" id="deptCode" value="">
-					<input type="text" name="deptName" id="deptName" readonly="readonly">
+					<input type="hidden" name="deptCode" id="deptCode" value="${DEPTCODE}">
+					<input type="text" name="deptName" id="deptName" value="${DEPTNAME}"readonly="readonly">
 					<span class="input-group-addon"><span class="glyphicon glyphicon-th-list"></span></span>
 				</div>
 			</div>
@@ -88,7 +89,8 @@
 				<select id="roleCode" name="roleCode" property="roleCode">
 						<option></option>
 					<c:forEach  var="pcodeList"  items="${pcodeList}">
-						<option value ="${pcodeList.CODE}" title=" ${pcodeList.NAME}" > ${pcodeList.NAME}</option>
+						<option value ="${pcodeList.CODE}" title=" ${pcodeList.NAME}" ${pcodeList.CODE == SUBTYPE ?"selected='selected'":''} > ${pcodeList.NAME}</option>
+
 					</c:forEach>
 				</select>
 			</div>
@@ -96,7 +98,7 @@
 		<div class="form-group col-xs-11" >
 			<label >优先级：</label>
 			<div class="controls">
-				<input type="text" id="priority" name="priority" property="priority" value="1">
+				<input type="text" id="priority" name="priority" property="priority" value="${PRIORITY}">
 			</div>
 		</div>
 	</div>
@@ -112,6 +114,7 @@
 		var deptCode = $("#deptCode").val();
 		var roleCode = $("#roleCode").val();
         var priority = $("#priority").val();
+        var id = $("#id").val();
 		var validator=[
 	              	      {name:'empName',vali:'required'},
 	             	      {name:'deptName',vali:'required'},
@@ -123,8 +126,8 @@
 			layer.msg("缺少必填项！");
 			return;
 		}
-		$.post("<%=request.getContextPath()%>/approver/addApprover",
-				{ empCode: empCode, deptCode: deptCode, roleCode : roleCode, priority : priority},
+		$.post("<%=request.getContextPath()%>/approver/updataApprover",
+				{ empCode: empCode, deptCode: deptCode, roleCode : roleCode, priority : priority, id : id},
 				function(data){
 					if(data.success=="true"){
 						parent.queryList("reload");

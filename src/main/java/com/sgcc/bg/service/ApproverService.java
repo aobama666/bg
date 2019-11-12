@@ -7,6 +7,24 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 public interface ApproverService {
+	/**
+	 * 查询数据字典
+	 * @param pcode
+	 * @return
+	 */
+	public List<Map<String, Object>>  selectForDatadicttionary(String  pcode);
+	/**
+	 * 查询数用户信息
+	 * @param empCode
+	 * @return
+	 */
+	public List<Map<String, Object>>  selectForUserInfo(String  empCode);
+	/**
+	 * 查询部门信息
+	 * @param deptCode
+	 * @return
+	 */
+	public  Map<String, Object>   selectForDeptInfo(String  deptCode);
 
 	/**
 	 * 添加审批权限
@@ -15,16 +33,34 @@ public interface ApproverService {
 	 * @param subType
 	 * @return
 	 */
-	public int addApprover(String empCode, String deptCode, String subType);
+	public int addApprover(String empCode, String deptCode, String subType,String priority);
+	/**
+	 * 添加审批权限
+	 * @pm approverInfo
+	 * @return
+	 */
+	public int addNewApprover(Map<String ,Object> approverInfo);
+	/**
+	 * 修改审批权限
+	 * @pm approverInfo
+	 * @return
+	 */
+	public int updataApprover(Map<String ,Object> approverInfo);
+
+
 
 	/**
 	 * 获取所有审批权限信息
-	 * @param username
-	 * @param deptcode
-	 * @param roleCode
+	 * @param approverList
 	 * @return
 	 */
-	public List<Map<String, Object>> getAllApprovers(String username,String deptcode,String roleCode);
+	public List<Map<String, Object>> getAllApprovers( Map<String ,Object> approverList);
+	/**
+	 * 判断审批人是否存在
+	 * @param approverList
+	 * @return
+	 */
+	public List<Map<String, Object>> isforApprovers(Map<String ,Object> approverList);
 
 	/**
 	 * 删除人员审批权限
@@ -58,4 +94,16 @@ public interface ApproverService {
 	 * @return
 	 */
 	public List<Map<String, Object>> getInfoForShow(String target);
+	/**
+	 * 获取所有审批规则信息
+	 * @param roleList
+	 * @return
+	 */
+	public List<Map<String, Object>> selectForApproveRule( Map<String ,Object> roleList);
+	/**
+	 * 获取所有审核部门信息
+	 * @param organList
+	 * @return
+	 */
+	public List<Map<String, Object>> selectForApproverOrgant( Map<String ,Object> organList);
 }
