@@ -91,11 +91,23 @@ public class StringUtil {
     	String regex = "^[\\u4e00-\\u9fa5\\w]+$";
     	return value.matches(regex);
     }
-   
-    
-    
-    public static void main(String[] args) {  
-        System.out.println(checkNumber("18334790408"));// true  
+    /**
+     * 验证是不是正数
+     * @param value 要验证的字符串
+     * @return 如果是符合格式的字符串,返回 <b>true </b>,否则为 <b>false </b>
+     */
+    /**正数 */
+    private static final String V_POSITIVE_NUMBER="^[1-9]\\d*|$";
+    public static boolean PositiveNumber(String value){
+        return value.matches(V_POSITIVE_NUMBER);
+    }
+
+
+
+    public static void main(String[] args) {
+        String  value="1";
+        boolean  flag=  PositiveNumber(value);
+        System.out.println(flag);
       
         
    }  

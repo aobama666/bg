@@ -18,7 +18,7 @@ public class DateUtil {
 	private final static SimpleDateFormat sdfTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	private final static SimpleDateFormat newsdfTime = new SimpleDateFormat("yyyyMMddHHmmss");
-   
+
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	/**
 	 * 获取yyyyMMdd HHmmss

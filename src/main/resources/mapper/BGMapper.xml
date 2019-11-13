@@ -483,7 +483,7 @@
 		   AND T.PROJECT_ID = #{proId}
 	</select>
 	
-	<select id="getEmpByProIdFromKY" resultType="java.util.Map">
+	<select id="getEmpByProIdFromKY" resultType="java.util.HashMap">
 		SELECT T.ID,
 		       T.PROJECT_ID AS "projectId",
 		       T.HRCODE AS "hrcode",
@@ -766,5 +766,105 @@
 		FROM bg_project_info
 		WHERE  ID = #{proId}
 		and STATUS = '1'
+	</select>
+
+	<select id="getProInfoByProIdFromKYJS" resultType="java.util.Map">
+		SELECT T.ID,
+		T.CATEGORY,
+		T.PROJECT_ID,
+		T.PROJECT_NAME,
+		T.WBS_NUMBER,
+		T.PROJECT_INTRODUCE,
+		T.START_DATE,
+		T.END_DATE,
+		T.PROJECT_ORGANIZE,
+		d.DEPTID
+		FROM BG_SYNC_KY_JS_PROJECT T
+		left join bg_sys_dept d
+		ON  T.PROJECT_ORGANIZE = d.deptcode
+		WHERE T.VALID = '1'
+		AND d.valid = '1'
+		AND T.PROJECT_ID = #{proId}
+	</select>
+
+	<select id="getEmpByProIdFromKYJS" resultType="java.util.HashMap">
+		SELECT T.ID,
+			T.PROJECT_ID AS "projectId",
+			T.HRCODE AS "hrcode",
+			T.EMPNAME AS "stuffName",
+			T.START_DATE AS "startDate",
+			T.END_DATE AS "endDate",
+			T.ROLE AS "role",
+			T.PLANHOURS AS "planHours"
+		FROM BG_SYNC_KY_JS_EMP T
+		WHERE T.VALID = '1'
+		AND T.PROJECT_ID = #{proId}
+	</select>
+
+	<select id="getProjectsFromJS" resultType="java.util.Map">
+		SELECT T.ID,
+				T.CATEGORY,
+				T.PROJECT_ID,
+				T.PROJECT_NAME,
+				T.WBS_NUMBER,
+				T.PROJECT_INTRODUCE,
+				T.START_DATE,
+				T.END_DATE,
+				T.PROJECT_ORGANIZE,
+				D.DEPTNAME AS "deptName"
+		FROM BG_SYNC_KY_JS_PROJECT T
+		JOIN BG_SYNC_KY_JS_EMP E
+		ON T.PROJECT_ID = E.PROJECT_ID
+		AND E.VALID = '1'
+		JOIN BG_SYS_DEPT D
+		ON T.PROJECT_ORGANIZE = D.DEPTCODE
+		AND D.VALID = '1'
+		JOIN BG_SYS_USER U
+		ON E.HRCODE = U.HRCODE
+		WHERE T.VALID = '1'
+		AND NOT EXISTS (SELECT 1
+			FROM BG_SYNC_PROJECT_RELATION R
+			WHERE R.SYNC_ID = T.PROJECT_ID
+			AND R.VALID = '1')
+		AND U.USERNAME = #{username}
+		AND E.ROLE = '1'
+		<if test="proName != null and proName != ''" >
+			AND T.PROJECT_NAME LIKE '%'||#{proName}||'%'
+		</if>
+		<if test="wbsNumber != null and wbsNumber != ''" >
+			AND T.WBS_NUMBER = #{wbsNumber}
+		</if>
+	</select>
+
+	<select id="getProInfoByProIdFromJS" resultType="java.util.Map">
+		SELECT T.ID,
+				T.CATEGORY,
+				T.PROJECT_ID,
+				T.PROJECT_NAME,
+				T.WBS_NUMBER,
+				T.PROJECT_INTRODUCE,
+				T.START_DATE,
+				T.END_DATE,
+				T.PROJECT_ORGANIZE,
+				D.DEPTNAME AS "deptName"
+		FROM BG_SYNC_KY_JS_PROJECT T
+		JOIN BG_SYS_DEPT D
+		ON T.PROJECT_ORGANIZE = D.DEPTCODE
+		AND D.VALID = '1'
+		WHERE T.VALID = '1'
+		AND T.PROJECT_ID = #{proId}
+	</select>
+
+	<select id="syncStatus" resultType="java.util.Map">
+		SELECT * FROM (
+			SELECT UUID,
+					FUNCTION_NAME,
+					SYS_NAME,
+					STATE,
+					UPDATE_TIME
+			FROM BG_DATA_SYNC_STATUS
+			WHERE FUNCTION_NAME = #{type}
+			order by  UPDATE_TIME DESC)
+		where rownum = 1
 	</select>
 </mapper>

@@ -105,9 +105,8 @@
 			<div class="controls">
 				<div id="organTree" class="input-group organ">
 					<input type="hidden" name="deptCode" id="deptCode" value="">
-					<input type="text" name="deptName" id="deptName"
-						readonly="readonly"> <span class="input-group-addon"><span
-						class="glyphicon glyphicon-th-list"></span></span>
+					<input type="text" name="deptName" id="deptName" property="deptName"readonly="readonly">
+					<span class="input-group-addon"><span id="deptSpan" class="glyphicon glyphicon-th-list"></span></span>
 				</div>
 			</div>
 		</div>
@@ -149,14 +148,22 @@ function initPro(){
 
 function typeChange(type){	
 	if(type=="JS"){
-		$("#organInfo").show();
+		/*$("#organInfo").show();
 		$("#proSelect").hide();
 		$("#tips").hide();
 		if($("#deptCode").val()==""){
 			$("#deptName").val($("#currentDeptName").val());
 			$("#deptCode").val($("#currentDeptCode").val());
 		}
-		$("#WBSNumber label").html('WBS编号');
+		$("#WBSNumber label").html('WBS编号');*/
+        $("#organInfo").show();
+        $("#proSelect").show();
+        $("#tips").show();
+        if($("#deptCode").val()==""){
+            $("#deptName").val($("#currentDeptName").val());
+            $("#deptCode").val($("#currentDeptCode").val());
+        }
+        $("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
 	}
 	if(type=="KY" || type=="HX"){
 		$("#organInfo").hide();
@@ -208,6 +215,7 @@ $("#proSelect").click(function(){
 	var category = $("select[name='category']").val();
 	var title = "项目选择-科研项目";
 	if(category=="HX") title = "项目选择-横向项目";
+	if(category=="JS") title = "项目选择-技术服务项目";
 	
 	parent.layer.open({
 		type:2,
@@ -253,7 +261,7 @@ function forSave_pro(){
     var category=$("select[name='category']").val();
     var wbs=$("#WBSNumber input");
     //当为科研、横向项目时，校验wbs编号,否则如果天了wbs编号的话，只校验其唯一性
-    if(category=='HX' || category=='KY' ){
+    if(category=='HX' || category=='KY' || category=='JS' ){
     	validator[2].vali='required;length[-50];checkUniqueness()';
     }else if($.trim(wbs.val())!=''){
     	validator[2].vali='length[-50];checkUniqueness()';
@@ -351,7 +359,6 @@ function stuffShow(){
 //选择项目信息的回调方法
 function getProInfo(proId,queryFor){
 	isSaved = false;//新选择的项目，未保存
-	//alert(proId+"/"+queryFor);
 	$.get('<%=request.getContextPath()%>/project/getProAndEmpData', { proId: proId, src: queryFor },
 		function(data){
 	    	if(data.result=='success'){
@@ -369,6 +376,15 @@ function getProInfo(proId,queryFor){
 	    		$('textarea[name="projectIntroduce"]').text(pro.PROJECT_INTRODUCE);
 	    		$('#startDatePicker').datepicker( 'setDates' , new Date(pro.START_DATE.replace(/-/g,"\/")));
 	    		$('#endDatePicker').datepicker( 'setDates' , new Date(pro.END_DATE.replace(/-/g,"\/")));
+	    		debugger;
+                if(src == 'JS'){
+                    $('input[name="deptName"]').val(pro.deptName);
+                    $('input[name="deptCode"]').val(pro.PROJECT_ORGANIZE);
+                    $('#deptName').removeAttr("readonly");
+
+                    $('#proInfo input[name="deptName"]').attr("disabled",true);
+                    $("#deptSpan").hide();
+                }
 	    		//项目类型，项目名称，wbs编号不允许修改
 	    		$('#proInfo select[name="category"],input[name="projectName"],input[name="WBSNumber"]').prop("disabled",true);
 	    		
