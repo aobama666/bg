@@ -98,7 +98,9 @@
             <span title = "用印事由"><b class="mustWrite">*</b>用印事由</span>
         </td>
         <td style="width: 90%" class="addInputStyle" colspan="3">
-            <input type="text"  id="useSealReason" name="useSealReason"  class="validNull"  content="用印事由"  len="2000"  title="必填项  "/>
+<%--            <input type="text"  id="useSealReason" name="useSealReason"  class="validNull"  content="用印事由"  len="2000"  title="必填项  "/>--%>
+            <textarea id="useSealReason" name="useSealReason"  class="validNull"  content="用印事由"  len="2000"  title="必填项"
+                    style="border:none;margin-left:0.5%;height: 100%;width: 99.5%;resize:vertical;"></textarea>
         </td>
     </tr>
 </table>

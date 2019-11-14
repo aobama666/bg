@@ -25,7 +25,7 @@
 <div class="main_div"></div>
 <!-- start    查询条件 -->
 <div class="sheach">
-	<div class='content_top'>确定用印</div>
+<%--	<div class='content_top'>确定用印</div>--%>
 	<form id="queryForm" style="margin-bottom: 10px;">
 		<input type = "hidden"   id = "applyId" name="applyId">
 		<input type = "hidden"   id = "type" name="type" value="${type}">

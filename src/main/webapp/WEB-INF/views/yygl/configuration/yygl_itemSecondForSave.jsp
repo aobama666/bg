@@ -81,8 +81,8 @@
 			</td>
 			<td   class="addInputStyle">
 				<select id="ifLeaderApprove"  name = "ifLeaderApprove"  class = "validNull select-person"   content="是否需要院领导批准"    title="必填项  "  >
-					<option value="1"  selected>是</option>
-					<option value="0"  >否</option>
+					<option value="1"  >是</option>
+					<option value="0"  selected>否</option>
 				</select>
 			</td>
 		</tr>

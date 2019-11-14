@@ -53,10 +53,10 @@ apply.initDataGrid = function(){
             {name: '用印种类',style:{width:"50px"}, data: 'USE_SEAL_KIND'},
             {name: '审批状态',style:{width:"50px"}, data: 'USE_SEAL_STATUS'},
             {name: '用印审批单',style:{width:"50px"}, forMat:function (row) {
-                    if(row.USE_SEAL_STATUS_CODE=='8'){
+                    // if(row.USE_SEAL_STATUS_CODE=='8'){ //之前是只有已完成（待用印）才能行，现在是所有的都能行
                         return "<a title = '点击查看打印预览' style='color:#0080FF'" +
                         " onclick=apply.printPreview('"+row.UUID+"')>打印预览</a>";
-                    }
+                    // }
                 }}
         ]
     });
@@ -233,13 +233,13 @@ apply.submit = function () {
         }
     }
     checkedIds = checkedIds.slice(0,checkedIds.length-1);
-    //判断五个申请的事项是否一致
-    for(var i = 0; i <checkedItems.length; i++){
+    //判断五个申请的事项是否一致,后期取消了这个判断条件，不用判断该条件
+    /*for(var i = 0; i <checkedItems.length; i++){
         if(checkedItems[i].USESEALITEM !== checkedItems[0].USESEALITEM){
             layer.msg("批量提交时用印事项必须一致");
             return;
         }
-    }
+    }*/
     $.ajax({
         url: "/bg/yygl/apply/ifSubmit?checkedId="+checkedItems[0].UUID,
         type: "post",
@@ -351,7 +351,7 @@ apply.forItemInfo = function (){
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:27px;">用印事项</h4>',
-        area:['300px','350px'],
+        area:['500px','350px'],
         fixed:false,//不固定
         maxmin:true,
         content:url,

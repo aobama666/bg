@@ -107,7 +107,7 @@
 		</div>
 
      <input type='hidden' name='itemList' id='itemList' value='${itemList}'>
-	 <div class="tree-box" style="width: 270px;height: 241px !important">
+	 <div class="tree-box" style="width: 470px;height: 241px !important">
 		<div id="treeDemo" class="ztree"></div>
 	</div>
 </body>

@@ -48,7 +48,10 @@
 
         <c:forEach  var="principal"  items="${deptPrincipal}">
             <tr>
-                <td><input type="radio" id="principal" name="principal" value="${principal.STAFFID}"/></td>
+                <td>
+<%--                    <input type="radio" id="principal" name="principal" value="${principal.STAFFID}"/>--%>
+                    <input type="checkbox" id="principal" name="principal" value="${principal.STAFFID}"/>
+                </td>
                 <td>${principal.USERNAME}</td>
                 <td>${principal.USERALIAS}</td>
                 <td>${principal.NODETYPE}</td>
