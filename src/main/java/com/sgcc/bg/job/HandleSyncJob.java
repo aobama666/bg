@@ -1,5 +1,6 @@
 package com.sgcc.bg.job;
 
+import com.sgcc.bg.common.DateUtil;
 import com.sgcc.bg.mapper.HandleSyncMapper;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,17 +50,19 @@ public class HandleSyncJob {
         Date endDate;
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat ds = new SimpleDateFormat("yyyy-MM-dd");
-        sightcingDate = df.parse(ds.format(date)+" 12:00:00");
+        String dateStr = ds.format(date);
+        sightcingDate = df.parse(dateStr+" 12:00:00");
         if(date.getTime()<sightcingDate.getTime()){
             String amStartDate = ConfigUtils.getConfig("amStartDate");
             String amEndDate = ConfigUtils.getConfig("amEndDate");
-            startDate = df.parse(ds.format(date)+" "+amStartDate);
-            endDate = df.parse(ds.format(date)+" "+amEndDate);
+            String start = DateUtil.getSpecifiedDayBefore(dateStr);
+            startDate = df.parse(start+" "+amStartDate);
+            endDate = df.parse(dateStr+" "+amEndDate);
         }else {
             String pmSartDate = ConfigUtils.getConfig("pmStartDate");
             String pmEndDate = ConfigUtils.getConfig("pmEndDate");
-            startDate = df.parse(ds.format(date)+" "+pmSartDate);
-            endDate = df.parse(ds.format(date)+" "+pmEndDate);
+            startDate = df.parse(dateStr+" "+pmSartDate);
+            endDate = df.parse(dateStr+" "+pmEndDate);
         }
 
         if (Rtext.ToBoolean(ConfigUtils.getConfig("DataSyncKY"))
