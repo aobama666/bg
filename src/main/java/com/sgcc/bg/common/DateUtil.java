@@ -191,7 +191,16 @@ public class DateUtil {
 		temp = dateFormat.format(date);
 		return temp;
 	}
+	public static void main(String[] args) {
+		String data="2019-09";
+		String[] str= data.split("-");
+		String year=	String.valueOf(str[0]);
+		String month=	String.valueOf(str[1]);
 
+
+		System.out.println(year);
+		System.out.println(month);
+	}
 	/**
 	 * 根据日期的字符串转化为Date对象
 	 * @param datestr
@@ -208,7 +217,17 @@ public class DateUtil {
 			}
 		return date;
 	}
-	
+	/**
+	 * 根据日期的字符串转化为Date对象
+	 * @param datestr
+	 * @param format
+	 * @return
+	 */
+	public static String  getFormatStringToString(String datestr, String format) {
+		Date date=getFormatDate(datestr,format);
+		String dateTime=getFormatDateString(date,format);
+		return dateTime;
+	}
 	/**
 	 * 校验时间格式
 	 * @param s
@@ -852,7 +871,5 @@ public class DateUtil {
 		}
 		return  false;
 	}
-	    public static void main(String[] args) {
-			System.out.println(getNewsdfTime());
-		}
+
 }

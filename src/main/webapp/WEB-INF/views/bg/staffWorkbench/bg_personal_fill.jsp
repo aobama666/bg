@@ -121,7 +121,7 @@ td span{
 			<label>
 				<span style="color: red" id="fillSumKQ" >${fillSumKQ}</span>
 				<span style="color: red">/</span>
-				<span style="color: red" id="fillSum">${fillSumKQ}</span>
+				<span style="color: red" id="fillSum">${fillSum}</span>
 			</label>
 		</div>
 	</form>
