@@ -852,7 +852,32 @@ public class DateUtil {
 		}
 		return  false;
 	}
-	    public static void main(String[] args) {
-			System.out.println(getNewsdfTime());
+
+	/**
+	 * 获取某日期的前一天
+	 * @param specifiedDay
+	 * @return
+	 */
+	public static String getSpecifiedDayBefore(String specifiedDay){
+		//SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar c = Calendar.getInstance();
+		Date date=null;
+		try {
+			date = new SimpleDateFormat("yy-MM-dd").parse(specifiedDay);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		c.setTime(date);
+		int day=c.get(Calendar.DATE);
+		c.set(Calendar.DATE,day-1);
+
+		String dayBefore=new SimpleDateFormat("yyyy-MM-dd").format(c.getTime());
+		return dayBefore;
+	}
+
+	public static void main(String[] args) {
+			String a= "2019-03-01";
+			String b = getSpecifiedDayBefore(a);
+		 System.out.println(b);
 		}
 }
