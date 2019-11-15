@@ -20,6 +20,8 @@ public interface IStaffWorkbenchService {
 	 * 工时统计（月度工时及已填工时）
 	 * @param selectedDate
 	 * @return
+	 * ①　如果校验配置 “否/空”，不需要与员工考勤数据对接，校验投入总工时<=8h*工作日+36h。 月度工时=8h*工作日+36h。
+	 * ②　如果校验配 “是”  ，需要与员工考勤数据对接，校验投入工时<=考勤工时。 月度工时=考勤工时。
 	 */
 	Map<String,Object> workingHoursMap(String selectedDate);
 

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+ -->
+<mapper namespace="com.sgcc.bg.mapper.BgConfigEfficacyMapper">
+
+
+
+	<!--查询工作日-->
+	<select id="selectForBcxx" resultType="java.util.Map">
+		SELECT  sum(fillSumKQ)+36  as  fillSumKQ  FROM(
+		SELECT
+		ID,
+		SCHEDULE_DATE,
+		SCHEDULE_WEEK,
+		SCHEDULE_TYPE,
+		'8'as fillSumKQ,
+		DECODE(RBC_CODE,'RBC001','工作日','RBC002','节假日','RBC003','半天特殊日','RBCOO3','弹性工作日') RBC_CODE,
+		DECODE(IS_HOLIDAY,'1','节假日','0','工作日') IS_HOLIDAY,
+		BC_CODE
+		FROM BG_SYS_WORK_SCHEDULE
+		WHERE VALID  = '1'
+		AND IS_HOLIDAY = '0'
+		AND RBC_CODE = 'RBC001'
+		<if test="dateTime != null and dateTime != ''">
+			AND to_char(SCHEDULE_DATE,'yyyy-mm') = #{dateTime}
+		</if>
+		)
+	</select>
+
+	<sql id="efficacyInfo">
+		SELECT
+		T.UUID,
+		T.YEAR,
+		T.MONTH,
+		IS_EFFICACY,
+		DECODE(T.IS_EFFICACY,'1','是','0','否')   as  EFFICACY_NAME,
+		T.UPDATE_USER,
+		TO_CHAR(T.UPDATE_DATE,'yyyy-MM-dd HH:mm:ss')  as UPDATE_DATE,
+		U.USERALIAS
+		FROM    BG_CONFIG_EFFICACY_INFO   T
+		LEFT JOIN BG_SYS_USER   U   ON U.USERID = T.UPDATE_USER
+		where  U.VALID='1'  and T.VALID='1'
+		<if test="efficacyInfo.id != null and efficacyInfo.id != ''" >
+			AND T.UUID = #{efficacyInfo.id,jdbcType=VARCHAR}
+		</if>
+		<if test="efficacyInfo.year != null and efficacyInfo.year != ''" >
+			AND T.YEAR = #{efficacyInfo.year,jdbcType=VARCHAR}
+		</if>
+		<if test="efficacyInfo.month != null and efficacyInfo.month != ''" >
+			AND T.MONTH = #{efficacyInfo.month,jdbcType=VARCHAR}
+		</if>
+		ORDER BY T.YEAR  DESC,T.MONTH
+	</sql>
+	<!-- 获取校验配置 -->
+	<select id="selectForConfigEfficacy" resultType="java.util.Map">
+		SELECT   *   FROM (<include refid="efficacyInfo"/>)
+	</select>
+	<!-- 获取校验配置 ,去除重新-->
+	<select id="getDisConfigEfficacy" resultType="java.util.Map">
+		SELECT  * FROM (
+			SELECT   YEAR   FROM  BG_CONFIG_EFFICACY_INFO  where    VALID='1'
+			UNION
+			SELECT  TO_CHAR(extract(year FROM  SYSDATE))   as YEAR  from  dual
+		)  ORDER BY YEAR  DESC
+	</select>
+	<!-- 新增校验配置-->
+	<insert id="addConfigEfficacy"   parameterType="java.util.HashMap">
+	   INSERT INTO  BG_CONFIG_EFFICACY_INFO (
+		UUID,
+		YEAR,
+		MONTH,
+		IS_EFFICACY,
+		CREATE_USER,
+        CREATE_DATE,
+        UPDATE_USER,
+        UPDATE_DATE,
+        VALID
+		)
+		VALUES(
+		#{efficacyInfo.id},
+		#{efficacyInfo.year},
+		#{efficacyInfo.month},
+		#{efficacyInfo.isEfficacy},
+		#{efficacyInfo.createUser},
+		#{efficacyInfo.createTime},
+		#{efficacyInfo.updateUser},
+		#{efficacyInfo.updateTime},
+		#{efficacyInfo.valid}
+		)
+	</insert>
+
+	<!-- 根据id删除校验配置，逻辑删除 -->
+	<update id="deleteConfigEfficacy">
+		UPDATE BG_CONFIG_EFFICACY_INFO T
+		    SET
+		    T.VALID = #{efficacyInfo.valid},
+		    T.UPDATE_USER=#{efficacyInfo.updateUser},
+		    T.UPDATE_DATE=#{efficacyInfo.updateTime}
+		  WHERE T.UUID = #{efficacyInfo.id}
+	</update>
+	<!-- 根据id修改校验配置 -->
+	<update id="updataConfigEfficacy" parameterType="java.util.HashMap">
+		UPDATE BG_CONFIG_EFFICACY_INFO T
+		SET
+		T.YEAR=#{efficacyInfo.year},
+		T.MONTH=#{efficacyInfo.month},
+		T.IS_EFFICACY=#{efficacyInfo.isEfficacy},
+		T.UPDATE_USER=#{efficacyInfo.updateUser},
+		T.UPDATE_DATE=#{efficacyInfo.updateTime}
+		WHERE  VALID='1' and  T.UUID = #{efficacyInfo.id}
+	</update>
+	
+
+</mapper>

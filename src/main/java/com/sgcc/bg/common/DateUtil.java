@@ -208,7 +208,17 @@ public class DateUtil {
 			}
 		return date;
 	}
-	
+	/**
+	 * 根据日期的字符串转化为Date对象
+	 * @param datestr
+	 * @param format
+	 * @return
+	 */
+	public static String  getFormatStringToString(String datestr, String format) {
+		Date date=getFormatDate(datestr,format);
+		String dateTime=getFormatDateString(date,format);
+		return dateTime;
+	}
 	/**
 	 * 校验时间格式
 	 * @param s
@@ -880,4 +890,5 @@ public class DateUtil {
 			String b = getSpecifiedDayBefore(a);
 		 System.out.println(b);
 		}
+
 }
