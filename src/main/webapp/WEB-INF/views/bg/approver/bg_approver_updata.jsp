@@ -57,7 +57,7 @@
 	<div class="page-header-sl">
 		<div class="button-box">
 			<button type="button" class="btn btn-success btn-xs"
-				onclick="forSubmit()">修改</button>
+				onclick="forSubmit()">保存</button>
 		</div>
 	</div>
 	<hr>

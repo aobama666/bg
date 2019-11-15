@@ -59,10 +59,10 @@ a{
 </head>
 <body>
 	<div class="page-header-sl">
-		<h5>审批规则配置</h5>
+		<h5>审批规则查询</h5>
 		<div class="button-box">
 			<button type="button" class="btn btn-primary btn-xs"
-					name="kOne" onclick="forProcess()">提交流程</button>
+					name="kOne" onclick="forProcess()">审批规则查询</button>
 
 		</div>
 	</div>

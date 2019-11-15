@@ -12,7 +12,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
 
-<title>审批组织配置</title>
+<title>部门类型查询</title>
 <link rel="stylesheet" type="text/css"
 	href="<%=request.getContextPath()%>/common/plugins/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" type="text/css"
@@ -59,7 +59,7 @@ a{
 </head>
 <body>
 	<div class="page-header-sl">
-		<h5>审批组织配置</h5>
+		<h5>部门类型查询</h5>
 	</div>
 	<hr>
 	<div class="query-box">
