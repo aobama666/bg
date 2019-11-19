@@ -62,7 +62,7 @@ a{
 		<h5>审批规则查询</h5>
 		<div class="button-box">
 			<button type="button" class="btn btn-primary btn-xs"
-					name="kOne" onclick="forProcess()">审批规则查询</button>
+					name="kOne" onclick="forProcess()">审批规则总览</button>
 
 		</div>
 	</div>
