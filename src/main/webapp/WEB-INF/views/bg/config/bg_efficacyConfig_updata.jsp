@@ -68,18 +68,17 @@
 	<div class="form-group col-xs-11"  style="height: 40px">
 		<label >年度：</label>
 		<div class="controls">
-				<div class="input-group date form_date bg-white" id="yearTime"　data-date-format="yyyy" >
-					<input type="hidden" name="id" id="id" value="${UUID}">
-					<input  id="year" name="year" property="year"  type="text"  class="form-control form_datetime_2 input-sm bg-white" value="${YEAR}"  readonly  />
-					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-				</div>
+			<div class="input-group date form_date bg-white" id="yearTime"　data-date-format="yyyy" >
+				<input  id="year" name="year" property="year"  type="text"  class="form-control form_datetime_2 input-sm bg-white"   readonly  />
+				<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+			</div>
 		</div>
 	</div>
 	<div class="form-group col-xs-11"  style="height: 40px">
 		<label>月度：</label>
 		<div class="controls">
 			<div class="input-group date form_date bg-white" id="monthTime"　data-date-format="mm" >
-				<input  id="month" name="month" property="month"  type="text"  class="form-control form_datetime_2 input-sm bg-white" value="${MONTH}"   readonly  />
+				<input  id="month" name="month" property="month"  type="text"  class="form-control form_datetime_2 input-sm bg-white"   readonly  />
 				<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 			</div>
 		</div>
@@ -97,6 +96,9 @@
 </div>
 </body>
 <script type="text/javascript">
+
+    $("input[name=year]").val(${YEAR});
+    $("input[name=month]").val(${MONTH});
     $(function(){
         Timeinit();
     });
