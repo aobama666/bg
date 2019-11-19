@@ -83,6 +83,12 @@ applyOperate.applyAdd = function () {
         layer.msg('申请日期不能早于当前时间');
         return;
     }
+    //验证手机号格式
+    var  phone=IsRight.telePhone("#useSealPhone");
+    if(!phone){
+        layer.alert('联系电话格式错误，请输入11位数字手机号码或固定电话',{icon:0,title:'信息提示'});
+        return;
+    }
     //获取form表单内容
     var paperDetailFormData = roomAddInfoCommon.getFormDataInfo();
     layer.confirm('确认保存该数据吗',{
@@ -127,6 +133,12 @@ applyOperate.applyUpdate = function () {
     useSealDate = new Date(useSealDate+' 23:59:59');
     if(useSealDate<new Date()){
         layer.msg('申请日期不能早于当前时间');
+        return;
+    }
+    //验证手机号格式
+    var  phone=IsRight.telePhone("#useSealPhone");
+    if(!phone){
+        layer.alert('联系电话格式错误，请输入11位数字手机号码或固定电话',{icon:0,title:'信息提示'});
         return;
     }
     //获取form表单内容
@@ -228,7 +240,11 @@ applyOperate.toSubmit = function () {
 //提交用印申请
 applyOperate.applySubmit = function () {
     //发送后台请求
-    var principalUser = $("input[name='principal']:checked").val();
+    var arr = new Array();
+    $("input:checkbox[name='principal']:checked").each(function (i) {
+        arr[i] = $(this).val();
+    })
+    var principalUser = arr.join(",");
     var checkedIds = $("#checkedIds").val();
     if(principalUser==='' || principalUser === undefined){
         layer.msg("请选择下一环节审批人！");

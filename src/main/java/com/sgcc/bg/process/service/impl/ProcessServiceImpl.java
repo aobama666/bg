@@ -104,15 +104,18 @@ public class ProcessServiceImpl implements ProcessService {
         applyUpdate.setUpdateUser(approveUserId);
         pbMapper.updateApply(applyUpdate);
 
-        //共有方法中考虑是否会传递多个审批人，目前没对多人做处理
         //添加待办人信息
-        String auditUserUuId = Rtext.getUUID();
-        PbAuditUser auditUser = new PbAuditUser();
-        auditUser.setId(auditUserUuId);
-        auditUser.setApproveId(approveNextUuid);
-        auditUser.setApproveUser(toDoerId);
-        auditUser.setCreateUser(approveUserId);
-        pbMapper.addAuditUser(auditUser);
+        String[] toDoerArray = toDoerId.split(",");
+        PbAuditUser auditUser;
+        for(String toDoer : toDoerArray){
+            String auditUserUuId = Rtext.getUUID();
+            auditUser = new PbAuditUser();
+            auditUser.setId(auditUserUuId);
+            auditUser.setApproveId(approveNextUuid);
+            auditUser.setApproveUser(toDoer);
+            auditUser.setCreateUser(approveUserId);
+            pbMapper.addAuditUser(auditUser);
+        }
 
         //发送待办，申请id，审批id，
         sendUpcoming(pbApplyUuid,approveNextUuid,ProcessBaseConstant.PRECESS_APPROVE,toDoerId,auditUrl,auditCatalog,auditTitle);
@@ -542,14 +545,14 @@ public class ProcessServiceImpl implements ProcessService {
      * 共有方法   添加审批扩展信息封装--新增扩展信息、新增待办信息、发送多人多条待办
      * @param applyId       申请id
      * @param approveId     审批id
-     * @param toDoerId      待办人，可为多个，中间英文逗号隔开
+     * @param toDoerId      待办人，会签部门使用分号隔开，每个部门中的人员使用分号隔开，例“123,234;456,567”，123或456通过并且456或567通过为条件
      * @param operator      操作人
      * @param auditUrl      待办url
      * @param auditCatalog  待办catalog
      * @param auditTitle    待办标题
      */
     public boolean approveExpandPackage(String applyId,String approveId,String toDoerId,String operator,String auditUrl,String auditCatalog,String auditTitle){
-        String[] toDoerIdStr = toDoerId.split(",");
+        String[] toDoerIdStr = toDoerId.split(";");
         PbApproveExpand pbApproveExpand;
         PbAuditUser pbAuditUser;
         for(String userId:toDoerIdStr){
@@ -558,22 +561,23 @@ public class ProcessServiceImpl implements ProcessService {
             String pbApproveExpandUuid = Rtext.getUUID();
             pbApproveExpand.setUuid(pbApproveExpandUuid);
             pbApproveExpand.setApproveId(approveId);
-            pbApproveExpand.setApproveUser(userId);
+            pbApproveExpand.setApproveUser("");
             pbApproveExpand.setAuditFlag(ProcessBaseConstant.AUDIT_FLAG_YES);
             pbApproveExpand.setCreateUser(operator);
             pbApproveExpand.setApproveStep(getApproveStep(applyId));
             pbMapper.addApproveExpand(pbApproveExpand);
-
             //待办用户表
-            pbAuditUser = new PbAuditUser();
-            String pbAuditUserId = Rtext.getUUID();
-            pbAuditUser.setId(pbAuditUserId);
-            pbAuditUser.setApproveId(approveId);
-            pbAuditUser.setApproveExpandId(pbApproveExpandUuid);
-            pbAuditUser.setApproveUser(userId);
-            pbAuditUser.setCreateUser(operator);
-            pbMapper.addAuditUser(pbAuditUser);
-
+            String[] userIdStr = userId.split(",");
+            for(String userIdDou : userIdStr){
+                pbAuditUser = new PbAuditUser();
+                String pbAuditUserId = Rtext.getUUID();
+                pbAuditUser.setId(pbAuditUserId);
+                pbAuditUser.setApproveId(approveId);
+                pbAuditUser.setApproveExpandId(pbApproveExpandUuid);
+                pbAuditUser.setApproveUser(userIdDou);
+                pbAuditUser.setCreateUser(operator);
+                pbMapper.addAuditUser(pbAuditUser);
+            }
             //发送待办_扩展表格式_多人多条
             sendUpcoming(applyId,pbApproveExpandUuid,ProcessBaseConstant.PRECESS_EXPAND,userId,auditUrl,auditCatalog,auditTitle);
         }

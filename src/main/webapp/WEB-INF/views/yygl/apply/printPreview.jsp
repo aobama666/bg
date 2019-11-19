@@ -60,7 +60,9 @@
         </tr>
         <tr>
             <th>用印事由:</th>
-            <td colspan="3">&nbsp;&nbsp; ${yyApplyDAO.useSealReason}</td>
+            <td colspan="3">
+                <div style="padding-left: 14px">${yyApplyDAO.useSealReason}</div>
+            </td>
         </tr>
         <tr>
             <th colspan="4" style="text-align: center">审批记录</th>

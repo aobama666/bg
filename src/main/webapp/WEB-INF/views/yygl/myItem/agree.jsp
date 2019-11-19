@@ -77,7 +77,7 @@
         <tr>
             <td class="bg">审批意见</td>
             <td colspan="3">
-                <textarea id="approveOpinion" style="height: 100%;width: 100%;resize:vertical;text-align: center">同意</textarea>
+                <textarea id="approveOpinion" style="height: 100%;width: 100%;resize:vertical;padding-left: 10px">同意</textarea>
             </td>
         </tr>
     </table>

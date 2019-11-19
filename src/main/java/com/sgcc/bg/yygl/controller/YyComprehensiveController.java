@@ -101,13 +101,13 @@ public class YyComprehensiveController {
 	@RequestMapping(value="/itemIndex",method = RequestMethod.GET)
 	public ModelAndView itemIndex(HttpServletRequest res){
 		Logger.info("用印管理事项弹窗框-----开始");
-		Logger.info("------------------用印管理事项弹窗框下拉选的查询------------------------");
+//		Logger.info("------------------用印管理事项弹窗框下拉选的查询------------------------");
 		List<Map<String,String>>      itemList = yyComprehensiveService.selectForItemList();
 		Logger.info("------------------用印管理事项弹窗框下拉选的查询------------------------");
 		Map<String, Object> map = new HashMap<>();
     	Object jsonStr = JSON.toJSONStringWithDateFormat(itemList, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
     	map.put("itemList", jsonStr);//用印事项
-		Logger.info("用印管理事项弹窗框------返回值"+map);
+//		Logger.info("用印管理事项弹窗框------返回值"+map);
 		ModelAndView model = new ModelAndView("yygl/comprehensive/yygl_item_info",map);
 		Logger.info("用印管理事项弹窗框------结束");
 		return model;

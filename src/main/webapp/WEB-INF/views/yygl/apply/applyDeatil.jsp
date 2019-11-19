@@ -34,7 +34,8 @@
 <body>
 <div style="padding-top: 20px"></div>
 <input type="hidden" value="${auditType}" id="auditType"/>
-    <h3 style="float: left;margin-left: 3%;">申请编号:${yyApplyDAO.applyCode}</h3>
+<%--    <h3 style="float: left;margin-left: 3%;">申请编号:${yyApplyDAO.applyCode}</h3>--%>
+    <span style="font-size: 20px;float: left;margin-left: 3%">申请编号:${yyApplyDAO.applyCode}</span>
 <div class="tabbable active" style="text-align:right;width: 97%;padding-bottom: 5px;">
 
     <c:if test="${applyUser == 1}">
@@ -122,7 +123,7 @@
 
 
 <div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 1%">
-    <h3>用印材料详情</h3>
+    <span style="font-size: 20px">用印材料详情</span>
 
     <div id="datagrid" style="padding-top: 3px;"></div>
 </div>
@@ -131,8 +132,8 @@
 
 
 <div class="mingliao" style="margin-left: 3%;width: 94%;">
-    <h3 style="padding-top: 10px;padding-bottom: 10px">审批流程</h3>
-    <table class="liuchengTable" >
+    <span style="font-size: 20px;line-height: 40px">审批流程</span>
+    <table class="liuchengTable">
         <tr>
             <td>
                 <div class="start green">开始</div>
@@ -200,7 +201,7 @@
         <tr>
             <td colspan="8"></td>
             <td>
-                <div class="process " style="padding:0px;min-height:45px;line-height: 20px;padding-top: 8px;" id="7">印章管理员<br/>确认用印</div>
+                <div class="process " style="padding:0px;min-height:45px;line-height: 20px;" id="7">印章管理员<br/>确认用印</div>
             </td>
             <td>
                 <i class="toRight"></i>
