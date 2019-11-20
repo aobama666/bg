@@ -131,9 +131,12 @@
 				function(data){
 					if(data.success=="true"){
 						parent.queryList("reload");
+                        parent.layer.msg(data.msg);
 						forClose();
+					}else {
+                        parent.layer.msg(data.msg);
 					}
-					parent.layer.msg(data.msg);
+
 				}
 		);
 	}
