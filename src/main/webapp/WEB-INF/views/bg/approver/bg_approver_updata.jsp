@@ -57,7 +57,7 @@
 	<div class="page-header-sl">
 		<div class="button-box">
 			<button type="button" class="btn btn-success btn-xs"
-				onclick="forSubmit()">修改</button>
+				onclick="forSubmit()">保存</button>
 		</div>
 	</div>
 	<hr>
@@ -131,9 +131,12 @@
 				function(data){
 					if(data.success=="true"){
 						parent.queryList("reload");
+                        parent.layer.msg(data.msg);
 						forClose();
+					}else {
+                        parent.layer.msg(data.msg);
 					}
-					parent.layer.msg(data.msg);
+
 				}
 		);
 	}
