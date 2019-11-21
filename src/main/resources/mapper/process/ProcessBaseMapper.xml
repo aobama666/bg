@@ -46,7 +46,7 @@
         insert into TB_WL_APPROVE_EXPAND (
         uuid,APPROVE_ID,APPROVE_USER,AUDIT_FLAG,APPROVE_STEP,CREATE_USER,CREATE_TIME,VALID
         ) VALUES (
-            #{uuid},#{approveId},#{approveUser},#{auditFlag},#{approveStep},#{createUser},sysdate,'1'
+            #{approveExpandId},#{approveId},#{approveUser},#{auditFlag},#{approveStep},#{createUser},sysdate,'1'
         )
     </insert>
 
@@ -87,7 +87,7 @@
         ,audit_flag=#{auditFlag}
         ,approve_node=#{approveNode}
         ,next_approve_id=#{nextApproveId}
-          where id = #{id}
+          where id = #{approveId}
     </update>
 
     <update id="updateApproveExpand">
@@ -119,7 +119,7 @@
 
     <update id="updateAuditUserForExpand">
         update TB_WL_AUDIT_USER set valid ='0'
-        where APPROVE_EXPAND_ID_ID=#{approveExpandId} and APPROVE_USER!=#{approveUser}
+        where APPROVE_EXPAND_ID=#{approveExpandId} and APPROVE_USER!=#{approveUser}
     </update>
 
     <select id="selectAuditUserForApprove" resultType="com.sgcc.bg.process.model.PbAuditUser">
