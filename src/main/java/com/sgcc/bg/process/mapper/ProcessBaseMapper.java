@@ -46,6 +46,12 @@ public interface ProcessBaseMapper {
             @Param("approveId") String approveId,
             @Param("approveUser") String approveUser);
 
+    //修改对应审批扩展id除参数外其他用户的有效改为无效
+    Integer updateAuditUserForExpand(
+            @Param("approveExpandId") String approveExpandId,
+            @Param("approveUser") String approveUser
+    );
+
     //查询对应审批id待办用户信息
     List<PbAuditUser> selectAuditUserForApprove(@Param("approveId") String approveId);
 
@@ -101,7 +107,7 @@ public interface ProcessBaseMapper {
             @Param("approveRemark") String approveRemark,
             @Param("auditFlag") String auditFlag,
             @Param("updateUser") String updateUser,
-            @Param("approveId") String approveId,
+            @Param("approveExpandId") String approveExpandId,
             @Param("approveUser") String approveUser,
             @Param("toDoerIdS") String toDoerIdS
     );
@@ -126,4 +132,5 @@ public interface ProcessBaseMapper {
 
     //根据userid获取门户账号,针对待办的所有操作，用户id都需要换成门户账号
     String getUserName(@Param("userId") String userId);
+
 }

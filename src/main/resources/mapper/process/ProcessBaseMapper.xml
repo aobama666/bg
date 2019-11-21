@@ -99,10 +99,10 @@
             TODOER_ID=#{toDoerIdS},
           </if>
           APPROVE_DATE=sysdate,
+          APPROVE_USER=#{approveUser},
           UPDATE_USER=#{updateUser},
           UPDATE_TIME=sysdate
-        where approve_id = #{approveId}
-        and approve_user = #{approveUser}
+        where UUID = #{approveExpandId}
     </update>
 
     <update id="updateAuditUserForUser">
@@ -115,6 +115,11 @@
         SET AUDIT_FLAG = '0',update_user = #{updateUser},update_time = sysdate
         WHERE AUDIT_FLAG = '1'
         AND APPROVE_ID = #{approveId}
+    </update>
+
+    <update id="updateAuditUserForExpand">
+        update TB_WL_AUDIT_USER set valid ='0'
+        where APPROVE_EXPAND_ID_ID=#{approveExpandId} and APPROVE_USER!=#{approveUser}
     </update>
 
     <select id="selectAuditUserForApprove" resultType="com.sgcc.bg.process.model.PbAuditUser">
@@ -225,10 +230,8 @@
     </select>
 
     <select id="getExpandId" resultType="java.lang.String">
-        SELECT uuid
-        FROM TB_WL_APPROVE_EXPAND
-        WHERE approve_id = #{approveId} AND APPROVE_USER = #{approveUser}
-        AND valid='1'
+        select APPROVE_EXPAND_ID from TB_WL_AUDIT_USER
+        where APPROVE_ID = #{approveId} and APPROVE_USER = #{approveUser} and VALID='1'
     </select>
 
     <select id="undoneApproveExpand" resultType="java.lang.String">

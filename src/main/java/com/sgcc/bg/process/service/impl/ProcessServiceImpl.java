@@ -157,7 +157,7 @@ public class ProcessServiceImpl implements ProcessService {
             String approveExpandId = pbMapper.getExpandId(approveId,approveUserId);
             //修改对应扩展表信息
             pbMapper.updateApproveExpand(ProcessBaseConstant.RESULT_AGREE,approveRemark,ProcessBaseConstant.AUDIT_FLAG_NO
-                    ,approveUserId,approveId,approveUserId,toDoerId);
+                    ,approveUserId,approveExpandId,approveUserId,toDoerId);
             //完成当前待办信息
             completeUpcoming(applyId,approveExpandId,ProcessBaseConstant.PRECESS_EXPAND,approveUserId,ProcessBaseConstant.AUDIT_RESULT_AGREE);
             //判断本环节审批其他人员是否审批通过
@@ -257,20 +257,21 @@ public class ProcessServiceImpl implements ProcessService {
         boolean if_expand = pbRule.getIfExpand().equals(ProcessBaseConstant.RULE_EXPAND_YES);
         //如果属于扩展表
         if(if_expand){
+            //根据审批id和审批用户获取审批扩展id
+            String approveExpandId = pbMapper.getExpandId(approveId,approveUserId);
             //修改当前人员对应状态
             pbMapper.updateApproveExpand(ProcessBaseConstant.RESULT_REFUSE,approveRemark
-                    ,ProcessBaseConstant.AUDIT_FLAG_NO,approveUserId,approveId,approveUserId,null);
-            //根据审批id和审批用户获取对应扩展id
-            String approveExpandId = pbMapper.getExpandId(approveId,approveUserId);
+                    ,ProcessBaseConstant.AUDIT_FLAG_NO,approveUserId,approveExpandId,approveUserId,null);
             //完成当前待办
             completeUpcoming(applyId,approveExpandId,ProcessBaseConstant.PRECESS_EXPAND,approveUserId,ProcessBaseConstant.AUDIT_RESULT_REFUSE);
-
             //获取当前待办状态为待办的审批扩展信息，
             List<String> undoneApproveExpand = pbMapper.undoneApproveExpand(approveId);
             //循环撤销其他人员的待办
             for(String expandId : undoneApproveExpand){
                 cancelUpcoming(applyId,expandId,ProcessBaseConstant.PRECESS_EXPAND);
             }
+            // 修改除此之外的会签审批扩展id对应的待办用户置为无效状态,避免其他用户显示已办消息
+            pbMapper.updateAuditUserForExpand(approveExpandId,approveUserId);
             //如果有其他的对应审批扩展信息，修改当前为待办的待办状态为已办
             pbMapper.updateUndoneApproveExpand(approveId,approveUserId);
         }
@@ -355,6 +356,8 @@ public class ProcessServiceImpl implements ProcessService {
             //循环撤销其他人员的待办
             for(String expandId : undoneApproveExpand){
                 cancelUpcoming(applyId,expandId,ProcessBaseConstant.PRECESS_EXPAND);
+                // 修改除此之外的会签审批扩展id对应的待办用户置为无效状态,避免其他用户显示已办消息
+                pbMapper.updateAuditUserForExpand(expandId,operator);
             }
             //如果有其他的对应审批扩展信息，修改当前为待办的待办状态为已办
             pbMapper.updateUndoneApproveExpand(approveId,operator);
