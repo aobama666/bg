@@ -149,9 +149,12 @@
             function(data){
                 if(data.success=="true"){
                     parent.queryListPro("reload");
+                    parent.layer.msg(data.msg);
                     forClose();
-                }
-                parent.layer.msg(data.msg);
+                }else{
+                    parent.layer.msg(data.msg);
+				}
+
             }
         );
     }
