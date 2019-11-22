@@ -90,7 +90,7 @@
 		<div class="controls">
 			<select id="isEfficacy" name="isEfficacy" property="isEfficacy">
 				<option  value ="1" title="是" selected> 是</option>
-				<option  value ="０" title="否" > 否</option>
+				<option  value ="0" title="否" > 否</option>
 			</select>
 		</div>
 	</div>
