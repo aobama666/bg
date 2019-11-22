@@ -193,8 +193,8 @@ public class BgConfigEfficacyController {
 		if(!content.isEmpty()){
 			String  oldisEfficacy=content.get(0).get("IS_EFFICACY").toString();
 			if(oldisEfficacy.equals(isEfficacy)){
-				rw.setSuccess("false");
-				rw.setMsg("该信息无改动");
+				rw.setSuccess("true");
+				rw.setMsg("修改成功");
 				return rw;
 			}else{
 				result = bgConfigEfficacyService.updataConfigEfficacy(efficacyInfo);
