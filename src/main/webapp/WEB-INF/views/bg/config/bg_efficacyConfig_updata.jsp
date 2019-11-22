@@ -69,7 +69,7 @@
 		<label >年度：</label>
 		<div class="controls">
 			<div class="input-group date form_date bg-white" id="yearTime"　data-date-format="yyyy" >
-				<input  type="hidden" id="id" name="id" value="${UUID}">
+
 				<input  id="year" name="year" property="year"  type="text"  class="form-control form_datetime_2 input-sm bg-white"   readonly  />
 				<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
 			</div>
@@ -89,11 +89,13 @@
 		<label style="    width: 95px;">校验考勤工时：</label>
 		<div class="controls">
 			<select id="isEfficacy" name="isEfficacy" property="isEfficacy">
+
 				<option  value ="1" title="是" ${IS_EFFICACY ==1 ?"selected='selected'":''}> 是</option>
 				<option  value ="0" title="否" ${IS_EFFICACY == 0 ?"selected='selected'":''}> 否</option>
 			</select>
 		</div>
 	</div>
+	<input  type="hidden" id="id" name="id" value="${UUID}">
 </div>
 </body>
 <script type="text/javascript">

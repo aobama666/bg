@@ -283,7 +283,7 @@ public class StaffWorkingHourManageController {
 			Double workhours = Double.valueOf(workHour);
 			Map<String,Object> dateMap = SWService.workingHoursMap(date);
 			BigDecimal fillSum = new BigDecimal(String.valueOf(dateMap.get("fillSum")));
-			BigDecimal fillSumKQ = (BigDecimal)dateMap.get("fillSumKQ");
+			BigDecimal fillSumKQ = new BigDecimal(String.valueOf(dateMap.get("fillSumKQ")));
 			int j = fillSum.add(BigDecimal.valueOf(workhours)).compareTo(fillSumKQ);
 			if(j>0){
 				smLog.info("工时超标！");

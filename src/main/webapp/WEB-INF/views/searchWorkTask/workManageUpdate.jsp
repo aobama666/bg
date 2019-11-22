@@ -91,7 +91,7 @@
 				<span>投入工时(h)</span>
 			</label>
 			<div class="controls">
-				<input type="text" style="width: 150px" name="hours" property="hours">
+				<input type="text" style="width: 150px" name="hours" property="hours"  >
 				<input type="hidden" name="hoursOld" property="hoursOld">
 			</div>
 		</div>
@@ -102,12 +102,6 @@
 			<span id="fillSum" style="color: red">${fillSum}</span>
 		</div>
 	</div>
-	<%--<div class="form-group col-xs-12">
-		<span>月度工时/已填报工时（h）：</span>
-		<span id="fillSumKQ" >${fillSumKQ}</span>
-		<span>/</span>
-		<span id="fillSum">${fillSum}</span>
-	</div>--%>
 </div>
 </body>
 <script type="text/javascript">
@@ -147,6 +141,10 @@ function forSave(){
             layer.msg("填报工时已超出月度工时，请检查");
             return;
 		}*/
+        if (fillSumKQ<hours){
+            layer.msg("投入工时已超出月度工时，请检查");
+            return;
+        }
 		var param = {
 				userName:userName,
 				userCode:userCode,
@@ -204,9 +202,11 @@ function workCommit(){
             layer.msg("无月度工时，不可提交");
             return;
         }
+        debugger;
         //fillSum = Number(fillSum)-Number(hoursOld)+Number(hours);
-        fillSum = Number(fillSum)+Number(hours);
-        if (fillSumKQ<fillSum){
+       // fillSum = Number(fillSum)+Number(hours);
+
+        if (fillSumKQ<hours){
             layer.msg("填报工时已超出月度工时，请检查");
             return;
         }
