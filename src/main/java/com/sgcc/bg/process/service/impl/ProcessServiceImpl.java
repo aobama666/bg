@@ -54,10 +54,12 @@ public class ProcessServiceImpl implements ProcessService {
         pbMapper.addApprove(approveSubUuid,pbApplyUuid,subRule.getId()
                 ,ProcessBaseConstant.AUDIT_FLAG_NO,"1",approveUserId);
 
+        //提交人当前部门信息
+        String approveDept = pbMapper.getDeptId(approveUserId);
         //修改提交审批的状态
         String approveNextUuid = Rtext.getUUID();
         pbMapper.updateApprove(approveSubUuid,ProcessBaseConstant.AUDIT_FLAG_NO,subRule.getId(),approveNextUuid
-                ,ProcessBaseConstant.APPROVE_YES,ProcessBaseConstant.RESULT_SUBMIT,approveUserId,approveRemark,new Date());
+                ,ProcessBaseConstant.APPROVE_YES,ProcessBaseConstant.RESULT_SUBMIT,approveUserId,approveDept,approveRemark,new Date());
 
         //添加提交后的第二条审批信息
         pbMapper.addApprove(approveNextUuid,pbApplyUuid,nextRule.getId()
@@ -94,6 +96,8 @@ public class ProcessServiceImpl implements ProcessService {
         /**
          * 获取各项信息，判断下一环节走向
          */
+        //对应审批人部门
+        String approveDept = pbMapper.getDeptId(approveUserId);
         //获取当前审批id
         String approveId = pbMapper.getApproveIdForBusinessId(businessId);
         //本环节审批信息
@@ -116,7 +120,7 @@ public class ProcessServiceImpl implements ProcessService {
             String approveExpandId = pbMapper.getExpandId(approveId,approveUserId);
             //修改对应扩展表信息
             pbMapper.updateApproveExpand(ProcessBaseConstant.RESULT_AGREE,approveRemark,ProcessBaseConstant.AUDIT_FLAG_NO
-                    ,approveUserId,approveExpandId,approveUserId,toDoerId);
+                    ,approveUserId,approveExpandId,approveUserId,approveDept,toDoerId);
             //完成当前待办信息
             completeUpcoming(applyId,approveExpandId,ProcessBaseConstant.PRECESS_EXPAND,approveUserId,ProcessBaseConstant.AUDIT_RESULT_AGREE);
             //判断本环节审批其他人员是否审批通过
@@ -163,7 +167,7 @@ public class ProcessServiceImpl implements ProcessService {
         pbMapper.updateApply(pbRuleNext.getNode(),approveIdAdd,approveUserId,applyId);
         //更新审批表信息
         pbMapper.updateApprove(approveId,ProcessBaseConstant.AUDIT_FLAG_NO,pbRule.getId(),approveIdAdd,ProcessBaseConstant.APPROVE_YES
-                ,ProcessBaseConstant.RESULT_AGREE,approveUserId,approveRemark,new Date());
+                ,ProcessBaseConstant.RESULT_AGREE,approveUserId,approveDept,approveRemark,new Date());
         if(!if_expand){//如果不属于审批扩展表
             //完成当前待办信息
             completeUpcoming(applyId,approveId,ProcessBaseConstant.PRECESS_APPROVE,approveUserId,ProcessBaseConstant.AUDIT_RESULT_AGREE);
@@ -180,6 +184,8 @@ public class ProcessServiceImpl implements ProcessService {
     public boolean refuse(String businessId,
                           String approveRemark,
                           String approveUserId) {
+        //审批人对应部门信息
+        String approveDept = pbMapper.getDeptId(approveUserId);
         //获取当前审批id
         String approveId = pbMapper.getApproveIdForBusinessId(businessId);
         //本环节审批信息
@@ -196,7 +202,7 @@ public class ProcessServiceImpl implements ProcessService {
             String approveExpandId = pbMapper.getExpandId(approveId,approveUserId);
             //修改当前人员对应状态
             pbMapper.updateApproveExpand(ProcessBaseConstant.RESULT_REFUSE,approveRemark
-                    ,ProcessBaseConstant.AUDIT_FLAG_NO,approveUserId,approveExpandId,approveUserId,null);
+                    ,ProcessBaseConstant.AUDIT_FLAG_NO,approveUserId,approveExpandId,approveUserId,approveDept,null);
             //完成当前待办
             completeUpcoming(applyId,approveExpandId,ProcessBaseConstant.PRECESS_EXPAND,approveUserId,ProcessBaseConstant.AUDIT_RESULT_REFUSE);
             //获取当前待办状态为待办的审批扩展信息，
@@ -214,11 +220,11 @@ public class ProcessServiceImpl implements ProcessService {
         //添加下一环节的审批信息
                         String approveIdAdd = Rtext.getUUID();
         pbMapper.addApprove(approveIdAdd,applyId,pbRule.getNextNodeId()
-                ,ProcessBaseConstant.AUDIT_FLAG_NO,approveUserId,getApproveStep(applyId));
+                ,ProcessBaseConstant.AUDIT_FLAG_NO,getApproveStep(applyId),approveUserId);
 
         //修改当前审批表信息
         pbMapper.updateApprove(approveId,ProcessBaseConstant.AUDIT_FLAG_NO,pbRule.getId(),approveIdAdd,ProcessBaseConstant.APPROVE_YES
-                ,ProcessBaseConstant.RESULT_REFUSE,approveUserId,approveRemark,new Date());
+                ,ProcessBaseConstant.RESULT_REFUSE,approveUserId,approveDept,approveRemark,new Date());
 
         //如果不属于审批扩展表,完成当前待办信息
         if(!if_expand){
@@ -297,14 +303,16 @@ public class ProcessServiceImpl implements ProcessService {
 
         //修改当前审批表信息
         pbMapper.updateApprove(approveId,ProcessBaseConstant.AUDIT_FLAG_NO,pbRule.getId(),approveIdAdd,ProcessBaseConstant.APPROVE_YES
-                ,null,null,null,null);
+                ,null,null,null,null,null);
 
         //添加撤回待办流程信息
         pbMapper.addApprove(approveIdAdd,applyId,pbRuleWithdraw.getId(),ProcessBaseConstant.AUDIT_FLAG_NO
                 ,getApproveStep(applyId),operator);
+        //操作人对应部门
+        String approveDept = pbMapper.getDeptId(operator);
         //修改撤回待办流程信息
         pbMapper.updateApprove(approveIdAdd,ProcessBaseConstant.AUDIT_FLAG_NO,pbRuleWithdraw.getId(),approveIdAddNext
-                ,ProcessBaseConstant.APPROVE_YES,ProcessBaseConstant.RESULT_WITHDRAW,operator,approveRemark,new Date());
+                ,ProcessBaseConstant.APPROVE_YES,ProcessBaseConstant.RESULT_WITHDRAW,operator,approveDept,approveRemark,new Date());
 
         //添加撤回待办之后的流程信息
         pbMapper.addApprove(approveIdAddNext,applyId,pbRuleWithdraw.getNextNodeId()
@@ -453,7 +461,7 @@ public class ProcessServiceImpl implements ProcessService {
         for(String userId:toDoerIdStr){
             // 添加扩展信息
             String pbApproveExpandUuid = Rtext.getUUID();
-            pbMapper.addApproveExpand(pbApproveExpandUuid,approveId,"",ProcessBaseConstant.AUDIT_FLAG_YES,getApproveStep(applyId),operator);
+            pbMapper.addApproveExpand(pbApproveExpandUuid,approveId,ProcessBaseConstant.AUDIT_FLAG_YES,getApproveStep(applyId),operator);
             //待办用户表
             String[] userIdStr = userId.split(",");
             for(String userIdDou : userIdStr){

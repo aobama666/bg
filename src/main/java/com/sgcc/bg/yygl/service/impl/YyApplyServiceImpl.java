@@ -366,7 +366,7 @@ public class YyApplyServiceImpl implements YyApplyService {
     public String ifApproveIsNull(String applyUuid) {
         YyApplyDAO apply = yyApplyMapper.findApply(applyUuid);
         String itemSecondId = apply.getItemSecondId();
-        String ifSign = yyMyItemMapper.ifSign(itemSecondId);
+        String ifLeaderApprove = yyMyItemMapper.ifLeaderApprove(itemSecondId);
         List<String> nodeDept = yyApplyMapper.getApproveUserId(YyApplyConstant.NODE_DEPT,apply.getApplyDeptId(),null);
         if(nodeDept.size()==0){
             return "未配置部门负责人，无法发起申请";
@@ -385,7 +385,7 @@ public class YyApplyServiceImpl implements YyApplyService {
             return "未配置办公室负责人，无法发起申请";
         }
         //查看该申请对应事项是否需要院领导批准
-        if(YyApplyConstant.LEADER_APPROVE_NEED.equals(ifSign)){
+        if(YyApplyConstant.LEADER_APPROVE_NEED.equals(ifLeaderApprove)){
             List<String> nodeLeader = yyApplyMapper.getApproveUserId(YyApplyConstant.NODE_LEADER,null,itemSecondId);
             if(nodeLeader.size()==0){
                 return "未配置院领导负责人，无法发起申请";

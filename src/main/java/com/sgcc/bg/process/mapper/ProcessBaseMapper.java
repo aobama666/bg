@@ -126,6 +126,7 @@ public interface ProcessBaseMapper {
             @Param("approveStatus") String approveStatus,
             @Param("approveResult") String approveResult,
             @Param("approveUser") String approveUser,
+            @Param("approveDept") String approveDept,
             @Param("approveRemark") String approveRemark,
             @Param("approveDate") Date approveDate
     );
@@ -144,7 +145,6 @@ public interface ProcessBaseMapper {
     Integer addApproveExpand(
             @Param("approveExpandId") String approveExpandId,
             @Param("approveId") String approveId,
-            @Param("approveUser") String approveUser,
             @Param("auditFlag") String auditFlag,
             @Param("approveStep") String approveStep,
             @Param("createUser") String createUser
@@ -158,6 +158,7 @@ public interface ProcessBaseMapper {
             @Param("updateUser") String updateUser,
             @Param("approveExpandId") String approveExpandId,
             @Param("approveUser") String approveUser,
+            @Param("approveDept") String approveDept,
             @Param("toDoerIdS") String toDoerIdS
     );
 
@@ -178,8 +179,9 @@ public interface ProcessBaseMapper {
     //查询扩展表中，某个审批id其下对应的所有下一环节审批人
     List<String> getExpandToDoer(@Param("approveId") String approveId);
 
-
     //根据userid获取门户账号,针对待办的所有操作，用户id都需要换成门户账号
     String getUserName(@Param("userId") String userId);
 
+    //根据当前人员，获取对应对应处室名称
+    String getDeptId(@Param("userId") String userId);
 }

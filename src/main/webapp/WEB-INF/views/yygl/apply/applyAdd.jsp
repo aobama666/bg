@@ -89,7 +89,7 @@
         <td style="width: 90%" class="addInputStyle" colspan="3">
             <input type = "text" style="display: none" id = "useSealKindCode"  name="useSealKindCode">
             <input type = "text" style="display: none" id = "elseKind"  name="elseKind">
-            <input type="text"  id="useSealKindValue"  name="useSealKindValue"  class="validNull"
+            <input type="text"  id="useSealKindValue"  name="useSealKindValue"  class="validNull" readonly
                    onclick="applyOperate.checkKind()" content="用印种类" title="必填项"/>
         </td>
     </tr>

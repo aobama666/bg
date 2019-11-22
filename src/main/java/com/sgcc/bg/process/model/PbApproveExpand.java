@@ -9,6 +9,7 @@ public class PbApproveExpand {
     private String uuid;
     private String approveId;
     private String approveUser;
+    private String approveDept;
     private String approveResult;
     private String approveRemark;
     private String auditFlag;
@@ -123,5 +124,13 @@ public class PbApproveExpand {
 
     public void setApproveStep(String approveStep) {
         this.approveStep = approveStep;
+    }
+
+    public String getApproveDept() {
+        return approveDept;
+    }
+
+    public void setApproveDept(String approveDept) {
+        this.approveDept = approveDept;
     }
 }

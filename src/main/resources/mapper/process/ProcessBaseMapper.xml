@@ -44,9 +44,9 @@
 
     <insert id="addApproveExpand">
         insert into TB_WL_APPROVE_EXPAND (
-        uuid,APPROVE_ID,APPROVE_USER,AUDIT_FLAG,APPROVE_STEP,CREATE_USER,CREATE_TIME,VALID
+        uuid,APPROVE_ID,AUDIT_FLAG,APPROVE_STEP,CREATE_USER,CREATE_TIME,VALID
         ) VALUES (
-            #{approveExpandId},#{approveId},#{approveUser},#{auditFlag},#{approveStep},#{createUser},sysdate,'1'
+            #{approveExpandId},#{approveId},#{auditFlag},#{approveStep},#{createUser},sysdate,'1'
         )
     </insert>
 
@@ -78,6 +78,9 @@
         <if test="approveUser!=null and approveUser!=''">
           ,approve_user=#{approveUser}
         </if>
+        <if test="approveDept!=null and approveDept!=''">
+            ,approve_dept=#{approveDept}
+        </if>
         <if test="approveRemark!=null and approveRemark!=''">
           ,approve_remark=#{approveRemark}
         </if>
@@ -100,6 +103,7 @@
           </if>
           APPROVE_DATE=sysdate,
           APPROVE_USER=#{approveUser},
+          APPROVE_DEPT=#{approveDept},
           UPDATE_USER=#{updateUser},
           UPDATE_TIME=sysdate
         where UUID = #{approveExpandId}
@@ -279,6 +283,10 @@
         FROM TB_WL_APPROVE_EXPAND
         WHERE APPROVE_ID = #{approveId}
         AND TODOER_ID is not null
+    </select>
+
+    <select id="getDeptId" resultType="java.lang.String">
+        select hrdeptcode from BG_SYS_USER where USERID=#{userId}
     </select>
 
 
