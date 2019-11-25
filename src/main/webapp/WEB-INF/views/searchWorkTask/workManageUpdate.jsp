@@ -135,16 +135,18 @@ function forSave(){
 		/*if(fillSumKQ == '-'){
             layer.msg("无月度工时，不可提交");
             return;
-		}
-		fillSum = Number(fillSum)-Number(hoursOld)+Number(hours);
-		if (fillSumKQ<fillSum){
-            layer.msg("填报工时已超出月度工时，请检查");
-            return;
 		}*/
-        if (fillSumKQ<hours){
-            layer.msg("投入工时已超出月度工时，请检查");
-            return;
-        }
+
+       // fillSum = Number(fillSum)-Number(hoursOld)+Number(hours);
+		//fillSum = Number(fillSum)-Number(hoursOld)+Number(hours);
+		// if (fillSumKQ<fillSum){
+         //    layer.msg("填报工时已超出月度工时，请检查");
+         //    return;
+		// }
+        // if (fillSumKQ<hours){
+        //     layer.msg("投入工时已超出月度工时，请检查");
+        //     return;
+        // }
 		var param = {
 				userName:userName,
 				userCode:userCode,
@@ -204,9 +206,9 @@ function workCommit(){
         }
         debugger;
         //fillSum = Number(fillSum)-Number(hoursOld)+Number(hours);
-       // fillSum = Number(fillSum)+Number(hours);
+          fillSum = Number(fillSum)+Number(hours);
 
-        if (fillSumKQ<hours){
+        if (fillSumKQ<fillSum){
             layer.msg("填报工时已超出月度工时，请检查");
             return;
         }

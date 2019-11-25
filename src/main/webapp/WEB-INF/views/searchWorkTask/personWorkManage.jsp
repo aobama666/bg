@@ -329,6 +329,7 @@ function queryList(load){
 
 //提交
 function workCommit(){
+    debugger
 	var ids = "";
 	var xhs = "";
 	var noxhs = "";
