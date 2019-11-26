@@ -78,9 +78,7 @@ applyOperate.applyAdd = function () {
     }
     //验证申请日期大于当前时间
     var useSealDate = $("#useSealDate").val();
-    console.info('date:'+useSealDate);
     useSealDate = new Date(useSealDate.replace(/-/g,'/')+' 23:59:59').getTime();
-    console.info('date:'+useSealDate);
     if(useSealDate<new Date().getTime()){
         layer.msg('申请日期不能早于当前时间');
         return;
