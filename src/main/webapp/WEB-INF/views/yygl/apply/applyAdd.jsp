@@ -133,7 +133,7 @@
 <!-- 引入日期选择框 -->
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
 <!-- 引入datagrid -->
-<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>
+<%--<script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/My97DatePicker/WdatePicker.js"></script>--%>
 <!-- 验证校验公共方法，提示框公共方法 -->
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
