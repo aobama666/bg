@@ -67,7 +67,7 @@
         </td>
         <td style="width: 90%" class="addInputStyle">
             <input type="text"  id="useSealAmount"  name="useSealAmount"
-                   class="validNull"  len="50"   content="用印文件份数" title="必填项"/>
+                   class="validNull"  len="7"   content="用印文件份数" title="必填项"/>
         </td>
     </tr>
     <tr>
