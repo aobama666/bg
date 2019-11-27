@@ -204,7 +204,7 @@ function workCommit(){
             layer.msg("无月度工时，不可提交");
             return;
         }
-        debugger;
+
         //fillSum = Number(fillSum)-Number(hoursOld)+Number(hours);
           fillSum = Number(fillSum)+Number(hours);
 

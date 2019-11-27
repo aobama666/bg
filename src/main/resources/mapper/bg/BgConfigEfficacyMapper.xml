@@ -23,7 +23,7 @@
 		FROM BG_SYS_WORK_SCHEDULE
 		WHERE VALID  = '1'
 		AND IS_HOLIDAY = '0'
-		AND RBC_CODE = 'RBC001'
+		AND   SCHEDULE_TYPE ='0'
 		<if test="dateTime != null and dateTime != ''">
 			AND to_char(SCHEDULE_DATE,'yyyy-mm') = #{dateTime}
 		</if>
