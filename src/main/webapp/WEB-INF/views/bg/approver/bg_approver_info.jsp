@@ -132,7 +132,7 @@ $(function(){
 	queryList();
 });
 function init(){
-	$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio',popEvent:'pop'});
+	$("#organTree").organTree({root:'41000001',organCode:'deptCode',organName:'deptName',iframe:'self',checkType:'radio',popEvent:'pop',level:'1'});
 }
 function queryList(load){
 	var ran = Math.random()*100000000;

@@ -367,8 +367,8 @@ public class ApproverController {
 				String newpriority = String.valueOf(approverlist.get(0).get("PRIORITY"));
 				if (newpriority.equals(priority)) {
 					log.info("审批人配置修改----判断该信息优先级无改变");
-					rw.setSuccess("false");
-					rw.setMsg("无改动内容");
+					rw.setSuccess("true");
+					rw.setMsg( "修改成功");
 					log.info("审批人配置修改----结束-----返回值："+rw);
 					return rw;
 				}else{
