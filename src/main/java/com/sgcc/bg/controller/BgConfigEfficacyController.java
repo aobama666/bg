@@ -184,6 +184,11 @@ public class BgConfigEfficacyController {
 		efficacyInfo.put("month",month);
 		efficacyInfo.put("isEfficacy",isEfficacy);
 		List<Map<String,Object>> content = bgConfigEfficacyService.selectForConfigEfficacy(efficacyInfo);
+		if(!content.isEmpty()){
+			rw.setSuccess("false");
+			rw.setMsg("该信息已存在");
+			return rw;
+		}
 		CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String userId = currentUser.getUserId();
 		efficacyInfo.put("id", id);
