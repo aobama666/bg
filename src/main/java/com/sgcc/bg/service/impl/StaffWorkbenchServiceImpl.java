@@ -1,5 +1,6 @@
 package com.sgcc.bg.service.impl;
 
+import com.sgcc.bg.mapper.BgConfigEfficacyMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -39,6 +40,8 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 	private BGMapper bgMapper;
 	@Autowired
 	private StaffWorkbenchMaper SWMapper;
+	@Autowired
+	private BgConfigEfficacyMapper bgConfigEfficacyMapper;
 	@Autowired
 	private WebUtils webUtils;
 	@Autowired
@@ -84,26 +87,40 @@ public class StaffWorkbenchServiceImpl implements IStaffWorkbenchService{
 
 	@Override
 	public Map<String, Object> workingHoursMap(String selectedDate) {
-
 		//取一天工作时长
 		Integer TIME = Integer.parseInt(ConfigUtils.getConfig("KQ_everyday_workDate"));
-
 		//取月初和月末
 		Map<String,String> dateMap = dateBeginEnd(selectedDate);
 		String dataBegin = dateMap.get("dateBegin");
 		String dataEnd = dateMap.get("dateEnd");
-
 		CommonUser commonUser = webUtils.getCommonUser();
 		String currentUsername = commonUser.getUserName();
 		String currentHrcode = commonUser.getSapHrCode();
 		Double fillSum = SWMapper.fillWorkingHour(dataBegin,dataEnd,currentUsername);
-		Map<String,Object> fillSumKQ = SWMapper.fillKQWorkingHour(dataBegin,dataEnd,currentUsername);
+		Map map = new HashMap();
+		map.put("fillSum",fillSum);//已填报工时
 
+		String[] str= selectedDate.split("-");
+		String year=	String.valueOf(str[0]);
+		String month=	String.valueOf(str[1]);
+		Map<String ,Object> efficacyInfo=new HashMap<>();
+		efficacyInfo.put("year",year);
+		efficacyInfo.put("month",month);
+		List<Map<String ,Object>> efficacyList=bgConfigEfficacyMapper.selectForConfigEfficacy(efficacyInfo);
+        if(!efficacyList.isEmpty()){
+			String  isEfficacy=efficacyList.get(0).get("IS_EFFICACY").toString();
+			if(isEfficacy.equals("0")){
+				selectedDate=DateUtil.getFormatStringToString(selectedDate,"yyyy-MM");
+				Map<String ,Object> efficacyMap=bgConfigEfficacyMapper.selectForBcxx(selectedDate);
+				String    fillSumKQ=   efficacyMap.get("FILLSUMKQ").toString();
+				map.put("fillSumKQ", fillSumKQ);//月度工时=8h*工作日+36h
+				return map;
+			}
+		}
+		Map<String,Object> fillSumKQ = SWMapper.fillKQWorkingHour(dataBegin,dataEnd,currentUsername);
 		BigDecimal fullTime = ((BigDecimal) fillSumKQ.get("fullTime")).multiply(BigDecimal.valueOf(TIME));
 		BigDecimal overTime = (BigDecimal) fillSumKQ.get("overTime");
-		Map map = new HashMap();
-		map.put("fillSum",fillSum);
-		map.put("fillSumKQ",fullTime.add(overTime));
+		map.put("fillSumKQ",fullTime.add(overTime));//月度工时=考勤工时
 		return map;
 	}
 
