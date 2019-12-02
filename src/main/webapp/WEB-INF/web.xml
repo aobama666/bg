@@ -22,22 +22,22 @@
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:applicationContext.xml
-		</param-value>
+    </param-value>
   </context-param>
   <listener>
     <description>springListens</description>
     <listener-class>org.springframework.web.context.ContextLoaderListener
-		</listener-class>
+    </listener-class>
   </listener>
   <listener>
     <listener-class>
-			org.springframework.web.util.IntrospectorCleanupListener
-		</listener-class>
+        org.springframework.web.util.IntrospectorCleanupListener
+    </listener-class>
   </listener>
   <servlet>
     <servlet-name>SpringMVC</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet
-		</servlet-class>
+    </servlet-class>
     <init-param>
       <description>spring MVC config</description>
       <param-name>contextConfigLocation</param-name>
@@ -52,18 +52,9 @@
   <servlet>
     <servlet-name>AxisServlet</servlet-name>
     <servlet-class>org.apache.axis2.transport.http.AxisServlet
-		</servlet-class>
+    </servlet-class>
     <load-on-startup>2</load-on-startup>
   </servlet>
-  <!-- 添加druid监控-->
-  <servlet>
-    <servlet-name>DruidStatView</servlet-name>
-    <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>DruidStatView</servlet-name>
-    <url-pattern>/druid/*</url-pattern>
-  </servlet-mapping>
   <servlet-mapping>
     <servlet-name>AxisServlet</servlet-name>
     <url-pattern>/services/*</url-pattern>
@@ -71,7 +62,7 @@
   <filter>
     <filter-name>encodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter
-		</filter-class>
+    </filter-class>
     <init-param>
       <param-name>encoding</param-name>
       <param-value>UTF-8</param-value>
@@ -80,32 +71,12 @@
       <param-name>forceEncoding</param-name>
       <param-value>true</param-value>
     </init-param>
-    <filter-name>DruidWebStatFilter</filter-name>
-    <filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
-    <init-param>
-      <param-name>exclusions</param-name>
-      <param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*</param-value>
-    </init-param>
-    <init-param>
-      <param-name>profileEnable</param-name>
-      <param-value>true</param-value>
-    </init-param>
-    <init-param>
-      <param-name>principalCookieName</param-name>
-      <param-value>USER_COOKIE</param-value>
-    </init-param>
-    <init-param>
-      <param-name>principalSessionName</param-name>
-      <param-value>USER_SESSION</param-value>
-    </init-param>
   </filter>
   <filter-mapping>
     <filter-name>encodingFilter</filter-name>
     <url-pattern>/*</url-pattern>
     <dispatcher>REQUEST</dispatcher>
     <dispatcher>FORWARD</dispatcher>
-    <filter-name>DruidWebStatFilter</filter-name>
-    <url-pattern>/*</url-pattern>
   </filter-mapping>
   <welcome-file-list>
     <welcome-file>/index.jsp</welcome-file>
@@ -113,4 +84,36 @@
   <session-config>
     <session-timeout>15</session-timeout>
   </session-config>
+
+    <!--druid监控-->
+    <servlet>
+        <servlet-name>DruidStatView</servlet-name>
+        <servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+        <init-param>
+            <param-name>loginUsername</param-name>
+            <param-value>bg</param-value>
+        </init-param>
+        <init-param>
+            <param-name>loginPassword</param-name>
+            <param-value>password.bg</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DruidStatView</servlet-name>
+        <url-pattern>/druid/*</url-pattern>
+    </servlet-mapping>
+    <!--监控url，设置web关联监控配置-->
+    <filter>
+        <filter-name>DruidWebStatFilter</filter-name>
+        <filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+        <init-param>
+            <param-name>exclusions</param-name>
+            <param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*</param-value><!--排除前端依赖干扰-->
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>DruidWebStatFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
 </web-app>
