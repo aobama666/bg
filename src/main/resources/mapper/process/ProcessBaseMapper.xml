@@ -44,9 +44,9 @@
 
     <insert id="addApproveExpand">
         insert into TB_WL_APPROVE_EXPAND (
-        uuid,APPROVE_ID,APPROVE_USER,AUDIT_FLAG,APPROVE_STEP,CREATE_USER,CREATE_TIME,VALID
+        uuid,APPROVE_ID,AUDIT_FLAG,APPROVE_STEP,CREATE_USER,CREATE_TIME,VALID
         ) VALUES (
-            #{uuid},#{approveId},#{approveUser},#{auditFlag},#{approveStep},#{createUser},sysdate,'1'
+            #{approveExpandId},#{approveId},#{auditFlag},#{approveStep},#{createUser},sysdate,'1'
         )
     </insert>
 
@@ -78,6 +78,9 @@
         <if test="approveUser!=null and approveUser!=''">
           ,approve_user=#{approveUser}
         </if>
+        <if test="approveDept!=null and approveDept!=''">
+            ,approve_dept=#{approveDept}
+        </if>
         <if test="approveRemark!=null and approveRemark!=''">
           ,approve_remark=#{approveRemark}
         </if>
@@ -87,7 +90,7 @@
         ,audit_flag=#{auditFlag}
         ,approve_node=#{approveNode}
         ,next_approve_id=#{nextApproveId}
-          where id = #{id}
+          where id = #{approveId}
     </update>
 
     <update id="updateApproveExpand">
@@ -99,10 +102,11 @@
             TODOER_ID=#{toDoerIdS},
           </if>
           APPROVE_DATE=sysdate,
+          APPROVE_USER=#{approveUser},
+          APPROVE_DEPT=#{approveDept},
           UPDATE_USER=#{updateUser},
           UPDATE_TIME=sysdate
-        where approve_id = #{approveId}
-        and approve_user = #{approveUser}
+        where UUID = #{approveExpandId}
     </update>
 
     <update id="updateAuditUserForUser">
@@ -115,6 +119,11 @@
         SET AUDIT_FLAG = '0',update_user = #{updateUser},update_time = sysdate
         WHERE AUDIT_FLAG = '1'
         AND APPROVE_ID = #{approveId}
+    </update>
+
+    <update id="updateAuditUserForExpand">
+        update TB_WL_AUDIT_USER set valid ='0'
+        where APPROVE_EXPAND_ID=#{approveExpandId} and APPROVE_USER!=#{approveUser}
     </update>
 
     <select id="selectAuditUserForApprove" resultType="com.sgcc.bg.process.model.PbAuditUser">
@@ -225,10 +234,8 @@
     </select>
 
     <select id="getExpandId" resultType="java.lang.String">
-        SELECT uuid
-        FROM TB_WL_APPROVE_EXPAND
-        WHERE approve_id = #{approveId} AND APPROVE_USER = #{approveUser}
-        AND valid='1'
+        select APPROVE_EXPAND_ID from TB_WL_AUDIT_USER
+        where APPROVE_ID = #{approveId} and APPROVE_USER = #{approveUser} and VALID='1'
     </select>
 
     <select id="undoneApproveExpand" resultType="java.lang.String">
@@ -276,6 +283,10 @@
         FROM TB_WL_APPROVE_EXPAND
         WHERE APPROVE_ID = #{approveId}
         AND TODOER_ID is not null
+    </select>
+
+    <select id="getDeptId" resultType="java.lang.String">
+        select hrdeptcode from BG_SYS_USER where USERID=#{userId}
     </select>
 
 

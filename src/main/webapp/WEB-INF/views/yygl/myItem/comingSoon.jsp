@@ -33,7 +33,7 @@
 
 <!-- start    查询条件 -->
 <div class="sheach">
-    <div class='content_top'>待办事项</div>
+<%--    <div class='content_top'>待办事项</div>--%>
 
     <form id="queryForm" style="margin-bottom: 10px;">
                 <%--是否待办，待办属性值为1--%>

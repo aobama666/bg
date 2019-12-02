@@ -322,6 +322,7 @@
                 AP.ID,
                 AP.NEXT_APPROVE_ID,
                 AP.APPROVE_USER,
+                AP.APPROVE_DEPT,
                 AP.APPROVE_REMARK,
                 AP.APPROVE_DATE,
                 to_number(AP.APPROVE_STEP) APPROVE_STEP,
@@ -339,6 +340,7 @@
                 AP.ID,
                 AP.NEXT_APPROVE_ID,
                 ape.APPROVE_USER,
+                ape.APPROVE_DEPT,
                 ape.APPROVE_REMARK,
                 ape.APPROVE_DATE,
                 to_number(ape.APPROVE_STEP) APPROVE_STEP,
@@ -355,7 +357,7 @@
           LEFT JOIN BG_SYS_USER U
             ON F.APPROVE_USER = U.USERID
           LEFT JOIN BG_SYS_DEPT D
-            ON u.hrdeptcode = d.deptcode
+            ON F.APPROVE_DEPT = d.deptcode
           LEFT JOIN TB_WL_APPROVE NX_AP
             ON NX_AP.ID = F.NEXT_APPROVE_ID
           LEFT JOIN TB_WL_RULE RU
@@ -378,6 +380,7 @@
                 AP.ID,
                 AP.NEXT_APPROVE_ID,
                 AP.APPROVE_USER,
+                AP.APPROVE_DEPT,
                 AP.APPROVE_REMARK,
                 AP.APPROVE_DATE,
                 to_number(AP.APPROVE_STEP) APPROVE_STEP,
@@ -404,6 +407,7 @@
                 AP.ID,
                 AP.NEXT_APPROVE_ID,
                 ape.APPROVE_USER,
+                ape.APPROVE_DEPT,
                 ape.APPROVE_REMARK,
                 ape.APPROVE_DATE,
                 to_number(ape.APPROVE_STEP) APPROVE_STEP,
@@ -432,7 +436,7 @@
           LEFT JOIN BG_SYS_USER U
             ON F.APPROVE_USER = U.USERID
           LEFT JOIN BG_SYS_DEPT D
-            ON u.hrdeptcode = d.deptcode
+            ON F.APPROVE_DEPT = d.deptcode
           LEFT JOIN TB_WL_APPROVE NX_AP
             ON NX_AP.ID = F.ID
           LEFT JOIN TB_WL_RULE RU

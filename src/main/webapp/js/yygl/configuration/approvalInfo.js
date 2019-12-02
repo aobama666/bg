@@ -142,7 +142,7 @@ approvalInfo.forItemInfo = function (){
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:27px;font-size: 14px;">用印事项</h4>',
-        area:['300px','350px'],
+        area:['500px','350px'],
         fixed:false,//不固定
         maxmin:true,
         content:url,

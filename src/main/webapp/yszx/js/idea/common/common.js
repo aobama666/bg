@@ -5,11 +5,24 @@
  * Created by hanxifa05 on 2017-04-10.
  */
 var IsRight={
+
+	//电话验证
+	telePhone:function(ele){
+		var val=IsRight.trim($(ele).val());
+		var exp=/(^1\d{10}$)|(^\d{3}-\d{8}$)|(^\d{4}-\d{7}$)/;
+
+		if(exp.test(val)){
+			$(ele).removeClass("redColor");
+			$(ele).next("span").html("√");
+		}else{
+			$(ele).addClass("redColor");
+			$(ele).next("span").html("*手机号或者xxx-xxxxxxxx或者xxxx-xxxxxxx");
+		}
+	},
+	//
      trim:function(ele){
 		        return ele.replace(/(^\s*)|(\s*$)/g,"");
 		    },
-		    
-		    
     //不能为空
    checkLength:function(ele,len){
 	  

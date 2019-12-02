@@ -34,10 +34,13 @@
 <body>
 <div style="padding-top: 20px"></div>
 <input type="hidden" value="${auditType}" id="auditType"/>
-    <h3 style="float: left;margin-left: 3%;">申请编号:${yyApplyDAO.applyCode}</h3>
+<%--    <h3 style="float: left;margin-left: 3%;">申请编号:${yyApplyDAO.applyCode}</h3>--%>
+    <span style="font-size: 20px;float: left;margin-left: 3%">申请编号:${yyApplyDAO.applyCode}</span>
 <div class="tabbable active" style="text-align:right;width: 97%;padding-bottom: 5px;">
+
     <c:if test="${applyUser == 1}">
         <button type="button" class="btn" onclick="detail.withdraw()">撤回</button>
+        <button type="button" class="btn" onclick="detail.printPreview()">打印预览</button>
     </c:if>
     <c:if test="${approveUser == 1}">
         <button type="button" class="btn" onclick="detail.agree()">同意</button>
@@ -48,6 +51,7 @@
     </c:if>
     <c:if test="${sealAdmin == 1}">
         <button type="button" class="btn" onclick="detail.completeSeal()">确认用印</button>
+        <button type="button" class="btn" onclick="detail.printPreview()">打印预览</button>
     </c:if>
     <c:if test="${accessType != 1}">
         <button type="button" class="btn" onclick="returnClose()">返回</button>
@@ -119,7 +123,7 @@
 
 
 <div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 1%">
-    <h3>用印材料详情</h3>
+    <span style="font-size: 20px">用印材料详情</span>
 
     <div id="datagrid" style="padding-top: 3px;"></div>
 </div>
@@ -128,8 +132,8 @@
 
 
 <div class="mingliao" style="margin-left: 3%;width: 94%;">
-    <h3 style="padding-top: 10px;padding-bottom: 10px">审批流程</h3>
-    <table class="liuchengTable" >
+    <span style="font-size: 20px;line-height: 40px">审批流程</span>
+    <table class="liuchengTable">
         <tr>
             <td>
                 <div class="start green">开始</div>
@@ -172,13 +176,19 @@
             <td>
                 <i class="toRight"></i>
             </td>
+           <%-- <td>
+                <div class="process " id="5">党委办公室审批</div>
+            </td>
+            <td>
+                <i class="toRight"></i>
+            </td>--%>
             <td>
                 <div class="process" id="6">院领导批准</div>
             </td>
         </tr>
         <tr>
             <td colspan="6"></td>
-            <td style="padding-left: 70px" colspan="2" rowspan="3">
+            <td style="padding-left: 58px" colspan="2" rowspan="3">
                 <i class="toDownRight"></i>
             </td>
         </tr>
@@ -191,7 +201,7 @@
         <tr>
             <td colspan="8"></td>
             <td>
-                <div class="process " style="padding:0px;height:45px;" id="7">印章管理员<br/>确认用印</div>
+                <div class="process " style="padding:0px;min-height:45px;line-height: 20px;" id="7">印章管理员<br/>确认用印</div>
             </td>
             <td>
                 <i class="toRight"></i>

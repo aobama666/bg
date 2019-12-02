@@ -73,9 +73,9 @@ public class YyApplyStuffController {
     public void stuffAdd(HttpServletResponse response, HttpServletRequest request){
         response.setContentType("text/html;charset=utf-8");
         YyApplyAnnex yyApplyAnnex = new YyApplyAnnex();
-        yyApplyAnnex.setApplyId(request.getParameter("applyId"));
-        yyApplyAnnex.setUseSealAmount(request.getParameter("useSealAmount"));
-        yyApplyAnnex.setRemark(request.getParameter("remark"));
+        yyApplyAnnex.setApplyId(request.getParameter("applyId").trim());
+        yyApplyAnnex.setUseSealAmount(request.getParameter("useSealAmount").trim());
+        yyApplyAnnex.setRemark(request.getParameter("remark").trim());
         String stuffUuid = Rtext.getUUID();
 
         //上传文件至本地服务

@@ -52,13 +52,13 @@
 
 <!-- start    查询条件 -->
 <div class="sheach">
-    <div class='content_top'>用印申请列表</div>
+<%--    <div class='content_top'>用印申请列表</div>--%>
 
     <form id="queryForm" style="margin-bottom: 10px;">
         <input type="hidden" name="checkList"/>
         <span style="margin-left: 20px"></span>
         <label>申请编号：</label>
-        <input type = "text" id = "applyCode" name = "applyCode" style="width: 150px" class = "inputQuery changeQuery" >
+        <input type = "text" id = "applyCode" name = "applyCode" style="width: 200px" class = "inputQuery changeQuery" >
         <span style="margin-left: 20px"></span>
 
         <label>申请日期：</label>
@@ -79,7 +79,7 @@
         <span style="margin-left: 20px"></span>
         <label>审批状态：</label>
         <span style="margin-left: 3px"></span>
-        <select style="width: 150px;" id = "useSealStatus" name = "useSealStatus"   class = "changeQuery changeYear">
+        <select style="width: 200px;" id = "useSealStatus" name = "useSealStatus"   class = "changeQuery changeYear">
             <option value = "" selected>请选择</option>
             <c:forEach  var="useSealStatus"  items="${useSealStatus}">
                 <option value ="${useSealStatus.K}"}> ${useSealStatus.V}</option>
@@ -90,7 +90,7 @@
 
         <span style="margin-left: 20px"></span>
         <label>用印事项：</label>
-        <input readonly="true" type = "text" id = "itemName" name = "itemName" style="  width:150px"   class = "inputQuery changeQuery"   title="用印事项"   onclick="apply.forItemInfo()"  >
+        <input readonly="true" type = "text" id = "itemName" name = "itemName" style="  width:200px"   class = "inputQuery changeQuery"   title="用印事项"   onclick="apply.forItemInfo()"  >
         <span class="input-itemName-addon"  onclick="apply.forItemInfo()" ><span class="glyphicon glyphicon-th-list"></span></span>
         <input type = "hidden" id = "useSealItemSecondFind" name = "useSealItemSecondFind"   class = "inputQuery changeQuery"   title="用印事项"   >
         <input type = "hidden" id = "useSealItemFirstFind" name = "useSealItemFirstFind"   class = "inputQuery changeQuery"   title="用印事项"    >

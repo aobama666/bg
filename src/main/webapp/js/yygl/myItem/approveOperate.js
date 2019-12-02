@@ -13,7 +13,11 @@ approve.agree =function () {
     var toDoerId = '';
 
     if(useSealAdmin!=='2'){//如果需要待办人
-        var toDoerId = $("input[name='staffId1']:checked").val();
+        var arr = new Array();
+        $("input:checkbox[name='staffId1']:checked").each(function (i) {
+            arr[i] = $(this).val();
+        })
+        var toDoerId = arr.join(",");
         if(toDoerId === undefined || toDoerId===''){
             layer.msg('请选择下一环节审批人,每部门必须选一人');
             return;
@@ -23,14 +27,17 @@ approve.agree =function () {
             var i =2;
             var staffId = '';
             for(i;i<=deptNum;i++){
-                debugger
                 var snapName = 'staffId'+i;
-                staffId = $("input[name='"+snapName+"']:checked").val();
+                var arr = new Array();
+                $("input:checkbox[name='"+snapName+"']:checked").each(function (i) {
+                    arr[i] = $(this).val();
+                })
+                staffId = arr.join(",");
                 if(staffId === undefined || staffId===''){
                     layer.msg('请选择下一环节审批人,每部门必须选一人');
                     return;
                 }
-                toDoerId = toDoerId+','+staffId;
+                toDoerId = toDoerId+';'+staffId;
             }
         }
     }

@@ -155,10 +155,12 @@
         FROM TB_WL_AUDIT_USER
         WHERE APPROVE_ID = #{approveId}
               AND APPROVE_EXPAND_ID IS NULL
+              AND valid = '1'
         UNION ALL
-        SELECT APPROVE_USER
-        FROM TB_WL_APPROVE_EXPAND
-        WHERE AUDIT_FLAG = '1' AND APPROVE_ID = #{approveId}
+        select u.APPROVE_USER from TB_WL_APPROVE_EXPAND e,TB_WL_AUDIT_USER u
+        where u.APPROVE_EXPAND_ID = e.UUID
+        and e.audit_flag = '1'
+        and e.APPROVE_ID = #{approveId}
     </select>
 
     <select id="getSecondItemDept" resultType="java.lang.String">

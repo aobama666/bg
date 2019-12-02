@@ -261,14 +261,16 @@ public class YyApplyController {
         }
 
         //按钮组展示信息
-        //申请人-撤回按钮
+        //申请人-撤回按钮、打印预览
         String applyUser = "0";
-        //印章管理员-确认用印按钮
+        //印章管理员-确认用印按钮、打印预览
         String sealAdmin = "0";
         //审批人-同意退回按钮
         String approveUser = "0";
         //业务部门负责人，办公室负责人-增加业务会签按钮
         String businessOrOffice = "0";
+        //综合管理员-、打印预览
+        String comprehensiveManager = "0";
 
         if(!useSealStatus.equals(YyApplyConstant.STATUS_USED_SEAL)
                 && !useSealStatus.equals(YyApplyConstant.STATUS_RETURN)

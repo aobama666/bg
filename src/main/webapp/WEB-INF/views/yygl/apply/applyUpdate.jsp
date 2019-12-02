@@ -89,7 +89,7 @@
         <td style="width: 90%" class="addInputStyle" colspan="3">
             <input type = "text" style="display: none" id = "useSealKindCode"  name="useSealKindCode" value="${kindCode}">
             <input type = "text" style="display: none" id = "elseKind"  name="elseKind" value="${KindValue}">
-            <input type="text"  id="useSealKindValue"  name="useSealKindValue"  class="validNull"
+            <input type="text"  id="useSealKindValue"  name="useSealKindValue"  class="validNull" readonly
                    onclick="applyOperate.checkKind()" content="用印种类" value="${apply.useSealKind}" title="必填项"/>
         </td>
     </tr>
@@ -98,7 +98,9 @@
             <span title = "用印事由"><b class="mustWrite">*</b>用印事由</span>
         </td>
         <td style="width: 90%" class="addInputStyle" colspan="3">
-            <input type="text"  id="useSealReason" name="useSealReason" value="${apply.useSealReason}"  class="validNull"  content="用印事由"  len="2000"  title="必填项  "/>
+<%--            <input type="text"  id="useSealReason" name="useSealReason" value="${apply.useSealReason}"  class="validNull"  content="用印事由"  len="2000"  title="必填项  "/>--%>
+            <textarea id="useSealReason" name="useSealReason"  class="validNull"  content="用印事由"  len="2000"  title="必填项"
+                      style="border:none;margin-left:0.5%;height: 60px;width: 99.5%;resize:vertical;">${apply.useSealReason}</textarea>
         </td>
     </tr>
 </table>
@@ -109,7 +111,7 @@
 
 
 <div class="tabbable active" style="width: 94%;margin-left: 3%;margin-top: 1%">
-    <h3 style="float: left">用印材料详情</h3>
+    <span style="font-size: 20px;float: left">用印材料详情</span>
     <div style="text-align: right">
         <button type="button" class="btn" onclick="annex.toAddStuff()">新增</button>
         <button type="button" class="btn" onclick="annex.delStuff()">删除</button>
