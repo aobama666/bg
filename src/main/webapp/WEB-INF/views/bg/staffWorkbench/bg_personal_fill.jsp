@@ -92,24 +92,9 @@ td span{
 	</div>
 	<hr>
 	<form class="form-inline">
-		<%--<div class="form-group">
-			 <label>填报月度</label>
-			<span onclick="changeDateByStep(-1)"><span class="glyphicon glyphicon-backward" ></span></span>
-			<div class="input-group date form_date bg-white" style="width: 200px;display:inline-table;vertical-align:middle">
-				<div id="cover" style="width:100%;height:100%;position:absolute;top:0px;left:0px;z-index:999;display: none"></div>
-				<input type="text" name="selectedDate" property="
-					fillDate" class="form-control" id="fillDate" readonly>
-				<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-			</div>
-			<span onclick="changeDateByStep(1)"><span class="glyphicon glyphicon-forward" ></span></span>
-		</div>--%>
 		<div class="form-group">
 			<label>填报月度</label>
 			<span onclick="changeByStep(-1)"><span class="glyphicon glyphicon-backward" ></span></span>
-			<%--<div class="gainDate" style="width: 200px;display:inline-table;vertical-align:middle">
-				<div id="cover" style="width:100%;height:100%;position:absolute;top:0px;left:0px;z-index:999;display: none"></div>
-				<input type="text" name="selectedDate" property="fillDate" class="form-control" id="fillDa" readonly>
-			</div>--%>
 			<div class="input-group date form_date bg-white" style="width: 200px;display:inline-table;vertical-align:middle" id="time" <%--onclick="dateTime()"--%> >
 				<input  name="selectedDate" property="fillDate" type="text" id="fillDa" class="form-control form_datetime_2 input-sm bg-white" placeholder='时间'  readonly />
 				<span class="input-group-addon">
@@ -121,12 +106,10 @@ td span{
 			<label>
 				<span style="color: red" id="fillSumKQ" >${fillSumKQ}</span>
 				<span style="color: red">/</span>
-				<span style="color: red" id="fillSum">${fillSumKQ}</span>
+				<span style="color: red" id="fillSum">${fillSum}</span>
 			</label>
 		</div>
 	</form>
-
-
 	<div>
 		<table id="mmg" class="mmg">
 			<tr>
@@ -134,12 +117,6 @@ td span{
 			</tr>
 		</table>
 	</div>
-	<%--<c:if test="${note!='' and note!=null}">
-		<div style="font-family:'微软雅黑';color:red;font-size:13px;position:fixed;bottom:20px">
-			<div>说明：</div>
-			<span>${note}</span>
-		</div>
-	</c:if>--%>
 </body>
 <script type="text/javascript">
 var mmg;
@@ -290,59 +267,6 @@ function workingHours() {
     });
 }
 
-
-
-/*$(function(){
-	$(".form_date").datepicker({
-		autoclose:true,
-		orientation:'auto',
-		language: 'cn',
-		format: 'yyyy-mm-dd',
-		todayHighlight:true
-	}).on({
-		'changeDate':function(){
-			var errorCount=$("#mmg .has-error").length;
-			if(errorCount>0){
-				return;
-			}
-			forSave();
-			delayDate=$("#fillDate").val();
-			if(mmg!=undefined){
-				mmg.load();
-			}
-		}
-	});
-	$(".form_date").datepicker( 'setDates' , new Date() );
-	queryList();
-});*/
-
-/*function getFormatDate(date){
-	if(date==undefined){
-		date=new Date();
-	}
-	var year=date.getFullYear();
-	var month=(date.getMonth()+1).toString();
-	month=month.length==1?("0"+month):month;
-	var day=(date.getDate()).toString();
-	day=day.length==1?("0"+day):day;
-	return year+"-"+month+"-"+day;
-}*/
-
-/*function changeDateByStep(step){
-	var errorCount=$("#mmg .has-error").length;
-	if(errorCount>0){
-		return;
-	}
-	var dateStr=$("#fillDate").val();
-	var date=new Date(dateStr.replace(/-/g,"/"));
-	var millis=24*60*60*1000;
-	var newDate= new Date(date.getTime()+step*millis);
-	$("#fillDate").val(getFormatDate(newDate));
-	forSave();
-	delayDate=$("#fillDate").val();
-	mmg.load();
-}*/
-
 // 初始化列表数据
 function queryList(load){
 	var ran = Math.random()*100000000;
@@ -415,7 +339,7 @@ function queryList(load){
 	            		if(item.STATUS=="0" || item.STATUS=="2"){
 	            			val='<div style="display:inline"><input onblur="checkInput(this)" style="text-align:center;" class="form-control" name="workHour" value="'+val+'" property="workHour"></div>';
 	            		}else{
-	            			val='<span>'+val+'</span><input type="hidden" property="workHour" value="'+val+'">';
+	            			val='<span>'+val+'</span><input type="hidden" property="workHour"     value="'+val+'">';
 	            		}
 	            		return val;
 	            	}
@@ -617,18 +541,6 @@ function forSave(){
 		});
 		paramArr.push(JSON.stringify(params));
 	}
-	/*for (var i=0;i<rowsTb.length;i++){
-	    fillSum+=Number($(rowsTb[i]).find("input[property='workHour']").val())
-	}
-
-	if(fillSumKQ=='-'){
-	    fillSumKQ=0;
-	}
-	if(fillSumKQ<fillSum){
-        layer.msg("填报工时已超出月度工时，请检查");
-        return;
-	}*/
-
 	$.ajax({
 		type: 'POST',
 		url:'<%=request.getContextPath()%>/staffWorkbench/ajaxSaveWorkHourInfo?ran='+ran,

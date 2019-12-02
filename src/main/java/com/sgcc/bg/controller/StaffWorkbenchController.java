@@ -96,10 +96,13 @@ public class StaffWorkbenchController {
 	 * 工时统计（月度工时及已填工时）
 	 * @param selectedDate
 	 * @return
+	 * 功能变更
+	 * 修改人：cyj
 	 */
 	@RequestMapping("/workingHoursStatistics")
 	@ResponseBody
 	public String workingHoursStatistics(String selectedDate) {
+		SWLog.info("工时统计（月度工时及已填工时）接口名称:workingHoursStatistics"+"参数：selectedDate"+selectedDate);
 		Map<String,Object> workingHoursMap = SWService.workingHoursMap(selectedDate);
 		String jsonStr = JSON.toJSONStringWithDateFormat(workingHoursMap, "yyyy-MM-dd",
 				SerializerFeature.WriteDateUseDateFormat);

@@ -334,7 +334,8 @@ import com.sgcc.bg.workinghourinfo.service.personWorkManageService;
 							//效验累计工时是否超过月度工时
 							Map<String,Object> dateMap = swService.workingHoursMap(worktimeBegin);
 							BigDecimal fillSum = new BigDecimal(String.valueOf(dateMap.get("fillSum")));
-							BigDecimal fillSumKQ = (BigDecimal)dateMap.get("fillSumKQ");
+
+							BigDecimal fillSumKQ = new BigDecimal(String.valueOf( dateMap.get("fillSumKQ")));
 							if(fillSumKQ.compareTo(BigDecimal.valueOf(0))==0){
 								rw = new ResultWarp(ResultWarp.FAILED, "提交成功" + count + "条，第" + xhs + "行无月度工时，无法提交");
 								return JSON.toJSONString(rw);

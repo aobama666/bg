@@ -122,7 +122,7 @@
 			<div style="float: left">
 				<label for="workHour">投入工时(h)：</label>
 				<div class="controls">
-					<input type="text" style="width: 150px" id="workHour" name="workHour" onblur="checkInput(this)" property="workHour" value="${WORKING_HOUR}">
+					<input type="text" style="width: 150px" id="workHour" name="workHour" onkeyup="checkInput(this)" property="workHour" value="${WORKING_HOUR}">
 					<input type="hidden" id="workHourOld" name="workHourOld" property="workHourOld" value="${WORKING_HOUR}">
 				</div>
 			</div>
@@ -250,9 +250,7 @@
                 layer.msg("无月度工时，不可提交");
                 return;
             }
-            //fillSum = Number(fillSum)-Number(workHourOld)+Number(workHour);
-            fillSum = Number(fillSum)+Number(workHour)
-            if (fillSumKQ<fillSum){
+            if (fillSumKQ<workHour){
                 layer.msg("填报工时已超出月度工时，请检查");
                 return;
             }
