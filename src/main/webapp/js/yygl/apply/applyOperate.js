@@ -78,9 +78,15 @@ applyOperate.applyAdd = function () {
     }
     //验证申请日期大于当前时间
     var useSealDate = $("#useSealDate").val();
-    useSealDate = new Date(useSealDate+' 23:59:59');
-    if(useSealDate<new Date()){
+    useSealDate = new Date(useSealDate.replace(/-/g,'/')+' 23:59:59').getTime();
+    if(useSealDate<new Date().getTime()){
         layer.msg('申请日期不能早于当前时间');
+        return;
+    }
+    //验证手机号格式
+    var  phone=IsRight.telePhone("#useSealPhone");
+    if(!phone){
+        layer.alert('联系电话格式错误，请输入11位数字手机号码或固定电话',{icon:0,title:'信息提示'});
         return;
     }
     //获取form表单内容
@@ -124,9 +130,15 @@ applyOperate.applyUpdate = function () {
     }
     //验证申请日期大于当前时间
     var useSealDate = $("#useSealDate").val();
-    useSealDate = new Date(useSealDate+' 23:59:59');
-    if(useSealDate<new Date()){
+    useSealDate = new Date(useSealDate.replace(/-/g,'/')+' 23:59:59').getTime();
+    if(useSealDate<new Date().getTime()){
         layer.msg('申请日期不能早于当前时间');
+        return;
+    }
+    //验证手机号格式
+    var  phone=IsRight.telePhone("#useSealPhone");
+    if(!phone){
+        layer.alert('联系电话格式错误，请输入11位数字手机号码或固定电话',{icon:0,title:'信息提示'});
         return;
     }
     //获取form表单内容
@@ -172,8 +184,8 @@ applyOperate.toSubmit = function () {
     }
     //验证申请日期大于当前时间
     var useSealDate = $("#useSealDate").val();
-    useSealDate = new Date(useSealDate+' 23:59:59');
-    if(useSealDate<new Date()){
+    useSealDate = new Date(useSealDate.replace(/-/g,'/')+' 23:59:59').getTime();
+        if(useSealDate<new Date().getTime()){
         layer.msg('申请日期不能早于当前时间');
         return;
     }
@@ -228,7 +240,11 @@ applyOperate.toSubmit = function () {
 //提交用印申请
 applyOperate.applySubmit = function () {
     //发送后台请求
-    var principalUser = $("input[name='principal']:checked").val();
+    var arr = new Array();
+    $("input:checkbox[name='principal']:checked").each(function (i) {
+        arr[i] = $(this).val();
+    })
+    var principalUser = arr.join(",");
     var checkedIds = $("#checkedIds").val();
     if(principalUser==='' || principalUser === undefined){
         layer.msg("请选择下一环节审批人！");
@@ -272,7 +288,7 @@ applyOperate.forItemInfo = function (){
     layer.open({
         type:2,
         title:'<h4 style="height:42px;line-height:27px;">用印事项</h4>',
-        area:['300px','350px'],
+        area:['500px','350px'],
         fixed:false,//不固定
         maxmin:true,
         content:url,

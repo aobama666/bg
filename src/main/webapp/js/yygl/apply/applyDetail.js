@@ -88,12 +88,20 @@ detail.completeSeal = function () {
     });
 }
 
+
+//打印预览
+detail.printPreview = function () {
+    var applyUuid = $("#uuid").val();
+    var url = "/bg/yygl/apply/toPrintPreview?applyUuid="+applyUuid;
+    window.open(url);
+}
+
 //刷新详情页面，考虑关闭窗口后重新打开,功能弹出窗口关闭时触发该方法
 detail.refresh = function () {
     window.location.reload();
 }
 
-
+//返回tygl中的待办已办页面
 detail.returnItem = function () {
     var auditType=$("#auditType").val();
     if(auditType=="finish"){

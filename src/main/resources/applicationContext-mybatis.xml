@@ -9,38 +9,39 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 ">
 
 	<!-- JNDI方式配置数据源 -->
-    <!--	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">-->
-    <!--		<property name="jndiName" value="jdbc/huitong"></property>-->
-    <!--		<property name="resourceRef" value="true"></property>-->
-    <!--	</bean>  -->
+<!--	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">-->
+<!--		<property name="jndiName" value="jdbc/huitong"></property>-->
+<!--		<property name="resourceRef" value="true"></property>-->
+<!--	</bean>  -->
+  
 
+	
+	<!-- 数据源配置,使用Druid -->
+  <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
+        destroy-method="close">
+    <property name="url" value="${jdbc.url}"/>
+    <property name="username" value="${jdbc.username}"/>
+    <property name="password" value="${jdbc.password}"/>
 
-    <!-- 数据源配置,使用Druid -->
-    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
-          destroy-method="close">
-        <property name="url" value="${jdbc.url}"/>
-        <property name="username" value="${jdbc.username}"/>
-        <property name="password" value="${jdbc.password}"/>
+    <property name="filters" value="stat,wall"/>
 
-        <property name="filters" value="stat,wall"/>
+    <property name="maxActive" value="${jdbc.pool.maxActive}"/>
+    <property name="initialSize" value="1"/>
+    <property name="maxWait" value="60000"/>
+    <property name="minIdle" value="1"/>
 
-        <property name="maxActive" value="${jdbc.pool.maxActive}"/>
-        <property name="initialSize" value="1"/>
-        <property name="maxWait" value="60000"/>
-        <property name="minIdle" value="1"/>
+    <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+    <property name="minEvictableIdleTimeMillis" value="300000"/>
+    <property name="defaultAutoCommit" value="true"/>
+    <property name="testWhileIdle" value="true"/>
+    <property name="testOnBorrow" value="false"/>
+    <property name="testOnReturn" value="false"/>
 
-        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
-        <property name="minEvictableIdleTimeMillis" value="300000"/>
-        <property name="defaultAutoCommit" value="true"/>
-        <property name="testWhileIdle" value="true"/>
-        <property name="testOnBorrow" value="false"/>
-        <property name="testOnReturn" value="false"/>
-
-        <property name="poolPreparedStatements" value="true"/>
-        <property name="maxOpenPreparedStatements" value="20"/>
-    </bean>
-
-    <!-- mybatis文件 -->
+    <property name="poolPreparedStatements" value="true"/>
+    <property name="maxOpenPreparedStatements" value="20"/>
+  </bean>
+  
+	<!-- mybatis文件 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<!-- 自动扫描entity目录，省略Configuration.xml里手工配置 -->
@@ -61,7 +62,7 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 	</bean>
 
 	<!-- 注解方式配置事物 -->
-    <tx:annotation-driven transaction-manager="transactionManager"/>
+	 <tx:annotation-driven transaction-manager="transactionManager" />
 
 	<!-- 拦截器方式配置事物 -->
 	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
@@ -87,11 +88,11 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 			<tx:method name="*" propagation="REQUIRED" read-only="true" />
 		</tx:attributes>
 	</tx:advice>
-
+	
 	<aop:config>
 		<!-- <aop:pointcut id="transactionPointcut" expression="execution(* com.sgcc.bg.service..*Impl.*(..)) or execution(* com.sgcc.bg.yszx.service..*Impl.*(..))" /> -->
 		<aop:pointcut id="transactionPointcut" expression="execution(* com.sgcc.bg.**.*Impl.*(..))" />
 		<aop:advisor pointcut-ref="transactionPointcut" advice-ref="transactionAdvice" />
 	</aop:config>
 
-</beans>
+	</beans>

@@ -25,7 +25,7 @@
 	<div class="main_div"></div>
 	<!-- start    查询条件 -->
 	<div class="sheach">
-		<div class='content_top'>审批人配置</div>
+<%--		<div class='content_top'>审批人配置</div>--%>
 		<form id="queryForm" style="margin-bottom: 10px;">
 
 			<input type = "hidden"   id = "approveId" name="approveId">

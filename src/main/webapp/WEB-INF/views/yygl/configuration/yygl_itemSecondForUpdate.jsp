@@ -60,7 +60,7 @@
 				<span title = "是否需要会签"> 是否需要会签</span>
 			</td>
 			<td   class="addInputStyle">
-				<select id="ifsign"  name = "ifsign"  class = "validNull select-person"   content="是否需要会签"    title="必填项  "  >
+				<select id="ifsign"  name = "ifsign"  class = "validNull select-person"   content="是否需要会签"    title="必填项"  disabled="disabled">
 					<option value="1"  ${ 1== ifSignCode ?"selected='selected'":''}>是</option>
 					<option value="0"  ${ 0== ifSignCode ?"selected='selected'":''}>否</option>
 				</select>

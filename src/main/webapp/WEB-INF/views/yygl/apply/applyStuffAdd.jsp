@@ -27,8 +27,14 @@
     <link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath()%>/js/plugins/layui/css/layui.css" rel="stylesheet" media="all">
     <title>用印材料新增</title>
+    <style type="text/css">
+        #remark{
+            color: #aeaeae;
+        }
+    </style>
 </head>
 <body>
+<div style="padding-top: 5px"><b class="mustWrite" style="font-size: 15px;padding-left: 3%; font-weight: 500;">标*为必填项</b></div>
 <form action="" id="form17" name="form17" enctype="multipart/form-data" method="post">
 <table class="visitOperate tableStyle specialTable">
     <tr>
@@ -61,7 +67,7 @@
         </td>
         <td style="width: 90%" class="addInputStyle">
             <input type="text"  id="useSealAmount"  name="useSealAmount"
-                   class="validNull"  len="50"   content="用印文件份数" title="必填项"/>
+                   class="validNull"  len="7"   content="用印文件份数" title="必填项"/>
         </td>
     </tr>
     <tr>
@@ -69,8 +75,8 @@
             <span title = "备注">备注</span>
         </td>
         <td style="width: 90%" class="addInputStyle">
-            <input type="text"  id="remark"  name="remark"
-                   class=""  len="50"   content="备注" title="必填项"/>
+            <input type="text"  id="remark"  name="remark" placeholder="填写备注信息，如：需要骑缝章"
+                   class=""  len="50"  onfocus="$(this).css('color','#333')"  onblur="if($(this).val() ==''){$(this).css('color','#aeaeae')}" content="备注" title="必填项"/>
         </td>
     </tr>
 </table>
@@ -100,6 +106,7 @@
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoValidate/sotoValidate.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/common/plugins/sotoCollecter/sotoCollecter.js"></script>
 <script src="<%=request.getContextPath()%>/js/plugins/jquery.form.js"></script>
+<script src="<%=request.getContextPath()%>/js/plugins/jquery.placeholder.min.js"></script>
 
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layui.js"></script>
 <script src="<%=request.getContextPath()%>/js/plugins/layui/layer.js"></script>

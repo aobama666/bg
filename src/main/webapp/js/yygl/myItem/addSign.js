@@ -85,7 +85,7 @@ sign.initTree = function () {
         callback: {
             beforeExpand: function(event, treeNode){
                 if(!treeNode.hasOwnProperty("children")){
-                    $.ajax({url:'/bg/organstufftree/queryUserTreeByOrgan',
+                    $.ajax({url:'/bg/organstufftree/queryUserTreeByOrganNew',
                         type:'post',
                         data:{organId:treeNode.id,organCode:treeNode.organCode},
                         success:function(data){

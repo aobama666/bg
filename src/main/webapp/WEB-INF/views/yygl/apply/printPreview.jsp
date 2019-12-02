@@ -35,10 +35,11 @@
 <div>
     <div style="padding-top: 20px"></div>
     <div style="text-align: center;font-size: 22px;font-weight: bold;">中国电力科学研究院有限公司用印审批单</div>
+    <div style="font-size: 16px;font-weight: bold;float: right">用印日期：${yyApplyDAO.useSealDate}</div>
     <div style="font-size: 16px;font-weight: bold">申请编号：${yyApplyDAO.applyCode}</div>
     <table border="1" cellspacing="0" width="100%" style="font-size: 16px;">
         <tr>
-            <th width="20%">用印部门(单位):</th>
+            <th width="20%">用印部门:</th>
             <td colspan="3">&nbsp;&nbsp; ${yyApplyDAO.applyDept}</td>
         </tr>
         <tr>
@@ -48,10 +49,10 @@
             <td>&nbsp;&nbsp; ${yyApplyDAO.useSealPhone}</td>
         </tr>
         <tr>
-            <th>用印日期:</th>
-            <td>&nbsp;&nbsp; ${yyApplyDAO.useSealDate}</td>
+            <%--<th>用印日期:</th>
+            <td>&nbsp;&nbsp; </td>--%>
             <th>用印事项:</th>
-            <td>&nbsp;&nbsp; ${yyApplyDAO.useSealItem}</td>
+            <td colspan="3">&nbsp;&nbsp; ${yyApplyDAO.useSealItem}</td>
         </tr>
         <tr>
             <th>用印种类:</th>
@@ -59,7 +60,9 @@
         </tr>
         <tr>
             <th>用印事由:</th>
-            <td colspan="3">&nbsp;&nbsp; ${yyApplyDAO.useSealReason}</td>
+            <td colspan="3">
+                <div style="padding-left: 14px">${yyApplyDAO.useSealReason}</div>
+            </td>
         </tr>
         <tr>
             <th colspan="4" style="text-align: center">审批记录</th>

@@ -23,7 +23,7 @@
 	<div class="main_div"></div>
 	<!-- start    查询条件 -->
 	<div class="sheach">
-		<div class='content_top'>用印事项配置</div>
+<%--		<div class='content_top'>用印事项配置</div>--%>
 		<form id="queryForm" style="margin-bottom: 10px;">
 			<label  for="itemName" class="yearTitle">用印事项：</label>
 			<input type = "text" id = "itemName" name = "itemName" style="width: 239px" class = "inputQuery changeQuery"   title="用印事项"  onclick="roomList.forItemInfo()" >

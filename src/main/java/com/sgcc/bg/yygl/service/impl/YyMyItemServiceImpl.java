@@ -88,7 +88,7 @@ public class YyMyItemServiceImpl implements YyMyItemService{
 
         //跳过业务部门参数准备
         if(ifDeptEqual.equals("1")){
-            toDoerId = approveUserId+","+toDoerId;
+            toDoerId = approveUserId+";"+toDoerId;
         }
         String newToDoerId = toDoerId;
         if(ifDeptEqual.equals("2")){

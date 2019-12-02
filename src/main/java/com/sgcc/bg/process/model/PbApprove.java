@@ -11,6 +11,7 @@ public class PbApprove {
     private String nextApproveId;
     private String approveNode;
     private String approveUser;
+    private String approveDept;
     private String approveStatus;
     private String approveResult;
     private String approveRemark;
@@ -149,5 +150,13 @@ public class PbApprove {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getApproveDept() {
+        return approveDept;
+    }
+
+    public void setApproveDept(String approveDept) {
+        this.approveDept = approveDept;
     }
 }

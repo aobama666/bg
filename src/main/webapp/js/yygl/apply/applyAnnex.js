@@ -91,6 +91,15 @@ annex.saveStuff = function() {
         return;
     }
 
+    //验证份数是否数字
+    var exp = /^[0-9]+$/;
+    var useSealAmount = IsRight.trim($("#useSealAmount").val());
+    if(!exp.test(useSealAmount)){
+        layer.alert('用印文件份数只能为数字',{icon:0,title:'信息提示'});
+        return;
+    }
+
+
     layer.confirm('确认上传吗',{
             btn:['确定','取消'],icon:0,title:'上传提示'
         },function () {
