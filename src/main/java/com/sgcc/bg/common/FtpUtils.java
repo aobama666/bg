@@ -1,10 +1,10 @@
 package com.sgcc.bg.common;
 
-import java.io.File;
-import java.io.InputStream;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.io.File;
+import java.io.InputStream;
 
 /**
  * Ftp 工具类
@@ -37,6 +37,16 @@ public class FtpUtils {
 	 * 评标专家
 	 */
 	public static String EvaluationUploadPath = "/accessory/evaluation/";
+
+	/**
+	 * 优秀论文评审论文附件
+	 */
+	public static String PaperUploadPath = "/accessory/lunwen/";
+
+	/**
+	 * 用印管理附件
+	 */
+	public static String UseSealStuffPath = "/accessory/yygl/";
 	
 	/**
 	 * 微信图片上传路径

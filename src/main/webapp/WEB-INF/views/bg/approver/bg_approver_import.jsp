@@ -46,7 +46,7 @@
 			<span>请选择要导入的EXCEL文件</span>&nbsp;<code>注意：文件需为Excel 97~2003格式，后缀名为.xls</code>
 		</div>
 		<div class="form-group col-xs-12">
-			<label for="approver" style="width:110px;margin-top:5px">审批权限文件：</label>
+			<label for="file" style="width:110px;margin-top:5px">审批权限文件：</label>
 			<div class="controls" style="margin-left:110px" class="form-control">
 				<input id="file" type="file" name="approverFile" property="approverFile" style="display:inline-block;width:395px">
 				<button type="button" class="btn btn-success btn-xs" onclick="uploadFile()"> 确定</button>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.yygl.mapper.YyApplyAnnexMapper">
+
+
+    <insert id="addApplyAnnex">
+        INSERT INTO BG_YY_APPLY_ANNEX (uuid, APPLY_ID, USE_SEAL_FILE_ID, PROOF_FILE_ID, USE_SEAL_AMOUNT
+          , REMARK, CREATE_USER, CREATE_TIME, VALID) VALUES
+          (#{uuid},#{applyId},#{useSealFileId},#{proofFileId},
+          #{useSealAmount},#{remark},#{createUser},sysdate,'1')
+    </insert>
+
+
+    <delete id="delApplyAnnex">
+          update BG_YY_APPLY_ANNEX set valid = '0' where uuid = #{uuid}
+    </delete>
+
+
+    <select id="selectApplyAnnex" resultType="com.sgcc.bg.yygl.pojo.YyApplyAnnexDAO">
+        SELECT
+          a.uuid,
+          (SELECT file_name
+           FROM BG_LW_FILE
+           WHERE UUID = a.USE_SEAL_FILE_ID AND valid = 1) AS useSealFileName,
+          (SELECT FTP_FILE_PATH
+           FROM BG_LW_FILE
+           WHERE UUID = a.USE_SEAL_FILE_ID AND valid = 1) AS useSealFileLink,
+           (SELECT UUID
+           FROM BG_LW_FILE
+           WHERE UUID = a.USE_SEAL_FILE_ID AND valid = 1) AS useSealFileUuid,
+          (SELECT file_name
+           FROM BG_LW_FILE
+           WHERE UUID = a.PROOF_FILE_ID AND valid = 1)    AS proofFileName,
+          (SELECT FTP_FILE_PATH
+           FROM BG_LW_FILE
+           WHERE UUID = a.PROOF_FILE_ID AND valid = 1)    AS proofFileLink,
+           (SELECT UUID
+           FROM BG_LW_FILE
+           WHERE UUID = a.PROOF_FILE_ID AND valid = 1)    AS proofFileUuid,
+          a.USE_SEAL_AMOUNT                                  useSealAmount,
+          a.REMARK                                           remark
+        FROM BG_YY_APPLY_ANNEX a
+        WHERE a.APPLY_ID = #{applyUuid} AND valid = 1
+    </select>
+
+    <select id="findApplyAnnex" resultType="com.sgcc.bg.yygl.bean.YyApplyAnnex">
+        SELECT
+          uuid,
+          APPLY_ID applyId,
+          use_seal_file_id useSealFileId,
+          PROOF_FILE_ID proofFileId,
+          USE_SEAL_AMOUNT useSealAmount,
+          REMARK
+        FROM BG_YY_APPLY_ANNEX
+        WHERE uuid = #{uuid}
+    </select>
+</mapper>

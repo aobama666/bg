@@ -45,12 +45,14 @@
 		<!-- <button type="button" class="btn btn-warning btn-xs" onclick="forClose()"> 关闭</button> -->
 	</div>
 </div>
+
+
 <hr>
 <div class="form-box">
 	<div class="form-group col-xs-12">
 		<label for="empCode">人员姓名</label>
 		<div class="controls">
-			<input type="text" name="userName" property=""userName"" disabled="disabled">
+			<input type="text" name="userName" property="userName" disabled="disabled">
 		</div>
 	</div>
 	<div class="form-group col-xs-12">
@@ -84,15 +86,27 @@
 		</div>
 	</div>
 	<div class="form-group col-xs-12">
-		<label for="documentType"><!-- <font class="glyphicon glyphicon-asterisk required"></font> -->投入工时(h)</label>
-		<div class="controls">
-			<input type="text" name="hours" property="hours">
+		<div style="float: left">
+			<label for="documentType"><!-- <font class="glyphicon glyphicon-asterisk required"></font> -->
+				<span>投入工时(h)</span>
+			</label>
+			<div class="controls">
+				<input type="text" style="width: 150px" name="hours" property="hours"  >
+				<input type="hidden" name="hoursOld" property="hoursOld">
+			</div>
+		</div>
+		<div style="padding-left: 290px">
+			<span style="line-height: 26px; color: red">月度工时/已填报工时（h）：</span>
+			<span id="fillSumKQ" style="color: red" >${fillSumKQ}</span>
+			<span style="color: red">/</span>
+			<span id="fillSum" style="color: red">${fillSum}</span>
 		</div>
 	</div>
 </div>
 </body>
 <script type="text/javascript">
 var id=common.getQueryString("id");
+var selectedDate = common.getQueryString("selectedDate");
 
 function forSave(){
 	var userName = $("input[name=userName]").val();
@@ -102,6 +116,9 @@ function forSave(){
 	var proType = $("input[name=proType]").val();
 	var workContent = $("textarea[name=workContent]").val();
 	var hours = $("input[name=hours]").val();
+	var hoursOld = $("input[name=hoursOld]").val();
+    var fillSum = document.getElementById("fillSum").innerHTML;
+    var fillSumKQ = document.getElementById("fillSumKQ").innerHTML;
 	var ran = Math.random()*10000;
 	var validator=[
 	           	      //{name:'workContent',vali:'required'},暂不校验工作内容必填
@@ -114,6 +131,22 @@ function forSave(){
 			layer.msg(result.info);
 			return false;
 		}
+		//验证累计工时是否超过月度工时
+		/*if(fillSumKQ == '-'){
+            layer.msg("无月度工时，不可提交");
+            return;
+		}*/
+
+       // fillSum = Number(fillSum)-Number(hoursOld)+Number(hours);
+		//fillSum = Number(fillSum)-Number(hoursOld)+Number(hours);
+		// if (fillSumKQ<fillSum){
+         //    layer.msg("填报工时已超出月度工时，请检查");
+         //    return;
+		// }
+        // if (fillSumKQ<hours){
+        //     layer.msg("投入工时已超出月度工时，请检查");
+        //     return;
+        // }
 		var param = {
 				userName:userName,
 				userCode:userCode,
@@ -141,6 +174,8 @@ function forSave(){
 	}
 	
 }
+
+/*提交*/
 function workCommit(){
 	var userName = $("input[name=userName]").val();
 	var userCode = $("input[name=userCode]").val();
@@ -149,6 +184,9 @@ function workCommit(){
 	var proType = $("input[name=proType]").val();
 	var workContent = $("textarea[name=workContent]").val();
 	var hours = $("input[name=hours]").val();
+    var hoursOld = $("input[name=hoursOld]").val();
+    var fillSum = document.getElementById("fillSum").innerHTML;
+    var fillSumKQ = document.getElementById("fillSumKQ").innerHTML;
 	var ran = Math.random()*10000;
 	var validator=[
 	           	      //{name:'workContent',vali:'required'},暂不校验工作内容必填
@@ -161,7 +199,19 @@ function workCommit(){
 			layer.msg(result.info);
 			return false;
 		}
-		
+        //验证累计工时是否超过月度工时
+        if(fillSumKQ == '-'){
+            layer.msg("无月度工时，不可提交");
+            return;
+        }
+
+        //fillSum = Number(fillSum)-Number(hoursOld)+Number(hours);
+          fillSum = Number(fillSum)+Number(hours);
+
+        if (fillSumKQ<fillSum){
+            layer.msg("填报工时已超出月度工时，请检查");
+            return;
+        }
 		var param = {
 				userName:userName,
 				userCode:userCode,
@@ -218,17 +268,49 @@ function checkUniqueness(){
 			}else{
 				$("input[name=proName]").attr("disabled","disabled");
 			}
+			var dateStr = data.items[0].WORK_TIME_BEGIN.split('-');
+            var WORK_TIME = dateStr[0]+"-"+dateStr[1];
 			$("input[name=userName]").val(data.items[0].WORKERS);
 			$("input[name=userCode]").val(data.items[0].EMPLOYEENUMBER);
-			$("input[name=time]").val(data.items[0].WORK_TIME);
+			$("input[name=time]").val(WORK_TIME);
 			$("input[name=proName]").val(data.items[0].PROJECT_NAME);
 			$("input[name=proType]").val(data.items[0].CATEGORY);
 			$("textarea[name=workContent]").val(data.items[0].JOB_CONTENT);
 			$("input[name=hours]").val(data.items[0].WORKING_HOUR);
+			$("input[name=hoursOld]").val(data.items[0].WORKING_HOUR);
 		}
 	});
 }
+/*获取指定月份的工时*/
+function workingHours() {
+    var ran = Math.random()*100000000;
+    var fillSumKQ;
+    var fillSum;
+    $.ajax({
+        type: 'POST',
+        url:'<%=request.getContextPath()%>/staffWorkbench/workingHoursStatistics?ran='+ran,
+        data:{selectedDate:selectedDate},
+        dataType:'json',
+        success : function(data) {
+            if(data.fillSumKQ==0){
+                fillSumKQ='-'
+            }else {
+                fillSumKQ = data.fillSumKQ;
+            }
+            if (data.fillSum==0){
+                fillSum='-'
+            }else {
+                fillSum=data.fillSum;
+            }
+            document.getElementById("fillSumKQ").innerText=fillSumKQ;
+            document.getElementById("fillSum").innerText=fillSum;
+        }
+    });
+}
+
 checkUniqueness();
+workingHours();
+
 function forClose(){
 	parent.layer.close(parent.layer.getFrameIndex(window.name));
 }

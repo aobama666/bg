@@ -89,8 +89,17 @@ $(function(){
 
 function init(){
 	queryFor = common.getQueryString("queryFor");
-	var title = queryFor=="KY"?"科研项目信息":"横向项目信息";
-	$("h5").text(title);
+	//var title = queryFor=="KY"?"科研项目信息":"横向项目信息";
+	//$("h5").text(title);
+	var title;
+	if(queryFor=="KY"){
+	    title = "科研项目信息";
+	}else if (queryFor == "HX"){
+	    title = "横向项目信息";
+	}else {
+        title = "技术服务项目信息";
+	}
+    $("h5").text(title);
 }
 function forSearch(){
 	queryList("reload");

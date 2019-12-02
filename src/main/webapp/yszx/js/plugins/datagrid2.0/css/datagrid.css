@@ -1,0 +1,371 @@
+@charset "UTF-8";
+
+html,body{
+	width: 100%;
+	height: 100%;
+	font-family: "Microsoft YaHei";
+	font-size: 14px;
+	padding:0 5px;
+}
+
+.datagrid{
+	width: 100%;
+	box-sizing: border-box;
+	table-layout: fixed;
+}
+.demo-class{
+    background: red;
+}
+.datagridHead  th {
+    border-bottom: 0;
+    padding: 6px;
+    background-color: #D5E7E7!important;
+    border-right: 1px solid #ddd;
+    font-weight: bold;
+    text-align: center;
+    font-family: Microsoft YaHei;
+    font-size: 14px;
+}
+
+table thead th{
+	overflow: hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+}
+
+.datagrid tr:hover{
+	background-color: #D5E7E7;
+}
+
+.datagrid tr td {
+    text-align: center;
+    overflow: hidden;
+    display: table-cell;
+    -ms-text-overflow:ellipsis;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+	vertical-align: middle !important;
+}
+
+.datagrid  .paging{
+	width: 100%;
+	height: 40px;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+.datagrid a{
+	color: black;
+}
+
+.datagrid u{
+	cursor: pointer;
+}
+
+.datagrid input{
+	cursor: pointer;
+}
+
+.paging .paging_vessel{
+	width: 50%;
+	height: 40px;
+	float: right;
+	-ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+   vertical-align: middle;
+}
+.paging .paging_hint{
+	width: 45%;
+	height: 40px;
+	float: left;
+	text-align: left;
+}
+.paging_vessel .paging_item{
+	width: 29px;
+	height: 30px;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+    float: right;
+    cursor: pointer;
+    line-height: 28px;
+    text-align: center;
+   
+    display:block;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    color: #FFF;
+    background: #2d9592;
+}
+.paging .paging_vessel .paging_item_bd{
+	border:1px solid #6d99e0/* #5677ad */;
+	
+}
+.select_box .paging_item_bds{
+	border:1px solid #6d99e0 /* #5677ad */;
+}
+.paging_vessel .item_icon{
+    font-size: 18px;
+    width:25px;
+    height:30px;
+    color: #fff;
+    background: #2d9592 !important;
+}
+.paging_vessel .firstpage{
+	width: 29px;
+	height: 30px;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+    float: right;
+    cursor: pointer;
+    line-height: 28px;
+    text-align: center;
+    display:block;
+    font-size:18px;
+    margin-right:1px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    color: #FFF;
+    background: #2d9592 !important;
+}
+.paging_vessel .lastpage{
+	width: 30px;
+	height: 30px;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+    float: right;
+    cursor: pointer;
+    line-height: 28px;
+    text-align: center;
+    font-size:18px;
+    display:block;
+    margin-left:1px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    color: #FFF;
+    background: #2d9592 !important;
+}
+.none_click{
+    cursor: no-drop !important;
+}
+.paging_vessel .paging_item_select{
+    background: #fff ;
+    color: #636363 !important;
+    cursor: no-drop;
+}
+
+.paging_nums{
+	width:100px;
+	height:40px;
+	float:right;
+	margin-left: 20px;
+}
+.pagesize{
+	width:70px;
+	height:40px;
+	float:left;
+}
+.paging_vessel b{
+	width:100%;
+	height:100%;
+	display:block
+}
+.paging_vessel b img{
+	width: 15px;
+    display: block;
+    height: 15px;
+    margin-top: 6px;
+    margin-left: 5px;
+}
+.paging_nums .pago{
+	width: 25px;
+	height: 30px;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+    float: right;
+    cursor: pointer;
+    line-height: 28px;
+    text-align: center;
+    margin: 1px;
+    display:block;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    color: #FFF;
+    background: #2d9592 !important;
+}
+.page_sizes {
+	width:60px;
+	height:30px;
+	position:relative;
+	font-size:12px;
+	border:1px solid #ccc;
+	margin-left: 5px;
+}
+.page_sizes span{
+	width:70%!important;
+	border:none!important;
+	font-size:14px;
+	cursor:pointer;
+	line-height:28px!important;
+	padding-left:5px;
+}
+.page_sizes .pasize_img{
+	position: absolute;
+    bottom: 0px;
+    right: 3px;
+    width: 20px!important;
+    height: 18px;
+    float:left;
+    background: url(drop_down_button_bg.png);
+    border-left:1px solid #E2E3EA;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor:pointer;
+}
+.myselect3{
+	font-size:14px;
+	cursor:pointer;
+	display:inline-block;
+	line-height:28px;
+	width:30px !important;
+	height:28px !important;
+	text-align:center;
+	border:1px solid #ccc;
+	margin-top: 2px;
+}
+.page_sizes ul {
+	width:60px;
+	height:125px;
+	display:none;
+	position:absolute;
+	left:-1px;
+	top:-125px;
+	border:1px solid #ccc;
+	z-index:99999;
+	background:#fff;
+	margin:0;
+	padding:0;
+}
+.page_sizes ul li {
+	display:block;
+	height:25px;
+	overflow:hidden;
+	list-style-type:none;
+	line-height:23px;
+	padding-left:5px;
+	cursor:pointer;
+	width:60px;
+	font-size:14px;
+} 
+.page_sizes ul li.bg{
+	background:#0E9D9E;
+	color:#fff;
+	height:25px;
+	width:58px;
+}
+.page_sizes ul li.bg2{
+	background:#0E9D9E;
+	height:25px;
+	width:58px;
+	color:#fff;
+}
+.leftDiv{
+	float: left;
+	vertical-align: middle;
+	line-height: 30px;
+}
+.datagrid_mark_mulch{
+	position:absolute;
+	z-index:777;
+	width:100%;
+	top:38px;
+	left:0;
+	bottom:0;
+	overflow:hidden;
+	background-color: #EDEDED;
+	display:none;
+}
+.datagrid_mark_mulch span{
+	display: block;
+    width: 100%;
+    height: 100%;
+    background: url(loading_32.gif) no-repeat center center;
+}
+.tabbable{
+	width:100%;
+}
+.nav-tabs{
+	width:100%;
+}
+
+.datagrid_td_text{
+	text-align:center;
+	display:block;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.datagrid_td_feed_text{
+	white-space:inherit !important;
+	word-break: break-all;
+	word-wrap: break-word;
+}
+
+.datagrid_td_u{
+	cursor: pointer;
+}
+
+.datagrid_td_u a{
+	color: blue;
+}
+
+.datagrid_td_u a:HOVER{
+	color: red;
+} 
+
+.check_{
+	cursor: pointer;
+}
+
+
+.grip{width:20px;height:30px;margin-top:-3px;margin-left:-5px;position:relative;z-index:88;cursor:e-resize;}
+.grip:hover{background-position-x:-20px;}
+.dragging .grip{background-position-x:-40px;}
+body .demo-class .layui-layer-title{background:#00828a; color:#fff; border: none;}
+body .demo-class .layui-layer-btn{border-top:1px solid #fff}
+body .demo-class .layui-layer-btn a{background:#00828a; margin-top:5px;}
+body .demo-class .layui-layer-btn .layui-layer-btn1{background:#00828a;}
+body .demo-class .layui-layer-ico{color:#fff;}
+
+
+.tableHead{
+	position: relative;
+    height: 38px;
+    overflow:hidden;
+}
+.tableHead table{
+	table-layout: fixed;
+	position: absolute;
+	top:0;
+	box-sizing: border-box;
+	left:0;
+}
+.headTop{
+	background-color: #D5E7E7;
+}
+.datagrid td span{
+	display:inline-block;
+	text-align:center;
+}
+.row_list{
+	display:inline-block;
+	white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

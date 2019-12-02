@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.lunwen.mapper.LwGradeMapper">
+
+    <insert id="saveLwGrade">
+        insert into bg_lw_grade (uuid,pme_id,rule_id,score,create_user,create_time,valid)
+        values (
+            #{uuid},
+            #{pmeId},
+            #{ruleId},
+            #{score},
+            #{createUser},
+            sysdate,
+            #{valid}
+        )
+    </insert>
+
+
+    <update id="updateScore">
+        update bg_lw_grade
+        set score = #{score},
+        update_user = #{updateUser},
+        update_time = sysdate
+        where pme_id = #{pmeId}
+        and rule_id = #{ruleId}
+        and valid = #{valid}
+    </update>
+
+    <select id="selectGrade" resultType="java.util.Map">
+        select * from(
+        select p.*, ROWNUM as r
+        from (select p.uuid paperUuid,
+            m.uuid pmeId,
+            p.paper_id paperId,
+            p.paper_name paperName,
+            p.year,
+            p.unit,
+            p.author,
+            p.journal,
+            p.recommend_unit recommendUnit,
+            p.paper_type paperType,
+            p.quote_count quoteCount,
+            p.download_count downloadCount,
+            p.field,
+            m.score,
+            (SELECT name
+            FROM BG_SYS_DATADICTIONARY
+            WHERE pcode = 'score_status'
+            and vaild = 1
+            and code = m.score_status) as scoreStatus,
+            m.score_status scoreStatusCode,
+            ROWNUM rown
+            from    bg_lw_paper      p,
+            bg_lw_paper_match_expert m,
+            bg_lw_specialist s
+            where 1 = 1
+            <if test="paperName!=null and paperName!=''">
+                and p.paper_name = #{paperName}
+            </if>
+            <if test="year!=null and year!=''">
+                and p.year = #{year}
+            </if>
+            <if test="scoreStatus!=null and scoreStatus!=''">
+                and m.score_status = #{scoreStatus}
+            </if>
+            <if test="paperType!=null and paperType!=''">
+                and p.paper_type = #{paperType}
+            </if>
+            and p.score_table_status = ${scoreTableStatus}
+            and s.user_id = #{userId}
+            and p.uuid = m.paper_id
+            and m.specialist_id = s.uuid
+            and p.valid = #{valid}
+            and m.valid = #{valid}
+            and s.valid = #{valid}
+            order by p.paper_id desc
+        ) p
+        where  #{pageEnd} >= ROWNUM
+        ) where r > #{pageStart}
+    </select>
+
+    <select id="selectGradeCount" resultType="java.lang.Integer">
+        select count(*)
+        from (select p.uuid,
+        p.paper_id paperId,
+        p.paper_name paperName,
+        p.year,
+        p.unit,
+        p.author,
+        p.journal,
+        p.recommend_unit recommendUnit,
+        p.paper_type paperType,
+        p.quote_count quoteCount,
+        p.download_count downloadCount,
+        p.field,
+        m.score,
+        (SELECT name
+        FROM BG_SYS_DATADICTIONARY
+        WHERE pcode = 'score_status'
+        and vaild = 1
+        and code = m.score_status) as scoreStatus,
+        ROWNUM rown
+        from    bg_lw_paper      p,
+        bg_lw_paper_match_expert m,
+        bg_lw_specialist s
+        where 1 = 1
+        <if test="paperName!=null and paperName!=''">
+            and p.paper_name = #{paperName}
+        </if>
+        <if test="year!=null and year!=''">
+            and p.year = #{year}
+        </if>
+        <if test="scoreStatus!=null and scoreStatus!=''">
+            and m.score_status = #{scoreStatus}
+        </if>
+        <if test="paperType!=null and paperType!=''">
+            and p.paper_type = #{paperType}
+        </if>
+        and p.score_table_status = ${scoreTableStatus}
+        and s.user_id = #{userId}
+        and p.uuid = m.paper_id
+        and m.specialist_id = s.uuid
+        and p.valid = #{valid}
+        and m.valid = #{valid}
+        and s.valid = #{valid}
+        order by p.paper_id desc
+        ) p
+    </select>
+
+    <select id="nowScoreTable" resultType="java.util.Map">
+        select s.uuid,
+            f.first_index,
+            s.second_index,
+            s.weights sweights,
+            s.REFERENCE_REQUIRE require,
+            s.score_max scoreMax,
+            s.score_min scoreMin,
+            f.weights fweights
+            <if test="pmeId != null and pmeId != ''">
+                ,g.score
+            </if>
+        from bg_lw_rule_first f,
+            bg_lw_rule_second s
+            <if test="pmeId != null and pmeId != ''">
+                ,bg_lw_grade g
+            </if>
+        where 1 = 1
+            and f.uuid = s.first_index_id
+            and f.year = #{year}
+            and f.paper_type = #{paperType}
+            and f.valid = #{valid}
+            and s.valid = #{valid}
+            <if test="pmeId != null and pmeId != ''">
+                and g.rule_id = s.uuid
+                and g.pme_id = #{pmeId}
+            </if>
+            order by first_order, second_order
+    </select>
+
+    <select id="firstIndexNums" resultType="java.lang.String">
+        select s.nums
+        from bg_lw_rule_first f,
+            (select s.first_index_id, count(s.first_index_id) nums
+            from bg_lw_rule_second s
+            where s.valid = #{valid}
+            group by s.first_index_id) s
+        where s.first_index_id = f.uuid
+            and f.valid = #{valid}
+            and f.year = #{year}
+            and f.paper_type = #{paperType}
+        order by f.first_order
+    </select>
+
+</mapper>

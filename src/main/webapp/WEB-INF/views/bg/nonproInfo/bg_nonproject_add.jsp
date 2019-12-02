@@ -226,7 +226,6 @@
 	}); 
 
 	function typeChange(type){	
-	   
 			$("#organInfo").show();
 			if($("#deptCode").val()==""){
 				$("#deptName").val($("#currentDeptName").val());
@@ -248,7 +247,7 @@
 					$("#WBSNumber input").val(data);
 				  }
 			});
-		}
+	 
 		*/
 		var validator=[
 	              	      {name:'category',vali:'required'},  
@@ -751,7 +750,7 @@
 		$("#myTab a:eq(1)").tab("show");
 	}
 	
-	function roleChange(_this){
+	/*function roleChange(_this){
 		var role=_this.val();
 		var hrCode=_this.parents("tr").find("input[name='hrcode']").val();
 		var rows=$("#mmg tr").has("input[value='"+hrCode+"']");
@@ -763,7 +762,7 @@
 		rows.each(function(index,row){
 			$(row).find("select").val(role);
 		});
-	}
+	}*/
 	
 	function getDate(dateStr){
 		var reg=new RegExp("\\-","gi");

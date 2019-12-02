@@ -1,9 +1,6 @@
 package com.sgcc.bg.mapper;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
@@ -351,4 +348,82 @@ public interface BGMapper {
 	 */
 	public boolean deleteBeforeProById(String[] idsArr);
 
+    /**
+     * 取出该项目所有负责人的开始时间结束时间和姓名
+     * @param proId
+     * @return
+     */
+    List<Map<String,String>> listPrincipalDate(String proId);
+
+	/**
+	 * 取项目信息
+	 * @param proId
+	 * @return
+	 */
+	Map<String,String> getProjectsInfo(String proId);
+
+	/**
+	 * 取项目填报工时
+	 * @param id
+	 * @return
+	 */
+	Double hourSum(String id);
+
+	//取项目关联的前期项目是否有工时
+	Double qianQiSum(String id);
+
+	/**
+	 * 取项目人员填报的工时
+	 * @param proId
+	 * @param hrcode
+	 * @return
+	 */
+	Double workingHour(@Param("proId") String proId, @Param("hrcode") String hrcode);
+
+	//查看项目时间段中每月人员填报工时
+    List<Map<String,String>> userWorker(String proId);
+
+    //查项目员工填报日期
+	List<Map<String,String>> projectTime(String proId);
+
+	//把原来时间段取出来
+	List<Map<String,String>> userDateOld(@Param("hrCode") String hrCode, @Param("proId") String proId);
+
+	//判断改变的时间段中是否有工时
+	List<Map<String,String>> userWorkingInfo(@Param("start") String start, @Param("end") String end, @Param("proId") String proId, @Param("hrCode") String hrCode);
+
+	//查项目详情
+    Map<String,String> projectMap(String proId);
+
+	/**
+	 * 根据项目id从科研系统中获取项目信息（技术服务）
+	 * @param
+	 * @return
+	 */
+	Map<String,Object> getProInfoByProIdFromKYJS(String proId);
+
+	/**
+	 * 根据项目id从科研系统中获取参与人员（技术服务）
+	 * @param
+	 * @return
+	 */
+	List<HashMap> getEmpByProIdFromKYJS(String proId);
+
+	List<Map<String,Object>> getProjectsFromJS(@Param("username") String username,
+											   @Param("proName") String proName,
+											   @Param("wbsNumber") String wbsNumber);
+
+	/**
+	 * 根据项目id从科研系统中获取项目信息
+	 * @param proId
+	 * @return
+	 */
+    Map<String,Object> getProInfoByProIdFromJS(String proId);
+
+	/**
+	 * 最新数据同步状态记录
+	 * @param type
+	 * @return
+	 */
+	Map<String,Object> syncStatus(String type);
 }

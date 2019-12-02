@@ -1,5 +1,6 @@
 package com.sgcc.bg.service.impl;
 
+import com.sgcc.bg.common.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -8,9 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -20,31 +19,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.sgcc.bg.common.CommonCurrentUser;
-import com.sgcc.bg.common.DateUtil;
-import com.sgcc.bg.common.ExcelUtil;
-import com.sgcc.bg.common.ExportExcelHelper;
-import com.sgcc.bg.common.FtpUtils;
-import com.sgcc.bg.common.Rtext;
-import com.sgcc.bg.common.UserUtils;
 import com.sgcc.bg.mapper.ApproverMapper;
 import com.sgcc.bg.service.ApproverService;
 import com.sgcc.bg.service.DataDictionaryService;
 
 @Service
 public class ApproverServiceImpl implements ApproverService {
+
+
 	@Autowired
 	private ApproverMapper approverMapper;
 	
 	@Autowired
 	private UserUtils userUtils;
+	 
+	
 	
 	@Autowired
 	private DataDictionaryService dict;
 	
 	private static Logger log = LoggerFactory.getLogger(ApproverServiceImpl.class);
 
+	@Override
+	public List<Map<String, Object>>  selectForDatadicttionary(String  pcode){
+		return approverMapper.selectForDatadicttionary(pcode);
+	}
+	@Override
+	public List<Map<String, Object>>  selectForUserInfo(String  empCode){
+		return approverMapper.selectForUserInfo(empCode);
+	}
+	@Override
+	public  Map<String, Object> selectForDeptInfo(String  deptCode){
+		return approverMapper.getDeptByDeptCode(deptCode);
+	}
 	@Override
 	public List<Map<String, Object>> getInfoForShow(String target) {
 		List<Map<String, Object>> result = new ArrayList<>();
@@ -55,15 +62,29 @@ public class ApproverServiceImpl implements ApproverService {
 		}
 		return result;
 	}
-	
+
 	@Override
-	public int addApprover(String empCode, String deptCode, String subType) {
+	public int addApprover(String empCode, String deptCode, String subType,String priority) {
 		//如果新增组织在权限表中存在父级组织，则不再添加
-		if(existsApprover(empCode,deptCode,subType)) return 0;
-		approverMapper.addApprover(empCode,deptCode,subType);//在sql中已做了判断：如果该人员已存在该类型角色，则不再重复添加
+		if(existsApprover(empCode,deptCode,subType)){
+			return 0;
+		}else{
+			approverMapper.addApprover(empCode,deptCode,subType ,priority);//在sql中已做了判断：如果该人员已存在该类型角色，则不再重复添加
+			return 1;
+		}
+	}
+
+	@Override
+	public int addNewApprover( Map<String ,Object> approverInfo) {
+		approverMapper.addNewApprover(approverInfo);
 		return 1;
 	}
-	
+	@Override
+	public int updataApprover(Map<String ,Object> approverInfo){
+		approverMapper.updataApprover(approverInfo);
+		return 1;
+	}
+
 	/**
 	 * 验证某人是否权限重复
 	 * @param empCode
@@ -71,15 +92,34 @@ public class ApproverServiceImpl implements ApproverService {
 	 * @return
 	 */
 	private boolean existsApprover(String empCode,String deptCode, String subType){
-		List<Map<String, Object>> apprpverList = approverMapper.getAllApprovers(null,empCode,deptCode,subType);
-		if(apprpverList!=null && apprpverList.size()>0) return true;
-		
-		return false;
+		Map<String ,Object> approverList=new HashMap<>();
+		approverList.put("empCode",empCode);
+		approverList.put("deptCode",deptCode);
+		Map<String,String> dictMap=dict.getDictDataByPcode("submitUserType");
+		for (Map.Entry<String,String> entry : dictMap.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
+			if(subType.equals(value)){
+				subType=key;
+			}
+		}
+		approverList.put("subType",subType);
+		List<Map<String, Object>> apprpverList = approverMapper.getAllApprovers(approverList);
+		if(apprpverList.isEmpty()){
+			return false;
+		} else {
+			return true;
+		}
+
 	}
 
 	@Override
-	public List<Map<String, Object>> getAllApprovers(String username,String deptCode,String subType) {
-		return approverMapper.getAllApprovers(username,null,deptCode, subType);
+	public List<Map<String, Object>> getAllApprovers(Map<String ,Object> approverList) {
+		return approverMapper.getAllApprovers(approverList);
+	}
+	@Override
+	public List<Map<String, Object>> isforApprovers(Map<String ,Object> approverList) {
+		return approverMapper.getAllApprovers(approverList);
 	}
 
 	@Override
@@ -97,7 +137,6 @@ public class ApproverServiceImpl implements ApproverService {
 	
 	@Override
 	public String[] parseApproverFile(InputStream in) {
-
 		HSSFWorkbook wb = null;
 		//获取通过验证的专责信息
 		//List<Map<String,Object>> correctList = new ArrayList<>();
@@ -122,10 +161,9 @@ public class ApproverServiceImpl implements ApproverService {
 			
 			//从数据字典中获取项目类型
 			Map<String,String> dictMap=dict.getDictDataByPcode("submitUserType");
-			
 			log.info("项目信息excel表格最后一行： " + rows);
 			/* 保存有效的Excel模版列数 */
-			String[] cellValue = new String[6];
+			String[] cellValue = new String[7];
 			for (int i = 1; i <=rows; i++) {// 从第2行开始是正式数据
 				// 获取正式数据并封装进cellValue数组中
 				StringBuffer checkStr = new StringBuffer();
@@ -151,6 +189,7 @@ public class ApproverServiceImpl implements ApproverService {
 					String empCode = cellValue[2];
 					String subType = cellValue[3];
 					String deptCode = cellValue[5];
+					String priority = cellValue[6];
 					
 					// 校验人资编号
 					if (Rtext.isEmpty(empCode)) {
@@ -163,10 +202,10 @@ public class ApproverServiceImpl implements ApproverService {
 					
 					// 校验角色
 					if (Rtext.isEmpty(subType)) {
-						errorInfo.append("角色不能为空！ ");
+						errorInfo.append("审核人类型不能为空！ ");
 						errorNum.add(3);
 					} else if(!dictMap.containsValue(subType)){
-						errorInfo.append("无此角色类型！ ");
+						errorInfo.append("无此审核人类型！ ");
 						errorNum.add(3);
 					}
 					
@@ -180,8 +219,18 @@ public class ApproverServiceImpl implements ApproverService {
 							errorInfo.append("部门编号错误！ ");
 							errorNum.add(5);
 						}
+						String type=String.valueOf(dept.get("TYPE"));
+						if(!"1".equals(type)){
+							errorInfo.append("部门编号错误！必须为部门级别 ");
+							errorNum.add(5);
+						}
 					}
-					
+					boolean  flag=  StringUtil.PositiveNumber(priority);
+					if(!flag){
+						errorInfo.append("优先级错误！必须为大于0的整数 ");
+						errorNum.add(6);
+					}
+
 					//如果新增组织在权限表中存在父级组织，则不再添加
 					/*if(errorNum.size()==0 && existsApprover(empCode,deptCode)){
 						errorNum.add(5);
@@ -196,19 +245,21 @@ public class ApproverServiceImpl implements ApproverService {
 						errorNum.add(5);
 						errorInfo.append("重复添加！  ");
 					}
-					
+
 					// 校验结束，分流数据
 					if (errorNum.size()==0) {// 通过校验
 						//保存正确数据
 						for (Map.Entry<String,String> entry : dictMap.entrySet()) {
 							String key = entry.getKey();
 							String value = entry.getValue();
-							if(subType.equals(value)) subType=key;
+							if(subType.equals(value)){
+								subType=key;
+							}
 						}
-						int result = addApprover(empCode,deptCode,subType);
-						
-						if(result==1) count++;
-						
+						int result = addApprover(empCode,deptCode,subType,priority);
+						if(result==1){
+							count++;
+						}
 					} else {// 未通过校验
 						Map<String,Object> errortMap = new HashMap<String, Object>();
 						errortMap.put("sqnum", cellValue[0]);
@@ -217,6 +268,7 @@ public class ApproverServiceImpl implements ApproverService {
 						errortMap.put("subType", cellValue[3]);
 						errortMap.put("deptName", cellValue[4]);
 						errortMap.put("deptCode", cellValue[5]);
+						errortMap.put("priority", cellValue[6]);
 						errortMap.put("errInfo",errorInfo.toString());
 						errortMap.put("errSet",errorNum);
 						errorList.add(errortMap);
@@ -230,11 +282,12 @@ public class ApproverServiceImpl implements ApproverService {
 				// 生成错误信息文件
 				Object[][] title = { 
 						{ "序号\r\n（选填）", "sqnum","nowrap" }, 
-						{ "人员姓名\r\n（选填）", "empName","nowrap" }, 
+						{ "姓名\r\n（选填）", "empName","nowrap" },
 						{ "人员编号\r\n（必填）", "empCode" ,"nowrap"},
 						{ "角色\r\n（必填）","subType","nowrap"}, 
 						{ "组织名称\r\n（选填）","deptName","nowrap"},
-						{ "组织编号\r\n（必填）","deptCode","nowrap"}, 
+						{ "组织编号\r\n（必填）","deptCode","nowrap"},
+						{ "审核优先级\r\n（必填）","priority","nowrap"},
 						{ "错误说明","errInfo"}
 				};
 				errorUUID = ExportExcelHelper.createErrorExcel(FtpUtils.BgTempUploadPath, title, errorList);
@@ -274,8 +327,11 @@ public class ApproverServiceImpl implements ApproverService {
 		index = Rtext.toStringTrim(index, "");
 		List<Map<String,Object>> resultList=new ArrayList<Map<String,Object>>();
 		//复用页面查询方法
-		List<Map<String,Object>> dataList = getAllApprovers(username, deptCode, roleCode);
-		
+		Map<String ,Object> approverList=new HashMap<>();
+		approverList.put("username",username);
+		approverList.put("deptCode",deptCode);
+		approverList.put("subType",roleCode);
+		List<Map<String,Object>> dataList = getAllApprovers(approverList);
 		if(Rtext.isEmpty(index)){
 			resultList = dataList;
 		}else{
@@ -287,20 +343,24 @@ public class ApproverServiceImpl implements ApproverService {
 		}
 		
 		Object[][] title = { 
-							 { "人员姓名", "USERALIAS","nowrap" },
-							 { "人员编号", "HRCODE","nowrap" },
-							 { "审批层级", "SUBNAME","nowrap" }, 
-							 { "组织机构","DEPTNAME"},
-							 //{ "项目类型", "TYPE","nowrap" },
-							 { "组织编号","DEPTCODE","nowrap"}
+							 { "姓名", "USERALIAS","nowrap" },
+							 { "审核人类别", "SUBNAME","nowrap" },
+							 { "组织名称","DEPTNAME"},
+				             { "组织等级","TYPE"},
+				             { "审核优先级","PRIORITY"}
+							// { "组织编号","DEPTCODE","nowrap"}
 							};
 		ExportExcelHelper.getExcel(response, "报工管理-审批权限授权-"+DateUtil.getDays(), title, resultList, "normal");
 		return "";
 	}
 
-	/*	public static void main(String[] args) {
-		syncErpHrUserDataByMh();
+	@Override
+	public List<Map<String, Object>> selectForApproveRule(Map<String, Object> roleList) {
+		return approverMapper.selectForApproveRule(roleList);
 	}
-	*/
+	@Override
+	public List<Map<String, Object>> selectForApproverOrgant(Map<String, Object> organList) {
+		return approverMapper.selectForApproverOrgant(organList);
+	}
 
 }

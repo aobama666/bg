@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.yygl.mapper.YyApplyMapper">
+    <insert id="addApply">
+        insert into bg_yy_apply (uuid,apply_code,dept_id,apply_user_id,use_seal_date,use_seal_phone,
+        item_first_id,item_second_id,use_seal_reason,use_seal_status,create_user,create_time,valid) values
+            (#{uuid},
+            #{applyCode},
+            #{deptId},
+            #{applyUserId},
+            to_date(#{useSealDate},'yyyy-mm-dd'),
+            #{useSealPhone},
+            #{itemFirstId},
+            #{itemSecondId},
+            #{useSealReason},
+            #{useSealStatus},
+            #{createUser},
+            sysdate,
+            '1')
+    </insert>
+
+
+    <update id="updateApply">
+        update bg_yy_apply set
+         use_seal_date = to_date(#{useSealDate},'yyyy-mm-dd'),
+         use_seal_phone = #{useSealPhone},
+         item_first_id = #{itemFirstId},
+         item_second_id = #{itemSecondId},
+         use_seal_reason = #{useSealReason},
+         update_user = #{updateUser},
+         update_time = sysdate
+        where uuid = #{uuid}
+    </update>
+
+
+    <update id="updateApplyStatus">
+        update bg_yy_apply set use_seal_status = #{useSealStatus} where uuid = #{uuid}
+    </update>
+
+
+    <update id="applyDel">
+        update bg_yy_apply set valid ='0' where uuid = #{uuid} and use_seal_status = #{useSealStatus}
+    </update>
+
+
+    <select id="selectApply" resultType="java.util.Map">
+        select *
+        from (select p.*, ROWNUM as r
+        from (select a.uuid,
+            a.apply_code,
+            a.use_seal_reason,
+            d.deptname,
+            u.useralias,
+            TO_CHAR(a.use_seal_date, 'YYYY-MM-DD') use_seal_date,
+            TO_CHAR(a.create_time, 'YYYY-MM-DD') create_time,
+            s.second_category_name useSealItem,
+            (select name
+                from bg_sys_datadictionary
+                where pcode = 'use_seal_status'
+                and code = a.use_seal_status) use_seal_status,
+            a.use_seal_status use_seal_status_code,
+            (select replace(wm_concat(nvl(d.name, k.use_seal_value)),',',';') useSealKind
+              from bg_yy_kind k,
+              (select * from bg_sys_datadictionary d
+                where d.pcode = 'use_seal_kind'
+                and d.vaild = '1') d
+              where k.use_seal_kind_code = d.code(+)
+              and k.apply_id = a.uuid and k.valid='1') use_seal_kind
+            from bg_yy_apply a
+            left join bg_sys_dept d
+            on d.deptId = a.dept_id
+            left join bg_sys_user u
+            on a.apply_user_id = u.userid
+            left join bg_yy_item_second s
+            on a.item_second_id = s.uuid
+            left join bg_yy_item_first f
+            on a.item_first_id = f.uuid
+            where 1=1
+                <if test="applyCode != null and applyCode != ''">
+                  and a.apply_code like '%'||#{applyCode}||'%'
+                </if>
+                <if test="startTime != null and startTime != ''">
+                  and a.create_time &gt;= to_date(#{startTime},'YYYY-MM-DD hh24:mi:ss')
+                </if>
+                <if test="endTime != null and endTime != ''">
+                  and a.create_time &lt;= to_date(#{endTime},'YYYY-MM-DD hh24:mi:ss')
+                </if>
+                <if test="useSealStatus != null and useSealStatus != ''">
+                  and a.use_seal_status = #{useSealStatus}
+                </if>
+                <if test="useSealItemFirst != null and useSealItemFirst != ''">
+                  and f.uuid = #{useSealItemFirst}
+                </if>
+                <if test="itemSecondId != null and itemSecondId != ''">
+                  and s.uuid = #{itemSecondId}
+                </if>
+                <if test="useSealReason != null and useSealReason != ''">
+                  and a.use_seal_reason like  '%'||#{useSealReason}||'%'
+                </if>
+            and a.apply_user_id = #{userId}
+            and a.valid = '1'
+        order by a.create_time desc) p
+        where #{pageEnd} >= ROWNUM)
+        where r > #{pageStart}
+
+    </select>
+
+
+    <select id="selectApplyTotal" resultType="java.lang.Integer">
+        select count(*)
+        from bg_yy_apply a
+        left join bg_sys_dept d
+        on d.deptId = a.dept_id
+        left join bg_sys_user u
+        on a.apply_user_id = u.userid
+        left join bg_yy_item_second s
+        on a.item_second_id = s.uuid
+        left join bg_yy_item_first f
+        on a.item_first_id = f.uuid
+        where 1=1
+        <if test="applyCode != null and applyCode != ''">
+            and a.apply_code like '%'||#{applyCode}||'%'
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and a.create_time &gt;= to_date(#{startTime},'YYYY-MM-DD hh24:mi:ss')
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and a.create_time &lt;= to_date(#{endTime},'YYYY-MM-DD hh24:mi:ss')
+        </if>
+        <if test="useSealStatus != null and useSealStatus != ''">
+            and a.use_seal_status = #{useSealStatus}
+        </if>
+        <if test="useSealItemFirst != null and useSealItemFirst != ''">
+            and f.uuid = #{useSealItemFirst}
+        </if>
+        <if test="itemSecondId != null and itemSecondId != ''">
+            and s.uuid = #{itemSecondId}
+        </if>
+        <if test="useSealReason != null and useSealReason != ''">
+            and a.use_seal_reason like  '%'||#{useSealReason}||'%'
+        </if>
+        and a.apply_user_id = #{userId}
+        and a.valid = '1'
+        order by a.create_time desc
+    </select>
+
+
+    <select id="findApply" resultType="com.sgcc.bg.yygl.pojo.YyApplyDAO">
+          select a.uuid,
+               a.apply_code applyCode,
+               a.use_seal_reason useSealReason,
+               a.dept_id applyDeptId,
+               d.deptname applyDept,
+               u.useralias applyUser,
+               a.apply_user_id applyUserId,
+               a.use_seal_phone useSealPhone,
+               TO_CHAR(a.use_seal_date, 'YYYY-MM-DD') useSealDate,
+               TO_CHAR(a.create_time, 'YYYY-MM-DD') createTime,
+               s.second_category_name useSealItem,
+               (select name
+                  from bg_sys_datadictionary
+                 where pcode = 'use_seal_status'
+                   and code = a.use_seal_status) useSealStatusValue,
+               a.use_seal_status useSealStatus,
+               a.item_first_id itemFirstId,
+               a.item_second_id itemSecondId,
+               (select replace(wm_concat(nvl(d.name, k.use_seal_value)), ',', ';') useSealKind
+                  from bg_yy_kind k,
+                       (select *
+                          from bg_sys_datadictionary d
+                         where d.pcode = 'use_seal_kind'
+                           and d.vaild = '1') d
+                 where k.use_seal_kind_code = d.code(+)
+                   and k.apply_id = a.uuid
+                   and k.valid = '1') useSealKind
+          from bg_yy_apply a
+          left join bg_sys_dept d
+            on d.deptId = a.dept_id
+          left join bg_sys_user u
+            on a.apply_user_id = u.userid
+          left join bg_yy_item_second s
+            on a.item_second_id = s.uuid
+          left join bg_yy_item_first f
+            on a.item_first_id = f.uuid
+         where a.uuid = #{uuid}
+    </select>
+
+    <select id="selectApplyExport" resultType="com.sgcc.bg.yygl.pojo.YyApplyDAO">
+        select a.uuid,
+        a.apply_code applyCode,
+        a.use_seal_reason useSealReason,
+        a.dept_id applyDeptId,
+        d.deptname applyDept,
+        u.useralias applyUser,
+        a.apply_user_id applyUserId,
+        TO_CHAR(a.use_seal_date, 'YYYY-MM-DD') useSealDate,
+        TO_CHAR(a.create_time, 'YYYY-MM-DD') createTime,
+        f.first_category_name||'-'||s.second_category_name useSealItem,
+        (select name
+        from bg_sys_datadictionary
+        where pcode = 'use_seal_status'
+        and code = a.use_seal_status) useSealStatusValue,
+        a.use_seal_status useSealStatus,
+        (select replace(wm_concat(nvl(d.name, k.use_seal_value)),',',';') useSealKind
+        from bg_yy_kind k,
+        (select * from bg_sys_datadictionary d
+        where d.pcode = 'use_seal_kind'
+        and d.vaild = '1') d
+        where k.use_seal_kind_code = d.code(+)
+        and k.apply_id = a.uuid and k.valid='1') useSealKind
+        from bg_yy_apply a
+        left join bg_sys_dept d
+        on d.deptId = a.dept_id
+        left join bg_sys_user u
+        on a.apply_user_id = u.userid
+        left join bg_yy_item_second s
+        on a.item_second_id = s.uuid
+        left join bg_yy_item_first f
+        on a.item_first_id = f.uuid
+        where 1=1
+        <if test="applyCode != null and applyCode != ''">
+            and a.apply_code like '%'||#{applyCode}||'%'
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and a.create_time &gt;= to_date(#{startTime},'YYYY-MM-DD hh24:mi:ss')
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and a.create_time &lt;= to_date(#{endTime},'YYYY-MM-DD hh24:mi:ss')
+        </if>
+        <if test="useSealStatus != null and useSealStatus != ''">
+            and a.use_seal_status = #{useSealStatus}
+        </if>
+        <if test="itemSecondId != null and itemSecondId != ''">
+            and s.uuid = #{itemSecondId}
+        </if>
+        <if test="useSealReason != null and useSealReason != ''">
+            and a.use_seal_reason like  '%'||#{useSealReason}||'%'
+        </if>
+        <if test="uuids != null and uuids != ''">
+            AND a.uuid IN (
+            <foreach collection="uuids" item="uuid" index="index" separator=",">
+                #{uuid}
+            </foreach>
+            )
+        </if>
+        and a.apply_user_id = #{userId}
+        and a.valid = '1'
+        order by a.create_time desc
+    </select>
+
+    <select id="findDayApplyCode" resultType="java.lang.String">
+        select  substr(apply_code,10) from bg_yy_apply where apply_code LIKE #{date}||'%'
+    </select>
+
+    <select id="findDept" resultType="java.util.Map">
+        select t.deptcode,
+               t.deptname,
+               t.deptid,
+               decode(t.type, 2, t.pdeptid, 1, t.deptid) pdeptid,
+               decode(t.type, 2, t.pdeptname, 1, t.deptname) pdeptname
+          from bg_sys_dept t
+         where t.deptcode =
+               (select hrdeptcode from bg_sys_user where userid = #{userId} and valid='1')
+               and t.valid='1'
+               and t.SRC='0'
+    </select>
+
+    <select id="getItemFirst" resultType="java.util.Map">
+        select uuid k,first_category_name v from bg_yy_item_first where valid = '1'
+    </select>
+
+    <select id="getItemSecond" resultType="java.util.Map">
+        select uuid k, second_category_name v
+          from bg_yy_item_second
+         where first_category_id = #{firstCategoryId}
+         and valid = '1'
+    </select>
+
+    <select id="approveAnnal" resultType="java.util.Map">
+        SELECT
+          F.SRC,
+          F.ID,
+          F.NEXT_APPROVE_ID,
+          U.USERALIAS,
+          DECODE(D.TYPE, 1, D.DEPTNAME, D.PDEPTNAME)                           DEPTNAME,
+          F.APPROVE_REMARK,
+          TO_CHAR(F.APPROVE_DATE, 'yyyy-MM-dd HH24:mi:ss')                     APPROVE_DATE,
+          DECODE(RU.NODE, 'FINISH', '结束', DR.NAME)                             APPROVE_NODE,
+          CASE RU.NODE
+          WHEN 'BUSINESS_DEPT_APPROVE'
+            THEN
+              TO_CHAR((SELECT replace(wm_concat(BSU.USERALIAS), ',', ';')
+                       FROM TB_WL_AUDIT_USER AU
+                         JOIN BG_SYS_USER BSU
+                           ON BSU.USERID = AU.APPROVE_USER
+                       WHERE AU.APPROVE_ID = F.NEXT_APPROVE_ID AND BSU.VALID = 1))
+          ELSE TO_CHAR((SELECT replace(wm_concat(BSU.USERALIAS), ',', '/')
+                        FROM TB_WL_AUDIT_USER AU
+                          JOIN BG_SYS_USER BSU
+                            ON BSU.USERID = AU.APPROVE_USER
+                        WHERE AU.APPROVE_ID = F.NEXT_APPROVE_ID AND BSU.VALID = 1)) END NEXT_USERALIAS,
+          CASE RU.NODE
+          WHEN 'BUSINESS_DEPT_APPROVE'
+            THEN
+              TO_CHAR((SELECT replace(wm_concat(BSU.PHONE), ',', ';')
+                       FROM TB_WL_AUDIT_USER AU
+                         JOIN BG_SYS_USER BSU
+                           ON BSU.USERID = AU.APPROVE_USER
+                       WHERE AU.APPROVE_ID = F.NEXT_APPROVE_ID AND BSU.VALID = 1))
+          ELSE
+            TO_CHAR((SELECT replace(wm_concat(BSU.PHONE), ',', '/')
+                     FROM TB_WL_AUDIT_USER AU
+                       JOIN BG_SYS_USER BSU
+                         ON BSU.USERID = AU.APPROVE_USER
+                     WHERE AU.APPROVE_ID = F.NEXT_APPROVE_ID AND BSU.VALID = 1))
+          END                                                                           NEXT_PHONE,
+          f.APPROVE_STEP,
+          f.apply_time
+        FROM (SELECT
+                'APP'                      SRC,
+                AP.ID,
+                AP.NEXT_APPROVE_ID,
+                AP.APPROVE_USER,
+                AP.APPROVE_DEPT,
+                AP.APPROVE_REMARK,
+                AP.APPROVE_DATE,
+                to_number(AP.APPROVE_STEP) APPROVE_STEP,
+                AP.APPLY_ID,
+                r.CREATE_TIME              apply_time
+              FROM tb_wl_approve ap LEFT JOIN tb_wl_business_r_apply r
+                  ON ap.apply_id = r.APPLY_ID
+              WHERE ap.valid = '1' AND r.VALID = '1' AND r.BUSINESS_ID = #{applyId}
+                    AND NOT exists(SELECT uuid
+                                   FROM tb_wl_approve_expand ae
+                                   WHERE ae.approve_id = ap.id)
+              UNION ALL
+              SELECT
+                'APE'                       SRC,
+                AP.ID,
+                AP.NEXT_APPROVE_ID,
+                ape.APPROVE_USER,
+                ape.APPROVE_DEPT,
+                ape.APPROVE_REMARK,
+                ape.APPROVE_DATE,
+                to_number(ape.APPROVE_STEP) APPROVE_STEP,
+                AP.APPLY_ID,
+                r.CREATE_TIME               apply_time
+              FROM
+                tb_wl_approve_expand ape
+                LEFT JOIN tb_wl_approve AP
+                  ON AP.ID = APE.APPROVE_ID
+                LEFT JOIN TB_WL_BUSINESS_R_APPLY r
+                  ON r.APPLY_ID = AP.APPLY_ID
+              WHERE ape.valid = '1' AND AP.VALID = '1' AND r.VALID = '1' AND r.BUSINESS_ID = #{applyId}
+             ) F
+          LEFT JOIN BG_SYS_USER U
+            ON F.APPROVE_USER = U.USERID
+          LEFT JOIN BG_SYS_DEPT D
+            ON F.APPROVE_DEPT = d.deptcode
+          LEFT JOIN TB_WL_APPROVE NX_AP
+            ON NX_AP.ID = F.NEXT_APPROVE_ID
+          LEFT JOIN TB_WL_RULE RU
+            ON RU.ID = NX_AP.APPROVE_NODE
+          LEFT JOIN BG_SYS_DATADICTIONARY DR
+            ON DR.CODE = RU.NODE AND DR.PCODE = 'pb_yygl_status'
+        WHERE U.VALID = 1 AND D.VALID = 1 AND RU.VALID = '1' AND DR.VAILD = 1 AND NX_AP.VALID = '1'
+        ORDER BY f.apply_time, APPROVE_STEP
+    </select>
+
+    <select id="printPreview" resultType="java.util.Map">
+        SELECT
+          U.USERALIAS,
+          DECODE(D.TYPE, 1, D.DEPTNAME, D.PDEPTNAME)       DEPTNAME,
+          F.APPROVE_REMARK,
+          TO_CHAR(F.APPROVE_DATE, 'yyyy-MM-dd HH24:mi:ss') APPROVE_DATE,
+          DECODE(RU.NODE, 'FINISH', '结束', DR.NAME)         APPROVE_NODE
+        FROM (SELECT
+                'APP'                      SRC,
+                AP.ID,
+                AP.NEXT_APPROVE_ID,
+                AP.APPROVE_USER,
+                AP.APPROVE_DEPT,
+                AP.APPROVE_REMARK,
+                AP.APPROVE_DATE,
+                to_number(AP.APPROVE_STEP) APPROVE_STEP,
+                AP.APPLY_ID
+              FROM tb_wl_approve ap
+              WHERE ap.valid = '1' AND ap.apply_id = (SELECT r.apply_id
+                                                      FROM tb_wl_business_r_apply r
+                                                      WHERE r.valid = '1' AND r.business_id = #{businessId}
+                                                            AND r.create_time = (SELECT max(
+                                                                                            r1.create_time) create_time
+                                                                                 FROM
+                                                                                   tb_wl_business_r_apply r1
+                                                                                 WHERE
+                                                                                   r1.valid = '1'
+                                                                                   AND
+                                                                                   r1.business_id =
+                                                                                   #{businessId}))
+                    AND NOT exists(SELECT uuid
+                                   FROM tb_wl_approve_expand ae
+                                   WHERE ae.approve_id = ap.id)
+              UNION ALL
+              SELECT
+                'APE'                       SRC,
+                AP.ID,
+                AP.NEXT_APPROVE_ID,
+                ape.APPROVE_USER,
+                ape.APPROVE_DEPT,
+                ape.APPROVE_REMARK,
+                ape.APPROVE_DATE,
+                to_number(ape.APPROVE_STEP) APPROVE_STEP,
+                AP.APPLY_ID
+              FROM tb_wl_approve_expand ape
+                LEFT JOIN tb_wl_approve AP
+                  ON AP.ID = APE.APPROVE_ID
+              WHERE ape.valid = '1' AND AP.VALID = '1' AND ape.approve_id IN (SELECT ap.id
+                                                                              FROM tb_wl_approve ap
+                                                                              WHERE ap.valid = '1' AND
+                                                                                    ap.apply_id = (SELECT r.apply_id
+                                                                                                   FROM tb_wl_business_r_apply r
+                                                                                                   WHERE r.valid = '1' AND
+                                                                                                         r.business_id =
+                                                                                                         #{businessId}
+                                                                                                         AND r.create_time =
+                                                                                                             (SELECT max(
+                                                                                                                         r1.create_time) create_time
+                                                                                                              FROM
+                                                                                                                tb_wl_business_r_apply r1
+                                                                                                              WHERE
+                                                                                                                r1.valid = '1'
+                                                                                                                AND
+                                                                                                                r1.business_id =
+                                                                                                                #{businessId})))) F
+          LEFT JOIN BG_SYS_USER U
+            ON F.APPROVE_USER = U.USERID
+          LEFT JOIN BG_SYS_DEPT D
+            ON F.APPROVE_DEPT = d.deptcode
+          LEFT JOIN TB_WL_APPROVE NX_AP
+            ON NX_AP.ID = F.ID
+          LEFT JOIN TB_WL_RULE RU
+            ON RU.ID = NX_AP.APPROVE_NODE
+          LEFT JOIN BG_SYS_DATADICTIONARY DR
+            ON DR.CODE = RU.NODE AND DR.PCODE = 'pb_yygl_status'
+        WHERE U.VALID = 1 AND D.VALID = 1 AND RU.VALID = '1' AND DR.VAILD = 1 AND NX_AP.VALID = '1'
+        ORDER BY F.APPROVE_STEP
+    </select>
+
+    <select id="getApproveUserId" resultType="java.lang.String">
+        SELECT STAFF_ID
+        FROM BG_YY_APPROVE
+        WHERE NODE_TYPE = #{nodeTYpe}
+        <if test="deptId!=null and deptId!=''">
+            AND DEPT_ID = #{deptId}
+        </if>
+        <if test="itemSecondId!=null and itemSecondId!=''">
+            AND ITEM_SECOND_ID = #{itemSecondId}
+        </if>
+        AND VALID = '1'
+    </select>
+
+    <select id="approveAnnalBusiness" resultType="java.util.Map">
+        SELECT u.USERALIAS,
+         DECODE(D.TYPE, 1, D.DEPTNAME, D.PDEPTNAME)          DEPTNAME,
+         AE.APPROVE_REMARK,
+         TO_CHAR(AE.APPROVE_DATE, 'yyyy-MM-dd HH24:mi:ss') APPROVE_DATE,
+         '办公室负责人审批' APPROVE_NODE,
+         (select USERALIAS from BG_SYS_USER  where USERID=AE.TODOER_ID) NEXT_USERALIAS,
+         (select PHONE from BG_SYS_USER where USERID=AE.TODOER_ID) NEXT_PHONE
+        FROM TB_WL_APPLY A
+         LEFT JOIN TB_WL_APPROVE_EXPAND AE
+          ON A.APPROVE_ID = AE.APPROVE_ID
+         LEFT JOIN BG_SYS_USER U
+          ON AE.APPROVE_USER = U.USERID
+         LEFT JOIN BG_SYS_DEPT D
+          ON u.hrdeptcode = d.deptcode
+        WHERE A.ID = (SELECT apply_id
+                    FROM TB_WL_BUSINESS_R_APPLY
+                    WHERE BUSINESS_ID = #{applyId} AND CREATE_TIME = (SELECT max(CREATE_TIME)
+                                                                                              FROM TB_WL_BUSINESS_R_APPLY
+                                                                                              WHERE BUSINESS_ID =
+                                                                                                    #{applyId}
+                                                                                                    AND VALID = '1')
+                          AND VALID = '1')
+              AND A.VALID = '1'
+              AND AE.APPROVE_RESULT is not null
+    </select>
+
+</mapper>

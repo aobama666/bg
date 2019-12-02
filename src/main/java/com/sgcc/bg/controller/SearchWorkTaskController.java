@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -235,6 +236,35 @@ public class SearchWorkTaskController {
 		String type = request.getParameter("type")==null?"":request.getParameter("type").trim();
 		String userName = request.getParameter("userName")==null?"":request.getParameter("userName").trim();
 		String userCode = request.getParameter("userCode")==null?"":request.getParameter("userCode").trim();
+
+		if(startTime==""){
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("status", 201);
+			map.put("res", "开始时间不能为空");
+			String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+			return jsonStr;
+		}
+		if(endTime==""){
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("status", 201);
+			map.put("res", "结束时间不能为空");
+			String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
+			return jsonStr;
+		}
+
+		//取月初和月末
+		String[] str = startTime.split("-");
+		int year = Integer.parseInt(str[0]);
+		int month = Integer.parseInt(str[1]);
+
+		String[] strEnd = endTime.split("-");
+		int yearEnd = Integer.parseInt(strEnd[0]);
+		int monthEnd = Integer.parseInt(strEnd[1]);
+		//查询开始月初
+		startTime = DateUtil.getFirstDayOfMonth1(year, month);
+		//查询结束月末
+		endTime = DateUtil.getLastDayOfMonth1(yearEnd, monthEnd);
+
 		/* 首先获取当前登录人的信息 userInfo*/
 		CommonUser userInfo = webUtils.getCommonUser();
 		/* 获取当前登陆人的账号 */
@@ -310,10 +340,6 @@ public class SearchWorkTaskController {
 		Map<String, String> map = new HashMap<>();
 		//type==2是驳回   type==1是确认
 		if("2".equals(type)){
-			/*if(ided.length>1){
-				map.put("msg","只能选择一条");
-				return JSON.toJSONString(map);
-			}*/
 			String reason = request.getParameter("reason")==null?"":request.getParameter("reason");
 			if("".equals(reason)){
 				map.put("msg","驳回原因不能为空");
@@ -338,7 +364,48 @@ public class SearchWorkTaskController {
 			return JSON.toJSONString(map);
 		}
 	}
-	
+	/*
+	 * 审批通过后-驳回
+	 * 工时审核的确认
+	 * 需要修改这条数据的status=1
+	 */
+	@ResponseBody
+	@RequestMapping(value="/confirmExamined")
+	public String confirmExamined(HttpServletRequest request){
+		String type = request.getParameter("type");
+		String ids = request.getParameter("ids");
+		String[] ided = ids.split(",");
+		logger.info("【进行审批操作】："+type);
+		CommonUser userInfo = webUtils.getCommonUser();
+		/* 获取人自编号 */
+		String dealUserName = userInfo.getUserName(); //当前用户名
+		Map<String, String> map = new HashMap<>();
+		//type==2是驳回   type==1是确认
+		if("2".equals(type)){
+			String reason = request.getParameter("reason")==null?"":request.getParameter("reason");
+			if("".equals(reason)){
+				map.put("msg","驳回原因不能为空");
+				return JSON.toJSONString(map);
+			}
+			for(String id:ided){
+				if(swService.canExamined(id)){//判断当前是否为可审批状态
+					String processId=swService.addExamineRecord(id, dealUserName, "3", reason);
+					searchWorkTaskService.confirmExamine(id,type,processId,dealUserName);
+				}
+			}
+			map.put("msg","驳回成功");
+			return JSON.toJSONString(map);
+		}else{
+			for(String id:ided){
+				if(swService.canExamine(id)){//判断当前是否为可审批状态
+					String processId=swService.addExamineRecord(id, dealUserName, "2", "");
+					searchWorkTaskService.confirmExamine(id,type,processId,dealUserName);
+				}
+			}
+			map.put("msg","审批成功");
+			return JSON.toJSONString(map);
+		}
+	}
 	
 	/*
 	 *已审核工时页面 table查询接口
@@ -396,7 +463,9 @@ public class SearchWorkTaskController {
 		valueList = searchWorkTaskService.queryAllExamine(startTime,endTime,projectName,type,userName,userCode,hrName,list);	
 		System.out.println(valueList);
 		Object[][] title = { 
-				 { "日期", "WORK_TIME" }, 
+
+				 { "开始日期", "WORK_TIME_BEGIN" },
+				 { "结束日期", "WORK_TIME_END" },
 				 { "部门（单位）","DEPTNAME"},
 				 { "处室", "LABNAME" },
 				 { "人员编号","HRCODE"}, 

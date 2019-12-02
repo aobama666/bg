@@ -23,8 +23,7 @@ public class BaseController {
 		RequestInfo requestInfo = new RequestInfo();
 		String data = null;
 		try {
-		    data = req.getParameter("data");
-		    
+		         data = req.getParameter("data");
 		    	if (data == null || data.trim().length() == 0) {
 					BufferedReader reader = req.getReader();
 					String line = null;

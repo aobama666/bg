@@ -1,0 +1,18 @@
+html,body,div,p,ul,ol,li,a,img,dl,dd,dt,span,input,h1,h2,h3,h4,h5,h6{
+    padding:0;
+    margin:0;
+}
+html,body{
+    font-family: "微软雅黑";
+    font-size: 14px;
+    background-color: #fff;
+}
+ul, li {
+    list-style: none;
+}
+a {
+    text-decoration: none;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+}

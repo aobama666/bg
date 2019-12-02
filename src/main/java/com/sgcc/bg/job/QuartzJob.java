@@ -21,6 +21,9 @@ public class QuartzJob {
 	private Logger logger = (Logger) LoggerFactory.getLogger(QuartzJob.class);
 	@Autowired
 	private SyncService syncService;
+
+
+
 	
 	/**
 	 * applicationContext.xml配置的定时任务。每天4点进行调用
@@ -66,7 +69,7 @@ public class QuartzJob {
 	 * 
 	 * @return String
 	 */
-	 static String getLocalIP() {
+	 public static String getLocalIP() {
 		String sIP = "";
 		InetAddress ip = null;
 		try {

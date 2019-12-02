@@ -19,6 +19,9 @@ public class ProjectInfoVali implements Serializable {
 	private String sqnum;
 	// 项目名称
 	private String projectName;
+	//项目级别
+	private String projectGrade;
+
 	// 项目分类
 	private String category;
 	// wbs编号
@@ -176,7 +179,15 @@ public class ProjectInfoVali implements Serializable {
 	public void setErrSet(Set<Integer> errSet) {
 		this.errSet = errSet;
 	}
-	
+
+	public String getProjectGrade() {
+		return projectGrade;
+	}
+
+	public void setProjectGrade(String projectGrade) {
+		this.projectGrade = projectGrade;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -195,6 +206,7 @@ public class ProjectInfoVali implements Serializable {
 		result = prime * result + ((sqnum == null) ? 0 : sqnum.hashCode());
 		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		result = prime * result + ((projectGrade == null) ? 0 : projectGrade.hashCode());
 		return result;
 	}
 	@Override
@@ -276,6 +288,13 @@ public class ProjectInfoVali implements Serializable {
 				return false;
 		} else if (!status.equals(other.status))
 			return false;
+
+		if (projectGrade == null) {
+			if (other.projectGrade != null)
+				return false;
+		} else if (!projectGrade.equals(other.projectGrade))
+			return false;
+
 		return true;
 	}
 	@Override

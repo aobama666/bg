@@ -58,7 +58,7 @@
 			<hr>
 			<div class="form-box">
 				<c:out value="${proUsers}"></c:out>
-				<div class="form-group col-xs-11">
+				<div class="form-group col-xs-5">
 					<label for="category">项目分类</label>
 					<div class="controls bg-white">
 						<input type="text" name="category" property="category" 
@@ -72,6 +72,22 @@
 						readonly >
 					</div>
 				</div>
+
+				<div class="form-group col-xs-6">
+					<label for="projectGrade">项目级别</label>
+					<div class="controls bg-white">
+						<%--<input type="text" name="projectGrade" property="projectGrade" value="${projectGrade}" readonly>--%>
+						<input type="text" name="projectGrade" property="projectGrade"
+							<c:choose>
+								<c:when test="${projectGrade=='YJ'}"> value="院级"</c:when>
+								<c:when test="${projectGrade=='BMJ'}"> value="部门级"</c:when>
+								<c:when test="${projectGrade=='CSJ'}"> value="处室级"</c:when>
+								<c:otherwise></c:otherwise>
+							</c:choose>
+						readonly>
+					</div>
+				</div>
+
 				<div class="form-group col-xs-11">
 					<label for="projectName">项目名称</label>
 					<div class="controls bg-white">

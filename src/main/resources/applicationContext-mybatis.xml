@@ -23,7 +23,7 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
     <property name="username" value="${jdbc.username}"/>
     <property name="password" value="${jdbc.password}"/>
 
-    <property name="filters" value="stat"/>
+	  <property name="filters" value="stat"/>
 
     <property name="maxActive" value="${jdbc.pool.maxActive}"/>
     <property name="initialSize" value="1"/>
@@ -51,7 +51,8 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 	</bean>
 
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.sgcc.bg.mapper,com.sgcc.bg.pa.mapper,com.sgcc.bg.wechat.mapper,com.sgcc.bg.ky.irp.mapper,com.sgcc.bg.ky_reward.mapper" />
+		<!-- <property name="basePackage" value="com.sgcc.bg.mapper,com.sgcc.bg.yszx.mapper" /> -->
+		<property name="basePackage" value="com.sgcc.bg.**.mapper" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
 
@@ -61,7 +62,7 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 	</bean>
 
 	<!-- 注解方式配置事物 -->
-	<!-- <tx:annotation-driven transaction-manager="transactionManager" /> -->
+	 <tx:annotation-driven transaction-manager="transactionManager" />
 
 	<!-- 拦截器方式配置事物 -->
 	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
@@ -89,7 +90,8 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 	</tx:advice>
 	
 	<aop:config>
-		<aop:pointcut id="transactionPointcut" expression="execution(* com.sgcc.bg.service..*Impl.*(..))" />
+		<!-- <aop:pointcut id="transactionPointcut" expression="execution(* com.sgcc.bg.service..*Impl.*(..)) or execution(* com.sgcc.bg.yszx.service..*Impl.*(..))" /> -->
+		<aop:pointcut id="transactionPointcut" expression="execution(* com.sgcc.bg.**.*Impl.*(..))" />
 		<aop:advisor pointcut-ref="transactionPointcut" advice-ref="transactionAdvice" />
 	</aop:config>
 

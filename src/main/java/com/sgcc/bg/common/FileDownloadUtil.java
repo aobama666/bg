@@ -1,19 +1,11 @@
 package com.sgcc.bg.common;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URLEncoder;
+import org.apache.commons.io.FileUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.FileUtils;
+import java.io.*;
+import java.net.URLEncoder;
 
 public class FileDownloadUtil {
 	
@@ -167,5 +159,63 @@ public class FileDownloadUtil {
       //删除已下载文件
         //TODO
   	  //FtpUtils.deleteFile(FtpUtils.BgTempUploadPath+fileName);
+	}
+
+
+
+
+	/**
+	 * 文件下载————————论文附件使用，避免楼上方法的路径不同和ftp删除后患
+	 * @param response
+	 * @param filePath
+	 * @param fileName
+	 * @throws Exception
+	 */
+	public static void fileDownloadFromFtpLwAnnex(
+			final HttpServletResponse response,
+			final HttpServletRequest request,
+			String filePath,
+			String fileName) throws Exception {
+		BufferedInputStream bis = null;
+		BufferedOutputStream bos = null;
+		try {
+			response.reset();
+			response.setContentType("application/x-download");
+			response.setCharacterEncoding("UTF-8");
+			String userAgent = request.getHeader("user-agent").toLowerCase();
+			if (userAgent.contains("msie") || userAgent.contains("like gecko") ) {
+				// win10 ie edge 浏览器 和其他系统的ie
+				fileName = URLEncoder.encode(fileName, "UTF-8");
+			} else {
+				// fe
+				fileName = new String(fileName.getBytes("utf-8"), "iso-8859-1");
+			}
+			response.setHeader("Content-Disposition", "attachment;filename=" +fileName);
+			bis = new BufferedInputStream(FtpUtils.readFile(filePath));
+			bos = new BufferedOutputStream(response.getOutputStream());
+			byte[] buff = new byte[2048];
+			int bytesRead;
+			while (-1 != (bytesRead = bis.read(buff, 0, buff.length))) {
+				bos.write(buff, 0, bytesRead);
+			}
+			bos.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (bis != null)
+				try {
+					bis.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if (bos != null)
+				try {
+					bos.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
 	}
 }

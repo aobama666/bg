@@ -1,0 +1,69 @@
+/**
+    流程图控件，圆角开始结束，直角过程中，向右向下，右下箭头，绿色黄色无背景色状态
+    角度为截取图片中的内容，如有新的角度，请自建图片加角度箭头，避免影响原有工程
+*/
+.mingliao .liuchengTable {
+    width: 500px;
+    padding: 0px;
+}
+.mingliao .liuchengTable tr td {
+    margin: 0px;
+    padding:0px;
+}
+.mingliao .null {
+    background: #FFFFFF;
+}
+.mingliao .green {
+    background: #00b050;
+}
+.mingliao .yellow {
+    background: #ff0;
+}
+.mingliao .liuchengTable .start {
+    border-radius: 20px 20px 20px 20px;
+    border: solid 1px black;
+    height: 38px;
+    line-height: 38px;
+    width: 130px;
+    text-align: center;
+   /* padding-top: 8px;*/
+    box-sizing: unset;
+    -webkit-box-sizing: unset;
+}
+.mingliao .liuchengTable .process {
+    border: solid 1px black;
+    height: 38px;
+    line-height: 38px;
+    width: 130px;
+    text-align: center;
+ /*   padding-top:8px;*/
+    box-sizing: unset;
+    -webkit-box-sizing: unset;
+}
+.mingliao .liuchengTable .colorIcon {
+    display: inline-block;
+    padding: 5px 12px;
+    margin-left: 10px;
+    border: 1px solid #ccc;
+}
+.mingliao .toDown {
+    display: inline-block;
+    width: 100px;
+    height: 30px;
+    background-image: url("liucheng.png");
+    background-position: 8% 7% ;
+}
+.mingliao .toRight {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background-image: url("liucheng.png");
+    background-position: -1% 41% ;
+}
+.mingliao .toDownRight {
+    display: inline-block;
+    width: 115px;
+    height: 75px;
+    background-image: url("liucheng.png");
+    background-position: 2% 101% ;
+}

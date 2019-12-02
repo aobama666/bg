@@ -32,7 +32,8 @@
 	<!-- AOP  -->
 	<bean id="DataSourceAspect" class="com.sgcc.bg.common.DataSourceAspect"/>
 	<aop:config>
-		<aop:advisor pointcut="execution(* com.sgcc.bg.mapper.*.*(..))" advice-ref="DataSourceAspect"/>
+		<!-- <aop:advisor pointcut="execution(* com.sgcc.bg.mapper.*.*(..))" advice-ref="DataSourceAspect"/> -->
+		<aop:advisor pointcut="execution(* com.sgcc.bg.**.*mapper.*(..))" advice-ref="DataSourceAspect"/>
 	</aop:config>
 	<!-- 导入Mybatis 配置 -->
 	<import resource="applicationContext-mybatis.xml" />
@@ -44,17 +45,18 @@
 	</bean>
 
 	<task:scheduled-tasks>
-		<task:scheduled ref="quartzJob" method="syncDeptAndUserData" cron="0 45 4,12 * * ?" />	
-		<task:scheduled ref="quartzJob" method="deleteErrorInfoFilesFromFtp" cron="0 0 4 * * ?" />	
-		<task:scheduled ref="handleSyncJob" method="handleData" cron="0 0 2,13 * * ?" />	
-	</task:scheduled-tasks>
+		<task:scheduled ref="quartzJob" method="syncDeptAndUserData" cron="0 45 4,12 * * ?" />
+		<task:scheduled ref="quartzJob" method="deleteErrorInfoFilesFromFtp" cron="0 0 4 * * ?" />
+		<task:scheduled ref="handleSyncJob" method="handleData" cron="0 0 2,13 * * ?" />
+		<task:scheduled ref="syncZhDataBase" method="newSyncBaseDataForZH" cron="0 0 5 * * ?" />
+        <task:scheduled ref="syncKqInfoJob" method="syncBaseDataForKq" cron="0 0 8,12,17 1-10 * ?" />
+    </task:scheduled-tasks>
 	
 	
 	<context:property-placeholder
 			ignore-resource-not-found="true" location="classpath*:/application.properties" />
 
-	<rabbit:connection-factory id="connectionFactory"
-							   host="${rabbitmq.host}" username="${rabbitmq.username}" password="${rabbitmq.password}" port="${rabbitmq.port}" />
+	<rabbit:connection-factory id="connectionFactory" host="${rabbitmq.host}" username="${rabbitmq.username}" password="${rabbitmq.password}" port="${rabbitmq.port}" />
 
 	<rabbit:admin connection-factory="connectionFactory" />
 
@@ -67,7 +69,7 @@
 	</rabbit:direct-exchange>
 
 	<rabbit:template id="rabbitTemplate" connection-factory="connectionFactory" exchange="directExchange"/>
-	
+
 	<!-- 配置多媒体文件解析器 -->
 	<!-- 文件上传 -->
 	<!-- <bean id="multipartResolver"
@@ -79,6 +81,6 @@
 		 <property name="defaultEncoding">
             <value>UTF-8</value>
         </property>
-		
+
 	</bean> -->
 </beans>

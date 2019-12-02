@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+	namespace：必须与对应的接口全类名一致
+	id:必须与对应接口的某个对应的方法名一致
+ -->
+<mapper namespace="com.sgcc.bg.mapper.RequestManagerMapper">
+
+
+    <insert id="insertManager" parameterType="java.util.Map">
+        INSERT INTO BG_SYS_REQUEST_MANAGER
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="UUID != null ">
+                    UUID,
+                </if>
+                <if test="REQUEST_TYPE != null ">
+                    REQUEST_TYPE,
+                </if>
+                <if test="START_DATE != null ">
+                    START_DATE,
+                </if>
+                <if test="END_DATE != null ">
+                    END_DATE,
+                </if>
+                <if test="STATUS != null ">
+                    STATUS,
+                </if>
+                <if test="MESSAGE != null ">
+                    MESSAGE,
+                </if>
+                <if test="REMARK != null ">
+                    REMARK,
+                </if>
+                <if test="CREATE_USER != null ">
+                    CREATE_USER,
+                </if>
+                <if test="CREATE_DATE != null ">
+                    CREATE_DATE,
+                </if>
+                <if test="UPDATE_USER != null ">
+                    UPDATE_USER,
+                </if>
+                <if test="UPDATE_DATE != null ">
+                    UPDATE_DATE,
+                </if>
+                <if test="RUN_STEP != null ">
+                    RUN_STEP,
+                </if>
+                <if test="REQUEST_INFO != null ">
+                    REQUEST_INFO,
+                </if>
+                <if test="SYNC_TYPE != null ">
+                    SYNC_TYPE
+                </if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="UUID != null ">
+                    #{UUID,jdbcType = VARCHAR},
+                </if>
+                <if test="REQUEST_TYPE != null ">
+                    #{REQUEST_TYPE,jdbcType = VARCHAR},
+                </if>
+                <if test="START_DATE != null ">
+                    #{START_DATE,jdbcType=TIMESTAMP},
+                </if>
+                <if test="END_DATE != null ">
+                    #{END_DATE,jdbcType=TIMESTAMP},
+                </if>
+                <if test="STATUS != null ">
+                    #{STATUS,jdbcType = VARCHAR},
+                </if>
+                <if test="MESSAGE != null ">
+                    #{MESSAGE,jdbcType = VARCHAR},
+                </if>
+                <if test="REMARK != null ">
+                    #{REMARK,jdbcType = VARCHAR},
+                </if>
+                <if test="CREATE_USER != null ">
+                    #{CREATE_USER,jdbcType = VARCHAR},
+                </if>
+                <if test="CREATE_DATE != null ">
+                    #{CREATE_DATE,jdbcType=TIMESTAMP},
+                </if>
+                <if test="UPDATE_USER != null ">
+                    #{UPDATE_USER,jdbcType = VARCHAR},
+                </if>
+                <if test="UPDATE_DATE != null ">
+                    #{UPDATE_DATE,jdbcType=TIMESTAMP},
+                </if>
+                <if test="RUN_STEP != null ">
+                    #{RUN_STEP,jdbcType = VARCHAR},
+                </if>
+                <if test="REQUEST_INFO != null ">
+                    #{REQUEST_INFO,jdbcType = VARCHAR},
+                </if>
+                <if test="SYNC_TYPE != null ">
+                    #{SYNC_TYPE,jdbcType = VARCHAR}
+                </if>
+            </trim>
+    </insert>
+
+
+    <update id="updateManager" parameterType="java.util.Map">
+        UPDATE BG_SYS_REQUEST_MANAGER
+        <set>
+            <if test="REQUEST_TYPE != null">
+                REQUEST_TYPE = #{REQUEST_TYPE,jdbcType=VARCHAR},
+            </if>
+            <if test="START_DATE != null">
+                START_DATE = #{START_DATE,jdbcType=TIMESTAMP},
+            </if>
+            <if test="END_DATE != null">
+                END_DATE = #{END_DATE,jdbcType=TIMESTAMP},
+            </if>
+            <if test="STATUS != null">
+                STATUS = #{STATUS,jdbcType =VARCHAR},
+            </if>
+            <if test="MESSAGE != null">
+                MESSAGE = #{MESSAGE,jdbcType = VARCHAR},
+            </if>
+            <if test="REMARK != null">
+                REMARK = #{REMARK,jdbcType = VARCHAR},
+            </if>
+            <if test="CREATE_USER != null">
+                CREATE_USER = #{CREATE_USER,jdbcType = VARCHAR},
+            </if>
+            <if test="CREATE_DATE != null">
+                CREATE_DATE = #{CREATE_DATE,jdbcType=TIMESTAMP},
+            </if>
+            <if test="UPDATE_USER != null">
+                UPDATE_USER = #{UPDATE_USER,jdbcType = VARCHAR},
+            </if>
+            <if test="UPDATE_DATE != null">
+                UPDATE_DATE = #{UPDATE_DATE,jdbcType=TIMESTAMP},
+            </if>
+            <if test="RUN_STEP != null">
+                RUN_STEP = #{RUN_STEP,jdbcType = VARCHAR},
+            </if>
+            <if test="REQUEST_INFO != null">
+                REQUEST_INFO = #{REQUEST_INFO,jdbcType = VARCHAR},
+            </if>
+            <if test="SYNC_TYPE != null">
+                SYNC_TYPE = #{SYNC_TYPE,jdbcType = VARCHAR},
+            </if>
+        </set>
+        where UUID = #{UUID,jdbcType = VARCHAR}
+    </update>
+
+
+</mapper>

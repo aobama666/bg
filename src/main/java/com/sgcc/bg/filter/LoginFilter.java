@@ -74,7 +74,14 @@ public class LoginFilter implements Filter {
 					dataRedisTemplate.expire(cookievalue, 30*60, TimeUnit.SECONDS);
 					chain.doFilter(request, response);
 				}
-			}else if (request.getRequestURI().equals(request.getContextPath()+"/index/login")||request.getRequestURI().equals(request.getContextPath()+"/index/loginsystem")||request.getRequestURI().equals(request.getContextPath()+"/index/autocompleteName")) {
+			}else if (
+					request.getRequestURI().equals(request.getContextPath()+"/index/login")
+					|| request.getRequestURI().equals(request.getContextPath()+"/index/loginsystem")
+					|| request.getRequestURI().equals(request.getContextPath()+"/index/autocompleteName")
+					|| request.getRequestURI().equals(request.getContextPath()+"/bgSyncService/queryProjectInfo")
+					|| request.getRequestURI().equals(request.getContextPath()+"/syncUser/getUsers")
+					|| request.getRequestURI().contains(request.getContextPath()+"/druid/") //过滤数据连接池监控的请求不受登录监控，没事别乱动
+			) {
 				chain.doFilter(request, response);
 			}else {
 				log.info("userSession is null");

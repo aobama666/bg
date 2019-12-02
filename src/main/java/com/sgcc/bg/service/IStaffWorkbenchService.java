@@ -17,8 +17,17 @@ public interface IStaffWorkbenchService {
 	List<Map<String, String>> getWorkingHourInfo(String selectedDate);
 
 	/**
-	 *获取当前员工名下的项目信息 条件：1.项目开始日期<=填报日期<=项目结束日期 
-	 *2.如果为项目信息，员工参与开始日期<=填报日期<=参与结束日期
+	 * 工时统计（月度工时及已填工时）
+	 * @param selectedDate
+	 * @return
+	 * ①　如果校验配置 “否/空”，不需要与员工考勤数据对接，校验投入总工时<=8h*工作日+36h。 月度工时=8h*工作日+36h。
+	 * ②　如果校验配 “是”  ，需要与员工考勤数据对接，校验投入工时<=考勤工时。 月度工时=考勤工时。
+	 */
+	Map<String,Object> workingHoursMap(String selectedDate);
+
+	/**
+	 *获取当前员工名下的项目信息 条件：1.项目开始日期<=填报月度<=项目结束日期
+	 *2.如果为项目信息，员工参与开始日期<=填报月度<=参与结束日期
 	 *3.如果为非项目信息，则为本人所属处室或部门下的项目
 	 * @param selectedDate
 	 * @param proName
@@ -117,6 +126,12 @@ public interface IStaffWorkbenchService {
 	 * @return 当状态为1审批中的，则返回true
 	 */
 	boolean canExamine(String id);
+	/**
+	 * 判断指定id的记录能否被审核
+	 * @param id
+	 * @return 当状态为1审批中的，则返回true
+	 */
+	boolean canExamined(String id);
 
 	/**
 	 * 为提交操作添加记录
@@ -163,4 +178,5 @@ public interface IStaffWorkbenchService {
 	 * @return
 	 */
 	String getApproverById(String id);
+
 }

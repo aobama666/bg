@@ -30,14 +30,30 @@
 	<update id="syncHrOrganData">
 		MERGE INTO BG_SYS_DEPT D
 		USING (SELECT DEPTID DEPTCODE,
-		              DECODE(DEPTTYPE, 'UNIT', 0, 'DEPT', 1, 'LAB', 2) TYPE,
+		              /*DECODE(DEPTTYPE, 'UNIT', 0, 'DEPT', 1, 'LAB', 2) TYPE,*/
+						case
+						when PARENTID is null then
+						'-1'
+						when parentid in
+						(select deptid from BG_ERP_HR_DEPT where parentid is null) then
+						'0'
+						when parentid in
+						(select deptid
+						from BG_ERP_HR_DEPT
+						where parentid = (select deptid
+						from BG_ERP_HR_DEPT
+						where parentid is null)) then
+						'1'
+						else
+						'2'
+						end TYPE,
 		              DEPTNAME,
 		              PARENTID PDEPTCODE
 		         FROM BG_ERP_HR_DEPT) T
 		ON (D.SRC = 0 AND D.DEPTCODE = T.DEPTCODE)
 		WHEN MATCHED THEN
 		  UPDATE
-		     SET D.VALID=1,D.DEPTNAME = T.DEPTNAME,D.TYPE = T.TYPE,D.UPDATE_USER = 'admin',D.UPDATE_DATE = SYSDATE
+		     SET D.VALID=1,D.DEPTNAME = T.DEPTNAME,D.TYPE = T.TYPE,D.UPDATE_USER = 'admin',D.UPDATE_DATE = SYSDATE,D.PDEPTCODE = T.PDEPTCODE
 		WHEN NOT MATCHED THEN
 		  INSERT
 		    (DEPTID , DEPTCODE, DEPTNAME, PDEPTCODE,TYPE,SRC,CREATE_USER,CREATE_DATE,UPDATE_USER,UPDATE_DATE,VALID)
@@ -240,11 +256,13 @@
 		           ON P.Z00HRSSBZID = D.DEPTCODE
 		         LEFT JOIN BG_SYS_DEPT D1
 		           ON P.Z00HRSSBMID = D1.DEPTCODE
-		        WHERE P.Z00HRSSDWID = '41000001'
+		        WHERE 1=1
+		        /*P.Z00HRSSDWID = '41000001'*/
 		          AND P.BEGDA IS NOT NULL
 		          AND P.ENDDA IS NOT NULL
 		          AND U.USERID IS NOT NULL
-		          AND NVL(D.DEPTID, D1.DEPTID) IS NOT NULL) B
+		          AND ((d.deptcode is not null and d.src = 0) or (d.deptcode is null and d1.deptcode is not null and d1.src = 0))
+		          ) B
 		ON (A.SRC = 0 AND A.USERID = B.USERID AND A.DEPTID = B.DEPTID AND A.EXP_START_TIME = B.BEGIN_DATE AND A.EXP_END_TIME = B.END_DATE)
 		WHEN MATCHED THEN
 		  UPDATE SET A.VALID = 1, A.UPDATE_USER = 'admin', A.UPDATE_DATE = SYSDATE

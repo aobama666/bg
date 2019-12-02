@@ -3,6 +3,7 @@ package sync;
 import java.util.List;
 import java.util.Map;
 
+import com.sgcc.bg.job.SyncZhDataBase;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ public class syncTest {
 	public static ApplicationContext ctx;
 	public HandleSyncService handleSyncService = ctx.getBean(HandleSyncService.class);
 	public BgWorkinghourInfoMapper bgMapper = ctx.getBean(BgWorkinghourInfoMapper.class);
+	public SyncZhDataBase syncZhDataBase = ctx.getBean(SyncZhDataBase.class);
 
 	@BeforeClass
 	public static void initConfig(){
@@ -85,4 +87,9 @@ public class syncTest {
 		//System.out.println(list2);
 		
 	}
+
+	/*@Test
+	public void testSyncForZH(){
+		syncZhDataBase.syncBaseDataForZH();
+	}*/
 }

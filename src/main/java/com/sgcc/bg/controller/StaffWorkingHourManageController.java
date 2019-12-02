@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.sgcc.bg.common.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +29,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.sgcc.bg.common.CommonCurrentUser;
-import com.sgcc.bg.common.FileDownloadUtil;
-import com.sgcc.bg.common.PageHelper;
-import com.sgcc.bg.common.Rtext;
-import com.sgcc.bg.common.UserUtils;
-import com.sgcc.bg.common.WebUtils;
 import com.sgcc.bg.model.WorkHourInfoPo;
 import com.sgcc.bg.service.DataDictionaryService;
 import com.sgcc.bg.service.IStaffWorkbenchService;
@@ -87,6 +83,22 @@ public class StaffWorkingHourManageController {
 		String status = Rtext.toStringTrim(request.getParameter("status"), "");
 		Integer page = Rtext.ToInteger(request.getParameter("page"), 0);
 		Integer limit = Rtext.ToInteger(request.getParameter("limit"), 30);
+
+		if(startDate!=null && startDate!="" && endDate!=null && endDate!="") {
+			//取月初和月末
+			String[] str = startDate.split("-");
+			int year = Integer.parseInt(str[0]);
+			int month = Integer.parseInt(str[1]);
+
+			String[] strEnd = endDate.split("-");
+			int yearEnd = Integer.parseInt(strEnd[0]);
+			int monthEnd = Integer.parseInt(strEnd[1]);
+			//查询开始月初
+			startDate = DateUtil.getFirstDayOfMonth1(year, month);
+			//查询结束月末
+			endDate = DateUtil.getLastDayOfMonth1(yearEnd, monthEnd);
+		}
+
 		smLog.info("员工工时管理页面查询条件为： startDate: "+startDate+"/"+
 				"endDate: "+endDate+"/"+
 				"deptName: "+deptName+"/"+
@@ -113,6 +125,25 @@ public class StaffWorkingHourManageController {
 	@RequestMapping("/update")
 	public ModelAndView projectUpdate(String whId, HttpServletRequest request) {
 		Map<String, String> workHourInfo = smService.getWorkHourInfoById(whId);
+		String[] work = workHourInfo.get("WORK_TIME_BEGIN").split("-");
+		String workTimeBegin = work[0]+"-"+work[1];
+		String fillSum = null;
+		String fillSumKQ = null;
+		workHourInfo.put("WORK_DATE",workTimeBegin);
+		//查询月度工时及累计工时
+		if(workHourInfo.get("WORK_TIME_BEGIN")!=null && workHourInfo.get("WORK_TIME_BEGIN") != "") {
+			Map<String, Object> workingHoursMap = SWService.workingHoursMap(workHourInfo.get("WORK_TIME_BEGIN"));
+			fillSumKQ = String.valueOf(workingHoursMap.get("fillSumKQ"));
+			fillSum= String.valueOf(workingHoursMap.get("fillSum"));
+			if(fillSum.equals("0.0")){
+				fillSum="-";
+			}
+			if (fillSumKQ.equals("0")){
+				fillSumKQ="-";
+			}
+			workHourInfo.put("fillSum", fillSum);
+			workHourInfo.put("fillSumKQ", fillSumKQ);
+		}
 		ModelAndView model = new ModelAndView("bg/staffWorkHourManage/bg_staffWorkHour_update", workHourInfo);
 		return model;
 	}
@@ -196,6 +227,8 @@ public class StaffWorkingHourManageController {
 			String workHour=Rtext.toStringTrim(map.get("workHour"), "");
 			String jobContent=Rtext.toStringTrim(map.get("jobContent"), "");
 			String date=Rtext.toStringTrim(map.get("date"), "");
+			//String dateBegin=Rtext.toStringTrim(map.get("dateBegin"), "");
+			//String dateEnd=Rtext.toStringTrim(map.get("dateEnd"), "");
 			String hrCode=Rtext.toStringTrim(map.get("hrCode"), "");
 			String projectName=Rtext.toStringTrim(map.get("projectName"), "");
 			String approverUsername=Rtext.toStringTrim(map.get("approver"), "");
@@ -211,10 +244,12 @@ public class StaffWorkingHourManageController {
 				resultMap.put("hint","重复提交！");
 				return JSON.toJSONString(resultMap);
 			}
-			if("".equals(id) || "".equals(workHour) || "".equals(date) || "".equals(hrCode) 
-					|| "".equals(approverUsername)){
-				smLog.info("员工工时管理执行提交的数据有空值： 项目id:"+id+"-工时："+workHour+"-日期："+date+"-员工编号："
-					+hrCode+"-审批人用户名："+approverUsername);
+			/*if("".equals(id) || "".equals(workHour) || "".equals(date) || "".equals(hrCode) || "".equals(approverUsername)){
+				smLog.info("员工工时管理执行提交的数据有空值： 项目id:"+id+"-工时："+workHour+"-日期："+date+"-员工编号："+hrCode+"-审批人用户名："+approverUsername);
+				continue;
+			}*/
+			if("".equals(id) || "".equals(workHour) || "".equals(hrCode) || "".equals(approverUsername)){
+				smLog.info("员工工时管理执行提交的数据有空值： 项目id:"+id+"-工时："+workHour+"-员工编号："+hrCode+"-审批人用户名："+approverUsername);
 				continue;
 			}
 			// || "".equals(jobContent)  +"-工作内容："+jobContent 暂不做工作内容必填校验
@@ -232,17 +267,32 @@ public class StaffWorkingHourManageController {
 				smLog.info("workHour工时解析出错！");
 				continue;
 			}
-			
+
 			CommonCurrentUser user=userUtils.getCommonCurrentUserByHrCode(hrCode);
 			//校验当天工时是否超标
-			checkResult=smService.checkWorkHour(user.getUserName(),date,todayHours);
+			/*checkResult=smService.checkWorkHour(user.getUserName(),date,todayHours);
 			if (!"".equals(checkResult)) {
 				smLog.info("工时超标！");
 				resultMap.put("count", count+"");
 				resultMap.put("rowNum", rowNum);
 				resultMap.put("hint", "工时超标！");
 				return JSON.toJSONString(resultMap);
-			} 
+			} */
+
+			//效验累计工时是否超过月度工时
+			Double workhours = Double.valueOf(workHour);
+			Map<String,Object> dateMap = SWService.workingHoursMap(date);
+			BigDecimal fillSum = new BigDecimal(String.valueOf(dateMap.get("fillSum")));
+			BigDecimal fillSumKQ = new BigDecimal(String.valueOf(dateMap.get("fillSumKQ")));
+			int j = fillSum.add(BigDecimal.valueOf(workhours)).compareTo(fillSumKQ);
+			if(j>0){
+				smLog.info("工时超标！");
+				resultMap.put("count", count+"");
+				resultMap.put("rowNum", rowNum);
+				resultMap.put("hint", "工时超标！");
+				return JSON.toJSONString(resultMap);
+			}
+
 			//添加到流程记录表
 			String processId=SWService.addSubmitRecord(id, processUsername);
 			if(approverUsername.equals(user==null?"":user.getUserName())){//如果审核人就是本人，则默认通过
@@ -345,7 +395,7 @@ public class StaffWorkingHourManageController {
 	
 	/**
 	 * 解析上传的批量文件
-	 * @param file
+	 * @param
 	 * @param response
 	 * @throws Exception
 	 */

@@ -12,7 +12,7 @@
 	</div>
 	<hr>
 	<div class="form-box">
-		<div class="form-group col-xs-11">
+		<div class="form-group col-xs-5">
 			<label for="category"><font
 				class="glyphicon glyphicon-asterisk required"></font>项目分类</label>
 			<div class="controls">
@@ -28,6 +28,22 @@
 				</select>
 			</div>
 		</div>
+
+		<div class="form-group col-xs-6">
+			<label for="projectGrade"><font
+					class="glyphicon glyphicon-asterisk required"></font>项目级别</label>
+			<div class="controls">
+				<%--<input type="text" name="projectGrade" property="projectGrade">--%>
+					<select name="projectGrade" property="projectGrade">
+					<options collection="typeList" property="label" labelProperty="value">
+                        <option value="YJ">院级</option>
+                        <option value="BMJ">部门级</option>
+                        <option value="CSJ">处室级</option>
+                    </options>
+				</select>
+			</div>
+		</div>
+
 		<div class="form-group col-xs-11">
 			<label for="projectName"><font
 				class="glyphicon glyphicon-asterisk required"></font>项目名称</label>
@@ -89,9 +105,8 @@
 			<div class="controls">
 				<div id="organTree" class="input-group organ">
 					<input type="hidden" name="deptCode" id="deptCode" value="">
-					<input type="text" name="deptName" id="deptName"
-						readonly="readonly"> <span class="input-group-addon"><span
-						class="glyphicon glyphicon-th-list"></span></span>
+					<input type="text" name="deptName" id="deptName" property="deptName"readonly="readonly">
+					<span class="input-group-addon"><span id="deptSpan" class="glyphicon glyphicon-th-list"></span></span>
 				</div>
 			</div>
 		</div>
@@ -118,6 +133,7 @@ var src = "BG"//项目来源系统 BG,KY.HX
 var srcProId;//项目信息来源系统的项目id
 var isSaved = false;//标记是否项目已被成功保存
 
+
 function initPro(){
 	$("#startDatePicker,#endDatePicker").datepicker({
 		autoclose:true,
@@ -132,14 +148,22 @@ function initPro(){
 
 function typeChange(type){	
 	if(type=="JS"){
-		$("#organInfo").show();
+		/*$("#organInfo").show();
 		$("#proSelect").hide();
 		$("#tips").hide();
 		if($("#deptCode").val()==""){
 			$("#deptName").val($("#currentDeptName").val());
 			$("#deptCode").val($("#currentDeptCode").val());
 		}
-		$("#WBSNumber label").html('WBS编号');
+		$("#WBSNumber label").html('WBS编号');*/
+        $("#organInfo").show();
+        $("#proSelect").show();
+        $("#tips").show();
+        if($("#deptCode").val()==""){
+            $("#deptName").val($("#currentDeptName").val());
+            $("#deptCode").val($("#currentDeptCode").val());
+        }
+        $("#WBSNumber label").html('<font class="glyphicon glyphicon-asterisk required"></font>WBS编号');
 	}
 	if(type=="KY" || type=="HX"){
 		$("#organInfo").hide();
@@ -191,6 +215,7 @@ $("#proSelect").click(function(){
 	var category = $("select[name='category']").val();
 	var title = "项目选择-科研项目";
 	if(category=="HX") title = "项目选择-横向项目";
+	if(category=="JS") title = "项目选择-技术服务项目";
 	
 	parent.layer.open({
 		type:2,
@@ -223,6 +248,7 @@ function forSave_pro(){
 	*/
 	var validator=[
               	      {name:'category',vali:'required'},
+					   {name:'projectGrade',vali:'required;length[-20]'},
              	      {name:'projectName',vali:'required;length[-50]'},
              	      {name:'WBSNumber',vali:''},//required;WBS编号改为选填项
              	      {name:'projectIntroduce',vali:'length[-200]'},
@@ -235,7 +261,7 @@ function forSave_pro(){
     var category=$("select[name='category']").val();
     var wbs=$("#WBSNumber input");
     //当为科研、横向项目时，校验wbs编号,否则如果天了wbs编号的话，只校验其唯一性
-    if(category=='HX' || category=='KY' ){
+    if(category=='HX' || category=='KY' || category=='JS' ){
     	validator[2].vali='required;length[-50];checkUniqueness()';
     }else if($.trim(wbs.val())!=''){
     	validator[2].vali='length[-50];checkUniqueness()';
@@ -311,7 +337,9 @@ function forSave_pro(){
 						stuffShow();
 					}
 					
-				}else {
+				}else if (data.result=="error"){
+                    parent.layer.msg(data.content);
+                }else {
 					parent.layer.msg("保存失败!");
 				}
 			},
@@ -331,7 +359,6 @@ function stuffShow(){
 //选择项目信息的回调方法
 function getProInfo(proId,queryFor){
 	isSaved = false;//新选择的项目，未保存
-	//alert(proId+"/"+queryFor);
 	$.get('<%=request.getContextPath()%>/project/getProAndEmpData', { proId: proId, src: queryFor },
 		function(data){
 	    	if(data.result=='success'){
@@ -349,6 +376,15 @@ function getProInfo(proId,queryFor){
 	    		$('textarea[name="projectIntroduce"]').text(pro.PROJECT_INTRODUCE);
 	    		$('#startDatePicker').datepicker( 'setDates' , new Date(pro.START_DATE.replace(/-/g,"\/")));
 	    		$('#endDatePicker').datepicker( 'setDates' , new Date(pro.END_DATE.replace(/-/g,"\/")));
+	    		debugger;
+                if(src == 'JS'){
+                    $('input[name="deptName"]').val(pro.deptName);
+                    $('input[name="deptCode"]').val(pro.PROJECT_ORGANIZE);
+                    $('#deptName').removeAttr("readonly");
+
+                    $('#proInfo input[name="deptName"]').attr("disabled",true);
+                    $("#deptSpan").hide();
+                }
 	    		//项目类型，项目名称，wbs编号不允许修改
 	    		$('#proInfo select[name="category"],input[name="projectName"],input[name="WBSNumber"]').prop("disabled",true);
 	    		

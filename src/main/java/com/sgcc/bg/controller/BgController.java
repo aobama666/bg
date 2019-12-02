@@ -110,11 +110,13 @@ public class BgController {
 
 	@RequestMapping("/pro_add")
 	public ModelAndView projectAdd() {
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		CommonCurrentUser currentUser=userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
+		Map<String,String> rankMap= dict.getDictDataByPcode("project_rank");
 		map.put("hrcode", currentUser==null?"":currentUser.getHrCode());
 		map.put("deptName", currentUser==null?"":currentUser.getDeptName());
 		map.put("deptCode", currentUser==null?"":currentUser.getDeptCode());
+		map.put("rankMap",rankMap);
 		ModelAndView model = new ModelAndView("bg/proInfo/bg_project_add",map);
 		return model;
 	}
@@ -534,7 +536,7 @@ public class BgController {
 	/**
 	 * 通过id获取科研或者横向系统的项目信息以及其关联人员信息并返回
 	 * @param proId 科研或横向的项目id
-	 * @param queryFor 科研或是横向系统 KY/HX
+	 * @param   src 科研或是横向系统 KY/HX
  	 * @return
 	 */
 	@RequestMapping(value="/getProAndEmpData",method = RequestMethod.GET)
@@ -547,7 +549,7 @@ public class BgController {
 		};
 		
 		Map<String,Object> proData = bgService.getProDataByProIdAndSrc(proId,src);
-		//List<Map<String,Object>> empData = bgService.getEmpDataByProIdAndSrc(proId,src);
+		//List<HashMap> empData = bgService.getEmpDataByProIdAndSrc(proId,src);
 		
 		jsonMap.put("result", "success");
 		jsonMap.put("proData", proData);
