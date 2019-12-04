@@ -99,6 +99,9 @@ annex.saveStuff = function() {
         return;
     }
 
+    if(document.getElementById("remark").value == $("#remark").attr('placeholder')){
+        document.getElementById("remark").value = '';
+    }
 
     layer.confirm('确认上传吗',{
             btn:['确定','取消'],icon:0,title:'上传提示'
