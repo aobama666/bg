@@ -99,6 +99,7 @@ annex.saveStuff = function() {
         return;
     }
 
+    //防止ie8的placeholder内容当成value传如后台
     if(document.getElementById("remark").value == $("#remark").attr('placeholder')){
         document.getElementById("remark").value = '';
     }
