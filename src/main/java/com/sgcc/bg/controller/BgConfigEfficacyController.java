@@ -184,11 +184,6 @@ public class BgConfigEfficacyController {
 		efficacyInfo.put("month",month);
 		efficacyInfo.put("isEfficacy",isEfficacy);
 		List<Map<String,Object>> content = bgConfigEfficacyService.selectForConfigEfficacy(efficacyInfo);
-		if(!content.isEmpty()){
-			rw.setSuccess("false");
-			rw.setMsg("该信息已存在");
-			return rw;
-		}
 		CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
 		String userId = currentUser.getUserId();
 		efficacyInfo.put("id", id);
@@ -196,13 +191,28 @@ public class BgConfigEfficacyController {
 		efficacyInfo.put("updateTime", new Date());
 		int result=0;
 		if(!content.isEmpty()){
-			String  oldisEfficacy=content.get(0).get("IS_EFFICACY").toString();
-			if(oldisEfficacy.equals(isEfficacy)){
-				rw.setSuccess("true");
-				rw.setMsg("修改成功");
-				return rw;
+			String  ID=String.valueOf(content.get(0).get("UUID"));
+			String  years=String.valueOf(content.get(0).get("YEAR"));
+			String  months=String.valueOf(content.get(0).get("MONTH"));
+			String  isEfficacys=String.valueOf(content.get(0).get("IS_EFFICACY"));
+			if(ID.equals(id)){
+				if(years.equals(year)&&months.equals(month)){
+					 if(isEfficacys.equals(isEfficacy)){
+						 rw.setSuccess("true");
+						 rw.setMsg("修改成功");
+						 return rw;
+					 }else{
+						 result = bgConfigEfficacyService.updataConfigEfficacy(efficacyInfo);
+					 }
+				}else{
+					rw.setSuccess("true");
+					rw.setMsg("该数据存在!");
+					return rw;
+				}
 			}else{
-				result = bgConfigEfficacyService.updataConfigEfficacy(efficacyInfo);
+				rw.setSuccess("true");
+				rw.setMsg("该数据存在!");
+				return rw;
 			}
 		}else{
 			result = bgConfigEfficacyService.updataConfigEfficacy(efficacyInfo);
