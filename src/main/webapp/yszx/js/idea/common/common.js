@@ -155,7 +155,22 @@ var IsRight={
             $(ele).next("span").html("*必须是3位数字");
         }
     },
-  
+    //只能是小数，保留两位小数
+    onlyThreeNum:function(ele){
+        var val = IsRight.trim($(ele).val());
+        var exp1 = /^[0-9]{3}$/;
+
+        if (exp1.test(val)) {
+            $(ele).removeClass("redColor");
+            $(ele).next("span").html("√");
+        } else {
+            $(ele).addClass("redColor");
+            $(ele).next("span").html("*必须是3位数字");
+        }
+    },
+
+
+
     notSpecial:function(ele){
         var val = IsRight.trim($(ele).val());
         var exp1 = /^[\u4e00-\u9fa50-9a-zA-Z_]+$/;

@@ -124,7 +124,28 @@ var dataForm = {
 			}
 			return true;
 		},
-		
+    /**
+     * 验证字段是否为正整数
+     */
+    validPosiviceNumber:function(e){
+        if(!e){
+            e = $(".posiviceNum");
+        }
+        for(var a = 0;a<e.length;a++){
+            var ele = $(e[a]);
+            var eleTitle = ele.attr("content");
+            var eleValue = ele.val();
+            var reg = regStr.numRegStr;
+            if(!reg.test(eleValue)){
+                messager.tip(eleTitle+"必须为正整数",2000);
+                ele.addClass("validRefuse");
+                return  false;
+            }else{
+                ele.removeClass("validRefuse");
+            }
+        }
+        return true;
+       },
 		/**
 		 * 验证字段是否为数字  小数  
 		 * @param type	0代表可为零的正整数，1代表不可零的正整数，2代表小数 
@@ -212,9 +233,33 @@ var dataForm = {
 			}
 			return true;
 		},
-		
-		
-		
+
+    /**
+     * 验证字段是否为数字 和两位 小数
+     *
+     */
+    validNewNumber:function(e,type,byte){
+    	debugger;
+        if(!e){
+            e = $(".validNum");
+        }
+        for(var a = 0;a<e.length;a++){
+            var ele = $(e[a]);
+            var eleTitle = ele.attr("content");
+            var eleValue = ele.val();
+            var reg1 = regStr.notZeroInt;;
+            var reg2 = regStr.intOrFloatRegStr;
+            if(!reg1.test(eleValue)&&!reg2.test(eleValue)){
+                messager.tip(eleTitle+"必须为正整数或者保留两位小数的小数",2000);
+                ele.addClass("validRefuse");
+                return  false;
+            }else{
+                ele.removeClass("validRefuse");
+            }
+        }
+        return true;
+    },
+
 		initSelectEditor:function(dictList,jDom){
 			var dictObj = JSON.parse(dictList);
 			var optiontxt = ""

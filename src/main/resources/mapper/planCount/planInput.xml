@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.planCount.mapper.PlanInputMapper">
+
+    <!--计划投入数据维护公共sql-->
+    <sql id="maintainInfo">
+        SELECT  ID,
+           SPECIAL_TYPE,
+           YEAR,
+           PLAN_AMOUNT,
+           ITEM_NUMBER,
+           IMAGE_PROGRESS,
+           BEARER,
+           CREATE_USER,
+           CREATE_TIME,
+           UPDATE_USER,
+           UPDATE_TIME
+        FROM   PS_MAINTAIN_YEAR
+        where  VALID='1'
+        <if test="maintainMap.year!= null and maintainMap.year!= ''">
+            and   YEAR  = #{maintainMap.year}
+        </if>
+        <if test="maintainMap.specialType!= null and maintainMap.specialType!= ''">
+            and  SPECIAL_TYPE = #{maintainMap.specialType}
+        </if>
+        <if test="maintainMap.id!= null and maintainMap.id!= ''">
+            and  ID = #{maintainMap.id}
+        </if>
+        ORDER BY  YEAR  DESC
+    </sql>
+    <!-- 计划投入数据维护的查询分页-->
+    <select id="selectForMaintainOfYear" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT  T.*  from(
+        SELECT  TB.* , ROWNUM AS ROWNO   from(
+        <include refid="maintainInfo"/>
+        ) TB  WHERE #{maintainMap.page_end} >= ROWNUM
+        ) T   WHERE T.ROWNO > #{maintainMap.page_start}
+    </select>
+    <!-- 计划投入数据条数-->
+    <select id="selectForMaintainOfYearNum" resultType="java.lang.String" parameterType="java.util.HashMap" >
+        SELECT    COUNT(1)  AS "countNum"  from(<include refid="maintainInfo"/>)
+    </select>
+    <!-- 计划投入数据维护的查询-->
+    <select id="findForMaintainOfYear" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT     *  from(<include refid="maintainInfo"/>)
+    </select>
+
+    <!--计划投入数据维护的新增 （股权投资和信息系统开发建设）-->
+    <insert id="saveForMaintainOfYear"    parameterType="java.util.HashMap">
+        insert into PS_MAINTAIN_YEAR
+        (id,
+        special_type,
+        year,
+        plan_amount,
+        item_number,
+        create_user,
+        create_time,
+        update_user,
+        update_time,
+        VALID
+        ) values
+        (#{maintainMap.id},
+        #{maintainMap.specialType},
+        #{maintainMap.year},
+        #{maintainMap.planAmount},
+        #{maintainMap.itemNumber},
+        #{maintainMap.createUser},
+        #{maintainMap.createTime},
+        #{maintainMap.updateUser},
+        #{maintainMap.updateTime},
+        #{maintainMap.valid}
+        )
+    </insert>
+    <!-- 计划投入数据维护的修改 （股权投资和信息系统开发建设）-->
+    <update id="updateForMaintainOfYear"  parameterType="java.util.HashMap">
+        update  PS_MAINTAIN_YEAR  set
+        PLAN_AMOUNT = #{maintainMap.planAmount},
+        ITEM_NUMBER = #{maintainMap.itemNumber},
+        UPDATE_USER = #{maintainMap.updateUser},
+        UPDATE_TIME = #{maintainMap.updateTime}
+        where id = #{maintainMap.id}
+    </update>
+    <!-- 计划投入数据维护的删除 （股权投资和信息系统开发建设）-->
+    <update id="deleteForMaintainOfYear"  parameterType="java.util.HashMap">
+        update  PS_MAINTAIN_YEAR  set
+        VALID = #{maintainMap.valid},
+        UPDATE_USER = #{maintainMap.updateUser},
+        UPDATE_TIME = #{maintainMap.updateTime}
+        where id = #{maintainMap.id}
+    </update>
+    <!-- 计划执行形象进度的维护 （股权投资和信息系统开发建设）-->
+    <update id="updateForImageProgress"  parameterType="java.util.HashMap">
+        update  PS_MAINTAIN_YEAR  set
+        IMAGE_PROGRESS = #{maintainMap.imageProgress},
+        UPDATE_USER = #{maintainMap.updateUser},
+        UPDATE_TIME = #{maintainMap.updateTime}
+        where id = #{maintainMap.id}
+    </update>
+
+</mapper>

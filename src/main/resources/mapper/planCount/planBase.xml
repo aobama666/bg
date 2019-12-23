@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.planCount.mapper.PlanBaseMapper">
+
+    <!--专项和院内项目类型数据维护公共sql-->
+    <sql id="CategoryInfo">
+        SELECT  ID,
+        SPECIAL_NAME,
+        SPECIAL_CODE
+        FROM   PS_SPECIAL_CATEGORY
+        where   1=1
+        <if test="categoryMap.specalType!= null and categoryMap.specalType!= ''">
+            and   SPECIAL_TYPE  = #{categoryMap.specalType}
+        </if>
+        <if test="categoryMap.specalCode!= null and categoryMap.specalCode!= ''">
+            and   SPECIAL_CODE  = #{categoryMap.specalCode}
+        </if>
+        ORDER BY  SPECIAL_CODE
+    </sql>
+    <!-- 专项和院内项目类型的查询-->
+    <select id="selectForCategoryInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT     *  from(<include refid="CategoryInfo"/>)
+    </select>
+
+
+
+    <!--资金来源维护公共sql-->
+    <sql id="FundsSourceInfo">
+    SELECT  ID,
+    FUNDS_SOURCE_CODE,
+    FUNDS_SOURCE_NAME,
+    SPECIAL_COMPANY_CODE,
+    SPECIAL_EPRI_CODE
+    FROM   PS_FUNDS_SOURCE  where   1=1
+        <if test="fundsSourceMap.specalType!= null and fundsSourceMap.specalType!= ''">
+            and   SPECIAL_COMPANY_CODE  = #{fundsSourceMap.specalType}
+        </if>
+    ORDER BY  FUNDS_SOURCE_CODE
+    </sql>
+
+    <!-- 资金来源的查询-->
+    <select id="selectForFundsSourceInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT     *  from(<include refid="FundsSourceInfo"/>)
+    </select>
+
+
+    <!--承担单位的查询-->
+    <sql id="CommitmentUnitInfo">
+        SELECT  DISTINCT
+        PROFIT_CENTER_CODE,
+        PROFIT_CENTER_DEATIL
+        FROM   PS_PROFIT_CENTER
+        where  1=1
+        <if test="commitmentUnitMap.commitmentUnit!= null and commitmentUnitMap.commitmentUnit!= ''">
+            and   PROFIT_CENTER_CODE  = #{commitmentUnitMap.commitmentUnit}
+        </if>
+    </sql>
+    <!-- 基础数据中存在的承担单位的查询-->
+    <select id="selectForCommitmentUnitInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT     *  from(<include refid="CommitmentUnitInfo"/>)
+    </select>
+
+
+</mapper>
