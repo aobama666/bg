@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sgcc.bg.planCount.mapper.PlanExecutionMapper">
+
+    <!--计划执行数据维护公共sql-->
+    <sql id="maintainInfo">
+        SELECT  Z1.PSPID ,
+        Z1.POSID ,
+        Z1.PTIME ,
+        Z1.POST1 ,
+        Z1.PRART1 ,
+        Z1.SPST1 ,
+        Z1.ZGSZTZ ,
+        Z1.WERT1 ,
+        Z1.ZZJLY ,
+        Z1.ZZJLY_T ,
+        Z1.ZZJXZ ,
+        Z1.ZZJXZ_T ,
+        Z1.PRCTR ,
+        Z1.KTEXT ,
+        Z1.PLFAZ ,
+        Z1.PLSEZ ,
+        Z1.ZSQJE ,
+        Z1.ZDDJE ,
+        Z1.ZFPRZ ,
+        Z2.GJAHR,
+        Z2.ZJFZCE,
+        ER.SPECIAL_COMPANY_CODE,
+        FS.FUNDS_SOURCE_NAME,
+        FS.SPECIAL_EPRI_CODE,
+        SC.SPECIAL_NAME
+        FROM   ZTPSJHTJ001    Z1
+        LEFT JOIN     ZTPSJHTJ002  Z2  ON  Z1.PSPID=Z2.PSPID   and  Z1.PTIME=Z2.GJAHR
+        LEFT JOIN     PS_SPECIAL_ERP_RELATION  ER ON    ER.ERP_SPECIAL_CODE=Z1.PRART1
+        LEFT JOIN     PS_FUNDS_SOURCE  FS ON    FS.FUNDS_SOURCE_CODE=Z1.ZZJLY  and  FS.SPECIAL_COMPANY_CODE=ER.SPECIAL_COMPANY_CODE
+        LEFT JOIN     PS_SPECIAL_CATEGORY  SC ON  SC.SPECIAL_CODE=FS.SPECIAL_EPRI_CODE
+        where  1=1
+        <if test="maintainMap.year!= null and maintainMap.year!= ''">
+            and   Z1.PTIME  = #{maintainMap.year}
+        </if>
+        <if test="maintainMap.specialType!= null and maintainMap.specialType!= ''">
+            and   ER.SPECIAL_COMPANY_CODE = #{maintainMap.specialType}
+        </if>
+        <if test="maintainMap.sourceOfFunds!= null and maintainMap.sourceOfFunds!= ''">
+            and  Z1.ZZJLY= #{maintainMap.sourceOfFunds}
+        </if>
+        <if test="maintainMap.commitmentUnit!= null and maintainMap.commitmentUnit!= ''">
+            and Z1.PRCTR= #{maintainMap.commitmentUnit}
+        </if>
+        <if test="maintainMap.projectCode!= null and maintainMap.projectCode!= ''">
+            and Z1.PSPID= #{maintainMap.projectCode}
+        </if>
+        ORDER BY   Z1.PTIME  DESC
+    </sql>
+    <!-- 计划执行数据维护的查询分页-->
+    <select id="selectForBaseInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT  T.*  from(
+        SELECT  TB.* , ROWNUM AS ROWNO   from(
+        <include refid="maintainInfo"/>
+        ) TB  WHERE #{maintainMap.page_end} >= ROWNUM
+        ) T   WHERE T.ROWNO > #{maintainMap.page_start}
+    </select>
+    <!-- 计划执行数据维护的查询条数-->
+    <select id="selectForBaseInfoNum" resultType="java.lang.String" parameterType="java.util.HashMap" >
+        SELECT    COUNT(1)  AS "countNum"  from(<include refid="maintainInfo"/>)
+    </select>
+    <!-- 计划执行数据维护的查询-->
+    <select id="selectForExecutionInfo" resultType="java.util.Map" parameterType="java.util.HashMap" >
+        SELECT     *      from(<include refid="maintainInfo"/>)
+    </select>
+
+
+    <sql id="nodeInfo">
+          SELECT   ID,
+          PROJECT_ID,
+          NODE_SORT,
+          NODE_NAME,
+          IMAGE_PROGRESS,
+          SPECAIL_TYPE,
+          CREATE_USER,
+          CREATE_TIME,
+          UPDATA_USER,
+          UPDATA_TIME
+          FROM PS_MAINRTAIN_NODE
+          WHERE  VALID='1'
+        <if test="nodeMap.projectId!= null and nodeMap.projectId!= ''">
+            and  PROJECT_ID  = #{nodeMap.projectId}
+        </if>
+        <if test="nodeMap.nodeName!= null and nodeMap.nodeName!= ''">
+            and  NODE_NAME  = #{nodeMap.nodeName}
+        </if>
+        ORDER BY  NODE_SORT
+    </sql>
+
+    <!-- 节点数据维护的查询分页-->
+    <select id="selectForNodeInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT  T.*  from(
+        SELECT  TB.* , ROWNUM AS ROWNO   from(
+        <include refid="nodeInfo"/>
+        ) TB  WHERE #{nodeMap.page_end} >= ROWNUM
+        ) T   WHERE T.ROWNO > #{nodeMap.page_start}
+    </select>
+
+    <!-- 节点数据维护的查询条数-->
+    <select id="selectForNodeInfoNum" resultType="java.lang.String" parameterType="java.util.HashMap" >
+        SELECT    COUNT(1)  AS "countNum"  from(<include refid="nodeInfo"/>)
+    </select>
+    <!-- 节点数据维护的查询-->
+    <select id="selectForNodeList" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT       N.ID,
+        N.PROJECT_ID,
+        N.NODE_SORT,
+        N.NODE_NAME,
+        N.IMAGE_PROGRESS,
+        N.SPECAIL_TYPE,
+        N.CREATE_USER,
+        N.CREATE_TIME,
+        N.UPDATA_USER,
+        N.UPDATA_TIME,
+        Z1.POST1  AS  PROJECTNAME
+        FROM PS_MAINRTAIN_NODE  N
+        LEFT JOIN   ZTPSJHTJ001    Z1  ON  N.PROJECT_ID=Z1.PSPID
+        WHERE  VALID='1'
+
+        <if test="nodeMap.projectId!= null and nodeMap.projectId!= ''">
+            and  N.PROJECT_ID  = #{nodeMap.projectId}
+        </if>
+        <if test="nodeMap.id!= null and nodeMap.id!= ''">
+            and  N.ID  = #{nodeMap.id}
+        </if>
+        ORDER BY  N.NODE_SORT DESC
+    </select>
+
+    <!-- 节点数据维护的新增 （股权投资和信息系统开发建设）-->
+    <insert id="saveForNodeInfo"    parameterType="java.util.HashMap">
+        insert into PS_MAINRTAIN_NODE
+        ( ID,
+          PROJECT_ID,
+          NODE_SORT,
+          NODE_NAME,
+          IMAGE_PROGRESS,
+          SPECAIL_TYPE,
+          CREATE_USER,
+          CREATE_TIME,
+          UPDATA_USER,
+          UPDATA_TIME,
+          VALID
+        ) values
+        (#{nodeMap.id},
+        #{nodeMap.projectId},
+        #{nodeMap.nodeSort},
+        #{nodeMap.nodeName},
+        #{nodeMap.imageProgress},
+        #{nodeMap.specailType},
+        #{nodeMap.createUser},
+        #{nodeMap.createTime},
+        #{nodeMap.updateUser},
+        #{nodeMap.updateTime},
+        #{nodeMap.valid}
+        )
+    </insert>
+
+
+    <!-- 节点数据维护的修改  -->
+    <update id="updateForNodeInfo"  parameterType="java.util.HashMap">
+        update  PS_MAINRTAIN_NODE  set
+        IMAGE_PROGRESS = #{nodeMap.imageProgress},
+        NODE_NAME = #{nodeMap.nodeName},
+        UPDATE_USER = #{nodeMap.updateUser},
+        UPDATE_TIME = #{nodeMap.updateTime}
+        where id = #{nodeMap.id}
+    </update>
+
+</mapper>
