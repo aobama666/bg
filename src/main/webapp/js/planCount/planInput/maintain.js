@@ -36,6 +36,9 @@ function stockRightUpdata(){
         MaintainOfYearForUpdata();
     }
 }
+
+
+
 //信息系统开发建设投入数据维护新增
 function messageSave(){
     var  flag= commonCheck();
@@ -43,13 +46,29 @@ function messageSave(){
          MaintainOfYearForSave();
     }
 }
-//股权投资投入数据维护修改
+//信息系统开发建设投入数据维护修改
 function messageUpdata(){
     var  flag= commonCheck();
     if(flag){
         MaintainOfYearForUpdata();
     }
 }
+//教育培训投入数据添加
+function educateSave(){
+    var  flag= commonCheck();
+    if(flag){
+       MaintainOfYearForSave();
+    }
+}
+//教育培训投入数据修改
+function　educateUpdata(){
+    var  flag= commonCheck();
+    if(flag){
+        MaintainOfYearForUpdata();
+    }
+}
+
+
 //新增接口
 function MaintainOfYearForSave(){
     var   affirmFormData = roomAddInfoCommon.getFormDataInfo();
@@ -108,18 +127,11 @@ function Resign(){
 }
 
 function ImageProgressUpdata(){
-    /* 验证形象进度保留两位小数的小数*/
-    var  checkteleUser=dataForm.validNewNumber(0,2);
-    if(!checkteleUser){
-        maintainInfo.saveBtnClickFlag = 0;
-        return false;
-    }
 
-    //形象进度的值
-    var    imageProgress= $("#imageProgress").val();
-    if(Number(imageProgress)>100){
-        maintainInfo.saveBtnClickFlag = 0;
-        messager.tip("形象进度不能超过100.00",5000);
+    /* 验证形象进度保留小数的小数或正整数0-100带%的数字*/
+    var  checkPer=dataForm.validPercent();
+    if(!checkPer){
+        roomList.saveBtnClickFlag = 0;
         return false;
     }
     ImageProgressForUpdata();

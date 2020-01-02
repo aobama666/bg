@@ -2,9 +2,9 @@
 <!DOCTYPE>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 		 pageEncoding="utf-8"%>
+
 <%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -28,6 +28,7 @@
 <!-- end  头部 -->
 <span  style="color:red;margin:5px 0;display: inline-block;">        </span>
 <!-- 参观申请单位信息展示 -->
+<input type = "hidden"   id = "applyId" name="applyId"  value="${applyId}">
 <div class="contentBox   Remark">
 	<div class="btnBox"  style="margin-top: 14px;     position: relative;">
 		<table class="visitOperate tableStyle specialTable" style="width: 90%;">
@@ -36,13 +37,8 @@
 					<span title = " 年度"> 年度</span>
 				</td>
 				<td class="addInputStyle" style="width: 200px">
-					<input id="year" name="year"
-						   onclick=" WdatePicker({dateFmt:'yyyy',enableInputMask:false})" readonly="true"
-						   type="text"
-						   class="inputQuery validNull changeQuery Wdate"
-						   title="年度（格式：yyyy）"
-						   content="年度"
-					/>
+					<input type = "hidden"   id = "id" name="id"  value="${ID}">
+					<input type="text"  id="year"  name="year"  style="text-align: center;" value="${YEAR}"  disabled />
 				</td>
 			</tr>
 			<tr>
@@ -50,12 +46,8 @@
 					<span title = " 承担单位"> 承担单位</span>
 				</td>
 				<td class="addInputStyle" style="width: 200px">
-					<select id = "commitmentUnit" name = "commitmentUnit" title="承担单位"   content="承担单位" title="必填项"    class = "validNull"   >
-						<option value = "">   </option>
-						<c:forEach  var="commitmentUnitInfo"  items="${commitmentUnitList}">
-							<option value ="${commitmentUnitInfo.PROFIT_CENTER_CODE}" title=" ${commitmentUnitInfo.PROFIT_CENTER_DEATIL}" > ${commitmentUnitInfo.PROFIT_CENTER_DEATIL}</option>
-						</c:forEach>
-					</select>
+					<input type = "hidden"   id = "commitmentUnit" name="commitmentUnit"  value="${BEARER}">
+					<input type="text"  id="commitmentUnitName"  name="commitmentUnitName" style="text-align: center;"  value="${PROFIT_CENTER_DEATIL}" disabled/>
 				</td>
 			</tr>
 			<tr>
@@ -63,7 +55,7 @@
 					<span title = " 计划投入金额"> 计划投入金额</span>
 				</td>
 				<td class="addInputStyle" style="width: 200px">
-					<input type="text"  id="planAmount"  name="planAmount"  content="计划投入金额" title="必填项"    class = "validNull validNum"     />
+					<input type="text"  id="planAmount"  name="planAmount"  style="text-align: center;" value="${PLAN_AMOUNT}"  content="计划投入金额" title="必填项"    class = "validNull validNum"  disabled/>
 				</td>
 			</tr>
 			<tr>
@@ -71,15 +63,22 @@
 					<span title = " 计划项目数"> 计划项目数</span>
 				</td>
 				<td class="addInputStyle" style="width: 200px">
-					<input type = "hidden"   id = "specialType" name="specialType"   value="${specialType}">
-					<input type="text"  id="itemNumber"  name="itemNumber"     content="计划项目数" title="必填项"    class = "validNull posiviceNum"     />
+					<input type="text"  id="itemNumber"  name="itemNumber"  style="text-align: center;" value="${ITEM_NUMBER}"  content="计划项目数" title="必填项"   class = "validNull posiviceNum"  disabled />
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 145px">
+					<span title = " 形象进度"> 形象进度 </span>
+				</td>
+				<td class="addInputStyle" style="width: 200px">
+					<input type="text"  id="imageProgress"  name="imageProgress"   value="${IMAGE_PROGRESS}%"    style="text-align: center;"  content="形象进度" title="必填项"   class = "validNull validPer"   />
 				</td>
 			</tr>
 		</table>
 	</div>
 </div>
 <div class="btnContent">
-	<button type="button" class="btn" onclick="educateSave()">确认</button>
+	<button type="button" class="btn" onclick="ImageProgressUpdata()">确认</button>
 	<button type="button" class="btn" onclick="Resign()">返回</button>
 </div>
 </body>

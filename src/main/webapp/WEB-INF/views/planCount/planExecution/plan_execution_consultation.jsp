@@ -23,27 +23,26 @@
 <div class="main_div"></div>
 <div class="sheach">
 	<%--<div class='content_top'>执行数据综合维护</div>--%>
-	<form id="queryForm" style="margin-bottom: 10px;">
-		<input type = "hidden"   id = "applyId" name="applyId">
-		<input type = "hidden"   id = "type" name="type" value="${type}">
+		<form id="queryForm" style="margin-bottom: 10px;">
+			<input type="hidden"   id="specialType"  name="specialType" value="${sprcialType}">
+			<label >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年度：</label>
+			<select id="year"  name = "year"  title="年度" class = "changeQuery userlevel" style="width: 200px;margin-left: 0px"   >
+				<option value="" > </option>
+				<c:forEach  var="yearInfo"  items="${yearList}">
+					<option value ="${yearInfo.year}" title=" ${yearInfo.year}" > ${yearInfo.year}</option>
+				</c:forEach>
+			</select>
 
-		<label >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年度：</label>
-		<select id="year"  name = "year"  title="年度" class = "changeQuery userlevel" style="width: 200px;margin-left: 0px"  >
-			<option value=""  ></option>
-			<c:forEach  var="deptInfo"  items="${deptInfoList}">
-				<option value ="${deptInfo.DEPT_ID}" title=" ${deptInfo.DEPTNAME}" > ${deptInfo.DEPTNAME}</option>
-			</c:forEach>
-		</select>
-		<label  for="useSealStatus" class="yearTitle"> 承担单位：</label>
-		<select id = "useSealStatus" name = "useSealStatus" title="审批状态"    class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
-			<option value = "">   </option>
-			<c:forEach  var="statusInfo"  items="${statusInfoList}">
-				<option value ="${statusInfo.CODE}" title=" ${statusInfo.NAME}" > ${statusInfo.NAME}</option>
-			</c:forEach>
-		</select>
-		<!-- 查询按钮  -->
-		<div id = "queryButton" class = "btn query" onclick = "roomList.query()" style="margin-left: 20px;">搜索</div> <!-- 原来引用的函数onclick = "roomList.query()" -->
-	</form>
+			<label  for="commitmentUnit" class="yearTitle"> 承担单位：</label>
+			<select id = "commitmentUnit" name = "commitmentUnit" title="承担单位"    class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
+				<option value = "">   </option>
+				<c:forEach  var="commitmentUnitInfo"  items="${commitmentUnitList}">
+					<option value ="${commitmentUnitInfo.PROFIT_CENTER_CODE}" title=" ${commitmentUnitInfo.PROFIT_CENTER_DEATIL}" > ${commitmentUnitInfo.PROFIT_CENTER_DEATIL}</option>
+				</c:forEach>
+			</select>
+			<!-- 查询按钮  -->
+			<div id = "queryButton" class = "btn query" onclick = "roomList.query()" style="margin-left: 20px;">搜索</div> <!-- 原来引用的函数onclick = "roomList.query()" -->
+		</form>
 </div>
 
 <!-- end    查询条件 -->

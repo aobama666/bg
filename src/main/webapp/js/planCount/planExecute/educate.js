@@ -45,15 +45,14 @@ roomList.initDataGrid = function(){
 		tablepage:$(".tablepage"),//分页组件
 		columns: [
             {name: '序号',style:{width:"50px"}, data: 'ROWNO'},
-            {name: '选择',style:{width:"50px"}, data: 'ID',  forMat:function(row){
-                    dataItems[index] = row;//将一行数据放在一个list中
-                    return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.ID)+'"/>';
-                }
-            },
+
             {name: '年份',style:{width:"100px"},data: 'YEAR'   },
             {name: '承担单位',style:{width:"200px"},data: 'PROFIT_CENTER_DEATIL'   },
             {name: '计划投入金额（万元）', style:{width:"100px"},data: 'PLAN_AMOUNT' },
             {name: '计划项目数', style:{width:"100px"},data: 'ITEM_NUMBER' },
+            {name: '形象进度',style:{width:"200px"}, data: 'IMAGE_PROGRESS',forMat:function(row){
+                    return row.IMAGE_PROGRESS+"%";
+                }},
             {name: '维护',style:{width:"100px"}, data: 'SPECIAL_TYPE',forMat:function(row){
                     return "<a title = '"+row.SPECIAL_TYPE+"' style='width:150px;" +
                         "color: blue;" +
@@ -71,65 +70,18 @@ roomList.initDataGrid = function(){
  * 维护
  */
 roomList.forDetails = function (id) {
-    var url = "/bg/planInput/educateOfUpdata?id="+id;
+    var url = "/bg/planExecution/educateOfUpdata?id="+id;
     layer.open({
                 type:2,
                 title:'<h4 style="text-align: center;margin-top: 2px;font-size: 18px;padding-top: 10px">教育培训专项投入数据维护</h4>',
-                area:['32%','30%'],
+                area:['32%','32%'],
                 fixed:false,//不固定
                 maxmin:true,
                 content:url
     });
 }
-roomList.educateOfDelete= function(){
-    var checkedItems = dataGrid.getCheckedItems(dataItems);
-    if(checkedItems.length==0){
-        messager.tip("请选择要删除的数据",1000);
-        return;
-    }else if(checkedItems.length>1){
-        messager.tip("每次只能删除一条数据",2000);
-        return;
-    }
-    var id=checkedItems[0].ID;
-    $.messager.confirm( "删除提示", "确认删除该吗？",
-        function(r){
-            if(r){
-              deleteForMaintainOfYear(id);
-            }
-        }
-    );
-}
-function deleteForMaintainOfYear(id) {
-    var  data= {"id":id}
-    $.ajax({
-        url: "/bg/planInput/deleteForMaintainOfYear",//删除
-        type: "post",
-        dataType:"json",
-        contentType: 'application/json',
-        data: JSON.stringify(data),
-        success: function (data) {
-            if(data.success=="true"){
-                messager.tip("删除成功",1000);
-                roomList.query();
-                layer.close();
-            }else{
-                messager.tip(data.msg,5000);
-                return;
-            }
-        }
-    });
-}
-roomList.educateOfSave= function(){
-    var url = "/bg/planInput/educateOfSave";
-    layer.open({
-        type:2,
-        title:'<h4 style="text-align: center;margin-top: 2px;font-size: 18px;padding-top: 10px">教育培训专项投入数据新增</h4>',
-        area:['32%','30%'],
-        fixed:false,//不固定
-        maxmin:true,
-        content:url
-    });
-}
+
+
 
 
  

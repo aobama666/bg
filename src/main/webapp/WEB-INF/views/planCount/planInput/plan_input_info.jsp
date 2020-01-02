@@ -18,21 +18,97 @@
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet"/>
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/css/planCount/planInput/planInput.css" rel="stylesheet" type="text/css">
-
+	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+
+<div class="sheach">
 		<div class="box">
 			<div class="box-top">
-				<div   id="yearAndDevelop" class="box-top-left"></div>
-				<div  id="yearAndItem" class="box-top-right" ></div>
+				<div   class="box-top-left" style=" background-color: #D5E7E7;">
+					<table  style="width:100%;height: 100%; ">
+						<tr style="width:100%;height: 10%; ">
+							<td>
+
+										<label style="font-size: 20px;"> 近三年发展投入趋势</label ><br>
+										<label > 综合计划发展投入：</label>
+										<select id = "developSpecialType" name = "developSpecialType" title="专项类别"    class = " userlevel" style="width: 240px;margin-left: -2px" onchange="maintainInfo.forFundsSource()"  >
+											<option value = ""  >发展总投入</option>
+											<c:forEach  var="specialInfo"  items="${specialList}">
+												<option value ="${specialInfo.SPECIAL_CODE}" title=" ${specialInfo.SPECIAL_NAME}" > ${specialInfo.SPECIAL_NAME}</option>
+											</c:forEach>
+										</select>
+
+							</td>
+						</tr>
+						<tr  style="width:100%;height: 90%;">
+							<td style=" background: #fcfdfd !important;">
+								<div id="yearAndDevelop"   style="width:100%;height: 100%;"></div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div     class="box-top-right" style=" background-color: #D5E7E7;">
+					<table  style="width:100%;height: 100%; ">
+						<tr style="width:100%;height: 10%; ">
+							<td>
+								<form id="queryForm" style="padding-top: 0px;">
+										<label style="font-size: 20px;"> 各专项年度投入情况</label ><br>
+										<label > 年份：</label>
+										<select id="year"  name = "year"  title="年度" class = "changeQuery userlevel" style="width: 200px;margin-left: 0px"   >
+											<option value="" > </option>
+											<c:forEach  var="yearInfo"  items="${yearList}">
+												<option value ="${yearInfo.year}" title=" ${yearInfo.year}" > ${yearInfo.year}</option>
+											</c:forEach>
+										</select>
+										<label   class="yearTitle"> 专项类别：</label>
+										<select id = "itemSpecialType" name = "itemSpecialType" title="专项类别"    class = "changeQuery userlevel" style="width: 240px;margin-left: -2px" onchange="maintainInfo.forFundsSource()"    >
+											<option value = ""  >全部专项</option>
+										<c:forEach  var="specialInfo"  items="${specialList}">
+										<option value ="${specialInfo.SPECIAL_CODE}" title=" ${specialInfo.SPECIAL_NAME}" > ${specialInfo.SPECIAL_NAME}</option>
+										</c:forEach>
+										</select>
+								</form>
+							</td>
+						</tr>
+						<tr  style="width:100%;height: 90%; " >
+							<td style=" background: #fcfdfd !important;">
+								<div id="yearAndItem"   style="width:100%;height: 100%;"></div>
+							</td>
+						</tr>
+					</table>
+
+				</div>
 			</div>
 			<div class="box-center">
-				<div id="costAndCapital" class="box-center-left"></div>
-				<div class="box-center-right">
+				<div  class="box-center-left" style=" background-color: #D5E7E7;">
+					<table  style="width:100%;height: 100%; ">
+						<tr style="width:100%;height: 10%; ">
+							<td>
+										<label style="font-size: 20px;"> 资本性与成本性投入趋势</label >
+										<%--<label > 综合计划发展投入：</label>--%>
+										<%--<select id = "costSpecialType" name = "costSpecialType" title="专项类别"    class = "  userlevel" style="width: 240px;margin-left: -2px" onchange="maintainInfo.forFundsSource()"    >--%>
+											<%--<option value = ""  > </option>--%>
+											<%--<c:forEach  var="specialInfo"  items="${specialList}">--%>
+												<%--<option value ="${specialInfo.SPECIAL_CODE}" title=" ${specialInfo.SPECIAL_NAME}" > ${specialInfo.SPECIAL_NAME}</option>--%>
+											<%--</c:forEach>--%>
+										<%--</select>--%>
+							</td>
+						</tr>
+						<tr  style="width:100%;height: 90%;">
+							<td style=" background: #fcfdfd !important;">
+								<div id="costAndCapital"   style="width:100%;height: 100%;"></div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="box-center-right" style=" background-color: #D5E7E7;">
 					<img src="bg/imeges/planCount/planInput/unit.png" alt="unit">
 				</div>
 			</div>
 		</div>
+</div>
+
 </body>
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/plugins/datebox/jquery.easyui.min.js"></script>

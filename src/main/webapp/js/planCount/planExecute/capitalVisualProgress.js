@@ -54,15 +54,18 @@ roomList.initDataGrid = function(){
             },
             {name: '序号',style:{width:"30px"}, data: 'NODE_SORT'},
             {name: '项目节点', style:{width:"150px"},data: 'NODE_NAME'},
-            {name: '累计形象进度', style:{width:"150px"},data: 'IMAGE_PROGRESS'}
+            {name: '累计形象进度',style:{width:"150px"}, data: 'IMAGE_PROGRESS',forMat:function(row){
+                    return row.IMAGE_PROGRESS+"%";
+                }}
 		]
 	});
 
 }
 /*计划统计-基建类执行数据维护-形象进度维护-新增节点 */
- roomList.nodeForSave = function (){
-	 var  id =$("#id").val();
-     var url = "/bg/planExecution/capitalVisualNameOfSave?id="+id;
+roomList.nodeForSave = function (){
+	 var  projectId =$("#projectId").val();
+     var  year =$("#year").val();
+     var url = "/bg/planExecution/capitalVisualNameOfSave?projectId="+projectId+"&year="+year;
      layer.open({
          type:2,
          title:'<h4 style="margin-top: 2px;text-align: center;font-size: 18px;padding-top: 10px">增加项目节点</h4>',
@@ -71,18 +74,19 @@ roomList.initDataGrid = function(){
          maxmin:true,
          content:url
      });
- }
+}
 
 roomList.nodeSave= function () {
+    debugger
     /* 验证字段超长 */
     var checkLength = dataForm.checkLength();
     if(!checkLength){
         roomList.saveBtnClickFlag = 0;
         return;
     }
-    /* 验证形象进度保留两位小数的小数*/
-    var  checkteleUser=dataForm.validNewNumber(0,2);
-    if(!checkteleUser){
+    /* 验证形象进度保留小数的小数或正整数0-100带%的数字*/
+    var  checkPer=dataForm.validPercent();
+    if(!checkPer){
         roomList.saveBtnClickFlag = 0;
         return false;
     }
@@ -112,7 +116,6 @@ roomList.nodeSave= function () {
 
  /*计划统计-基建类执行数据维护-形象进度维护-修改节点 */
  roomList.nodeForUpdata = function (){
-     debugger;
      var checkedItems = dataGrid.getCheckedItems(dataItems);
      if(checkedItems.length==0){
          messager.tip("请选择要修改的数据",1000);
@@ -121,7 +124,6 @@ roomList.nodeSave= function () {
          messager.tip("每次只能修改一条数据",2000);
          return;
      }
-     //var id = dataGrid.getCheckedIds();
      var id=checkedItems[0].ID;
      var url = "/bg/planExecution/capitalVisualNameOfUpdata?id="+id;
      layer.open({
@@ -133,19 +135,87 @@ roomList.nodeSave= function () {
          content:url
      });
  }
- /*计划统计-基建类执行数据维护-形象进度维护-删除节点 */
- roomList.nodeFordelete = function(){
- 	var checkedItems = dataGrid.getCheckedItems(dataItems);
- 	if(checkedItems.length==0){
- 		messager.tip("请选择要删除的数据",1000);
- 		return;
- 	}else if(checkedItems.length>1){
- 		messager.tip("每次只能删除一条数据",2000);
- 		return;
- 	}
-	 var checkedIds = dataGrid.getCheckedIds();
- 	 findForitemFirstInfo(checkedIds)
- }
+roomList.nodeUpdata= function () {
+    /* 验证字段超长 */
+    var checkLength = dataForm.checkLength();
+    if(!checkLength){
+        roomList.saveBtnClickFlag = 0;
+        return;
+    }
+    /* 验证形象进度保留两位小数的小数*/
+    var  checkteleUser=dataForm.validPercent();
+    if(!checkteleUser){
+        roomList.saveBtnClickFlag = 0;
+        return false;
+    }
+    var   nodeFormData = roomAddInfoCommon.getFormDataInfo();
+    $.ajax({
+        url: "/bg/planExecution/updataForNodeInfo",
+        type: "post",
+        dataType:"json",
+        contentType: 'application/json',
+        data: JSON.stringify(nodeFormData),
+        success: function (data) {
+            roomList.saveBtnClickFlag = 0;//保存按钮点击事件
+            if(data.success=="true"){
+                messager.tip("保存成功",1000);
+                roomList.saveInfoFlag = true;//页面数据保存事件
+                window.parent.location.reload();
+                var closeIndex = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(closeIndex);
+            }else{
+                messager.tip(data.msg,5000);
+                return;
+            }
+        }
+    });
+}
+
+
+
+/*计划统计-基建类执行数据维护-形象进度维护-删除节点 */
+roomList.nodeFordelete= function(){
+    debugger;
+    var checkedItems = dataGrid.getCheckedItems(dataItems);
+    if(checkedItems.length==0){
+        messager.tip("请选择要删除的数据",1000);
+        return;
+    }else if(checkedItems.length>1){
+        messager.tip("每次只能删除一条数据",2000);
+        return;
+    }
+    var id=checkedItems[0].ID;
+    var projectId=checkedItems[0].PROJECT_ID;
+    var year=checkedItems[0].YEAR;
+    $.messager.confirm( "删除提示", "确认删除该吗？",
+        function(r){
+            if(r){
+                deleteForNode(id,projectId,year);
+            }
+        }
+    );
+}
+function deleteForNode(id ,projectId,year) {
+    var  data= {"id":id,"projectId":projectId,"year":year}
+    $.ajax({
+        url: "/bg/planExecution/deleteForNodeInfo",//删除
+        type: "post",
+        dataType:"json",
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function (data) {
+            if(data.success=="true"){
+                messager.tip("删除成功",1000);
+                roomList.query();
+                layer.close();
+            }else{
+                messager.tip(data.msg,5000);
+                return;
+            }
+        }
+    });
+}
+
 
 
 roomList.nodeResign= function(){

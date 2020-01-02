@@ -37,5 +37,28 @@ public interface PlanExecutionService {
      * 节点的修改
      */
     int  updateForNodeInfo(@Param("nodeMap") Map<String, Object> nodeMap);
-
+    /**
+     * 节点的删除
+     */
+    int  deleteForNodeInfo(@Param("nodeMap") Map<String, Object> nodeMap);
+    /**
+     * 招标采购进度维护的修改
+     */
+    int  updateForBiddingProgress(@Param("maintaion") Map<String, Object> maintaion);
+    /**
+     * 物资到货/系统开发进度的修改
+     */
+    int  updateForSystemDevProgress(@Param("maintaion") Map<String, Object> maintaion);
+    /**
+     * 项目信息的维护
+     */
+    List<Map<String,Object>>   selectForProjectList(@Param("projectMap") Map<String, Object> projectMap);
+    /**
+     * 项目信息的添加
+     */
+    int  saveForProjectInfo (@Param("projectMap") Map<String, Object> projectMap);
+    /**
+     * 形象进度的修改
+     */
+    int updateForImageProgress(@Param("maintaion") Map<String, Object> maintaion);
 }

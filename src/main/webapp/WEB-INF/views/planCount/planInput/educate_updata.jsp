@@ -34,10 +34,20 @@
 		<table class="visitOperate tableStyle specialTable" style="width: 90%;">
 			<tr>
 				<td style="width: 145px">
+					<span title = " 年度"> 年度</span>
+				</td>
+				<td class="addInputStyle" style="width: 200px">
+					<input type = "hidden"   id = "id" name="id"  value="${ID}">
+					<input type="text"  id="year"  name="year"   value="${YEAR}"  disabled />
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 145px">
 					<span title = " 承担单位"> 承担单位</span>
 				</td>
 				<td class="addInputStyle" style="width: 200px">
-					<input type="text"  id="applyUserAlias"  name="applyUserAlias"   value="${applyUserAlias}" disabled/>
+					<input type = "hidden"   id = "commitmentUnit" name="commitmentUnit"  value="${BEARER}">
+					<input type="text"  id="commitmentUnitName"  name="commitmentUnitName"   value="${PROFIT_CENTER_DEATIL}" disabled/>
 				</td>
 			</tr>
 			<tr>
@@ -45,7 +55,7 @@
 					<span title = " 计划投入金额"> 计划投入金额</span>
 				</td>
 				<td class="addInputStyle" style="width: 200px">
-					<input type="text"  id="applyUserAlias"  name="applyUserAlias"   value="${applyUserAlias}"  />
+					<input type="text"  id="planAmount"  name="planAmount"   value="${PLAN_AMOUNT}"  content="计划投入金额" title="必填项"    class = "validNull validNum"  />
 				</td>
 			</tr>
 			<tr>
@@ -53,15 +63,15 @@
 					<span title = " 计划项目数"> 计划项目数</span>
 				</td>
 				<td class="addInputStyle" style="width: 200px">
-					<input type="text"  id="applyUserAlias"  name="applyUserAlias"   value="${applyUserAlias}"  />
+					<input type="text"  id="itemNumber"  name="itemNumber"   value="${ITEM_NUMBER}"  content="计划项目数" title="必填项"   class = "validNull posiviceNum"   />
 				</td>
 			</tr>
 		</table>
 	</div>
 </div>
 <div class="btnContent">
-	<button type="button" class="btn" onclick="affirmSave()">确认</button>
-	<button type="button" class="btn" onclick="affirmResign()">返回</button>
+	<button type="button" class="btn" onclick="educateUpdata()">确认</button>
+	<button type="button" class="btn" onclick="Resign()">返回</button>
 </div>
 </body>
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
@@ -81,5 +91,5 @@
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 <!-- 本页面所需的js -->
-<script src="<%=request.getContextPath()%>/js/yygl/comprehensive/affirm.js"></script>
+<script src="<%=request.getContextPath()%>/js/planCount/planInput/maintain.js"></script>
 </html>

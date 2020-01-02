@@ -1,5 +1,9 @@
 (function($) {
     $.fn.fSelect = function(options) {
+        debugger
+            // $(".fs-label-wrap").remove();
+            // $(".fs-dropdown").remove();
+            // $('#sourceOfFunds').removeClass('visibility-hidden');
 
         if (typeof options == 'string' ) {
             var settings = options;
@@ -17,7 +21,7 @@
          * Constructor
          */
         function fSelect(select, settings) {
-
+            debugger
             this.$select = $(select);
             this.settings = settings;
             this.create();
@@ -28,13 +32,13 @@
         fSelect.prototype = {
             create: function() {
                 var multiple = this.$select.is('[multiple]') ? ' multiple' : '';
-                this.$select.wrap('<div class="fs-wrap' + multiple + '"></div>');
+                this.$select.wrap('<div class="fs-wrap' + multiple + '  "></div>');
                 this.$select.before('<div class="fs-label-wrap"><div class="fs-label">' + this.settings.placeholder + '</div>  <input class="fs-label-new" type="hidden"    id = "sourceOfFundsNew" name = "sourceOfFundsNew" />     <span class="fs-arrow"></span></div>');
                 this.$select.before('<div class="fs-dropdown hidden"><div class="fs-options"></div></div>');
-                // this.$select.addClass('hidden');
                 this.$select.addClass('visibility-hidden');
                 this.$wrap = this.$select.closest('.fs-wrap');
                 this.reload();
+
             },
             reload: function() {
                 //如果设置显示搜索框，执行下面方法

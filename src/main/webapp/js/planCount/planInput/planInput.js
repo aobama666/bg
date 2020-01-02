@@ -1,17 +1,57 @@
-var affirmInfo = {};
-affirmInfo.saveBtnClickFlag = 0;//保存按钮点击事件
-affirmInfo.saveInfoFlag = true;//页面数据保存事件
+var roomList = {};
+var dataItems = new Array();
+var index = 0;
+roomList.btn_type_flag = 0;
 $(function(){
-    yearAndDevelop();
-    costAndCapital();
-    yearAndItem();
-
+    roomList.initDataGrid();
+    $("#developSpecialType").change(function(e){
+        roomList.yearAndDevelopQuery();
+    });
+    $("#costSpecialType").change(function(e){
+        roomList.costAndCapitalQuery();
+    });
+    $(".changeQuery").change(function(e){
+        roomList.yearAndItemQuery();
+    });
 });
+roomList.initDataGrid = function(){
+    roomList.yearAndDevelopQuery();
+    roomList.costAndCapitalQuery();
+    roomList.yearAndItemQuery();
+}
+roomList.yearAndDevelopQuery = function(){
+   var   developSpecialType= $("#developSpecialType").val();
+    var  year=['2019','2018','2017' ];
+    var  developInput=[46155.3, 170353.8, 85535.1  ];
+    var  developItemNumber=[ 357, 390, 269  ];
+    yearAndDevelop(year,developInput,developItemNumber);
+}
+roomList.costAndCapitalQuery = function(){
+    var   costSpecialType= $("#costSpecialType").val();
+    var  year=['2019','2018','2017'];
+    //资本性
+    var  capitalMoney=[36155, 100000, 65535 ];
+    //成本性
+    var costmoney=[ 10000, 50354, 20000];
+    costAndCapital(year,capitalMoney,costmoney);
+}
+roomList.yearAndItemQuery = function(){
+   var year= $("#year").val();
+   var  itemSpecialType= $("#itemSpecialType").val();
+    var ItemType=['产业基建','电网小型基建','产业技改','产业大修','固定资产零星购置',
+        '电力营销投入','电网信息化','生产辅助技改','生产辅助大修改','管理咨询',
+        '研究开发','教育培训','股权投资','信息系统开发建设' ];
+    var appregnum = [46155.3, 150353.8, 85535.1,46155.3, 150353.8, 85535.1,
+        46155.3, 150353.8, 85535.1,46155.3, 150353.8, 85535.1,
+        46155.3, 150353.8   ];
+    var activenum = [500, 300, 460,101, 60, 369,
+        500, 890, 460,525, 310, 399,
+        500, 477 ];
+    yearAndItem(ItemType,appregnum,activenum,year,itemSpecialType);
+}
+
 //近三年发展投入趋势
-function yearAndDevelop(){
-    var  year=[' ','2019','2018','2017',' ' ];
-    var  developInput=['', 46155.3, 170353.8, 85535.1,''  ];
-    var  developItemNumber=['', 357, 390, 269,''  ];
+function yearAndDevelop(year,developInput,developItemNumber){
     var maxdevelopInput = calMax(developInput); //计划投入金额Y轴值
     var maxdevelopItemNumber = calMax(developItemNumber); //项目数Y轴值
     var interval_left = maxdevelopInput / 5; //左轴间隔
@@ -20,10 +60,6 @@ function yearAndDevelop(){
     var myChart = echarts.init(document.getElementById('yearAndDevelop'));
     // 指定图表的配置项和数据
     option = {
-        title: {
-            text: '近三年发展投入趋势',
-            left: 'center',
-        },
         tooltip: {
             trigger: 'axis',
             axisPointer: {
@@ -119,22 +155,12 @@ function yearAndDevelop(){
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
 }
-
 //资本性和成本性投入趋势
-function costAndCapital(){
-   var  year=[' ','2019','2018','2017',' ' ];
-   //资本性
-   var  capitalMoney=['', 36155, 100000, 65535,''  ];
-   //成本性
-    var costmoney=['', 10000, 50354, 20000,''];
+function costAndCapital(year,capitalMoney,costmoney){
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('costAndCapital'));
     // 指定图表的配置项和数据
     option = {
-        title: {
-            text: '资本性和成本性投入趋势',
-            left: 'center',
-        },
         tooltip: {
             trigger: 'axis'
         },
@@ -156,11 +182,10 @@ function costAndCapital(){
                 saveAsImage: {}
             }
         },
-
         xAxis:  {
             type: 'category',
             name: '年份',
-            boundaryGap: false,
+            splitLine:{show:false},
             data:year
         },
         yAxis: {
@@ -208,31 +233,56 @@ function costAndCapital(){
     };
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
+    myChart.on('click', function (params) {
+        switch (params.seriesIndex) {
+            case 0:roomList.forCost(params.name );
+                break;
+            case 1:roomList.forCapital(params.name );
+                break;
+            default: break;
+        }
+    });
 }
+roomList.forCost =  function  (year) {
+    var title=year+"年资本性项目详情";
+    var  type="00001";
+    var url = "/bg/planInput/planInputCostAndCapitalDetails?year="+year+"&type="+type;
+    layer.open({
+        type:2,
+        title:'<h4 style="text-align: center;margin: 2px;font-size: 18px;padding-top: 10px">'+title+'</h4>',
+        area:['60%','56.2%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url
+    });
+}
+
+roomList.forCapital =  function  (year) {
+    var  type="00002";
+    var title=year+"年成本性项目详情";
+    var url = "/bg/planInput/planInputCostAndCapitalDetails?year="+year+"&type="+type;
+    layer.open({
+        type:2,
+        title:'<h4 style="text-align: center;margin: 2px;font-size: 18px;padding-top: 10px">'+title+'</h4>',
+        area:['60%','56.2%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url
+    });
+}
+
+
+
 //各专项年度投入情况
-function yearAndItem(){
+function yearAndItem(ItemType,appregnum,activenum,year,itemSpecialType){
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('yearAndItem'));
-    var ItemType=['产业基建','电网小型基建','产业技改','产业大修','固定资产零星购置',
-        '电力营销投入','电网信息化','生产辅助技改','生产辅助大修改','管理咨询',
-        '研究开发','教育培训','股权投资','信息系统开发建设' ];
-    var appregnum = [46155.3, 150353.8, 85535.1,46155.3, 150353.8, 85535.1,
-        46155.3, 150353.8, 85535.1,46155.3, 150353.8, 85535.1,
-        46155.3, 150353.8   ];
-    var activenum = [500, 300, 460,101, 60, 369,
-        500, 890, 460,525, 310, 399,
-        500, 477 ];
-    debugger
     var maxappreg = calMax(appregnum); //计划投入金额Y轴值
     var maxactive = calMax(activenum); //项目数Y轴值
     var interval_left = maxappreg / 5; //左轴间隔
     var interval_right = maxactive / 5; //右轴间隔
     // 指定图表的配置项和数据
     option = {
-        title: {
-            text: '各专项年度投入情况',
-            left: 'center',
-        },
         tooltip: {
             trigger: 'axis',
             axisPointer: {
@@ -347,18 +397,28 @@ function yearAndItem(){
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
     myChart.on('click', function (params) {
-        //每个月份的第几个柱子params.seriesIndex;
         switch (params.seriesIndex) {
-            case 0: alert(params.name+"蒸发量是"+params.value);
+            case 0:roomList.forDetails(params.name,year);
                 break;
-            case 1:alert(params.name+"dddddd"+params.value);
+            case 1:roomList.forDetails(params.name,year);
                 break;
             default: break;
         }
     });
 }
-
-
+roomList.forDetails =  function  (name,year) {
+    debugger
+    var title=year+name+"详情";
+    var url = "/bg/planInput/planInputDetails?year="+year+"&name="+name;
+    layer.open({
+        type:2,
+        title:'<h4 style="text-align: center;margin: 2px;font-size: 18px;padding-top: 10px">'+title+'</h4>',
+        area:['60%','56.2%'],
+        fixed:false,//不固定
+        maxmin:true,
+        content:url
+    });
+}
 // 输出最大值
 function calMax(arr) {
     var max = arr[0];

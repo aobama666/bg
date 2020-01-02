@@ -5,19 +5,20 @@
 
     <!--计划执行数据维护公共sql-->
     <sql id="maintainInfo">
+        SELECT   *   FROM  (
         SELECT  Z1.PSPID ,
         Z1.POSID ,
         Z1.PTIME ,
-        Z1.POST1 ,
+        Z1.POST1,
         Z1.PRART1 ,
-        Z1.SPST1 ,
+        Z1.SPST1,
         Z1.ZGSZTZ ,
-        Z1.WERT1 ,
+        Z1.WERT1,
         Z1.ZZJLY ,
-        Z1.ZZJLY_T ,
-        Z1.ZZJXZ ,
-        Z1.ZZJXZ_T ,
-        Z1.PRCTR ,
+        Z1.ZZJLY_T,
+        Z1.ZZJXZ,
+        Z1.ZZJXZ_T,
+        Z1.PRCTR,
         Z1.KTEXT ,
         Z1.PLFAZ ,
         Z1.PLSEZ ,
@@ -27,31 +28,93 @@
         Z2.GJAHR,
         Z2.ZJFZCE,
         ER.SPECIAL_COMPANY_CODE,
+        SC1.SPECIAL_NAME  as  SPECIAL_COMPANY_NAME,
         FS.FUNDS_SOURCE_NAME,
         FS.SPECIAL_EPRI_CODE,
-        SC.SPECIAL_NAME
+        SC.SPECIAL_NAME,
+        DECODE(MP.IMAGE_PROGRESS, NULL,'0.00', '', '0.00', MP.IMAGE_PROGRESS ) IMAGE_PROGRESS ,
+        DECODE(MP.BIDDING_PROGRESS, NULL,'0.00', '', '0.00',  MP.BIDDING_PROGRESS)  BIDDING_PROGRESS,
+        DECODE(MP.SYSTEM_DEV_PROGRESS, NULL,'0.00', '', '0.00',  MP.SYSTEM_DEV_PROGRESS)  SYSTEM_DEV_PROGRESS,
+        DECODE(MP.PLANNED_COMPLETION, NULL,'0', '', '0',  MP.PLANNED_COMPLETION)  PLANNED_COMPLETION
         FROM   ZTPSJHTJ001    Z1
         LEFT JOIN     ZTPSJHTJ002  Z2  ON  Z1.PSPID=Z2.PSPID   and  Z1.PTIME=Z2.GJAHR
         LEFT JOIN     PS_SPECIAL_ERP_RELATION  ER ON    ER.ERP_SPECIAL_CODE=Z1.PRART1
         LEFT JOIN     PS_FUNDS_SOURCE  FS ON    FS.FUNDS_SOURCE_CODE=Z1.ZZJLY  and  FS.SPECIAL_COMPANY_CODE=ER.SPECIAL_COMPANY_CODE
         LEFT JOIN     PS_SPECIAL_CATEGORY  SC ON  SC.SPECIAL_CODE=FS.SPECIAL_EPRI_CODE
+        LEFT JOIN     PS_SPECIAL_CATEGORY  SC1 ON  SC1.SPECIAL_CODE=ER.SPECIAL_COMPANY_CODE
+        LEFT JOIN     PS_MAINTAIN_PROJECT  MP ON  MP.PROJECT_ID =Z1.PSPID  and    MP.VALID='1'
         where  1=1
+        UNION ALL
+        SELECT
+        MY.ID  as PSPID,
+        null  POSID,
+        MY.YEAR  as  PTIME,
+        null POST1,
+        null PRART1,
+        SC.SPECIAL_NAME  SPST1,
+        null ZGSZTZ,
+        TO_NUMBER(MY.PLAN_AMOUNT)  as  WERT1,
+        null ZZJLY,
+        null ZZJLY_T,
+        DECODE(MY.SPECIAL_TYPE, 'C013','00001', 'C014', '00001', 'C012', '00002'  ,    '' ) as ZZJXZ,
+        DECODE(MY.SPECIAL_TYPE, 'C013','资本化', 'C014', '资本化', 'C012', '成本化', '' ) as  ZZJXZ_T,
+        MY.BEARER  as PRCTR,
+        PC.PROFIT_CENTER_DEATIL  as  KTEXT,
+        null PLFAZ,
+        null PLSEZ ,
+        null ZSQJE ,
+        null ZDDJE ,
+        null ZFPRZ ,
+        null GJAHR,
+        null ZJFZCE,
+        MY.SPECIAL_TYPE   as SPECIAL_COMPANY_CODE,
+        SC.SPECIAL_NAME   as SPECIAL_COMPANY_NAME,
+        null FUNDS_SOURCE_NAME,
+        null SPECIAL_EPRI_CODE,
+        SC.SPECIAL_NAME,
+        MY.IMAGE_PROGRESS,
+        '0.00' BIDDING_PROGRESS,
+        '0.00' SYSTEM_DEV_PROGRESS,
+        MY.ITEM_NUMBER  PLANNED_COMPLETION
+        FROM      PS_MAINTAIN_YEAR  MY
+        LEFT JOIN     PS_SPECIAL_CATEGORY  SC ON    MY.SPECIAL_TYPE=SC.SPECIAL_CODE
+        LEFT JOIN   ( SELECT  DISTINCT
+        PROFIT_CENTER_CODE,
+        PROFIT_CENTER_DEATIL
+        FROM   PS_PROFIT_CENTER
+        where  1=1)   PC  ON  PC.PROFIT_CENTER_CODE=MY.BEARER
+        where MY.VALID='1'
+        ) where  1=1
         <if test="maintainMap.year!= null and maintainMap.year!= ''">
-            and   Z1.PTIME  = #{maintainMap.year}
+            and   PTIME  = #{maintainMap.year}
         </if>
         <if test="maintainMap.specialType!= null and maintainMap.specialType!= ''">
-            and   ER.SPECIAL_COMPANY_CODE = #{maintainMap.specialType}
+            and   SPECIAL_COMPANY_CODE = #{maintainMap.specialType}
         </if>
-        <if test="maintainMap.sourceOfFunds!= null and maintainMap.sourceOfFunds!= ''">
-            and  Z1.ZZJLY= #{maintainMap.sourceOfFunds}
-        </if>
+
         <if test="maintainMap.commitmentUnit!= null and maintainMap.commitmentUnit!= ''">
-            and Z1.PRCTR= #{maintainMap.commitmentUnit}
+            and PRCTR= #{maintainMap.commitmentUnit}
         </if>
         <if test="maintainMap.projectCode!= null and maintainMap.projectCode!= ''">
-            and Z1.PSPID= #{maintainMap.projectCode}
+            and PSPID= #{maintainMap.projectCode}
         </if>
-        ORDER BY   Z1.PTIME  DESC
+        <if test="maintainMap.projectType!= null and maintainMap.projectType!= ''">
+            and ZZJXZ= #{maintainMap.projectType}
+        </if>
+        <if test="null != maintainMap.specialCodes and maintainMap.specialCodes.size > 0">
+            AND  SPECIAL_EPRI_CODE  IN
+            <foreach collection="maintainMap.specialCodes" item="specialCode" open="(" separator="," close=")">
+                #{specialCode,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="null != maintainMap.sourceOfFunds and maintainMap.sourceOfFunds.size > 0">
+            and  ZZJLY IN
+            <foreach collection="maintainMap.sourceOfFunds" item="sourceOfFund" open="(" separator="," close=")">
+                #{sourceOfFund,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+
+        ORDER BY   PTIME   DESC
     </sql>
     <!-- 计划执行数据维护的查询分页-->
     <select id="selectForBaseInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
@@ -81,7 +144,8 @@
           CREATE_USER,
           CREATE_TIME,
           UPDATA_USER,
-          UPDATA_TIME
+          UPDATA_TIME,
+          YEAR
           FROM PS_MAINRTAIN_NODE
           WHERE  VALID='1'
         <if test="nodeMap.projectId!= null and nodeMap.projectId!= ''">
@@ -90,7 +154,16 @@
         <if test="nodeMap.nodeName!= null and nodeMap.nodeName!= ''">
             and  NODE_NAME  = #{nodeMap.nodeName}
         </if>
-        ORDER BY  NODE_SORT
+        <if test="nodeMap.year!= null and nodeMap.year!= ''">
+            and  YEAR  = #{nodeMap.year}
+        </if>
+        <if test="nodeMap.id!= null and nodeMap.id!= ''">
+            and  ID  = #{nodeMap.id}
+        </if>
+        <if test="nodeMap.idF!= null and nodeMap.idF!= ''">
+            and  ID  != #{nodeMap.idF}
+        </if>
+        ORDER BY  to_number(NODE_SORT)
     </sql>
 
     <!-- 节点数据维护的查询分页-->
@@ -118,6 +191,7 @@
         N.CREATE_TIME,
         N.UPDATA_USER,
         N.UPDATA_TIME,
+        N.YEAR,
         Z1.POST1  AS  PROJECTNAME
         FROM PS_MAINRTAIN_NODE  N
         LEFT JOIN   ZTPSJHTJ001    Z1  ON  N.PROJECT_ID=Z1.PSPID
@@ -129,7 +203,13 @@
         <if test="nodeMap.id!= null and nodeMap.id!= ''">
             and  N.ID  = #{nodeMap.id}
         </if>
-        ORDER BY  N.NODE_SORT DESC
+        <if test="nodeMap.year!= null and nodeMap.year!= ''">
+            and   N.YEAR  = #{nodeMap.year}
+        </if>
+        <if test="nodeMap.nodeSort!= null and nodeMap.nodeSort!= ''">
+            and  N.NODE_SORT  = #{nodeMap.nodeSort}
+        </if>
+        ORDER BY  to_number(N.IMAGE_PROGRESS) DESC
     </select>
 
     <!-- 节点数据维护的新增 （股权投资和信息系统开发建设）-->
@@ -141,6 +221,7 @@
           NODE_NAME,
           IMAGE_PROGRESS,
           SPECAIL_TYPE,
+          YEAR,
           CREATE_USER,
           CREATE_TIME,
           UPDATA_USER,
@@ -153,6 +234,7 @@
         #{nodeMap.nodeName},
         #{nodeMap.imageProgress},
         #{nodeMap.specailType},
+        #{nodeMap.year},
         #{nodeMap.createUser},
         #{nodeMap.createTime},
         #{nodeMap.updateUser},
@@ -166,10 +248,104 @@
     <update id="updateForNodeInfo"  parameterType="java.util.HashMap">
         update  PS_MAINRTAIN_NODE  set
         IMAGE_PROGRESS = #{nodeMap.imageProgress},
+        NODE_SORT= #{nodeMap.nodeSort},
         NODE_NAME = #{nodeMap.nodeName},
-        UPDATE_USER = #{nodeMap.updateUser},
-        UPDATE_TIME = #{nodeMap.updateTime}
+        UPDATA_USER = #{nodeMap.updateUser},
+        UPDATA_TIME = #{nodeMap.updateTime}
         where id = #{nodeMap.id}
     </update>
+
+    <!-- 节点数据维护的删除  -->
+    <update id="deleteForNodeInfo"  parameterType="java.util.HashMap">
+        update  PS_MAINRTAIN_NODE  set
+        VALID = #{nodeMap.valid},
+        UPDATA_USER = #{nodeMap.updateUser},
+        UPDATA_TIME = #{nodeMap.updateTime}
+        where id = #{nodeMap.id}
+    </update>
+
+    <!-- 项目信息的查询-->
+    <select id="selectForProjectList" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT
+        ID,
+        PROJECT_ID,
+        IMAGE_PROGRESS,
+        BIDDING_PROGRESS,
+        SYSTEM_DEV_PROGRESS,
+        PLANNED_COMPLETION,
+        SPECIAL_TYPE,
+        YEAR,
+        CREATE_USER,
+        CREATE_TIME,
+        UPDATE_USER,
+        UPDATE_TIME,
+        VALID
+        FROM PS_MAINTAIN_PROJECT
+        WHERE  VALID='1'
+        <if test="projectMap.projectId!= null and projectMap.projectId!= ''">
+            and  PROJECT_ID  = #{projectMap.projectId}
+        </if>
+        <if test="projectMap.year!= null and projectMap.year!= ''">
+            and  YEAR  = #{projectMap.year}
+        </if>
+        <if test="projectMap.id!= null and projectMap.id!= ''">
+            and  ID  = #{projectMap.id}
+        </if>
+    </select>
+    <!-- 项目信息的添加-->
+    <insert id="saveForProjectInfo"    parameterType="java.util.HashMap">
+        insert into PS_MAINTAIN_PROJECT
+        (ID,
+        PROJECT_ID,
+        IMAGE_PROGRESS,
+        BIDDING_PROGRESS,
+        SYSTEM_DEV_PROGRESS,
+        PLANNED_COMPLETION,
+        SPECIAL_TYPE,
+        YEAR,
+        CREATE_USER,
+        CREATE_TIME,
+        UPDATE_USER,
+        UPDATE_TIME,
+        VALID
+        ) values
+        (#{projectMap.id},
+        #{projectMap.projectId},
+        #{projectMap.imageProgress},
+        #{projectMap.biddingProgress},
+        #{projectMap.systemDevProgress},
+        #{projectMap.plannedCompletion},
+        #{projectMap.specailType},
+        #{projectMap.year},
+        #{projectMap.createUser},
+        #{projectMap.createTime},
+        #{projectMap.updateUser},
+        #{projectMap.updateTime},
+        #{projectMap.valid}
+        )
+    </insert>
+
+    <!-- 招标采购进度维护的修改  -->
+    <update id="updateForBiddingProgress"  parameterType="java.util.HashMap">
+        update  PS_MAINTAIN_PROJECT  set
+        BIDDING_PROGRESS = #{maintaion.biddingProgress}
+        where PROJECT_ID = #{maintaion.projectId}and  YEAR=#{maintaion.year}
+    </update>
+
+    <!-- 物资到货/系统开发进度的修改  -->
+    <update id="updateForSystemDevProgress"  parameterType="java.util.HashMap">
+        update  PS_MAINTAIN_PROJECT  set
+        SYSTEM_DEV_PROGRESS = #{maintaion.systemDevProgress}
+        where PROJECT_ID = #{maintaion.projectId}  and  YEAR=#{maintaion.year}
+    </update>
+
+    <!-- 形象进度的修改  -->
+    <update id="updateForImageProgress"  parameterType="java.util.HashMap">
+        update  PS_MAINTAIN_PROJECT  set
+        IMAGE_PROGRESS = #{maintaion.imageProgress}
+        where PROJECT_ID = #{maintaion.projectId}and  YEAR=#{maintaion.year}
+    </update>
+
+
 
 </mapper>

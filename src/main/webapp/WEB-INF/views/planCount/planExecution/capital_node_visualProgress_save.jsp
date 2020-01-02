@@ -31,19 +31,20 @@
 <input type = "hidden"   id = "applyId" name="applyId"  value="${applyId}">
 <div class="contentBox   Remark">
 	<div class="btnBox"  style="margin-top: 14px;     position: relative;">
-		<table class="visitOperate tableStyle specialTable" style="width: 60%;">
+		<table class="visitOperate tableStyle specialTable" style="width: 95%;">
 			<tr>
-				<td style="width: 145px">
+				<td style="width: 120px">
 					<span title = " 项目名称"> 项目名称</span>
 				</td>
 				<td class="addInputStyle" style="width: 250px">
 					<input type="hidden" id="projectId" name="projectId" value="${projectCode}">
 					<input type="hidden" id="specialType" name="specialType" value="${specialType}">
+					<input type="hidden" id="year" name="year" value="${year}">
 					<input type="text"  id="projectName"  name="projectName"   value="${projectName}" disabled/>
 				</td>
 			</tr>
 			<tr>
-				<td style="width: 145px">
+				<td style="width: 120px">
 					<span title = " 项目节点名称"> 项目节点名称</span>
 				</td>
 				<td class="addInputStyle" style="width: 250px">
@@ -51,11 +52,11 @@
 				</td>
 			</tr>
 			<tr>
-				<td style="width: 145px">
+				<td style="width: 120px">
 					<span title = " 形象进度"> 形象进度</span>
 				</td>
 				<td class="addInputStyle" style="width: 250px">
-					<input type="text"  id="imageProgress"  name="imageProgress"   content="形象进度" title="必填项"    class = "validNull validNum"    />
+					<input type="text"  id="imageProgress"  name="imageProgress"   content="形象进度" title="必填项"    class = "validNull validPer"    />
 				</td>
 			</tr>
 		</table>

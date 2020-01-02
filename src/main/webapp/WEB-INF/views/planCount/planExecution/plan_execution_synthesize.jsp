@@ -18,13 +18,30 @@
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
-	<link href="<%=request.getContextPath()%>/css/planCount/common/multiple-select.css" rel="stylesheet" type="text/css">
+	<style type="text/css">
+		.textbox{
+			width: 13%!important;
+			height: 35px!important;
+			border: 1px solid #ddd!important;
+			margin-left: -4px!important;
+			vertical-align: middle!important;
+			font-size: 16px!important;
+			line-height: 32px!important;
+			padding: 2px 0!important;
+			padding-bottom: 6px!important;
+			cursor: pointer!important;
+			border: 1px solid #ddd!important;
+		}
+
+	</style>
 </head>
 <body>
 <div class="main_div"></div>
-<div class="sheach">
+<div class="sheach"  >
 	 <%--<div class='content_top'>执行数据综合维护</div>--%>
 	<form id="queryForm" style="margin-bottom: 10px;">
+		<input type="hidden" id="type" name="type" value="">
+		<input type="hidden" id="sourceOfFunds" name="sourceOfFunds" value="">
 		<label >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年度：</label>
 		<select id="year"  name = "year"  title="年度" class = "changeQuery userlevel" style="width: 200px;margin-left: 0px"   >
 			<option value="" > </option>
@@ -39,15 +56,9 @@
 				<option value ="${specialInfo.SPECIAL_CODE}" title=" ${specialInfo.SPECIAL_NAME}" > ${specialInfo.SPECIAL_NAME}</option>
 			</c:forEach>
 		</select>
-		<label  for="sourceOfFunds" class="yearTitle"> 资金来源：</label>
-		<select id = "sourceOfFunds" name = "sourceOfFunds" title="资金来源"    class = "changeQuery userlevel" style="width: 300px;margin-left: -2px"    multiple>
-			<option value = "" selected>  全选 </option>
-			<c:forEach  var="fundsSourceInfo"  items="${fundsSourceList}">
-			<option value ="${fundsSourceInfo.FUNDS_SOURCE_CODE}" title=" ${fundsSourceInfo.FUNDS_SOURCE_NAME}" > ${fundsSourceInfo.FUNDS_SOURCE_NAME}</option>
-			</c:forEach>
-		</select>
-
-		<label  for="commitmentUnit" class="yearTitle"> 承担单位：</label>
+		<label  for="sourceOfFundsNew" class="yearTitle"> 资金来源：</label>
+		<input class="inputQuery changeQuery tree-data" style="width: 200px"   id="sourceOfFundsNew" name="sourceOfFundsNew"  data-companyLeaderName=""       title="资金来源  " />
+        <label  for="commitmentUnit" class="yearTitle"> 承担单位：</label>
 		<select id = "commitmentUnit" name = "commitmentUnit" title="承担单位"    class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
 			<option value = "">   </option>
 			<c:forEach  var="commitmentUnitInfo"  items="${commitmentUnitList}">
@@ -90,13 +101,10 @@
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
-<!-- 本页面所需的js -->
-<script src="<%=request.getContextPath()%>/yszx/js/plugins/stuff-tree/stuff-tree1.js"></script>
-<script src="<%=request.getContextPath()%>/yszx/js/plugins/organ-tree/organ-tree.js"></script>
-<!-- 本页面所需的js-->
-<script src="<%=request.getContextPath()%>/js/planCount/common/multiple-select.js"></script>
+ <!-- 本页面所需的js-->
 <script src="<%=request.getContextPath()%>/js/planCount/planExecute/synthesize.js"></script>
 <script src="<%=request.getContextPath()%>/js/planCount/planExecute/maintain.js"></script>
+
 
 </body>
 </html>

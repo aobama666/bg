@@ -24,23 +24,20 @@
 <div class="sheach">
 	<%--<div class='content_top'>执行数据综合维护</div>--%>
 	<form id="queryForm" style="margin-bottom: 10px;">
-		<input type = "hidden"   id = "applyId" name="applyId">
-		<input type = "hidden"   id = "type" name="type" value="${type}">
-
+		<input type="hidden"   id="specialType"  name="specialType" value="${sprcialType}">
 		<label >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年度：</label>
-		<select id="year"  name = "year"  title="年度" class = "changeQuery userlevel" style="width: 200px;margin-left: 0px"  >
-			<option value=""  ></option>
-			<c:forEach  var="deptInfo"  items="${deptInfoList}">
-				<option value ="${deptInfo.DEPT_ID}" title=" ${deptInfo.DEPTNAME}" > ${deptInfo.DEPTNAME}</option>
+		<select id="year"  name = "year"  title="年度" class = "changeQuery userlevel" style="width: 200px;margin-left: 0px"   >
+			<option value="" > </option>
+			<c:forEach  var="yearInfo"  items="${yearList}">
+				<option value ="${yearInfo.year}" title=" ${yearInfo.year}" > ${yearInfo.year}</option>
 			</c:forEach>
 		</select>
 
-
-		<label  for="useSealStatus" class="yearTitle"> 承担单位：</label>
-		<select id = "useSealStatus" name = "useSealStatus" title="审批状态"    class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
+		<label  for="commitmentUnit" class="yearTitle"> 承担单位：</label>
+		<select id = "commitmentUnit" name = "commitmentUnit" title="承担单位"    class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
 			<option value = "">   </option>
-			<c:forEach  var="statusInfo"  items="${statusInfoList}">
-				<option value ="${statusInfo.CODE}" title=" ${statusInfo.NAME}" > ${statusInfo.NAME}</option>
+			<c:forEach  var="commitmentUnitInfo"  items="${commitmentUnitList}">
+				<option value ="${commitmentUnitInfo.PROFIT_CENTER_CODE}" title=" ${commitmentUnitInfo.PROFIT_CENTER_DEATIL}" > ${commitmentUnitInfo.PROFIT_CENTER_DEATIL}</option>
 			</c:forEach>
 		</select>
 		<!-- 查询按钮  -->
@@ -79,10 +76,10 @@
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
-<!-- 本页面所需的js -->
-<script src="<%=request.getContextPath()%>/yszx/js/plugins/stuff-tree/stuff-tree1.js"></script>
-<script src="<%=request.getContextPath()%>/yszx/js/plugins/organ-tree/organ-tree.js"></script>
-<!-- 本页面所需的js -->
+<!-- 本页面所需的js-->
+
 <script src="<%=request.getContextPath()%>/js/planCount/planExecute/powerGrid.js"></script>
+
+
 </body>
 </html>

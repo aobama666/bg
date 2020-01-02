@@ -16,8 +16,35 @@
         <if test="categoryMap.specalCode!= null and categoryMap.specalCode!= ''">
             and   SPECIAL_CODE  = #{categoryMap.specalCode}
         </if>
+        <if test="categoryMap.specalName!= null and categoryMap.specalName!= ''">
+            and   SPECIAL_NAME  = #{categoryMap.specalName}
+        </if>
         ORDER BY  SPECIAL_CODE
     </sql>
+    <!--专项和院内项目类型数据维护公共sql-->
+    <select id="selectForCapitalCategoryInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+            SELECT  SC.ID,
+            SC.SPECIAL_NAME,
+            SC.SPECIAL_CODE
+            FROM   PS_SPECIAL_CATEGORY  SC
+            LEFT JOIN  PS_FUNDS_SOURCE  FS ON  SC.SPECIAL_CODE=FS.SPECIAL_COMPANY_CODE
+            LEFT JOIN  PS_SPECIAL_CATEGORY  SC1 ON  SC1.SPECIAL_CODE=FS.SPECIAL_EPRI_CODE
+            where   1=1
+            <if test="categoryMap.specalType!= null and categoryMap.specalType!= ''">
+                and   SC.SPECIAL_TYPE  = #{categoryMap.specalType}
+            </if>
+            <if test="categoryMap.specalCode!= null and categoryMap.specalCode!= ''">
+                and   SC.SPECIAL_CODE  = #{categoryMap.specalCode}
+            </if>
+            <if test="null != categoryMap.epriCodes and categoryMap.epriCodes.size > 0">
+                and   FS.SPECIAL_EPRI_CODE IN
+                <foreach collection="categoryMap.epriCodes" item="epriCode" open="(" separator="," close=")">
+                    #{epriCode,jdbcType=VARCHAR}
+                </foreach>
+            </if>
+            ORDER BY   SC.SPECIAL_CODE
+    </select>
+
     <!-- 专项和院内项目类型的查询-->
     <select id="selectForCategoryInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
         SELECT     *  from(<include refid="CategoryInfo"/>)
@@ -27,14 +54,30 @@
 
     <!--资金来源维护公共sql-->
     <sql id="FundsSourceInfo">
-    SELECT  ID,
-    FUNDS_SOURCE_CODE,
-    FUNDS_SOURCE_NAME,
-    SPECIAL_COMPANY_CODE,
-    SPECIAL_EPRI_CODE
-    FROM   PS_FUNDS_SOURCE  where   1=1
+        SELECT  FS.ID,
+        FS.FUNDS_SOURCE_CODE,
+        FS.FUNDS_SOURCE_NAME,
+        FS.SPECIAL_COMPANY_CODE,
+        FS.SPECIAL_EPRI_CODE,
+        SC.SPECIAL_CODE,
+        SC.SPECIAL_NAME
+        FROM   PS_FUNDS_SOURCE  FS
+        LEFT JOIN  PS_SPECIAL_CATEGORY SC  ON  SPECIAL_COMPANY_CODE=SC.SPECIAL_CODE
+        where   1=1
         <if test="fundsSourceMap.specalType!= null and fundsSourceMap.specalType!= ''">
-            and   SPECIAL_COMPANY_CODE  = #{fundsSourceMap.specalType}
+            and    FS.SPECIAL_COMPANY_CODE  = #{fundsSourceMap.specalType}
+        </if>
+        <if test="fundsSourceMap.specialName!= null and fundsSourceMap.specialName!= ''">
+            and    SC.SPECIAL_NAME  = #{fundsSourceMap.specialName}
+        </if>
+        <if test="fundsSourceMap.specialCode!= null and fundsSourceMap.specialCode!= ''">
+            and    SC.SPECIAL_CODE  = #{fundsSourceMap.specialCode}
+        </if>
+        <if test="null != fundsSourceMap.epriCodes and fundsSourceMap.epriCodes.size > 0">
+            and   FS.SPECIAL_EPRI_CODE IN
+            <foreach collection="fundsSourceMap.epriCodes" item="epriCode" open="(" separator="," close=")">
+                #{epriCode,jdbcType=VARCHAR}
+            </foreach>
         </if>
     ORDER BY  FUNDS_SOURCE_CODE
     </sql>
@@ -43,6 +86,7 @@
     <select id="selectForFundsSourceInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
         SELECT     *  from(<include refid="FundsSourceInfo"/>)
     </select>
+
 
 
     <!--承担单位的查询-->
@@ -60,6 +104,20 @@
     <select id="selectForCommitmentUnitInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
         SELECT     *  from(<include refid="CommitmentUnitInfo"/>)
     </select>
+
+
+    <select id="selectForDataDictionaryInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT     PID,PCODE,NAME,CODE,SORT_ID  from      BG_SYS_DATADICTIONARY  where 1=1
+        <if test="dataDictionaryMap.pcode!= null and dataDictionaryMap.pcode!= ''">
+            and   PCODE  = #{dataDictionaryMap.pcode}
+        </if>
+        <if test="dataDictionaryMap.pid!= null and dataDictionaryMap.pid!= ''">
+            and   PID  = #{dataDictionaryMap.pid}
+        </if>
+        ORDER BY  to_number(SORT_ID)
+    </select>
+
+
 
 
 </mapper>

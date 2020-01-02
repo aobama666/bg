@@ -31,13 +31,16 @@
 <input type = "hidden"   id = "applyId" name="applyId"  value="${applyId}">
 <div class="contentBox   Remark">
 	<div class="btnBox"  style="margin-top: 14px;     position: relative;">
-		<table class="visitOperate tableStyle specialTable" style="width: 60%;">
+		<table class="visitOperate tableStyle specialTable" style="width: 95%;">
 			<tr>
 				<td style="width: 145px">
 					<span title = " 项目名称"> 项目名称</span>
 				</td>
 				<td class="addInputStyle" style="width: 250px">
-					<input type="text"  id="applyUserAlias"  name="applyUserAlias"   value="${applyUserAlias}" disabled/>
+					<input type="text"  id="projectName"  name="projectName"   value="${PROJECTNAME}" disabled/>
+					<input type="hidden" id="id" name="id" value="${ID}">
+					<input type="hidden" id="year" name="year" value="${YEAR}">
+					<input type="hidden" id="projectId" name="projectId" value="${PROJECT_ID}">
 				</td>
 			</tr>
 			<tr>
@@ -45,7 +48,8 @@
 					<span title = " 项目节点名称"> 项目节点</span>
 				</td>
 				<td class="addInputStyle" style="width: 250px">
-					<input type="text"  id="applyUserAlias"  name="applyUserAlias"   value="${applyUserAlias}"  disabled/>
+					<input type="hidden" id="nodeSort" name="nodeSort" value="${NODE_SORT}">
+					<input type="text"  id="nodeName"  name="nodeName"   value="${NODE_NAME}" content="项目节点名称" title="必填项，中文或英文,字段长度不能超过20个字"    class = "validNull "  len="20" />
 				</td>
 			</tr>
 			<tr>
@@ -53,15 +57,15 @@
 					<span title = " 形象进度"> 累计形象进度</span>
 				</td>
 				<td class="addInputStyle" style="width: 250px">
-					<input type="text"  id="applyUserAlias"  name="applyUserAlias"   value="${applyUserAlias}"  />
+					<input type="text"  id="imageProgress"  name="imageProgress"   value="${IMAGE_PROGRESS}%" content="形象进度" title="必填项"    class = "validNull validPer"  />
 				</td>
 			</tr>
 		</table>
 	</div>
 </div>
 	<div class="btnContent">
-		<button type="button" class="btn" onclick="affirmSave()">确认</button>
-		<button type="button" class="btn" onclick="affirmResign()">返回</button>
+		<button type="button" class="btn" onclick="roomList.nodeUpdata()">确认</button>
+		<button type="button" class="btn" onclick="roomList.nodeResign()">返回</button>
 	</div>
 </body>
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
@@ -81,5 +85,5 @@
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 <!-- 本页面所需的js -->
-<script src="<%=request.getContextPath()%>/js/yygl/comprehensive/affirm.js"></script>
+<script src="<%=request.getContextPath()%>/js/planCount/planExecute/consultationVisualProgress.js"></script>
 </html>

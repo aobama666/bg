@@ -45,15 +45,14 @@ roomList.initDataGrid = function(){
 		tablepage:$(".tablepage"),//分页组件
 		columns: [
             {name: '序号',style:{width:"50px"}, data: 'ROWNO'},
-            {name: '选择',style:{width:"50px"}, data: 'ID',  forMat:function(row){
-                    dataItems[index] = row;//将一行数据放在一个list中
-                    return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.ID)+'"/>';
-                }
-            },
+
             {name: '年度',style:{width:"100px"},data: 'YEAR'   },
             {name: '计划投入金额（万元）', style:{width:"200px"},data: 'PLAN_AMOUNT' },
             {name: '计划项目数', style:{width:"200px"},data: 'ITEM_NUMBER' },
-            {name: '形象进度', style:{width:"200px"},data: 'IMAGE_PROGRESS' },
+
+            {name: '形象进度',style:{width:"200px"}, data: 'IMAGE_PROGRESS',forMat:function(row){
+                    return row.IMAGE_PROGRESS+"%";
+                }},
             {name: '维护',style:{width:"100px"}, data: 'SPECIAL_TYPE',forMat:function(row){
                     return "<a title = '"+row.SPECIAL_TYPE+"' style='width:150px;" +
                         "color: blue;" +

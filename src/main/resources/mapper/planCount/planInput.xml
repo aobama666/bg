@@ -5,27 +5,35 @@
 
     <!--计划投入数据维护公共sql-->
     <sql id="maintainInfo">
-        SELECT  ID,
-           SPECIAL_TYPE,
-           YEAR,
-           PLAN_AMOUNT,
-           ITEM_NUMBER,
-           IMAGE_PROGRESS,
-           BEARER,
-           CREATE_USER,
-           CREATE_TIME,
-           UPDATE_USER,
-           UPDATE_TIME
-        FROM   PS_MAINTAIN_YEAR
-        where  VALID='1'
+        SELECT    MY.ID,
+        MY.SPECIAL_TYPE,
+        MY.YEAR,
+        MY.PLAN_AMOUNT,
+        MY.ITEM_NUMBER,
+        MY.IMAGE_PROGRESS,
+        MY.BEARER,
+        MY.CREATE_USER,
+        MY.CREATE_TIME,
+        MY.UPDATE_USER,
+        MY.UPDATE_TIME,
+        PC.PROFIT_CENTER_DEATIL
+        FROM   PS_MAINTAIN_YEAR  MY
+        LEFT JOIN   (
+        SELECT  DISTINCT
+        PROFIT_CENTER_CODE,
+        PROFIT_CENTER_DEATIL
+        FROM   PS_PROFIT_CENTER
+        where  1=1
+        ) PC  ON   PC.PROFIT_CENTER_CODE=MY.BEARER
+        where  MY.VALID='1'
         <if test="maintainMap.year!= null and maintainMap.year!= ''">
-            and   YEAR  = #{maintainMap.year}
+            and   MY.YEAR  = #{maintainMap.year}
         </if>
         <if test="maintainMap.specialType!= null and maintainMap.specialType!= ''">
-            and  SPECIAL_TYPE = #{maintainMap.specialType}
+            and  MY.SPECIAL_TYPE = #{maintainMap.specialType}
         </if>
         <if test="maintainMap.id!= null and maintainMap.id!= ''">
-            and  ID = #{maintainMap.id}
+            and  MY.ID = #{maintainMap.id}
         </if>
         ORDER BY  YEAR  DESC
     </sql>
@@ -54,6 +62,8 @@
         year,
         plan_amount,
         item_number,
+        IMAGE_PROGRESS,
+        BEARER,
         create_user,
         create_time,
         update_user,
@@ -65,6 +75,8 @@
         #{maintainMap.year},
         #{maintainMap.planAmount},
         #{maintainMap.itemNumber},
+        #{maintainMap.imageProgress},
+        #{maintainMap.commitmentUnit},
         #{maintainMap.createUser},
         #{maintainMap.createTime},
         #{maintainMap.updateUser},

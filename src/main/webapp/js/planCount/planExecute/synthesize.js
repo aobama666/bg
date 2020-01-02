@@ -4,9 +4,9 @@ var dataItems = new Array();
 var index = 0;
 roomList.btn_type_flag = 0;
 $(function(){
-    //$("#sourceOfFunds").multipeSelect("refresh")
-    $("#sourceOfFunds").fSelect();
-   roomList.initDataGrid();
+    debugger;
+    maintainInfo.forFundsSource();
+    roomList.initDataGrid();
    /* 输入框的change事件，在输入过程中自动查询  */
 	$(".changeQuery").change(function(e){
 		roomList.query();
@@ -30,8 +30,8 @@ $(function(){
 });
 /*  start  列表查询  */
 roomList.query = function(){
-
-
+    var sourceOfFundsForCode = $("#sourceOfFundsNew").val();
+    $("#sourceOfFunds").val(sourceOfFundsForCode);
     /* 检索条件的验证 */
         dataItems = new Array();
         index = 0;
@@ -46,35 +46,42 @@ roomList.initDataGrid = function(){
 		type: 'POST',
 		form:'#queryForm',
 		pageSize:10,
+        showFooter:true,
+	    rownumbers:true,
+			pagination:true,
+			fitColumns:true,
 		tablepage:$(".tablepage"),//分页组件
 		columns: [
             {name: '序号',style:{width:"50px"}, data: 'ROWNO'},
-            {name: '选择',style:{width:"50px"}, data: 'PSPID',checkbox:true, forMat:function(row){
-                    dataItems[index] = row;
-                    return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.PSPID)+'"/>';
-            }},
-            {name: '项目名称', style:{width:"100px"},data: 'POST1' },
-            {name: '国网编码', style:{width:"100px"}, data: 'POSID'   },
-            {name: '专项类别',style:{width:"150px"}, data: 'SPST1'},
+            // {name: '选择',style:{width:"50px"}, data: 'PSPID',checkbox:true, forMat:function(row){
+            //         dataItems[index] = row;
+            //         return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.PSPID)+'"/>';
+            // }},
+            {name: '项目名称', style:{width:"200px"},data: 'POST1' },
+            {name: '国网编码', style:{width:"120px"}, data: 'POSID'   },
+            {name: '专项类别',style:{width:"100px"}, data: 'SPECIAL_COMPANY_NAME'},
             {name: '资金来源', style:{width:"200px"},data: 'ZZJLY_T'},
-            {name: '总投入', style:{width:"150px"},data: 'ZGSZTZ'},
-            {name: '当年投资', style:{width:"150px"},data: 'WERT1'},
+            {name: '总投入', style:{width:"100px"},data: 'ZGSZTZ'},
+            {name: '当年投资', style:{width:"100px"},data: 'WERT1'},
             {name: '承担单位',style:{width:"200px"},data: 'KTEXT'   },
             {name: '采购申请', style:{width:"100px"},data: 'ZSQJE' },
             {name: '采购合同', style:{width:"100px"},data: 'ZDDJE' },
             {name: '发票入账', style:{width:"100px"},data: 'ZFPRZ' },
             {name: '实际经费支出', style:{width:"100px"},data: 'ZJFZCE' },
             {name: '资金执行进度', style:{width:"100px"},data: 'GJAHR' },
-            {name: '形象进度',style:{width:"150px"}, data: 'PTIME',forMat:function(row){
-                    return "<a title = '"+row.applyCode+"' style='width:150px;" +
+            {name: '形象进度',style:{width:"100px"}, data: 'IMAGE_PROGRESS',forMat:function(row){
+                    return "<a title = '"+row.IMAGE_PROGRESS+"%' style='width:100px;" +
                         "color: blue;" +
                         "white-space: nowrap;" +
                         "text-overflow: ellipsis;" +
-                        "overflow: hidden;' applyCode = '"+row.applyCode+"'  ,applyId ='"+row.applyId+"' " +
-                        "href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.applyId+"')>"+row.applyCode+"</a>";
+                        "overflow: hidden;'  projectId ='"+row.PSPID+"' " +
+                        "href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.PSPID+"')>"+row.IMAGE_PROGRESS+"%</a>";
                 }},
-            {name: '计划完成数', style:{width:"100px"},data: 'PTIME' }
+
+            {name: '计划完成数', style:{width:"100px"},data: 'PLANNED_COMPLETION' }
 		]
+
+			
 	});
 
 }
@@ -83,8 +90,8 @@ roomList.initDataGrid = function(){
 /**
  * 形象进度
  */
-roomList.forDetails = function (applyUuid) {
-    var url = "/bg/planExecution/synthesizeVisualProgress?applyUuid=\"+applyUuid";
+roomList.forDetails = function (projectId) {
+    var url = "/bg/planExecution/synthesizeVisualProgress?projectId="+projectId;
     layer.open({
                 type:2,
                 title:'<h4 style="font-size: 18px;padding-top: 10px">形象进度维护</h4>',
@@ -108,7 +115,9 @@ roomList.expEvent = function(){
 			document.forms[0].action ="/bg/yyComprehensive/selectForComprehensiveExl?ran="+ran;
 			document.forms[0].submit();
 		}
+
 }
+
 
 
 

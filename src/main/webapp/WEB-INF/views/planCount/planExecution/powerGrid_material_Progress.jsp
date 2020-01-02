@@ -33,27 +33,31 @@
 	<div class="btnBox"  style="margin-top: 14px;     position: relative;">
 		<table class="visitOperate tableStyle specialTable" style="width: 90%;">
 			<tr>
-				<td style="width: 145px">
+				<td style="width: 120px">
 					<span title = " 项目名称"> 项目名称</span>
 				</td>
 				<td class="addInputStyle" style="width: 200px">
-					<input type="text"  id="applyUserAlias"  name="applyUserAlias"   value="${applyUserAlias}" disabled/>
+					<input type="hidden" id="year" name="year" value="${year}">
+					<input type="hidden" id="projectId" name="projectId" value="${projectCode}">
+					<input type="hidden" id="sprcialType" name="sprcialType" value="${sprcialType}">
+
+					<input type="text"  id="projectName"  name="projectName"   value="${projectName}" disabled/>
 				</td>
 			</tr>
 			<tr>
-				<td style="width: 240px">
+				<td style="width: 120px">
 					<span title = " 物资招标系统开发完成进度维护"> 物资招标系统开发完成进度维护</span>
 				</td>
 				<td class="addInputStyle" style="width: 200px">
-					<input type="text"  id="applyUserAlias"  name="applyUserAlias"   value="${applyUserAlias}"  />
+					<input type="text"  id="systemDevProgress"  name="systemDevProgress"   value="${systemDevProgress}"  content="物资招标系统开发完成进度维护" title="必填项"    class = "validNull validPer"  />
 				</td>
 			</tr>
 		</table>
 	</div>
 </div>
 	<div class="btnContent">
-		<button type="button" class="btn" onclick="affirmSave()">确认</button>
-		<button type="button" class="btn" onclick="affirmResign()">返回</button>
+		<button type="button" class="btn" onclick="roomList.marginForUpdata()">确认</button>
+		<button type="button" class="btn" onclick="roomList.resign()">返回</button>
 	</div>
 </body>
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
@@ -73,5 +77,5 @@
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 <!-- 本页面所需的js -->
-<script src="<%=request.getContextPath()%>/js/yygl/comprehensive/affirm.js"></script>
+<script src="<%=request.getContextPath()%>/js/planCount/planExecute/powerGrid.js"></script>
 </html>

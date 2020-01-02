@@ -58,10 +58,10 @@
 			</tr>
 			<tr>
 				<td style="width: 145px">
-					<span title = " 形象进度"> 形象进度(单位：%)</span>
+					<span title = " 形象进度"> 形象进度 </span>
 				</td>
 				<td class="addInputStyle" style="width: 200px">
-					<input type="text"  id="imageProgress"  name="imageProgress"   value="${IMAGE_PROGRESS}"    style="text-align: center;"  content="形象进度" title="必填项"   class = "validNull validNum"   />
+					<input type="text"  id="imageProgress"  name="imageProgress"   value="${IMAGE_PROGRESS}%"    style="text-align: center;"  content="形象进度" title="必填项"   class = "validNull validPer"   />
 				</td>
 			</tr>
 		</table>

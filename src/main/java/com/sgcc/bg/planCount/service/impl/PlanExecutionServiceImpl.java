@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlanExecutionServiceImpl implements PlanExecutionService {
 
-
     @Autowired
     private PlanExecutionMapper planExecutionMapper;
     @Override
@@ -46,4 +45,30 @@ public class PlanExecutionServiceImpl implements PlanExecutionService {
     public int updateForNodeInfo(Map<String, Object> nodeMap) {
         return planExecutionMapper.updateForNodeInfo(nodeMap);
     }
+    @Override
+    public int deleteForNodeInfo(Map<String, Object> nodeMap) {
+        return planExecutionMapper.deleteForNodeInfo(nodeMap);
+    }
+    @Override
+    public int updateForBiddingProgress(Map<String, Object> maintaion) {
+        return planExecutionMapper.updateForBiddingProgress(maintaion);
+    }
+
+    @Override
+    public int updateForSystemDevProgress(Map<String, Object> maintaion) {
+        return planExecutionMapper.updateForSystemDevProgress(maintaion);
+    }
+    @Override
+    public List<Map<String, Object>> selectForProjectList(Map<String, Object> projectMap) {
+        return planExecutionMapper.selectForProjectList(projectMap);
+    }
+    @Override
+    public int saveForProjectInfo(Map<String, Object> projectMap) {
+        return planExecutionMapper.saveForProjectInfo(projectMap);
+    }
+    @Override
+    public int updateForImageProgress(Map<String, Object> maintaion) {
+        return planExecutionMapper.updateForImageProgress(maintaion);
+    }
+
 }

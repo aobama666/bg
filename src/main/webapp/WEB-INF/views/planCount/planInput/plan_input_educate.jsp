@@ -24,14 +24,12 @@
 <div class="sheach">
 	 <%--<div class='content_top'>执行数据综合维护</div>--%>
 	<form id="queryForm" style="margin-bottom: 10px;">
-		<input type = "hidden"   id = "applyId" name="applyId">
-		<input type = "hidden"   id = "type" name="type" value="${type}">
-
+		<input type = "hidden"   id = "specialType" name="specialType" value="${specialType}">
 		<label >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年度：</label>
 		<select id="year"  name = "year"  title="年度" class = "changeQuery userlevel" style="width: 200px;margin-left: 0px"  >
 			<option value=""  ></option>
-			<c:forEach  var="deptInfo"  items="${deptInfoList}">
-				<option value ="${deptInfo.DEPT_ID}" title=" ${deptInfo.DEPTNAME}" > ${deptInfo.DEPTNAME}</option>
+			<c:forEach  var="yearInfo"  items="${yearList}">
+				<option value ="${yearInfo.year}" title=" ${yearInfo.year}" > ${yearInfo.year}</option>
 			</c:forEach>
 		</select>
 		<!-- 查询按钮  -->
@@ -41,7 +39,6 @@
 
 <!-- end    查询条件 -->
 
-<div class='btn right deleteButton' onclick="roomList.expEvent()" style="white-space: nowrap">导出</div>
 <div class='btn right deleteButton' onclick="roomList.educateOfDelete()" style="white-space: nowrap">删除</div>
 <div class='btn right deleteButton' onclick="roomList.educateOfSave()" style="white-space: nowrap">新增</div>
 <div  style="line-height: 37px">单位：万元</div>

@@ -25,7 +25,15 @@
 <!-- start    查询条件 -->
 <div class="main_div"  style="height: 20px"></div>
 <!-- end  头部 -->
-<span  style="display: inline-block;font-size: 18px"> 项目名称：XXXXXXXXXXXX</span>
+<span  style="display: inline-block;font-size: 18px"> 项目名称：${projectName}</span>
+<br>
+<div class="sheach">
+	<form id="queryForm"  >
+		<input type="hidden"  id="year"  name="year"  value="${year}">
+		<input type="hidden"  id="projectId"  name="projectId"  value="${projectCode}">
+		<input type="hidden"  id="specialType"  name="specialType"  value="${specialType}">
+	</form>　
+</div>
 <!-- end    查询条件 -->
 <div class='btn right deleteButton' onclick="roomList.nodeForUpdata()" style="white-space: nowrap">编辑</div>
 <div    style="line-height: 37px">&nbsp;</div>
@@ -56,7 +64,6 @@
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 <!-- 本页面所需的js -->
-<script src="<%=request.getContextPath()%>/js/yygl/configuration/itemFirst.js"></script>
 <script src="<%=request.getContextPath()%>/js/planCount/planExecute/consultationVisualProgress.js"></script>
 </body>
 </html>

@@ -53,56 +53,32 @@ roomList.initDataGrid = function(){
             {name: '项目编码', style:{width:"100px"}, data: 'PSPID'},
             {name: '总投入', style:{width:"150px"},data: 'ZGSZTZ'},
             {name: '当年投资', style:{width:"150px"},data: 'WERT1'},
-            {name: '承担单位',style:{width:"150px"},data: 'KTEXT'   },
+            {name: '承担单位',style:{width:"200px"},data: 'KTEXT'   },
             {name: '采购申请', style:{width:"100px"},data: 'ZSQJE' },
             {name: '采购合同', style:{width:"100px"},data: 'ZDDJE' },
             {name: '发票入账', style:{width:"100px"},data: 'ZFPRZ' },
             {name: '形象进度',style:{width:"150px"}, data: 'applyCode',forMat:function(row){
-                    return "<a title = '"+row.applyCode+"' style='width:150px;" +
+                    return "<a title = '"+row.IMAGE_PROGRESS+"%' style='width:150px;" +
                         "color: blue;" +
                         "white-space: nowrap;" +
                         "text-overflow: ellipsis;" +
-                        "overflow: hidden;' applyCode = '"+row.applyCode+"'  ,applyId ='"+row.applyId+"' " +
-                        "href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.applyId+"')>"+row.applyCode+"</a>";
+                        "overflow: hidden;' projectId ='"+row.PSPID+"' " +
+                        "href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.PSPID+"','"+row.PTIME+"')>"+row.IMAGE_PROGRESS+"%</a>";
                 }},
-            {name: '计划完成数', style:{width:"100px"},data: 'officeHandleUserName' }
+            {name: '计划完成数', style:{width:"100px"},data: 'PLANNED_COMPLETION' }
 		]
 	});
 
 }
-/**
- * 资金来源
- */
-changeItemFirst = function () {
-    var firstCategoryId = $("#itemFirst option:selected").val();
-    $.ajax({
-        url: "/bg/yygl/apply/secondType",
-        type: "post",
-        dataType:"json",
-        data: {'firstCategoryId':firstCategoryId},
-        success: function (data) {
-            var itemSecond = data.data.itemSecond;
-            var checkContent = '';
-            document.getElementById("itemSecond").innerHTML = checkContent;
-            var i ;
-            checkContent = "<option selected='selected'></option>";
-            for(i=0;i<itemSecond.length;i++){
-                var k = itemSecond[i].K;
-                var v = itemSecond[i].V;
-                checkContent = checkContent+'<option value = "'+k+'">'+v+'</option>';
-            }
-            document.getElementById("itemSecond").innerHTML = checkContent;
-        }
-    });
-}
+　
 /**
  * 形象进度
  */
-roomList.forDetails = function (applyUuid) {
-    var url = "/bg/planExecution/consultationVisualProgress?applyUuid=\"+applyUuid";
+roomList.forDetails = function (projectId,year) {
+    var url = "/bg/planExecution/consultationVisualProgress?projectId="+projectId+"&year="+year;
     layer.open({
                 type:2,
-                title:'<h4 style="font-size: 18px;padding-top: 10px">形象进度维护</h4>',
+                title:'<h4  style=" text-align: center;margin-top: 2px;font-size: 18px;padding-top: 10px">管理咨询形象进度维护</h4>',
                 area:['40%','50%'],
                 fixed:false,//不固定
                 maxmin:true,
