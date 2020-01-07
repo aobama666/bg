@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlanExecutionServiceImpl implements PlanExecutionService {
 
+
     @Autowired
     private PlanExecutionMapper planExecutionMapper;
     @Override
@@ -70,5 +71,8 @@ public class PlanExecutionServiceImpl implements PlanExecutionService {
     public int updateForImageProgress(Map<String, Object> maintaion) {
         return planExecutionMapper.updateForImageProgress(maintaion);
     }
-
+    @Override
+    public List<Map<String, Object>> selectForTotalBaseInfo(Map<String, Object> maintainMap) {
+        return planExecutionMapper.selectForTotalBaseInfo(maintainMap);
+    }
 }

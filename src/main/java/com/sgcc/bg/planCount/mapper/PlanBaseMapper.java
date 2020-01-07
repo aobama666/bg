@@ -27,5 +27,14 @@ public interface PlanBaseMapper {
     /**
      * 数据字典的查询
      */
-    List<Map<String,Object>>  selectForDataDictionaryInfo(@Param("dataDictionaryMap") Map<String, Object> dataDictionaryMap);
+    List<Map<String,Object>>  selectForDataDictionaryInfo(@Param("baseMap") Map<String, Object> baseMap);
+    /**
+     * 计划投入-近三年发展投入趋势-资本性和成本性投入趋势
+     */
+    List<Map<String,Object>>selectForYearInfo(@Param("baseMap") Map<String, Object> baseMap);
+    /**
+     * 计划投入-各专项年度投入情况
+     */
+    List<Map<String,Object>>selectForItemInfo(@Param("baseMap") Map<String, Object> baseMap);
+
   }

@@ -12,6 +12,10 @@ public interface PlanExecutionMapper {
      */
     List<Map<String,Object>> selectForBaseInfo(@Param("maintainMap") Map<String, Object> maintainMap);
     /**
+     * 计划执行数据维护总计
+     */
+    List<Map<String,Object>> selectForTotalBaseInfo(@Param("maintainMap") Map<String, Object> maintainMap);
+    /**
      * 计划执行数据维护的查询数量
      */
     String selectForBaseInfoNum(@Param("maintainMap") Map<String, Object> maintainMap);

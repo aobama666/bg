@@ -4,6 +4,7 @@ var index = 0;
 roomList.btn_type_flag = 0;
 $(function(){
     roomList.initDataGrid();
+    maintainInfo.forSpecalType();
     $("#developSpecialType").change(function(e){
         roomList.yearAndDevelopQuery();
     });
@@ -13,41 +14,100 @@ $(function(){
     $(".changeQuery").change(function(e){
         roomList.yearAndItemQuery();
     });
+
+
 });
+roomList.query = function(){
+    var specialTypeNew = $("#specialTypeNew").val();
+    $("#specialType").val(specialTypeNew);
+    roomList.yearAndItemQuery();
+}
 roomList.initDataGrid = function(){
     roomList.yearAndDevelopQuery();
     roomList.costAndCapitalQuery();
     roomList.yearAndItemQuery();
 }
 roomList.yearAndDevelopQuery = function(){
-   var   developSpecialType= $("#developSpecialType").val();
-    var  year=['2019','2018','2017' ];
-    var  developInput=[46155.3, 170353.8, 85535.1  ];
-    var  developItemNumber=[ 357, 390, 269  ];
+    var   developSpecialType= $("#developSpecialType").val();
+    var yearAndDevelopList="";
+    $.ajax({
+        url: "/bg/planBase/selectForYearAndDevelopListInfo",
+        type: "post",
+        dataType:"json",
+        async:false,
+        data: {'specalType':developSpecialType},
+        success: function (data) {
+            yearAndDevelopList  = data.yearAndDevelopList;
+        }
+    });
+
+    var year=new Array();
+    var developInput=new Array();
+    var developItemNumber=new Array();
+    for(var i=0;i<yearAndDevelopList.length;i++){
+        year.push( yearAndDevelopList[i].YEAR);
+        developInput.push( yearAndDevelopList[i].TOTAL_INVEST);
+        developItemNumber.push(yearAndDevelopList[i].NUMBER_OF_ITEMS);
+    }
     yearAndDevelop(year,developInput,developItemNumber);
 }
 roomList.costAndCapitalQuery = function(){
-    var   costSpecialType= $("#costSpecialType").val();
-    var  year=['2019','2018','2017'];
-    //资本性
-    var  capitalMoney=[36155, 100000, 65535 ];
-    //成本性
-    var costmoney=[ 10000, 50354, 20000];
+    var    specialType= $("#costSpecialType").val();
+    var yearAndDevelopList="";
+    $.ajax({
+        url: "/bg/planBase/selectForYearAndDevelopListInfo",
+        type: "post",
+        dataType:"json",
+        async:false,
+        data: {'specalType':specialType},
+        success: function (data) {
+            yearAndDevelopList  = data.yearAndDevelopList;
+        }
+    });
+    var year=new Array();
+    var capitalMoney=new Array();//资本性
+    var costmoney=new Array();//成本性
+    for(var i=0;i<yearAndDevelopList.length;i++){
+        year.push( yearAndDevelopList[i].YEAR);
+        capitalMoney.push( yearAndDevelopList[i].CAPITAL_INVEST);
+        costmoney.push(yearAndDevelopList[i].COST_INVEST);
+    }
     costAndCapital(year,capitalMoney,costmoney);
 }
 roomList.yearAndItemQuery = function(){
-   var year= $("#year").val();
-   var  itemSpecialType= $("#itemSpecialType").val();
-    var ItemType=['产业基建','电网小型基建','产业技改','产业大修','固定资产零星购置',
-        '电力营销投入','电网信息化','生产辅助技改','生产辅助大修改','管理咨询',
-        '研究开发','教育培训','股权投资','信息系统开发建设' ];
-    var appregnum = [46155.3, 150353.8, 85535.1,46155.3, 150353.8, 85535.1,
-        46155.3, 150353.8, 85535.1,46155.3, 150353.8, 85535.1,
-        46155.3, 150353.8   ];
-    var activenum = [500, 300, 460,101, 60, 369,
-        500, 890, 460,525, 310, 399,
-        500, 477 ];
-    yearAndItem(ItemType,appregnum,activenum,year,itemSpecialType);
+    var year= $("#year").val();
+   var  specialType= $("#specialType").val();
+    var itemList="";
+    $.ajax({
+        url: "/bg/planBase/selectForItemInfo",
+        type: "post",
+        dataType:"json",
+        async:false,
+        data: {'specalType':specialType,'year':year},
+        success: function (data) {
+            itemList  = data.itemList;
+        }
+    });
+    var ItemType=new Array();
+    var appregnum=new Array();//资本性
+    var activenum=new Array();//成本性
+    for(var i=0;i<itemList.length;i++){
+        ItemType.push(itemList[i].SPECIAL_NAME);
+        appregnum.push(itemList[i].YEAR_INVEST);
+        activenum.push(itemList[i].NUMBER_OF_ITEMS);
+    }
+
+
+    // var ItemType=['产业基建','电网小型基建','产业技改','产业大修','固定资产零星购置',
+    //     '电力营销投入','电网信息化','生产辅助技改','生产辅助大修改','管理咨询',
+    //     '研究开发','教育培训','股权投资','信息系统开发建设' ];
+    // var appregnum = [46155.3, 150353.8, 85535.1,46155.3, 150353.8, 85535.1,
+    //     46155.3, 150353.8, 85535.1,46155.3, 150353.8, 85535.1,
+    //     46155.3, 150353.8   ];
+    // var activenum = [500, 300, 460,101, 60, 369,
+    //     500, 890, 460,525, 310, 399,
+    //     500, 477 ];
+    yearAndItem(ItemType,appregnum,activenum);
 }
 
 //近三年发展投入趋势
@@ -274,7 +334,7 @@ roomList.forCapital =  function  (year) {
 
 
 //各专项年度投入情况
-function yearAndItem(ItemType,appregnum,activenum,year,itemSpecialType){
+function yearAndItem(ItemType,appregnum,activenum ){
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('yearAndItem'));
     var maxappreg = calMax(appregnum); //计划投入金额Y轴值
@@ -367,11 +427,11 @@ function yearAndItem(ItemType,appregnum,activenum,year,itemSpecialType){
                 type:'bar',
                 data:appregnum,
                 barWidth : 20,//柱图宽度
-                itemStyle:{
-                    normal:{
-                        color:'#4ad2ff'
-                    }
-                },
+                // itemStyle:{
+                //     normal:{
+                //         color:'#4ad2ff'
+                //     }
+                // },
                 label: {
                     normal: {
                         show: true,

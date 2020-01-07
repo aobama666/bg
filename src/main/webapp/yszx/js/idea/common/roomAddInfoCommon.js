@@ -74,6 +74,30 @@ var dataForm = {
 			}
 			return true;
 		},
+        /**
+         * 验证输入数字是否为0-100或0-100保留两位小数的百分比
+         */
+        validPercent:function(e){
+            if(!e){
+                e = $(".validPer");
+            }
+            for(var a = 0;a<e.length;a++){
+                var ele = $(e[a]);
+                var eleTitle = ele.attr("content");
+                var eleValue = ele.val();
+                var reg = regStr.perNumStr;
+                if(!reg.test(eleValue)){
+                    messager.tip(eleTitle+"必须0-100之间的百分比,例如（50%，50.67%）",2000);
+                    ele.addClass("validRefuse");
+                    return  false;
+                }else{
+
+                    ele.removeClass("validRefuse");
+                }
+            }
+            return true;
+        },
+
 
 		/**
 		 * 验证输入数字是否为0-100或其他参数
@@ -239,7 +263,6 @@ var dataForm = {
      *
      */
     validNewNumber:function(e,type,byte){
-    	debugger;
         if(!e){
             e = $(".validNum");
         }

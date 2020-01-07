@@ -3,6 +3,7 @@
 <%@page import="java.util.Map"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -19,6 +20,22 @@
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/css/planCount/planInput/planInput.css" rel="stylesheet" type="text/css">
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+	<style type="text/css">
+		.textbox{
+			width: 20%!important;
+			height: 35px!important;
+			border: 1px solid #ddd!important;
+			margin-left: -4px!important;
+			vertical-align: middle!important;
+			font-size: 16px!important;
+			line-height: 32px!important;
+			padding: 2px 0!important;
+			padding-bottom: 6px!important;
+			cursor: pointer!important;
+			border: 1px solid #ddd!important;
+		}
+
+	</style>
 </head>
 <body>
 
@@ -56,18 +73,14 @@
 										<label style="font-size: 20px;"> 各专项年度投入情况</label ><br>
 										<label > 年份：</label>
 										<select id="year"  name = "year"  title="年度" class = "changeQuery userlevel" style="width: 200px;margin-left: 0px"   >
-											<option value="" > </option>
 											<c:forEach  var="yearInfo"  items="${yearList}">
 												<option value ="${yearInfo.year}" title=" ${yearInfo.year}" > ${yearInfo.year}</option>
 											</c:forEach>
 										</select>
 										<label   class="yearTitle"> 专项类别：</label>
-										<select id = "itemSpecialType" name = "itemSpecialType" title="专项类别"    class = "changeQuery userlevel" style="width: 240px;margin-left: -2px" onchange="maintainInfo.forFundsSource()"    >
-											<option value = ""  >全部专项</option>
-										<c:forEach  var="specialInfo"  items="${specialList}">
-										<option value ="${specialInfo.SPECIAL_CODE}" title=" ${specialInfo.SPECIAL_NAME}" > ${specialInfo.SPECIAL_NAME}</option>
-										</c:forEach>
-										</select>
+									    <input type="hidden" id="specialType" name="specialType" value=""　   　>
+								    	<input class="inputQuery changeQuery tree-data" style="width: 300px"   id="specialTypeNew" name="specialTypeNew"  data-companyLeaderName=""        />
+									    <div id = "queryButton" class = "btn query" onclick = "roomList.query()" style="margin-left: 20px;">搜索</div>
 								</form>
 							</td>
 						</tr>
@@ -85,14 +98,14 @@
 					<table  style="width:100%;height: 100%; ">
 						<tr style="width:100%;height: 10%; ">
 							<td>
-										<label style="font-size: 20px;"> 资本性与成本性投入趋势</label >
-										<%--<label > 综合计划发展投入：</label>--%>
-										<%--<select id = "costSpecialType" name = "costSpecialType" title="专项类别"    class = "  userlevel" style="width: 240px;margin-left: -2px" onchange="maintainInfo.forFundsSource()"    >--%>
-											<%--<option value = ""  > </option>--%>
-											<%--<c:forEach  var="specialInfo"  items="${specialList}">--%>
-												<%--<option value ="${specialInfo.SPECIAL_CODE}" title=" ${specialInfo.SPECIAL_NAME}" > ${specialInfo.SPECIAL_NAME}</option>--%>
-											<%--</c:forEach>--%>
-										<%--</select>--%>
+										<label style="font-size: 20px;"> 资本性与成本性投入趋势</label ><br>
+										<label > 综合计划发展投入：</label>
+										<select id = "costSpecialType" name = "costSpecialType" title="专项类别"    class = "  userlevel" style="width: 240px;margin-left: -2px" onchange="maintainInfo.forFundsSource()"    >
+											<option value = ""  > </option>
+											<c:forEach  var="specialInfo"  items="${specialList}">
+												<option value ="${specialInfo.SPECIAL_CODE}" title=" ${specialInfo.SPECIAL_NAME}" > ${specialInfo.SPECIAL_NAME}</option>
+											</c:forEach>
+										</select>
 							</td>
 						</tr>
 						<tr  style="width:100%;height: 90%;">
@@ -126,4 +139,5 @@
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 <script src="<%=request.getContextPath()%>/js/echarts/echarts.min.js"></script>
 <script src="<%=request.getContextPath()%>/js/planCount/planInput/planInput.js"></script>
+<script src="<%=request.getContextPath()%>/js/planCount/planExecute/maintain.js"></script>
 </html>

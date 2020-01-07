@@ -12,8 +12,8 @@
         Z1.POST1,
         Z1.PRART1 ,
         Z1.SPST1,
-        Z1.ZGSZTZ ,
-        Z1.WERT1,
+        ROUND(DECODE(Z1.ZGSZTZ,NUll,0,Z1.ZGSZTZ)/10000, 2)ZGSZTZ,
+        ROUND(DECODE(Z1.WERT1,NUll,0,Z1.WERT1)/10000, 2)WERT1,
         Z1.ZZJLY ,
         Z1.ZZJLY_T,
         Z1.ZZJXZ,
@@ -22,11 +22,11 @@
         Z1.KTEXT ,
         Z1.PLFAZ ,
         Z1.PLSEZ ,
-        Z1.ZSQJE ,
-        Z1.ZDDJE ,
-        Z1.ZFPRZ ,
+        ROUND(DECODE(Z1.ZSQJE,NUll,0, Z1.ZSQJE)/10000, 2)ZSQJE,
+        ROUND(DECODE(Z1.ZDDJE,NUll,0, Z1.ZDDJE)/10000, 2)ZDDJE,
+        ROUND(DECODE(Z1.ZFPRZ,NUll,0, Z1.ZFPRZ)/10000, 2)ZFPRZ,
         Z2.GJAHR,
-        Z2.ZJFZCE,
+        ROUND(DECODE(Z2.ZJFZCE,NUll,0, Z2.ZJFZCE)/10000, 2)ZJFZCE,
         ER.SPECIAL_COMPANY_CODE,
         SC1.SPECIAL_NAME  as  SPECIAL_COMPANY_NAME,
         FS.FUNDS_SOURCE_NAME,
@@ -130,8 +130,16 @@
     </select>
     <!-- 计划执行数据维护的查询-->
     <select id="selectForExecutionInfo" resultType="java.util.Map" parameterType="java.util.HashMap" >
-        SELECT     *      from(<include refid="maintainInfo"/>)
+        SELECT    ROWNUM as ROWNO ,  T.*      from(<include refid="maintainInfo"/>) T
     </select>
+
+
+    <!-- 计划执行数据维护的总计-->
+    <select id="selectForTotalBaseInfo" resultType="java.util.Map" parameterType="java.util.HashMap" >
+        SELECT     SUM(ZGSZTZ)  ZGSZTZ,  SUM(WERT1)  WERT1,    SUM(ZSQJE)  ZSQJE,   SUM(ZDDJE)  ZDDJE,  SUM(ZFPRZ)  ZFPRZ, SUM(ZJFZCE)  ZJFZCE
+        from(<include refid="maintainInfo"/>)
+    </select>
+
 
 
     <sql id="nodeInfo">

@@ -45,10 +45,7 @@ roomList.initDataGrid = function(){
 		tablepage:$(".tablepage"),//分页组件
 		columns: [
             {name: '序号',style:{width:"50px"}, data: 'ROWNO'},
-            {name: '选择',style:{width:"50px"}, data: 'PSPID',checkbox:true, forMat:function(row){
-                    dataItems[index] = row;
-                    return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.PSPID)+'"/>';
-                }},
+
             {name: '项目名称', style:{width:"200px"},data: 'POST1' },
             {name: '项目编码', style:{width:"100px"}, data: 'PSPID'},
             {name: '总投入', style:{width:"150px"},data: 'ZGSZTZ'},
@@ -89,16 +86,15 @@ roomList.forDetails = function (projectId,year) {
  * 计划统计--执行数据综合维护
  */
 roomList.expEvent = function(){
-		var $tr = $("#datagrid tr");
-		if($tr.length == 1){
-			alert("没有要导出的数据！");
-		}else{
-			var applyIds = dataGrid.getCheckedIds();
-			$("input[name=applyId]").val(applyIds);
-			var ran = Math.random()*1000;
-			document.forms[0].action ="/bg/yyComprehensive/selectForComprehensiveExl?ran="+ran;
-			document.forms[0].submit();
-		}
+    var $tr = $("#datagrid tr");
+    if($tr.length == 1){
+        alert("没有要导出的数据！");
+    }else{
+        var ran = Math.random()*1000;
+        document.forms[0].action ="/bg/planExecution/selectForConsultationBaseExl?ran="+ran;
+        document.forms[0].submit();
+    }
+
 }
 
  

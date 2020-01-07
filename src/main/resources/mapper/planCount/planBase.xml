@@ -118,6 +118,96 @@
     </select>
 
 
+    <!--计划执行数据维护公共sql-->
+    <sql id="yearBaseInfo">
+        SELECT  PTIME as  YEAR , SUM(ZGSZTZ)  as TOTAL_INVEST,SUM(WERT1) as YEAR_INVEST ,count(PSPID) as NUMBER_OF_ITEMS ,SUM(DECODE(ZZJXZ,'00001',ZGSZTZ,'0')) AS  CAPITAL_INVEST,SUM(DECODE(ZZJXZ,'00002',ZGSZTZ,'0')) AS  COST_INVEST  from(
+        SELECT
+        Z1.PSPID,
+        Z1.PTIME,
+        Z1.ZGSZTZ,
+        Z1.WERT1,
+        DECODE(Z1.ZZJXZ,'00001','00001','00002','00002',''  )as ZZJXZ,
+        Z1.ZZJXZ_T,
+        Z1.PRCTR,
+        ER.SPECIAL_COMPANY_CODE,
+        SC.SPECIAL_NAME  as SPECIAL_COMPANY_NAME
+        FROM   ZTPSJHTJ001    Z1
+        LEFT JOIN     PS_SPECIAL_ERP_RELATION  ER ON    ER.ERP_SPECIAL_CODE=Z1.PRART1
+        LEFT JOIN     PS_SPECIAL_CATEGORY  SC  ON  SC.SPECIAL_CODE=ER.SPECIAL_COMPANY_CODE
+        UNION ALL
+        SELECT
+        MY.ID  as PSPID,
+        MY.YEAR  as  PTIME,
+        0 ZGSZTZ,
+        TO_NUMBER(MY.PLAN_AMOUNT)  as  WERT1,
+        DECODE(MY.SPECIAL_TYPE, 'C013','00001', 'C014', '00001', 'C012', '00002'  ,    '' ) as ZZJXZ,
+        DECODE(MY.SPECIAL_TYPE, 'C013','资本化', 'C014', '资本化', 'C012', '成本化', '' ) as  ZZJXZ_T,
+        null PRCTR,
+        MY.SPECIAL_TYPE   as SPECIAL_COMPANY_CODE,
+        SC.SPECIAL_NAME   as SPECIAL_COMPANY_NAME
+        FROM      PS_MAINTAIN_YEAR  MY
+        LEFT JOIN    PS_SPECIAL_CATEGORY  SC ON   MY.SPECIAL_TYPE=SC.SPECIAL_CODE
+        ) where 1=1  and  ZZJXZ IS NOT NULL
+        <if test="baseMap.year!= null and baseMap.year!= ''">
+            and   PTIME  = #{baseMap.year}
+        </if>
+        <if test="baseMap.specialType!= null and baseMap.specialType!= ''">
+            and   SPECIAL_COMPANY_CODE  = #{baseMap.specialType}
+        </if>
+        GROUP BY  PTIME
+    </sql>
 
+    <select id="selectForYearInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT  *   from(<include refid="yearBaseInfo"/>) where 1=1     ORDER BY   YEAR
+    </select>
+
+
+
+
+    <sql id="itemBaseInfo">
+        SELECT  PTIME as  YEAR ,   SPECIAL_COMPANY_CODE  as  SPECIAL_CODE,SPECIAL_COMPANY_NAME as  SPECIAL_NAME , SUM(ZGSZTZ)  as TOTAL_INVEST,SUM(WERT1) as YEAR_INVEST ,count(PSPID) as NUMBER_OF_ITEMS    from(
+        SELECT
+        Z1.PSPID,
+        Z1.PTIME,
+        Z1.ZGSZTZ,
+        Z1.WERT1,
+        DECODE(Z1.ZZJXZ,'00001','00001','00002','00002',''  )as ZZJXZ,
+        Z1.ZZJXZ_T,
+        Z1.PRCTR,
+        ER.SPECIAL_COMPANY_CODE,
+        SC.SPECIAL_NAME  as SPECIAL_COMPANY_NAME
+        FROM   ZTPSJHTJ001    Z1
+        LEFT JOIN     PS_SPECIAL_ERP_RELATION  ER ON    ER.ERP_SPECIAL_CODE=Z1.PRART1
+        LEFT JOIN     PS_SPECIAL_CATEGORY  SC  ON  SC.SPECIAL_CODE=ER.SPECIAL_COMPANY_CODE
+        UNION ALL
+        SELECT
+        MY.ID  as PSPID,
+        MY.YEAR  as  PTIME,
+        0 ZGSZTZ,
+        TO_NUMBER(MY.PLAN_AMOUNT)  as  WERT1,
+        DECODE(MY.SPECIAL_TYPE, 'C013','00001', 'C014', '00001', 'C012', '00002'  ,    '' ) as ZZJXZ,
+        DECODE(MY.SPECIAL_TYPE, 'C013','资本化', 'C014', '资本化', 'C012', '成本化', '' ) as  ZZJXZ_T,
+        null PRCTR,
+        MY.SPECIAL_TYPE   as SPECIAL_COMPANY_CODE,
+        SC.SPECIAL_NAME   as SPECIAL_COMPANY_NAME
+        FROM      PS_MAINTAIN_YEAR  MY
+        LEFT JOIN    PS_SPECIAL_CATEGORY  SC ON   MY.SPECIAL_TYPE=SC.SPECIAL_CODE
+        ) where 1=1  and  SPECIAL_COMPANY_CODE IS NOT NULL
+        <if test="baseMap.year!= null and baseMap.year!= ''">
+            and   PTIME  = #{baseMap.year}
+        </if>
+        <if test="null != baseMap.specialTypes and baseMap.specialTypes.size > 0">
+            and   SPECIAL_COMPANY_CODE IN
+            <foreach collection="baseMap.specialTypes" item="specialType" open="(" separator="," close=")">
+                #{specialType,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        GROUP BY  PTIME  ,SPECIAL_COMPANY_CODE,SPECIAL_COMPANY_NAME
+    </sql>
+
+
+    <select id="selectForItemInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT  *   from(<include refid="itemBaseInfo"/>) where 1=1     ORDER BY   SPECIAL_CODE
+    </select>
 
 </mapper>

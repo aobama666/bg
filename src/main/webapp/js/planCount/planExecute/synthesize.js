@@ -4,7 +4,6 @@ var dataItems = new Array();
 var index = 0;
 roomList.btn_type_flag = 0;
 $(function(){
-    debugger;
     maintainInfo.forFundsSource();
     roomList.initDataGrid();
    /* 输入框的change事件，在输入过程中自动查询  */
@@ -53,10 +52,6 @@ roomList.initDataGrid = function(){
 		tablepage:$(".tablepage"),//分页组件
 		columns: [
             {name: '序号',style:{width:"50px"}, data: 'ROWNO'},
-            // {name: '选择',style:{width:"50px"}, data: 'PSPID',checkbox:true, forMat:function(row){
-            //         dataItems[index] = row;
-            //         return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.PSPID)+'"/>';
-            // }},
             {name: '项目名称', style:{width:"200px"},data: 'POST1' },
             {name: '国网编码', style:{width:"120px"}, data: 'POSID'   },
             {name: '专项类别',style:{width:"100px"}, data: 'SPECIAL_COMPANY_NAME'},
@@ -70,14 +65,14 @@ roomList.initDataGrid = function(){
             {name: '实际经费支出', style:{width:"100px"},data: 'ZJFZCE' },
             {name: '资金执行进度', style:{width:"100px"},data: 'GJAHR' },
             {name: '形象进度',style:{width:"100px"}, data: 'IMAGE_PROGRESS',forMat:function(row){
+
                     return "<a title = '"+row.IMAGE_PROGRESS+"%' style='width:100px;" +
                         "color: blue;" +
                         "white-space: nowrap;" +
                         "text-overflow: ellipsis;" +
                         "overflow: hidden;'  projectId ='"+row.PSPID+"' " +
-                        "href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.PSPID+"')>"+row.IMAGE_PROGRESS+"%</a>";
+                        "href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.PSPID+"','"+row.PTIME+"')>"+row.IMAGE_PROGRESS+"%</a>";
                 }},
-
             {name: '计划完成数', style:{width:"100px"},data: 'PLANNED_COMPLETION' }
 		]
 
@@ -90,12 +85,12 @@ roomList.initDataGrid = function(){
 /**
  * 形象进度
  */
-roomList.forDetails = function (projectId) {
-    var url = "/bg/planExecution/synthesizeVisualProgress?projectId="+projectId;
+roomList.forDetails = function (projectId,year) {
+    var url = "/bg/planExecution/synthesizeVisualProgress?projectId="+projectId+"&year="+year;
     layer.open({
                 type:2,
-                title:'<h4 style="font-size: 18px;padding-top: 10px">形象进度维护</h4>',
-                area:['25%','25%'],
+                title:'<h4 style="text-align: center;margin-top: 2px;font-size: 18px;padding-top: 10px">形象进度维护</h4>',
+                area:['30%','25%'],
                 fixed:false,//不固定
                 maxmin:true,
                 content:url
@@ -109,10 +104,8 @@ roomList.expEvent = function(){
 		if($tr.length == 1){
 			alert("没有要导出的数据！");
 		}else{
-			var applyIds = dataGrid.getCheckedIds();
-			$("input[name=applyId]").val(applyIds);
 			var ran = Math.random()*1000;
-			document.forms[0].action ="/bg/yyComprehensive/selectForComprehensiveExl?ran="+ran;
+			document.forms[0].action ="/bg/planExecution/selectForBaseExl?ran="+ran;
 			document.forms[0].submit();
 		}
 

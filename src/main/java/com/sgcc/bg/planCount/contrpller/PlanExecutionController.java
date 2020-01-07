@@ -7,10 +7,18 @@ import com.sgcc.bg.common.*;
 import com.sgcc.bg.planCount.service.PlanBaseService;
 import com.sgcc.bg.planCount.service.PlanExecutionService;
 import com.sgcc.bg.planCount.service.PlanInputService;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.net.URLEncoder;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,9 +123,24 @@ public class PlanExecutionController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/synthesizeVisualProgress")
-	public ModelAndView synthesizeVisualProgress(HttpServletRequest res) {
+	public ModelAndView synthesizeVisualProgress(String projectId,String year) {
 		Logger.info("计划统计--执行数据综合维护-----形象进度维护------开始");
+		Map<String, Object> maintainMap = new HashMap<>();
+		maintainMap.put("projectCode",projectId);
+		maintainMap.put("year",year);
+		List<Map<String, Object>>   executionList=planExecutionService.selectForExecutionInfo(maintainMap);
+		Map<String, Object>  executionMap =executionList.get(0);
+		String  projectCode=String.valueOf(executionMap.get("PSPID"));
+		String  projectName=String.valueOf(executionMap.get("POST1"));
+		String  specialType=String.valueOf(executionMap.get("SPECIAL_COMPANY_CODE"));
+		String  ptime=String.valueOf(executionMap.get("PTIME"));
+		String  imageProgress=String.valueOf(executionMap.get("IMAGE_PROGRESS"));
 		Map<String, Object> map = new HashMap<>();
+		map.put("projectCode",projectCode);
+		map.put("projectName",projectName);
+		map.put("specialType",specialType);
+		map.put("year",ptime);
+		map.put("imageProgress",imageProgress+"%");
 		ModelAndView model = new ModelAndView("planCount/planExecution/plan_execution_synthesize_visualProgress", map);
 		Logger.info("计划统计--执行数据综合维护-----形象进度维护------结束");
 		return model;
@@ -552,17 +575,14 @@ public class PlanExecutionController {
 		Map.put("page_end",page_end);
 		List<Map<String, Object>> comprehensiveList=planExecutionService.selectForBaseInfo(Map);
 		String   countNum=planExecutionService.selectForBaseInfoNum(Map);
-		List<Map<String, Object>>    footerList=new ArrayList<Map<String, Object>>();
-		Map<String, Object> footerMap=new HashMap<String, Object>();
+		List<Map<String, Object>> footerList=planExecutionService.selectForTotalBaseInfo(Map);
+		Map<String, Object> footerMap=footerList.get(0);
 		footerMap.put("ROWNO","总计");
-		footerMap.put("ZGSZTZ","100");
-		footerMap.put("WERT1","200");
-	//	footerList.add(footerMap);
 		comprehensiveList.add(footerMap);
 		Map<String, Object> jsonMap1 = new HashMap<String, Object>();
 		jsonMap1.put("data", comprehensiveList);
 		jsonMap1.put("total", countNum);
-//		jsonMap1.put("footer", footerList);
+
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap.put("data", jsonMap1);
 		jsonMap.put("msg", "success");
@@ -1037,4 +1057,339 @@ public class PlanExecutionController {
 		}
 	}
 
+
+
+	/**
+	 * 投资执行-导出
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/selectForBaseExl")
+	public String selectForBaseExl(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		Logger.info("投资执行-导出------开始");
+
+		String year = request.getParameter("year")==null?"":request.getParameter("year");//年份
+		String specialType = request.getParameter("specialType")==null?"":request.getParameter("specialType"); //公司类型
+		String sourceOfFunds = request.getParameter("sourceOfFunds")==null?"":request.getParameter("sourceOfFunds");//资金来源
+		String commitmentUnit = request.getParameter("commitmentUnit")==null?"":request.getParameter("commitmentUnit");//承担单位
+		String specialCodes = request.getParameter("specialCodes")==null?"":request.getParameter("specialCodes");//院内类型
+		String type = request.getParameter("type")==null?"":request.getParameter("type"); //项目性质
+
+		Map<String, Object> Map = new HashMap<String, Object>();
+		if(!StringUtils.isEmpty(specialCodes)){
+			//拆分id
+			String[] arry = specialCodes.split(",");
+			List<String>  arrySpecialCode=new ArrayList<String>();
+			for (String specialCode : arry) {
+				arrySpecialCode.add(specialCode);
+			}
+			Map.put("specialCodes",arrySpecialCode);
+		}
+		if(!StringUtils.isEmpty(sourceOfFunds)){
+			//拆分id
+			String[] arry = sourceOfFunds.split(",");
+			List<String>  sourceOfFundsCode=new ArrayList<String>();
+			for (String sourceOfFund : arry) {
+				sourceOfFundsCode.add(sourceOfFund);
+			}
+			Map.put("sourceOfFunds",sourceOfFundsCode);
+		}
+		Map.put("year",year);
+		Map.put("projectType",type);
+		Map.put("specialType",specialType);
+		Map.put("commitmentUnit",commitmentUnit);
+
+		List<Map<String, Object>> comprehensiveList=planExecutionService.selectForExecutionInfo(Map);
+		List<Map<String, Object>> footerList=planExecutionService.selectForTotalBaseInfo(Map);
+		Map<String, Object> footerMap=footerList.get(0);
+		footerMap.put("ROWNO","总计");
+		comprehensiveList.add(footerMap);
+		//构建Excel表头
+		LinkedHashMap<String,String> headermap = new LinkedHashMap<>();
+		headermap.put("ROWNO", "序号");
+		headermap.put("POST1", "项目名称");
+		headermap.put("POSID", "国网编码");
+		headermap.put("SPECIAL_COMPANY_NAME", "专项类别");
+		headermap.put("ZZJLY_T", "资金来源");
+		headermap.put("ZGSZTZ", "总投入");
+		headermap.put("WERT1", "当年投资");
+		headermap.put("KTEXT", "承担单位");
+		headermap.put("ZSQJE", "采购申请");
+		headermap.put("ZDDJE", "采购合同");
+		headermap.put("ZFPRZ", "发票入账");
+		headermap.put("ZJFZCE", "实际经费支出");
+		headermap.put("GJAHR", "资金执行进度");
+		headermap.put("IMAGE_PROGRESS", "形象进度");
+		headermap.put("PLANNED_COMPLETION", "计划完成数");
+		OutputStream os = null;
+		try {
+			String fileName= "计划执行情况-综合查询"+DateUtil.getDay();
+			HSSFWorkbook workbook = newExcelUtil.PaddingExcel(headermap,comprehensiveList);
+			response.reset();
+			response.setContentType("application/x-download");
+			response.setCharacterEncoding("UTF-8");
+			response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName,"utf-8")+".xls");
+			os = response.getOutputStream();
+			workbook.write(os);
+			os.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			if(os!=null){
+				try {
+					os.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return "";
+	}
+	/**
+	 * 投资执行-导出
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/selectForCapitalBaseExl")
+	public String selectForCapitalBaseExl(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		Logger.info("投资执行-导出------开始");
+		String year = request.getParameter("year")==null?"":request.getParameter("year");//年份
+		String specialType = request.getParameter("specialType")==null?"":request.getParameter("specialType"); //公司类型
+		String sourceOfFunds = request.getParameter("sourceOfFunds")==null?"":request.getParameter("sourceOfFunds");//资金来源
+		String commitmentUnit = request.getParameter("commitmentUnit")==null?"":request.getParameter("commitmentUnit");//承担单位
+		String specialCodes = request.getParameter("specialCodes")==null?"":request.getParameter("specialCodes");//院内类型
+		String type = request.getParameter("type")==null?"":request.getParameter("type"); //项目性质
+
+		Map<String, Object> Map = new HashMap<String, Object>();
+		if(!StringUtils.isEmpty(specialCodes)){
+			//拆分id
+			String[] arry = specialCodes.split(",");
+			List<String>  arrySpecialCode=new ArrayList<String>();
+			for (String specialCode : arry) {
+				arrySpecialCode.add(specialCode);
+			}
+			Map.put("specialCodes",arrySpecialCode);
+		}
+		if(!StringUtils.isEmpty(sourceOfFunds)){
+			//拆分id
+			String[] arry = sourceOfFunds.split(",");
+			List<String>  sourceOfFundsCode=new ArrayList<String>();
+			for (String sourceOfFund : arry) {
+				sourceOfFundsCode.add(sourceOfFund);
+			}
+			Map.put("sourceOfFunds",sourceOfFundsCode);
+		}
+		Map.put("year",year);
+		Map.put("projectType",type);
+		Map.put("specialType",specialType);
+		Map.put("commitmentUnit",commitmentUnit);
+
+		List<Map<String, Object>> comprehensiveList=planExecutionService.selectForExecutionInfo(Map);
+		List<Map<String, Object>> footerList=planExecutionService.selectForTotalBaseInfo(Map);
+		Map<String, Object> footerMap=footerList.get(0);
+		footerMap.put("ROWNO","总计");
+		comprehensiveList.add(footerMap);
+		//构建Excel表头
+		LinkedHashMap<String,String> headermap = new LinkedHashMap<>();
+		headermap.put("ROWNO", "序号");
+		headermap.put("POST1", "项目名称");
+		headermap.put("POSID", "国网编码");
+		headermap.put("SPECIAL_COMPANY_NAME", "专项类别");
+		headermap.put("ZZJLY_T", "资金来源");
+		headermap.put("ZGSZTZ", "总投入");
+		headermap.put("WERT1", "当年投资");
+		headermap.put("KTEXT", "承担单位");
+		headermap.put("ZSQJE", "采购申请");
+		headermap.put("ZDDJE", "采购合同");
+		headermap.put("ZFPRZ", "发票入账");
+		headermap.put("IMAGE_PROGRESS", "形象进度");
+		headermap.put("PLANNED_COMPLETION", "计划完成数");
+		OutputStream os = null;
+		try {
+			String fileName= "计划执行情况-综合查询"+DateUtil.getDay();
+			HSSFWorkbook workbook = newExcelUtil.PaddingExcel(headermap,comprehensiveList);
+			response.reset();
+			response.setContentType("application/x-download");
+			response.setCharacterEncoding("UTF-8");
+			response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName,"utf-8")+".xls");
+			os = response.getOutputStream();
+			workbook.write(os);
+			os.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			if(os!=null){
+				try {
+					os.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return "";
+	}
+	/**
+	 * 投资执行-导出
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/selectForPowerGridBaseExl")
+	public String selectForPowerGridBaseExl(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		Logger.info("投资执行-导出------开始");
+		String year = request.getParameter("year")==null?"":request.getParameter("year");//年份
+		String specialType = request.getParameter("specialType")==null?"":request.getParameter("specialType"); //公司类型
+		String sourceOfFunds = request.getParameter("sourceOfFunds")==null?"":request.getParameter("sourceOfFunds");//资金来源
+		String commitmentUnit = request.getParameter("commitmentUnit")==null?"":request.getParameter("commitmentUnit");//承担单位
+		String specialCodes = request.getParameter("specialCodes")==null?"":request.getParameter("specialCodes");//院内类型
+		String type = request.getParameter("type")==null?"":request.getParameter("type"); //项目性质
+
+		Map<String, Object> Map = new HashMap<String, Object>();
+		if(!StringUtils.isEmpty(specialCodes)){
+			//拆分id
+			String[] arry = specialCodes.split(",");
+			List<String>  arrySpecialCode=new ArrayList<String>();
+			for (String specialCode : arry) {
+				arrySpecialCode.add(specialCode);
+			}
+			Map.put("specialCodes",arrySpecialCode);
+		}
+		if(!StringUtils.isEmpty(sourceOfFunds)){
+			//拆分id
+			String[] arry = sourceOfFunds.split(",");
+			List<String>  sourceOfFundsCode=new ArrayList<String>();
+			for (String sourceOfFund : arry) {
+				sourceOfFundsCode.add(sourceOfFund);
+			}
+			Map.put("sourceOfFunds",sourceOfFundsCode);
+		}
+		Map.put("year",year);
+		Map.put("projectType",type);
+		Map.put("specialType",specialType);
+		Map.put("commitmentUnit",commitmentUnit);
+
+		List<Map<String, Object>> comprehensiveList=planExecutionService.selectForExecutionInfo(Map);
+		List<Map<String, Object>> footerList=planExecutionService.selectForTotalBaseInfo(Map);
+		Map<String, Object> footerMap=footerList.get(0);
+		footerMap.put("ROWNO","总计");
+		comprehensiveList.add(footerMap);
+		//构建Excel表头
+		LinkedHashMap<String,String> headermap = new LinkedHashMap<>();
+		headermap.put("ROWNO", "序号");
+		headermap.put("POST1", "项目名称");
+		headermap.put("POSID", "国网编码");
+		headermap.put("ZGSZTZ", "总投入");
+		headermap.put("WERT1", "当年投资");
+		headermap.put("KTEXT", "承担单位");
+		headermap.put("ZSQJE", "采购申请");
+		headermap.put("BIDDING_PROGRESS", "招标采购完成进度");
+		headermap.put("ZDDJE", "采购合同");
+		headermap.put("SYSTEM_DEV_PROGRESS", "物资到货/系统开发进度");
+		headermap.put("ZFPRZ", "发票入账");
+		headermap.put("IMAGE_PROGRESS", "形象进度");
+		headermap.put("PLANNED_COMPLETION", "计划完成数");
+		OutputStream os = null;
+		try {
+			String fileName= "计划执行情况-综合查询"+DateUtil.getDay();
+			HSSFWorkbook workbook = newExcelUtil.PaddingExcel(headermap,comprehensiveList);
+			response.reset();
+			response.setContentType("application/x-download");
+			response.setCharacterEncoding("UTF-8");
+			response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName,"utf-8")+".xls");
+			os = response.getOutputStream();
+			workbook.write(os);
+			os.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			if(os!=null){
+				try {
+					os.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return "";
+	}
+	/**
+	 * 投资执行-导出
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/selectForConsultationBaseExl")
+	public String selectForConsultationBaseExl(HttpServletRequest request,HttpServletResponse response) throws IOException{
+		Logger.info("投资执行-导出------开始");
+		String year = request.getParameter("year")==null?"":request.getParameter("year");//年份
+		String specialType = request.getParameter("specialType")==null?"":request.getParameter("specialType"); //公司类型
+		String sourceOfFunds = request.getParameter("sourceOfFunds")==null?"":request.getParameter("sourceOfFunds");//资金来源
+		String commitmentUnit = request.getParameter("commitmentUnit")==null?"":request.getParameter("commitmentUnit");//承担单位
+		String specialCodes = request.getParameter("specialCodes")==null?"":request.getParameter("specialCodes");//院内类型
+		String type = request.getParameter("type")==null?"":request.getParameter("type"); //项目性质
+
+		Map<String, Object> Map = new HashMap<String, Object>();
+		if(!StringUtils.isEmpty(specialCodes)){
+			//拆分id
+			String[] arry = specialCodes.split(",");
+			List<String>  arrySpecialCode=new ArrayList<String>();
+			for (String specialCode : arry) {
+				arrySpecialCode.add(specialCode);
+			}
+			Map.put("specialCodes",arrySpecialCode);
+		}
+		if(!StringUtils.isEmpty(sourceOfFunds)){
+			//拆分id
+			String[] arry = sourceOfFunds.split(",");
+			List<String>  sourceOfFundsCode=new ArrayList<String>();
+			for (String sourceOfFund : arry) {
+				sourceOfFundsCode.add(sourceOfFund);
+			}
+			Map.put("sourceOfFunds",sourceOfFundsCode);
+		}
+		Map.put("year",year);
+		Map.put("projectType",type);
+		Map.put("specialType",specialType);
+		Map.put("commitmentUnit",commitmentUnit);
+
+		List<Map<String, Object>> comprehensiveList=planExecutionService.selectForExecutionInfo(Map);
+		List<Map<String, Object>> footerList=planExecutionService.selectForTotalBaseInfo(Map);
+		Map<String, Object> footerMap=footerList.get(0);
+		footerMap.put("ROWNO","总计");
+		comprehensiveList.add(footerMap);
+		//构建Excel表头
+		LinkedHashMap<String,String> headermap = new LinkedHashMap<>();
+		headermap.put("ROWNO", "序号");
+		headermap.put("POST1", "项目名称");
+		headermap.put("PSPID", "项目编码");
+		headermap.put("ZGSZTZ", "总投入");
+		headermap.put("WERT1", "当年投资");
+		headermap.put("KTEXT", "承担单位");
+		headermap.put("ZSQJE", "采购申请");
+		headermap.put("ZDDJE", "采购合同");
+		headermap.put("ZFPRZ", "发票入账");
+		headermap.put("IMAGE_PROGRESS", "形象进度");
+		headermap.put("PLANNED_COMPLETION", "计划完成数");
+		OutputStream os = null;
+		try {
+			String fileName= "计划执行情况-综合查询"+DateUtil.getDay();
+			HSSFWorkbook workbook = newExcelUtil.PaddingExcel(headermap,comprehensiveList);
+			response.reset();
+			response.setContentType("application/x-download");
+			response.setCharacterEncoding("UTF-8");
+			response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName,"utf-8")+".xls");
+			os = response.getOutputStream();
+			workbook.write(os);
+			os.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			if(os!=null){
+				try {
+					os.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return "";
+	}
 }

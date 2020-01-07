@@ -1,11 +1,8 @@
 package com.sgcc.bg.planCount.service.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+
 import com.sgcc.bg.planCount.mapper.PlanBaseMapper;
 import com.sgcc.bg.planCount.service.PlanBaseService;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PlanBaseServiceImpl implements PlanBaseService {
-
 
     @Autowired
     private PlanBaseMapper planBaseMapper;
@@ -40,5 +36,15 @@ public class PlanBaseServiceImpl implements PlanBaseService {
     public List<Map<String, Object>> selectForDataDictionaryInfo(Map<String, Object> dataDictionaryMap) {
         return planBaseMapper.selectForDataDictionaryInfo(dataDictionaryMap);
     }
+
+    @Override
+    public List<Map<String, Object>> selectForYearInfo(Map<String, Object> baseMap) {
+        return planBaseMapper.selectForYearInfo(baseMap);
+    }
+    @Override
+    public List<Map<String, Object>> selectForItemInfo(Map<String, Object> baseMap) {
+        return planBaseMapper.selectForItemInfo(baseMap);
+    }
+
 
 }

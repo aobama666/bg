@@ -79,3 +79,17 @@ roomList.forDetails = function (id) {
                 content:url
     });
 }
+/**
+ * 计划统计--执行数据综合维护
+ */
+roomList.expEvent = function(){
+    var $tr = $("#datagrid tr");
+    if($tr.length == 1){
+        alert("没有要导出的数据！");
+    }else{
+        var ran = Math.random()*1000;
+        document.forms[0].action ="/bg/planExecution/selectForBaseExl?ran="+ran;
+        document.forms[0].submit();
+    }
+
+}

@@ -87,19 +87,18 @@ roomList.forDetails = function (projectId,year) {
     });
 }
 /**
- * 计划统计-基建类执行数据维护
+ * 计划统计--执行数据综合维护
  */
 roomList.expEvent = function(){
-		var $tr = $("#datagrid tr");
-		if($tr.length == 1){
-			alert("没有要导出的数据！");
-		}else{
-			var applyIds = dataGrid.getCheckedIds();
-			$("input[name=applyId]").val(applyIds);
-			var ran = Math.random()*1000;
-			document.forms[0].action ="/bg/yyComprehensive/selectForComprehensiveExl?ran="+ran;
-			document.forms[0].submit();
-		}
+    var $tr = $("#datagrid tr");
+    if($tr.length == 1){
+        alert("没有要导出的数据！");
+    }else{
+        var ran = Math.random()*1000;
+        document.forms[0].action ="/bg/planExecution/selectForCapitalBaseExl?ran="+ran;
+        document.forms[0].submit();
+    }
+
 }
 
  

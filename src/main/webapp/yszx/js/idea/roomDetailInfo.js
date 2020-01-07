@@ -344,7 +344,7 @@ roomDetailInfo.messageSave= function(approvalUserd){
 	 	  
 	    } 
 	   
-	    
+	    debugger;
 	    // 院内陪同领导人员信息
 	    var companyLeaderName=$("#companyLeaderName").val();
 	    if(companyLeaderName==""){
@@ -604,12 +604,15 @@ function messageSubmitHtml(){
 
 
 roomDetailInfo.initSelectForLeader = function(){
+    debugger
 	/* start 查询数据字典集合  */
 	$.ajax({
 	    url: "/bg/IdeaInfo/selectForLeader" ,//获取申报界面数据字典
 		type: "post",
+        async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
 		success: function (data) {
 			if(data.success=="ture"){
+				debugger
 				var leaderData = data.leaderData;
 				var localData =  leaderData;
 				$(".tree-data").combotree({
