@@ -56,8 +56,8 @@
 	</div>
 </div>
 	<div class="btnContent">
-		<button type="button" class="btn" onclick="roomList.marginForUpdata()">确认</button>
-		<button type="button" class="btn" onclick="roomList.resign()">返回</button>
+		<button type="button" class="btn" onclick="roomList.updataForVisualProgress()">确认</button>
+		<button type="button" class="btn" onclick="roomList.Resign()">返回</button>
 	</div>
 </body>
 <script src="<%=request.getContextPath()%>/yszx/js/jquery/jquery-1.7.2.min.js?verNo=<%=VersionUtils.verNo%>"></script>
@@ -77,5 +77,5 @@
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 <!-- 本页面所需的js -->
-<script src="<%=request.getContextPath()%>/js/planCount/planExecute/synthesize.js"></script>
+<script src="<%=request.getContextPath()%>/js/planCount/planExecute/synthesizeVisualProgress.js"></script>
 </html>

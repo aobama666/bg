@@ -32,6 +32,34 @@ public class PlanInputController {
 	@Autowired
 	private PlanBaseService planBaseService;
 	/**
+	 * 计划统计--计划执行情况-权限查询
+	 */
+	public   Map<String ,Object>    AccessList(Map<String ,Object> map){
+
+		CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
+		String userCode = currentUser.getHrCode();
+		Map<String, Object>  AccessMap = new HashMap<>();
+		AccessMap.put("userCode",userCode);
+		List<Map<String, Object>> specialList=null;
+		List<Map<String, Object>>	accessInfoList=planBaseService.selectForMainrtainAccessInfo(AccessMap);
+		Object   accessType=accessInfoList.get(0).get("ACCESS_TYPE");
+		if(accessType.equals("BUSINESS_MANAGEMENT")){
+			Object   deptCode=accessInfoList.get(0).get("DEPT_CODE");
+			AccessMap.put("deptCode",deptCode);
+			specialList=planBaseService.selectForUserAccessInfo(AccessMap);
+			Object    prctr=specialList.get(0).get("PRCTR");
+			map.put("PRCTR",prctr);
+			map.put("specialList",specialList);
+		}else{
+			Map<String, Object> specialMap = new HashMap<>();
+			specialMap.put("specalType","0");
+			specialList=planBaseService.selectForCategoryInfo(specialMap);
+			map.put("PRCTR","");
+			map.put("specialList",specialList);
+		}
+		return map;
+	}
+	/**
 	 * 计划统计--计划投入情况
 	 */
 	@ResponseBody
@@ -39,25 +67,16 @@ public class PlanInputController {
 	public ModelAndView planInputCondition(HttpServletRequest res) {
 		Logger.info("计划统计--计划投入情况-----开始");
 		Map<String, Object> map = new HashMap<>();
-		List<Map<String, Object>>  yearList=new ArrayList<Map<String, Object>>();
-		Map<String, Object> yearMap = new HashMap<>();
-		yearMap.put("year","2017");
-		yearList.add(yearMap);
-		Map<String, Object> yearMap1 = new HashMap<>();
-		yearMap1.put("year","2018");
-		yearList.add(yearMap1);
-		Map<String, Object> yearMap2 = new HashMap<>();
-		yearMap2.put("year","2019");
-		yearList.add(yearMap2);
+		Map<String, Object>  yearMap = new HashMap<>();
+		yearMap.put("num",3);
+		List<Map<String, Object>>	yearList=planBaseService.selectForBaseYearInfo(yearMap);//查询年份
 		map.put("yearList",yearList);
-		Map<String, Object> specialMap = new HashMap<>();
-		specialMap.put("specalType","0");
-		List<Map<String, Object>>	specialList=planBaseService.selectForCategoryInfo(specialMap);
-		map.put("specialList",specialList);//专项类别
+		map=AccessList(map);//各专项类型
 		ModelAndView model = new ModelAndView("planCount/planInput/plan_input_info", map);
 		Logger.info("计划统计--计划投入情况------结束");
 		return model;
 	}
+
 	/**
 	 * 计划统计--计划投入-详情
 	 */
@@ -115,16 +134,9 @@ public class PlanInputController {
 	public ModelAndView planInputEducate(HttpServletRequest res) {
 		Logger.info("计划统计--执行数据综合维护-----开始");
 		Map<String, Object> map = new HashMap<>();
-		List<Map<String, Object>>  yearList=new ArrayList<Map<String, Object>>();
-		Map<String, Object> yearMap = new HashMap<>();
-		yearMap.put("year","2017");
-		yearList.add(yearMap);
-		Map<String, Object> yearMap1 = new HashMap<>();
-		yearMap1.put("year","2018");
-		yearList.add(yearMap1);
-		Map<String, Object> yearMap2 = new HashMap<>();
-		yearMap2.put("year","2019");
-		yearList.add(yearMap2);
+		Map<String, Object>  yearMap = new HashMap<>();
+		yearMap.put("num",3);
+		List<Map<String, Object>>	yearList=planBaseService.selectForBaseYearInfo(yearMap);
 		map.put("yearList",yearList);
 		map.put("specialType","C012");//承担单位
 		ModelAndView model = new ModelAndView("planCount/planInput/plan_input_educate", map);

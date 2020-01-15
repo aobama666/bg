@@ -9,6 +9,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
+    <meta name="viewport" content="width=device-width,inintial-scale=1.0">
 	<title>计划统计-计划投入</title>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 	<!-- newPage、item.css 页面css-->
@@ -34,6 +35,10 @@
 			cursor: pointer!important;
 			border: 1px solid #ddd!important;
 		}
+		body{
+			overflow: hidden;
+			padding-top: 20px;
+		}
 
 	</style>
 </head>
@@ -41,7 +46,7 @@
 
 <div class="sheach">
 		<div class="box">
-			<div class="box-top">
+			<div class="box-top" style="height:47%;">
 				<div   class="box-top-left" style=" background-color: #D5E7E7;">
 					<table  style="width:100%;height: 100%; ">
 						<tr style="width:100%;height: 10%; ">
@@ -49,7 +54,8 @@
 
 										<label style="font-size: 20px;"> 近三年发展投入趋势</label ><br>
 										<label > 综合计划发展投入：</label>
-										<select id = "developSpecialType" name = "developSpecialType" title="专项类别"    class = " userlevel" style="width: 240px;margin-left: -2px" onchange="maintainInfo.forFundsSource()"  >
+								        <input type="hidden" id="prctr" name="prctr"  value="${PRCTR}"  >
+										<select id = "developSpecialType" name = "developSpecialType" title="专项类别"    class = " userlevel" style="width: 240px;margin-left: -2px"    >
 											<option value = ""  >发展总投入</option>
 											<c:forEach  var="specialInfo"  items="${specialList}">
 												<option value ="${specialInfo.SPECIAL_CODE}" title=" ${specialInfo.SPECIAL_NAME}" > ${specialInfo.SPECIAL_NAME}</option>
@@ -59,8 +65,8 @@
 							</td>
 						</tr>
 						<tr  style="width:100%;height: 90%;">
-							<td style=" background: #fcfdfd !important;">
-								<div id="yearAndDevelop"   style="width:100%;height: 100%;"></div>
+							<td style=" background: #fcfdfd !important;height: 80%;">
+								<div id="yearAndDevelop"   style="width:100%;height: 90%;"></div>
 							</td>
 						</tr>
 					</table>
@@ -72,7 +78,7 @@
 								<form id="queryForm" style="padding-top: 0px;">
 										<label style="font-size: 20px;"> 各专项年度投入情况</label ><br>
 										<label > 年份：</label>
-										<select id="year"  name = "year"  title="年度" class = "changeQuery userlevel" style="width: 200px;margin-left: 0px"   >
+										<select id="year"  name = "year"  title="年度" class = "changeQuery userlevel" style="width: 200px;margin-left: 0px"   onclick="roomList.selectforYearToSpecialType()" >
 											<c:forEach  var="yearInfo"  items="${yearList}">
 												<option value ="${yearInfo.year}" title=" ${yearInfo.year}" > ${yearInfo.year}</option>
 											</c:forEach>
@@ -85,38 +91,52 @@
 							</td>
 						</tr>
 						<tr  style="width:100%;height: 90%; " >
-							<td style=" background: #fcfdfd !important;">
-								<div id="yearAndItem"   style="width:100%;height: 100%;"></div>
+							<td style=" background: #fcfdfd !important;height: 80%;">
+								<div id="yearAndItem"   style="width:100%;height: 90%;"></div>
 							</td>
 						</tr>
 					</table>
 
 				</div>
 			</div>
-			<div class="box-center">
+			<div class="box-center" style="height:47%;">
 				<div  class="box-center-left" style=" background-color: #D5E7E7;">
 					<table  style="width:100%;height: 100%; ">
 						<tr style="width:100%;height: 10%; ">
 							<td>
 										<label style="font-size: 20px;"> 资本性与成本性投入趋势</label ><br>
-										<label > 综合计划发展投入：</label>
-										<select id = "costSpecialType" name = "costSpecialType" title="专项类别"    class = "  userlevel" style="width: 240px;margin-left: -2px" onchange="maintainInfo.forFundsSource()"    >
-											<option value = ""  > </option>
-											<c:forEach  var="specialInfo"  items="${specialList}">
-												<option value ="${specialInfo.SPECIAL_CODE}" title=" ${specialInfo.SPECIAL_NAME}" > ${specialInfo.SPECIAL_NAME}</option>
-											</c:forEach>
-										</select>
+										<label >  </label>
+										<%--<select id = "costSpecialType" name = "costSpecialType" title="专项类别"    class = "  userlevel" style="width: 240px;margin-left: -2px" onchange="maintainInfo.forFundsSource()"    >--%>
+											<%--<option value = ""  > </option>--%>
+											<%--<c:forEach  var="specialInfo"  items="${specialList}">--%>
+												<%--<option value ="${specialInfo.SPECIAL_CODE}" title=" ${specialInfo.SPECIAL_NAME}" > ${specialInfo.SPECIAL_NAME}</option>--%>
+											<%--</c:forEach>--%>
+										<%--</select>--%>
 							</td>
 						</tr>
 						<tr  style="width:100%;height: 90%;">
-							<td style=" background: #fcfdfd !important;">
-								<div id="costAndCapital"   style="width:100%;height: 100%;"></div>
+							<td style=" background: #fcfdfd !important;height: 80%;">
+								<div id="costAndCapital"   style="width:100%;height: 90%;"></div>
 							</td>
 						</tr>
 					</table>
 				</div>
-				<div class="box-center-right" style=" background-color: #D5E7E7;">
-					<img src="bg/imeges/planCount/planInput/unit.png" alt="unit">
+				<div class="box-center-right  " style=" background-color: #D5E7E7;">
+					<table  style="width:100%;height: 100%; ">
+						<tr style="width:100%;height: 10%; ">
+							<td>
+								<label style="font-size: 20px;"> 各单位投资效率效益情况</label ><br>
+								<label >（图表目前展示2019实际数据，具体功能待建设）  </label>
+
+							</td>
+						</tr>
+						<tr  style="width:100%;height: 90%;">
+							<td style=" background: #fcfdfd !important;height: 80%;">
+								<div class="toImage"     style="width:100%;height: 90%; "></div>
+							</td>
+						</tr>
+					</table>
+
 				</div>
 			</div>
 		</div>
@@ -139,5 +159,4 @@
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 <script src="<%=request.getContextPath()%>/js/echarts/echarts.min.js"></script>
 <script src="<%=request.getContextPath()%>/js/planCount/planInput/planInput.js"></script>
-<script src="<%=request.getContextPath()%>/js/planCount/planExecute/maintain.js"></script>
 </html>

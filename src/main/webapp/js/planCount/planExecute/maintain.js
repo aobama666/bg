@@ -26,13 +26,18 @@ maintainInfo.forFundsSource = function(){
                         'setValue',sourceOfFundsNew.split(",")
                     );
                 }
-            }else{
-                layer.open({
-                    title:'提示信息',
-                    content:data.msg,
-                    area:'300px',
-                    skin:'demo-class'
-                })
+            }else {
+                var localData = data.fundsSourceList;
+                $(".tree-data").combotree({
+                    data:localData,
+                    multiple:true
+                });
+                var sourceOfFunds=$("#sourceOfFundsNew").attr("data-companyLeaderName") ;
+                if(sourceOfFunds!=""){
+                    $(".tree-data").combotree(
+                        'setValue',sourceOfFundsNew.split(",")
+                    );
+                }
             }
 
         }
@@ -79,40 +84,4 @@ maintainInfo.forCapitalFundsSource = function(){
 }
 
 
-/**
- * 专项类型来源
- */
-maintainInfo.forSpecalType = function(){
-    var year='';
-    $.ajax({
-        url: "/bg/planBase/selectForItem",
-        type: "post",
-        dataType:"json",
-        async : false,   //要想获取ajax返回的值,async属性必须设置成同步，否则获取不到返回值
-        data: {'year':year },
-        success: function (data) {
-            if(data.success=="ture"){
-                var localData = data.itmeList;
-                $(".tree-data").combotree({
-                    data:localData,
-                    multiple:true
-                });
-                var specialType=$("#specialTypeNew").attr("data-companyLeaderName") ;
-                if(specialType!=""){
-                    $(".tree-data").combotree(
-                        'setValue',specialTypeNew.split(",")
-                    );
-                }
-            }else{
-                layer.open({
-                    title:'提示信息',
-                    content:data.msg,
-                    area:'300px',
-                    skin:'demo-class'
-                })
-            }
 
-        }
-    });
-
-}

@@ -44,6 +44,39 @@ public class PlanExecutionController {
 	private PlanInputService planInputService;
 	@Autowired
 	private  PlanExecutionService  planExecutionService;
+
+
+
+	/**
+	 * 计划统计--计划执行情况-权限查询
+	 */
+     public  Map<String ,Object>   AccessList(String year,Map<String ,Object> map){
+		 CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
+		 String userCode = currentUser.getHrCode();
+		 Map<String, Object>  AccessMap = new HashMap<>();
+		 AccessMap.put("userCode",userCode);
+		 List<Map<String, Object>> specialList=null;
+		 List<Map<String, Object>>	accessInfoList=planBaseService.selectForMainrtainAccessInfo(AccessMap);
+		 Object   accessType=accessInfoList.get(0).get("ACCESS_TYPE");
+		 if(accessType.equals("BUSINESS_MANAGEMENT")){
+			 Object   deptCode=accessInfoList.get(0).get("DEPT_CODE");
+			 AccessMap.put("deptCode",deptCode);
+			 AccessMap.put("year",year);
+			 specialList=planBaseService.selectForUserAccessInfo(AccessMap);
+			 Object    prctr=specialList.get(0).get("PRCTR");
+			 map.put("PRCTR",prctr);
+			 map.put("specialList",specialList);
+
+		 }else{
+			 Map<String, Object> specialMap = new HashMap<>();
+			 specialMap.put("specalType","0");
+			 specialList=planBaseService.selectForCategoryInfo(specialMap);
+			 map.put("PRCTR","");
+			 map.put("specialList",specialList);
+		 }
+		 return map;
+	 }
+
 	/**
 	 * 计划统计--计划执行情况
 	 */
@@ -53,26 +86,13 @@ public class PlanExecutionController {
 		Logger.info("计划统计--计划执行情况-----开始");
 		Map<String, Object> map = new HashMap<>();
 
-		List<Map<String, Object>>  yearList=new ArrayList<Map<String, Object>>();
-		Map<String, Object> yearMap = new HashMap<>();
-		yearMap.put("year","2017");
-		yearList.add(yearMap);
-		Map<String, Object> yearMap1 = new HashMap<>();
-		yearMap1.put("year","2018");
-		yearList.add(yearMap1);
-		Map<String, Object> yearMap2 = new HashMap<>();
-		yearMap2.put("year","2019");
-		yearList.add(yearMap2);
+		Map<String, Object>  yearMap = new HashMap<>();
+		yearMap.put("num",3);
+		List<Map<String, Object>>	yearList=planBaseService.selectForBaseYearInfo(yearMap);
 		map.put("yearList",yearList);
 
-		Map<String, Object> specialMap = new HashMap<>();
-		specialMap.put("specalType","0");
-		List<Map<String, Object>>	specialList=planBaseService.selectForCategoryInfo(specialMap);
-		map.put("specialList",specialList);//专项类别
-
-//		Map<String, Object> fundsSourcelMap = new HashMap<>();
-//		List<Map<String, Object>>	fundsSourceList =planBaseService.selectForFundsSourceInfo(fundsSourcelMap);
-//		map.put("fundsSourceList",fundsSourceList);//资金来源
+		String year="";
+		map= AccessList(year,map);//专项类型
 
 		Map<String, Object> commitmentUnitMap = new HashMap<>();
 		List<Map<String, Object>>	commitmentUnitList =planBaseService.selectForCommitmentUnitInfo(commitmentUnitMap);
@@ -89,16 +109,10 @@ public class PlanExecutionController {
 	public ModelAndView planExecutionSynthesize(HttpServletRequest res) {
 		Logger.info("计划统计--执行数据综合维护-----开始");
 		Map<String, Object> map = new HashMap<>();
-		List<Map<String, Object>>  yearList=new ArrayList<Map<String, Object>>();
-		Map<String, Object> yearMap = new HashMap<>();
-		yearMap.put("year","2017");
-		yearList.add(yearMap);
-		Map<String, Object> yearMap1 = new HashMap<>();
-		yearMap1.put("year","2018");
-		yearList.add(yearMap1);
-		Map<String, Object> yearMap2 = new HashMap<>();
-		yearMap2.put("year","2019");
-		yearList.add(yearMap2);
+
+		Map<String, Object>  yearMap = new HashMap<>();
+		yearMap.put("num",3);
+		List<Map<String, Object>>	yearList=planBaseService.selectForBaseYearInfo(yearMap);
 		map.put("yearList",yearList);
 
 		Map<String, Object> specialMap = new HashMap<>();
@@ -154,17 +168,12 @@ public class PlanExecutionController {
 		Logger.info("计划统计--基建类执行数据维护-----开始");
 		Map<String, Object> map = new HashMap<>();
 		String  specialCodes="Y001,Y003";
-		List<Map<String, Object>>  yearList=new ArrayList<Map<String, Object>>();
-		Map<String, Object> yearMap = new HashMap<>();
-		yearMap.put("year","2017");
-		yearList.add(yearMap);
-		Map<String, Object> yearMap1 = new HashMap<>();
-		yearMap1.put("year","2018");
-		yearList.add(yearMap1);
-		Map<String, Object> yearMap2 = new HashMap<>();
-		yearMap2.put("year","2019");
-		yearList.add(yearMap2);
+
+		Map<String, Object>  yearMap = new HashMap<>();
+		yearMap.put("num",3);
+		List<Map<String, Object>>	yearList=planBaseService.selectForBaseYearInfo(yearMap);
 		map.put("yearList",yearList);
+
 		Map<String, Object> specialMap = new HashMap<>();
 		specialMap.put("specalType","0");
 		List<String>  arrySpecialCode=new ArrayList<String>();
@@ -267,17 +276,12 @@ public class PlanExecutionController {
 	public ModelAndView planExecutionPowerGrid(HttpServletRequest res) {
 		Logger.info("计划统计--电网信息化执行数据维护-----开始");
         Map<String, Object> map = new HashMap<>();
-        List<Map<String, Object>>  yearList=new ArrayList<Map<String, Object>>();
-        Map<String, Object> yearMap = new HashMap<>();
-        yearMap.put("year","2017");
-        yearList.add(yearMap);
-        Map<String, Object> yearMap1 = new HashMap<>();
-        yearMap1.put("year","2018");
-        yearList.add(yearMap1);
-        Map<String, Object> yearMap2 = new HashMap<>();
-        yearMap2.put("year","2019");
-        yearList.add(yearMap2);
-        map.put("yearList",yearList);
+
+		Map<String, Object>  yearMap = new HashMap<>();
+		yearMap.put("num",3);
+		List<Map<String, Object>>	yearList=planBaseService.selectForBaseYearInfo(yearMap);
+		map.put("yearList",yearList);
+
         Map<String, Object> commitmentUnitMap = new HashMap<>();
         List<Map<String, Object>>	commitmentUnitList =planBaseService.selectForCommitmentUnitInfo(commitmentUnitMap);
         map.put("commitmentUnitList",commitmentUnitList);//承担单位
@@ -349,17 +353,12 @@ public class PlanExecutionController {
 	public ModelAndView planExecutionConsultation(HttpServletRequest res) {
 		Logger.info("计划统计--管理咨询执行数据维护-----开始");
 		Map<String, Object> map = new HashMap<>();
-		List<Map<String, Object>>  yearList=new ArrayList<Map<String, Object>>();
-		Map<String, Object> yearMap = new HashMap<>();
-		yearMap.put("year","2017");
-		yearList.add(yearMap);
-		Map<String, Object> yearMap1 = new HashMap<>();
-		yearMap1.put("year","2018");
-		yearList.add(yearMap1);
-		Map<String, Object> yearMap2 = new HashMap<>();
-		yearMap2.put("year","2019");
-		yearList.add(yearMap2);
+
+		Map<String, Object>  yearMap = new HashMap<>();
+		yearMap.put("num",3);
+		List<Map<String, Object>>	yearList=planBaseService.selectForBaseYearInfo(yearMap);
 		map.put("yearList",yearList);
+
 		Map<String, Object> commitmentUnitMap = new HashMap<>();
 		List<Map<String, Object>>	commitmentUnitList =planBaseService.selectForCommitmentUnitInfo(commitmentUnitMap);
 		map.put("commitmentUnitList",commitmentUnitList);//承担单位
@@ -494,6 +493,60 @@ public class PlanExecutionController {
 		Logger.info("计划统计--股权投资执行数据维护-----维护------结束");
 		return model;
 	}
+
+
+	/**
+	 * 执行数据综合维护形象的修改-后台查询接口
+	 * @param paramsMap projectId 项目ID
+	 * @param paramsMap imageProgress  形象进度
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/updataForVisualProgress", method = RequestMethod.POST)
+	public String updataForVisualProgress(@RequestBody Map<String, Object> paramsMap) {
+		Logger.info("招标采购进度维护的修改------开始");
+		ResultWarp rw = null;
+		String projectId = paramsMap.get("projectId") == null ? "" : paramsMap.get("projectId").toString();
+		String imageProgress = paramsMap.get("imageProgress") == null ? "" : paramsMap.get("imageProgress").toString();
+		String sprcialType = paramsMap.get("sprcialType") == null ? "" : paramsMap.get("sprcialType").toString();
+		String year = paramsMap.get("year") == null ? "" : paramsMap.get("year").toString();
+		Logger.info("招标采购进度维护的修改------参数(projectId)项目ID：" + projectId+ "(imageProgress)项目进度：" + imageProgress);
+		imageProgress  =  String.valueOf(imageProgress.replace("%","")) ;
+		Map<String, Object> Map = new HashMap<String, Object>();
+		Map.put("projectId", projectId);
+		Map.put("year", year);
+		List<Map<String, Object>>   projectList=planExecutionService.selectForProjectList(Map);
+		int res=0;
+		if(projectList.isEmpty()){
+			CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
+			String userId = currentUser.getUserId();
+			String uuid = Rtext.getUUID();
+			Map.put("id", uuid);
+			Map.put("imageProgress", imageProgress);
+			Map.put("biddingProgress", "0.00");
+			Map.put("systemDevProgress","0.00");
+			Map.put("plannedCompletion","0");
+			Map.put("specailType",sprcialType);
+			Map.put("createUser", userId);
+			Map.put("createTime", new Date());
+			Map.put("updateUser", userId);
+			Map.put("updateTime", new Date());
+			Map.put("valid", "1");
+			res =planExecutionService.saveForProjectInfo(Map);
+		}else {
+			Map.put("imageProgress", imageProgress);
+			res = planExecutionService.updateForImageProgress(Map);
+		}
+
+		if (res != 1) {
+			rw = new ResultWarp(ResultWarp.FAILED, "修改失败");
+		} else {
+			rw = new ResultWarp(ResultWarp.SUCCESS, "修改成功");
+		}
+		return JSON.toJSONString(rw);
+	}
+
+
 	/**
 	 * 计划执行形象进度的维护-后台查询接口
 	 * @param paramsMap id 主键
@@ -575,10 +628,13 @@ public class PlanExecutionController {
 		Map.put("page_end",page_end);
 		List<Map<String, Object>> comprehensiveList=planExecutionService.selectForBaseInfo(Map);
 		String   countNum=planExecutionService.selectForBaseInfoNum(Map);
-		List<Map<String, Object>> footerList=planExecutionService.selectForTotalBaseInfo(Map);
-		Map<String, Object> footerMap=footerList.get(0);
-		footerMap.put("ROWNO","总计");
-		comprehensiveList.add(footerMap);
+		if(!comprehensiveList.isEmpty()){
+			List<Map<String, Object>> footerList=planExecutionService.selectForTotalBaseInfo(Map);
+			Map<String, Object> footerMap=footerList.get(0);
+			footerMap.put("ROWNO","总计");
+			comprehensiveList.add(footerMap);
+		}
+
 		Map<String, Object> jsonMap1 = new HashMap<String, Object>();
 		jsonMap1.put("data", comprehensiveList);
 		jsonMap1.put("total", countNum);

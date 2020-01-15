@@ -63,15 +63,30 @@ roomList.initDataGrid = function(){
             {name: '采购合同', style:{width:"100px"},data: 'ZDDJE' },
             {name: '发票入账', style:{width:"100px"},data: 'ZFPRZ' },
             {name: '实际经费支出', style:{width:"100px"},data: 'ZJFZCE' },
-            {name: '资金执行进度', style:{width:"100px"},data: 'GJAHR' },
+            {name: '资金执行进度', style:{width:"100px"},data: 'EXECUTION_PROGRESS',forMat:function(row){
+            	var executionProgress =row.EXECUTION_PROGRESS;
+            	if(executionProgress!=undefined){
+                    return row.EXECUTION_PROGRESS+"%";
+				}
+            }},
             {name: '形象进度',style:{width:"100px"}, data: 'IMAGE_PROGRESS',forMat:function(row){
+                    var  rowno=row.ROWNO;
+                    if(rowno=="总计"){
+                        return row.IMAGE_PROGRESS+"%";
+                    }
+                        var A=row.IMAGE_PROGRESS;
+                        var B=row.EXECUTION_PROGRESS;
+                        if(B<A){
+                            return row.IMAGE_PROGRESS+"%";
+                        }else{
+                            return "<a title = '"+row.IMAGE_PROGRESS+"%' style='width:100px;" +
+                                "color: blue;" +
+                                "white-space: nowrap;" +
+                                "text-overflow: ellipsis;" +
+                                "overflow: hidden;'  projectId ='"+row.PSPID+"' " +
+                                "href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.PSPID+"','"+row.PTIME+"')>"+row.IMAGE_PROGRESS+"%</a>";
+                        }
 
-                    return "<a title = '"+row.IMAGE_PROGRESS+"%' style='width:100px;" +
-                        "color: blue;" +
-                        "white-space: nowrap;" +
-                        "text-overflow: ellipsis;" +
-                        "overflow: hidden;'  projectId ='"+row.PSPID+"' " +
-                        "href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.PSPID+"','"+row.PTIME+"')>"+row.IMAGE_PROGRESS+"%</a>";
                 }},
             {name: '计划完成数', style:{width:"100px"},data: 'PLANNED_COMPLETION' }
 		]
@@ -96,6 +111,10 @@ roomList.forDetails = function (projectId,year) {
                 content:url
     });
 }
+
+
+
+
 /**
  * 计划统计--执行数据综合维护
  */
@@ -111,8 +130,16 @@ roomList.expEvent = function(){
 
 }
 
+roomList.resign= function(){
+    roomList.saveInfoFlag = true;//页面数据保存事件
+    var closeIndex = parent.layer.getFrameIndex(window.name);
+    parent.layer.close(closeIndex);
+}
 
 
+roomList.marginForUpdata= function(){
+
+}
 
 
 

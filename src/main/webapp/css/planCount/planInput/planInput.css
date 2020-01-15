@@ -63,3 +63,10 @@
     padding: 10px;
     border: 1px solid #3d4444;
 }
+.toImage{
+   /*display: inline-block;*/
+
+    background: url(../../../images/planCount/planInput/unit.png) 48px 18px;
+    background-repeat: no-repeat;
+
+}

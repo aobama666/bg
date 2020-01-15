@@ -44,7 +44,6 @@
 		<input type="hidden" id="sourceOfFunds" name="sourceOfFunds" value="">
 		<label >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年度：</label>
 		<select id="year"  name = "year"  title="年度" class = "changeQuery userlevel" style="width: 200px;margin-left: 0px"   >
-			<option value="" > </option>
 			<c:forEach  var="yearInfo"  items="${yearList}">
 				<option value ="${yearInfo.year}" title=" ${yearInfo.year}" > ${yearInfo.year}</option>
 			</c:forEach>

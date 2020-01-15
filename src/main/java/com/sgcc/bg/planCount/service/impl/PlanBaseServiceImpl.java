@@ -11,9 +11,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlanBaseServiceImpl implements PlanBaseService {
 
+
     @Autowired
     private PlanBaseMapper planBaseMapper;
-
+    @Override
+    public List<Map<String, Object>> selectForBaseYearInfo(Map<String, Object> baseMap) {
+        return planBaseMapper.selectForBaseYearInfo(baseMap);
+    }
     @Override
     public List<Map<String, Object>>   selectForCategoryInfo(  Map<String, Object> categoryMap) {
         return planBaseMapper.selectForCategoryInfo(categoryMap);
@@ -38,13 +42,31 @@ public class PlanBaseServiceImpl implements PlanBaseService {
     }
 
     @Override
-    public List<Map<String, Object>> selectForYearInfo(Map<String, Object> baseMap) {
-        return planBaseMapper.selectForYearInfo(baseMap);
+    public List<Map<String, Object>> selectForYearAndDevelopInfo(Map<String, Object> baseMap) {
+        return planBaseMapper.selectForYearAndDevelopInfo(baseMap);
+    }
+    @Override
+    public List<Map<String, Object>> selectForCostAndCapitalInfo(Map<String, Object> baseMap) {
+        return planBaseMapper.selectForCostAndCapitalInfo(baseMap);
     }
     @Override
     public List<Map<String, Object>> selectForItemInfo(Map<String, Object> baseMap) {
         return planBaseMapper.selectForItemInfo(baseMap);
     }
-
-
+    @Override
+    public List<Map<String, Object>> selectSubTypeInfo(Map<String, Object> subTypeMap) {
+        return planBaseMapper.selectSubTypeInfo(subTypeMap);
+    }
+    @Override
+    public List<Map<String, Object>> selectForSubUnitInfo(Map<String, Object> subUnitMap) {
+        return planBaseMapper.selectForSubUnitInfo(subUnitMap);
+    }
+    @Override
+    public List<Map<String, Object>> selectForMainrtainAccessInfo(Map<String, Object> accessMap) {
+        return planBaseMapper.selectForMainrtainAccessInfo(accessMap);
+    }
+    @Override
+    public List<Map<String, Object>> selectForUserAccessInfo(Map<String, Object> accessMap) {
+        return planBaseMapper.selectForUserAccessInfo(accessMap);
+    }
 }

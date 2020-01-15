@@ -37,26 +37,26 @@
 	</style>
 </head>
 <body>
-        <div class="main_div" style="margin-top: 15px;">
-			<span title = " 三年全院综合计划整体执行进度：" style="padding:0;position: absolute;font-size: 18px;     margin-left: 570px; margin-top: 5px;"> 三年全院综合计划整体执行进度：</span>
-			<table class="visitOperate tableStyle specialTable" style="width: 20% ">
+        <div class="main_div" style="margin-top: 15px;padding-left: 20px;">
+			<span title = " 三年全院综合计划整体执行进度：" style="padding:0;font-size: 18px;vertical-align: top;line-height: 33px;"> 三年全院综合计划整体执行进度：</span>
+			<table class="visitOperate tableStyle specialTable" style="width: auto ;display:inline-block;border: none;">
 				<tr>
-					<td style="width: 20px ">
-						<span title = " 2019"> 2019</span>
+					<td   style="padding: 0 10px;" >
+						<span title = " 2019" id="year0"  > 2019</span>
 					</td>
-					<td   style="width: 20px">
+					<td   style="padding: 0 10px;">
 						<span title = " 2019"> 0.00%</span>
 					</td>
-					<td style="width: 20px">
-						<span title = " 2019"> 2018</span>
+					<td style="padding: 0 10px;" >
+						<span title = " 2019" id="year1"  > 2018</span>
 					</td>
-					<td   style="width: 20px">
+					<td   style="padding: 0 10px;" >
 						<span title = " 2019"> 0.00%</span>
 					</td>
-					<td style="width: 20px">
-						<span title = " 2019"> 2017</span>
+					<td style="padding: 0 10px;">
+						<span title = " 2019" id="year2" > 2017</span>
 					</td>
-					<td   style="width: 20px">
+					<td   style="padding: 0 10px;">
 						<span title = " 2019"> 0.00%</span>
 					</td>
 				</tr>
@@ -70,6 +70,7 @@
 			<div class="sheach">
 				<%--<div class='content_top'>执行数据综合维护</div>--%>
 				<form id="queryForm" style="margin-bottom: 10px;">
+
 					<input type="hidden" id="type" name="type" value="">
 					<input type="hidden" id="sourceOfFunds" name="sourceOfFunds" value="">
 					<label >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年度：</label>
@@ -88,15 +89,23 @@
 					</select>
 					<label  for="sourceOfFundsNew" class="yearTitle"> 资金来源：</label>
 					<input class="inputQuery changeQuery tree-data" style="width: 200px"   id="sourceOfFundsNew" name="sourceOfFundsNew"  data-companyLeaderName=""       title="资金来源  " />
-					<label  for="commitmentUnit" class="yearTitle"> 承担单位：</label>
-					<select id = "commitmentUnit" name = "commitmentUnit" title="承担单位"    class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
-						<option value = "">   </option>
-						<c:forEach  var="commitmentUnitInfo"  items="${commitmentUnitList}">
-							<option value ="${commitmentUnitInfo.PROFIT_CENTER_CODE}" title=" ${commitmentUnitInfo.PROFIT_CENTER_DEATIL}" > ${commitmentUnitInfo.PROFIT_CENTER_DEATIL}</option>
-						</c:forEach>
-					</select>
+					<c:choose>
+
+					    <c:when test="${PRCTR==''}">
+							<label  for="commitmentUnit" class="yearTitle"> 承担单位：</label>
+							<select id = "commitmentUnit" name = "commitmentUnit" title="承担单位"    class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
+								<option value = "">   </option>
+								<c:forEach  var="commitmentUnitInfo"  items="${commitmentUnitList}">
+									<option value ="${commitmentUnitInfo.PROFIT_CENTER_CODE}" title=" ${commitmentUnitInfo.PROFIT_CENTER_DEATIL}" > ${commitmentUnitInfo.PROFIT_CENTER_DEATIL}</option>
+								</c:forEach>
+							</select>
+						</c:when>
+						<c:otherwise>
+							<input type="hidden" id="commitmentUnit" name="commitmentUnit" value="${PRCTR}">
+						</c:otherwise>
+					</c:choose>
 					<!-- 查询按钮  -->
-					<div id = "queryButton" class = "btn query" onclick = "roomList.query()" style="margin-left: 20px;">搜索</div> <!-- 原来引用的函数onclick = "roomList.query()" -->
+					<div id = "queryButton" class = "btn query" onclick = "executionList.query()" style="margin-left: 20px;">搜索</div> <!-- 原来引用的函数onclick = "roomList.query()" -->
 				</form>
 			</div>
 
@@ -132,7 +141,7 @@
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
 <!-- 本页面所需的js-->
-<script src="<%=request.getContextPath()%>/js/planCount/planExecute/synthesize.js"></script>
+
 <script src="<%=request.getContextPath()%>/js/echarts/echarts.min.js"></script>
 <script src="<%=request.getContextPath()%>/js/planCount/planExecute/planExecute.js"></script>
 <script src="<%=request.getContextPath()%>/js/planCount/planExecute/maintain.js"></script>
