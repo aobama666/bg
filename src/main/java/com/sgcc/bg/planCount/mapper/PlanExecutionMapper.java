@@ -16,6 +16,14 @@ public interface PlanExecutionMapper {
      */
     List<Map<String,Object>> selectForTotalBaseInfo(@Param("maintainMap") Map<String, Object> maintainMap);
     /**
+     * 计划执行数据股权信息和信息系统开发建设信息
+     */
+    List<Map<String,Object>> selectForStockRightAndmessageInfo(@Param("maintainMap") Map<String, Object> maintainMap);
+    /**
+     * 计划执行教育信息
+     */
+    List<Map<String,Object>>   selectForEducateInfo(@Param("maintainMap") Map<String, Object> maintainMap);
+    /**
      * 计划执行数据维护的查询数量
      */
     String selectForBaseInfoNum(@Param("maintainMap") Map<String, Object> maintainMap);

@@ -4,6 +4,7 @@ import com.sgcc.bg.planCount.mapper.PlanExecutionMapper;
 import com.sgcc.bg.planCount.service.PlanExecutionService;
 import java.util.List;
 import java.util.Map;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,16 @@ public class PlanExecutionServiceImpl implements PlanExecutionService {
     public String selectForBaseInfoNum(Map<String, Object> maintainMap) {
         return planExecutionMapper.selectForBaseInfoNum(maintainMap);
     }
+    @Override
+    public List<Map<String, Object>> selectForStockRightAndmessageInfo(Map<String, Object> maintainMap) {
+        return planExecutionMapper.selectForStockRightAndmessageInfo(maintainMap);
+    }
+
+    @Override
+    public List<Map<String, Object>> selectForEducateInfo(Map<String, Object> maintainMap) {
+           return planExecutionMapper.selectForEducateInfo(maintainMap);
+    }
+
     @Override
     public List<Map<String,Object>> selectForExecutionInfo(Map<String, Object> maintainMap) {
         return planExecutionMapper.selectForExecutionInfo(maintainMap);

@@ -26,7 +26,7 @@
 <body>
 <div class="main_div"  style="height: 20px"></div>
 <!-- end  头部 -->
-<span  style="font-size: 15px;margin:5px 0;display: inline-block;"> 物资招标/系统开发完成可认可的最高单项形象进度为20%</span>
+<span  style="font-size: 15px;margin:5px 0;display: inline-block;margin-left: 28px;"> 物资招标/系统开发完成可认可的最高单项形象进度为20%</span>
 <!-- 参观申请单位信息展示 -->
 <input type = "hidden"   id = "applyId" name="applyId"  value="${applyId}">
 <div class="contentBox   Remark">
@@ -46,7 +46,7 @@
 			</tr>
 			<tr>
 				<td style="width: 120px">
-					<span title = " 物资招标系统开发完成进度维护"> 物资招标系统开发完成进度维护</span>
+					<span title = " 物资招标系统开发完成进度维护"> 物资招标/系统开发完成进度维护</span>
 				</td>
 				<td class="addInputStyle" style="width: 200px">
 					<input type="text"  id="systemDevProgress"  name="systemDevProgress"   value="${systemDevProgress}"  content="物资招标系统开发完成进度维护" title="必填项"    class = "validNull validPer"  />

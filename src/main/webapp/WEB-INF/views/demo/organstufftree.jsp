@@ -131,7 +131,7 @@ $(function(){
 		limit:'yes' 启用个人权限管理   '' 或  'no' 不启用
 		level   控制显示层级，如 0 显示到院1 显示到部门 2 显示到科室,为空''时，显示到科室
 	*/
-	$("#organTree3").organTree({root:'41000001',organCode:'deptCode3',organName:'deptName3',iframe:'self',checkType:'radio',limit:'yes',level:'2',popEvent:'pop'});
+	$("#organTree3").organTree({root:'41000001',organCode:'deptCode3',organName:'deptName3',iframe:'self',checkType:'radio',limit:'yes',level:'1',popEvent:'pop'});
 
 });
 function forSave(){

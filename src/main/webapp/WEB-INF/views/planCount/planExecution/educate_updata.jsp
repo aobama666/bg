@@ -47,7 +47,7 @@
 				</td>
 				<td class="addInputStyle" style="width: 200px">
 					<input type = "hidden"   id = "commitmentUnit" name="commitmentUnit"  value="${BEARER}">
-					<input type="text"  id="commitmentUnitName"  name="commitmentUnitName" style="text-align: center;"  value="${PROFIT_CENTER_DEATIL}" disabled/>
+					<input type="text"  id="commitmentUnitName"  name="commitmentUnitName" style="text-align: center;"  value="${DEPT_ABBR}" disabled/>
 				</td>
 			</tr>
 			<tr>

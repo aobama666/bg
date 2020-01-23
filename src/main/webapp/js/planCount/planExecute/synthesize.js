@@ -76,7 +76,7 @@ roomList.initDataGrid = function(){
                     }
                         var A=row.IMAGE_PROGRESS;
                         var B=row.EXECUTION_PROGRESS;
-                        if(B<A){
+                        if(A==100){
                             return row.IMAGE_PROGRESS+"%";
                         }else{
                             return "<a title = '"+row.IMAGE_PROGRESS+"%' style='width:100px;" +
@@ -105,7 +105,7 @@ roomList.forDetails = function (projectId,year) {
     layer.open({
                 type:2,
                 title:'<h4 style="text-align: center;margin-top: 2px;font-size: 18px;padding-top: 10px">形象进度维护</h4>',
-                area:['30%','25%'],
+                area:['30%','30%'],
                 fixed:false,//不固定
                 maxmin:true,
                 content:url

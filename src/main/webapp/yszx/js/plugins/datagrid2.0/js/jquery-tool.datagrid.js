@@ -32,6 +32,7 @@
         select_way:true,
         error:function(){},//ajax请求失败
         vessel:null,
+		showFooter:false,
         size:0,//条数
         sizeSum:0,//总条数
         pageSize:10,//每一页显示的条数
@@ -61,6 +62,7 @@
         	opts.self=target;
         	$(target).empty();
         	opts.table=opts.new_table(opts);
+            opts.showFooter;
         	opts.new_paging(opts);
         	opts.self.append(opts.table);
         	opts.self.append(opts.tablepage);
@@ -141,6 +143,7 @@
                 	if(data.success){
                 		opts.data=data;
                 		opts.list=data.data.data;
+                        opts.footerlist=data.data.footer;
                 		opts.size=data.data.total==0 ? 1:data.data.total;
                 		opts.sizeSum=data.data.total;
                     	opts.new_row(opts);
@@ -163,7 +166,7 @@
         new_table:function(opts){
         	var tabelHead = $("<table class='datagridHead table table-bordered' id='tb_2' style='margin:0px;'><thead><tr></tr></thead></table>");
         	var table=$("<table class='datagrid table table-bordered' id='tb_1' style='margin:0px;'><tbody></tbody></table>");
-        	if(opts.columns.length>0){
+         	if(opts.columns.length>0){
         		if(opts.showIndex){
         			var tds=$("<th style=''>序号</th>");
         			tabelHead.find("thead tr").append(tds);
@@ -212,6 +215,7 @@
         		opts.error("表格列不能为空！");
         		return; 
         	}
+
         	if(opts.autoWidth){
         		//创建表格DIV 下设三个div分别对应 表头 遮罩 表格
         		var tableDiv=$("<div style='position: relative;'>" +
@@ -223,9 +227,14 @@
 						"</div>" +
 						"<div class='tableBody' style='overflow:auto;margin-bottom:5px;border: 1px solid #ddd;border-top:none;'>" +
 						"</div>" +
+
 					"</div>");
         		tableDiv.find(".tableHead").append(tabelHead);
             	tableDiv.find(".tableBody").append(table);
+            	if(opts.showFooter){
+                    var tablefooter=$("<table class='datagrid table table-bordered'  id='tb_3' style='margin:0px;margin-top: 10px;  '><tfoot></tfoot></table>");
+                    tableDiv.find(".tableBody").append(tablefooter);
+				}
             	return tableDiv;
         	}else{
         		return table;
@@ -238,21 +247,24 @@
 	    		tr=opts.row_item(opts,opts.list[k],tr);
 	    		opts.table.find("tbody").append(tr);
 	    	}
-	    	//表格拖拽改变宽度
-	    	/*var headerTds = document.getElementById("tb_2").rows[0].cells;
-	    	var mousedown = false;
-	    	var resizeable = false;
-	    	var targetTd;
-	    	var screenXStart =0;
-	    	var tdWidth = 0;
-	    	var headerWidth = 0;
-	    	var tblObj = document.getElementById("tb_2");
-	    	if(opts.dragAndDropRow){
-	    	    for(var i = 0;i<headerTds.length;i++){
-	    	    	addListener(headerTds[i],"mousedown",onmousedown);
-		    	    addListener(headerTds[i],"mousemove",onmousemove);
-		    	}
-	    	}*/
+            if(opts.showFooter){
+                if(opts.footerlist == null || opts.footerlist == undefined || opts.footerlist == 'undefined'|| opts.footerlist.length == 0){
+                }else {
+                    opts.table.find("tfoot").empty();
+                    for(var k=0;k<opts.footerlist.length;k++){
+                    	debugger;
+                        var tr;
+                    	if(opts.footerlist[k].ROWNO =='总计'){
+                              tr=$("<tr style='background-color: #D5E7E7'></tr>");
+						}else {
+                              tr=$("<tr></tr>");
+						}
+
+                        tr=opts.row_item(opts,opts.footerlist[k],tr);
+                        opts.table.find("tfoot").append(tr);
+                    }
+				}
+	    	}
     	    function onmousedown(event){
     	        if (resizeable == true){
     	            var evt =event||window.event;
@@ -301,6 +313,7 @@
     	    }
         },
         row_item:function(opts,data,obj){
+
         	if(opts.showIndex){
         		var td=$("<td style='width:50px'></td>").append(data.ROW_ID); 
 		    	 $(obj).append(td);
@@ -407,6 +420,9 @@
 			}
         	return $(obj);
         },
+
+
+
         new_paging:function(opts){
         	if(opts.dataIndex==false){
         		return false;

@@ -29,7 +29,76 @@ public class PlanBaseController {
 	UserUtils userUtils;
 	@Autowired
 	private PlanBaseService planBaseService;
+	/**
+	 * 计划统计--获取年度
+	 */
+	public   List<Map<String, Object>>      yearInfo(){
+		Map<String, Object>  yearMap = new HashMap<>();
+		yearMap.put("num",3);
+		List<Map<String, Object>>	yearList=planBaseService.selectForBaseYearInfo(yearMap);//查询年份
+		return  yearList;
+	}
+	/**
+	 * 计划统计--获取专项类型
+	 */
+	public   List<Map<String, Object>>   specialInfo(){
+		CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
+		String userCode = currentUser.getHrCode();
+		Map<String, Object>  accessMap = new HashMap<>();
+		accessMap.put("userCode",userCode);
+		List<Map<String, Object>>	accessInfoList=planBaseService.selectForMainrtainAccessInfo(accessMap);
+		Object   accessType=accessInfoList.get(0).get("ACCESS_TYPE");
+		if(accessType.equals("BUSINESS_MANAGEMENT")){//业务单位管理人员
+			Object   deptCode=accessInfoList.get(0).get("DEPT_CODE");
+			accessMap.put("deptCode",deptCode);
+			List<Map<String, Object>>  profitCenterList=planBaseService.selectForProfitCenterInfo(accessMap);
+			Map<String, Object>  specialMap = new HashMap<>();
+			if(!profitCenterList.isEmpty()){
+				//拆分id
+				List<String>  commitmentUnitList=new ArrayList<String>();
+				for (Map<String, Object>  unitMap : profitCenterList) {
+					String    profitCenterCode=String.valueOf(unitMap.get("PRCTR"));
+					commitmentUnitList.add(profitCenterCode);
+				}
+				specialMap.put("commitmentUnit",commitmentUnitList);
+			}
+			List<Map<String, Object>>  specialList=planBaseService.selectForSpecialInfo(specialMap);
+			return specialList;
+		}else{
+			Map<String, Object> specialMap = new HashMap<>();
+			specialMap.put("specalType","0");
+			List<Map<String, Object>>	specialList=planBaseService.selectForCategoryInfo(specialMap);
+			return specialList;
+		}
+	}
+	/**
+	 * 计划统计--部门权限
+	 */
+	public  List<String>   prctrInfo(){
+		CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
+		String userCode = currentUser.getHrCode();
+		Map<String, Object>  accessMap = new HashMap<>();
+		accessMap.put("userCode",userCode);
+		List<Map<String, Object>>	accessInfoList=planBaseService.selectForMainrtainAccessInfo(accessMap);
+		Object   accessType=accessInfoList.get(0).get("ACCESS_TYPE");
+		List<String>  prctrList=new ArrayList<String>();
+		if(accessType.equals("BUSINESS_MANAGEMENT")){//业务单位管理人员
+			Object   deptCode=accessInfoList.get(0).get("DEPT_CODE");
+			accessMap.put("deptCode",deptCode);
+			List<Map<String, Object>>  profitCenterList=planBaseService.selectForProfitCenterInfo(accessMap);
 
+			if(!profitCenterList.isEmpty()){
+				//拆分id
+				for (Map<String, Object>  unitMap : profitCenterList) {
+					String    profitCenterCode=String.valueOf(unitMap.get("PRCTR"));
+					prctrList.add(profitCenterCode);
+				}
+			}
+		}else{
+			prctrList=null;
+		}
+		return prctrList;
+	}
 	/**
 	 * 计划统计--专项类型
 	 */
@@ -77,6 +146,7 @@ public class PlanBaseController {
 		String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
 		return jsonStr;
 	}
+
 	/**
 	 * 计划统计--根据专项类别获取资金来源,所谓联动
 	 */
@@ -119,23 +189,21 @@ public class PlanBaseController {
 		String jsonStr=JSON.toJSONStringWithDateFormat(map,"yyyy-MM-dd",SerializerFeature.WriteDateUseDateFormat);
 		return jsonStr;
 	}
+
 	/**
 	 * 计划投入情况-近三年发展投入趋势
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/selectForYearAndDevelopListInfo")
-	public String selectForYearAndDevelopInfo(String specalType,String prctr){
+	public String selectForYearAndDevelopInfo(String specalType){
 		specalType=Rtext.toStringTrim(specalType, ""); //专项类别
-		prctr=Rtext.toStringTrim(prctr, "");
 		Map<String, Object>   baseMap = new HashMap<String, Object>();
-		Map<String, Object>  yearMap = new HashMap<>();
-		yearMap.put("num",3);
-		List<Map<String, Object>>	yearList=planBaseService.selectForBaseYearInfo(yearMap);
+		List<Map<String, Object>> yearList= yearInfo();
 		List<Map<String, Object>> yearAndDevelopList = new ArrayList<Map<String, Object>>();
-
 		for(Map<String, Object> map:yearList){
+			List<String>   prctrList=prctrInfo();
+			baseMap.put("prctr",prctrList);
 			Object   year=map.get("year");
-			baseMap.put("prctr",prctr);
 			baseMap.put("year",year);
 			baseMap.put("specialType",specalType);
 			List<Map<String,Object>>	developList =planBaseService.selectForYearAndDevelopInfo(baseMap);
@@ -164,17 +232,16 @@ public class PlanBaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/selectForCostAndCapitalInfo")
-	public String selectForCostAndCapitalInfo(String specalType,String prctr){
+	public String selectForCostAndCapitalInfo(String specalType){
 		specalType=Rtext.toStringTrim(specalType, ""); //专项类别
 		Map<String, Object>   baseMap = new HashMap<String, Object>();
-		Map<String, Object>  yearMap = new HashMap<>();
-		yearMap.put("num",3);
-		List<Map<String, Object>>	yearList=planBaseService.selectForBaseYearInfo(yearMap);
+		List<Map<String, Object>> yearList= yearInfo();
 		List<Map<String, Object>> yearAndDevelopList = new ArrayList<Map<String, Object>>();
 		for(Map<String, Object> map:yearList){
 			Object   year=map.get("year");
 			baseMap.put("year",year);
-			baseMap.put("prctr",prctr);
+			List<String>   prctrList=prctrInfo();
+			baseMap.put("prctr",prctrList);
 			baseMap.put("specialType",specalType);
 			List<Map<String,Object>>	developList =planBaseService.selectForCostAndCapitalInfo(baseMap);
 			Map<String, Object>  yearMaps = new HashMap<>();
@@ -202,10 +269,10 @@ public class PlanBaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/selectForItemInfo")
-	public String selectForItemInfo(String specalType,String year,String prctr){
+	public String selectForItemInfo(String specalType,String year){
 		specalType=Rtext.toStringTrim(specalType, ""); //专项类别
 		year=Rtext.toStringTrim(year, ""); //年份
-		prctr=Rtext.toStringTrim(prctr, ""); //年份
+
 		Map<String, Object>   baseMap = new HashMap<String, Object>();
 		baseMap.put("year",year);
 		CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
@@ -215,9 +282,9 @@ public class PlanBaseController {
 		List<Map<String, Object>>	accessInfoList=planBaseService.selectForMainrtainAccessInfo(AccessMap);
 		Object   accessType=accessInfoList.get(0).get("ACCESS_TYPE");
 		List<Map<String, Object> >  itemList=new ArrayList<Map<String, Object> >();
-
 		if(accessType.equals("BUSINESS_MANAGEMENT")) {
-			baseMap.put("prctr",prctr);
+			List<String>   prctrList=prctrInfo();
+			baseMap.put("prctr",prctrList);
 			if(!StringUtils.isEmpty(specalType)){
 				String[] arry = specalType.split(",");
 				for (String specialType : arry) {
@@ -310,8 +377,7 @@ public class PlanBaseController {
 					itemList.add(itemMaps);
 				}
 			}
-
-		   }
+		}
 		Map<String, Object>  map= new  HashMap<String, Object>();
 		map.put("itemList", itemList);
 		map.put("success", "ture");
@@ -324,31 +390,13 @@ public class PlanBaseController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/selectSubTypeInfo")
-	public String selectSubTypeInfo(String year,String prctr){
+	public String selectSubTypeInfo(String year){
 		year=Rtext.toStringTrim(year, ""); //年份
-		prctr=Rtext.toStringTrim(prctr, ""); //单位
-		List<Map<String, Object>>	specialList= AccessList(year);//根据权限获取专项
-		//List<Map<String, Object> >  executionList=new ArrayList<Map<String, Object> >();
-//		for(Map<String, Object> specialMap:specialList){
-//			Object  specialName=specialMap.get("SPECIAL_NAME");
-//			Object  specialCode=specialMap.get("SPECIAL_CODE");
-			Map<String, Object>   subTypeMap = new HashMap<String, Object>();
-			subTypeMap.put("year",year);
-			//subTypeMap.put("specialCode",specialCode);
-			subTypeMap.put("prctr",prctr);
-		//	Map<String, Object>  subTypes = new HashMap<>();
-			List<Map<String,Object>>	executionList =planBaseService.selectSubTypeInfo(subTypeMap);
-//			if(List.isEmpty()){
-//				subTypes.put("YEAR",year);
-//				subTypes.put("SPECIAL_CODE",specialCode);
-//				subTypes.put("SPECIAL_NAME",specialName);
-//				subTypes.put("ITEM_PROGRESS",0);
-//			}else{
-//				subTypes=List.get(0);
-//			}
-//			executionList.add(subTypes);
-//		}
-
+		Map<String, Object>   subTypeMap = new HashMap<String, Object>();
+		subTypeMap.put("year",year);
+		List<String> prctr = prctrInfo();
+		subTypeMap.put("prctr",prctr);
+		List<Map<String,Object>>	executionList =planBaseService.selectSubTypeInfo(subTypeMap);
 		Map<String, Object>  map= new  HashMap<String, Object>();
 		map.put("executionList", executionList);
 		map.put("success", "ture");
@@ -374,34 +422,5 @@ public class PlanBaseController {
 		return jsonStr;
 	}
 
-
-
-
-
-
-
-	/**
-	 * 计划统计--计划执行情况-权限查询
-	 */
-	public  List<Map<String ,Object>>   AccessList(String year){
-		CommonCurrentUser currentUser = userUtils.getCommonCurrentUserByUsername(webUtils.getUsername());
-		String userCode = currentUser.getHrCode();
-		Map<String, Object>  AccessMap = new HashMap<>();
-		AccessMap.put("userCode",userCode);
-		List<Map<String, Object>> specialList=null;
-		List<Map<String, Object>>	accessInfoList=planBaseService.selectForMainrtainAccessInfo(AccessMap);
-		Object   accessType=accessInfoList.get(0).get("ACCESS_TYPE");
-		if(accessType.equals("BUSINESS_MANAGEMENT")){
-			Object   deptCode=accessInfoList.get(0).get("DEPT_CODE");
-			AccessMap.put("deptCode",deptCode);
-			AccessMap.put("year",year);
-			specialList=planBaseService.selectForUserAccessInfo(AccessMap);
-		}else{
-			Map<String, Object> specialMap = new HashMap<>();
-			specialMap.put("specalType","0");
-			specialList=planBaseService.selectForCategoryInfo(specialMap);
-		}
-		return specialList;
-	}
 
 }

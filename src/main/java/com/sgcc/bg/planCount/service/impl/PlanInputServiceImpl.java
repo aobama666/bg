@@ -41,4 +41,8 @@ public class PlanInputServiceImpl implements PlanInputService {
     public int updateForImageProgress(Map<String, Object> maintainMap) {
         return planInputMapper.updateForImageProgress(maintainMap);
     }
+    @Override
+    public List<Map<String, Object>> selectForMaintainOfDept(Map<String, Object> maintainMap) {
+        return planInputMapper.selectForMaintainOfDept(maintainMap);
+    }
 }

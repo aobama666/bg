@@ -36,13 +36,11 @@
 					<span title = " 年度"> 年度</span>
 				</td>
 				<td class="addInputStyle" style="width: 200px">
-					<input id="year" name="year"
-						   onclick=" WdatePicker({dateFmt:'yyyy',enableInputMask:false})" readonly="true"
-						   type="text"
-						   class="inputQuery validNull changeQuery Wdate"
-						   title="年度（格式：yyyy）"
-						   content="年度"
-					/>
+					<select id = "year" name = "year" title="年度"   content="年度" title="必填项"    class = "validNull"   >
+						<c:forEach  var="yearInfo"  items="${yearList}">
+							<option value ="${yearInfo.year}" title=" ${yearInfo.year}" > ${yearInfo.year}</option>
+						</c:forEach>
+					</select>
 				</td>
 			</tr>
 			<tr>

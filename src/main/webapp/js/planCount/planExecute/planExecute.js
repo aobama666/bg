@@ -59,27 +59,22 @@ executionList.initTb = function(year) {
     executionList.progressSubUnitQuery(year);
 }
 executionList.initDataGrid = function(){
-
-
     $("#datagrid").datagrid({
         url: "/bg/planExecution/selectForBaseInfo",
         type: 'POST',
         form:'#queryForm',
         pageSize:10,
         showFooter:true,
-        rownumbers:true,
-        pagination:true,
-        fitColumns:true,
         tablepage:$(".tablepage"),//分页组件
         columns: [
             {name: '序号',style:{width:"50px"}, data: 'ROWNO'},
             {name: '项目名称', style:{width:"200px"},data: 'POST1' },
-            {name: '国网编码', style:{width:"120px"}, data: 'POSID'   },
+            {name: '国网编码', style:{width:"100px"}, data: 'POSID'   },
             {name: '专项类别',style:{width:"100px"}, data: 'SPECIAL_COMPANY_NAME'},
-            {name: '资金来源', style:{width:"200px"},data: 'ZZJLY_T'},
+            {name: '资金来源', style:{width:"150px"},data: 'ZZJLY_T'},
             {name: '总投入', style:{width:"100px"},data: 'ZGSZTZ'},
             {name: '当年投资', style:{width:"100px"},data: 'WERT1'},
-            {name: '承担单位',style:{width:"200px"},data: 'KTEXT'   },
+            {name: '承担单位',style:{width:"100px"},data: 'KTEXT'   },
             {name: '采购申请', style:{width:"100px"},data: 'ZSQJE' },
             {name: '采购合同', style:{width:"100px"},data: 'ZDDJE' },
             {name: '发票入账', style:{width:"100px"},data: 'ZFPRZ' },
@@ -90,13 +85,13 @@ executionList.initDataGrid = function(){
                         return row.EXECUTION_PROGRESS+"%";
                     }
                 }},
-            {name: '形象进度',style:{width:"100px"}, data: 'IMAGE_PROGRESS',forMat:function(row){
+            {name: '形象进度',style:{width:"50px"}, data: 'IMAGE_PROGRESS',forMat:function(row){
                     var imageProgress =row.IMAGE_PROGRESS;
                     if(imageProgress!=undefined){
                         return row.IMAGE_PROGRESS+"%";
                     }
                 }},
-            {name: '计划完成数', style:{width:"100px"},data: 'PLANNED_COMPLETION' }
+            {name: '计划完成数', style:{width:"50px"},data: 'PLANNED_COMPLETION' }
         ]
 
 
@@ -158,6 +153,8 @@ executionList.progressSubUnitQuery = function(year){
     progressSubUnit(year,unitName,ItemProgress);
 }
 function  progressSubType(year,specialName,ItemProgress){
+
+    var pipProgress=Number($('#pipProgress').val()) ;
     var title=year+'年综合计划执行进度-分类型';
     var ItemType= specialName;
     var appregnum = ItemProgress;
@@ -182,7 +179,7 @@ function  progressSubType(year,specialName,ItemProgress){
                     }else{
                        var   seriesName = params[i].seriesName;
                           if(seriesName=='全院整体执行进度'){
-                              var value=60;
+                              var value=pipProgress;
                               html+=params[i].seriesName+":"+value+"%<br>";
                           }else{
                               html+=params[i].seriesName+":"+params[i].value+"%<br>";
@@ -194,8 +191,8 @@ function  progressSubType(year,specialName,ItemProgress){
             }
         },
         legend: {
-            left: 'left',
-       //     bottom:'bottom',
+            left: 'center',
+            bottom:'bottom',
             selectedMode:false,
             data:[ '各专项执行进度','全院整体执行进度' ]
         },
@@ -226,7 +223,7 @@ function  progressSubType(year,specialName,ItemProgress){
                 name:'各专项执行进度',
                 type:'bar',
                 data:appregnum,
-
+                barWidth : 30,//柱图宽度
                 itemStyle:{
                     normal:{
                         color:'#4ad2ff'
@@ -256,7 +253,7 @@ function  progressSubType(year,specialName,ItemProgress){
                         {
                             name:'全院整体执行进度',
                             type:'average',
-                            yAxis:60,
+                            yAxis: pipProgress,
                             lineStyle:{
                                 color:'red'
                             }
@@ -281,6 +278,7 @@ function  progressSubType(year,specialName,ItemProgress){
 
 //综合计划执行进度-分单位
 function progressSubUnit(year,unitName,ItemProgress){
+    var pipProgress=Number($('#pipProgress').val()) ;
     var ItemType=unitName;
     var appregnum =ItemProgress;
     var title=year+'年综合计划执行进度-分单位';
@@ -305,7 +303,7 @@ function progressSubUnit(year,unitName,ItemProgress){
                     }else{
                         var   seriesName = params[i].seriesName;
                         if(seriesName=='全院整体执行进度'){
-                            var value=60;
+                            var value=pipProgress;
                             html+=params[i].seriesName+":"+value+"%<br>";
                         }else{
                             html+=params[i].seriesName+":"+params[i].value+"%<br>";
@@ -317,8 +315,8 @@ function progressSubUnit(year,unitName,ItemProgress){
             }
         },
         legend: {
-             left: 'left',
-      //       bottom:'bottom',
+             left: 'center',
+             bottom:'bottom',
              data:[ '各单位执行进度','全院整体执行进度' ]
         },
         xAxis:
@@ -348,7 +346,7 @@ function progressSubUnit(year,unitName,ItemProgress){
                 name:'各单位执行进度',
                 type:'bar',
                 data:appregnum,
-               // barWidth : 20,//柱图宽度
+                 barWidth : 30,//柱图宽度
                 itemStyle:{
                     normal:{
                         color:'#4ad2ff'
@@ -378,7 +376,7 @@ function progressSubUnit(year,unitName,ItemProgress){
                         {
                             name:'全院整体执行进度',
                             type:'average',
-                            yAxis:60,
+                            yAxis:pipProgress ,
                             lineStyle:{
                                 color:'red'
                             }

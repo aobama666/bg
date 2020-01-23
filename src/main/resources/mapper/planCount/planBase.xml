@@ -99,15 +99,35 @@
 
     <!--承担单位的查询-->
     <sql id="CommitmentUnitInfo">
-        SELECT  DISTINCT
-        PROFIT_CENTER_CODE,
-        PROFIT_CENTER_DEATIL
-        FROM   PS_PROFIT_CENTER
-        where  1=1
+        SELECT  DISTINCT  PROFIT_CENTER_CODE, PROFIT_CENTER_DEATIL  FROM  (
+        SELECT
+        Z1.PTIME,
+        Z1.ZZJXZ,
+        PC.PROFIT_CENTER_CODE,
+        PC.PROFIT_CENTER_DEATIL,
+        ER.SPECIAL_COMPANY_CODE
+        FROM   PS_ERP_PROJECT_INFO    Z1
+        LEFT JOIN     PS_ERP_PROJECT_SPEND  Z2  ON  Z1.PSPID=Z2.PSPID   and  Z1.PTIME=Z2.GJAHR
+        LEFT JOIN     PS_SPECIAL_ERP_RELATION  ER ON    ER.ERP_SPECIAL_CODE=Z1.PRART1
+        LEFT JOIN     (SELECT DISTINCT  PROFIT_CENTER_CODE,PROFIT_CENTER_DEATIL  FROM   PS_PROFIT_CENTER)  PC ON    PC.PROFIT_CENTER_CODE=Z1.PRCTR
+        )where 1=1  and PROFIT_CENTER_CODE IS  NOT NULL
         <if test="commitmentUnitMap.commitmentUnit!= null and commitmentUnitMap.commitmentUnit!= ''">
             and   PROFIT_CENTER_CODE  = #{commitmentUnitMap.commitmentUnit}
         </if>
+        <if test="commitmentUnitMap.year!= null and commitmentUnitMap.year!= ''">
+            and   PTIME = #{commitmentUnitMap.year}
+        </if>
+        <if test="commitmentUnitMap.specialCode!= null and commitmentUnitMap.specialCode!= ''">
+            and   SPECIAL_COMPANY_CODE = #{commitmentUnitMap.specialCode}
+        </if>
+        <if test="commitmentUnitMap.itemType!= null and commitmentUnitMap.itemType!= ''">
+            and   ZZJXZ = #{commitmentUnitMap.itemType}
+        </if>
+        ORDER BY PROFIT_CENTER_CODE
     </sql>
+
+
+
     <!-- 基础数据中存在的承担单位的查询-->
     <select id="selectForCommitmentUnitInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
         SELECT     *  from(<include refid="CommitmentUnitInfo"/>)
@@ -126,34 +146,87 @@
     </select>
 
 
-    <!--计划执行数据维护公共sql-->
-    <sql id="baseInfo">
-        SELECT
-        Z1.PSPID,
-        Z1.PTIME,
-        DECODE(Z1.ZGSZTZ,NUll,0,Z1.ZGSZTZ) ZGSZTZ,
-        DECODE(Z1.WERT1,NUll,0,Z1.WERT1) WERT1,
-        DECODE(Z1.ZZJXZ,'00001','00001','00002','00002','')as ZZJXZ,
-        Z1.ZZJXZ_T,
-        Z1.PRCTR,
-        ER.SPECIAL_COMPANY_CODE,
-        SC.SPECIAL_NAME  as SPECIAL_COMPANY_NAME
+    <!--计划投入数据维护公共sql-->
+    <sql id="projectInfo">
+      SELECT
+        '1'  ITEM_NUMBER,
+         Z1.PTIME,
+         DECODE(Z1.ZGSZTZ,NUll,0,Z1.ZGSZTZ) ZGSZTZ,
+         DECODE(Z1.WERT1,NUll,0,Z1.WERT1) WERT1,
+         DECODE(Z1.ZZJXZ,'00001','00001','00002','00002','')as ZZJXZ,
+         Z1.ZZJXZ_T,
+         Z1.PRCTR,
+         ER.SPECIAL_COMPANY_CODE,
+         SC.SPECIAL_NAME  as SPECIAL_COMPANY_NAME
         FROM   PS_ERP_PROJECT_INFO    Z1
         LEFT JOIN     PS_SPECIAL_ERP_RELATION  ER ON    ER.ERP_SPECIAL_CODE=Z1.PRART1
         LEFT JOIN     PS_SPECIAL_CATEGORY  SC  ON  SC.SPECIAL_CODE=ER.SPECIAL_COMPANY_CODE
-        UNION ALL
-        SELECT
-        MY.ID  as PSPID,
-        MY.YEAR  as  PTIME,
-        TO_NUMBER(MY.PLAN_AMOUNT) ZGSZTZ,
-        TO_NUMBER(MY.PLAN_AMOUNT)  as  WERT1,
-        DECODE(MY.SPECIAL_TYPE, 'C013','00001','C014','00001','C012','00002','') as ZZJXZ,
-        DECODE(MY.SPECIAL_TYPE, 'C013','资本化','C014','资本化','C012','成本化','') as  ZZJXZ_T,
-        null PRCTR,
-        MY.SPECIAL_TYPE   as SPECIAL_COMPANY_CODE,
-        SC.SPECIAL_NAME   as SPECIAL_COMPANY_NAME
+    </sql>
+    <sql id="stockRightInfoAndMessageInfo">
+         SELECT
+         MY.ITEM_NUMBER  as  ITEM_NUMBER ,
+         MY.YEAR  as  PTIME,
+         TO_NUMBER(MY.PLAN_AMOUNT) ZGSZTZ,
+         TO_NUMBER(MY.PLAN_AMOUNT)  as  WERT1,
+         DECODE(MY.SPECIAL_TYPE, 'C013','00001','C014','00001','C012','00002','') as ZZJXZ,
+         DECODE(MY.SPECIAL_TYPE, 'C013','资本化','C014','资本化','C012','成本化','') as  ZZJXZ_T,
+         null PRCTR,
+         MY.SPECIAL_TYPE   as SPECIAL_COMPANY_CODE,
+         SC.SPECIAL_NAME   as SPECIAL_COMPANY_NAME
         FROM      PS_MAINTAIN_YEAR  MY
         LEFT JOIN    PS_SPECIAL_CATEGORY  SC ON   MY.SPECIAL_TYPE=SC.SPECIAL_CODE
+        WHERE   MY.SPECIAL_TYPE IN ('C013','C014')
+    </sql>
+    <sql id="educateInfo">
+        <choose>
+            <when test="null != baseMap.prctr and baseMap.prctr.size > 0">
+                SELECT
+                MY.ITEM_NUMBER,
+                MY.YEAR  as  PTIME ,
+                TO_NUMBER(MY.PLAN_AMOUNT)  as  ZGSZTZ,
+                TO_NUMBER(MY.PLAN_AMOUNT)  as  WERT1,
+                '00002' as ZZJXZ,
+                '成本化' as  ZZJXZ_T,
+                null PRCTR,
+                MY.SPECIAL_TYPE   as SPECIAL_COMPANY_CODE,
+                SC.SPECIAL_NAME   as SPECIAL_COMPANY_NAME
+                FROM  PS_MAINTAIN_YEAR  MY
+                LEFT JOIN    PS_SPECIAL_CATEGORY  SC ON   MY.SPECIAL_TYPE=SC.SPECIAL_CODE
+                WHERE   MY.SPECIAL_TYPE IN ('C012')  AND  MY.TYPE='0'
+                <if test="baseMap.deptCode!= null and baseMap.deptCode!= ''">
+                    and   MY.BEARER  = #{baseMap.deptCode}
+                </if>
+            </when>
+            <otherwise>
+                SELECT  TO_CHAR(
+                DECODE(MY.ITEM_NUMBER,'0', (SELECT SUM(ITEM_NUMBER)  FROM  PS_MAINTAIN_YEAR    where  YEAR= MY.YEAR  and  SPECIAL_TYPE = MY.SPECIAL_TYPE and TYPE='0'),MY.ITEM_NUMBER)
+                ) as  ITEM_NUMBER,
+                MY.YEAR  as  PTIME ,
+                TO_NUMBER(
+                DECODE(MY.PLAN_AMOUNT,'0.00',(SELECT  SUM(PLAN_AMOUNT)  FROM  PS_MAINTAIN_YEAR    where  YEAR= MY.YEAR  and  SPECIAL_TYPE = MY.SPECIAL_TYPE and TYPE='0'),MY.PLAN_AMOUNT)
+                ) as  ZGSZTZ,
+                TO_NUMBER(
+                DECODE(MY.PLAN_AMOUNT,'0.00',(SELECT  SUM(PLAN_AMOUNT)  FROM  PS_MAINTAIN_YEAR    where  YEAR= MY.YEAR  and  SPECIAL_TYPE = MY.SPECIAL_TYPE and TYPE='0'),MY.PLAN_AMOUNT)
+                ) as  WERT1,
+                '00002' as ZZJXZ,
+                '成本化' as  ZZJXZ_T,
+                null PRCTR,
+                MY.SPECIAL_TYPE   as SPECIAL_COMPANY_CODE,
+                SC.SPECIAL_NAME   as SPECIAL_COMPANY_NAME
+                FROM  PS_MAINTAIN_YEAR  MY
+                LEFT JOIN    PS_SPECIAL_CATEGORY  SC ON   MY.SPECIAL_TYPE=SC.SPECIAL_CODE
+                WHERE   MY.SPECIAL_TYPE IN ('C012')  and  MY.TYPE='1'
+
+            </otherwise>
+        </choose>
+    </sql>
+    <!--计划执行数据维护公共sql-->
+    <sql id="baseInfo">
+        <include refid="projectInfo"/>
+        UNION ALL
+        <include refid="stockRightInfoAndMessageInfo"/>
+        UNION ALL
+        <include refid="educateInfo"/>
     </sql>
     <!--计划投入-近三年发展投入趋势-->
     <select id="selectForYearAndDevelopInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
@@ -162,7 +235,7 @@
           ROUND(DECODE(SUM(ZGSZTZ),NUll,0,SUM(ZGSZTZ))/10000, 2) TOTAL_INVEST,
           ROUND(DECODE(SUM(WERT1),NUll,0,SUM(WERT1))/10000, 2) YEAR_INVEST,
           SUM(WERT1) as YEAR_INVEST ,
-          COUNT(PSPID) as NUMBER_OF_ITEMS
+          SUM(TO_NUMBER(ITEM_NUMBER)) as NUMBER_OF_ITEMS
         from( <include refid="baseInfo"/> )where 1=1
         <if test="baseMap.year!= null and baseMap.year!= ''">
             and   PTIME  = #{baseMap.year}
@@ -170,8 +243,11 @@
         <if test="baseMap.specialType!= null and baseMap.specialType!= ''">
             and   SPECIAL_COMPANY_CODE  = #{baseMap.specialType}
         </if>
-        <if test="baseMap.prctr!= null and baseMap.prctr!= ''">
-            and   PRCTR  = #{baseMap.prctr}
+        <if test="null != baseMap.prctr and baseMap.prctr.size > 0">
+            and    PRCTR IN
+            <foreach collection="baseMap.prctr" item="prctrs" open="(" separator="," close=")">
+                #{prctrs,jdbcType=VARCHAR}
+            </foreach>
         </if>
         GROUP BY  PTIME
         ORDER BY  PTIME
@@ -183,7 +259,7 @@
         PTIME as YEAR ,
         ROUND(DECODE(SUM(ZGSZTZ),NUll,0,SUM(ZGSZTZ))/10000, 2) TOTAL_INVEST,
         ROUND(DECODE(SUM(WERT1),NUll,0,SUM(WERT1))/10000, 2) YEAR_INVEST,
-        COUNT(PSPID) as NUMBER_OF_ITEMS,
+        SUM(TO_NUMBER(ITEM_NUMBER)) as NUMBER_OF_ITEMS,
         ROUND(SUM(DECODE(ZZJXZ,'00001',ZGSZTZ,'0'))/10000, 2) AS CAPITAL_INVEST,
         ROUND(SUM(DECODE(ZZJXZ,'00002',ZGSZTZ,'0'))/10000, 2) AS COST_INVEST
         from( <include refid="baseInfo"/> )where 1=1  and   ZZJXZ IS NOT NULL
@@ -193,8 +269,11 @@
         <if test="baseMap.specialType!= null and baseMap.specialType!= ''">
             and   SPECIAL_COMPANY_CODE  = #{baseMap.specialType}
         </if>
-        <if test="baseMap.prctr!= null and baseMap.prctr!= ''">
-            and   PRCTR  = #{baseMap.prctr}
+        <if test="null != baseMap.prctr and baseMap.prctr.size > 0">
+            and    PRCTR IN
+            <foreach collection="baseMap.prctr" item="prctrs" open="(" separator="," close=")">
+                #{prctrs,jdbcType=VARCHAR}
+            </foreach>
         </if>
         GROUP BY  PTIME
         ORDER BY  PTIME
@@ -207,7 +286,7 @@
         SPECIAL_COMPANY_NAME as  SPECIAL_NAME ,
         ROUND(DECODE(SUM(ZGSZTZ),NUll,0,SUM(ZGSZTZ))/10000, 2) TOTAL_INVEST,
         ROUND(DECODE(SUM(WERT1),NUll,0,SUM(WERT1))/10000, 2) YEAR_INVEST,
-        count(PSPID) as NUMBER_OF_ITEMS
+        SUM(TO_NUMBER(ITEM_NUMBER)) as NUMBER_OF_ITEMS
         from(<include refid="baseInfo"/>) where 1=1  and  SPECIAL_COMPANY_CODE IS NOT NULL
         <if test="baseMap.year!= null and baseMap.year!= ''">
             and   PTIME  = #{baseMap.year}
@@ -215,8 +294,11 @@
         <if test="baseMap.specialType!= null and baseMap.specialType!= ''">
             and   SPECIAL_COMPANY_CODE  = #{baseMap.specialType}
         </if>
-        <if test="baseMap.prctr!= null and baseMap.prctr!= ''">
-            and   PRCTR  = #{baseMap.prctr}
+        <if test="null != baseMap.prctr and baseMap.prctr.size > 0">
+            and    PRCTR IN
+            <foreach collection="baseMap.prctr" item="prctrs" open="(" separator="," close=")">
+                #{prctrs,jdbcType=VARCHAR}
+            </foreach>
         </if>
         GROUP BY  PTIME  ,SPECIAL_COMPANY_CODE,SPECIAL_COMPANY_NAME
         ORDER BY   SPECIAL_CODE
@@ -224,20 +306,16 @@
     </select>
 
     <sql id="subTypeBaseInfo">
-         SELECT  PTIME as  YEAR ,
-         SPECIAL_COMPANY_CODE  as  SPECIAL_CODE,
-         SPECIAL_COMPANY_NAME  as  SPECIAL_NAME ,
-         SUM(ZGSZTZ)  as TOTAL_INVEST,
-         SUM(WERT1) as YEAR_INVEST ,
-         count(PSPID) as NUMBER_OF_ITEMS,
-         SUM(EXECUTION_PROGRESS) as EXECUTION_PROGRESS,
-         ROUND(SUM(EXECUTION_PROGRESS)/count(PSPID), 2)  as ITEM_PROGRESS
+        SELECT  PTIME as  YEAR ,
+        SPECIAL_COMPANY_CODE  as  SPECIAL_CODE,
+        SPECIAL_COMPANY_NAME  as  SPECIAL_NAME ,
+        count(ITEM_NUMBER) as NUMBER_OF_ITEMS,
+        SUM(EXECUTION_PROGRESS) as EXECUTION_PROGRESS,
+        ROUND(SUM(EXECUTION_PROGRESS)/count(ITEM_NUMBER), 2)  as ITEM_PROGRESS
         from(
         SELECT
-        Z1.PSPID,
+        '1'  ITEM_NUMBER,
         Z1.PTIME,
-        ROUND(DECODE(Z1.ZGSZTZ,NUll,0,Z1.ZGSZTZ)/10000, 2)ZGSZTZ,
-        ROUND(DECODE(Z1.WERT1,NUll,0,Z1.WERT1)/10000, 2)WERT1,
         Z1.PRCTR,
         ER.SPECIAL_COMPANY_CODE,
         SC.SPECIAL_NAME  as SPECIAL_COMPANY_NAME,
@@ -248,10 +326,8 @@
         LEFT JOIN     PS_MAINTAIN_PROJECT  MP ON  MP.PROJECT_ID=Z1.PSPID    AND    MP.YEAR=Z1.PTIME
         UNION ALL
         SELECT
-        MY.ID  as PSPID,
+        TO_CHAR( DECODE(MY.ITEM_NUMBER,'0',(SELECT  SUM(ITEM_NUMBER)  FROM  PS_MAINTAIN_YEAR    where  YEAR= MY.YEAR  and  SPECIAL_TYPE = MY.SPECIAL_TYPE and TYPE='0'),MY.ITEM_NUMBER))as  ITEM_NUMBER,
         MY.YEAR  as  PTIME,
-        0 ZGSZTZ,
-        TO_NUMBER(MY.PLAN_AMOUNT)  as  WERT1,
         null PRCTR,
         MY.SPECIAL_TYPE   as SPECIAL_COMPANY_CODE,
         SC.SPECIAL_NAME   as SPECIAL_COMPANY_NAME,
@@ -259,9 +335,25 @@
         FROM      PS_MAINTAIN_YEAR  MY
         LEFT JOIN    PS_SPECIAL_CATEGORY  SC ON   MY.SPECIAL_TYPE=SC.SPECIAL_CODE
         LEFT JOIN    PS_MAINTAIN_PROJECT  MP ON   MP.PROJECT_ID=MY.ID
+        WHERE   MY.SPECIAL_TYPE IN ('C012')  and  MY.TYPE='1'
+        UNION ALL
+        SELECT
+        MY.ITEM_NUMBER  as ITEM_NUMBER,
+        MY.YEAR  as  PTIME,
+        null PRCTR,
+        MY.SPECIAL_TYPE   as SPECIAL_COMPANY_CODE,
+        SC.SPECIAL_NAME   as SPECIAL_COMPANY_NAME,
+        DECODE(MP.EXECUTION_PROGRESS,NULL,'0',MP.EXECUTION_PROGRESS) AS   EXECUTION_PROGRESS
+        FROM      PS_MAINTAIN_YEAR  MY
+        LEFT JOIN    PS_SPECIAL_CATEGORY  SC ON   MY.SPECIAL_TYPE=SC.SPECIAL_CODE
+        LEFT JOIN    PS_MAINTAIN_PROJECT  MP ON   MP.PROJECT_ID=MY.ID
+        WHERE   MY.SPECIAL_TYPE IN ('C013','C014')
         ) where 1=1  and  SPECIAL_COMPANY_CODE IS NOT NULL
-        <if test="subTypeMap.prctr!= null and subTypeMap.prctr!= ''">
-            and   PRCTR  = #{subTypeMap.prctr}
+        <if test="null != subTypeMap.prctr and subTypeMap.prctr.size > 0">
+            and    PRCTR  IN
+            <foreach collection="subTypeMap.prctr" item="prctrs" open="(" separator="," close=")">
+                #{prctrs,jdbcType=VARCHAR}
+            </foreach>
         </if>
         <if test="subTypeMap.year!= null and subTypeMap.year!= ''">
             and   PTIME  = #{subTypeMap.year}
@@ -281,16 +373,21 @@
 
 
 
+
+
     <sql id="subUnitBaseInfo">
-         SELECT  PTIME as  YEAR ,   PRCTR  as  UNIT_CODE  ,PROFIT_CENTER_DEATIL  as  UNIT_NAME ,
-           count(PSPID) as NUMBER_OF_ITEMS,SUM(EXECUTION_PROGRESS) as EXECUTION_PROGRESS,
-         ROUND(SUM(EXECUTION_PROGRESS)/count(PSPID), 2)  as ITEM_PROGRESS
-        from(
+       SELECT  PTIME as  YEAR ,
+        DEPT_CODE  as  UNIT_CODE,
+        DEPT_ABBR  as  UNIT_NAME,
+        COUNT(PSPID) as NUMBER_OF_ITEMS,
+        SUM(EXECUTION_PROGRESS) as EXECUTION_PROGRESS,
+        ROUND(SUM(EXECUTION_PROGRESS)/count(PSPID), 2)  as ITEM_PROGRESS
+        FROM(
         SELECT
         Z1.PSPID,
         Z1.PTIME,
-        Z1.PRCTR,
-        DECODE(PC.PROFIT_CENTER_DEATIL,NULL,Z1.KTEXT, PC.PROFIT_CENTER_DEATIL)   PROFIT_CENTER_DEATIL,
+        PC.DEPT_CODE,
+        PC.DEPT_ABBR,
         ER.SPECIAL_COMPANY_CODE,
         SC.SPECIAL_NAME  as SPECIAL_COMPANY_NAME,
         DECODE(MP.EXECUTION_PROGRESS,NULL,'0',MP.EXECUTION_PROGRESS)  AS   EXECUTION_PROGRESS
@@ -298,22 +395,24 @@
         LEFT JOIN     PS_SPECIAL_ERP_RELATION  ER ON    ER.ERP_SPECIAL_CODE=Z1.PRART1
         LEFT JOIN     PS_SPECIAL_CATEGORY  SC  ON  SC.SPECIAL_CODE=ER.SPECIAL_COMPANY_CODE
         LEFT JOIN     PS_MAINTAIN_PROJECT  MP ON  MP.PROJECT_ID=Z1.PSPID    AND    MP.YEAR=Z1.PTIME
-        LEFT JOIN     ( SELECT  DISTINCT    PROFIT_CENTER_CODE ,PROFIT_CENTER_DEATIL FROM PS_PROFIT_CENTER)   PC  ON PC.PROFIT_CENTER_CODE=Z1.PRCTR
+        LEFT JOIN     (SELECT  DISTINCT    PROFIT_CENTER_CODE ,PROFIT_CENTER_DEATIL,DEPT_CODE,DEPT_NAME,DEPT_ABBR FROM PS_PROFIT_CENTER where DEPT_TYPE='BR')   PC  ON PC.PROFIT_CENTER_CODE=Z1.PRCTR
+        where PC.DEPT_CODE IS NOT NULL
         UNION ALL
         SELECT
         MY.ID  as PSPID,
         MY.YEAR  as  PTIME,
-        MY.BEARER PRCTR,
-        PC.PROFIT_CENTER_DEATIL,
+        PC.DEPT_CODE,
+        PC.DEPT_ABBR,
         MY.SPECIAL_TYPE   as SPECIAL_COMPANY_CODE,
         SC.SPECIAL_NAME   as SPECIAL_COMPANY_NAME,
         DECODE(MP.EXECUTION_PROGRESS,NULL,'0',MP.EXECUTION_PROGRESS) AS   EXECUTION_PROGRESS
         FROM      PS_MAINTAIN_YEAR  MY
         LEFT JOIN    PS_SPECIAL_CATEGORY  SC ON   MY.SPECIAL_TYPE=SC.SPECIAL_CODE
         LEFT JOIN    PS_MAINTAIN_PROJECT  MP ON   MP.PROJECT_ID=MY.ID
-        LEFT JOIN     ( SELECT  DISTINCT    PROFIT_CENTER_CODE ,PROFIT_CENTER_DEATIL FROM PS_PROFIT_CENTER)   PC  ON PC.PROFIT_CENTER_CODE=MY.BEARER
-        ) where 1=1  and  PRCTR IS NOT NULL
-        GROUP BY  PTIME  ,PRCTR,PROFIT_CENTER_DEATIL
+        LEFT JOIN     ( SELECT  DISTINCT    PROFIT_CENTER_CODE ,PROFIT_CENTER_DEATIL,DEPT_CODE,DEPT_NAME,DEPT_ABBR FROM PS_PROFIT_CENTER where DEPT_TYPE='BR')   PC  ON PC.PROFIT_CENTER_CODE=MY.BEARER
+        where PC.DEPT_CODE IS NOT NULL
+        ) where 1=1
+        GROUP BY  PTIME,DEPT_CODE,DEPT_ABBR
     </sql>
 
     <select id="selectForSubUnitInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
@@ -330,6 +429,80 @@
     </select>
 
 
+
+    <sql id="subTypeTotalBaseInfo">
+        SELECT  PTIME as  YEAR ,
+        SUM(ZGSZTZ)  as TOTAL_INVEST,
+        SUM(WERT1) as YEAR_INVEST ,
+        count(PSPID) as NUMBER_OF_ITEMS,
+        SUM(EXECUTION_PROGRESS) as EXECUTION_PROGRESS,
+        ROUND(SUM(EXECUTION_PROGRESS)/count(PSPID), 2)  as ITEM_PROGRESS
+        from(
+        SELECT
+        Z1.PSPID,
+        Z1.PTIME,
+        ROUND(DECODE(Z1.ZGSZTZ,NUll,0,Z1.ZGSZTZ)/10000, 2)ZGSZTZ,
+        ROUND(DECODE(Z1.WERT1,NUll,0,Z1.WERT1)/10000, 2)WERT1,
+        Z1.PRCTR,
+        ER.SPECIAL_COMPANY_CODE,
+        SC.SPECIAL_NAME  as SPECIAL_COMPANY_NAME,
+        DECODE(MP.EXECUTION_PROGRESS,NULL,'0', (case when  TO_NUMBER(MP.EXECUTION_PROGRESS) &lt;0  then 0  else  TO_NUMBER(MP.EXECUTION_PROGRESS)  end  ) )  AS   EXECUTION_PROGRESS
+        FROM   PS_ERP_PROJECT_INFO    Z1
+        LEFT JOIN     PS_SPECIAL_ERP_RELATION  ER ON    ER.ERP_SPECIAL_CODE=Z1.PRART1
+        LEFT JOIN     PS_SPECIAL_CATEGORY  SC  ON  SC.SPECIAL_CODE=ER.SPECIAL_COMPANY_CODE
+        LEFT JOIN     PS_MAINTAIN_PROJECT  MP ON  MP.PROJECT_ID=Z1.PSPID    AND    MP.YEAR=Z1.PTIME
+        UNION ALL
+        SELECT
+        MY.ID  as PSPID,
+        MY.YEAR  as  PTIME,
+        0 ZGSZTZ,
+        TO_NUMBER(MY.PLAN_AMOUNT)  as  WERT1,
+        null PRCTR,
+        MY.SPECIAL_TYPE   as SPECIAL_COMPANY_CODE,
+        SC.SPECIAL_NAME   as SPECIAL_COMPANY_NAME,
+        DECODE(MP.EXECUTION_PROGRESS,NULL,'0',MP.EXECUTION_PROGRESS) AS   EXECUTION_PROGRESS
+        FROM      PS_MAINTAIN_YEAR  MY
+        LEFT JOIN    PS_SPECIAL_CATEGORY  SC ON   MY.SPECIAL_TYPE=SC.SPECIAL_CODE
+        LEFT JOIN    PS_MAINTAIN_PROJECT  MP ON   MP.PROJECT_ID=MY.ID
+        ) where 1=1  and  SPECIAL_COMPANY_CODE IS NOT NULL
+        <if test="null != subTypeMap.prctr and subTypeMap.prctr.size > 0">
+            and    PRCTR  IN
+            <foreach collection="subTypeMap.prctr" item="prctrs" open="(" separator="," close=")">
+                #{prctrs,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="subTypeMap.year!= null and subTypeMap.year!= ''">
+            and   PTIME  = #{subTypeMap.year}
+        </if>
+        GROUP BY  PTIME
+    </sql>
+
+
+
+    <select id="selectForYearTotalInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT YEAR, (case when ITEM_PROGRESS &lt;0 then 0  else  ITEM_PROGRESS  end  )   as  ITEM_PROGRESS
+        FROM(<include refid="subTypeTotalBaseInfo"/>)
+        WHERE   1=1
+        ORDER BY   YEAR DESC
+    </select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <!--权限查询-->
     <select id="selectForMainrtainAccessInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
       SELECT   ACCESS_TYPE,DEPT_CODE,USER_CODE  FROM   PS_MAINRTAIN_ACCESS where VALID=1
@@ -339,7 +512,7 @@
     </select>
 
     <select id="selectForUserAccessInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
-            SELECT  DISTINCT PRCTR,SPECIAL_CODE, SPECIAL_NAME   FROM(
+            SELECT  DISTINCT  SPECIAL_CODE, SPECIAL_NAME   FROM(
             SELECT
             Z1.PTIME ,
             Z1.PRCTR,
@@ -359,5 +532,38 @@
         </if>
         ORDER BY   SPECIAL_CODE
     </select>
+
+    <select id="selectForProfitCenterInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+        SELECT  PROFIT_CENTER_CODE  as  PRCTR  FROM   PS_PROFIT_CENTER  where   1=1
+        <if test="profitMap.deptCode!= null and profitMap.deptCode!= ''">
+            and   DEPT_CODE  = #{profitMap.deptCode}
+        </if>
+    </select>
+
+    <select id="selectForSpecialInfo" resultType="java.util.Map" parameterType="java.util.HashMap" >
+        SELECT  DISTINCT  SPECIAL_CODE  , SPECIAL_NAME   FROM(
+            SELECT
+            Z1.PTIME ,
+            Z1.PRCTR,
+            ER.SPECIAL_COMPANY_CODE  as  SPECIAL_CODE ,
+            SC.SPECIAL_NAME  ,
+            PC.DEPT_CODE
+            FROM   PS_ERP_PROJECT_INFO    Z1
+            LEFT   JOIN     PS_SPECIAL_ERP_RELATION  ER  ON    ER.ERP_SPECIAL_CODE=Z1.PRART1
+            LEFT   JOIN     PS_SPECIAL_CATEGORY  SC ON  SC.SPECIAL_CODE=ER.SPECIAL_COMPANY_CODE
+            LEFT   JOIN     PS_PROFIT_CENTER PC ON PC.PROFIT_CENTER_CODE=Z1.PRCTR
+            WHERE      ER.SPECIAL_COMPANY_CODE IS NOT NULL
+            <if test="null != specialMap.commitmentUnit and specialMap.commitmentUnit.size > 0">
+                and  Z1.PRCTR IN
+                <foreach collection="specialMap.commitmentUnit" item="commitmentUnits" open="(" separator="," close=")">
+                    #{commitmentUnits,jdbcType=VARCHAR}
+                </foreach>
+            </if>
+            <if test="specialMap.year!= null and specialMap.year!= ''">
+                and  Z1.PTIME  = #{specialMap.year}
+            </if>
+            )
+    </select>
+
 
 </mapper>

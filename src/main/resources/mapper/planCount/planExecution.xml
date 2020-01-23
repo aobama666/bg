@@ -3,8 +3,182 @@
 
 <mapper namespace="com.sgcc.bg.planCount.mapper.PlanExecutionMapper">
 
-    <!--计划执行数据维护公共sql-->
-    <sql id="maintainInfo">
+    <!--计划执行情况股权和信息系统开发建设信息基础数据-->
+    <sql id="stockRightInfoAndMessageInfo">
+     SELECT *  FROM (
+        SELECT
+        MY.ID  as PSPID,
+        null  POSID,
+        MY.YEAR  as  PTIME,
+        null POST1,
+        null PRART1,
+        SC.SPECIAL_NAME  SPST1,
+        null ZGSZTZ,
+        TO_NUMBER(MY.PLAN_AMOUNT)  as  WERT1,
+        null ZZJLY,
+        null ZZJLY_T,
+        DECODE(MY.SPECIAL_TYPE, 'C013','00001', 'C014', '00001', 'C012', '00002'  ,    '' ) as ZZJXZ,
+        DECODE(MY.SPECIAL_TYPE, 'C013','资本化', 'C014', '资本化', 'C012', '成本化', '' ) as  ZZJXZ_T,
+        null  as PRCTR,
+        null  as  KTEXT,
+        null PLFAZ,
+        null PLSEZ ,
+        null ZSQJE ,
+        null ZDDJE ,
+        null ZFPRZ ,
+        null GJAHR,
+        null ZJFZCE,
+        MY.SPECIAL_TYPE   as SPECIAL_COMPANY_CODE,
+        SC.SPECIAL_NAME   as SPECIAL_COMPANY_NAME,
+        null FUNDS_SOURCE_NAME,
+        null SPECIAL_EPRI_CODE,
+        SC.SPECIAL_NAME,
+        MY.IMAGE_PROGRESS,
+        '0.00' EXECUTION_PROGRESS,
+        '0.00' BIDDING_PROGRESS,
+        '0.00' SYSTEM_DEV_PROGRESS,
+        TO_CHAR(ROUND(TO_NUMBER(MY.IMAGE_PROGRESS)*TO_NUMBER(MY.PLAN_AMOUNT), 2))  as ITEM_PROGRESS
+        FROM      PS_MAINTAIN_YEAR  MY
+        LEFT JOIN     PS_SPECIAL_CATEGORY  SC ON    MY.SPECIAL_TYPE=SC.SPECIAL_CODE
+        where MY.VALID='1' and MY.SPECIAL_TYPE IN('C013','C014') and TYPE='0'
+        )
+    </sql>
+
+
+    <!--计划执行情况股权和信息系统开发建设信息基础数据-->
+    <sql id="stockRightAndmessage">
+        SELECT   *   FROM  (
+        <include refid="stockRightInfoAndMessageInfo"/>
+        ) where  1=1
+        <if test="maintainMap.year!= null and maintainMap.year!= ''">
+            and   PTIME  = #{maintainMap.year}
+        </if>
+        <if test="maintainMap.specialType!= null and maintainMap.specialType!= ''">
+            and   SPECIAL_COMPANY_CODE = #{maintainMap.specialType}
+        </if>
+        <if test="maintainMap.projectCode!= null and maintainMap.projectCode!= ''">
+            and PSPID= #{maintainMap.projectCode}
+        </if>
+        <if test="maintainMap.projectType!= null and maintainMap.projectType!= ''">
+            and ZZJXZ= #{maintainMap.projectType}
+        </if>
+        <if test="null != maintainMap.specialCodes and maintainMap.specialCodes.size > 0">
+            AND  SPECIAL_EPRI_CODE  IN
+            <foreach collection="maintainMap.specialCodes" item="specialCode" open="(" separator="," close=")">
+                #{specialCode,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="null != maintainMap.sourceOfFunds and maintainMap.sourceOfFunds.size > 0">
+            and  ZZJLY IN
+            <foreach collection="maintainMap.sourceOfFunds" item="sourceOfFund" open="(" separator="," close=")">
+                #{sourceOfFund,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="null != maintainMap.commitmentUnit and maintainMap.commitmentUnit.size > 0">
+            and  PRCTR IN
+            <foreach collection="maintainMap.commitmentUnit" item="commitmentUnits" open="(" separator="," close=")">
+                #{commitmentUnits,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        ORDER BY   PTIME   DESC
+    </sql>
+
+    <!-- 计划执行数据维护的查询-->
+    <select id="selectForStockRightAndmessageInfo" resultType="java.util.Map" parameterType="java.util.HashMap" >
+        SELECT    ROWNUM as ROWNO ,  T.*      from(<include refid="stockRightAndmessage"/>) T
+    </select>
+
+
+
+    <!--计划执行教育基础数据-->
+    <sql id="educateInfo">
+      SELECT *  FROM (
+       SELECT
+        MY.ID  as PSPID,
+        null  POSID,
+        MY.YEAR  as  PTIME,
+        null POST1,
+        null PRART1,
+        SC.SPECIAL_NAME  SPST1,
+        null ZGSZTZ,
+        TO_NUMBER(MY.PLAN_AMOUNT)  as  WERT1,
+        null ZZJLY,
+        null ZZJLY_T,
+        DECODE(MY.SPECIAL_TYPE, 'C013','00001', 'C014', '00001', 'C012', '00002'  ,    '' ) as ZZJXZ,
+        DECODE(MY.SPECIAL_TYPE, 'C013','资本化', 'C014', '资本化', 'C012', '成本化', '' ) as  ZZJXZ_T,
+        null  as PRCTR,
+        null  as  KTEXT,
+        null PLFAZ,
+        null PLSEZ ,
+        null ZSQJE ,
+        null ZDDJE ,
+        null ZFPRZ ,
+        null GJAHR,
+        null ZJFZCE,
+        MY.SPECIAL_TYPE   as SPECIAL_COMPANY_CODE,
+        SC.SPECIAL_NAME   as SPECIAL_COMPANY_NAME,
+        null FUNDS_SOURCE_NAME,
+        null SPECIAL_EPRI_CODE,
+        SC.SPECIAL_NAME,
+        MY.IMAGE_PROGRESS,
+        '0.00' EXECUTION_PROGRESS,
+        '0.00' BIDDING_PROGRESS,
+        '0.00' SYSTEM_DEV_PROGRESS,
+        TO_CHAR(ROUND(TO_NUMBER(MY.IMAGE_PROGRESS)*TO_NUMBER(MY.PLAN_AMOUNT), 2))  as ITEM_PROGRESS
+        FROM      PS_MAINTAIN_YEAR  MY
+        LEFT JOIN     PS_SPECIAL_CATEGORY  SC ON    MY.SPECIAL_TYPE=SC.SPECIAL_CODE
+        where MY.VALID='1' and MY.SPECIAL_TYPE IN('C012') and TYPE='1'
+        )
+    </sql>
+
+
+
+    <!--计划执行情况股权和信息系统开发建设信息基础数据-->
+    <sql id="educate">
+        SELECT   *   FROM  (
+        <include refid="educateInfo"/>
+        ) where  1=1
+        <if test="maintainMap.year!= null and maintainMap.year!= ''">
+            and   PTIME  = #{maintainMap.year}
+        </if>
+        <if test="maintainMap.specialType!= null and maintainMap.specialType!= ''">
+            and   SPECIAL_COMPANY_CODE = #{maintainMap.specialType}
+        </if>
+        <if test="maintainMap.projectCode!= null and maintainMap.projectCode!= ''">
+            and PSPID= #{maintainMap.projectCode}
+        </if>
+        <if test="maintainMap.projectType!= null and maintainMap.projectType!= ''">
+            and ZZJXZ= #{maintainMap.projectType}
+        </if>
+        <if test="null != maintainMap.specialCodes and maintainMap.specialCodes.size > 0">
+            AND  SPECIAL_EPRI_CODE  IN
+            <foreach collection="maintainMap.specialCodes" item="specialCode" open="(" separator="," close=")">
+                #{specialCode,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="null != maintainMap.sourceOfFunds and maintainMap.sourceOfFunds.size > 0">
+            and  ZZJLY IN
+            <foreach collection="maintainMap.sourceOfFunds" item="sourceOfFund" open="(" separator="," close=")">
+                #{sourceOfFund,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        <if test="null != maintainMap.commitmentUnit and maintainMap.commitmentUnit.size > 0">
+            and  PRCTR IN
+            <foreach collection="maintainMap.commitmentUnit" item="commitmentUnits" open="(" separator="," close=")">
+                #{commitmentUnits,jdbcType=VARCHAR}
+            </foreach>
+        </if>
+        ORDER BY   PTIME   DESC
+    </sql>
+    <!-- 计划执行数据维护的查询-->
+    <select id="selectForEducateInfo" resultType="java.util.Map" parameterType="java.util.HashMap" >
+        SELECT    ROWNUM as ROWNO ,  T.*      from(<include refid="educate"/>) T
+    </select>
+
+
+
+    <!--计划执行基础数据-->
+    <sql id="baseMaintainInfo">
         SELECT   *   FROM  (
         SELECT  Z1.PSPID ,
         Z1.POSID ,
@@ -44,58 +218,19 @@
         LEFT JOIN     PS_SPECIAL_CATEGORY  SC ON  SC.SPECIAL_CODE=FS.SPECIAL_EPRI_CODE
         LEFT JOIN     PS_SPECIAL_CATEGORY  SC1 ON  SC1.SPECIAL_CODE=ER.SPECIAL_COMPANY_CODE
         LEFT JOIN     PS_MAINTAIN_PROJECT  MP ON  MP.PROJECT_ID =Z1.PSPID  and MP.YEAR=Z1.PTIME and    MP.VALID='1'
-        where  1=1
-        UNION ALL
-        SELECT
-        MY.ID  as PSPID,
-        null  POSID,
-        MY.YEAR  as  PTIME,
-        null POST1,
-        null PRART1,
-        SC.SPECIAL_NAME  SPST1,
-        null ZGSZTZ,
-        TO_NUMBER(MY.PLAN_AMOUNT)  as  WERT1,
-        null ZZJLY,
-        null ZZJLY_T,
-        DECODE(MY.SPECIAL_TYPE, 'C013','00001', 'C014', '00001', 'C012', '00002'  ,    '' ) as ZZJXZ,
-        DECODE(MY.SPECIAL_TYPE, 'C013','资本化', 'C014', '资本化', 'C012', '成本化', '' ) as  ZZJXZ_T,
-        MY.BEARER  as PRCTR,
-        PC.PROFIT_CENTER_DEATIL  as  KTEXT,
-        null PLFAZ,
-        null PLSEZ ,
-        null ZSQJE ,
-        null ZDDJE ,
-        null ZFPRZ ,
-        null GJAHR,
-        null ZJFZCE,
-        MY.SPECIAL_TYPE   as SPECIAL_COMPANY_CODE,
-        SC.SPECIAL_NAME   as SPECIAL_COMPANY_NAME,
-        null FUNDS_SOURCE_NAME,
-        null SPECIAL_EPRI_CODE,
-        SC.SPECIAL_NAME,
-        MY.IMAGE_PROGRESS,
-        '0.00' EXECUTION_PROGRESS,
-        '0.00' BIDDING_PROGRESS,
-        '0.00' SYSTEM_DEV_PROGRESS,
-        MY.ITEM_NUMBER  PLANNED_COMPLETION
-        FROM      PS_MAINTAIN_YEAR  MY
-        LEFT JOIN     PS_SPECIAL_CATEGORY  SC ON    MY.SPECIAL_TYPE=SC.SPECIAL_CODE
-        LEFT JOIN   ( SELECT  DISTINCT
-        PROFIT_CENTER_CODE,
-        PROFIT_CENTER_DEATIL
-        FROM   PS_PROFIT_CENTER
-        where  1=1)   PC  ON  PC.PROFIT_CENTER_CODE=MY.BEARER
-        where MY.VALID='1'
+        )
+    </sql>
+
+    <!--计划执行数据维护公共sql-->
+    <sql id="maintainInfo">
+        SELECT   *   FROM  (
+             <include refid="baseMaintainInfo"/>
         ) where  1=1
         <if test="maintainMap.year!= null and maintainMap.year!= ''">
             and   PTIME  = #{maintainMap.year}
         </if>
         <if test="maintainMap.specialType!= null and maintainMap.specialType!= ''">
             and   SPECIAL_COMPANY_CODE = #{maintainMap.specialType}
-        </if>
-
-        <if test="maintainMap.commitmentUnit!= null and maintainMap.commitmentUnit!= ''">
-            and PRCTR= #{maintainMap.commitmentUnit}
         </if>
         <if test="maintainMap.projectCode!= null and maintainMap.projectCode!= ''">
             and PSPID= #{maintainMap.projectCode}
@@ -115,9 +250,15 @@
                 #{sourceOfFund,jdbcType=VARCHAR}
             </foreach>
         </if>
-
+        <if test="null != maintainMap.commitmentUnit and maintainMap.commitmentUnit.size > 0">
+            and  PRCTR IN
+            <foreach collection="maintainMap.commitmentUnit" item="commitmentUnits" open="(" separator="," close=")">
+                #{commitmentUnits,jdbcType=VARCHAR}
+            </foreach>
+        </if>
         ORDER BY   PTIME   DESC
     </sql>
+
     <!-- 计划执行数据维护的查询分页-->
     <select id="selectForBaseInfo" resultType="java.util.Map" parameterType="java.util.HashMap"  >
         SELECT  T.*  from(
@@ -126,6 +267,7 @@
         ) TB  WHERE #{maintainMap.page_end} >= ROWNUM
         ) T   WHERE T.ROWNO > #{maintainMap.page_start}
     </select>
+
     <!-- 计划执行数据维护的查询条数-->
     <select id="selectForBaseInfoNum" resultType="java.lang.String" parameterType="java.util.HashMap" >
         SELECT    COUNT(1)  AS "countNum"  from(<include refid="maintainInfo"/>)

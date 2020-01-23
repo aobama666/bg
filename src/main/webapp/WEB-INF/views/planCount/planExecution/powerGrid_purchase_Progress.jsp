@@ -26,7 +26,7 @@
 <body>
 <div class="main_div"  style="height: 20px"></div>
 <!-- end  头部 -->
-<span  style="font-size: 15px;margin:5px 0;display: inline-block;"> 招标采购完成(中标通知书)可认定的最高单项形象进度为25%</span>
+<span  style="font-size: 15px;margin:5px 0;display: inline-block;margin-left: 28px;"> 招标采购完成(中标通知书)可认定的最高单项形象进度为25%</span>
 <!-- 参观申请单位信息展示 -->
 <input type = "hidden"   id = "applyId" name="applyId"  value="${applyId}">
 <div class="contentBox   Remark">

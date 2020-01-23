@@ -19,6 +19,21 @@
 	<link  href="<%=request.getContextPath()%>/yszx/css/idea/easyui.css" rel="stylesheet" />
 	<!-- 本页面所需css -->
 	<link href="<%=request.getContextPath()%>/yszx/css/idea/roomList.css" rel="stylesheet" type="text/css">
+	<style type="text/css">
+		.textbox{
+			width: 20%!important;
+			height: 35px!important;
+			border: 1px solid #ddd!important;
+			margin-left: -4px!important;
+			vertical-align: middle!important;
+			font-size: 16px!important;
+			line-height: 32px!important;
+			padding: 2px 0!important;
+			padding-bottom: 6px!important;
+			cursor: pointer!important;
+			border: 1px solid #ddd!important;
+		}
+	</style>
 </head>
 <body>
 
@@ -31,15 +46,11 @@
 		<input type = "hidden"   id = "year" name="year" value="${year}">
 		<input type = "hidden"   id = "type" name="type" value="${type}">
 		<input type = "hidden"   id = "specialType" name="specialType" value="${specialCode}">
-		<label  for="sourceOfFunds" class="yearTitle"> 资金来源：</label>
-		<select id = "sourceOfFunds" name = "sourceOfFunds" title="资金来源"    class = "changeQuery userlevel" style="width: 300px;margin-left: -2px"  >
-			<option value = "" selected>  全选 </option>
-			<c:forEach  var="fundsSourceInfo"  items="${fundsSourceList}">
-				<option value ="${fundsSourceInfo.FUNDS_SOURCE_CODE}" title=" ${fundsSourceInfo.FUNDS_SOURCE_NAME}" > ${fundsSourceInfo.FUNDS_SOURCE_NAME}</option>
-			</c:forEach>
-		</select>
-
+		<input type="hidden" id="sourceOfFunds" name="sourceOfFunds" value=""　   　>
+		<label  for="sourceOfFundsNew" class="yearTitle"> 资金来源：</label>
+		<input class="inputQuery changeQuery tree-data" style="width: 200px"   id="sourceOfFundsNew" name="sourceOfFundsNew"  data-companyLeaderName=""       title="资金来源  " />
 		<label  for="commitmentUnit" class="yearTitle"> 承担单位：</label>
+
 		<select id = "commitmentUnit" name = "commitmentUnit" title="承担单位"    class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
 			<option value = "">   </option>
 			<c:forEach  var="commitmentUnitInfo"  items="${commitmentUnitList}">
@@ -48,8 +59,11 @@
 		</select>
 		<!-- 查询按钮  -->
 		<div id = "queryButton" class = "btn query" onclick = "roomList.query()" style="margin-left: 20px;">搜索</div> <!-- 原来引用的函数onclick = "roomList.query()" -->
+		<div class='btn query' onclick="roomList.expEvent()" style="white-space: nowrap">导出</div>
 	</form>
 </div>
+
+<!-- end    查询条件 -->
 
 <!-- start 列表展示 -->
 <div class="tabbable" >
@@ -58,6 +72,7 @@
 		<div class="tab-pane active" >
 			<div id="datagrid"></div>
 			<div class="tablepage"></div>
+
 		</div>
 	</div>
 </div>
@@ -76,7 +91,6 @@
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 <!-- 本页面所需的js -->
-
-<script src="<%=request.getContextPath()%>/js/planCount/planInput/details.js"></script>
+<script src="<%=request.getContextPath()%>/js/planCount/planInput/specialDetails.js"></script>
 </body>
 </html>

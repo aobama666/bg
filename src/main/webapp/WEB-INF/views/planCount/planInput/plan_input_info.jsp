@@ -9,7 +9,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta charset="UTF-8" http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="x-ua-compatible" content="IE=10; IE=9; IE=8; IE=EDGE; Chrome=1"/>
-    <meta name="viewport" content="width=device-width,inintial-scale=1.0">
+
 	<title>计划统计-计划投入</title>
 	<link href="<%=request.getContextPath()%>/yszx/js/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 	<!-- newPage、item.css 页面css-->
@@ -35,10 +35,6 @@
 			cursor: pointer!important;
 			border: 1px solid #ddd!important;
 		}
-		body{
-			overflow: hidden;
-			padding-top: 20px;
-		}
 
 	</style>
 </head>
@@ -46,7 +42,7 @@
 
 <div class="sheach">
 		<div class="box">
-			<div class="box-top" style="height:47%;">
+			<div class="box-top" style="height:45%;">
 				<div   class="box-top-left" style=" background-color: #D5E7E7;">
 					<table  style="width:100%;height: 100%; ">
 						<tr style="width:100%;height: 10%; ">
@@ -54,7 +50,6 @@
 
 										<label style="font-size: 20px;"> 近三年发展投入趋势</label ><br>
 										<label > 综合计划发展投入：</label>
-								        <input type="hidden" id="prctr" name="prctr"  value="${PRCTR}"  >
 										<select id = "developSpecialType" name = "developSpecialType" title="专项类别"    class = " userlevel" style="width: 240px;margin-left: -2px"    >
 											<option value = ""  >发展总投入</option>
 											<c:forEach  var="specialInfo"  items="${specialList}">
@@ -84,9 +79,9 @@
 											</c:forEach>
 										</select>
 										<label   class="yearTitle"> 专项类别：</label>
-									    <input type="hidden" id="specialType" name="specialType" value=""　   　>
-								    	<input class="inputQuery changeQuery tree-data" style="width: 300px"   id="specialTypeNew" name="specialTypeNew"  data-companyLeaderName=""        />
-									    <div id = "queryButton" class = "btn query" onclick = "roomList.query()" style="margin-left: 20px;">搜索</div>
+									     <input type="hidden" id="specialType" name="specialType" value=""　   　>
+								    	 <input class="inputQuery changeQuery tree-data" style="width: 300px"   id="specialTypeNew" name="specialTypeNew"  data-companyLeaderName=""  />
+									     <div id = "queryButton" class = "btn query" onclick = "roomList.query()" style="margin-left: 20px;">搜索</div>
 								</form>
 							</td>
 						</tr>
@@ -99,7 +94,7 @@
 
 				</div>
 			</div>
-			<div class="box-center" style="height:47%;">
+			<div class="box-center" style="height:45%;">
 				<div  class="box-center-left" style=" background-color: #D5E7E7;">
 					<table  style="width:100%;height: 100%; ">
 						<tr style="width:100%;height: 10%; ">
@@ -127,12 +122,11 @@
 							<td>
 								<label style="font-size: 20px;"> 各单位投资效率效益情况</label ><br>
 								<label >（图表目前展示2019实际数据，具体功能待建设）  </label>
-
 							</td>
 						</tr>
 						<tr  style="width:100%;height: 90%;">
 							<td style=" background: #fcfdfd !important;height: 80%;">
-								<div class="toImage"     style="width:100%;height: 90%; "></div>
+								<div id="unitAndefficiency"   style="width:100%;height: 90%;"></div>
 							</td>
 						</tr>
 					</table>
@@ -157,6 +151,6 @@
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/common.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/recommonedCommon.js"></script>
 <script src="<%=request.getContextPath()%>/yszx/js/idea/common/roomAddInfoCommon.js?rnd=<%=VersionUtils.verNo %>"></script>
-<script src="<%=request.getContextPath()%>/js/echarts/echarts.min.js"></script>
+<script src="<%=request.getContextPath()%>/js/echarts/echarts3.0.js"></script>
 <script src="<%=request.getContextPath()%>/js/planCount/planInput/planInput.js"></script>
 </html>

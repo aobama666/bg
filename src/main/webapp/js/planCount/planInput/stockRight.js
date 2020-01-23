@@ -38,18 +38,13 @@ roomList.query = function(){
 /* 计划统计-股权投资投入数据维护-初始化列表界面  */
 roomList.initDataGrid = function(){
 	    $("#datagrid").datagrid({
-		url: "/bg/planInput/selectForMaintainOfYear",
+		url: "/bg/planInput/selectForPlanInputStockRight",
 		type: 'POST',
 		form:'#queryForm',
 		pageSize:10,
 		tablepage:$(".tablepage"),//分页组件
 		columns: [
             {name: '序号',style:{width:"50px"}, data: 'ROWNO'},
-            {name: '选择',style:{width:"50px"}, data: 'ID',  forMat:function(row){
-                    dataItems[index] = row;//将一行数据放在一个list中
-                    return '<input type="checkbox" name="oneCheck"  index = "'+(index++)+'"  value="'+(row.ID)+'"/>';
-                }
-            },
             {name: '年度',style:{width:"100px"},data: 'YEAR'   },
             {name: '计划投入金额（万元）', style:{width:"200px"},data: 'PLAN_AMOUNT' },
             {name: '计划项目数', style:{width:"200px"},data: 'ITEM_NUMBER' },
@@ -73,7 +68,7 @@ roomList.forDetails = function (id) {
     layer.open({
                 type:2,
                 title:'<h4 style=" text-align: center;style="font-size: 18px;padding-top: 10px">股权投资投入数据维护</h4>',
-                area:['25%','27%'],
+                area:['30%','36%'],
                 fixed:false,//不固定
                 maxmin:true,
                 content:url
@@ -129,7 +124,7 @@ roomList.stockRightOfSave= function(){
     layer.open({
         type:2,
         title:'<h4 style="margin: 2px;text-align: center;font-size: 18px;padding-top: 10px">股权投资投入数据新增</h4>',
-        area:['25%','27%'],
+        area:['30%','36%'],
         fixed:false,//不固定
         maxmin:true,
         content:url

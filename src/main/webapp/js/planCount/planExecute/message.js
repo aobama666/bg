@@ -72,7 +72,7 @@ roomList.forDetails = function (id) {
     layer.open({
         type:2,
         title:'<h4 style=" text-align: center;style="font-size: 18px;padding-top: 10px">信息系统开发建设形象数据维护</h4>',
-        area:['25%','30%'],
+        area:['30%','40%'],
         fixed:false,//不固定
         maxmin:true,
         content:url

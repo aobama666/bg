@@ -51,6 +51,10 @@ public interface PlanBaseService {
      */
     List<Map<String,Object>>selectForSubUnitInfo(@Param("subUnitMap") Map<String, Object> subUnitMap);
     /**
+     * 计划执行-综合计划执行进度-年份
+     */
+    List<Map<String,Object>>selectForYearTotalInfo(@Param("subTypeMap") Map<String, Object> subTypeMap);
+    /**
      * 权限查询
      */
     List<Map<String,Object>>selectForMainrtainAccessInfo(@Param("accessMap") Map<String, Object> accessMap);
@@ -58,4 +62,13 @@ public interface PlanBaseService {
      * 权限-查看专项名称查询
      */
     List<Map<String,Object>>selectForUserAccessInfo(@Param("accessMap") Map<String, Object> accessMap);
+    /**
+     * 权限-利润中心查询
+     */
+    List<Map<String,Object>> selectForProfitCenterInfo(@Param("profitMap") Map<String, Object> profitMap);
+    /**
+     * 权限-利润中心查询
+     */
+    List<Map<String,Object>> selectForSpecialInfo(@Param("specialMap") Map<String, Object> specialMap);
+
 }

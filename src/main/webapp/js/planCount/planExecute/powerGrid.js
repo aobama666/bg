@@ -44,6 +44,7 @@ roomList.initDataGrid = function(){
         type: 'POST',
         form:'#queryForm',
         pageSize:10,
+        showFooter:true,
         tablepage:$(".tablepage"),//分页组件
         columns: [
             {name: '序号',style:{width:"50px"}, data: 'ROWNO'},
@@ -88,7 +89,7 @@ roomList.forCG = function (projectId,year) {
     layer.open({
                 type:2,
                 title:'<h4 style="text-align: center;margin: 2px;font-size: 18px;padding-top: 10px">招标采购完成进度维护</h4>',
-                area:['40%','25%'],
+                area:['45%','33%'],
                 fixed:false,//不固定
                 maxmin:true,
                 content:url
@@ -136,7 +137,7 @@ roomList.forXT = function (projectId,year) {
     layer.open({
         type:2,
         title:'<h4 style="text-align: center;margin: 2px;font-size: 18px;padding-top: 10px">物资到货/系统开发进度维护</h4>',
-        area:['40%','25%'],
+        area:['48%','33%'],
         fixed:false,//不固定
         maxmin:true,
         content:url

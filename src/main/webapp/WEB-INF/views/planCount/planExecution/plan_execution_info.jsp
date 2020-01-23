@@ -33,49 +33,47 @@
 			cursor: pointer!important;
 			border: 1px solid #ddd!important;
 		}
+		body{
+			overflow: hidden;
+		}
 
 	</style>
 </head>
 <body>
-        <div class="main_div" style="margin-top: 15px;padding-left: 20px;">
+
+<c:choose>
+<c:when test="${PRCTR==null}">
+        <div class="main_div" style="margin-top: 10px;padding-left: 20px;">
 			<span title = " 三年全院综合计划整体执行进度：" style="padding:0;font-size: 18px;vertical-align: top;line-height: 33px;"> 三年全院综合计划整体执行进度：</span>
 			<table class="visitOperate tableStyle specialTable" style="width: auto ;display:inline-block;border: none;">
 				<tr>
-					<td   style="padding: 0 10px;" >
-						<span title = " 2019" id="year0"  > 2019</span>
-					</td>
-					<td   style="padding: 0 10px;">
-						<span title = " 2019"> 0.00%</span>
-					</td>
-					<td style="padding: 0 10px;" >
-						<span title = " 2019" id="year1"  > 2018</span>
-					</td>
-					<td   style="padding: 0 10px;" >
-						<span title = " 2019"> 0.00%</span>
-					</td>
-					<td style="padding: 0 10px;">
-						<span title = " 2019" id="year2" > 2017</span>
-					</td>
-					<td   style="padding: 0 10px;">
-						<span title = " 2019"> 0.00%</span>
-					</td>
+					<c:forEach  var="yearTotalInfo"  items="${yearTotallist}">
+						<td   style="padding: 0 10px;" >
+							<span title = "${yearTotalInfo.YEAR} "    > ${yearTotalInfo.YEAR}</span>
+						</td>
+						<td   style="padding: 0 10px;">
+							<span title = " ${yearTotalInfo.ITEM_PROGRESS}%">${yearTotalInfo.ITEM_PROGRESS}%</span>
+						</td>
+					</c:forEach>
 				</tr>
 			</table>
 		</div>
+</c:when>
+
+</c:choose>
+
 		<div class="box" style="margin-top: 12px;">
-			<div class="box-top"  >
+			<div class="box-top"  style="height: 300px" >
 				<div   id="yearAndDevelop" class="box-top-left"></div>
 				<div   id="costAndCapital" class="box-top-right" ></div>
 			</div>
 			<div class="sheach">
 				<%--<div class='content_top'>执行数据综合维护</div>--%>
 				<form id="queryForm" style="margin-bottom: 10px;">
-
-					<input type="hidden" id="type" name="type" value="">
+					<input type="hidden" id="pipProgress" name="pipProgress" value="${pipProgress}">
 					<input type="hidden" id="sourceOfFunds" name="sourceOfFunds" value="">
 					<label >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;年度：</label>
 					<select id="year"  name = "year"  title="年度" class = "changeQuery userlevel" style="width: 200px;margin-left: 0px"   >
-						<option value="" > </option>
 						<c:forEach  var="yearInfo"  items="${yearList}">
 							<option value ="${yearInfo.year}" title=" ${yearInfo.year}" > ${yearInfo.year}</option>
 						</c:forEach>
@@ -90,8 +88,7 @@
 					<label  for="sourceOfFundsNew" class="yearTitle"> 资金来源：</label>
 					<input class="inputQuery changeQuery tree-data" style="width: 200px"   id="sourceOfFundsNew" name="sourceOfFundsNew"  data-companyLeaderName=""       title="资金来源  " />
 					<c:choose>
-
-					    <c:when test="${PRCTR==''}">
+					    <c:when test="${PRCTR==null}">
 							<label  for="commitmentUnit" class="yearTitle"> 承担单位：</label>
 							<select id = "commitmentUnit" name = "commitmentUnit" title="承担单位"    class = "changeQuery userlevel" style="width: 240px;margin-left: -2px">
 								<option value = "">   </option>
@@ -101,20 +98,21 @@
 							</select>
 						</c:when>
 						<c:otherwise>
-							<input type="hidden" id="commitmentUnit" name="commitmentUnit" value="${PRCTR}">
+							<input type="hidden" id="commitmentUnit" name="commitmentUnit"  >
 						</c:otherwise>
 					</c:choose>
 					<!-- 查询按钮  -->
 					<div id = "queryButton" class = "btn query" onclick = "executionList.query()" style="margin-left: 20px;">搜索</div> <!-- 原来引用的函数onclick = "roomList.query()" -->
+					<div  class = "btn query" onclick="roomList.expEvent()" style="margin-left: 20px;">导出</div>
 				</form>
 			</div>
 
 			<!-- end    查询条件 -->
 
-			<div class='btn right deleteButton' onclick="roomList.expEvent()" style="white-space: nowrap">导出</div>
+			<%--<div class='btn right deleteButton' onclick="roomList.expEvent()" style="white-space: nowrap">导出</div>--%>
 			<div  style="line-height: 37px">单位：万元</div>
 			<!-- start 列表展示 -->
-			<div class="tabbable" >
+			<div class="tabbable"   >
 				<div class="tab-content">
 					<!-- 表格 -->
 					<div class="tab-pane active" >

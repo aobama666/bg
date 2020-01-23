@@ -42,7 +42,7 @@
 			</tr>
 			<tr>
 				<td style="width: 145px">
-					<span title = " 计划投入金额"> 计划投入金额</span>
+					<span title = " 计划投入金额（万元）"> 计划投入金额（万元）</span>
 				</td>
 				<td class="addInputStyle" style="width: 200px">
 					<input type="text"  id="planAmount"  name="planAmount"   value="${PLAN_AMOUNT}"  content="计划投入金额" title="必填项"    class = "validNull validNum"  />

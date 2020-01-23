@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlanBaseServiceImpl implements PlanBaseService {
 
-
     @Autowired
     private PlanBaseMapper planBaseMapper;
     @Override
@@ -62,6 +61,10 @@ public class PlanBaseServiceImpl implements PlanBaseService {
         return planBaseMapper.selectForSubUnitInfo(subUnitMap);
     }
     @Override
+    public List<Map<String, Object>> selectForYearTotalInfo(Map<String, Object> subTypeMap) {
+        return planBaseMapper.selectForYearTotalInfo(subTypeMap);
+    }
+    @Override
     public List<Map<String, Object>> selectForMainrtainAccessInfo(Map<String, Object> accessMap) {
         return planBaseMapper.selectForMainrtainAccessInfo(accessMap);
     }
@@ -69,4 +72,14 @@ public class PlanBaseServiceImpl implements PlanBaseService {
     public List<Map<String, Object>> selectForUserAccessInfo(Map<String, Object> accessMap) {
         return planBaseMapper.selectForUserAccessInfo(accessMap);
     }
+    @Override
+    public List<Map<String, Object>> selectForProfitCenterInfo(Map<String, Object> profitMap) {
+        return planBaseMapper.selectForProfitCenterInfo(profitMap);
+    }
+    @Override
+    public List<Map<String, Object>> selectForSpecialInfo(Map<String, Object> specialMap) {
+        return planBaseMapper.selectForSpecialInfo(specialMap);
+    }
+
+
 }

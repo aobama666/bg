@@ -38,7 +38,7 @@
 </div>
 
 <!-- end    查询条件 -->
-<div class='btn right deleteButton' onclick="roomList.stockRightOfDelete()" style="white-space: nowrap">删除</div>
+<%--<div class='btn right deleteButton' onclick="roomList.stockRightOfDelete()" style="white-space: nowrap">删除</div>--%>
 <div class='btn right deleteButton' onclick="roomList.stockRightOfSave()" style="white-space: nowrap">新增</div>
 <div  style="line-height: 37px">&nbsp;</div>
 <!-- start 列表展示 -->

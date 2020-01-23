@@ -1,10 +1,9 @@
 <%@page import="com.sgcc.bg.common.VersionUtils"%>
 <!DOCTYPE>
-<%@ page language="java" contentType="text/html; charset=utf-8"
-		 pageEncoding="utf-8"%>
-
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -41,23 +40,31 @@
 					<input type="text"  id="year"  name="year"   value="${YEAR}"  disabled />
 				</td>
 			</tr>
+			<c:choose>
+				<c:when test="${TYPE=='1'}">
+
+				</c:when>
+				<c:otherwise>
+					<tr>
+						<td style="width: 145px">
+							<span title = " 承担单位"> 承担单位</span>
+						</td>
+						<td class="addInputStyle" style="width: 200px">
+							<input type = "hidden"   id = "commitmentUnit" name="commitmentUnit"  value="${BEARER}">
+							<input type="text"  id="commitmentUnitName"  name="commitmentUnitName"   value="${DEPT_ABBR}" disabled/>
+						</td>
+					</tr>
+				</c:otherwise>
+			</c:choose>
 			<tr>
 				<td style="width: 145px">
-					<span title = " 承担单位"> 承担单位</span>
-				</td>
-				<td class="addInputStyle" style="width: 200px">
-					<input type = "hidden"   id = "commitmentUnit" name="commitmentUnit"  value="${BEARER}">
-					<input type="text"  id="commitmentUnitName"  name="commitmentUnitName"   value="${PROFIT_CENTER_DEATIL}" disabled/>
-				</td>
-			</tr>
-			<tr>
-				<td style="width: 145px">
-					<span title = " 计划投入金额"> 计划投入金额</span>
+					<span title = " 计划投入金额(万元)"> 计划投入金额(万元)</span>
 				</td>
 				<td class="addInputStyle" style="width: 200px">
 					<input type="text"  id="planAmount"  name="planAmount"   value="${PLAN_AMOUNT}"  content="计划投入金额" title="必填项"    class = "validNull validNum"  />
 				</td>
 			</tr>
+
 			<tr>
 				<td style="width: 145px">
 					<span title = " 计划项目数"> 计划项目数</span>

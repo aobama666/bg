@@ -2,7 +2,17 @@ var roomList = {};
 var dataItems = new Array();
 var index = 0;
 roomList.btn_type_flag = 0;
+
+
+
+//初始化数据
 $(function(){
+    if (!window.console || !console.firebug){
+        var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml", "group", "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
+        window.console = {};
+        for (var i = 0; i < names.length; ++i)
+            window.console[names[i]] = function() {}
+    }
     roomList.initDataGrid();
     var year = $("#year").val();
     roomList.forSpecalType(year);
@@ -16,6 +26,7 @@ $(function(){
         roomList.yearAndItemQuery();
     });
 });
+
 roomList.query = function(){
     var specialTypeNew = $("#specialTypeNew").val();
     $("#specialType").val(specialTypeNew);
@@ -25,7 +36,9 @@ roomList.initDataGrid = function(){
     roomList.yearAndDevelopQuery();
     roomList.costAndCapitalQuery();
     roomList.yearAndItemQuery();
+    unitAndefficiency();
 }
+//近三年发展投入趋势-后端数据接口
 roomList.yearAndDevelopQuery = function(){
     var   developSpecialType= $("#developSpecialType").val();
     var   prctr= $("#prctr").val();
@@ -50,6 +63,7 @@ roomList.yearAndDevelopQuery = function(){
     }
     yearAndDevelop(year,developInput,developItemNumber);
 }
+//资本性和成本性投入趋势-后端数据接口
 roomList.costAndCapitalQuery = function(){
     var    specialType= $("#costSpecialType").val();
     var    prctr= $("#prctr").val();
@@ -74,6 +88,7 @@ roomList.costAndCapitalQuery = function(){
     }
     costAndCapital(year,capitalMoney,costmoney);
 }
+//各专项年度投入情况-后端数据接口
 roomList.yearAndItemQuery = function(){
     var year= $("#year").val();
     var specialType= $("#specialType").val();
@@ -99,8 +114,7 @@ roomList.yearAndItemQuery = function(){
     }
     yearAndItem(ItemType,appregnum,activenum,year,specialType);
 }
-
-//近三年发展投入趋势
+//近三年发展投入趋势-图表展示
 function yearAndDevelop(year,developInput,developItemNumber){
     var maxdevelopInput = calMax(developInput); //计划投入金额Y轴值
     var maxdevelopItemNumber = calMax(developItemNumber); //项目数Y轴值
@@ -192,7 +206,7 @@ function yearAndDevelop(year,developInput,developItemNumber){
         }
     )
 }
-//资本性和成本性投入趋势
+//资本性和成本性投入趋势-图表展示
 function costAndCapital(year,capitalMoney,costmoney){
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('costAndCapital'));
@@ -270,6 +284,7 @@ function costAndCapital(year,capitalMoney,costmoney){
         }
     });
 }
+//资本性项目详情
 roomList.forCost =  function  (year) {
     var title=year+"年资本性项目详情";
     var  type="00001";
@@ -277,13 +292,13 @@ roomList.forCost =  function  (year) {
     layer.open({
         type:2,
         title:'<h4 style="text-align: center;margin: 2px;font-size: 18px;padding-top: 10px">'+title+'</h4>',
-        area:['60%','56.2%'],
+        area:['85%','76%'],
         fixed:false,//不固定
         maxmin:true,
         content:url
     });
 }
-
+//成本性项目详情
 roomList.forCapital =  function  (year) {
     var  type="00002";
     var title=year+"年成本性项目详情";
@@ -291,16 +306,13 @@ roomList.forCapital =  function  (year) {
     layer.open({
         type:2,
         title:'<h4 style="text-align: center;margin: 2px;font-size: 18px;padding-top: 10px">'+title+'</h4>',
-        area:['60%','56.2%'],
+        area:['85%','76%'],
         fixed:false,//不固定
         maxmin:true,
         content:url
     });
 }
-
-
-
-//各专项年度投入情况
+//各专项年度投入情况-图表展示
 function yearAndItem(ItemType,appregnum,activenum,year,specialType ){
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('yearAndItem'));
@@ -390,12 +402,6 @@ function yearAndItem(ItemType,appregnum,activenum,year,specialType ){
             }
         ]
     };
-
-
-
-
-
-
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);
     $(window).resize(
@@ -418,17 +424,134 @@ function yearAndItem(ItemType,appregnum,activenum,year,specialType ){
                }
     });
 }
+//各专项年度投入情况-详情
 roomList.forDetails =  function  (name,year) {
     var title=year+name+"详情";
     var url = "/bg/planInput/planInputDetails?year="+year+"&name="+name;
     layer.open({
         type:2,
         title:'<h4 style="text-align: center;margin: 2px;font-size: 18px;padding-top: 10px">'+title+'</h4>',
-        area:['60%','60%'],
+        area:['85%','76%'],
         fixed:false,//不固定
         maxmin:true,
         content:url
     });
+}
+//各单位投资效率效益情况
+function unitAndefficiency(){
+    var unit= ['系统所','高压所','电自所','保护所','工程所','信通所','计量所','配电所','用能所','新能源中心','电工所','武汉检测中心','电建质监中心','人工智能所'];
+    var defficiency = [36.94,9.98,27.06,7.90,7.51,6.60,4.38,14.53,3.64,5.28,7.33,10.53,0.00,45.83];
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('unitAndefficiency'));
+    var maxappreg = calMax(defficiency); //计划投入金额Y轴值
+    var interval_left = maxappreg / 5; //左轴间隔
+    // 指定图表的配置项和数据
+    option = {
+        tooltip: {
+            trigger: 'axis',
+            formatter: function (params) {
+                var html=params[0].name+"<br>";
+                for(var i=0;i<params.length;i++){
+                    html+='<span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:'+params[i].color+';"></span>'
+                    if(option.series[params[i].seriesIndex].valueType=="percent"){
+                        html+=params[i].seriesName+":"+params[i].value+" <br>";
+                    }else{
+                        var   seriesName = params[i].seriesName;
+                        if(seriesName=='全院整体执行进度'){
+                            var value=8.90;
+                            html+=params[i].seriesName+":"+value+"<br>";
+                        }else{
+                            html+=params[i].seriesName+":"+params[i].value+"<br>";
+                        }
+
+                    }
+                }
+                return html;
+            }
+        },
+        legend: {
+            left: 'center',
+            bottom:'bottom',
+            data:[ '各单位投资效益','全院整体投资效益' ]
+        },
+        xAxis:
+            {
+
+                type: 'category',
+                boundaryGap: true,
+                data: unit,
+                axisLabel: {
+                    interval:0,
+                    rotate:30,
+                }
+            },
+        yAxis:
+            {
+                type: 'value',
+                scale: true,
+                min: 0,
+                max: 50,
+                splitNumber: 5,
+                axisLabel: {
+                    formatter: '{value}'
+                }
+            },
+        series: [
+            {
+                name:'各单位投资效益',
+                type:'bar',
+                data:defficiency,
+                barWidth : 20,//柱图宽度
+                itemStyle:{
+                    normal:{
+                        color:'#4ad2ff'
+                    }
+                },
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'top',
+                        formatter:'{c}'
+                    }
+                },
+                markLine: {
+                    itemStyle:{
+                        normal:{
+                            lineStyle:{
+                                type:'solid',
+                                color:'red',
+                            },
+                            label:{
+                                show:true,
+                                position:'end'
+                            }
+                        },
+                    },
+                    data:[
+                        {
+                            name:'全院整体投资效益',
+                            type:'average',
+                            yAxis:8.90,
+                            lineStyle:{
+                                color:'red'
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                name:'全院整体投资效益',
+                type:'line',
+            }
+        ]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+    $(window).resize(
+        function () {
+            myChart.resize();
+        }
+    )
 }
 // 输出最大值
 function calMax(arr) {
@@ -483,7 +606,6 @@ roomList.selectforYearToSpecialType=function(){
  * 专项类型来源
  */
 roomList.forSpecalType = function(year){
-
     $.ajax({
         url: "/bg/planBase/selectForItem",
         type: "post",
@@ -497,10 +619,25 @@ roomList.forSpecalType = function(year){
                     data:localData,
                     multiple:true
                 });
+
                 var specialType=$("#specialTypeNew").attr("data-companyLeaderName") ;
                 if(specialType!=""){
                     $(".tree-data").combotree(
                         'setValue',specialTypeNew.split(",")
+                    );
+                 } else {
+                    var len=localData.length;
+                    if(localData.length > 0){
+                        var arr=[];
+                        var test="";
+                        for(var j =0;j <len  ;j++){
+                            arr.push(localData[j].id)
+                            test+=localData[j].text+",";
+                        }
+
+                    }
+                    $(".tree-data").combotree(
+                        'setValue',arr
                     );
                 }
             }else{

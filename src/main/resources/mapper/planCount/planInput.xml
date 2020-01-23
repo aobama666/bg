@@ -16,15 +16,16 @@
         MY.CREATE_TIME,
         MY.UPDATE_USER,
         MY.UPDATE_TIME,
-        PC.PROFIT_CENTER_DEATIL
+        MY.TYPE,
+        PC.DEPT_ABBR
         FROM   PS_MAINTAIN_YEAR  MY
-        LEFT JOIN   (
-        SELECT  DISTINCT
-        PROFIT_CENTER_CODE,
-        PROFIT_CENTER_DEATIL
+        LEFT JOIN
+        (SELECT  DISTINCT
+        DEPT_CODE,
+        DEPT_ABBR
         FROM   PS_PROFIT_CENTER
         where  1=1
-        ) PC  ON   PC.PROFIT_CENTER_CODE=MY.BEARER
+        ) PC  ON   PC.DEPT_CODE=MY.BEARER
         where  MY.VALID='1'
         <if test="maintainMap.year!= null and maintainMap.year!= ''">
             and   MY.YEAR  = #{maintainMap.year}
@@ -35,7 +36,10 @@
         <if test="maintainMap.id!= null and maintainMap.id!= ''">
             and  MY.ID = #{maintainMap.id}
         </if>
-        ORDER BY  YEAR  DESC
+        <if test="maintainMap.type!= null and maintainMap.type!= ''">
+            and  MY.TYPE = #{maintainMap.type}
+        </if>
+        ORDER BY  YEAR ,BEARER DESC
     </sql>
     <!-- 计划投入数据维护的查询分页-->
     <select id="selectForMaintainOfYear" resultType="java.util.Map" parameterType="java.util.HashMap"  >
@@ -68,7 +72,8 @@
         create_time,
         update_user,
         update_time,
-        VALID
+        VALID,
+        TYPE
         ) values
         (#{maintainMap.id},
         #{maintainMap.specialType},
@@ -81,7 +86,8 @@
         #{maintainMap.createTime},
         #{maintainMap.updateUser},
         #{maintainMap.updateTime},
-        #{maintainMap.valid}
+        #{maintainMap.valid},
+        #{maintainMap.type}
         )
     </insert>
     <!-- 计划投入数据维护的修改 （股权投资和信息系统开发建设）-->
@@ -109,5 +115,20 @@
         UPDATE_TIME = #{maintainMap.updateTime}
         where id = #{maintainMap.id}
     </update>
+
+
+
+    <select id="selectForMaintainOfDept" resultType="java.util.Map" parameterType="java.util.HashMap"  >
+    SELECT
+        YEAR,
+        DEPT_CODE,
+        DEPT_NAME,
+        DEPT_ABBR
+        FROM   PS_MAINRTAIN_DEPT
+        where  1=1
+        <if test="maintainMap.year!= null and maintainMap.year!= ''">
+           and  YEAR = #{maintainMap.year}
+         </if>
+    </select>
 
 </mapper>

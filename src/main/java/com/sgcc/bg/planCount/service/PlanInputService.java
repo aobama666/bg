@@ -33,4 +33,9 @@ public interface PlanInputService {
      * 计划执行形象进度的维护 （股权投资和信息系统开发建设）
      */
     int  updateForImageProgress(@Param("maintainMap") Map<String, Object> maintainMap);
+    /**
+     * 计划投入维护承担单位的查询
+     */
+    List<Map<String,Object>> selectForMaintainOfDept(@Param("maintainMap") Map<String, Object> maintainMap);
+
 }

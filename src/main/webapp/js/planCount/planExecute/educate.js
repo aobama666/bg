@@ -38,16 +38,22 @@ roomList.query = function(){
 /* 用印管理-初始化列表界面  */
 roomList.initDataGrid = function(){
 	    $("#datagrid").datagrid({
-		url: "/bg/planInput/selectForMaintainOfYear",
+		url: "/bg/planInput/selectForPlanInputEducate",
 		type: 'POST',
 		form:'#queryForm',
 		pageSize:10,
 		tablepage:$(".tablepage"),//分页组件
+   　　 rowStyler:function (index,row) {
+		    debugger;
+		    alert(row.ROWNO);
+                if(row.ROWNO=='总计'){
+                    return  'background-color:#FFF2CC;color:#fff;'
+                }
+            },
 		columns: [
             {name: '序号',style:{width:"50px"}, data: 'ROWNO'},
-
             {name: '年份',style:{width:"100px"},data: 'YEAR'   },
-            {name: '承担单位',style:{width:"200px"},data: 'PROFIT_CENTER_DEATIL'   },
+            {name: '承担单位',style:{width:"200px"},data: 'DEPT_ABBR'   },
             {name: '计划投入金额（万元）', style:{width:"100px"},data: 'PLAN_AMOUNT' },
             {name: '计划项目数', style:{width:"100px"},data: 'ITEM_NUMBER' },
             {name: '形象进度',style:{width:"200px"}, data: 'IMAGE_PROGRESS',forMat:function(row){
@@ -62,7 +68,9 @@ roomList.initDataGrid = function(){
                         "href = 'javascript:void(0)' onclick = roomList.forDetails('"+row.ID+"')>维护 </a>";
                 }}
 		]
+
 	});
+
 
 }
 
@@ -74,7 +82,7 @@ roomList.forDetails = function (id) {
     layer.open({
                 type:2,
                 title:'<h4 style="text-align: center;margin-top: 2px;font-size: 18px;padding-top: 10px">教育培训专项投入数据维护</h4>',
-                area:['32%','32%'],
+                area:['35%','45%'],
                 fixed:false,//不固定
                 maxmin:true,
                 content:url

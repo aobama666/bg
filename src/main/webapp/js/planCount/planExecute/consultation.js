@@ -42,6 +42,7 @@ roomList.initDataGrid = function(){
 		type: 'POST',
 		form:'#queryForm',
 		pageSize:10,
+        showFooter:true,
 		tablepage:$(".tablepage"),//分页组件
 		columns: [
             {name: '序号',style:{width:"50px"}, data: 'ROWNO'},

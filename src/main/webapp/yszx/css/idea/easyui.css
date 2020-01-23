@@ -977,15 +977,11 @@
 .combo-panel {
   background-color: #ffffff;
 }
-.combo-arrow {
-  background-color: #E0ECFF;
-}
+
 .combo-arrow-hover {
   background-color: #eaf2ff;
 }
-.combo-arrow:hover {
-  background-color: #eaf2ff;
-}
+
 .combo .textbox-icon-disabled:hover {
   cursor: default;
 }
