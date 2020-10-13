@@ -40,7 +40,7 @@
 		<commons-io.version>2.4</commons-io.version>
 		<dozer.version>5.5.1</dozer.version>
 		<aspectj.version>1.8.4</aspectj.version>
-		<junit.version>4.12</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<assertj.version>1.7.0</assertj.version>
 		<selenium.version>2.42.2</selenium.version>
 		<jetty-maven-plugin.version>9.2.0.M0</jetty-maven-plugin.version>
